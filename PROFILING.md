@@ -16,23 +16,23 @@ ARM/Android (2.3.x and later), X86/Android (4.0 and later), X86/Darwin and AMD64
 Memcheck - Leak detection and misuse of memory related functions:
 -----------------------------------------------------------------
 
-$ valgrind --leak-check=full --leak-resolution=high ./mysoftware
+> $ valgrind --leak-check=full --leak-resolution=high ./mysoftware
 
 Tremendously useful for finding memory leaks, pinpoint precisely the code responsible
 for memory allocation that are never freed, and much more.
 
 http://valgrind.org/docs/manual/mc-manual.html
 
-"--leak-check=<no|summary|yes|full>" is essential to precisly pinpoint memory leaks
-"--leak-resolution=<low|med|high>" set to low to merge similar leaks when presenting you the results
-"--show-reachable=yes" can detect memory block indirectly lost
-"--verbose" show extra debugging info
+> "--leak-check=<no|summary|yes|full>" is essential to precisly pinpoint memory leaks  
+> "--leak-resolution=<low|med|high>" set to low to merge similar leaks when presenting you the results  
+> "--show-reachable=yes" can detect memory block indirectly lost  
+> "--verbose" show extra debugging info  
 
 
 Callgrind - Function call analyser:
 -----------------------------------
 
-$ valgrind --tool=callgrind ./mysoftware
+> $ valgrind --tool=callgrind ./mysoftware
 
 Account for each function called during execution of the program and generate a massive call graph that shows:
 - which function is called by which function
@@ -41,13 +41,13 @@ Account for each function called during execution of the program and generate a 
 http://valgrind.org/docs/manual/cl-manual.html
 
 ### GUIs
-- kcachegrind : Very "visual" frontend to cachegrind and callgrind
+- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind
 
 
 Cachegrind - CPU cache and branch-prediction profiler:
 ------------------------------------------------------
 
-$ valgrind --tool=cachegrind ./mysoftware
+> $ valgrind --tool=cachegrind ./mysoftware
 
 Account for each function called during execution of the program and show:
 - an estimation of the number of CPU cycle spent in each function
@@ -57,18 +57,18 @@ Account for each function called during execution of the program and show:
 http://valgrind.org/docs/manual/cg-manual.html
 
 ### GUIs
-- kcachegrind : Very "visual" frontend to cachegrind and callgrind
-- qtcreator : Good integration of valgrind / cachegrind
+- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind
+- qtcreator (http://qt-project.org/wiki/Category:Tools::QtCreator) Good integration of valgrind / cachegrind
 
 
 Massif - Heap profiler:
 -----------------------
 
 Generate report:
-$ valgrind --tool=massif [--time-unit=B] [--stacks=yes] ./mysoftware
+> $ valgrind --tool=massif [--time-unit=B] [--stacks=yes] ./mysoftware
 
 Print restults:
-$ ms_print massif.out.xxxxx --x=128 --y=128
+> $ ms_print massif.out.xxxxx --x=128 --y=128
 
 Massif produces snapshots of the memory heap state at regular intervals (so it may not 
 necessarily catch the peaks uses). For each snapshot we have:

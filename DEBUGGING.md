@@ -25,6 +25,6 @@ Other GUI includes:
 Debbugging with GDB
 -------------------
 
-$ gdb --args ./myprogram -with -arguments
+> $ gdb --args ./myprogram -with -arguments
 
 Then, type "r" to run the program, and in case of a crash "bt" to print the backtrace.

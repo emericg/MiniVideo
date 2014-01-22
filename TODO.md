@@ -38,7 +38,7 @@ TODO library
 - MP4 parser:
   - timestamps
   - subtitles
-- Finish MKV parser
+- finish MKV parser
 - tracks_video_count sometimes not correclty set (and then bitsteammap not freed)
 
 // Decoder
@@ -49,22 +49,22 @@ TODO library
 PERFORMANCE IMPROVMENTS
 -----------------------
 
-- MACROBLOCKS:
+// MACROBLOCKS
 - Replace residual_block_cabac() AND residual_block_cavlc() by a pointer to residual_block()
 - Less call to deriv_neighbouringlocations()
 - Smarter management of (mb->CodedBlockPatternLuma == 0 || mb->CodedBlockPatternChroma == 0) in macroblock_layer()
-- Ne pas faire de transformations spatiales si pas de données résiduelles
-- Quantization Parameters & TransformBypassModeFlag = only when mb_qp_delta is read ?
+- No spatial transformations if no residual datas
+- Quantization Parameters & TransformBypassModeFlag = only when mb_qp_delta is read?
 - Replace iClip1_YCbCr_8() by Clip1_YCbCr_8()
 
-- CABAC:
-- "intable" computation not done for each binIdx ?
-- stop the memcmp() if we leave the decodedSE string
-- stop the memcmp() if match > 1
+// CABAC
+- "intable" computation not done for each binIdx?
+- Stop the memcmp() if we leave the decodedSE string
+- Stop the memcmp() if match > 1
 
-- TRANSFORMS:
+// TRANSFORMS:
 - Change some int u[][] to uint8 u[][]
 - Homogenize the idct code for luma/chroma DC
 - Use less different arrays within the idct code
-     idct4x4() use e[4][4] instead of g[4][4]
-     idct8x8() use e[8][8] instead of h[8][8] m[8][8] k[8][8]
+  - idct4x4() use e[4][4] instead of g[4][4]
+  - idct8x8() use e[8][8] instead of h[8][8] m[8][8] k[8][8]
