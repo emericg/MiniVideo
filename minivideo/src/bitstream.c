@@ -683,7 +683,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
         TRACE_ERROR(BITS, "<b> " BLUE "read_byte_aligned() on unaligned offset" RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     // Read one byte
     ////////////////////////////////////////////////////////////////////////
@@ -736,7 +736,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
         TRACE_ERROR(BITS, "<b> " BLUE "read_byte_aligned() on unaligned offset" RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     // Read one byte
     ////////////////////////////////////////////////////////////////////////

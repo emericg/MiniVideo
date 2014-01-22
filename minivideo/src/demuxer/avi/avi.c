@@ -306,7 +306,7 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
                 printf("%c", string[i]);
             }
             printf("'\n");
-#endif
+#endif /* ENABLE_DEBUG */
             free(string);
         }
     }

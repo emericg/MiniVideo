@@ -271,7 +271,7 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
             TRACE_2(PARSER, "[%u] sample dts\t> %lli\n", i, map->sample_timecode_decoding[i]);
         }
 */
-#endif
+#endif /* ENABLE_DEBUG */
     }
 
     return retcode;
@@ -449,7 +449,7 @@ static void print_box_header(Mp4Box_t *box_header)
         TRACE_2(PARSER, "* version\t\t: %u\n", box_header->version);
         TRACE_2(PARSER, "* flags\t\t: 0x%X\n", box_header->flags);
     }
-#endif
+#endif /* ENABLE_DEBUG */
 }
 
 /* ************************************************************************** */
@@ -482,9 +482,13 @@ static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
     }
 
 #if ENABLE_DEBUG
-    // Print box header
-    print_box_header(box_header);
-#endif
+    {
+        // Print box header
+        print_box_header(box_header);
+
+        // Print box content
+    }
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -503,9 +507,13 @@ static int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header)
     int retcode = SUCCESS;
 
 #if ENABLE_DEBUG
-    // Print box header
-    print_box_header(box_header);
-#endif
+    {
+        // Print box header
+        print_box_header(box_header);
+
+        // Print box content
+    }
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -560,7 +568,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
             TRACE_1(PARSER, "> compatible_brands[%i]\t: 0x%X\n", i, compatible_brands[i]);
         }
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -614,7 +622,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
 */
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -797,7 +805,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         TRACE_1(PARSER, "> width\t: %u\n", width);
         TRACE_1(PARSER, "> height\t: %u\n", height);
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -971,7 +979,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header)
         TRACE_1(PARSER, "> language[1]\t: %u\n", language[1]);
         TRACE_1(PARSER, "> language[2]\t: %u\n", language[2]);
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1073,7 +1081,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         TRACE_1(PARSER, "> pre_defined\t: %u\n", pre_defined);
         TRACE_1(PARSER, "> handler_type\t: 0x%X\n", track->handlerType);
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     if (track->handlerType != HANDLER_AUDIO &&
         track->handlerType != HANDLER_VIDEO)
@@ -1358,7 +1366,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 TRACE_1(PARSER, "> compressor\t: '%s'\n", compressorname);
                 TRACE_1(PARSER, "> color depth\t: %u\n", track->color_depth);
             }
-#endif
+#endif /* ENABLE_DEBUG */
 
             while (retcode == SUCCESS &&
                    bitstream_get_absolute_byte_offset(bitstr) < box_subheader.offset_end)
@@ -1503,7 +1511,7 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             TRACE_1(PARSER, "> pictureParameterSetOffset[%u]  : %u\n", i, track->pps_sample_offset[i]);
         }
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1536,7 +1544,7 @@ static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header)
         TRACE_1(PARSER, "> maxBitrate\t: %u\n", maxBitrate);
         TRACE_1(PARSER, "> avgBitrate\t: %u\n", avgBitrate);
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1588,7 +1596,7 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Print box content
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1628,7 +1636,7 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Print box content
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1687,7 +1695,7 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             printf("]\n");
 */
         }
-#endif
+#endif /* ENABLE_DEBUG */
     }
 
     return retcode;
@@ -1772,7 +1780,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             printf("]\n");
 */
         }
-#endif
+#endif /* ENABLE_DEBUG */
     }
 
     return retcode;
@@ -1858,7 +1866,7 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
 */
     }
-#endif
+#endif /* ENABLE_DEBUG */
 
     return retcode;
 }
@@ -1934,7 +1942,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             printf("]\n");
 */
         }
-#endif
+#endif /* ENABLE_DEBUG */
     }
 
     return retcode;

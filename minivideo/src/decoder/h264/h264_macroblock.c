@@ -154,7 +154,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
             // CABAC initialization process //FIXME needed? See 'ITU-T H.264' recommendation 9.3.1.2
             initCabacDecodingEngine(dc);
-#else
+#else /* ENABLE_IPCM */
             TRACE_ERROR(MB, "I_PCM decoding is currently disabled!\n");
             return UNSUPPORTED;
 #endif /* ENABLE_IPCM */
@@ -374,11 +374,9 @@ static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
     printf("[MB] <> " GREEN "print_macroblock_layer()\n" RESET);
 
     printf("[MB] ============" BLUE " MB %i (%2i,%2i) " RESET "============\n", mb->mbAddr, mb->mbAddr_x, mb->mbAddr_y);
-    printf("[MB] - File Position\t\t: %x:%i\n", (mb->mbFileAddrStart) / 8, (mb->mbFileAddrStart) % 8);
-    printf("[MB] - File Position\t\t: %x:%i\n", (mb->mbFileAddrStop) / 8, (mb->mbFileAddrStop) % 8);
-    printf("[MB] - File Position (bits)\t: %i\n", mb->mbFileAddrStart);
-    printf("[MB] - Mb size (bits)\t\t: %i\n", mb->mbFileAddrStop - mb->mbFileAddrStart + 1);
-    printf("[MB] - frame_num / idr_pic_id\t= %i/%i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
+    printf("[MB] - Mb position in file\t: 0x%X:%i (%i bits)\n", (mb->mbFileAddrStart) / 8, (mb->mbFileAddrStart) % 8, mb->mbFileAddrStart);
+    printf("[MB] - Mb size\t\t\t: %i bits\n", mb->mbFileAddrStop - mb->mbFileAddrStart + 1);
+    printf("[MB] - frame_num / idr_pic_id\t= %i / %i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
 
     if (dc->active_slice->slice_type == 0 || dc->active_slice->slice_type == 5)
         printf("[MB] - slice type\t\t= P Slice (%i)\n", dc->active_slice->slice_type);
