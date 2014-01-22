@@ -207,7 +207,7 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
         // FIXME cabac colorbug happen on every block except blk_LUMA_16x16_DC
         if (blkType == blk_CHROMA_DC_Cr || blk_CHROMA_DC_Cr)
         {
-            TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG?", mb->mbAddr);
+            TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (not a LUMA_16x16_DC block)\n", mb->mbAddr);
         }
 */
         numCoeff = endIdx + 1;
@@ -273,49 +273,57 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     }
 
 #if ENABLE_DEBUG
-/*
-if( mb->mbAddr == 907)
-{
-    int a = 0;
-    int iYCbCr = 0;
+    int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug
 
-    if (blkType > blk_LUMA_16x16_AC)
+    if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
     {
-        if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_AC_Cb)
-            iYCbCr = 1;
+        int a = 0;
+        int iYCbCr = 0;
+
+        if (blkType > blk_LUMA_16x16_AC)
+        {
+            if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_AC_Cb)
+                iYCbCr = 1;
+            else
+                iYCbCr = 2;
+        }
+
+        printf("[CABAC] " BLUE "CABAC RESIDUAL BLOCK\n" RESET);
+
+        printf("[CABAC] - from macroblock: %i\n", mb->mbAddr);
+        printf("[CABAC] - blkIdx   :  %i/x\n", blkIdx);
+        printf("[CABAC] - blkType  :  %i\n", blkType);
+        printf("[CABAC] - iYCbCr   :  %i\n", iYCbCr);
+
+        printf("[CABAC] - maxNumCoeff      = %i\n", maxNumCoeff);
+        printf("[CABAC] - coded_block_flag = %i\n", cbf);
+
+        if (cbf == true)
+        {
+            printf("[CABAC] - significant_coeff_flag\n");
+            for (a = 0; a < numCoeff; a++)
+                printf("[CABAC]   - [idx:%2i] = %i\n", a, significant_coeff_flag[a]);
+
+            printf("[CABAC] - last_significant_coeff_flag\n");
+            for (a = 0; a < numCoeff; a++)
+                printf("[CABAC]   - [idx:%2i] = %i\n", a, last_significant_coeff_flag[a]);
+        }
+
+        if (numCoeff > 0)
+        {
+            printf("[CABAC]  - coefficients:\n");
+            for (a = 0; a < numCoeff; a++)
+            {
+                printf("[CABAC]   - [idx:%2i] coeff_abs_level_minus1\t= %i\n", a, coeff_abs_level_minus1[a]);
+                printf("[CABAC]   -          coeff_sign_flag\t\t= %i\n", coeff_sign_flag[a]);
+                printf("[CABAC]   -          coeff final\t\t= %i\n", coeffLevel[a]);
+            }
+        }
         else
-            iYCbCr = 2;
+        {
+            printf("[CABAC]  - no coefficients for this block\n");
+        }
     }
-
-    //TRACE_JMP(DCABAC, "1");
-    TRACE_WARNING(CABAC, BLUE "CABAC BLOCK\n" RESET);
-
-    TRACE_WARNING(CABAC, "- blkType  :  %i\n", blkType);
-    TRACE_WARNING(CABAC, "- blkIdx   :  %i/x\n", blkIdx);
-    TRACE_WARNING(CABAC, "- iYCbCr   :  %i\n", iYCbCr);
-
-    TRACE_WARNING(CABAC, "- maxNumCoeff      = %i\n", maxNumCoeff);
-    TRACE_WARNING(CABAC, "- coded_block_flag = %i\n", cbf);
-
-    if (cbf)
-    {
-        TRACE_1(CABAC, "- significant_coeff_flag\n");
-        for (a = 0; a < numCoeff; a++)
-            TRACE_WARNING(CABAC, "  - [idx:%2i] = %i\n", a, significant_coeff_flag[a]);
-
-        TRACE_1(CABAC, "- last_significant_coeff_flag\n");
-        for (a = 0; a < numCoeff; a++)
-            TRACE_WARNING(CABAC, "  - [idx:%2i] = %i\n", a, last_significant_coeff_flag[a]);
-    }
-
-    TRACE_1(CABAC, "- coefficients\n");
-    for (a = 0; a < numCoeff; a++)
-    {
-        TRACE_WARNING(CABAC, "  - [idx:%2i] coeff_abs_level_minus1\t= %i\n", a, coeff_abs_level_minus1[a]);
-        TRACE_WARNING(CABAC, "  -          coeff_sign_flag\t= %i\n", coeff_sign_flag[a]);
-        TRACE_WARNING(CABAC, "  -          coeff final\t\t= %i\n", coeffLevel[a]);
-    }
-}*/
 #endif /* ENABLE_DEBUG */
 }
 
@@ -552,7 +560,7 @@ int initCabacContextVariables(DecodingContext_t *dc)
                 dc->active_slice->cc->valMPS[ctxIdx] = 1;
             }
 /*
-            // FIXME cabac colorbug
+            // FIXME cabac colorbug ctxIdx in IntraChromaPredMode range
             if (ctxIdx > 63 && ctxIdx < 68)
             {
                 TRACE_WARNING(CABAC, "[%i] pStateIdx: %i\n", ctxIdx, dc->active_slice->cc->pStateIdx[ctxIdx]);
@@ -1477,7 +1485,7 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
             {
                 ctxIdxInc = 3;
                 // FIXME cabac colorbug
-                TRACE_WARNING(CABAC, "SUPERWHAT ctxIdx=%i\n", ctxIdxOffset + ctxIdxInc);
+                TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (ctxIdx=%i in IntraChromaPredMode range)\n", 0, ctxIdxOffset + ctxIdxInc);
             }
             else
             { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=64 and binIdx>2 should not happend\n"); }
@@ -1843,8 +1851,6 @@ static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
         // mbAddrB is not available
         condTermFlagB = 0;
     }
-
-    // FIXME cabac colorbug when (condTermFlagA + condTermFlagB) != 0
 
     TRACE_3(CABAC, "  ctxIdxInc_intrachromapredmode() = %i\n", condTermFlagA + condTermFlagB);
     return (condTermFlagA + condTermFlagB);
@@ -2389,10 +2395,11 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
     // Shortcut
     CabacContext_t *cc = dc->active_slice->cc;
 /*
-    // FIXME cabac colorbug
+    // FIXME cabac colorbug ctxIdx in IntraChromaPredMode range
     if (ctxIdx > 64 && ctxIdx < 68)
     {
         TRACE_WARNING(CABAC, "yes we are in DecodeDecision()\n");
+        TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (ctxIdx=%i in IntraChromaPredMode range)\n", 0, ctxIdx);
     }
 */
     // 1

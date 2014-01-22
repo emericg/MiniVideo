@@ -290,20 +290,19 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             }
 
 
-#if ENABLE_DEBUG
-            // Print macroblock 'xxx' header and block content (need trace level 1)
+            // Print macroblock(s) header and block data
             ////////////////////////////////////////////////////////////////
+#if ENABLE_DEBUG
+            int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug
 
             mb->mbFileAddrStop = bitstream_get_absolute_bit_offset(dc->bitstr) - 1;
 
-            int mbrange[2] = {-1, -1};
-
-            if (mb->mbAddr >= mbrange[0] && mb->mbAddr <= mbrange[1])
+            if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
             {
                 print_macroblock_layer(dc, mb);
                 print_macroblock_pixel_residual(mb);
-                //print_macroblock_pixel_predicted(mb);
-                //print_macroblock_pixel_final(mb);
+                print_macroblock_pixel_predicted(mb);
+                print_macroblock_pixel_final(mb);
             }
 #endif /* ENABLE_DEBUG */
         }
@@ -372,89 +371,89 @@ void freeMbArrayContent(DecodingContext_t *dc)
 static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(MB, "<> " GREEN "print_macroblock_layer()\n" RESET);
+    printf("[MB] <> " GREEN "print_macroblock_layer()\n" RESET);
 
-    TRACE_1(MB, "============" BLUE " MB %i (%2i,%2i) " RESET "============\n", mb->mbAddr, mb->mbAddr_x, mb->mbAddr_y);
-    TRACE_1(MB, "- File Position\t\t: %x:%i\n", (mb->mbFileAddrStart) / 8, (mb->mbFileAddrStart) % 8);
-    TRACE_1(MB, "- File Position\t\t: %x:%i\n", (mb->mbFileAddrStop) / 8, (mb->mbFileAddrStop) % 8);
-    TRACE_1(MB, "- File Position (bits)\t: %i\n", mb->mbFileAddrStart);
-    TRACE_1(MB, "- Mb size (bits)\t\t: %i\n", mb->mbFileAddrStop - mb->mbFileAddrStart + 1);
-    TRACE_1(MB, "- frame_num / idr_pic_id\t= %i/%i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
+    printf("[MB] ============" BLUE " MB %i (%2i,%2i) " RESET "============\n", mb->mbAddr, mb->mbAddr_x, mb->mbAddr_y);
+    printf("[MB] - File Position\t\t: %x:%i\n", (mb->mbFileAddrStart) / 8, (mb->mbFileAddrStart) % 8);
+    printf("[MB] - File Position\t\t: %x:%i\n", (mb->mbFileAddrStop) / 8, (mb->mbFileAddrStop) % 8);
+    printf("[MB] - File Position (bits)\t: %i\n", mb->mbFileAddrStart);
+    printf("[MB] - Mb size (bits)\t\t: %i\n", mb->mbFileAddrStop - mb->mbFileAddrStart + 1);
+    printf("[MB] - frame_num / idr_pic_id\t= %i/%i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
 
     if (dc->active_slice->slice_type == 0 || dc->active_slice->slice_type == 5)
-        TRACE_1(MB, "- slice type\t\t= P Slice (%i)\n", dc->active_slice->slice_type);
+        printf("[MB] - slice type\t\t= P Slice (%i)\n", dc->active_slice->slice_type);
     else if (dc->active_slice->slice_type == 1 || dc->active_slice->slice_type == 6)
-        TRACE_1(MB, "- slice type\t\t= B Slice (%i)\n", dc->active_slice->slice_type);
+        printf("[MB] - slice type\t\t= B Slice (%i)\n", dc->active_slice->slice_type);
     else if (dc->active_slice->slice_type == 2 || dc->active_slice->slice_type == 7)
-        TRACE_1(MB, "- slice type\t\t= I Slice (%i)\n", dc->active_slice->slice_type);
+        printf("[MB] - slice type\t\t= I Slice (%i)\n", dc->active_slice->slice_type);
     else
-        TRACE_1(MB, "- slice type\t\t= %i\n", dc->active_slice->slice_type);
+        printf("[MB] - slice type\t\t= %i\n", dc->active_slice->slice_type);
 
-    TRACE_1(MB, "- mb_type\t\t\t= %i\n", mb->mb_type);
-    TRACE_1(MB, "- NumMbPart\t\t\t: %i\n", mb->NumMbPart);
-    //TRACE_1(MB, "- MbPartSize\t\t\t: %ix%i\n", MbPartWidth(dc->active_slice->slice_type, mb->mb_type), MbPartHeight(dc->active_slice->slice_type, mb->mb_type));
-    //TRACE_1(MB, "- NumSubMbPart\t\t: %i\n", mb->NumSubMbPart);
-    //TRACE_1(MB, "- SubMbPartSize\t\t\t: %ix%i\n", xx, yy);
+    printf("[MB] - mb_type\t\t\t= %i\n", mb->mb_type);
+    printf("[MB] - NumMbPart\t\t: %i\n", mb->NumMbPart);
+    //printf("[MB] - MbPartSize\t\t\t: %ix%i\n", MbPartWidth(dc->active_slice->slice_type, mb->mb_type), MbPartHeight(dc->active_slice->slice_type, mb->mb_type));
+    //printf("[MB] - NumSubMbPart\t\t: %i\n", mb->NumSubMbPart);
+    //printf("[MB] - SubMbPartSize\t\t\t: %ix%i\n", xx, yy);
 
     if (mb->MbPartPredMode[0] != Intra_16x16)
     {
         if (mb->transform_size_8x8_flag)
-            TRACE_1(MB, "- Luma transform size\t: 8x8\n");
+            printf("[MB] - Luma transform size\t: 8x8\n");
         else
-            TRACE_1(MB, "- Luma transform size\t: 4x4\n");
+            printf("[MB] - Luma transform size\t: 4x4\n");
 
-        TRACE_1(MB, "- Coded Block Pattern\t: %i\n", mb->coded_block_pattern);
+        printf("[MB] - Coded Block Pattern\t: %i\n", mb->coded_block_pattern);
     }
     else
     {
-        TRACE_1(MB, "- Coded Block Pattern\t: auto\n");
+        printf("[MB] - Coded Block Pattern\t: auto\n");
     }
 
-    TRACE_1(MB, " - cdp LUMA\t\t\t: %i\n", mb->CodedBlockPatternLuma);
-    TRACE_1(MB, " - cdp CHROMA\t\t: %i\n", mb->CodedBlockPatternChroma);
+    printf("[MB]  - cdp LUMA\t\t: %i\n", mb->CodedBlockPatternLuma);
+    printf("[MB]  - cdp CHROMA\t\t: %i\n", mb->CodedBlockPatternChroma);
 
-    TRACE_1(MB, "- mb_qp_delta\t\t= %i\n", mb->mb_qp_delta);
-    TRACE_1(MB, " - QPY\t\t\t: %i\n", mb->QPY);
-    TRACE_1(MB, " - QPC\t\t\t: %i, %i\n", mb->QPC[0], mb->QPC[1]);
+    printf("[MB] - mb_qp_delta\t\t= %i\n", mb->mb_qp_delta);
+    printf("[MB]  - QPY\t\t\t: %i\n", mb->QPY);
+    printf("[MB]  - QPC\t\t\t: %i, %i\n", mb->QPC[0], mb->QPC[1]);
 
-    TRACE_1(MB, "==============" BLUE " Neighbors " RESET "=============\n");
+    printf("[MB] ==============" BLUE " Neighbors " RESET "=============\n");
     if (mb->mbAddrA >= 0)
     {
-        TRACE_1(MB, "- macroblock A is available at address %i\n", mb->mbAddrA);
+        printf("[MB] - macroblock A is available at address %i\n", mb->mbAddrA);
     }
     else
     {
-        TRACE_1(MB, "- macroblock A is not available\n");
+        printf("[MB] - macroblock A is not available\n");
     }
     if (mb->mbAddrB >= 0)
     {
-        TRACE_1(MB, "- macroblock B is available at address %i\n", mb->mbAddrB);
+        printf("[MB] - macroblock B is available at address %i\n", mb->mbAddrB);
     }
     else
     {
-        TRACE_1(MB, "- macroblock B is not available\n");
+        printf("[MB] - macroblock B is not available\n");
     }
     if (mb->mbAddrC >= 0)
     {
-        TRACE_1(MB, "- macroblock C is available at address %i\n", mb->mbAddrC);
+        printf("[MB] - macroblock C is available at address %i\n", mb->mbAddrC);
     }
     else
     {
-        TRACE_1(MB, "- macroblock C is not available\n");
+        printf("[MB] - macroblock C is not available\n");
     }
     if (mb->mbAddrD >= 0)
     {
-        TRACE_1(MB, "- macroblock D is available at address %i\n", mb->mbAddrD);
+        printf("[MB] - macroblock D is available at address %i\n", mb->mbAddrD);
     }
     else
     {
-        TRACE_1(MB, "- macroblock D is not available\n");
+        printf("[MB] - macroblock D is not available\n");
     }
 
-    TRACE_1(MB, "=============" BLUE " Predictions " RESET "============\n");
+    printf("[MB] =============" BLUE " Predictions " RESET "============\n");
     if (mb->mb_type == I_PCM)
     {
-        TRACE_1(MB, "- Luma prediction\t\t: I_PCM macroblock, no prediction\n");
+        printf("[MB] - Luma prediction\t\t: I_PCM macroblock, no prediction\n");
     }
     else
     {
@@ -464,25 +463,25 @@ static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
         {
             if (mb->MbPartPredMode[i] == Intra_4x4)
             {
-                TRACE_1(MB, "- Luma prediction\t\t: Intra_4x4\n", i);
+                printf("[MB] - Luma prediction\t\t: Intra_4x4\n", i);
                 unsigned int luma4x4BlkIdx = 0;
                 for (luma4x4BlkIdx = 0; luma4x4BlkIdx < 16; luma4x4BlkIdx++)
                 {
-                    TRACE_1(MB, "  - Intra4x4PredMode[%i]\t: %i\n", luma4x4BlkIdx, mb->Intra4x4PredMode[luma4x4BlkIdx]);
+                    printf("[MB]   - Intra4x4PredMode[%i]\t: %i\n", luma4x4BlkIdx, mb->Intra4x4PredMode[luma4x4BlkIdx]);
                 }
             }
             else if (mb->MbPartPredMode[i] == Intra_16x16)
             {
-                TRACE_1(MB, "- Luma prediction\t\t: Intra_16x16\n", i);
-                TRACE_1(MB, "  - Intra16x16PredMode\t: %i\n", mb->Intra16x16PredMode);
+                printf("[MB] - Luma prediction\t\t: Intra_16x16\n", i);
+                printf("[MB]   - Intra16x16PredMode\t: %i\n", mb->Intra16x16PredMode);
             }
             else if (mb->MbPartPredMode[i] == Intra_8x8)
             {
-                TRACE_1(MB, "- Luma prediction\t\t: Intra_8x8\n", i);
+                printf("[MB] - Luma prediction\t\t: Intra_8x8\n", i);
                 unsigned int luma8x8BlkIdx = 0;
                 for (luma8x8BlkIdx = 0; luma8x8BlkIdx < 4; luma8x8BlkIdx++)
                 {
-                    TRACE_1(MB, "  - Intra8x8PredMode[%i]\t: %i\n", luma8x8BlkIdx, mb->Intra8x8PredMode[luma8x8BlkIdx]);
+                    printf("[MB]   - Intra8x8PredMode[%i]\t: %i\n", luma8x8BlkIdx, mb->Intra8x8PredMode[luma8x8BlkIdx]);
                 }
             }
             else if (mb->MbPartPredMode[i] == Direct ||
@@ -490,13 +489,13 @@ static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
                      mb->MbPartPredMode[i] == Pred_L1 ||
                      mb->MbPartPredMode[i] == BiPred)
             {
-                TRACE_1(MB, "  - Inter prediction :\n");
-                TRACE_1(MB, "    - Motion Vector 1 :\n");
-                TRACE_1(MB, "    - Motion Vector 2 :\n");
+                printf("[MB]   - Inter prediction :\n");
+                printf("[MB]     - Motion Vector 1 :\n");
+                printf("[MB]     - Motion Vector 2 :\n");
             }
             else
             {
-                TRACE_1(MB, "- MbPartPredMode[%i]\t\t: %i\n", i, mb->MbPartPredMode[i]);
+                printf("[MB] - MbPartPredMode[%i]\t\t: %i\n", i, mb->MbPartPredMode[i]);
                 TRACE_WARNING(MB, "Unknown luma prediction mode\n");
             }
         }
@@ -504,37 +503,37 @@ static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
         // Chroma
         if (dc->ChromaArrayType != 0)
         {
-            TRACE_1(MB, "- Chroma prediction mode\t: %i\n", mb->IntraChromaPredMode);
+            printf("[MB] - Chroma prediction mode\t: %i\n", mb->IntraChromaPredMode);
         }
     }
 
     if (dc->entropy_coding_mode_flag)
     {
-        TRACE_1(MB, "===========" BLUE " coded_block_flag " RESET "==========\n");
+        printf("[MB] ===========" BLUE " coded_block_flag " RESET "==========\n");
         int a = 0;
 
         if (mb->MbPartPredMode[0] == Intra_16x16)
         {
-            TRACE_1(MB, " - [luma] [DC]\t: %i\n", mb->coded_block_flag[0][16]);
+            printf("[MB]  - [luma] [DC]\t: %i\n", mb->coded_block_flag[0][16]);
         }
         for (a = 0; a < ((mb->MbPartPredMode[0] == Intra_8x8) ? 4 : 16) ; a++)
         {
-            TRACE_1(MB, " - [luma] [%i]\t: %i\n", a, mb->coded_block_flag[0][a]);
+            printf("[MB]  - [luma] [%i]\t: %i\n", a, mb->coded_block_flag[0][a]);
         }
 
-        TRACE_1(MB, " -  [cb]  [DC]\t: %i\n", mb->coded_block_flag[1][4]);
+        printf("[MB]  -  [cb]  [DC]\t: %i\n", mb->coded_block_flag[1][4]);
         for (a = 0; a < 4; a++)
         {
-            TRACE_1(MB, " -  [cb]  [%i]\t: %i\n", a, mb->coded_block_flag[1][a]);
+            printf("[MB]  -  [cb]  [%i]\t: %i\n", a, mb->coded_block_flag[1][a]);
         }
 
-        TRACE_1(MB, " -  [cr]  [DC]\t: %i\n", mb->coded_block_flag[2][4]);
+        printf("[MB]  -  [cr]  [DC]\t: %i\n", mb->coded_block_flag[2][4]);
         for (a = 0; a < 4; a++)
         {
-            TRACE_1(MB, " -  [cr]  [%i]\t: %i\n", a, mb->coded_block_flag[2][a]);
+            printf("[MB]  -  [cr]  [%i]\t: %i\n", a, mb->coded_block_flag[2][a]);
         }
     }
-    TRACE_1(MB, "======================================\n\n");
+    printf("[MB] ======================================\n\n");
 #endif /* ENABLE_DEBUG */
 }
 
@@ -552,7 +551,7 @@ static void print_macroblock_pixel_residual(Macroblock_t *mb)
     int ra = 0;
     int zz = 0;
 
-    TRACE_INFO(MB, "==============" BLUE " RESIDUAL Y " RESET "==============\n");
+    printf("[MB] ==============" BLUE " RESIDUAL Y " RESET "==============\n");
     if (mb->MbPartPredMode[0] == Intra_4x4)
     {
         for (blkGrp = 0; blkGrp < 4; blkGrp++)
@@ -633,7 +632,7 @@ static void print_macroblock_pixel_residual(Macroblock_t *mb)
         printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
     }
 
-    TRACE_INFO(MB, "==============" BLUE " RESIDUAL Cb " RESET "=============\n");
+    printf("[MB] ==============" BLUE " RESIDUAL Cb " RESET "=============\n");
     if (1 == 1)
     {
         blkGrp = 0;
@@ -669,7 +668,7 @@ static void print_macroblock_pixel_residual(Macroblock_t *mb)
         printf("+-------------------+-------------------+\n\n");
     }
 
-    TRACE_INFO(MB, "==============" BLUE " RESIDUAL Cr " RESET "=============\n");
+    printf("[MB] ==============" BLUE " RESIDUAL Cr " RESET "=============\n");
     if (1 == 1)
     {
         blkGrp = 0;
@@ -722,7 +721,7 @@ static void print_macroblock_pixel_predicted(Macroblock_t *mb)
     if (mb->MbPartPredMode[0] == Intra_8x8)
         blkSize = 8;
 
-    TRACE_INFO(MB, "=============" BLUE " PREDICTED Y " RESET "=============\n");
+    printf("[MB] =============" BLUE " PREDICTED Y " RESET "=============\n");
     for (y = 0; y < 16; y++)
     {
         if (y % blkSize == 0)
@@ -741,7 +740,7 @@ static void print_macroblock_pixel_predicted(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
 
-    TRACE_INFO(MB, "=============" BLUE " PREDICTED Cb " RESET "============\n");
+    printf("[MB] =============" BLUE " PREDICTED Cb " RESET "============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -760,7 +759,7 @@ static void print_macroblock_pixel_predicted(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+\n\n");
 
-    TRACE_INFO(MB, "=============" BLUE " PREDICTED Cr " RESET "============\n");
+    printf("[MB] =============" BLUE " PREDICTED Cr " RESET "============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -796,7 +795,7 @@ static void print_macroblock_pixel_final(Macroblock_t *mb)
     if (mb->MbPartPredMode[0] == Intra_8x8)
         blkSize = 8;
 
-    TRACE_INFO(MB, "==============" BLUE " FINAL Y " RESET "==============\n");
+    printf("[MB] ==============" BLUE " FINAL Y " RESET "==============\n");
     for (y = 0; y < 16; y++)
     {
         if (y % blkSize == 0)
@@ -815,7 +814,7 @@ static void print_macroblock_pixel_final(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
 
-    TRACE_INFO(MB, "==============" BLUE " FINAL Cb " RESET "==============\n");
+    printf("[MB] ==============" BLUE " FINAL Cb " RESET "==============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -834,7 +833,7 @@ static void print_macroblock_pixel_final(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+\n\n");
 
-    TRACE_INFO(MB, "==============" BLUE " FINAL Cr " RESET "==============\n");
+    printf("[MB] ==============" BLUE " FINAL Cr " RESET "==============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)

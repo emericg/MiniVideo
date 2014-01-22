@@ -134,7 +134,7 @@ static TraceModule_t sv_trace_modules[] =
         { "NALU"  , "NAL Unit decoding"          , TRACE_LEVEL_DEFAULT },
         { "PARAM" , "Parameters Set"             , TRACE_LEVEL_DEFAULT },
         { "SLICE" , "Slice decoding"             , TRACE_LEVEL_DEFAULT },
-        { "MACRO" , "MacroBlock decoding"        , TRACE_LEVEL_DEFAULT | TRACE_LEVEL_1 },
+        { "MACRO" , "MacroBlock decoding"        , TRACE_LEVEL_DEFAULT },
         { "SPACE" , "Spatial subdivision"        , TRACE_LEVEL_DEFAULT },
         { "INTRA" , "Intra prediction"           , TRACE_LEVEL_DEFAULT },
         { "INTER" , "Inter prediction"           , TRACE_LEVEL_DEFAULT },

@@ -118,8 +118,6 @@ void minivideo_infos(void)
     TRACE_1(MAIN, "TEST lvl 1\n");
     TRACE_2(MAIN, "TEST lvl 2\n");
     TRACE_3(MAIN, "TEST lvl 3\n\n");
-
-    TRACE_INFO(MAIN, GREEN "minivideo_thumbnailer()\n" RESET);
 #endif /* ENABLE_DEBUG */
 }
 
@@ -192,6 +190,8 @@ int minivideo_thumbnailer(const char *input_filepath,
                           const int picture_number,
                           const int picture_extractionmode)
 {
+    TRACE_INFO(MAIN, GREEN "minivideo_thumbnailer()\n" RESET);
+
     int retcode = FAILURE;
     int picture_number_filtered = picture_number;
 
@@ -275,6 +275,8 @@ int minivideo_extractor(const char *input_filepath,
                         const bool extract_subtitles,
                         const int output_format)
 {
+    TRACE_INFO(MAIN, GREEN "minivideo_extractor()\n" RESET);
+
     int retcode = FAILURE;
 
     // Open the video file
