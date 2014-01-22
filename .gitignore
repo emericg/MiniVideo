@@ -1,5 +1,21 @@
+# Build directories
+mini_thumbnailer/build/*
+mini_extractor/build/*
+minivideo/build/*
+
+# QtCreator project files
+MiniVideo*
+
+# CMake temporary files
 CMakeCache.txt
 CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
+
+# Doxygen documentation
+minivideo/doc/doxygen_temp/html/*
+minivideo/doc/doxygen_temp/latex/*
+
+# cppcheck temporary files
+minivideo/doc/cppcheck_temp/

@@ -1,0 +1,44 @@
+/*!
+ * COPYRIGHT (C) 2012 Emeric Grange - All Rights Reserved
+ *
+ * This file is part of MiniVideo.
+ *
+ * MiniVideo is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MiniVideo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \file      ps.h
+ * \author    Emeric Grange <emeric.grange@gmail.com>
+ * \date      2012
+ */
+
+#ifndef PARSER_MPEG_PS_H
+#define PARSER_MPEG_PS_H
+
+// minivideo headers
+#include "../../../import.h"
+#include "../../../bitstream.h"
+
+/* ************************************************************************** */
+
+#define MARKER_BIT \
+    if (read_bit(bitstr) != 1) { \
+        TRACE_ERROR(PARSER, "wrong 'marker_bit' (M1)\n"); \
+        return FAILURE; \
+    }
+
+/* ************************************************************************** */
+
+int ps_fileParse(VideoFile_t *video);
+
+/* ************************************************************************** */
+#endif /* PARSER_MPEG_PS_H */
