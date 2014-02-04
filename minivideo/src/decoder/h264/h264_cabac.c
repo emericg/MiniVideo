@@ -2439,8 +2439,8 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 
 #else /* ENABLE_DEBUG == 1 */
 
-    int frame_debug_range[2] = {39, 39}; // Range of (idr) frame(s) to debug/analyse
-    int mb_debug_range[2] = {4855, 4856}; // Range of macroblock(s) to debug/analyse
+    int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
+    int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
     if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
     {
