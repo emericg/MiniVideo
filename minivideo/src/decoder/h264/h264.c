@@ -71,8 +71,6 @@ int h264_decode(VideoFile_t *input_video,
 {
     TRACE_INFO(H264, GREEN "h264_decode()\n" RESET);
     int retcode = FAILURE;
-    int errorCounter = 0;
-    int idrCounter = 0;
 
     // Init decoding context
     DecodingContext_t *dc = initDecodingContext(input_video);
@@ -95,11 +93,11 @@ int h264_decode(VideoFile_t *input_video,
         dc->picture_extractionmode = picture_extractionmode;
 
         // Start the decoding process
-        dc->run = true;
+        dc->decoderRunning = true;
     }
 
     // Loop until end of file
-    while (dc->run)
+    while (dc->decoderRunning)
     {
         // Load next NAL Unit
         retcode = buffer_feed_next_sample(dc->bitstr);
@@ -121,14 +119,17 @@ int h264_decode(VideoFile_t *input_video,
                     dc->IdrPicFlag = true;
                     nalu_clean_sample(dc->bitstr);
 
+                    TRACE_INFO(MAIN, "> " GREEN "decodeIDR(%i)\n" RESET, dc->idrCounter);
+
                     if (decode_slice(dc))
                     {
                         retcode = SUCCESS;
-                        errorCounter = 0;
-                        idrCounter++;
+                        dc->errorCounter = 0;
+                        dc->idrCounter++;
+                        dc->frameCounter++;
                     }
                     else
-                        errorCounter++;
+                        dc->errorCounter++;
 
                     dc->IdrPicFlag = false;
                 }
@@ -144,7 +145,7 @@ int h264_decode(VideoFile_t *input_video,
                         printSEI(dc);
                     }
                     else
-                        errorCounter++;
+                        dc->errorCounter++;
                 }
                 break;
 
@@ -158,7 +159,7 @@ int h264_decode(VideoFile_t *input_video,
                         printSPS(dc);
                     }
                     else
-                        errorCounter++;
+                        dc->errorCounter++;
                 }
                 break;
 
@@ -172,13 +173,13 @@ int h264_decode(VideoFile_t *input_video,
                         printPPS(dc);
                     }
                     else
-                        errorCounter++;
+                        dc->errorCounter++;
                 }
                 break;
 
                 default:
                 {
-                    errorCounter++;
+                    dc->errorCounter++;
                     TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)\n", dc->active_nalu->nal_unit_type);
                 }
                 break;
@@ -189,24 +190,24 @@ int h264_decode(VideoFile_t *input_video,
         }
         else
         {
-            errorCounter++;
-            TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)\n", errorCounter);
+            dc->errorCounter++;
+            TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)\n", dc->errorCounter);
         }
 
-        if (idrCounter == picture_number)
+        if (dc->idrCounter == picture_number)
         {
-            TRACE_INFO(H264, ">> " YELLOW "Decoding of %i IDR successfull!\n" RESET, idrCounter);
+            TRACE_INFO(H264, ">> " YELLOW "Decoding of %i IDR successfull!\n" RESET, dc->idrCounter);
             TRACE_INFO(H264, "H.264 decoding ended\n");
             retcode = SUCCESS;
-            dc->run = false;
+            dc->decoderRunning = false;
         }
 
-        if (errorCounter > 64 || retcode == FAILURE)
+        if (dc->errorCounter > 64 || retcode == FAILURE)
         {
-            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)\n", errorCounter, dc->active_nalu->nal_unit_type);
+            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)\n", dc->errorCounter, dc->active_nalu->nal_unit_type);
             TRACE_ERROR(H264, "H.264 decoding aborted\n");
             retcode = FAILURE;
-            dc->run = false;
+            dc->decoderRunning = false;
         }
     }
 
@@ -244,16 +245,14 @@ DecodingContext_t *initDecodingContext(VideoFile_t *video)
         }
         else
         {
-            // Some parameters
+            // Init output variables
             dc->output_format = 0;
             dc->picture_quality = 75;
             dc->picture_number = 1;
             dc->picture_extractionmode = 0;
 
-            // Set input file in the decoding context
+            // Init input bitstream
             dc->VideoFile = video;
-
-            // Init bitstream
             dc->bitstr = init_bitstream(video, video->tracks_video[0]);
 
             if (dc->bitstr == NULL)
@@ -436,7 +435,7 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
 
 /*!
  * \param *dc The current DecodingContext.
- * \return  0 if failed, 1 otherwise.
+ * \return 0 if failed, 1 otherwise.
  *
  * Compute some values needed during the quantization of the coefficients
  * contained in the bitstream.
@@ -477,9 +476,9 @@ static int computeNormAdjust(DecodingContext_t *dc)
             {
                 for (j = 0; j < 4; j++)
                 {
-                    if (i % 2 == 0 && j % 2 == 0)
+                    if ((i % 2 == 0) && (j % 2 == 0))
                         dc->normAdjust4x4[q][i][j] = v4x4[q][0];
-                    else if (i % 2 ==  1 && j % 2 == 1)
+                    else if ((i % 2 == 1) && (j % 2 == 1))
                         dc->normAdjust4x4[q][i][j] = v4x4[q][1];
                     else
                         dc->normAdjust4x4[q][i][j] = v4x4[q][2];
@@ -493,15 +492,15 @@ static int computeNormAdjust(DecodingContext_t *dc)
             {
                 for (j = 0; j < 8; j++)
                 {
-                    if (i % 4 == 0 && j % 4 == 0)
+                    if ((i % 4 == 0) && (j % 4 == 0))
                         dc->normAdjust8x8[q][i][j] = v8x8[q][0];
-                    else if (i % 2 ==  1 && j % 2 == 1)
+                    else if ((i % 2 ==  1) && (j % 2 == 1))
                         dc->normAdjust8x8[q][i][j] = v8x8[q][1];
-                    else if (i % 4 == 2 && j % 4 == 2)
+                    else if ((i % 4 == 2) && (j % 4 == 2))
                         dc->normAdjust8x8[q][i][j] = v8x8[q][2];
-                    else if ((i % 4 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 4 == 0))
+                    else if (((i % 4 == 0) && (j % 2 == 1)) || ((i % 2 == 1) && (j % 4 == 0)))
                         dc->normAdjust8x8[q][i][j] = v8x8[q][3];
-                    else if ((i % 4 == 0 && j % 4 == 2) || (i % 4 == 2 && j % 4 == 0))
+                    else if (((i % 4 == 0) && (j % 4 == 2)) || ((i % 4 == 2) && (j % 4 == 0)))
                         dc->normAdjust8x8[q][i][j] = v8x8[q][4];
                     else
                         dc->normAdjust8x8[q][i][j] = v8x8[q][5];

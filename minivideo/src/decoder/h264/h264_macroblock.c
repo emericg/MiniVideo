@@ -232,8 +232,9 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                     else
                         mb->transform_size_8x8_flag = read_one_bit(dc->bitstr);
 
-                    // Need to update MbPartPredMode in order to detect I_8x8 prediction mode
-                    mb->MbPartPredMode[0] = MbPartPredMode(mb, slice->slice_type, 0);
+                    // Need to update MbPartPredMode in order to account for I_8x8 prediction mode
+                    if (transform_size_8x8_flag)
+                        mb->MbPartPredMode[0] = MbPartPredMode(mb, slice->slice_type, 0);
                 }
 #endif /* ENABLE_INTER_PRED */
             }
@@ -266,15 +267,17 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             }
 
             // Compute luma Quantization Parameters
-            mb->QPY = ((slice->QPYprev + mb->mb_qp_delta + 52 + sps->QpBdOffsetY*2) % (52 + sps->QpBdOffsetY)) - sps->QpBdOffsetY;
+            if (mb->mb_qp_delta)
+                mb->QPY = ((slice->QPYprev + mb->mb_qp_delta + 52 + sps->QpBdOffsetY*2) % (52 + sps->QpBdOffsetY)) - sps->QpBdOffsetY;
+            else
+                mb->QPY = slice->QPYprev;
+
             mb->QPprimeY = mb->QPY + sps->QpBdOffsetY;
             slice->QPYprev = mb->QPY;
 
             // Set Transform Bypass Mode
             if (sps->qpprime_y_zero_transform_bypass_flag == true && mb->QPprimeY == 0)
                 mb->TransformBypassModeFlag = true;
-            else
-                mb->TransformBypassModeFlag = false;
 
 
             // Prediction process (include quantization and transformation)
@@ -293,16 +296,20 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             // Print macroblock(s) header and block data
             ////////////////////////////////////////////////////////////////
 #if ENABLE_DEBUG
-            int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug
-
             mb->mbFileAddrStop = bitstream_get_absolute_bit_offset(dc->bitstr) - 1;
 
-            if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
+            int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
+            int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
+
+            if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
             {
-                print_macroblock_layer(dc, mb);
-                print_macroblock_pixel_residual(mb);
-                print_macroblock_pixel_predicted(mb);
-                print_macroblock_pixel_final(mb);
+                if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
+                {
+                    print_macroblock_layer(dc, mb);
+                    print_macroblock_pixel_residual(mb);
+                    print_macroblock_pixel_predicted(mb);
+                    print_macroblock_pixel_final(mb);
+                }
             }
 #endif /* ENABLE_DEBUG */
         }
@@ -379,15 +386,213 @@ static void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
     printf("[MB] - frame_num / idr_pic_id\t= %i / %i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
 
     if (dc->active_slice->slice_type == 0 || dc->active_slice->slice_type == 5)
+    {
         printf("[MB] - slice type\t\t= P Slice (%i)\n", dc->active_slice->slice_type);
-    else if (dc->active_slice->slice_type == 1 || dc->active_slice->slice_type == 6)
-        printf("[MB] - slice type\t\t= B Slice (%i)\n", dc->active_slice->slice_type);
-    else if (dc->active_slice->slice_type == 2 || dc->active_slice->slice_type == 7)
-        printf("[MB] - slice type\t\t= I Slice (%i)\n", dc->active_slice->slice_type);
-    else
-        printf("[MB] - slice type\t\t= %i\n", dc->active_slice->slice_type);
 
-    printf("[MB] - mb_type\t\t\t= %i\n", mb->mb_type);
+        switch (mb->mb_type)
+        {
+            case P_L0_16x16:
+                printf("[MB] - mb_type\t\t\t= P_L0_16x16 (%i)\n", mb->mb_type);
+            break;
+            case P_L0_L0_16x8:
+                printf("[MB] - mb_type\t\t\t= P_L0_L0_16x8 (%i)\n", mb->mb_type);
+            break;
+            case P_L0_L0_8x16:
+                printf("[MB] - mb_type\t\t\t= P_L0_L0_8x16 (%i)\n", mb->mb_type);
+            break;
+            case P_8x8:
+                printf("[MB] - mb_type\t\t\t= P_8x8 (%i)\n", mb->mb_type);
+            break;
+            case P_8x8ref0:
+                printf("[MB] - mb_type\t\t\t= P_8x8ref0 (%i)\n", mb->mb_type);
+            break;
+            case P_Skip:
+                printf("[MB] - mb_type\t\t\t= P_Skip (%i)\n", mb->mb_type);
+            break;
+            default:
+                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%i)\n", mb->mb_type);
+            break;
+        }
+
+        // TODO handle sub_mb_type !!
+    }
+    else if (dc->active_slice->slice_type == 1 || dc->active_slice->slice_type == 6)
+    {
+        printf("[MB] - slice type\t\t= B Slice (%i)\n", dc->active_slice->slice_type);
+
+        switch (mb->mb_type)
+        {
+            case B_Direct_16x16:
+                printf("[MB] - mb_type\t\t\t= B_Direct_16x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_16x16:
+                printf("[MB] - mb_type\t\t\t= B_L0_16x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_16x16:
+                printf("[MB] - mb_type\t\t\t= B_L1_16x16 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_16x16:
+                printf("[MB] - mb_type\t\t\t= B_Bi_16x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_L0_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L0_L0_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_L0_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L0_L0_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_L1_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L1_L1_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_L1_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L1_L1_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_L1_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L0_L1_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_L1_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L0_L1_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_L0_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L1_L0_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_L0_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L1_L0_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_Bi_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L0_Bi_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L0_Bi_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L0_Bi_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_Bi_16x8:
+                printf("[MB] - mb_type\t\t\t= B_L1_Bi_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_L1_Bi_8x16:
+                printf("[MB] - mb_type\t\t\t= B_L1_Bi_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_L0_16x8:
+                printf("[MB] - mb_type\t\t\t= B_Bi_L0_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_L0_8x16:
+                printf("[MB] - mb_type\t\t\t= B_Bi_L0_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_L1_16x8:
+                printf("[MB] - mb_type\t\t\t= B_Bi_L1_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_L1_8x16:
+                printf("[MB] - mb_type\t\t\t= B_Bi_L1_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_Bi_16x8:
+                printf("[MB] - mb_type\t\t\t= B_Bi_Bi_16x8 (%i)\n", mb->mb_type);
+            break;
+            case B_Bi_Bi_8x16:
+                printf("[MB] - mb_type\t\t\t= B_Bi_Bi_8x16 (%i)\n", mb->mb_type);
+            break;
+            case B_8x8:
+                printf("[MB] - mb_type\t\t\t= B_8x8 (%i)\n", mb->mb_type);
+            break;
+            case B_Skip:
+                printf("[MB] - mb_type\t\t\t= B_Skip (%i)\n", mb->mb_type);
+            break;
+            default:
+                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%i)\n", mb->mb_type);
+            break;
+        }
+    }
+    else if (dc->active_slice->slice_type == 2 || dc->active_slice->slice_type == 7)
+    {
+        printf("[MB] - slice type\t\t= I Slice (%i)\n", dc->active_slice->slice_type);
+
+        switch (mb->mb_type)
+        {
+            case I_NxN:
+                if (mb->transform_size_8x8_flag)
+                    printf("[MB] - mb_type\t\t\t= I_8x8 (%i)\n", mb->mb_type);
+                else
+                    printf("[MB] - mb_type\t\t\t= I_4x4 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_0_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_0_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_0_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_0_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_0_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_0_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_0_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_0_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_1_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_1_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_1_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_1_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_1_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_1_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_1_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_1_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_2_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_2_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_2_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_2_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_2_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_2_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_2_0:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_2_0 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_0_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_0_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_0_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_0_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_0_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_0_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_0_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_0_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_1_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_1_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_1_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_1_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_1_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_1_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_1_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_1_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_0_2_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_0_2_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_1_2_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_1_2_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_2_2_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_2_2_1 (%i)\n", mb->mb_type);
+            break;
+            case I_16x16_3_2_1:
+                printf("[MB] - mb_type\t\t\t= I_16x16_3_2_1 (%i)\n", mb->mb_type);
+            break;
+            case I_PCM:
+                printf("[MB] - mb_type\t\t\t= I_PCM (%i)\n", mb->mb_type);
+            break;
+        }
+    }
+    else
+    {
+        printf("[MB] - unknown slice type\t\t= %i\n", dc->active_slice->slice_type);
+    }
+
     printf("[MB] - NumMbPart\t\t: %i\n", mb->NumMbPart);
     //printf("[MB] - MbPartSize\t\t\t: %ix%i\n", MbPartWidth(dc->active_slice->slice_type, mb->mb_type), MbPartHeight(dc->active_slice->slice_type, mb->mb_type));
     //printf("[MB] - NumSubMbPart\t\t: %i\n", mb->NumSubMbPart);

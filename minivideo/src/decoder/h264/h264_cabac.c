@@ -203,13 +203,17 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     // Decode block if coefficients are present
     if (cbf == true)
     {
-/*
         // FIXME cabac colorbug happen on every block except blk_LUMA_16x16_DC
-        if (blkType == blk_CHROMA_DC_Cr || blk_CHROMA_DC_Cr)
+        if (blkType == blk_CHROMA_DC_Cr || blkType == blk_CHROMA_DC_Cr)
         {
-            TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (not a LUMA_16x16_DC block)\n", mb->mbAddr);
+            TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (we have DC coeffs for Cb/Cr planes)\n", mb->mbAddr);
+
+            if (blkType == blk_CHROMA_AC_Cr || blkType == blk_CHROMA_AC_Cr)
+            {
+                TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (we have AC coeffs for Cb/Cr planes)\n", mb->mbAddr);
+            }
         }
-*/
+
         numCoeff = endIdx + 1;
         i = startIdx;
         mb->levelListIdx = startIdx;
@@ -273,55 +277,59 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     }
 
 #if ENABLE_DEBUG
-    int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug
+    int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
+    int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
-    if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
+    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
     {
-        int a = 0;
-        int iYCbCr = 0;
-
-        if (blkType > blk_LUMA_16x16_AC)
+        if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
         {
-            if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_AC_Cb)
-                iYCbCr = 1;
-            else
-                iYCbCr = 2;
-        }
+            int a = 0;
+            int iYCbCr = 0;
 
-        printf("[CABAC] " BLUE "CABAC RESIDUAL BLOCK\n" RESET);
-
-        printf("[CABAC] - from macroblock: %i\n", mb->mbAddr);
-        printf("[CABAC] - blkIdx   :  %i/x\n", blkIdx);
-        printf("[CABAC] - blkType  :  %i\n", blkType);
-        printf("[CABAC] - iYCbCr   :  %i\n", iYCbCr);
-
-        printf("[CABAC] - maxNumCoeff      = %i\n", maxNumCoeff);
-        printf("[CABAC] - coded_block_flag = %i\n", cbf);
-
-        if (cbf == true)
-        {
-            printf("[CABAC] - significant_coeff_flag\n");
-            for (a = 0; a < numCoeff; a++)
-                printf("[CABAC]   - [idx:%2i] = %i\n", a, significant_coeff_flag[a]);
-
-            printf("[CABAC] - last_significant_coeff_flag\n");
-            for (a = 0; a < numCoeff; a++)
-                printf("[CABAC]   - [idx:%2i] = %i\n", a, last_significant_coeff_flag[a]);
-        }
-
-        if (numCoeff > 0)
-        {
-            printf("[CABAC]  - coefficients:\n");
-            for (a = 0; a < numCoeff; a++)
+            if (blkType > blk_LUMA_16x16_AC)
             {
-                printf("[CABAC]   - [idx:%2i] coeff_abs_level_minus1\t= %i\n", a, coeff_abs_level_minus1[a]);
-                printf("[CABAC]   -          coeff_sign_flag\t\t= %i\n", coeff_sign_flag[a]);
-                printf("[CABAC]   -          coeff final\t\t= %i\n", coeffLevel[a]);
+                if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_AC_Cb)
+                    iYCbCr = 1;
+                else
+                    iYCbCr = 2;
             }
-        }
-        else
-        {
-            printf("[CABAC]  - no coefficients for this block\n");
+
+            printf("[CABAC] " BLUE "CABAC RESIDUAL BLOCK\n" RESET);
+
+            printf("[CABAC] - from macroblock: %i\n", mb->mbAddr);
+            printf("[CABAC] - blkIdx   :  %i/x\n", blkIdx);
+            printf("[CABAC] - blkType  :  %i\n", blkType);
+            printf("[CABAC] - iYCbCr   :  %i\n", iYCbCr);
+
+            printf("[CABAC] - maxNumCoeff      = %i\n", maxNumCoeff);
+            printf("[CABAC] - coded_block_flag = %i\n", cbf);
+
+            if (cbf == true)
+            {
+                printf("[CABAC] - significant_coeff_flag\n");
+                for (a = 0; a < numCoeff; a++)
+                    printf("[CABAC]   - [idx:%2i] = %i\n", a, significant_coeff_flag[a]);
+
+                printf("[CABAC] - last_significant_coeff_flag\n");
+                for (a = 0; a < numCoeff; a++)
+                    printf("[CABAC]   - [idx:%2i] = %i\n", a, last_significant_coeff_flag[a]);
+            }
+
+            if (numCoeff > 0)
+            {
+                printf("[CABAC]  - coefficients:\n");
+                for (a = 0; a < numCoeff; a++)
+                {
+                    printf("[CABAC]   - [idx:%2i] coeff_abs_level_minus1\t= %i\n", a, coeff_abs_level_minus1[a]);
+                    printf("[CABAC]   -          coeff_sign_flag\t\t= %i\n", coeff_sign_flag[a]);
+                    printf("[CABAC]   -          coeff final\t\t= %i\n", coeffLevel[a]);
+                }
+            }
+            else
+            {
+                printf("[CABAC]  - no coefficients for this block\n");
+            }
         }
     }
 #endif /* ENABLE_DEBUG */
@@ -346,7 +354,6 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
  */
 int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 {
-    //TRACE_JMP(DCABAC, "1");
     TRACE_1(CABAC, GREEN "read_ae (" RESET "SE_Type %i" GREEN ") =============================\n" RESET, seType);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
@@ -448,7 +455,6 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
  */
 int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx)
 {
-    //TRACE_JMP(DCABAC, "1");
     TRACE_1(CABAC, GREEN "read_ae_blk (" RESET "SE_Type %i" GREEN ") (" RESET "BLK_Type %i" GREEN ") (" RESET "BLK_Idx %i" GREEN ") =============================\n" RESET, seType, blkType, blkIdx);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
@@ -699,7 +705,7 @@ static int getBinarization(DecodingContext_t *dc,
             prefix->bintable_x = 32;
             prefix->bintable_y = 32;
 
-            retcode = SUCCESS;// bp_mbQPd();
+            retcode = SUCCESS; // bp_mbQPd();
         break;
 
         case SE_intra_chroma_pred_mode:
@@ -1275,7 +1281,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
         // Print bin string
         ////////////////////////////////////////////////////////////////////////
         {
-            TRACE_2(DCABAC, "binIdx (%i)  |  bin string ( ", binIdx);
+            TRACE_2(CABAC, "binIdx (%i)  |  bin string ( ", binIdx);
             int i = 0;
             while (i <= binIdx)
             {
@@ -1297,7 +1303,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
             {
                 if (memcmp(decodedSE, (((uint8_t *)(bin->bintable)) + (i*(bin->bintable_x))), binIdx+1) == 0)
                 {
-                    //TRACE_3(DCABAC, "binIdx (%i)  |  (MATCH binarization scheme [%i])\n", binIdx, i);
+                    //TRACE_3(CABAC, "binIdx (%i)  |  (MATCH binarization scheme [%i])\n", binIdx, i);
                     bin->SyntaxElementValue = i;
                     match++;
                 }
@@ -1425,9 +1431,6 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
             return -1;
         }
     }
-
-    if (ctxIdx == 65 || ctxIdx == 66)
-        TRACE_ERROR(CABAC, "CABAC BUG ??\n");
 
     TRACE_2(CABAC, " ctxIdx = %i\n", ctxIdx);
     return ctxIdx;
@@ -2350,7 +2353,6 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType
  */
 static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassFlag)
 {
-    TRACE_2(CABAC, GREEN " decodeBin()\n" RESET);
     int binVal = -1;
 
     if (bypassFlag)
@@ -2389,7 +2391,6 @@ static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassF
  */
 static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 {
-    TRACE_2(CABAC, GREEN " DecodeDecision()\n" RESET);
     int binVal = 0;
 
     // Shortcut
@@ -2431,16 +2432,42 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 
         cc->pStateIdx[ctxIdx] = transIdxLPS[cc->pStateIdx[ctxIdx]];
     }
-/*
-    {
-        // Print decoder status
-        TRACE_WARNING(DCABAC, "ctxIdx     : %i\n", ctxIdx);
-        TRACE_WARNING(DCABAC, "codIRange  : %i\n", dc->active_slice->cc->codIRange);
-        TRACE_WARNING(DCABAC, "codIOffset : %i\n\n", dc->active_slice->cc->codIOffset);
-    }
-*/
+
+#if ENABLE_DEBUG == 0
+
     RenormD(cc, dc->bitstr);
 
+#else /* ENABLE_DEBUG == 1 */
+
+    int frame_debug_range[2] = {39, 39}; // Range of (idr) frame(s) to debug/analyse
+    int mb_debug_range[2] = {4855, 4856}; // Range of macroblock(s) to debug/analyse
+
+    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+    {
+        if (dc->CurrMbAddr >= mb_debug_range[0] && dc->CurrMbAddr <= mb_debug_range[1])
+        {
+            // Print decoder status
+            printf("[CABAC] DecodeDecision()\n");
+            printf("[CABAC] ctxIdx     : %i\n", ctxIdx);
+            printf("[CABAC] codIRange  : %i\n", dc->active_slice->cc->codIRange);
+            printf("[CABAC] codIOffset : %i\n", dc->active_slice->cc->codIOffset);
+        }
+    }
+
+    RenormD(cc, dc->bitstr);
+
+    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+    {
+        if (dc->CurrMbAddr >= mb_debug_range[0] && dc->CurrMbAddr <= mb_debug_range[1])
+        {
+            // Print decoder status
+            printf("[CABAC] RenormD()\n");
+            printf("[CABAC] ctxIdx     : %i\n", ctxIdx);
+            printf("[CABAC] codIRange  : %i\n", dc->active_slice->cc->codIRange);
+            printf("[CABAC] codIOffset : %i\n\n", dc->active_slice->cc->codIOffset);
+        }
+    }
+#endif /* ENABLE_DEBUG */
     return binVal;
 }
 
@@ -2468,15 +2495,18 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
         cc->codIRange <<= 1;
         cc->codIOffset <<= 1;
         cc->codIOffset |= (int)read_bit(bitstr);
-/*
-        {
-            // Print decoder status
-            TRACE_WARNING(DCABAC, GREEN "  RenormD()\n" RESET);
-            TRACE_WARNING(DCABAC, "codIRange : %i\n", cc->codIRange);
-            TRACE_WARNING(DCABAC, "codIOffset : %i\n\n", cc->codIOffset);
-        }
-*/
     }
+
+#if ENABLE_DEBUG
+/*
+    {
+        // Print decoder status
+        printf("[CABAC] RenormD");
+        printf("[CABAC] codIRange : %i\n", cc->codIRange);
+        printf("[CABAC] codIOffset : %i\n\n", cc->codIOffset);
+    }
+*/
+#endif /* ENABLE_DEBUG */
 }
 
 /* ************************************************************************** */

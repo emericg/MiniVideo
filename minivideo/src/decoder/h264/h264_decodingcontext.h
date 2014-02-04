@@ -36,8 +36,6 @@
 //! H.264 decoding context
 typedef struct DecodingContext_t
 {
-    bool run;                        //!< Set 'run' to false to stop video decoding
-
     // Input
     ////////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +54,11 @@ typedef struct DecodingContext_t
 
     // Decoding context
     ////////////////////////////////////////////////////////////////////////////
+
+    bool decoderRunning;             //!< Set 'decoderRunning' to false to stop video decoding
+    unsigned frameCounter;           //!< The number of frame decoded
+    unsigned idrCounter;             //!< The number of idr frame decoded
+    unsigned errorCounter;           //!< The number of decoding error so far
 
     // NAL
     nalu_t *active_nalu;             //!< Current NAL Unit
