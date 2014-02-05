@@ -416,7 +416,7 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
  * \param *mbAddr The (current?) macroblock address.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.1 Derivation process for neighbouring macroblocks
+ * 6.4.11.1 Derivation process for neighbouring macroblocks
  *
  * <!> This process can only be invoked when MbaffFrameFlag is equal to 0.
  */
@@ -446,16 +446,18 @@ void deriv_macroblockneighbours(DecodingContext_t *dc, const int mbAddr)
  * \param *luma8x8BlkIdxB The index of the 8x8 luma block above the 8x8 block with index luma8x8BlkIdx and its availability status.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.2 Derivation process for neighbouring 8x8 luma blocks.
+ * 6.4.11.2 Derivation process for neighbouring 8x8 luma blocks.
  *
  * Input to this process is a 8x8 luma block index luma8x8BlkIdx.
  * Other parameters are output.
  */
-void deriv_8x8lumablocks(DecodingContext_t *dc, const int luma8x8BlkIdx, int *mbAddrA, int *luma8x8BlkIdxA, int *mbAddrB, int *luma8x8BlkIdxB)
+void deriv_8x8lumablocks(DecodingContext_t *dc, const int luma8x8BlkIdx,
+                         int *mbAddrA, int *luma8x8BlkIdxA,
+                         int *mbAddrB, int *luma8x8BlkIdxB)
 {
     TRACE_1(SPATIAL, GREEN "  deriv_8x8lumablocks()\n" RESET);
 /*
-    // Table 6-2: Specification of input and output assignments for subclauses 6.4.10.1 to 6.4.10.7
+    // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
     A      -1        0
     B       0       -1
@@ -514,14 +516,16 @@ void deriv_8x8lumablocks(DecodingContext_t *dc, const int luma8x8BlkIdx, int *mb
  * \param *chroma8x8BlkIdxB The index of the 8x8 chroma block above the 8x8 block with index chroma8x8BlkIdx and its availability status.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.3 Derivation process for neighbouring 8x8 chroma blocks for ChromaArrayType equal to 3.
+ * 6.4.11.3 Derivation process for neighbouring 8x8 chroma blocks for ChromaArrayType equal to 3.
  *
  * This process is IDENTICAL to the derivation process for neighbouring 8x8 LUMA
- * block as specified in subclause 6.4.10.2.
+ * block as specified in subclause 6.4.11.2.
  *
  * <!> This process is only invoked when ChromaArrayType is equal to 3.
  */
-void deriv_8x8chromablocks_cat3(DecodingContext_t *dc, const int chroma8x8BlkIdx, int *mbAddrA, int *chroma8x8BlkIdxA, int *mbAddrB, int *chroma8x8BlkIdxB)
+void deriv_8x8chromablocks_cat3(DecodingContext_t *dc, const int chroma8x8BlkIdx,
+                                int *mbAddrA, int *chroma8x8BlkIdxA,
+                                int *mbAddrB, int *chroma8x8BlkIdxB)
 {
     TRACE_1(SPATIAL, GREEN "  deriv_8x8chromablocks()\n" RESET);
 
@@ -540,16 +544,18 @@ void deriv_8x8chromablocks_cat3(DecodingContext_t *dc, const int chroma8x8BlkIdx
  * \param *luma4x4BlkIdxB The index of the 4x4 luma block above the 4x4 block with index luma4x4BlkIdx and its availability status.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.4 Derivation process for neighbouring 4x4 luma blocks.
+ * 6.4.11.4 Derivation process for neighbouring 4x4 luma blocks.
  *
  * Input to this process is a 4x4 luma block index luma4x4BlkIdx.
  * Other parameters are output.
  */
-void deriv_4x4lumablocks(DecodingContext_t *dc, const int luma4x4BlkIdx, int *mbAddrA, int *luma4x4BlkIdxA, int *mbAddrB, int *luma4x4BlkIdxB)
+void deriv_4x4lumablocks(DecodingContext_t *dc, const int luma4x4BlkIdx,
+                         int *mbAddrA, int *luma4x4BlkIdxA,
+                         int *mbAddrB, int *luma4x4BlkIdxB)
 {
     TRACE_1(SPATIAL, GREEN "  deriv_4x4lumablocks()\n" RESET);
 /*
-    // Table 6-2: Specification of input and output assignments for subclauses 6.4.10.1 to 6.4.10.7
+    // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
     A      -1        0
     B       0       -1
@@ -608,18 +614,20 @@ void deriv_4x4lumablocks(DecodingContext_t *dc, const int luma4x4BlkIdx, int *mb
  * \param *chroma4x4BlkIdxB The index of the 4x4 chroma block above the 4x4 block with index chroma4x4BlkIdx and its availability status.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.5 Derivation process for neighbouring 4x4 chroma blocks.
+ * 6.4.11.5 Derivation process for neighbouring 4x4 chroma blocks.
  *
  * Input to this process is a 4x4 chroma block index chroma4x4BlkIdx.
  * Other parameters are output.
  *
  * <!> This process can only be invoked when ChromaArrayType is equals to 1 or 2.
  */
-void deriv_4x4chromablocks(DecodingContext_t *dc, const int chroma4x4BlkIdx, int *mbAddrA, int *chroma4x4BlkIdxA, int *mbAddrB, int *chroma4x4BlkIdxB)
+void deriv_4x4chromablocks(DecodingContext_t *dc, const int chroma4x4BlkIdx,
+                           int *mbAddrA, int *chroma4x4BlkIdxA,
+                           int *mbAddrB, int *chroma4x4BlkIdxB)
 {
     TRACE_1(SPATIAL, GREEN "  deriv_4x4chromablocks()\n" RESET);
 /*
-    // Table 6-2: Specification of input and output assignments for subclauses 6.4.10.1 to 6.4.10.7
+    // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
     A      -1        0
     B       0       -1
@@ -678,14 +686,16 @@ void deriv_4x4chromablocks(DecodingContext_t *dc, const int chroma4x4BlkIdx, int
  * \param *chroma4x4BlkIdxB The index of a 4x4 chroma (cb or cr) block above the 4x4 block with index chroma4x4BlkIdx and its availability status.
  *
  * From 'ITU-T H.264' recommendation:
- * 6.4.10.6 Derivation process for neighbouring 4x4 chroma blocks for ChromaArrayType equal to 3.
+ * 6.4.11.6 Derivation process for neighbouring 4x4 chroma blocks for ChromaArrayType equal to 3.
  *
  * This process is IDENTICAL to the derivation process for neighbouring 4x4 LUMA
- * block as specified in subclause 6.4.10.4.
+ * block as specified in subclause 6.4.11.4.
  *
  * <!> ChromaArrayType must be equal to 3 in order to call this function.
  */
-void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx, int *mbAddrA, int *chroma4x4BlkIdxA, int *mbAddrB, int *chroma4x4BlkIdxB)
+void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx,
+                                int *mbAddrA, int *chroma4x4BlkIdxA,
+                                int *mbAddrB, int *chroma4x4BlkIdxB)
 {
     TRACE_1(SPATIAL, GREEN "  deriv_4x4chromablocks_cat3()\n" RESET);
 
@@ -694,7 +704,7 @@ void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx
 
 /* ************************************************************************** */
 
-// 6.4.10.7 Derivation process for neighbouring partitions
+// 6.4.11.7 Derivation process for neighbouring partitions
 // Unused because macroblock partitions are not supported
 
 /* ************************************************************************** */
@@ -719,7 +729,8 @@ void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx
  * of the macroblock mbAddrN (rather than relative to the upper-left corner of
  * the current macroblock).
  */
-void deriv_neighbouringlocations(DecodingContext_t *dc, const bool lumaBlock, const int xN, const int yN, int *mbAddrN, int *xW, int *yW)
+void deriv_neighbouringlocations(DecodingContext_t *dc, const bool lumaBlock,
+                                 const int xN, const int yN, int *mbAddrN, int *xW, int *yW)
 {
     TRACE_1(SPATIAL, GREEN "   deriv_neighbouringlocations()\n" RESET);
 

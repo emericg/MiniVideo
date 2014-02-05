@@ -280,7 +280,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 mb->TransformBypassModeFlag = true;
 
 
-            // Prediction process (include quantization and transformation)
+            // Prediction process (include quantization and transformation stages)
             ////////////////////////////////////////////////////////////////
 
             if (dc->IdrPicFlag)
@@ -293,7 +293,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             }
 
 
-            // Print macroblock(s) header and block data
+            // Print macroblock(s) header and block data ?
             ////////////////////////////////////////////////////////////////
 #if ENABLE_DEBUG
             mb->mbFileAddrStop = bitstream_get_absolute_bit_offset(dc->bitstr) - 1;
@@ -1839,7 +1839,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                 {
                     if (mb->MbPartPredMode[0] == Intra_16x16)
                     {
-                        TRACE_2(MB, "---- residual_luma 4x4 AC (mb %i - blk %i/15) ---------------- START - 16x16 AC\n", mb->mbAddr, blkIdx);
+                        TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- START - 16x16 AC\n", mb->mbAddr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
                             residual_block_cabac(dc, mb->Intra16x16ACLevel[blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
@@ -1858,7 +1858,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                 }
                 else if (mb->MbPartPredMode[0] == Intra_16x16)
                 {
-                    TRACE_2(MB, "---- residual_luma 4x4 AC (mb %i - blk %i/15) ---------------- EMPTY - no 16x16 AC coeff\n\n", mb->mbAddr, blkIdx);
+                    TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- EMPTY - no 16x16 AC coeff\n\n", mb->mbAddr, blkIdx);
 
                     int i = 0;
                     for (i = 0; i < 15; i++)
