@@ -204,17 +204,6 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     // Decode block if coefficients are present
     if (cbf == true)
     {
-        // FIXME cabac colorbug happen on every block except blk_LUMA_16x16_DC
-        if (blkType == blk_CHROMA_DC_Cr || blkType == blk_CHROMA_DC_Cr)
-        {
-            TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (we have DC coeffs for Cb/Cr planes)\n", mb->mbAddr);
-
-            if (blkType == blk_CHROMA_AC_Cr || blkType == blk_CHROMA_AC_Cr)
-            {
-                TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (we have AC coeffs for Cb/Cr planes)\n", mb->mbAddr);
-            }
-        }
-
         numCoeff = endIdx + 1;
         i = startIdx;
         mb->levelListIdx = startIdx;
@@ -1747,7 +1736,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
             condTermFlagA = 0;
         else if (binIdx == 0 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 0)
             condTermFlagA = 0;
-        else if (binIdx == 1 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 2)
+        else if (binIdx == 1 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma != 2)
             condTermFlagA = 0;
     }
     else
@@ -1764,7 +1753,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
             condTermFlagB = 0;
         else if (binIdx == 0 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 0)
             condTermFlagB = 0;
-        else if (binIdx == 1 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 2)
+        else if (binIdx == 1 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma != 2)
             condTermFlagB = 0;
     }
     else

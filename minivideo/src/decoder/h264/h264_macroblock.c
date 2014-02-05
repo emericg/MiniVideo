@@ -1140,17 +1140,7 @@ static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
         if (dc->ChromaArrayType == 1 || dc->ChromaArrayType == 2)
         {
             if (dc->entropy_coding_mode_flag)
-            {
                 mb->IntraChromaPredMode = read_ae(dc, SE_intra_chroma_pred_mode);
-
-                // FIXME cabac colorbug
-                if (mb->IntraChromaPredMode != 0)
-                {
-                    TRACE_WARNING(CABAC, "[mb: %i] mb->IntraChromaPredMode: %i\n", mb->mbAddr, mb->IntraChromaPredMode);
-                    // bug happen as soon as we have a value != 0
-                    //mb->IntraChromaPredMode = 0; // try to force it (ps: no luck)
-                }
-            }
             else
                 mb->IntraChromaPredMode = read_ue(dc->bitstr);
         }
