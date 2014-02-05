@@ -647,7 +647,8 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
-/*
+
+#if ENABLE_INTER_PRED
     bool mbIsInterFlag = false;
 
     if (mb->MbPartPredMode[0] > 3)
@@ -656,14 +657,17 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
         return UNSUPPORTED;
     }
+#endif /* ENABLE_INTER_PRED */
 
+#if ENABLE_SEPARATE_COLOUR_PLANES
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
         TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
         return UNSUPPORTED;
     }
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+
     // Compute
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
         for (q = 0; q < 6; q++)
@@ -695,7 +699,8 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
-/*
+
+#if ENABLE_INTER_PRED
     bool mbIsInterFlag = false;
 
     if (mb->MbPartPredMode[0] > 3)
@@ -704,14 +709,17 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
         return UNSUPPORTED;
     }
+#endif /* ENABLE_INTER_PRED */
 
+#if ENABLE_SEPARATE_COLOUR_PLANES
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
         TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
         return UNSUPPORTED;
     }
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+
     // Compute
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
         for (q = 0; q < 6; q++)
@@ -1405,7 +1413,7 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
 
     // Derivation of upper-left luma sample of the current macroblock
     //int xP = 0, yP = 0;
-    //InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+    //InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
     //TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
 
     // Picture construction
@@ -1447,7 +1455,7 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
-    InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+    InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
     TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
 */
     // Picture construction
@@ -1496,7 +1504,7 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
-    InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+    InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
     TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
 */
     // Picture construction
@@ -1538,7 +1546,7 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
-    InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+    InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
     TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
 */
     // Picture construction
@@ -1579,26 +1587,26 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
-    InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+    InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
     TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
 */
+
     // Picture construction
-/*
-    if (dc->active_slice->MbaffFrameFlag == false)
+#if ENABLE_MBAFF
+    if (dc->active_slice->MbaffFrameFlag)
     {
-*/
+        TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
+        return UNSUPPORTED;
+    }
+    else
+#endif /* ENABLE_MBAFF */
+    {
         int i = 0, j = 0;
         for (i = 0; i < 16; i++)
             for (j = 0; j < 16; j++)
                 mb->SprimeL[/*xP + */ + j][/*yP + */ + i] = (uint8_t)u[i][j];
-/*
     }
-    else
-    {
-        TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
-        retcode = UNSUPPORTED;
-    }
-*/
+
     return retcode;
 }
 
@@ -1611,6 +1619,7 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
  * \param **r docme.
  * \param nW docme.
  * \param nH docme.
+ *
  * From 'ITU-T H.264' recommendation:
  * 8.5.15 Intra residual transform-bypass decoding process.
  */

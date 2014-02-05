@@ -241,7 +241,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
         TRACE_ERROR(SLICE, ">>> UNSUPPORTED (P, SP, B frame)\n");
         return UNSUPPORTED;
 /*
-        slice->num_ref_idx_active_override_flag = read_one_bit(dc->bitstr);
+        slice->num_ref_idx_active_override_flag = read_bit(dc->bitstr);
 
         if (slice->num_ref_idx_active_override_flag)
         {
@@ -296,17 +296,18 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
     if (slice->slice_type == 3 || slice->slice_type == 8 ||
         slice->slice_type == 4 || slice->slice_type == 9) // SP, SI frame
     {
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (slice_type == SP || slice_type == SI)\n");
-        return UNSUPPORTED;
-/*
+#if ENABLE_SWITCHING_SLICE
         if (slice->slice_type == 4 || slice->slice_type == 9)
         {
-            slice->sp_for_switch_flag = read_one_bit(dc->bitstr);
+            slice->sp_for_switch_flag = read_bit(dc->bitstr);
         }
 
         slice->slice_qs_delta = read_se(dc->bitstr);
         slice->SliceQSY = 26 + pps->pic_init_qs_minus26 + slice->slice_qs_delta;
-*/
+#else /* ENABLE_SWITCHING_SLICE */
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (slice_type == SP || slice_type == SI)\n");
+        return UNSUPPORTED;
+#endif /* ENABLE_SWITCHING_SLICE */
     }
 
     if (pps->deblocking_filter_control_present_flag)
@@ -1046,7 +1047,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
            (slice->moreDataFlag == true) &&
            (dc->CurrMbAddr < dc->PicSizeInMbs))
     {
-/*
+#if ENABLE_INTER_PRED
         // Only I frames are supported anyway
         if (slice->slice_type != 2 && slice->slice_type != 7 &&
             slice->slice_type != 4 && slice->slice_type != 9) // Not I or SI slice
@@ -1077,29 +1078,32 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
         // If there is still some data in the slice
         if (slice->moreDataFlag)
         {
+#if ENABLE_MBAFF
             if (slice->MbaffFrameFlag == true &&
                 (dc->CurrMbAddr % 2 == 0 || (dc->CurrMbAddr % 2 == 1 && slice->prevMbSkipped == true)))
             {
                 if (pps->entropy_coding_mode_flag)
                     slice->mb_field_decoding_flag = read_ae(dc, SE_mb_field_decoding_flag);
                 else
-                    slice->mb_field_decoding_flag = read_one_bit(dc->bitstr);
+                    slice->mb_field_decoding_flag = read_bit(dc->bitstr);
 
                 TRACE_ERROR(DSLICE, ">>> UNSUPPORTED (interlaced mode)\n");
                 return UNSUPPORTED;
             }
+#endif /* ENABLE_MBAFF */
 
             // Macroblock decoding
             retcode = macroblock_layer(dc, dc->CurrMbAddr);
         }
-*/
+#endif /* ENABLE_INTER_PRED */
+
         // Macroblock decoding
         retcode = macroblock_layer(dc, dc->CurrMbAddr);
 
         // Check for end of slice
         if (pps->entropy_coding_mode_flag)
         {
-/*
+#if ENABLE_INTER_PRED
             // Only I frames are supported anyway
             if (slice->slice_type != 2 && slice->slice_type != 7 &&
                 slice->slice_type != 4 && slice->slice_type != 9) // Not I or SI slice
@@ -1107,13 +1111,15 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 slice->prevMbSkipped = slice->mb_skip_flag;
             }
 
+#if ENABLE_MBAFF
             // MbaffFrameFlag is unsupported, so always "false"
             if (slice->MbaffFrameFlag == true && dc->CurrMbAddr % 2 == 0)
             {
                 slice->moreDataFlag = true;
             }
             else
-*/
+#endif /* ENABLE_MBAFF */
+#endif /* ENABLE_INTER_PRED */
             {
                 slice->end_of_slice_flag = read_ae(dc, SE_end_of_slice_flag);
                 if (slice->end_of_slice_flag)

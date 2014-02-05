@@ -122,6 +122,11 @@ void InverseMacroblockScan(const int mbAddr,
 {
     TRACE_1(SPATIAL, GREEN "   InverseMacroblockScan()\n" RESET);
 
+#if ENABLE_MBAFF
+    TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
+    return;
+#endif /* ENABLE_MBAFF */
+
     *x = InverseRasterScan_x(mbAddr, 16, 16, PicWidthInSamplesL);
     *y = InverseRasterScan_y(mbAddr, 16, 16, PicWidthInSamplesL);
 }
@@ -340,8 +345,9 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
     Macroblock_t *mb = dc->mb_array[mbAddr];
     int PicWidthInMbs = (int)sps->PicWidthInMbs;
 
-    //Input to the process in subclause 6.4.7 is mbAddrA = CurrMbAddr - 1 and the output is whether the macroblock
-    //mbAddrA is available. In addition, mbAddrA is marked as not available when CurrMbAddr % PicWidthInMbs is equal to 0.
+    // Input to the process in subclause 6.4.7 is mbAddrA = CurrMbAddr - 1 and
+    // the output is whether the macroblock mbAddrA is available.
+    // In addition, mbAddrA is marked as not available when CurrMbAddr % PicWidthInMbs is equal to 0.
     if (mbAddr % PicWidthInMbs != 0)
     {
         mb->mbAddrA = mbAddr - 1;
@@ -351,8 +357,8 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
         mb->mbAddrA = -1;
     }
 
-    //Input to the process in subclause 6.4.7 is mbAddrB = CurrMbAddr - PicWidthInMbs and the output is whether the
-    //macroblock mbAddrB is available.
+    // Input to the process in subclause 6.4.7 is mbAddrB = CurrMbAddr - PicWidthInMbs
+    // and the output is whether the macroblock mbAddrB is available.
     if (mbAddr >= PicWidthInMbs)
     {
         mb->mbAddrB = mbAddr - PicWidthInMbs;
@@ -362,9 +368,9 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
         mb->mbAddrB = -1;
     }
 
-    //Input to the process in subclause 6.4.7 is mbAddrC = CurrMbAddr - PicWidthInMbs + 1 and the output is whether the
-    //macroblock mbAddrC is available. In addition, mbAddrC is marked as not available when
-    //( CurrMbAddr + 1 ) % PicWidthInMbs is equal to 0.
+    // Input to the process in subclause 6.4.7 is mbAddrC = CurrMbAddr - PicWidthInMbs + 1
+    // and the output is whether the macroblock mbAddrC is available.
+    // In addition, mbAddrC is marked as not available when (CurrMbAddr + 1) % PicWidthInMbs is equal to 0.
     if (mbAddr >= PicWidthInMbs &&
         (mbAddr + 1) % PicWidthInMbs != 0)
     {
@@ -375,9 +381,9 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
         mb->mbAddrC = -1;
     }
 
-    //Input to the process in subclause 6.4.7 is mbAddrD = CurrMbAddr - PicWidthInMbs - 1 and the output is whether the
-    //macroblock mbAddrD is available. In addition, mbAddrD is marked as not available when
-    //CurrMbAddr % PicWidthInMbs is equal to 0.
+    // Input to the process in subclause 6.4.7 is mbAddrD = CurrMbAddr - PicWidthInMbs - 1
+    // and the output is whether the macroblock mbAddrD is available.
+    // In addition, mbAddrD is marked as not available when CurrMbAddr % PicWidthInMbs is equal to 0.
     if (mbAddr > PicWidthInMbs &&
         mbAddr % PicWidthInMbs != 0)
     {
@@ -388,8 +394,8 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
         mb->mbAddrD = -1;
     }
 
+#if ENABLE_DEBUG
     // Check neighbors availability in memory
-    ////////////////////////////////////////////////////////////////////////////
     if (mb->mbAddrA >= 0 && dc->mb_array[mb->mbAddrA] == NULL)
     {
         TRACE_ERROR(SPATIAL, "     - macroblock A (mbAddr %i) should be available\n", mb->mbAddrA);
@@ -406,6 +412,7 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
     {
         TRACE_ERROR(SPATIAL, "     - macroblock D (mbAddr %i) should be available\n", mb->mbAddrD);
     }
+#endif /* ENABLE_DEBUG */
 }
 
 /* ************************************************************************** */

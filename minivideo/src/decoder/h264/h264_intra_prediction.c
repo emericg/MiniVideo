@@ -358,7 +358,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -387,7 +387,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -417,7 +417,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             if (x < 4)
                 ip.sample_up = true;
@@ -1035,13 +1035,16 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
                 intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra8x8PredMode[blkA];
             else if (dc->mb_array[mbAddrA_temp]->MbPartPredMode[0] == Intra_4x4)
             {
-/*
                 int n = 1;
-                if (// MbaffFrameFlag is equal to 1, the current macroblock is a frame coded macroblock, the macroblock mbAddrN is a field coded macroblock,
-                    luma8x8BlkIdx == 2)
+
+#if ENABLE_MBAFF
+                // MbaffFrameFlag is equal to 1, the current macroblock is a frame coded macroblock,
+                // the macroblock mbAddrN is a field coded macroblock.
+                if (MbaffFrameFlag == 1 && luma8x8BlkIdx == 2)
                     n = 3;
-*/
-                intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra4x4PredMode[blkA * 4 + 1/*n*/];
+#endif /* ENABLE_MBAFF */
+
+                intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra4x4PredMode[blkA * 4 + n];
             }
         }
     }
@@ -1155,7 +1158,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -1184,7 +1187,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -1213,7 +1216,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             if (x < 8)
                 ip.sample_up = true;
@@ -1845,7 +1848,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.phv = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
             TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ip.phv, mbAddrN, xW, yW);
@@ -1869,7 +1872,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_left = true;
             ip.pv[y] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -1894,7 +1897,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         else
         {
             //int xM = 0, yM = 0;
-            //InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xM, &yM);
+            //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.sample_up = true;
             ip.ph[x] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
@@ -2201,7 +2204,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         {
 /*
             int xL = 0, yL = 0;
-            InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xL, &yL);
+            InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xL, &yL);
 
             int xM = 0, yM = 0;
             xM = (xL >> 4) * MbWidthC;
@@ -2232,7 +2235,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         {
 /*
             int xL = 0, yL = 0;
-            InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xL, &yL);
+            InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xL, &yL);
 
             int xM = 0, yM = 0;
             xM = (xL >> 4) * MbWidthC;
@@ -2266,7 +2269,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         {
 /*
             int xL = 0, yL = 0;
-            InverseMacroblockScan(mbAddrN, FALSE, sps->PicWidthInSamplesL, &xL, &yL);
+            InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xL, &yL);
 
             int xM = 0, yM = 0;
             xM = (xL >> 4) * MbWidthC;
@@ -2577,12 +2580,12 @@ static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
  * 8.3.5 Sample construction process for I_PCM macroblocks.
  *
  * This process is invoked when the macroblock type is I_PCM.
- * This feature is unsupported by this decoder.
+ * This feature is currently unsupported by this decoder.
  */
 static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
     TRACE_1(INTRA, "> " GREEN "ipcm_construction_process()\n" RESET);
-    int retcode = SUCCESS;
+    int retcode = FAILURE;
 
 #if ENABLE_IPCM
     // Shortcuts
@@ -2593,14 +2596,16 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
     int i = 0;
     int dy = 1;
     int xP = 0, yP = 0;
-/*
+
+#if ENABLE_MBAFF
     // MbaffFrameFlag is unsupported, so always "false"
     if (dc->active_slice->MbaffFrameFlag == true && dc->active_slice->field_pic_flag == true)
     {
         dy = 2;
     }
-*/
-    InverseMacroblockScan(mb->mbAddr, FALSE, sps->PicWidthInSamplesL, &xP, &yP);
+#endif /* ENABLE_MBAFF */
+
+    InverseMacroblockScan(mb->mbAddr, dc->active_slice->MbaffFrameFlag, sps->PicWidthInSamplesL, &xP, &yP);
 
     // Luma samples construction
     for (i = 0; i < 256; i++)
@@ -2617,6 +2622,8 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
            mb->SprimeCr[(xP / sps->SubWidthC) + (i % sps->MbWidthC)][((yP + sps->SubHeightC - 1) / sps->SubHeightC) + dy * (i / sps->MbWidthC)] = mb->pcm_sample_chroma[i + sps->MbWidthC * sps->MbHeightC];
         }
     }
+
+    retcode = SUCCESS;
 #endif /* ENABLE_IPCM */
 
     return retcode;

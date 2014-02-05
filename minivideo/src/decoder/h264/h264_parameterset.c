@@ -841,9 +841,7 @@ int decodePPS(DecodingContext_t *dc)
         pps->num_slice_groups_minus1 = read_ue(dc->bitstr);
         if (pps->num_slice_groups_minus1 > 0)
         {
-            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
-            return UNSUPPORTED;
-/*
+#if ENABLE_FMO
             pps->slice_group_map_type = read_ue(dc->bitstr);
             if (pps->slice_group_map_type == 0)
             {
@@ -866,7 +864,7 @@ int decodePPS(DecodingContext_t *dc)
                      pps->slice_group_map_type == 4 ||
                      pps->slice_group_map_type == 5)
             {
-                pps->slice_group_change_direction_flag = read_one_bit(dc->bitstr);
+                pps->slice_group_change_direction_flag = read_bit(dc->bitstr);
                 pps->slice_group_change_rate_minus1 = read_ue(dc->bitstr);
             }
             else if (pps->slice_group_map_type == 6)
@@ -878,7 +876,10 @@ int decodePPS(DecodingContext_t *dc)
                     //pps->slice_group_id[i] = read_bits(dc->bitstr, ceil(log2(pps->num_slice_groups_minus1 + 1)));
                 }
             }
-*/
+#else /* ENABLE_FMO */
+            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
+            return UNSUPPORTED;
+#endif /* ENABLE_FMO */
         }
 
         pps->num_ref_idx_l0_default_active_minus1 = read_ue(dc->bitstr);
@@ -900,13 +901,11 @@ int decodePPS(DecodingContext_t *dc)
             pps->pic_scaling_matrix_present_flag = read_bit(dc->bitstr);
             if (pps->pic_scaling_matrix_present_flag)
             {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
-                return UNSUPPORTED;
-/*
+#if ENABLE_FMO
                 int i = 0;
                 for (i = 0; i < 6 + ((dc->sps_array[pps->seq_parameter_set_id]->chroma_format_idc != 3) ? 2 : 6) * pps->transform_8x8_mode_flag; i++)
                 {
-                    pps->pic_scaling_list_present_flag[i] = read_one_bit(dc->bitstr); //FIXME?
+                    pps->pic_scaling_list_present_flag[i] = read_bit(dc->bitstr); //FIXME?
                     if (pps->pic_scaling_list_present_flag[i])
                     {
                         if (i < 6)
@@ -915,7 +914,10 @@ int decodePPS(DecodingContext_t *dc)
                             scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList8x8[i-6], 64, dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix8x8Flag[i-6]);
                     }
                 }
-*/
+#else /* ENABLE_FMO */
+                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
+                return UNSUPPORTED;
+#endif /* ENABLE_FMO */
             }
 
             pps->second_chroma_qp_index_offset = read_se(dc->bitstr);

@@ -128,9 +128,9 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
             while (bitstream_check_alignment(dc->bitstr) == false)
             {
-                if (read_one_bit(dc->bitstr) != 0) // pcm_alignment_zero_bit
+                if (read_bit(dc->bitstr) != 0) // pcm_alignment_zero_bit
                 {
-                    TRACE_ERROR(DPARAMS, "  Error while reading pcm_alignment_zero_bit: must be 0!\n");
+                    TRACE_ERROR(MB, "  Error while reading pcm_alignment_zero_bit: must be 0!\n");
                     return FAILURE;
                 }
             }
@@ -230,7 +230,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                     if (pps->entropy_coding_mode_flag)
                         mb->transform_size_8x8_flag = read_ae(dc, SE_transform_size_8x8_flag);
                     else
-                        mb->transform_size_8x8_flag = read_one_bit(dc->bitstr);
+                        mb->transform_size_8x8_flag = read_bit(dc->bitstr);
 
                     // Need to update MbPartPredMode in order to account for I_8x8 prediction mode
                     if (transform_size_8x8_flag)

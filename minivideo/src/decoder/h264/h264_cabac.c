@@ -762,7 +762,8 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 1012;
             else
                 prefix->ctxIdxOffset = 85;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
             //UNSUPPORTED separate_colour_plane_flag
             if (ctxBlockCat == 5 || ctxBlockCat == 9 || ctxBlockCat == 13)
                 prefix->ctxIdxOffset = 1012;
@@ -772,7 +773,8 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 460;
             else if (ctxBlockCat < 13)
                 prefix->ctxIdxOffset = 472;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+
             prefix->bintable = (uint8_t **)binarization_fl1;
             prefix->bintable_x = 1;
             prefix->bintable_y = 2;
@@ -790,7 +792,8 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 402;
                 else
                     prefix->ctxIdxOffset = 105;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
                 //UNSUPPORTED separate_colour_plane_flag
                 if (ctxBlockCat < 5)
                     prefix->ctxIdxOffset = 105;
@@ -804,7 +807,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 528;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 718;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
             }
             else
             {
@@ -813,7 +816,8 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 436;
                 else
                     prefix->ctxIdxOffset = 277;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
                 //UNSUPPORTED separate_colour_plane_flag
                 if (ctxBlockCat < 5)
                     prefix->ctxIdxOffset = 277;
@@ -827,7 +831,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 820;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 733;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
             }
 
             prefix->bintable = (uint8_t **)binarization_fl1;
@@ -847,7 +851,8 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 417;
                 else
                     prefix->ctxIdxOffset = 166;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
                 //UNSUPPORTED separate_colour_plane_flag
                 if (ctxBlockCat < 5)
                     prefix->ctxIdxOffset = 166;
@@ -861,7 +866,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 616;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 748;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
             }
             else
             {
@@ -870,7 +875,8 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 451;
                 else
                     prefix->ctxIdxOffset = 338;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
                 //UNSUPPORTED separate_colour_plane_flag
                 if (ctxBlockCat < 5)
                     prefix->ctxIdxOffset = 338;
@@ -884,7 +890,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 908;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 757;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
             }
 
             prefix->bintable = (uint8_t **)binarization_fl1;
@@ -901,7 +907,8 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 426;
             else
                 prefix->ctxIdxOffset = 227;
-/*
+
+#if ENABLE_SEPARATE_COLOUR_PLANES
             //UNSUPPORTED separate_colour_plane_flag
             if (ctxBlockCat < 5)
                 prefix->ctxIdxOffset = 227;
@@ -915,7 +922,8 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 982;
             else if (ctxBlockCat == 13)
                 prefix->ctxIdxOffset = 766;
-*/
+#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+
             prefix->bintable = (uint8_t **)binarization_tu14;
             prefix->bintable_x = 14;
             prefix->bintable_y = 15;
