@@ -97,7 +97,8 @@ static int decodingProcessFlow(DecodingContext_t *dc,
 static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset);
         static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
         static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset);
-        static int deriv_ctxIdxInc_cbp(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
+        static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx);
+        static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx);
         static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc);
@@ -565,20 +566,6 @@ int initCabacContextVariables(DecodingContext_t *dc)
                 dc->active_slice->cc->pStateIdx[ctxIdx] = (preCtxState - 64);
                 dc->active_slice->cc->valMPS[ctxIdx] = 1;
             }
-/*
-            // FIXME cabac colorbug ctxIdx in IntraChromaPredMode range
-            if (ctxIdx > 63 && ctxIdx < 68)
-            {
-                TRACE_WARNING(CABAC, "[%i] pStateIdx: %i\n", ctxIdx, dc->active_slice->cc->pStateIdx[ctxIdx]);
-                TRACE_WARNING(CABAC, "[%i] valMPS: %i\n", ctxIdx, dc->active_slice->cc->valMPS[ctxIdx]);
-            }
-            // FIXME check spectial values for ctxIdx == 276
-            if (ctxIdx == 276)
-            {
-                TRACE_WARNING(CABAC, "[%i] pStateIdx: %i\n", ctxIdx, dc->active_slice->cc->pStateIdx[ctxIdx]);
-                TRACE_WARNING(CABAC, "[%i] valMPS: %i\n", ctxIdx, dc->active_slice->cc->valMPS[ctxIdx]);
-            }
-*/
         }
 
         // Note: ctxIdx equal to 276 is associated with the end_of_slice_flag and the bin of mb_type
@@ -1485,11 +1472,7 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
             if (binIdx == 0)
                 ctxIdxInc = deriv_ctxIdxInc_intrachromapredmode(dc);
             else if (binIdx < 3)
-            {
                 ctxIdxInc = 3;
-                // FIXME cabac colorbug
-                TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (ctxIdx=%i in IntraChromaPredMode range)\n", 0, ctxIdxOffset + ctxIdxInc);
-            }
             else
             { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=64 and binIdx>2 should not happend\n"); }
         break;
@@ -1514,16 +1497,16 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
 
         case 73:
             if (binIdx == 0 || binIdx == 1 || binIdx == 2 || binIdx == 3)
-                ctxIdxInc = deriv_ctxIdxInc_cbp(dc, decodedSE, binIdx, ctxIdxOffset);
+                ctxIdxInc = deriv_ctxIdxInc_cbp_luma(dc, decodedSE, binIdx);
             else
             { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=73 and binIdx!=0,1,2,3 should not happend\n"); }
         break;
 
         case 77:
             if (binIdx == 0 || binIdx == 1)
-                ctxIdxInc = deriv_ctxIdxInc_cbp(dc, decodedSE, binIdx, ctxIdxOffset);
+                ctxIdxInc = deriv_ctxIdxInc_cbp_chroma(dc, decodedSE, binIdx);
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=73 and binIdx!=0,1 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=77 and binIdx!=0,1 should not happend\n"); }
         break;
 
         case 276:
@@ -1618,17 +1601,15 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
 /* ************************************************************************** */
 
 /*!
- * \brief Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
+ * \brief Derivation process of ctxIdxInc for the syntax element coded_block_pattern_luma.
  * \param *dc The current DecodingContext.
  * \param decodedSE[] The syntax element.
  * \param binIdx docme.
- * \param ctxIdxOffset docme.
- * \return ctxIdxInc docme.
  *
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
  */
-static int deriv_ctxIdxInc_cbp(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
+static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
 {
     TRACE_3(CABAC, GREEN "  deriv_ctxIdxInc_cbp()\n" RESET);
 
@@ -1640,120 +1621,151 @@ static int deriv_ctxIdxInc_cbp(DecodingContext_t *dc, uint8_t decodedSE[32], con
 
     int ctxIdxInc = 0;
 
-    if (ctxIdxOffset == 73)
+    int luma8x8BlkIdxA = -1;
+    int luma8x8BlkIdxB = -1;
+
+    deriv_8x8lumablocks(dc, binIdx, &mbAddrA, &luma8x8BlkIdxA, &mbAddrB, &luma8x8BlkIdxB);
+
+    if (mbAddrA != -1 &&
+        dc->mb_array[mbAddrA] != NULL)
     {
-        int luma8x8BlkIdxA = -1;
-        int luma8x8BlkIdxB = -1;
-
-        deriv_8x8lumablocks(dc, binIdx, &mbAddrA, &luma8x8BlkIdxA, &mbAddrB, &luma8x8BlkIdxB);
-
-        if (mbAddrA != -1 &&
-            dc->mb_array[mbAddrA] != NULL)
+#if ENABLE_IPCM
+        if (dc->mb_array[mbAddrA]->mb_type == I_PCM)
         {
-            if (dc->mb_array[mbAddrA]->mb_type == I_PCM)
-            {
-                condTermFlagA = 0;
-            }
-            else if (mbAddrA != dc->CurrMbAddr)
-            {
-                if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
-                     dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
-                    (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
-                {
-                    condTermFlagA = 0;
-                }
-            }
-            else //if (mbAddrA == dc->CurrMbAddr)
-            {
-                if (decodedSE[luma8x8BlkIdxA] != 0)
-                {
-                    condTermFlagA = 0;
-                }
-            }
-        }
-        else
-        {
-            // mbAddrA is not available
             condTermFlagA = 0;
         }
-
-        if (mbAddrB != -1 &&
-            dc->mb_array[mbAddrB] != NULL)
-        {
-            if (dc->mb_array[mbAddrB]->mb_type == I_PCM)
-            {
-                condTermFlagB = 0;
-            }
-            else if (mbAddrB != dc->CurrMbAddr)
-            {
-                if ((dc->mb_array[mbAddrB]->mb_type != P_Skip &&
-                     dc->mb_array[mbAddrB]->mb_type != B_Skip) &&
-                    (((dc->mb_array[mbAddrB]->CodedBlockPatternLuma >> luma8x8BlkIdxB) & 1) != 0))
-                {
-                    condTermFlagB = 0;
-                }
-            }
-            else //if (mbAddrB == dc->CurrMbAddr)
-            {
-                if (decodedSE[luma8x8BlkIdxB] != 0)
-                {
-                    condTermFlagB = 0;
-                }
-            }
-        }
         else
-        {
-            // mbAddrB is not available
-            condTermFlagB = 0;
-        }
+#endif /* ENABLE_IPCM */
 
-        ctxIdxInc = (condTermFlagA + condTermFlagB*2);
-    }
-    else if (ctxIdxOffset == 77)
-    {
-        mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
-        mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
 
-        if (mbAddrA != -1 &&
-            dc->mb_array[mbAddrA] != NULL)
+        if ((mbAddrA != dc->CurrMbAddr) &&
+            (dc->mb_array[mbAddrA]->mb_type != P_Skip && dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
+            (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
         {
-            if (dc->mb_array[mbAddrA]->mb_type == P_Skip ||
-                dc->mb_array[mbAddrA]->mb_type == B_Skip)
-                condTermFlagA = 0;
-            else if (binIdx == 0 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 0)
-                condTermFlagA = 0;
-            else if (binIdx == 1 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 2)
-                condTermFlagA = 0;
-        }
-        else
-        {
-            // mbAddrA is not available
             condTermFlagA = 0;
         }
-
-        if (mbAddrB != -1 &&
-            dc->mb_array[mbAddrB] != NULL)
+        else if ((mbAddrA == dc->CurrMbAddr) &&
+            (decodedSE[luma8x8BlkIdxA] != 0))
         {
-            if (dc->mb_array[mbAddrB]->mb_type == P_Skip ||
-                dc->mb_array[mbAddrB]->mb_type == B_Skip)
-                condTermFlagB = 0;
-            else if (binIdx == 0 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 0)
-                condTermFlagB = 0;
-            else if (binIdx == 1 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 2)
-                condTermFlagB = 0;
+            condTermFlagA = 0;
         }
-        else
+/*
+        if (mbAddrA != dc->CurrMbAddr)
         {
-            // mbAddrB is not available
-            condTermFlagB = 0;
+            if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
+                 dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
+                (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
+            {
+                condTermFlagA = 0;
+            }
         }
-
-        ctxIdxInc = condTermFlagA + condTermFlagB*2 + ((binIdx == 1) ? 4 : 0);
+        else //if (mbAddrA == dc->CurrMbAddr)
+        {
+            if (decodedSE[luma8x8BlkIdxA] != 0)
+            {
+                condTermFlagA = 0;
+            }
+        }*/
     }
     else
     {
-        TRACE_ERROR(CABAC, GREEN "  deriv_ctxIdxInc_cbp() should not have been called\n" RESET);
+        // mbAddrA is not available
+        condTermFlagA = 0;
     }
+
+    if (mbAddrB != -1 &&
+        dc->mb_array[mbAddrB] != NULL)
+    {
+#if ENABLE_IPCM
+        if (dc->mb_array[mbAddrB]->mb_type == I_PCM)
+        {
+            condTermFlagB = 0;
+        }
+        else
+#endif /* ENABLE_IPCM */
+        if ((mbAddrB != dc->CurrMbAddr) &&
+            (dc->mb_array[mbAddrB]->mb_type != P_Skip && dc->mb_array[mbAddrB]->mb_type != B_Skip) &&
+            (((dc->mb_array[mbAddrB]->CodedBlockPatternLuma >> luma8x8BlkIdxB) & 1) != 0))
+        {
+            condTermFlagB = 0;
+        }
+        else if ((mbAddrB == dc->CurrMbAddr) &&
+            (decodedSE[luma8x8BlkIdxB] != 0))
+        {
+            condTermFlagB = 0;
+        }
+    }
+    else
+    {
+        // mbAddrB is not available
+        condTermFlagB = 0;
+    }
+
+    ctxIdxInc = (condTermFlagA + condTermFlagB*2);
+
+    TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i\n", ctxIdxInc);
+    return ctxIdxInc;
+}
+
+/*!
+ * \brief Derivation process of ctxIdxInc for the syntax element coded_block_pattern_chroma.
+ * \param *dc The current DecodingContext.
+ * \param decodedSE[] The syntax element.
+ * \param binIdx docme.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
+ */
+static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
+{
+    TRACE_3(CABAC, GREEN "  deriv_ctxIdxInc_cbp()\n" RESET);
+
+    int mbAddrA = -1;
+    int mbAddrB = -1;
+
+    int condTermFlagA = 1;
+    int condTermFlagB = 1;
+
+    int ctxIdxInc = 0;
+
+    mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
+    mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
+
+    if (mbAddrA != -1 &&
+        dc->mb_array[mbAddrA] != NULL)
+    {
+        if (dc->mb_array[mbAddrA]->mb_type == P_Skip ||
+            dc->mb_array[mbAddrA]->mb_type == B_Skip)
+            condTermFlagA = 0;
+        else if (binIdx == 0 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 0)
+            condTermFlagA = 0;
+        else if (binIdx == 1 && dc->mb_array[mbAddrA]->CodedBlockPatternChroma == 2)
+            condTermFlagA = 0;
+    }
+    else
+    {
+        // mbAddrA is not available
+        condTermFlagA = 0;
+    }
+
+    if (mbAddrB != -1 &&
+        dc->mb_array[mbAddrB] != NULL)
+    {
+        if (dc->mb_array[mbAddrB]->mb_type == P_Skip ||
+            dc->mb_array[mbAddrB]->mb_type == B_Skip)
+            condTermFlagB = 0;
+        else if (binIdx == 0 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 0)
+            condTermFlagB = 0;
+        else if (binIdx == 1 && dc->mb_array[mbAddrB]->CodedBlockPatternChroma == 2)
+            condTermFlagB = 0;
+    }
+    else
+    {
+        // mbAddrB is not available
+        condTermFlagB = 0;
+    }
+
+    ctxIdxInc = condTermFlagA + condTermFlagB*2 + ((binIdx == 1) ? 4 : 0);
 
     TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i\n", ctxIdxInc);
     return ctxIdxInc;
@@ -2395,31 +2407,24 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 
     // Shortcut
     CabacContext_t *cc = dc->active_slice->cc;
-/*
-    // FIXME cabac colorbug ctxIdx in IntraChromaPredMode range
-    if (ctxIdx > 64 && ctxIdx < 68)
-    {
-        TRACE_WARNING(CABAC, "yes we are in DecodeDecision()\n");
-        TRACE_WARNING(CABAC, "[mb: %i] CABAC COLORBUG? (ctxIdx=%i in IntraChromaPredMode range)\n", 0, ctxIdx);
-    }
-*/
+
     // 1
-    int qCodIRangeIdx = (cc->codIRange >> 6) & 3;
-    int codIRangeLPS = rangeTabLPS[cc->pStateIdx[ctxIdx]][qCodIRangeIdx];
+    uint16_t qCodIRangeIdx = (cc->codIRange >> 6) & 3;
+    uint16_t codIRangeLPS = rangeTabLPS[cc->pStateIdx[ctxIdx]][qCodIRangeIdx];
 
     // 2
     cc->codIRange -= codIRangeLPS;
 
     if (cc->codIOffset < cc->codIRange)
     {
-        binVal = cc->valMPS[ctxIdx];
+        binVal = (int)cc->valMPS[ctxIdx];
 
         // 9.3.3.2.1.1 State transition process
         cc->pStateIdx[ctxIdx] = transIdxMPS[cc->pStateIdx[ctxIdx]];
     }
     else
     {
-        binVal = 1 - cc->valMPS[ctxIdx];
+        binVal = 1 - (int)cc->valMPS[ctxIdx];
 
         cc->codIOffset -= cc->codIRange;
         cc->codIRange = codIRangeLPS;
@@ -2427,7 +2432,7 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
         // 9.3.3.2.1.1 State transition process
         if (cc->pStateIdx[ctxIdx] == 0)
         {
-            cc->valMPS[ctxIdx] = binVal; // = 1 - cc->valMPS[ctxIdx];
+            cc->valMPS[ctxIdx] = 1 - cc->valMPS[ctxIdx];
         }
 
         cc->pStateIdx[ctxIdx] = transIdxLPS[cc->pStateIdx[ctxIdx]];
@@ -2470,7 +2475,6 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 #endif /* ENABLE_DEBUG */
     return binVal;
 }
-
 
 /* ************************************************************************** */
 
@@ -2518,7 +2522,7 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
  * \return binVal The value of one bin decoded from the stream.
  *
  * From 'ITU-T H.264' recommendation:
- * 9.3.3.2.3 Bypass decoding process for binary decisions
+ * 9.3.3.2.3 Bypass decoding process for binary decisions.
  *
  * Inputs to this process are bits from slice data and the variables codIRange and codIOffset.
  * Outputs of this process are the updated variable codIOffset and the decoded value binVal.

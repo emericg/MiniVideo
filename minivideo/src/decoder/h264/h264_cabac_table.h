@@ -29,7 +29,7 @@
 /* ************************************************************************** */
 
 //! Values of variables m and n for ctxIdx from 0 to 459, I frame only.
-const int cabac_context_init_I[460][2] =
+const int8_t cabac_context_init_I[460][2] =
 {
     // Table 9-12 | ctxIdx 0 -> 10
     { 20, -15 }, {   2, 54 }, {   3,  74 },  { 20, -15 },   {  2, 54 },
@@ -1497,7 +1497,7 @@ const int ctxIdxInc_8x8blk[64][3] =
 /* ************************************************************************** */
 
 //! Table 9-44 | Specification of rangeTabLPS depending on pStateIdx and qCodIRangeIdx
-const int rangeTabLPS[64][4] =
+const uint16_t rangeTabLPS[64][4] =
 {
     {128, 176, 208, 240}, // 0
     {128, 167, 197, 227},
@@ -1566,14 +1566,14 @@ const int rangeTabLPS[64][4] =
 };
 
 //! Table 9-45 | State transition table for Least Probable Symbol
-const int transIdxLPS[64] =
+const uint8_t transIdxLPS[64] =
 { 0,  0,  1,  2,  2,  4,  4,  5,  6,  7,  8,  9,  9, 11, 11, 12,
  13, 13, 15, 15, 16, 16, 18, 18, 19, 19, 21, 21, 22, 22, 23, 24,
  24, 25, 26, 26, 27, 27, 28, 29, 29, 30, 30, 30, 31, 32, 32, 33,
  33, 33, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 63};
 
 //! Table 9-45 | State transition table for Most Probable Symbol
-const int transIdxMPS[64] =
+const uint8_t transIdxMPS[64] =
 { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
  17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
  33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
