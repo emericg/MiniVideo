@@ -1,5 +1,5 @@
-Debugging mini manual
-=====================
+Debugging "mini manual"
+=======================
 
 What is GDB? (from https://www.gnu.org/software/gdb/)
 
@@ -16,7 +16,7 @@ The program being debugged can be written in Ada, C, C++, Objective-C, Pascal (a
 Debbugging using a GUI
 ----------------------
 
-Most of today's IDE have great integration with GDB, so you should probably start by using it through your favorite IDE. 
+Most of today's IDE have great UI integration with GDB, so you should probably start by using it through your favorite IDE.
 
 Other GUI includes:
 - Nemiver (https://wiki.gnome.org/Apps/Nemiver)

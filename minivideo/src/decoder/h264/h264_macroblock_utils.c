@@ -33,10 +33,6 @@
 
 /* ************************************************************************** */
 
-// Debug
-
-/* ************************************************************************** */
-
 /*!
  * \brief Print informations about macroblock_layer decoding.
  * \param *dc The current DecodingContext.

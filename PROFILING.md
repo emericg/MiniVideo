@@ -1,5 +1,5 @@
-Profiling mini manual
-=====================
+Profiling "mini manual"
+=======================
 
 Valgrind is a free software very useful for debugging massive software.
 We are going to use it to perform code profiling and highlight memory leaks.

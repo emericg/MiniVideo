@@ -17,8 +17,8 @@ TODO test softwares
 - a "mini_analyser" with container and video stream infos would be awesome
 - a "mini_player" would definitly be an interesting thing to do
 
-TODO library
-------------
+TODO video library
+------------------
 
 // General features
 - make make_path_absolute() works (to be able to choose picture export directory)
@@ -41,8 +41,8 @@ TODO library
 - finish MKV parser
 - tracks_video_count sometimes not correclty set (and then bitsteammap not freed)
 
-// Decoder
-- CABAC "color" bugfix
+// Video decoder
+- CABAC bugfix
 - reimplement transformbypass_decoding() to use static data table
 - scaling_list extraction process common to SPS & PPS
 
@@ -50,7 +50,7 @@ PERFORMANCE IMPROVMENTS
 -----------------------
 
 // MACROBLOCKS
-- Replace residual_block_cabac() AND residual_block_cavlc() by a pointer to residual_block()
+- Replace residual_block_cabac() AND residual_block_cavlc() calls by a single function pointer residual_block()
 - Less call to deriv_neighbouringlocations()
 - Smarter management of (mb->CodedBlockPatternLuma == 0 || mb->CodedBlockPatternChroma == 0) in macroblock_layer()
 - No spatial transformations if no residual datas
@@ -62,7 +62,7 @@ PERFORMANCE IMPROVMENTS
 - Stop the memcmp() if we leave the decodedSE string
 - Stop the memcmp() if match > 1
 
-// TRANSFORMS:
+// TRANSFORMS
 - Change some int u[][] to uint8 u[][]
 - Homogenize the idct code for luma/chroma DC
 - Use less different arrays within the idct code

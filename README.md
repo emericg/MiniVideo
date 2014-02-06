@@ -17,26 +17,27 @@ The minivideo library can:
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
-  - please note that at the moment there is a major bug being worked on inside CABAC decoding process
+  - please note that at the moment there is a major bug inside CABAC decoding process being worked on...
 
 ### Supported container formats (import module)
 - Elementary stream H.264 ("Annex B" format) [.264]
 - Elementary stream MPEG-1/2 [.mpg, .mpeg]
 - PS (MPEG Program Stream) [.mpg, .vob, ...]
 - MP4 (MPEG ISO container) [.mp4, .mov, .3gp, ...]
-* MKV (Matroska, Work In Progress) [.mkv, .webm]
-* AVI (Work In Progress) [.avi]
+Work In Progress:
+* MKV (Matroska) [.mkv, .webm]
+* AVI [.avi]
 
 ### Supported picture formats (export module)
 - bmp
 - tga
 - tiff
-- png (with external libpng support)
-- jpeg (with external libjpeg support)
+- png (if external libpng support is available)
+- jpeg (if external libjpeg support is available)
 
 
-To build the minivideo library:
--------------------------------
+Building minivideo library
+--------------------------
 
 > $ cd minivideo/build/  
 > $ cmake ..  
@@ -54,8 +55,8 @@ CMake parameters:
 You can also change several build options into the "minivideo/CMakeLists.txt" file.
 
 
-To build the minivideo testing softwares:
------------------------------------------
+Building minivideo's testing softwares
+--------------------------------------
 
 Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
 how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
@@ -69,13 +70,13 @@ In case of problem, it may be necessary to manualy indicate the paths of these f
 > $ cmake ..  
 > $ make  
 
-Installation into the system:
+Installation into the system, available for both testing softwares:
 > $ su  
 > $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
-mini_extractor usage:
----------------------
+Using mini_extractor
+--------------------
 
 > $ cd mini_extractor/build/  
 > $ ./mini_extractor -i 'myfilepath' [-o 'mydirectory'] [-a nb_tracks] [-v nb_tracks]  
@@ -88,8 +89,8 @@ Command line arguments:
 > -v : maximum number of video stream(s) to extract  
 
 
-mini_thumbnailer usage:
------------------------
+Using mini_thumbnailer
+----------------------
 
 > $ cd mini_thumbnailer/build/  
 > $ ./mini_thumbnailer -i 'myfilepath' [-o 'mydirectory'] [-f picture_format] [-q picture_quality] [-n picture_number] [-m picture_extractionmode]  
@@ -104,8 +105,8 @@ Command line arguments:
 > -m : extraction mode for the thumbnails (can be 'unfiltered', 'ordered' or 'distributed')  
 
 
-Generate online documentation with Doxygen
-------------------------------------------
+Generating online documentation with Doxygen
+--------------------------------------------
 
 > $ cd minivideo/doc/  
 > $ ./generate_doxygen.sh  
@@ -113,8 +114,8 @@ Generate online documentation with Doxygen
 Open "minivideo/doc/doxygen.html" with your favorite browser.
 
 
-Generate error report with cppcheck
------------------------------------
+Generating error report with cppcheck
+-------------------------------------
 
 > $ cd minivideo/doc/  
 > $ ./generate_cppcheck.sh  
@@ -125,8 +126,8 @@ Open "minivideo/doc/cppcheck.html" with your favorite browser.
 MiniVideo decoding capabilities
 ===============================
 
-Unsupported features regarding H.264 specification
---------------------------------------------------
+H.264 unsupported features
+--------------------------
 
 // UNSUPPORTED for BP and XP profiles
 - (FMO) Flexible Macroblock Ordering
@@ -137,21 +138,21 @@ Unsupported features regarding H.264 specification
 - Data partitioning
 - SI and SP slices
 
-// UNSUPPORTED for HiP profile (HIGH)
-- Major bug inside CABAC decoding process
+// UNSUPPORTED for HiP profile ("HIGH")
+- Major bug(s) inside CABAC decoding process (WIP)
 - No deblocking filter
-- Interlaced coding (PicAFF, MBAFF)
+- Interlaced coding (also PicAFF and MBAFF features)
 - 4:0:0 "greyscale" subsampling
 
-// UNSUPPORTED for Hi10P profile (HIGH + 10bits samples)
+// UNSUPPORTED for Hi10P profile ("HIGH + 10bits samples")
 - Sample depths > 8 bits
 
-// UNSUPPORTED for Hi422P profile (HIGH + 10bits samples + 4:2:2 subsampling)
+// UNSUPPORTED for Hi422P profile ("HIGH + 10bits samples + 4:2:2 subsampling")
 - Sample depths > 8 bits
 - 4:2:2 subsampling
 
-// UNSUPPORTED for Hi444P profile (HIGH + 14bits samples + 4:4:4 subsampling)
+// UNSUPPORTED for Hi444P profile ("HIGH + 14bits samples + 4:4:4 subsampling")
+- Sample depths > 10 bits
 - 4:4:4 subsampling
 - Separate color plane coding
-- Sample depths > 10 bits
 - IPCM macroblocks
