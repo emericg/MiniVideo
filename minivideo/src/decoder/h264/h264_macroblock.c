@@ -251,7 +251,6 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 else
                     mb->mb_qp_delta = read_se(dc->bitstr);
 
-
                 // Parse the residual coefficients
                 ////////////////////////////////////////////////////////////////
 
@@ -279,7 +278,6 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             if (sps->qpprime_y_zero_transform_bypass_flag == true && mb->QPprimeY == 0)
                 mb->TransformBypassModeFlag = true;
 
-
             // Prediction process (include quantization and transformation stages)
             ////////////////////////////////////////////////////////////////
 
@@ -291,7 +289,6 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             {
                 retcode = inter_prediction_process(dc, mb);
             }
-
 
             // Print macroblock(s) header and block data ?
             ////////////////////////////////////////////////////////////////

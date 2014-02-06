@@ -349,6 +349,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 
     // Initialization
     ////////////////////////////////////////////////////////////////////////////
+
     int SyntaxElementValue = -1;
 
     binarization_t prefix;
@@ -371,12 +372,12 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 
     // Binarization process
     ////////////////////////////////////////////////////////////////////////////
+
     if (getBinarization(dc, seType, 999, &prefix, &suffix) == FAILURE)
     {
         TRACE_ERROR(CABAC, "Fatal error during Binarization process\n");
         exit(EXIT_FAILURE);
     }
-
 
     // Arithmetic decoding process
     ////////////////////////////////////////////////////////////////////////////
@@ -450,6 +451,7 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
 
     // Initialization
     ////////////////////////////////////////////////////////////////////////////
+
     int SyntaxElementValue = 0;
 
     binarization_t prefix;
@@ -470,15 +472,14 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     suffix.bintable_y = -1;
     suffix.bypassFlag = false;
 
-
     // Binarization process
     ////////////////////////////////////////////////////////////////////////////
+
     if (getBinarization(dc, seType, blkType, &prefix, &suffix) == FAILURE)
     {
         TRACE_ERROR(CABAC, "Fatal error during Binarization process\n");
         exit(EXIT_FAILURE);
     }
-
 
     // Arithmetic decoding process
     ////////////////////////////////////////////////////////////////////////////
@@ -545,7 +546,7 @@ int initCabacContextVariables(DecodingContext_t *dc)
         {
             preCtxState = iClip3(1, 126, ((cabac_context_init_I[ctxIdx][0] * iClip3(0, 51, dc->active_slice->SliceQPY)) >> 4) + cabac_context_init_I[ctxIdx][1]);
 
-            if (preCtxState <= 63)
+            if (preCtxState < 64)
             {
                 dc->active_slice->cc->pStateIdx[ctxIdx] = (63 - preCtxState);
                 dc->active_slice->cc->valMPS[ctxIdx] = 0;
@@ -1555,7 +1556,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
     int condTermFlagA = 1;
     int condTermFlagB = 1;
 
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
         if (ctxIdxOffset == 3 && dc->mb_array[mbAddrA]->mb_type == I_NxN)
@@ -1573,7 +1574,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
         condTermFlagA = 0;
     }
 
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
         if (ctxIdxOffset == 3 && dc->mb_array[mbAddrB]->mb_type == I_NxN)
@@ -1623,7 +1624,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
 
     deriv_8x8lumablocks(dc, binIdx, &mbAddrA, &luma8x8BlkIdxA, &mbAddrB, &luma8x8BlkIdxB);
 
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
 #if ENABLE_IPCM
@@ -1634,7 +1635,6 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
         else
 #endif /* ENABLE_IPCM */
 
-
         if ((mbAddrA != dc->CurrMbAddr) &&
             (dc->mb_array[mbAddrA]->mb_type != P_Skip && dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
             (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
@@ -1642,27 +1642,10 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
             condTermFlagA = 0;
         }
         else if ((mbAddrA == dc->CurrMbAddr) &&
-            (decodedSE[luma8x8BlkIdxA] != 0))
+                 (decodedSE[luma8x8BlkIdxA] != 0))
         {
             condTermFlagA = 0;
         }
-/*
-        if (mbAddrA != dc->CurrMbAddr)
-        {
-            if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
-                 dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
-                (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
-            {
-                condTermFlagA = 0;
-            }
-        }
-        else //if (mbAddrA == dc->CurrMbAddr)
-        {
-            if (decodedSE[luma8x8BlkIdxA] != 0)
-            {
-                condTermFlagA = 0;
-            }
-        }*/
     }
     else
     {
@@ -1670,7 +1653,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
         condTermFlagA = 0;
     }
 
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
 #if ENABLE_IPCM
@@ -1687,7 +1670,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
             condTermFlagB = 0;
         }
         else if ((mbAddrB == dc->CurrMbAddr) &&
-            (decodedSE[luma8x8BlkIdxB] != 0))
+                 (decodedSE[luma8x8BlkIdxB] != 0))
         {
             condTermFlagB = 0;
         }
@@ -1728,7 +1711,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
     mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
     mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
 
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
         if (dc->mb_array[mbAddrA]->mb_type == P_Skip ||
@@ -1745,7 +1728,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
         condTermFlagA = 0;
     }
 
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
         if (dc->mb_array[mbAddrB]->mb_type == P_Skip ||
@@ -1784,7 +1767,7 @@ static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc)
     int ctxIdxInc = 1;
     int prevMbAddr = dc->CurrMbAddr - 1;
 
-    if (prevMbAddr != -1 &&
+    if (prevMbAddr > -1 &&
         dc->mb_array[prevMbAddr] != NULL)
     {
         if (dc->mb_array[prevMbAddr]->mb_type == I_PCM ||
@@ -1832,7 +1815,7 @@ static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
     int condTermFlagA = 1;
     int condTermFlagB = 1;
 
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
         if (dc->mb_array[mbAddrA]->MbPartPredMode[0] > 3)
@@ -1848,7 +1831,7 @@ static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
         condTermFlagA = 0;
     }
 
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
         if (dc->mb_array[mbAddrB]->MbPartPredMode[0] > 3)
@@ -1899,7 +1882,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
 
         // A
-        if ((mbAddrA != -1 && dc->mb_array[mbAddrA] != NULL) &&
+        if ((mbAddrA > -1 && dc->mb_array[mbAddrA] != NULL) &&
             dc->mb_array[mbAddrA]->MbPartPredMode[0] == Intra_16x16)
         {
             transBlockA = 16;
@@ -1908,7 +1891,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         }
 
         // B
-        if ((mbAddrB != -1 && dc->mb_array[mbAddrB] != NULL) &&
+        if ((mbAddrB > -1 && dc->mb_array[mbAddrB] != NULL) &&
             dc->mb_array[mbAddrB]->MbPartPredMode[0] == Intra_16x16)
         {
             transBlockB = 16;
@@ -1923,7 +1906,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         deriv_4x4lumablocks(dc, blkIdx, &mbAddrA, &luma4x4BlkIdxA, &mbAddrB, &luma4x4BlkIdxB);
 
         // A
-        if (mbAddrA != -1 &&
+        if (mbAddrA > -1 &&
             dc->mb_array[mbAddrA] != NULL)
         {
             if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
@@ -1947,7 +1930,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         }
 
         // B
-        if (mbAddrB != -1 &&
+        if (mbAddrB > -1 &&
             dc->mb_array[mbAddrB] != NULL)
         {
             if ((dc->mb_array[mbAddrB]->mb_type != P_Skip &&
@@ -1981,7 +1964,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
 
         // A
-        if (mbAddrA != -1 &&
+        if (mbAddrA > -1 &&
             dc->mb_array[mbAddrA] != NULL)
         {
             if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
@@ -1996,7 +1979,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         }
 
         // B
-        if (mbAddrB != -1 &&
+        if (mbAddrB > -1 &&
             dc->mb_array[mbAddrB] != NULL)
         {
             if ((dc->mb_array[mbAddrB]->mb_type != P_Skip &&
@@ -2022,7 +2005,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         deriv_4x4chromablocks(dc, blkIdx, &mbAddrA, &chroma4x4BlkIdxA, &mbAddrB, &chroma4x4BlkIdxB);
 
         // A
-        if (mbAddrA != -1 &&
+        if (mbAddrA > -1 &&
             dc->mb_array[mbAddrA] != NULL)
         {
             if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
@@ -2037,7 +2020,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         }
 
         // B
-        if (mbAddrB != -1 &&
+        if (mbAddrB > -1 &&
             dc->mb_array[mbAddrB] != NULL)
         {
             if ((dc->mb_array[mbAddrB]->mb_type != P_Skip &&
@@ -2058,7 +2041,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         deriv_8x8lumablocks(dc, blkIdx, &mbAddrA, &luma8x8BlkIdxA, &mbAddrB, &luma8x8BlkIdxB);
 
         // A
-        if (mbAddrA != -1 &&
+        if (mbAddrA > -1 &&
             dc->mb_array[mbAddrA] != NULL)
         {
             if ((dc->mb_array[mbAddrA]->mb_type != P_Skip &&
@@ -2074,7 +2057,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
         }
 
         // B
-        if (mbAddrB != -1 &&
+        if (mbAddrB > -1 &&
             dc->mb_array[mbAddrB] != NULL)
         {
             if ((dc->mb_array[mbAddrB]->mb_type != P_Skip &&
@@ -2103,7 +2086,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
     bool condTermFlagB = false;
 
     // A
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
         if (transBlockA == -1 &&
@@ -2133,7 +2116,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
     }
 
     // B
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
         if (transBlockB == -1 &&
@@ -2186,7 +2169,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
     int condTermFlagA = 1;
     int condTermFlagB = 1;
 
-    if (mbAddrA != -1 &&
+    if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
     {
         if (dc->mb_array[mbAddrA]->transform_size_8x8_flag == false)
@@ -2198,7 +2181,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
         condTermFlagA = 0;
     }
 
-    if (mbAddrB != -1 &&
+    if (mbAddrB > -1 &&
         dc->mb_array[mbAddrB] != NULL)
     {
         if (dc->mb_array[mbAddrB]->transform_size_8x8_flag == false)
