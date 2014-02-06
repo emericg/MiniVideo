@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      h264_cabac_table.h
+ * \file      h264_cabac_tables.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2011
  */
 
-#ifndef H264_CABAC_TABLE_H
-#define H264_CABAC_TABLE_H
+#ifndef H264_CABAC_TABLES_H
+#define H264_CABAC_TABLES_H
 
 #include "../../typedef.h"
 
@@ -1580,4 +1580,4 @@ const uint8_t transIdxMPS[64] =
  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 62, 63};
 
 /* ************************************************************************** */
-#endif /* H264_CABAC_TABLE_H */
+#endif /* H264_CABAC_TABLES_H */

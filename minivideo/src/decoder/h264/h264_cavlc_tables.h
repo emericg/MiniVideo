@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      h264_cavlc_table.h
+ * \file      h264_cavlc_tables.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2010
  */
 
-#ifndef H264_CAVLC_TABLE_H
-#define H264_CAVLC_TABLE_H
+#ifndef H264_CAVLC_TABLES_H
+#define H264_CAVLC_TABLES_H
 
 #include "../../typedef.h"
 
@@ -340,4 +340,4 @@ const uint8_t runbefore_codtab[TOTRUN_NUM][16] =
 };
 
 /* ************************************************************************** */
-#endif /* H264_CAVLC_TABLE_H */
+#endif /* H264_CAVLC_TABLES_H */

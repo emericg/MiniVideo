@@ -33,7 +33,7 @@
 #include "h264_spatial.h"
 
 #include "h264_cabac.h"
-#include "h264_cabac_table.h"
+#include "h264_cabac_tables.h"
 
 /* ************************************************************************** */
 /*

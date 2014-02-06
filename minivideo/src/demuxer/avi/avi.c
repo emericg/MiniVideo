@@ -30,7 +30,7 @@
 #include "../../minitraces.h"
 #include "../../typedef.h"
 #include "../../bitstream.h"
-#include "../../bitstream_tools.h"
+#include "../../bitstream_utils.h"
 
 #include "avi.h"
 #include "avi_struct.h"

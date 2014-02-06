@@ -85,13 +85,18 @@ CONFIGURE_FILE(
 
 SET(minivideo_SRC
     src/minivideo.c
-        src/cmake_defines.h src/minitraces.c 
-        src/typedef.h src/utils.c
+        src/cmake_defines.h
+        src/minitraces.c
+        src/typedef.h
+        src/utils.c
         src/avcodecs.h
     src/bitstream.c
-        src/bitstream_map.c src/bitstream_tools.c
-        src/import.c
-        src/export.c src/export_utils.c src/stb_image_write.h
+        src/bitstream_utils.c
+        src/bitstream_map.c
+    src/import.c
+    src/export.c
+        src/export_utils.c
+        src/stb_image_write.h
     src/demuxer/filter.c
         src/demuxer/bruteforce/bruteforce.c
         src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
@@ -103,19 +108,20 @@ SET(minivideo_SRC
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
     src/decoder/video.h
-    src/decoder/h264/h264.c 
+    src/decoder/h264/h264.c
         src/decoder/h264/h264_decodingcontext.h
         src/decoder/h264/h264_expgolomb.c
         src/decoder/h264/h264_cavlc.c
-        src/decoder/h264/h264_cavlc_table.h
+        src/decoder/h264/h264_cavlc_tables.h
         src/decoder/h264/h264_cabac.c
-        src/decoder/h264/h264_cabac_table.h
+        src/decoder/h264/h264_cabac_tables.h
         src/decoder/h264/h264_nalu.c
         src/decoder/h264/h264_parameterset.c
         src/decoder/h264/h264_parameterset_struct.h
         src/decoder/h264/h264_slice.c
         src/decoder/h264/h264_slice_struct.h
         src/decoder/h264/h264_macroblock.c
+        src/decoder/h264/h264_macroblock_utils.c
         src/decoder/h264/h264_macroblock_struct.h
         src/decoder/h264/h264_intra_prediction.c
         src/decoder/h264/h264_inter_prediction.c

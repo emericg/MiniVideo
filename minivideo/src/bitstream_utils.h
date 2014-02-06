@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      bitstream_tools.h
+ * \file      bitstream_utils.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2012
  */
 
-#ifndef BITSTREAM_TOOLS_H
-#define BITSTREAM_TOOLS_H
+#ifndef BITSTREAM_UTILS_H
+#define BITSTREAM_UTILS_H
 
 // minivideo headers
 #include "typedef.h"
@@ -57,4 +57,4 @@ inline uint64_t endian_flip_64(uint64_t src);
 inline uint64_t endian_flip_cut_64(uint64_t src, const int n);
 
 /* ************************************************************************** */
-#endif /* BITSTREAM_TOOLS_H */
+#endif /* BITSTREAM_UTILS_H */
