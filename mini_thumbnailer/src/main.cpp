@@ -266,11 +266,11 @@ int main(int argc, char *argv[])
     // Check exit code from the video backend
     if (retcode == EXIT_SUCCESS)
     {
-        std::cout << YELLOW "Exiting mini_thumbnailer exited without errors. Have a nice day." RESET << std::endl;
+        std::cout << std::endl << YELLOW "mini_thumbnailer exited without errors. Have a nice day." RESET << std::endl;
     }
     else
     {
-        std::cerr << YELLOW "Exiting mini_thumbnailer " RED "with errors!" YELLOW " Have a nice day nonetheless." RESET << std::endl;
+        std::cerr << std::endl << YELLOW "mini_thumbnailer exited " RED "with errors!" YELLOW " Have a nice day nonetheless..." RESET << std::endl;
     }
 
     // Let's get to rest

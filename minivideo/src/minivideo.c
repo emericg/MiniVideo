@@ -93,21 +93,21 @@ void minivideo_infos(void)
 #endif /* ENABLE_STDBOOL */
 
 #if ENABLE_JPEG
-    printf("* EXTERNAL JPEG SUPPORT is " GREEN "ON\n" RESET);
+    printf("* EXTERNAL JPEG support is " GREEN "ON\n" RESET);
 #else
-    printf("* EXTERNAL JPEG SUPPORT is " RED "OFF\n" RESET);
+    printf("* EXTERNAL JPEG support is " RED "OFF\n" RESET);
 #endif /* ENABLE_JPEG */
 
 #if ENABLE_PNG
-    printf("* EXTERNAL PNG SUPPORT is " GREEN "ON\n" RESET);
+    printf("* EXTERNAL PNG support is " GREEN "ON\n" RESET);
 #else
-    printf("* EXTERNAL PNG SUPPORT is " RED "OFF\n" RESET);
+    printf("* EXTERNAL PNG support is " RED "OFF\n" RESET);
 #endif /* ENABLE_PNG */
 
 #if ENABLE_STBIMWRITE
-    printf("* STB_IMAGE_WRITE SUPPORT is " GREEN "ON\n" RESET);
+    printf("* STB_IMAGE_WRITE support is " GREEN "ON\n" RESET);
 #else
-    printf("* STB_IMAGE_WRITE SUPPORT is " RED "OFF\n" RESET);
+    printf("* STB_IMAGE_WRITE support is " RED "OFF\n" RESET);
 #endif /* ENABLE_STBIMWRITE */
 
 #if ENABLE_DEBUG
@@ -228,6 +228,8 @@ int minivideo_thumbnailer(const char *input_filepath,
 
             if (picture_number_filtered == 0)
                 retcode = FAILURE;
+
+            print_bitstream_map(input_video->tracks_video[0]);
         }
 
         if (retcode == SUCCESS)
@@ -303,8 +305,6 @@ int minivideo_extractor(const char *input_filepath,
                 retcode = mkv_fileParse(input_video);
                 break;
             case CONTAINER_ES:
-                // Guess its H.264 codec, the only one supported anyway
-                input_video->codec_video = CODEC_H264;
                 retcode = bruteforce_fileParse(input_video, CODEC_H264);
                 break;
             default:
