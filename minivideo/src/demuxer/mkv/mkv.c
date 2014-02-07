@@ -39,13 +39,13 @@
 
 static int mkv_parse_info(Bitstream_t *bitstr)
 {
-    TRACE_INFO(PARSER, GREEN "mkv_parse_info()\n" RESET);
+    TRACE_INFO(MKV, GREEN "mkv_parse_info()\n" RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
 
-    TRACE_1(PARSER, "* info size   = %llu\n", elementSize);
-    TRACE_1(PARSER, "* info offset = %llu\n", elementOffset);
+    TRACE_1(MKV, "* info size   = %llu\n", elementSize);
+    TRACE_1(MKV, "* info offset = %llu\n", elementOffset);
 
     while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
     {
@@ -65,7 +65,7 @@ static int mkv_parse_info(Bitstream_t *bitstr)
 
 static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
 {
-    TRACE_INFO(PARSER, GREEN "mkv_parse_seekhead_seek()\n" RESET);
+    TRACE_INFO(MKV, GREEN "mkv_parse_seekhead_seek()\n" RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
@@ -73,8 +73,8 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
     uint64_t subelementOffset = 0;
     uint64_t subelementValue = 0;
 
-    TRACE_1(PARSER, "  seekhead_seek size   = %llu\n", elementSize);
-    TRACE_1(PARSER, "  seekhead_seek offset = %llu\n", elementOffset);
+    TRACE_1(MKV, "  seekhead_seek size   = %llu\n", elementSize);
+    TRACE_1(MKV, "  seekhead_seek offset = %llu\n", elementOffset);
 
     while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
     {
@@ -84,17 +84,17 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
                 subelementSize = read_ebml_size(bitstr);
                 subelementOffset = bitstream_get_absolute_byte_offset(bitstr);
                 subelementValue = read_bits_64(bitstr, subelementSize*8);
-                TRACE_1(PARSER, "    seek_id size   = %llu\n", subelementSize);
-                TRACE_1(PARSER, "    seek_id offset = %llu\n", elementOffset);
-                TRACE_1(PARSER, "    seek_id value  = %llu\n", subelementValue);
+                TRACE_1(MKV, "    seek_id size   = %llu\n", subelementSize);
+                TRACE_1(MKV, "    seek_id offset = %llu\n", elementOffset);
+                TRACE_1(MKV, "    seek_id value  = %llu\n", subelementValue);
                 break;
             case element_SeekPosition:
                 subelementSize = read_ebml_size(bitstr);
                 subelementOffset = bitstream_get_absolute_byte_offset(bitstr);
                 subelementValue = read_ebml_data_uint(bitstr);
-                TRACE_1(PARSER, "    seek_position size   = %llu\n", subelementSize);
-                TRACE_1(PARSER, "    seek_position offset = %llu\n", subelementOffset);
-                TRACE_1(PARSER, "    seek_position value  = %llu\n", subelementValue);
+                TRACE_1(MKV, "    seek_position size   = %llu\n", subelementSize);
+                TRACE_1(MKV, "    seek_position offset = %llu\n", subelementOffset);
+                TRACE_1(MKV, "    seek_position value  = %llu\n", subelementValue);
                 break;
             default:
                 retcode = FAILURE;
@@ -109,13 +109,13 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
 
 static int mkv_parse_seekhead(Bitstream_t *bitstr)
 {
-    TRACE_INFO(PARSER, GREEN "mkv_parse_seekhead()\n" RESET);
+    TRACE_INFO(MKV, GREEN "mkv_parse_seekhead()\n" RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
 
-    TRACE_1(PARSER, "* seekhead size   = %llu\n", elementSize);
-    TRACE_1(PARSER, "* seekhead offset = %llu\n", elementOffset);
+    TRACE_1(MKV, "* seekhead size   = %llu\n", elementSize);
+    TRACE_1(MKV, "* seekhead offset = %llu\n", elementOffset);
 
     while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
     {
@@ -138,7 +138,7 @@ static int mkv_parse_seekhead(Bitstream_t *bitstr)
 
 static int mkv_parse_segment(Bitstream_t *bitstr)
 {
-    TRACE_INFO(PARSER, GREEN "ebml_parse_segment()\n" RESET);
+    TRACE_INFO(MKV, GREEN "ebml_parse_segment()\n" RESET);
     int retcode = FAILURE;
     uint64_t segmentSize = 0;
     uint64_t segmentOffset = 0;
@@ -148,8 +148,8 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
         segmentSize = read_ebml_size(bitstr);
         segmentOffset = bitstream_get_absolute_byte_offset(bitstr);
 
-        TRACE_1(PARSER, "* segment size   = %llu\n", segmentSize);
-        TRACE_1(PARSER, "* segment offset = %llu\n", segmentOffset);
+        TRACE_1(MKV, "* segment size   = %llu\n", segmentSize);
+        TRACE_1(MKV, "* segment offset = %llu\n", segmentOffset);
 
         while (bitstream_get_absolute_byte_offset(bitstr) < (segmentOffset + segmentSize))
         {
@@ -164,27 +164,27 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
                     retcode = SUCCESS;
                     break;
                 case element_Cluster:
-                    TRACE_1(PARSER, "element_Cluster\n");
+                    TRACE_1(MKV, "element_Cluster\n");
                     retcode = SUCCESS;
                     break;
                 case element_Tracks:
-                    TRACE_1(PARSER, "element_Tracks\n");
+                    TRACE_1(MKV, "element_Tracks\n");
                     retcode = SUCCESS;
                     break;
                 case element_Cues:
-                    TRACE_1(PARSER, "element_Cues\n");
+                    TRACE_1(MKV, "element_Cues\n");
                     retcode = SUCCESS;
                     break;
                 case element_Attachments:
-                    TRACE_1(PARSER, "element_Attachments\n");
+                    TRACE_1(MKV, "element_Attachments\n");
                     retcode = SUCCESS;
                     break;
                 case element_Chapters:
-                    TRACE_1(PARSER, "element_Chapters\n");
+                    TRACE_1(MKV, "element_Chapters\n");
                     retcode = SUCCESS;
                     break;
                 case element_Tags:
-                    TRACE_1(PARSER, "element_Tags\n");
+                    TRACE_1(MKV, "element_Tags\n");
                     retcode = SUCCESS;
                     break;
                 default:
@@ -211,7 +211,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
  */
 int mkv_fileParse(VideoFile_t *video)
 {
-    TRACE_INFO(PARSER, GREEN "mkv_fileParse()\n" RESET);
+    TRACE_INFO(MKV, GREEN "mkv_fileParse()\n" RESET);
     int retcode = FAILURE;
 
     // Init bitstream to parse container infos

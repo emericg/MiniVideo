@@ -114,7 +114,7 @@ typedef struct BitstreamMap_t
 int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries);
 void free_bitstream_map(BitstreamMap_t **bitstream_map);
 
-int print_bitstream_map(BitstreamMap_t *bitstream_map);
+void print_bitstream_map(BitstreamMap_t *bitstream_map);
 
 /* ************************************************************************** */
 #endif /* BITSTREAM_MAP_H */

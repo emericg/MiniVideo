@@ -37,7 +37,7 @@
 
 int ebml_parse_header(Bitstream_t *bitstr)
 {
-    TRACE_INFO(PARSER, GREEN "ebml_parse_header()\n" RESET);
+    TRACE_INFO(MKV, GREEN "ebml_parse_header()\n" RESET);
     int retcode = FAILURE;
 
     uint64_t headerSize = 0;
@@ -89,7 +89,7 @@ int ebml_parse_header(Bitstream_t *bitstr)
                     DocTypeReadVersion = read_ebml_data_uint(bitstr);
                     break;
                 default:
-                    TRACE_WARNING(PARSER, "Unknown ebml element inside header\n");
+                    TRACE_WARNING(MKV, "Unknown ebml element inside header\n");
                     bitstream_force_alignment(bitstr);
                     break;
             }
@@ -97,15 +97,15 @@ int ebml_parse_header(Bitstream_t *bitstr)
 
         // Goto the end of the element
 
-        TRACE_2(PARSER, "header size        = %llu\n", headerSize);
-        TRACE_2(PARSER, "header offset      = %llu\n", headerOffset);
-        TRACE_1(PARSER, "EBMLVersion        = %llu\n", EBMLVersion);
-        TRACE_1(PARSER, "EBMLReadVersion    = %llu\n", EBMLReadVersion);
-        TRACE_1(PARSER, "EBMLMaxIDLength    = %llu\n", EBMLMaxIDLength);
-        TRACE_1(PARSER, "EBMLMaxSizeLength  = %llu\n", EBMLMaxSizeLength);
-        TRACE_1(PARSER, "DocType            = %llu\n", DocType);
-        TRACE_1(PARSER, "DocTypeVersion     = %llu\n", DocTypeVersion);
-        TRACE_1(PARSER, "DocTypeReadVersion = %llu\n", DocTypeReadVersion);
+        TRACE_2(MKV, "header size        = %llu\n", headerSize);
+        TRACE_2(MKV, "header offset      = %llu\n", headerOffset);
+        TRACE_1(MKV, "EBMLVersion        = %llu\n", EBMLVersion);
+        TRACE_1(MKV, "EBMLReadVersion    = %llu\n", EBMLReadVersion);
+        TRACE_1(MKV, "EBMLMaxIDLength    = %llu\n", EBMLMaxIDLength);
+        TRACE_1(MKV, "EBMLMaxSizeLength  = %llu\n", EBMLMaxSizeLength);
+        TRACE_1(MKV, "DocType            = %llu\n", DocType);
+        TRACE_1(MKV, "DocTypeVersion     = %llu\n", DocTypeVersion);
+        TRACE_1(MKV, "DocTypeReadVersion = %llu\n", DocTypeReadVersion);
     }
 
     return retcode;
@@ -121,7 +121,7 @@ int ebml_parse_header(Bitstream_t *bitstr)
  */
 uint32_t read_ebml_eid(Bitstream_t *bitstr)
 {
-    TRACE_2(PARSER, "read_ebml_eid()\n");
+    TRACE_2(MKV, "read_ebml_eid()\n");
     bitstream_print_absolute_bit_offset(bitstr);
 
     uint32_t leadingZeroBits = 0;
@@ -134,9 +134,9 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
     elementSize = (leadingZeroBits + 1) * 7;
     elementValue = read_bits_64(bitstr, elementSize) + pow(2, elementSize);
 /*
-    TRACE_3(PARSER, "- leadingZeroBits = %u\n", leadingZeroBits);
-    TRACE_2(PARSER, "- elementSize     = %u\n", elementSize);
-    TRACE_2(PARSER, "- elementValue    = 0x%0X\n\n", elementValue);
+    TRACE_3(MKV, "- leadingZeroBits = %u\n", leadingZeroBits);
+    TRACE_2(MKV, "- elementSize     = %u\n", elementSize);
+    TRACE_2(MKV, "- elementValue    = 0x%0X\n\n", elementValue);
 */
     return elementValue;
 }
@@ -150,7 +150,7 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
  */
 uint64_t read_ebml_size(Bitstream_t *bitstr)
 {
-    TRACE_2(PARSER, "read_ebml_size()\n");
+    TRACE_2(MKV, "read_ebml_size()\n");
 
     uint32_t leadingZeroBits = 0;
     uint32_t sizeSize = 0;
@@ -162,9 +162,9 @@ uint64_t read_ebml_size(Bitstream_t *bitstr)
     sizeSize = (leadingZeroBits + 1) * 7;
     sizeValue = read_bits_64(bitstr, sizeSize);
 /*
-    TRACE_3(PARSER, "- leadingZeroBits = %u\n", leadingZeroBits);
-    TRACE_2(PARSER, "- sizeSize        = %u\n", sizeSize);
-    TRACE_2(PARSER, "- sizeValue       = %llu\n\n", sizeValue);
+    TRACE_3(MKV, "- leadingZeroBits = %u\n", leadingZeroBits);
+    TRACE_2(MKV, "- sizeSize        = %u\n", sizeSize);
+    TRACE_2(MKV, "- sizeValue       = %llu\n\n", sizeValue);
 */
     return sizeValue;
 }
@@ -178,7 +178,7 @@ uint64_t read_ebml_size(Bitstream_t *bitstr)
  */
 uint64_t read_ebml_data_uint(Bitstream_t *bitstr)
 {
-    TRACE_2(PARSER, "read_ebml_data_uint()\n");
+    TRACE_2(MKV, "read_ebml_data_uint()\n");
 
     uint32_t leadingZeroBits = 0;
     uint32_t elementSizeSize = 0;
@@ -192,10 +192,10 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr)
     elementSize = read_bits(bitstr, elementSizeSize) * 8;
     elementValue = read_bits_64(bitstr, elementSize);
 /*
-    TRACE_3(PARSER, "- leadingZeroBits = %u\n", leadingZeroBits);
-    TRACE_3(PARSER, "- elementSizeSize = %u\n", elementSizeSize);
-    TRACE_3(PARSER, "- elementSize     = %u\n", elementSize);
-    TRACE_2(PARSER, "- elementValue    = %u\n\n", elementValue);
+    TRACE_3(MKV, "- leadingZeroBits = %u\n", leadingZeroBits);
+    TRACE_3(MKV, "- elementSizeSize = %u\n", elementSizeSize);
+    TRACE_3(MKV, "- elementSize     = %u\n", elementSize);
+    TRACE_2(MKV, "- elementValue    = %u\n\n", elementValue);
 */
     return elementValue;
 }
@@ -209,7 +209,7 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr)
  */
 uint64_t read_ebml_data_binary(Bitstream_t *bitstr)
 {
-    TRACE_2(PARSER, "read_ebml_data_binary()\n");
+    TRACE_2(MKV, "read_ebml_data_binary()\n");
 
     uint32_t leadingZeroBits = 0;
     uint32_t elementSize = 0;
@@ -221,9 +221,9 @@ uint64_t read_ebml_data_binary(Bitstream_t *bitstr)
     elementSize = (leadingZeroBits + 1) * 7;
     elementValue = read_bits_64(bitstr, elementSize);
 /*
-    TRACE_3(PARSER, "- leadingZeroBits = %u\n", leadingZeroBits);
-    TRACE_3(PARSER, "- elementSize     = %u\n", elementSize);
-    TRACE_2(PARSER, "- elementValue    = %u\n\n", elementValue);
+    TRACE_3(MKV, "- leadingZeroBits = %u\n", leadingZeroBits);
+    TRACE_3(MKV, "- elementSize     = %u\n", elementSize);
+    TRACE_2(MKV, "- elementValue    = %u\n\n", elementValue);
 */
     return elementValue;
 }

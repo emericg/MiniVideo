@@ -74,10 +74,10 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
         // Check if we have enough IDR samples inside the video
         if (map->sample_count_idr == 0)
         {
-            TRACE_WARNING(FILTER, "Not IDR samples inside the stream, 0 pictures will be extracted!\n", map->sample_count_idr);
+            TRACE_WARNING(FILTER, "No IDR samples inside the stream, 0 pictures will be extracted!\n", map->sample_count_idr);
             picture_number = 0;
         }
-        if (map->sample_count_idr < picture_number)
+        else if (map->sample_count_idr < picture_number)
         {
             TRACE_WARNING(FILTER, "Not enough IDR samples inside the stream, only %i pictures will be extracted!\n", map->sample_count_idr);
             picture_number = map->sample_count_idr;
@@ -178,7 +178,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                 free_bitstream_map(bitstream_map_pointer);
                 bitstream_map_pointer = &map_filtered;
 
-                // exit
+                // Exit
                 retcode = picture_number;
             }
         }

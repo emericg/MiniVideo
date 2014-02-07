@@ -42,12 +42,12 @@
  */
 int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 {
-    TRACE_INFO(BITS, "<b> " BLUE "init_bitstream_map()\n" RESET);
+    TRACE_INFO(DEMUX, "<b> " BLUE "init_bitstream_map()\n" RESET);
     int retcode = SUCCESS;
 
     if (*bitstream_map != NULL)
     {
-        TRACE_ERROR(BITS, "<b> Unable to alloc a new bitstream_map: not null!\n");
+        TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map: not null!\n");
         retcode = FAILURE;
     }
     else
@@ -56,7 +56,7 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 
         if (*bitstream_map == NULL)
         {
-            TRACE_ERROR(BITS, "<b> Unable to alloc a new bitstream_map!\n");
+            TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map!\n");
             retcode = FAILURE;
         }
         else
@@ -73,7 +73,7 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
                 (*bitstream_map)->sample_timecode_presentation == NULL ||
                 (*bitstream_map)->sample_timecode_decoding == NULL)
             {
-                TRACE_ERROR(BITS, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
+                TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
 
                 if ((*bitstream_map)->sample_type != NULL)
                     free((*bitstream_map)->sample_type);
@@ -104,10 +104,10 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
  */
 void free_bitstream_map(BitstreamMap_t **bitstream_map)
 {
-    TRACE_INFO(BITS, "<b> " BLUE "free_bitstream_map()\n" RESET);
-
     if ((*bitstream_map) != NULL)
     {
+        TRACE_INFO(DEMUX, "<b> " BLUE "free_bitstream_map()\n" RESET);
+
         if ((*bitstream_map)->sample_type != NULL)
         {
             free((*bitstream_map)->sample_type);
@@ -136,7 +136,7 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
         free(*bitstream_map);
         *bitstream_map = NULL;
 
-        TRACE_1(BITS, "<b> Bitstream_map freed\n");
+        TRACE_1(DEMUX, "<b> Bitstream_map freed\n");
     }
 }
 
@@ -146,52 +146,53 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
 /*!
  * \brief Print the content of a bitstreamMap_t structure.
  * \param bitstream_map docme.
- * \return The number of picture available in the bitstream map (0 means error).
  */
-int print_bitstream_map(BitstreamMap_t *bitstream_map)
+void print_bitstream_map(BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(FILTER, GREEN "print_bitstream_map()\n" RESET);
-    int retcode = FAILURE;
+#if ENABLE_DEBUG
 
     if (bitstream_map == NULL)
     {
-        TRACE_ERROR(FILTER, "Invalid bitstream_map structure!\n");
+        TRACE_ERROR(DEMUX, "Invalid bitstream_map structure!\n");
     }
     else
     {
+        TRACE_INFO(DEMUX, GREEN "print_bitstream_map()\n" RESET);
+
         if (bitstream_map->stream_type == stream_VIDEO &&
             bitstream_map->sample_count > 0)
         {
-            TRACE_1(FILTER, "> Elementary stream type\t: VIDEO\n");
+            TRACE_INFO(DEMUX, "Elementary stream type > VIDEO\n");
         }
         else if (bitstream_map->stream_type == stream_AUDIO &&
                  bitstream_map->sample_count > 0)
         {
-            TRACE_1(FILTER, "> Elementary stream type\t: AUDIO\n");
+            TRACE_INFO(DEMUX, "Elementary stream type > AUDIO\n");
         }
         else
         {
-            TRACE_WARNING(FILTER, "> Unknown elementary stream type!\n");
+            TRACE_WARNING(FILTER, "Unknown elementary stream type!\n");
         }
 
-        TRACE_1(FILTER, "> samples alignment\t: %i\n", bitstream_map->sample_alignment);
-        TRACE_1(FILTER, "> samples count \t: %i\n", bitstream_map->sample_count);
-        TRACE_1(FILTER, "> IDR samples count\t: %i\n", bitstream_map->sample_count_idr);
+        TRACE_INFO(DEMUX, "> samples alignment: %i\n", bitstream_map->sample_alignment);
+        TRACE_INFO(DEMUX, "> samples count    : %i\n", bitstream_map->sample_count);
+        TRACE_INFO(DEMUX, "> IDR samples count: %i\n", bitstream_map->sample_count_idr);
 
         if (bitstream_map->sample_count > 0)
         {
+            TRACE_1(DEMUX, "SAMPLES\n");
             int i = 0;
             for (i = 0; i < bitstream_map->sample_count; i++)
             {
-                TRACE_1(FILTER, "> sample_type\t: %i\n", bitstream_map->sample_type[i]);
-                TRACE_1(FILTER, "  | sample_offset\t: %i\n", bitstream_map->sample_offset[i]);
-                TRACE_1(FILTER, "  | sample_size\t: %i\n", bitstream_map->sample_size[i]);
-                TRACE_1(FILTER, "  | sample_timecode: %i\n", bitstream_map->sample_timecode_presentation[i]);
+                TRACE_1(DEMUX, "> sample_type      : %i\n", bitstream_map->sample_type[i]);
+                TRACE_1(DEMUX, "  | sample_offset  : %i\n", bitstream_map->sample_offset[i]);
+                TRACE_1(DEMUX, "  | sample_size    : %i\n", bitstream_map->sample_size[i]);
+                TRACE_1(DEMUX, "  | sample_timecode: %i\n", bitstream_map->sample_timecode_presentation[i]);
             }
         }
     }
 
-    return retcode;
+#endif /* ENABLE_DEBUG */
 }
 
 /* ************************************************************************** */

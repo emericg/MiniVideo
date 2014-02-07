@@ -32,7 +32,7 @@
 
 #define MARKER_BIT \
     if (read_bit(bitstr) != 1) { \
-        TRACE_ERROR(PARSER, "wrong 'marker_bit' (M1)\n"); \
+        TRACE_ERROR(MP4, "wrong 'marker_bit' (M1)\n"); \
         return FAILURE; \
     }
 
