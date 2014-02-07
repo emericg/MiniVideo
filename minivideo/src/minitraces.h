@@ -19,10 +19,8 @@
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
+ * \version   0.2
  */
-
-#include "cmake_defines.h"
-#include "typedef.h"
 
 #ifndef MINITRACES_H
 #define MINITRACES_H
@@ -31,6 +29,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
+// Settings
+#include "cmake_defines.h"
+#include "typedef.h"
 
 /******************************************************************************
                          PUBLIC INTERFACES
@@ -56,25 +58,28 @@ extern void MiniTraces_print(const char *file, const int line, const char *func,
 #define TRACE_LEVEL_ALL     (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN | TRACE_LEVEL_INFO | TRACE_LEVEL_1 | TRACE_LEVEL_2 | TRACE_LEVEL_3)
 
 // =============================================================================
-//                       USER DEFINED OPTIONS
+//                       USER DEFINED SETTINGS
 // =============================================================================
 
+// Enable terminal colored output
 #if ENABLE_COLORS == 1
 #define DEBUG_WITH_COLORS      1
 #else
 #define DEBUG_WITH_COLORS      0
 #endif
 
+// Advanced debugging settings
 #define DEBUG_WITH_TIMESTAMPS  0
-#define DEBUG_WITH_FILE_INFO   1
+#define DEBUG_WITH_FUNC_INFO   0
+#define DEBUG_WITH_FILE_INFO   0
 #define DEBUG_WITH_FORCED_SYNC 0
 
 // =============================================================================
-//                       USER DEFINED TRACE IDENTIFIER
+//                       USER DEFINED TRACE PROGRAM IDENTIFIER
 // =============================================================================
 
 // This is used to identify the project if multiple program are using minitraces
-// at the same time. Leave blank if you dont need this.
+// at the same time. Leave blank if you don't need this!
 
 #if ENABLE_COLORS == 1
 #define TID ""
@@ -118,7 +123,6 @@ enum TraceModule_e
         EXPGO,
         CAVLC,
         CABAC,
-    LAST_ID /* auto counter, do not remove */
 };
 
 /*!
@@ -130,16 +134,16 @@ static TraceModule_t sv_trace_modules[] =
     { "MAIN"      , "Library main functions"     , TRACE_LEVEL_DEBUG },
     { "BITS"      , "Bitstream handling"         , TRACE_LEVEL_DEFAULT },
     { "I/O"       , "Input/Output related"       , TRACE_LEVEL_DEFAULT },
-    { "TOOL"      , "Various useful functions"   , TRACE_LEVEL_DEFAULT },
-    { "DEMUX"     , "File parsing functions"     , TRACE_LEVEL_DEBUG },
+    { "TOOLS"     , "Various useful functions"   , TRACE_LEVEL_DEFAULT },
+    { "DEMUX"     , "File parsing functions"     , TRACE_LEVEL_DEFAULT },
         { "AVI"   , "AVI parser"                 , TRACE_LEVEL_DEFAULT },
         { "MP4"   , "MP4 parser"                 , TRACE_LEVEL_DEFAULT },
         { "MKV"   , "MKV parser"                 , TRACE_LEVEL_DEFAULT },
         { "MPS"   , "MPEG-PS parser"             , TRACE_LEVEL_DEFAULT },
-        { "FILTER", "IDR filtering functions"    , TRACE_LEVEL_DEFAULT },
+        { "FILTR" , "IDR filtering functions"    , TRACE_LEVEL_DEFAULT },
     { "MUXER"     , "Output ES or PES to file"   , TRACE_LEVEL_DEFAULT },
-    { "H264"      , "H.264 decoder"              , TRACE_LEVEL_DEFAULT },
-        { "NALU"  , "NAL Unit decoding"          , TRACE_LEVEL_DEFAULT },
+    { "H.264"     , "H.264 decoder"              , TRACE_LEVEL_DEFAULT },
+        { "NAL-U" , "NAL Unit decoding"          , TRACE_LEVEL_DEFAULT },
         { "PARAM" , "Parameters Set"             , TRACE_LEVEL_DEFAULT },
         { "SLICE" , "Slice decoding"             , TRACE_LEVEL_DEFAULT },
         { "MACRO" , "MacroBlock decoding"        , TRACE_LEVEL_DEFAULT },
@@ -174,7 +178,7 @@ static TraceModule_t sv_trace_modules[] =
 #else
 
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
-#define TRACE_WARNING( MODULE, ... )
+#define TRACE_WARNING( MODULE, ... ) MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_WARN, MODULE, __VA_ARGS__ )
 #define TRACE_INFO( MODULE, ... )
 #define TRACE_1( MODULE, ... )
 #define TRACE_2( MODULE, ... )

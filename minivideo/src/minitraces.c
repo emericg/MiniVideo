@@ -19,6 +19,7 @@
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
+ * \version   0.2
  */
 
 // C standard libraries
@@ -26,7 +27,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "minitraces.h"
 
@@ -35,6 +35,10 @@
 *******************************************************************************/
 
 static const unsigned int sf_trace_module_count = sizeof(sv_trace_modules) / sizeof(TraceModule_t);
+
+#if DEBUG_WITH_TIMESTAMPS
+
+#include <time.h>
 
 /*!
  * If CLOCK_MONOTONIC_RAW is not available on your system, you can fallback to
@@ -49,9 +53,10 @@ static unsigned get_trace_ticks(void)
 
     return time;
 }
+#endif /* DEBUG_WITH_TIMESTAMPS */
 
 /*!
- * \brief This function displays (normally at boot-up) trace modules configuration
+ * \brief This function displays trace modules configuration (usually at program start-up)
  */
 static void sf_print_trace_levels(const unsigned level)
 {
@@ -82,7 +87,7 @@ static void sf_dump_trace_config(void)
 
     for (i = 0; i < sf_trace_module_count; i++)
     {
-        printf(TID"[%02x][%s] Trace Mask 0x%X: ", i,
+        printf(TID "[%02x][%s] Trace Mask 0x%X: ", i,
                sv_trace_modules[i].module_name,
                sv_trace_modules[i].module_mask);
 
@@ -139,37 +144,60 @@ void MiniTraces_dump(void)
 void MiniTraces_print(const char *file, const int line, const char *func,
                       const unsigned level, const unsigned module, const char *format, ...)
 {
-    // Print trace module header
-    printf(TID);
-
+#if ENABLE_DEBUG
     if (module > sf_trace_module_count)
     {
         printf("[TRACE][%s] module[%d] unknown\n", __FUNCTION__, (int)module);
         return;
     }
+#endif
 
     if ((sv_trace_modules[module].module_mask & level) == level)
     {
-        // Retrieve all arguments
-        va_list args;
-        va_start(args, format);
+        // Trace program identifier
+        ////////////////////////////////////////////////////////////////////////
 
-        // Format trace header
+        printf(TID);
 
-#if DEBUG_WITH_TIME_STAMP
+        // Trace header
+        ////////////////////////////////////////////////////////////////////////
+
+#if DEBUG_WITH_TIMESTAMPS
+        // Print the trace precise timestamp
         clock_t ticks = clock() *1000 / CLOCKS_PER_SEC;
         printf("[%li ms] ", get_trace_ticks());
 #endif
-        const char *level_string = sf_trace_level_string(level);
-        const char *tmp = strrchr(file, '/');
-        printf("[%s][%s]" BLD_WHITE "[%s]" CLR_RESET "{%s:%d} > ", level_string, sv_trace_modules[module].module_name, func, tmp ? ++tmp : file, line);
 
-        // Trace outputted
+        // Trace module, 5 chars, left padded
+        const char *level_string = sf_trace_level_string(level);
+        printf("[%s][%05s]", level_string, sv_trace_modules[module].module_name);
+
+#if DEBUG_WITH_FUNC_INFO
+        // Print the function where the trace came from
+        printf(BLD_WHITE "[%s]" CLR_RESET, func);
+#endif
+
+#if DEBUG_WITH_FILE_INFO
+        // Print the line of code that triggered the trace output
+        const char *tmp = strrchr(file, '/');
+        printf(BLD_WHITE "[%s]" CLR_RESET "{%s:%d}", func, tmp ? ++tmp : file, line);
+#endif
+
+        // Customizable header / body separator
+        ////////////////////////////////////////////////////////////////////////
+
+        printf(" ");
+
+        // Trace body
+        ////////////////////////////////////////////////////////////////////////
+
+        va_list args;
+        va_start(args, format);
         vprintf(format, args);
         va_end(args);
 
 #if DEBUG_WITH_FORCED_SYNC
-        // Force terminal synchronisazion (slow)
+        // Force terminal synchronisazion (very slow!)
         fflush(stdout);
 #endif
     }
