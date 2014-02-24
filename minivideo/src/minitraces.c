@@ -19,7 +19,7 @@
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.2
+ * \version   0.3
  */
 
 // C standard libraries
@@ -30,9 +30,48 @@
 
 #include "minitraces.h"
 
-/******************************************************************************
-                   STATIC FUNCTION IMPLEMENTATION
-*******************************************************************************/
+/* ************************************************************************** */
+
+typedef struct TraceModule_t
+{
+    char     module_name[8];
+    char     module_description[64];
+    unsigned module_mask;
+} TraceModule_t;
+
+/*!
+ * WARNING: The content of this structure should ALWAYS be in sync with the "TraceModule_e" enum in minitraces.h.
+ * The following modules sould follow the exact same order that the one in "TraceModule_e" enum.
+ */
+static TraceModule_t sv_trace_modules[] =
+{
+    { "MAIN"      , "Library main functions"     , TRACE_LEVEL_DEBUG },
+    { "BITS"      , "Bitstream handling"         , TRACE_LEVEL_DEFAULT },
+    { "I/O"       , "Input/Output related"       , TRACE_LEVEL_DEFAULT },
+    { "TOOLS"     , "Various useful functions"   , TRACE_LEVEL_DEFAULT },
+    { "DEMUX"     , "File parsing functions"     , TRACE_LEVEL_DEFAULT },
+        { "AVI"   , "AVI parser"                 , TRACE_LEVEL_DEFAULT },
+        { "MP4"   , "MP4 parser"                 , TRACE_LEVEL_DEFAULT },
+        { "MKV"   , "MKV parser"                 , TRACE_LEVEL_DEFAULT },
+        { "MPS"   , "MPEG-PS parser"             , TRACE_LEVEL_DEFAULT },
+        { "FILTR" , "IDR filtering functions"    , TRACE_LEVEL_DEFAULT },
+    { "MUXER"     , "Output ES or PES to file"   , TRACE_LEVEL_DEFAULT },
+    { "H.264"     , "H.264 decoder"              , TRACE_LEVEL_DEFAULT },
+        { "NAL-U" , "NAL Unit decoding"          , TRACE_LEVEL_DEFAULT },
+        { "PARAM" , "Parameters Set"             , TRACE_LEVEL_DEFAULT },
+        { "SLICE" , "Slice decoding"             , TRACE_LEVEL_DEFAULT },
+        { "MACRO" , "MacroBlock decoding"        , TRACE_LEVEL_DEFAULT },
+        { "SPACE" , "Spatial subdivision"        , TRACE_LEVEL_DEFAULT },
+        { "INTRA" , "Intra prediction"           , TRACE_LEVEL_DEFAULT },
+        { "INTER" , "Inter prediction"           , TRACE_LEVEL_DEFAULT },
+        { "TRANS" , "Spatial transformation"     , TRACE_LEVEL_DEFAULT },
+        { "EXPGO" , "Exp-Golomb decoding"        , TRACE_LEVEL_DEFAULT },
+        { "CAVLC" , "CAVLC decoding"             , TRACE_LEVEL_DEFAULT },
+        { "CABAC" , "CABAC decoding"             , TRACE_LEVEL_DEFAULT },
+};
+
+/* ************************************************************************** */
+/* ************************************************************************** */
 
 static const unsigned int sf_trace_module_count = sizeof(sv_trace_modules) / sizeof(TraceModule_t);
 
@@ -55,6 +94,8 @@ static unsigned get_trace_ticks(void)
 }
 #endif /* DEBUG_WITH_TIMESTAMPS */
 
+/* ************************************************************************** */
+
 /*!
  * \brief This function displays trace modules configuration (usually at program start-up)
  */
@@ -69,6 +110,8 @@ static void sf_print_trace_levels(const unsigned level)
            (level & TRACE_LEVEL_3)    ? " | L3":"");
     printf("\n");
 }
+
+/* ************************************************************************** */
 
 /*!
  * \brief This function displays (normally at boot-up) trace modules configuration
@@ -95,6 +138,8 @@ static void sf_dump_trace_config(void)
     }
 }
 
+/* ************************************************************************** */
+
 /*!
  * Gives out a 2-character description of the trace level.
  * This is more readable than the numeric value of the level.
@@ -118,9 +163,8 @@ static const char *sf_trace_level_string(unsigned level)
     return string;
 }
 
-/******************************************************************************
-                   PUBLIC FUNCTION IMPLEMENTATION
-*******************************************************************************/
+/* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
  * \brief This function displays what trace modules are currently enabled.
@@ -129,6 +173,8 @@ void MiniTraces_dump(void)
 {
     sf_dump_trace_config();
 }
+
+/* ************************************************************************** */
 
 /*!
  * \brief This function formats output traces.
@@ -157,7 +203,7 @@ void MiniTraces_print(const char *file, const int line, const char *func,
         // Trace program identifier
         ////////////////////////////////////////////////////////////////////////
 
-        printf(TID);
+        printf("%s", TID);
 
         // Trace header
         ////////////////////////////////////////////////////////////////////////
@@ -170,7 +216,7 @@ void MiniTraces_print(const char *file, const int line, const char *func,
 
         // Trace module, 5 chars, left padded
         const char *level_string = sf_trace_level_string(level);
-        printf("[%s][%05s]", level_string, sv_trace_modules[module].module_name);
+        printf("[%s][%5s]", level_string, sv_trace_modules[module].module_name);
 
 #if DEBUG_WITH_FUNC_INFO
         // Print the function where the trace came from
@@ -180,7 +226,7 @@ void MiniTraces_print(const char *file, const int line, const char *func,
 #if DEBUG_WITH_FILE_INFO
         // Print the line of code that triggered the trace output
         const char *tmp = strrchr(file, '/');
-        printf(BLD_WHITE "[%s]" CLR_RESET "{%s:%d}", func, tmp ? ++tmp : file, line);
+        printf("{%s:%d}", tmp ? ++tmp : file, line);
 #endif
 
         // Customizable header / body separator
@@ -202,3 +248,5 @@ void MiniTraces_print(const char *file, const int line, const char *func,
 #endif
     }
 }
+
+/* ************************************************************************** */

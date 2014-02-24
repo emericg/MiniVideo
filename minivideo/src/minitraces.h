@@ -19,7 +19,7 @@
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.2
+ * \version   0.3
  */
 
 #ifndef MINITRACES_H
@@ -34,28 +34,16 @@ extern "C" {
 #include "cmake_defines.h"
 #include "typedef.h"
 
-/******************************************************************************
-                         PUBLIC INTERFACES
-*******************************************************************************/
+// Colors
+#include "colors.h"
+
+/* ************************************************************************** */
 
 extern void MiniTraces_dump(void);
 extern void MiniTraces_print(const char *file, const int line, const char *func,
                              const unsigned level, const unsigned module, const char *format, ...);
 
-/******************************************************************************
-                     GENERIC DEBUG LEVEL DEFINITIONS
-*******************************************************************************/
-
-#define TRACE_LEVEL_ERR    (1 << 0)
-#define TRACE_LEVEL_WARN   (1 << 1)
-#define TRACE_LEVEL_INFO   (1 << 2)
-#define TRACE_LEVEL_1      (1 << 3)
-#define TRACE_LEVEL_2      (1 << 4)
-#define TRACE_LEVEL_3      (1 << 5)
-
-#define TRACE_LEVEL_DEFAULT (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN)
-#define TRACE_LEVEL_DEBUG   (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN | TRACE_LEVEL_INFO)
-#define TRACE_LEVEL_ALL     (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN | TRACE_LEVEL_INFO | TRACE_LEVEL_1 | TRACE_LEVEL_2 | TRACE_LEVEL_3)
+/* ************************************************************************** */
 
 // =============================================================================
 //                       USER DEFINED SETTINGS
@@ -70,8 +58,8 @@ extern void MiniTraces_print(const char *file, const int line, const char *func,
 
 // Advanced debugging settings
 #define DEBUG_WITH_TIMESTAMPS  0
-#define DEBUG_WITH_FUNC_INFO   0
-#define DEBUG_WITH_FILE_INFO   0
+#define DEBUG_WITH_FUNC_INFO   1
+#define DEBUG_WITH_FILE_INFO   1
 #define DEBUG_WITH_FORCED_SYNC 0
 
 // =============================================================================
@@ -79,25 +67,18 @@ extern void MiniTraces_print(const char *file, const int line, const char *func,
 // =============================================================================
 
 // This is used to identify the project if multiple program are using minitraces
-// at the same time. Leave blank if you don't need this!
+// at the same time. Leave blank if you don't need this feature!
 
-#if ENABLE_COLORS == 1
 #define TID ""
-#else
-#define TID ""
-#endif
 
 // =============================================================================
 //                       USER DEFINED MODULES
 // =============================================================================
 
-typedef struct TraceModule_t
-{
-    char     module_name[16];
-    char     module_description[64];
-    unsigned module_mask;
-} TraceModule_t;
-
+/*!
+ * WARNING: The content of this enum should ALWAYS be in sync with the "sv_trace_modules" structure in minitraces.h.
+ * The following modules sould follow the exact same order that the one in "sv_trace_modules" structure.
+ */
 enum TraceModule_e
 {
     MAIN,
@@ -125,46 +106,22 @@ enum TraceModule_e
         CABAC,
 };
 
-/*!
- * Warning: trace declarations in this table should follow the order of the
- * type definition of MeTraces.h. It should be alphabetic.
- */
-static TraceModule_t sv_trace_modules[] =
-{
-    { "MAIN"      , "Library main functions"     , TRACE_LEVEL_DEBUG },
-    { "BITS"      , "Bitstream handling"         , TRACE_LEVEL_DEFAULT },
-    { "I/O"       , "Input/Output related"       , TRACE_LEVEL_DEFAULT },
-    { "TOOLS"     , "Various useful functions"   , TRACE_LEVEL_DEFAULT },
-    { "DEMUX"     , "File parsing functions"     , TRACE_LEVEL_DEFAULT },
-        { "AVI"   , "AVI parser"                 , TRACE_LEVEL_DEFAULT },
-        { "MP4"   , "MP4 parser"                 , TRACE_LEVEL_DEFAULT },
-        { "MKV"   , "MKV parser"                 , TRACE_LEVEL_DEFAULT },
-        { "MPS"   , "MPEG-PS parser"             , TRACE_LEVEL_DEFAULT },
-        { "FILTR" , "IDR filtering functions"    , TRACE_LEVEL_DEFAULT },
-    { "MUXER"     , "Output ES or PES to file"   , TRACE_LEVEL_DEFAULT },
-    { "H.264"     , "H.264 decoder"              , TRACE_LEVEL_DEFAULT },
-        { "NAL-U" , "NAL Unit decoding"          , TRACE_LEVEL_DEFAULT },
-        { "PARAM" , "Parameters Set"             , TRACE_LEVEL_DEFAULT },
-        { "SLICE" , "Slice decoding"             , TRACE_LEVEL_DEFAULT },
-        { "MACRO" , "MacroBlock decoding"        , TRACE_LEVEL_DEFAULT },
-        { "SPACE" , "Spatial subdivision"        , TRACE_LEVEL_DEFAULT },
-        { "INTRA" , "Intra prediction"           , TRACE_LEVEL_DEFAULT },
-        { "INTER" , "Inter prediction"           , TRACE_LEVEL_DEFAULT },
-        { "TRANS" , "Spatial transformation"     , TRACE_LEVEL_DEFAULT },
-        { "EXPGO" , "Exp-Golomb decoding"        , TRACE_LEVEL_DEFAULT },
-        { "CAVLC" , "CAVLC decoding"             , TRACE_LEVEL_DEFAULT },
-        { "CABAC" , "CABAC decoding"             , TRACE_LEVEL_DEFAULT },
-};
+/* ************************************************************************** */
 
-/******************************************************************************
-                         COLORS DEFINITIONS
-*******************************************************************************/
+// GENERIC DEBUG LEVEL DEFINITIONS
 
-#include "colors.h"
+#define TRACE_LEVEL_ERR     (1 << 0)
+#define TRACE_LEVEL_WARN    (1 << 1)
+#define TRACE_LEVEL_INFO    (1 << 2)
+#define TRACE_LEVEL_1       (1 << 3)
+#define TRACE_LEVEL_2       (1 << 4)
+#define TRACE_LEVEL_3       (1 << 5)
 
-/******************************************************************************
-                         TRACES MACRO DEFINITIONS
-*******************************************************************************/
+#define TRACE_LEVEL_DEFAULT (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN)
+#define TRACE_LEVEL_DEBUG   (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN | TRACE_LEVEL_INFO)
+#define TRACE_LEVEL_ALL     (TRACE_LEVEL_ERR | TRACE_LEVEL_WARN | TRACE_LEVEL_INFO | TRACE_LEVEL_1 | TRACE_LEVEL_2 | TRACE_LEVEL_3)
+
+// TRACE MACROS
 
 #if ENABLE_DEBUG == 1
 
@@ -184,7 +141,7 @@ static TraceModule_t sv_trace_modules[] =
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#endif
+#endif /* ENABLE_DEBUG */
 
 #ifdef __cplusplus
 }
