@@ -30,6 +30,7 @@
 #include "../../minitraces.h"
 #include "../../typedef.h"
 #include "../../utils.h"
+#include "../../bitstream_utils.h"
 #include "h264_expgolomb.h"
 #include "h264_transform.h"
 

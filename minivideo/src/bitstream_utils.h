@@ -30,10 +30,7 @@
 
 /* ************************************************************************** */
 
-// Various operations
-inline int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr);
-inline int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr);
-
+// Debug operations
 void bitstream_print_stats(Bitstream_t *bitstr);
 void bitstream_print_buffer(Bitstream_t *bitstr);
 void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr);

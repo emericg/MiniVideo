@@ -10,8 +10,9 @@ MiniVideo*
 CMakeCache.txt
 CMakeFiles
 Makefile
-cmake_install.cmake
 install_manifest.txt
+cmake_install.cmake
+cmake_defines.h
 
 # Doxygen documentation
 minivideo/doc/doxygen_temp/html/*

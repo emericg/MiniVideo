@@ -330,7 +330,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
         {
             if (mb->MbPartPredMode[i] == Intra_4x4)
             {
-                printf("[MB] - Luma prediction\t\t: Intra_4x4\n", i);
+                printf("[MB] - Luma prediction\t\t: Intra_4x4\n");
                 unsigned int luma4x4BlkIdx = 0;
                 for (luma4x4BlkIdx = 0; luma4x4BlkIdx < 16; luma4x4BlkIdx++)
                 {
@@ -339,12 +339,12 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
             }
             else if (mb->MbPartPredMode[i] == Intra_16x16)
             {
-                printf("[MB] - Luma prediction\t\t: Intra_16x16\n", i);
+                printf("[MB] - Luma prediction\t\t: Intra_16x16\n");
                 printf("[MB]   - Intra16x16PredMode\t: %i\n", mb->Intra16x16PredMode);
             }
             else if (mb->MbPartPredMode[i] == Intra_8x8)
             {
-                printf("[MB] - Luma prediction\t\t: Intra_8x8\n", i);
+                printf("[MB] - Luma prediction\t\t: Intra_8x8\n");
                 unsigned int luma8x8BlkIdx = 0;
                 for (luma8x8BlkIdx = 0; luma8x8BlkIdx < 4; luma8x8BlkIdx++)
                 {

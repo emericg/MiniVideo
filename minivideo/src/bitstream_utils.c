@@ -40,33 +40,6 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Return the absolute byte offset into the bitstream.
- * \param *bitstr The bitstream to use.
- * \return The absolute byte offset into the bitstream.
- */
-int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr)
-{
-    return (int64_t)(bitstr->bitstream_offset + bitstr->buffer_offset/8 + bitstr->buffer_discarded_bytes);
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Return the absolute bit offset into the bitstream.
- * \param *bitstr The bitstream to use.
- * \return The absolute bit offset into the bitstream.
- *
- * Be careful of integer overflow if file is more than 134217728 GiB?
- */
-int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr)
-{
-    return (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + bitstr->buffer_discarded_bytes*8);
-}
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/*!
  * \brief Print various statistics about the current bitstream and its buffer.
  * \param *bitstr The bitstream to check.
  */

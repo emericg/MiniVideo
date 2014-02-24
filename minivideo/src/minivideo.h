@@ -54,4 +54,6 @@ int minivideo_extractor(const char *input_filepath,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+/* ************************************************************************** */
 #endif /* MINIVIDEO_H */

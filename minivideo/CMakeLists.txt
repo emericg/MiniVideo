@@ -28,7 +28,7 @@ SET(ENABLE_STDBOOL 1) # "Toggle C99 <stdbool.h> usage"
 
 SET(ENABLE_JPEG 1) # "Toggle external libjpeg support"
 SET(ENABLE_PNG 1) # "Toggle external libpng support"
-SET(ENABLE_STBIMWRITE 1) # "Toggle bundled stb_image_write library for bmp/png/tga support"
+SET(ENABLE_STBIMWRITE 1) # "Toggle internal stb_image_write library for bmp/png/tga support"
 
 # libjpeg module
 IF(ENABLE_JPEG)
@@ -59,17 +59,16 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("** This is a RELEASE build. You can change it using -DCMAKE_BUILD_TYPE=Debug.")
     SET(ENABLE_DEBUG 0)
     SET(CMAKE_BUILD_TYPE release)
-    # Custom cflags ? Use "release" and "-O2" for maximum speed.
-    # Use "debug" and "-O0 -g" if you want better support for GDB and Valgrind.
-    #SET(CMAKE_C_FLAGS "-O2")
+    # Custom cflags ? Use "release mode" and "-O2" for maximum speed.
+    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE")
 
 ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
 
     MESSAGE("** This is a DEBUG build. You can change it using -DCMAKE_BUILD_TYPE=Release.")
     SET(ENABLE_DEBUG 1)
     SET(CMAKE_BUILD_TYPE debug)
-    # Custom cflags ? Use "debug" and "-O0 -g" if you want better support for GDB and Valgrind.
-    #SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE")
+    # Custom cflags ? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
+    SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE -Wall -Wextra -Wshadow -Wno-sign-compare -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
 
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 

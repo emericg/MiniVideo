@@ -30,6 +30,7 @@
 #include "../../typedef.h"
 
 #include "../../bitstream.h"
+#include "../../bitstream_utils.h"
 #include "ebml.h"
 
 #include "mkv.h"

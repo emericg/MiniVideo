@@ -28,6 +28,8 @@
 // minivideo headers
 #include "../../minitraces.h"
 #include "../../typedef.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
 #include "bruteforce.h"
 
 #define INITIAL_SEARCH_WINDOW  4194304 // 4MiB

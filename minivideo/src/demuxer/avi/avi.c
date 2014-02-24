@@ -686,7 +686,6 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
             TRACE_1(AVI, "> movi_offset : %i\n", movioffset);
 
             // Parse index structure
-            int i = 0;
             for (i = 0; i < index_entry_count; i++)
             {
                 uint32_t dwChunkId = read_bits(bitstr, 32);
@@ -1531,7 +1530,7 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
                         int sid = video->tracks_video[tid]->sample_count;
                         video->tracks_video[tid]->sample_count++;
 
-                        if (avi->tracks[i]->index_entries[i].flags = AVIIF_KEYFRAME)
+                        if (avi->tracks[i]->index_entries[i].flags == AVIIF_KEYFRAME)
                             video->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
                         else
                             video->tracks_video[tid]->sample_type[sid] = sample_VIDEO;

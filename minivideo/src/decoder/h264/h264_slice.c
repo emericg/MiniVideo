@@ -30,6 +30,7 @@
 #include "../../typedef.h"
 #include "../../export.h"
 #include "../../bitstream.h"
+#include "../../bitstream_utils.h"
 #include "h264_expgolomb.h"
 #include "h264_cabac.h"
 #include "h264_macroblock.h"

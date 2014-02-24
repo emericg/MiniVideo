@@ -147,9 +147,9 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
     TRACE_INFO(BITS, "<b> " BLUE "buffer_feed_next_sample()\n" RESET);
     int retcode = SUCCESS;
 
-    // Print stats
-    TRACE_1(BITS, "<b> Status before reallocation:\n");
-    bitstream_print_stats(bitstr);
+    // Print stats?
+    //TRACE_1(BITS, "<b> Status before reallocation:\n");
+    //bitstream_print_stats(bitstr);
 
     // Check for premature end of file
     if (bitstr->bitstream_sample_index == bitstr->bitstream_map->sample_count)
@@ -219,9 +219,9 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
                     }
                 }
 
-                // Print stats
-                TRACE_1(BITS, "<b> Status after reallocation:\n");
-                bitstream_print_stats(bitstr);
+                // Print stats?
+                //TRACE_1(BITS, "<b> Status after reallocation:\n");
+                //bitstream_print_stats(bitstr);
 
                 // Update sample position
                 bitstr->bitstream_sample_index++;
@@ -249,9 +249,9 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
     TRACE_INFO(BITS, "<b> " BLUE "buffer_feed_dynamic()\n" RESET);
     int retcode = FAILURE;
 
-    // Print stats
-    TRACE_1(BITS, "<b> Status before reallocation:\n");
-    bitstream_print_stats(bitstr);
+    // Print stats?
+    //TRACE_1(BITS, "<b> Status before reallocation:\n");
+    //bitstream_print_stats(bitstr);
 
     // Update current offset into the bitstream
     if (new_bitstream_offset >= 0)
@@ -316,9 +316,9 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
                 retcode = SUCCESS;
             }
 
-            // Print stats
-            TRACE_1(BITS, "<b> Status after reallocation:\n");
-            bitstream_print_stats(bitstr);
+            // Print stats?
+            //TRACE_1(BITS, "<b> Status after reallocation:\n");
+            //bitstream_print_stats(bitstr);
         }
     }
 
@@ -1015,6 +1015,33 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
 #endif /* ENABLE_DEBUG */
 
     return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Return the absolute byte offset into the bitstream.
+ * \param *bitstr The bitstream to use.
+ * \return The absolute byte offset into the bitstream.
+ */
+int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr)
+{
+    return (int64_t)(bitstr->bitstream_offset + bitstr->buffer_offset/8 + bitstr->buffer_discarded_bytes);
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Return the absolute bit offset into the bitstream.
+ * \param *bitstr The bitstream to use.
+ * \return The absolute bit offset into the bitstream.
+ *
+ * Be careful of integer overflow if file is more than 134217728 GiB?
+ */
+int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr)
+{
+    return (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + bitstr->buffer_discarded_bytes*8);
 }
 
 /* ************************************************************************** */

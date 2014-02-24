@@ -177,7 +177,7 @@ int parse_pes(Bitstream_t *bitstr, PesPacket_t *packet)
             packet->pack_header_field_flag = read_bit(bitstr);
             packet->program_packet_sequence_counter_flag = read_bit(bitstr);
             packet->PSTD_buffer_flag = read_bit(bitstr);
-            int reserved = read_bits(bitstr, 3);
+            /*int reserved =*/ read_bits(bitstr, 3);
             packet->PES_extension_flag_2 = read_bit(bitstr);
 
             if (packet->PES_private_data_flag == 1)
@@ -223,7 +223,7 @@ int parse_pes(Bitstream_t *bitstr, PesPacket_t *packet)
                 int i = 0;
                 for (i = 0; i < packet->PES_extension_field_length; i++)
                 {
-                    int reserved = read_bits(bitstr, 8);
+                    /*int reserved =*/ read_bits(bitstr, 8);
                 }
             }
         }

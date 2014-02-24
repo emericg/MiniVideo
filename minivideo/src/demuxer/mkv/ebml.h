@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "../../bitstream.h"
+#include "../../bitstream_utils.h"
 
 /* ************************************************************************** */
 

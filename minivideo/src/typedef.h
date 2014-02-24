@@ -34,8 +34,8 @@
 #define SUCCESS     1
 #define UNSUPPORTED 2
 
-// This section is deprecated
 #if ENABLE_LARGEFILE
+    // This section is deprecated
     #define fopen(a, b)      fopen64(a, b)
     #define ftell(a)         ftello64(a)
     #define ftello(a)        ftello64(a)
@@ -43,7 +43,7 @@
     #define fseek(a, b, c)   fseeko64(a, b, c)
     #define lseek(a, b, c)   lseek64(a, b, c)
 #else
-    // Just compile with -D_LARGEFILE64_SOURCE
+    // Just build MiniVideo with -D_LARGEFILE64_SOURCE
 #endif /* ENABLE_LARGEFILE */
 
 
