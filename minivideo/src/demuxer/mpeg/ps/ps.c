@@ -279,12 +279,12 @@ int ps_fileParse(VideoFile_t *video)
         {
             video->tracks_audio[0]->stream_type = stream_AUDIO;
             video->tracks_audio[0]->stream_level = stream_level_PES;
-            video->tracks_audio[0]->stream_codec = CODEC_MP3;
+            video->tracks_audio[0]->stream_codec = CODEC_MPEG_L3;
             video->tracks_audio[0]->sample_alignment = false;
 
             video->tracks_video[0]->stream_type = stream_VIDEO;
             video->tracks_video[0]->stream_level = stream_level_PES;
-            video->tracks_video[0]->stream_codec = CODEC_H262;
+            video->tracks_video[0]->stream_codec = CODEC_MPEG12;
             video->tracks_video[0]->sample_alignment = false;
 
             // Read bitstream
@@ -350,8 +350,8 @@ int ps_fileParse(VideoFile_t *video)
                                     video->tracks_video[0]->sample_type[sid] = sample_VIDEO;
                                     video->tracks_video[0]->sample_size[sid] = pes_packet.PES_packet_length + 6;
                                     video->tracks_video[0]->sample_offset[sid] = pes_packet.packet_start_offset;
-                                    video->tracks_video[0]->sample_timecode_presentation[sid] = pes_packet.PTS;
-                                    video->tracks_video[0]->sample_timecode_decoding[sid] = pes_packet.DTS;
+                                    video->tracks_video[0]->sample_pts[sid] = pes_packet.PTS;
+                                    video->tracks_video[0]->sample_dts[sid] = pes_packet.DTS;
                                 }
                                 break;
                             case SID_AUDIO:
@@ -367,8 +367,8 @@ int ps_fileParse(VideoFile_t *video)
                                     video->tracks_audio[0]->sample_type[sid] = sample_AUDIO;
                                     video->tracks_audio[0]->sample_size[sid] = pes_packet.PES_packet_length + 6;
                                     video->tracks_audio[0]->sample_offset[sid] = pes_packet.packet_start_offset;
-                                    video->tracks_audio[0]->sample_timecode_presentation[sid] = pes_packet.PTS;
-                                    video->tracks_audio[0]->sample_timecode_decoding[sid] = pes_packet.DTS;
+                                    video->tracks_audio[0]->sample_pts[sid] = pes_packet.PTS;
+                                    video->tracks_audio[0]->sample_dts[sid] = pes_packet.DTS;
                                 }
                                 break;
                             default:

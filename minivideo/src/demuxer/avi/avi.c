@@ -528,7 +528,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
                 if (track->strf.wFormatTag == wftag_MP1)
                 {
                     TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
-                    track->strh.fccHandler = CODEC_MP1;
+                    track->strh.fccHandler = CODEC_MPEG_L1;
 
                     if (byte_left >= 24)
                     {
@@ -557,7 +557,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
                 else if (track->strf.wFormatTag == wftag_MP3)
                 {
                     TRACE_1(AVI, "> EXT > MPEGLAYER3WAVEFORMAT\n");
-                    track->strh.fccHandler = CODEC_MP3;
+                    track->strh.fccHandler = CODEC_MPEG_L3;
 
                     if (byte_left >= 11)
                     {
@@ -580,7 +580,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
                 else if (track->strf.wFormatTag == wftag_WAV)
                 {
                     TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
-                    track->strh.fccHandler = CODEC_WAV;
+                    track->strh.fccHandler = CODEC_PCM;
 
                     if (byte_left >= 28)
                     {
@@ -704,8 +704,8 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
                     video->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
                     video->tracks_audio[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
                     video->tracks_audio[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_audio[tid]->sample_timecode_decoding[sid] = -1;
-                    video->tracks_audio[tid]->sample_timecode_presentation[sid] = -1;
+                    video->tracks_audio[tid]->sample_dts[sid] = -1;
+                    video->tracks_audio[tid]->sample_pts[sid] = -1;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x6463) // dc: video
                 {
@@ -721,8 +721,8 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
 
                     video->tracks_video[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
                     video->tracks_video[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_video[tid]->sample_timecode_decoding[sid] = -1;
-                    video->tracks_video[tid]->sample_timecode_presentation[sid] = -1;
+                    video->tracks_video[tid]->sample_dts[sid] = -1;
+                    video->tracks_video[tid]->sample_pts[sid] = -1;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7478) // tx: subtitles
                 {
@@ -733,8 +733,8 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
                     video->tracks_subtitles[tid]->sample_type[sid] = sample_TEXT_FILE;
                     video->tracks_subtitles[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
                     video->tracks_subtitles[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_subtitles[tid]->sample_timecode_decoding[sid] = -1;
-                    video->tracks_subtitles[tid]->sample_timecode_presentation[sid] = -1;
+                    video->tracks_subtitles[tid]->sample_dts[sid] = -1;
+                    video->tracks_subtitles[tid]->sample_pts[sid] = -1;
                     video->tracks_subtitles[tid]->sample_count++;
                 }
 /*
@@ -1426,7 +1426,7 @@ static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_
                 track->strh.fccHandler == fcc_FMP4 ||
                 track->strh.fccHandler == fcc_DIVX ||
                 track->strh.fccHandler == fcc_DX50)
-                mytrack->stream_codec = CODEC_XVID;
+                mytrack->stream_codec = CODEC_MPEG4;
             else
                 mytrack->stream_codec = CODEC_UNKNOWN;
 
@@ -1519,8 +1519,8 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
                         video->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
                         video->tracks_audio[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
                         video->tracks_audio[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
-                        video->tracks_audio[tid]->sample_timecode_decoding[sid] = avi->tracks[i]->index_entries[k].pts;
-                        video->tracks_audio[tid]->sample_timecode_presentation[sid] = -1;
+                        video->tracks_audio[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
+                        video->tracks_audio[tid]->sample_pts[sid] = -1;
                     }
                 }
                 else if (avi->tracks[i]->strh.fccType == fcc_vids)
@@ -1537,8 +1537,8 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
 
                         video->tracks_video[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
                         video->tracks_video[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
-                        video->tracks_video[tid]->sample_timecode_decoding[sid] = avi->tracks[i]->index_entries[k].pts;
-                        video->tracks_video[tid]->sample_timecode_presentation[sid] = -1;
+                        video->tracks_video[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
+                        video->tracks_video[tid]->sample_pts[sid] = -1;
                     }
                 }
                 else if (avi->tracks[i]->strh.fccType == fcc_txts)

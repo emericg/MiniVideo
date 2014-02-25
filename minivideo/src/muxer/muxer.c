@@ -237,7 +237,7 @@ static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_
     // File extension
     if (bitstream_map->stream_type == stream_AUDIO)
     {
-        if (bitstream_map->stream_codec == CODEC_MP3)
+        if (bitstream_map->stream_codec == CODEC_MPEG_L3)
         {
             strncat(output_filename, ".mp3", 254);
         }
@@ -258,7 +258,7 @@ static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_
     else // if (bitstream_map->stream_type == stream_VIDEO)
     {
 
-        if (bitstream_map->stream_codec == CODEC_H262)
+        if (bitstream_map->stream_codec == CODEC_MPEG12)
         {
             strncat(output_filename, ".mpegv", 254);
         }
@@ -269,7 +269,7 @@ static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_
             else
                 strncat(output_filename, ".h264", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_XVID)
+        else if (bitstream_map->stream_codec == CODEC_MPEG4)
         {
             if (output_format == 0)
                 strncat(output_filename, ".mpgv", 254);

@@ -26,66 +26,104 @@
 
 /* ************************************************************************** */
 
-//! Audio and Video compression standards (codecs)
-typedef enum AVCodec_e
+//! Stream type
+typedef enum StreamType_e
 {
-    CODEC_UNKNOWN     = 0,
+    stream_UNKNOWN = 0,
+    stream_AUDIO   = 1,
+    stream_VIDEO   = 2,
+    stream_TEXT    = 3
 
-    // Audio codecs
-    CODEC_MP1         = 1,
-    CODEC_MP2         = 2,
-    CODEC_MP3         = 3, //!< MPEG 1/2 Audio Layer III
-    CODEC_AAC         = 4, //!< Advanced Audio Coding
-    CODEC_AC3         = 5, //!< Dolby Digital
-    CODEC_DTS         = 6,
-    CODEC_PCM         = 7, //!< Pulse-code modulation, not a codec
-    CODEC_WAV         = 8, //!< Waveform Audio File Format
-    CODEC_WMA         = 9, //!< Windows Media Audio
-    CODEC_VORBIS      = 10,
-    CODEC_FLAC        = 11,
+} StreamType_e;
 
-    // Video codecs
-    CODEC_H264        = 12, //!< MPEG-4 Part 10 "AVC"
-    CODEC_XVID        = 13, //!< MPEG-4 Part 2 "ASP"
-    CODEC_H262        = 14, //!< MPEG-2 Part 2
-    CODEC_VP8         = 15,
-    CODEC_VC1         = 16, //!< Windows Media Video
-    CODEC_DV          = 17,
+//! Stream level
+typedef enum StreamLevel_e
+{
+    stream_level_UNKNOWN = 0,
+    stream_level_PES     = 1,
+    stream_level_ES      = 2
 
-    // Subtitles codecs
-    CODEC_SRT         = 18, //!< SubRip (.srt)
-    CODEC_ASS         = 19, //!< SubStation Alpha (.ass .ssa)
-    CODEC_SUB         = 20  //!< VobSub (.sub .idx)
-
-} AVCodec_e;
+} StreamLevel_e;
 
 //! Container file formats
 typedef enum ContainerFormat_e
 {
     CONTAINER_UNKNOWN = 0,
 
-    CONTAINER_ES      = 1, //!< Plain ES format, not a container at all...
-    CONTAINER_AVI     = 2,
-    CONTAINER_MP4     = 3, //!< Support mp4, mov, ... extensions
-    CONTAINER_MKV     = 4, //!< Support mkv and webm extensions
-    CONTAINER_PS      = 5, //!< Support mpg, vob, ... extensions
-    CONTAINER_TS      = 6,
+    CONTAINER_ES      = 1,  //!< Plain ES format (not a container)
+    CONTAINER_ASF     = 2,  //!< "Advanced Systems Format" (.asf, .wma, .wmv)
+    CONTAINER_AVI     = 3,  //!< "Audio Video Interleave" (.avi)
+    CONTAINER_FLAC    = 4,  //!< FLAC (.flac)
+    CONTAINER_FLV     = 5,  //!< SWF "Small Web Format" (.flv)
+    CONTAINER_OGG     = 6,  //!< OGG (.ogg, .ogv, ...)
+    CONTAINER_MKV     = 7,  //!< Matroska (.mkv, .webm)
+    CONTAINER_MP3     = 8,  //!< MP3 ES format (not a container)
+    CONTAINER_MP4     = 9,  //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
+    CONTAINER_MPEG_PS = 10, //!< MPEG Program Stream (.mpg, .vob, ...)
+    CONTAINER_MPEG_TS = 11  //!< MPEG Transport Stream (.ts, .mts, .m2ts, ...)
 
 } ContainerFormat_e;
+
+//! Audio and Video compression standards (codecs)
+typedef enum AVCodec_e
+{
+    CODEC_UNKNOWN     = 0,
+
+    // Audio codecs
+    CODEC_PCM         = 1,  //!< Pulse-code modulation (not a codec) (PCM, LPCM, DPCM, ADPCM ?)
+    CODEC_MPEG_L1     = 2,  //!< MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L2     = 3,  //!< MPEG 1/2 Audio Layer II
+    CODEC_MPEG_L3     = 4,  //!< MPEG 1/2 Audio Layer III
+    CODEC_AAC         = 5,  //!< Advanced Audio Coding
+    CODEC_AAC_HE      = 6,  //!< High Efficiency Advanced Audio Coding
+    CODEC_AC3         = 7,  //!< AC3, or Dobly Digital, or A/52A */
+    CODEC_EAC3        = 8,  //!< Enhanced AC3, or Dobly Digital Plus, or A/52B */
+    CODEC_DTS         = 9,
+    CODEC_DTS_HD      = 10,
+    CODEC_FLAC        = 11,
+    CODEC_OPUS        = 12,
+    CODEC_VORBIS      = 13, //!< Ogg Vorbis
+    CODEC_WMA         = 14, //!< Windows Media Audio
+
+    // Video codecs
+    CODEC_MPEG12      = 32, //!< MPEG-1/2 videos
+    CODEC_MPEG4       = 33, //!< MPEG-4 Part 2 "ASP" or XVID
+    CODEC_MSMPEG4     = 34, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft, NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_H263        = 35, //!< H.263, sometimes found inside "mobile" 3GP files
+    CODEC_H264        = 36, //!< H.264 or MPEG-4 Part 10 "AVC"
+    CODEC_VC1         = 37, //!< VC1 or Windows Media Video
+    CODEC_VC2         = 38, //!< VC2 or Dirac
+    CODEC_VP4         = 39,
+    CODEC_VP6         = 40,
+    CODEC_VP8         = 41,
+    CODEC_VP9         = 42,
+
+    // Subtitles codecs
+    CODEC_SRT         = 64, //!< SubRip (.srt)
+    CODEC_SSA         = 65, //!< "SubStation Alpha" (.ssa)
+    CODEC_ASS         = 66, //!< "Advanced SubStation Alpha" (.ass)
+
+} AVCodec_e;
 
 //! Picture file formats
 typedef enum PictureFormat_e
 {
     PICTURE_UNKNOWN   = 0,
 
-    PICTURE_JPG       = 1,
-    PICTURE_PNG       = 2,
-    PICTURE_BMP       = 3,
+    PICTURE_BMP       = 1,
+    PICTURE_JPG       = 2,
+    PICTURE_PNG       = 3,
     PICTURE_TGA       = 4,
-    PICTURE_YUV420    = 5,
-    PICTURE_YUV444    = 6
+    PICTURE_YUV444    = 5,  //!< Planar YCbCr file without subsampling
+    PICTURE_YUV420    = 6   //!< Planar YCbCr file with 4:2:0 subsampling
 
 } PictureFormat_e;
+
+/* ************************************************************************** */
+
+const char *getContainerString(ContainerFormat_e container);
+const char *getCodecString(StreamType_e type, AVCodec_e codec);
+const char *getPictureString(PictureFormat_e picture);
 
 /* ************************************************************************** */
 #endif /* AV_CODECS_H */

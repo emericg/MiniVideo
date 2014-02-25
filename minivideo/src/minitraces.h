@@ -34,9 +34,6 @@ extern "C" {
 #include "cmake_defines.h"
 #include "typedef.h"
 
-// Colors
-#include "colors.h"
-
 /* ************************************************************************** */
 
 extern void MiniTraces_dump(void);

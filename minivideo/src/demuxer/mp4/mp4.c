@@ -86,13 +86,15 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
     {
         if (track->handlerType == HANDLER_AUDIO)
         {
-            retcode = init_bitstream_map(&video->tracks_audio[0], track->stsz_sample_count);
-            map = video->tracks_audio[0];
+            retcode = init_bitstream_map(&video->tracks_audio[video->tracks_audio_count], track->stsz_sample_count);
+            map = video->tracks_audio[video->tracks_audio_count];
+            video->tracks_audio_count++;
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
-            retcode = init_bitstream_map(&video->tracks_video[0], track->stsz_sample_count + track->sps_count + track->pps_count);
-            map = video->tracks_video[0];
+            retcode = init_bitstream_map(&video->tracks_video[video->tracks_video_count], track->stsz_sample_count + track->sps_count + track->pps_count);
+            map = video->tracks_video[video->tracks_video_count];
+            video->tracks_video_count++;
         }
         else
         {
@@ -137,8 +139,8 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
                     map->sample_type[i] = sample_VIDEO_PARAM;
                     map->sample_offset[i] = track->sps_sample_offset[i];
                     map->sample_size[i] = track->sps_sample_size[i];
-                    map->sample_timecode_presentation[i] = -1;
-                    map->sample_timecode_decoding[i] = -1;
+                    map->sample_pts[i] = -1;
+                    map->sample_dts[i] = -1;
                 }
                 // Set PPS
                 for (i = 0; i < track->pps_count; i++)
@@ -146,8 +148,8 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
                     map->sample_type[i] = sample_VIDEO_PARAM;
                     map->sample_offset[i + track->sps_count] = track->pps_sample_offset[i];
                     map->sample_size[i + track->sps_count] = track->pps_sample_size[i];
-                    map->sample_timecode_presentation[i] = -1;
-                    map->sample_timecode_decoding[i] = -1;
+                    map->sample_pts[i] = -1;
+                    map->sample_dts[i] = -1;
                 }
             }
         }
@@ -250,10 +252,10 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
             }
 
             // Set sample presentation timecode
-            map->sample_timecode_presentation[sid] = -1;
+            map->sample_pts[sid] = -1;
 
             // Set sample decoding timecode
-            map->sample_timecode_decoding[sid] = -1;
+            map->sample_dts[sid] = -1;
         }
 
 #if ENABLE_DEBUG
@@ -1312,7 +1314,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             }
             else if (box_subheader.type == SAMPLE_MP4V)
             {
-                track->codec = CODEC_XVID;
+                track->codec = CODEC_MPEG4;
                 TRACE_1(MP4, "> Video track is using XVID codec\n");
             }
             else
@@ -1449,6 +1451,9 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 {
     TRACE_INFO(MP4, GREEN "parse_avcC()\n" RESET);
     int retcode = SUCCESS;
+
+    // avcC box means H.264 codec
+    track->codec = CODEC_H264;
 
     // Parse box content
     int i = 0;

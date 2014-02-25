@@ -199,6 +199,7 @@ typedef enum Mp4HandlerType_e
 typedef enum Mp4SampleEntry_e
 {
     SAMPLE_AVC1 = 0x61766331,    //!< AVC-1/H.264
+    SAMPLE_AVCC = 0x61766343,    //!< AVC-1/H.264
     SAMPLE_AI55 = 0x0,           //!< AVC Intra  50 / 1080 interlace
     SAMPLE_AI5q = 0x0,           //!< AVC Intra  50 /  720
     SAMPLE_AI15 = 0x0,           //!< AVC Intra 100 / 1080 interlace

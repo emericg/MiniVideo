@@ -30,25 +30,6 @@
 
 /* ************************************************************************** */
 
-//! Stream type
-typedef enum StreamType_e
-{
-    stream_UNKNOWN = 0,
-    stream_AUDIO   = 1,
-    stream_VIDEO   = 2,
-    stream_TEXT    = 3
-
-} StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
-
 //! Sample type
 typedef enum SampleType_e
 {
@@ -101,11 +82,11 @@ typedef struct BitstreamMap_t
     uint32_t sample_count_idr;      //!< The total number of IDR samples in the (video) track, providing random access points within the stream
 
     // Samples arrays
-    uint32_t *sample_type;          //!< Type of each samples
-    uint32_t *sample_size;          //!< Size in byte of each samples
-    int64_t *sample_offset;         //!< Offset in byte of each samples
-    int64_t *sample_timecode_presentation; //!< Presentation timecode (in xx) of each samples
-    int64_t *sample_timecode_decoding;     //!< Decoding timecode (in xx) of each samples
+    uint32_t *sample_type;          //!< Type (for each samples of the track)
+    uint32_t *sample_size;          //!< Size in byte
+    int64_t *sample_offset;         //!< Offset in byte
+    int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds)
+    int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds)
 
 } BitstreamMap_t;
 

@@ -163,11 +163,11 @@ static void getSize(VideoFile_t *video)
     }
     else if (video->file_size < 1048576) // < 1 MiB
     {
-        TRACE_1(IO, "* File size      : %.2f KiB\n", (double)video->file_size / 1024.0);
+        TRACE_1(IO, "* File size      : %.2f KiB (%.2f KB)\n", (double)video->file_size / 1024.0, (double)video->file_size / 1000.0);
     }
     else // >= 1 MiB
     {
-        TRACE_1(IO, "* File size      : %.2f MiB\n", (double)video->file_size / 1024.0 / 1024.0);
+        TRACE_1(IO, "* File size      : %.2f MiB (%.2f MB)\n", (double)video->file_size / 1024.0 / 1024.0, (double)video->file_size / 1000.0 / 1000.0);
     }
 }
 
@@ -196,7 +196,7 @@ static void getContainer(VideoFile_t *video)
     if (buffer[0] == 0x47)
     {
         TRACE_1(IO, "* File type      : TS (MPEG Transport Stream) container detected\n");
-        video->container = CONTAINER_TS;
+        video->container = CONTAINER_MPEG_TS;
     }
     else if (buffer[0] == 0x1A && buffer[1] == 0x45 && buffer[2] == 0xDF && buffer[3] == 0xA3)
     {
@@ -210,19 +210,19 @@ static void getContainer(VideoFile_t *video)
             if (buffer[3] == 0xBA)
             {
                 TRACE_1(IO, "* File type      : PS (MPEG Program Stream) container detected\n");
-                video->container = CONTAINER_PS;
+                video->container = CONTAINER_MPEG_PS;
             }
             else if (buffer[3] == 0xB3)
             {
                 TRACE_1(IO, "* File type      : MPEG12 / H.262 Elementary Stream detected (video data without container)\n");
                 video->container = CONTAINER_ES;
-                video->codec_video = CODEC_H262;
+                //video->codec_video = CODEC_MPEG12;
             }
             else if (buffer[3] == 0x67)
             {
                 TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (video data without container)\n");
                 video->container = CONTAINER_ES;
-                video->codec_video = CODEC_H264;
+                //video->codec_video = CODEC_H264;
             }
         }
         else if (buffer[2] == 0x00 && buffer[3] == 0x01)
@@ -230,19 +230,19 @@ static void getContainer(VideoFile_t *video)
             if (buffer[4] == 0xBA)
             {
                 TRACE_1(IO, "* File type      : PS (MPEG Program Stream) container detected\n");
-                video->container = CONTAINER_PS;
+                video->container = CONTAINER_MPEG_PS;
             }
             else if (buffer[4] == 0xB3)
             {
                 TRACE_1(IO, "* File type      : MPEG12 / H.262 Elementary Stream detected (video data without container)\n");
                 video->container = CONTAINER_ES;
-                video->codec_video = CODEC_H262;
+                //video->codec_video = CODEC_MPEG12;
             }
             else if (buffer[4] == 0x67)
             {
                 TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (video data without container)\n");
                 video->container = CONTAINER_ES;
-                video->codec_video = CODEC_H264;
+                //video->codec_video = CODEC_H264;
             }
         }
 
@@ -399,6 +399,56 @@ int import_fileClose(VideoFile_t **video_ptr)
     }
 
     return retcode;
+}
+
+/* ************************************************************************** */
+
+void import_fileStatus(VideoFile_t *videoFile)
+{
+    TRACE_INFO(IO, GREEN "import_fileStatus()\n" RESET);
+
+    int i = 0;
+
+    // File
+    if (videoFile->file_pointer)
+        TRACE_1(IO, "file_pointer is " GREEN "open\n" RESET);
+    else
+        TRACE_1(IO, "file_pointer is " RED "closed\n" RESET);
+
+
+    // File info
+    TRACE_1(IO, "* File path      : '%s'\n", videoFile->file_path);
+    TRACE_1(IO, "* File directory : '%s'\n", videoFile->file_directory);
+    TRACE_1(IO, "* File name      : '%s'\n", videoFile->file_name);
+    TRACE_1(IO, "* File extension : '%s'\n", videoFile->file_extension);
+    TRACE_1(IO, "* File size      : %i MiB  /  %i MB\n", videoFile->file_size / 1024 / 1024, videoFile->file_size / 1000 / 1000);
+
+    // File format
+    TRACE_1(IO, "* File container :  '%s'\n", getContainerString(videoFile->container));
+
+    // Audio track(s)
+    TRACE_1(IO, "* %i audio track(s)\n", videoFile->tracks_audio_count);
+    for (i = 0; i < videoFile->tracks_audio_count; i++)
+    {
+        if (videoFile->tracks_audio[i])
+            print_bitstream_map(videoFile->tracks_audio[i]);
+    }
+
+    // Video track(s)
+    TRACE_1(IO, "* %i video track(s)\n", videoFile->tracks_video_count);
+    for (i = 0; i < videoFile->tracks_video_count; i++)
+    {
+        if (videoFile->tracks_video[i])
+            print_bitstream_map(videoFile->tracks_video[i]);
+    }
+
+    // Subtitles track(s)
+    TRACE_1(IO, "* %i subtitles track(s)\n", videoFile->tracks_subtitles_count);
+    for (i = 0; i < videoFile->tracks_audio_count; i++)
+    {
+        if (videoFile->tracks_subtitles[i])
+            print_bitstream_map(videoFile->tracks_subtitles[i]);
+    }
 }
 
 /* ************************************************************************** */

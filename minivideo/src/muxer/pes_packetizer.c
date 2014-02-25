@@ -96,13 +96,13 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             {
                 pes_header_size += 5;
 
-                if (bitstream_map->sample_timecode_presentation[i] >= 0)
+                if (bitstream_map->sample_pts[i] >= 0)
                 {
-                    pes_header[9] += (uint8_t)(bitstream_map->sample_timecode_presentation[i] >> 30) & 0x0E;
-                    pes_header[10] = (uint8_t)(bitstream_map->sample_timecode_presentation[i] >> 22);
-                    pes_header[11] += (uint8_t)(bitstream_map->sample_timecode_presentation[i] >> 14) & 0xFE;
-                    pes_header[12] = (uint8_t)(bitstream_map->sample_timecode_presentation[i] >> 7);
-                    pes_header[13] += (uint8_t)(bitstream_map->sample_timecode_presentation[i] << 1) & 0xFE;
+                    pes_header[9] += (uint8_t)(bitstream_map->sample_pts[i] >> 30) & 0x0E;
+                    pes_header[10] = (uint8_t)(bitstream_map->sample_pts[i] >> 22);
+                    pes_header[11] += (uint8_t)(bitstream_map->sample_pts[i] >> 14) & 0xFE;
+                    pes_header[12] = (uint8_t)(bitstream_map->sample_pts[i] >> 7);
+                    pes_header[13] += (uint8_t)(bitstream_map->sample_pts[i] << 1) & 0xFE;
                 }
                 else
                 {
@@ -119,15 +119,15 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             // [14-18] DTS
             if (dts_enable == true)
             {
-                if (bitstream_map->sample_timecode_decoding[i] >= 0)
+                if (bitstream_map->sample_dts[i] >= 0)
                 {
                     pes_header_size += 5;
 
-                    pes_header[14] += (uint8_t)(bitstream_map->sample_timecode_decoding[i] >> 30) & 0x0E;
-                    pes_header[15] = (uint8_t)(bitstream_map->sample_timecode_decoding[i] >> 22);
-                    pes_header[16] += (uint8_t)(bitstream_map->sample_timecode_decoding[i] >> 14) & 0xFE;
-                    pes_header[17] = (uint8_t)(bitstream_map->sample_timecode_decoding[i] >> 7);
-                    pes_header[18] += (uint8_t)(bitstream_map->sample_timecode_decoding[i] << 1) & 0xFE;
+                    pes_header[14] += (uint8_t)(bitstream_map->sample_dts[i] >> 30) & 0x0E;
+                    pes_header[15] = (uint8_t)(bitstream_map->sample_dts[i] >> 22);
+                    pes_header[16] += (uint8_t)(bitstream_map->sample_dts[i] >> 14) & 0xFE;
+                    pes_header[17] = (uint8_t)(bitstream_map->sample_dts[i] >> 7);
+                    pes_header[18] += (uint8_t)(bitstream_map->sample_dts[i] << 1) & 0xFE;
                 }
                 else
                 {

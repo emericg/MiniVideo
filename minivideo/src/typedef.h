@@ -30,23 +30,12 @@
 /* ************************************************************************** */
 
 // Custom return codes
-#define FAILURE     0
-#define SUCCESS     1
-#define UNSUPPORTED 2
-
-#if ENABLE_LARGEFILE
-    // This section is deprecated
-    #define fopen(a, b)      fopen64(a, b)
-    #define ftell(a)         ftello64(a)
-    #define ftello(a)        ftello64(a)
-    #define fseeko(a, b, c)  fseeko64(a, b, c)
-    #define fseek(a, b, c)   fseeko64(a, b, c)
-    #define lseek(a, b, c)   lseek64(a, b, c)
-#else
-    // Just build MiniVideo with -D_LARGEFILE64_SOURCE
-#endif /* ENABLE_LARGEFILE */
+#define UNSUPPORTED -1
+#define FAILURE      0
+#define SUCCESS      1
 
 
+// Custom types
 #if ENABLE_STDINT
     #include <stdint.h>
 #else
@@ -65,6 +54,7 @@
 #endif /* ENABLE_STDINT */
 
 
+// Boolean support
 #if ENABLE_STDBOOL
     #include <stdbool.h>
 #else
@@ -74,6 +64,10 @@
     #define true	   1
     #define false	   0
 #endif /* ENABLE_STDBOOL */
+
+
+// Color support
+#include "colors.h"
 
 
 #if ENABLE_COLORS

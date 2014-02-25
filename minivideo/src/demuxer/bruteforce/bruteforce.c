@@ -100,7 +100,7 @@ int bruteforce_fileParse(VideoFile_t *video, AVCodec_e video_codec)
                             // Write results into the bitstream_map
                             video->tracks_video[0]->sample_offset[video->tracks_video[0]->sample_count] = bitstream_get_absolute_byte_offset(bitstr);
                             video->tracks_video[0]->sample_size[video->tracks_video[0]->sample_count] = GUESS_BUFFERSIZE;
-                            video->tracks_video[0]->sample_timecode_presentation[video->tracks_video[0]->sample_count] = -1;
+                            video->tracks_video[0]->sample_pts[video->tracks_video[0]->sample_count] = -1;
 
                             // Set size of the previous frame, now that we know where it stops
                             if (video->tracks_video[0]->sample_count > 0)

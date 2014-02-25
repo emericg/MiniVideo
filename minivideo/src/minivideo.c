@@ -228,23 +228,24 @@ int minivideo_thumbnailer(const char *input_filepath,
 
             if (picture_number_filtered == 0)
                 retcode = FAILURE;
-
-            print_bitstream_map(input_video->tracks_video[0]);
         }
 
         if (retcode == SUCCESS)
         {
+            // Print status
+            //import_fileStatus(input_video);
+
             // Start video decoding
-            switch (input_video->codec_video)
+            switch (input_video->tracks_video[0]->stream_codec)
             {
                 case CODEC_UNKNOWN:
-                    //TRACE_ERROR(MAIN, "Unknown video format. Unable to decode that file!\n");
-                    //break;
+                    TRACE_ERROR(MAIN, "Unknown video format. Unable to decode that file!\n");
+                    break;
                 case CODEC_H264:
                     retcode = h264_decode(input_video, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
                     break;
                 default:
-                    TRACE_ERROR(MAIN, "Unable to decode given file format (id %i): no decoder available!\n", input_video->codec_video);
+                    TRACE_ERROR(MAIN, "Unable to decode given file format (id %i): no decoder available!\n", input_video->tracks_video[0]->stream_codec);
                     break;
             }
         }
@@ -292,7 +293,7 @@ int minivideo_extractor(const char *input_filepath,
             case CONTAINER_UNKNOWN:
                 TRACE_ERROR(MAIN, "Unknown container format. Unable to parse that file!\n");
                 break;
-            case CONTAINER_PS:
+            case CONTAINER_MPEG_PS:
                 retcode = ps_fileParse(input_video);
                 break;
             case CONTAINER_AVI:

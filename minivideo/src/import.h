@@ -52,15 +52,13 @@ typedef struct VideoFile_t
 
     // File format
     ContainerFormat_e container;    //!< Video file container
-    AVCodec_e codec_audio;          //!< First audio codec
-    AVCodec_e codec_video;          //!< First video codec
 
     // A/V data
     int tracks_audio_count;
-    BitstreamMap_t *tracks_audio[16];  //!< A list of all audio tracks
+    BitstreamMap_t *tracks_audio[16];     //!< A list of all audio tracks
 
     int tracks_video_count;
-    BitstreamMap_t *tracks_video[16];  //!< A list of all video tracks
+    BitstreamMap_t *tracks_video[16];     //!< A list of all video tracks
 
     int tracks_subtitles_count;
     BitstreamMap_t *tracks_subtitles[16]; //!< A list of all subtitles tracks
@@ -91,6 +89,8 @@ typedef struct OutputFile_t
 VideoFile_t *import_fileOpen(const char *filepath);
 
 int import_fileClose(VideoFile_t **video_ptr);
+
+void import_fileStatus(VideoFile_t *videoFile);
 
 /* ************************************************************************** */
 #endif /* IMPORT_H */

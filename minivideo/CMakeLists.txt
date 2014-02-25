@@ -88,7 +88,7 @@ SET(minivideo_SRC
         src/minitraces.c
         src/typedef.h
         src/utils.c
-        src/avcodecs.h
+        src/avcodecs.c
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c

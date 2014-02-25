@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "minitraces.h"
+#include "avcodecs.h"
 
 #include "bitstream.h"
 
@@ -64,14 +65,14 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
             (*bitstream_map)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
             (*bitstream_map)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
             (*bitstream_map)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
-            (*bitstream_map)->sample_timecode_presentation = (int64_t*)calloc(entries, sizeof(int64_t));
-            (*bitstream_map)->sample_timecode_decoding = (int64_t*)calloc(entries, sizeof(int64_t));
+            (*bitstream_map)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
+            (*bitstream_map)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
 
             if ((*bitstream_map)->sample_type == NULL ||
                 (*bitstream_map)->sample_size == NULL ||
                 (*bitstream_map)->sample_offset == NULL ||
-                (*bitstream_map)->sample_timecode_presentation == NULL ||
-                (*bitstream_map)->sample_timecode_decoding == NULL)
+                (*bitstream_map)->sample_pts == NULL ||
+                (*bitstream_map)->sample_dts == NULL)
             {
                 TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
 
@@ -81,10 +82,10 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
                     free((*bitstream_map)->sample_size);
                 if ((*bitstream_map)->sample_offset != NULL)
                     free((*bitstream_map)->sample_offset);
-                if ((*bitstream_map)->sample_timecode_presentation != NULL)
-                    free((*bitstream_map)->sample_timecode_presentation);
-                if ((*bitstream_map)->sample_timecode_decoding != NULL)
-                    free((*bitstream_map)->sample_timecode_decoding);
+                if ((*bitstream_map)->sample_pts != NULL)
+                    free((*bitstream_map)->sample_pts);
+                if ((*bitstream_map)->sample_dts != NULL)
+                    free((*bitstream_map)->sample_dts);
 
                 free(*bitstream_map);
                 *bitstream_map = NULL;
@@ -123,14 +124,14 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
             free((*bitstream_map)->sample_offset);
         }
 
-        if ((*bitstream_map)->sample_timecode_presentation != NULL)
+        if ((*bitstream_map)->sample_pts != NULL)
         {
-            free((*bitstream_map)->sample_timecode_presentation);
+            free((*bitstream_map)->sample_pts);
         }
 
-        if ((*bitstream_map)->sample_timecode_decoding != NULL)
+        if ((*bitstream_map)->sample_dts != NULL)
         {
-            free((*bitstream_map)->sample_timecode_decoding);
+            free((*bitstream_map)->sample_dts);
         }
 
         free(*bitstream_map);
@@ -171,8 +172,10 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
         }
         else
         {
-            TRACE_WARNING(FILTER, "Unknown elementary stream type!\n");
+            TRACE_WARNING(DEMUX, "Unknown elementary stream type!\n");
         }
+
+        TRACE_1(DEMUX, "Track codec:     '%s'\n", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec));
 
         TRACE_INFO(DEMUX, "> samples alignment: %i\n", bitstream_map->sample_alignment);
         TRACE_INFO(DEMUX, "> samples count    : %i\n", bitstream_map->sample_count);
@@ -187,7 +190,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
                 TRACE_1(DEMUX, "> sample_type      : %i\n", bitstream_map->sample_type[i]);
                 TRACE_1(DEMUX, "  | sample_offset  : %i\n", bitstream_map->sample_offset[i]);
                 TRACE_1(DEMUX, "  | sample_size    : %i\n", bitstream_map->sample_size[i]);
-                TRACE_1(DEMUX, "  | sample_timecode: %i\n", bitstream_map->sample_timecode_presentation[i]);
+                TRACE_1(DEMUX, "  | sample_timecode: %i\n", bitstream_map->sample_pts[i]);
             }
         }
     }

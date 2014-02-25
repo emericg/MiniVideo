@@ -143,7 +143,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                 for (i = 0; i < spspps; i++)
                 {
                     map_filtered->sample_type[i] = map->sample_type[i];
-                    map_filtered->sample_timecode_presentation[i] = map->sample_timecode_presentation[i];
+                    map_filtered->sample_pts[i] = map->sample_pts[i];
 
                     map_filtered->sample_offset[i] = map->sample_offset[i];
                     map_filtered->sample_size[i] = map->sample_size[i];
@@ -155,7 +155,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                     if (picture_extractionmode == PICTURE_ORDERED)
                     {
                         map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i]];
-                        map_filtered->sample_timecode_presentation[spspps + i] = map->sample_timecode_presentation[temporary_sample_id[i]];
+                        map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i]];
 
                         map_filtered->sample_offset[spspps + i] = map->sample_offset[temporary_sample_id[i]];
                         map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i]];
@@ -163,7 +163,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                     else if (picture_extractionmode == PICTURE_DISTRIBUTED)
                     {
                         map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i*frame_jump]];
-                        map_filtered->sample_timecode_presentation[spspps + i] = map->sample_timecode_presentation[temporary_sample_id[i*frame_jump]];
+                        map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i*frame_jump]];
 
                         map_filtered->sample_offset[spspps + i] = map->sample_offset[temporary_sample_id[i*frame_jump]];
                         map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i*frame_jump]];
