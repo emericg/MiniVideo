@@ -60,7 +60,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Release")
     SET(ENABLE_DEBUG 0)
     SET(CMAKE_BUILD_TYPE release)
     # Custom cflags ? Use "release mode" and "-O2" for maximum speed.
-    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE")
+    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
 
 ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
 
@@ -68,7 +68,7 @@ ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
     SET(ENABLE_DEBUG 1)
     SET(CMAKE_BUILD_TYPE debug)
     # Custom cflags ? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
-    SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE -Wall -Wextra -Wshadow -Wno-sign-compare -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+    SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Wshadow -Wno-sign-compare -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
 
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 

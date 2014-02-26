@@ -28,9 +28,6 @@
 
 // C POSIX libraries
 #include <unistd.h>
-#if ENABLE_LARGEFILE
-    #include <sys/types.h>
-#endif
 
 // minivideo headers
 #include "minitraces.h"
