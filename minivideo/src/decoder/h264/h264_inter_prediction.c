@@ -40,7 +40,7 @@
  */
 int inter_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_INFO(INTER, "<> " GREEN "inter_prediction_process()\n" RESET);
+    TRACE_INFO(INTER, "<> " BLD_GREEN "inter_prediction_process()\n" CLR_RESET);
     int retcode = FAILURE;
 
     TRACE_ERROR(INTER, ">>> UNSUPPORTED (inter_prediction_process())\n");

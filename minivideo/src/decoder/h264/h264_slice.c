@@ -64,7 +64,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm);
  */
 int decode_slice(DecodingContext_t *dc)
 {
-    TRACE_INFO(SLICE, "> " GREEN "decodeSlice()\n" RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSlice()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // New slice allocation
@@ -156,7 +156,7 @@ void free_slice(slice_t **slice_ptr)
  */
 static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "> " GREEN "decodeSliceHeader()\n" RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceHeader()\n" CLR_RESET);
 
     // Slice header decoding
     ////////////////////////////////////////////////////////////////////////////
@@ -343,7 +343,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 static void printSliceHeader(DecodingContext_t *dc)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "> " GREEN "printSliceHeader()\n" RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "printSliceHeader()\n" CLR_RESET);
 
     // Shortcut
     slice_t *slice = dc->active_slice;
@@ -478,7 +478,7 @@ static void printSliceHeader(DecodingContext_t *dc)
  */
 static int checkSliceHeader(DecodingContext_t *dc)
 {
-    TRACE_INFO(SLICE, "  > " GREEN "checkSliceHeader()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "checkSliceHeader()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -672,7 +672,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
  */
 static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " GREEN "decodeRPLM()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeRPLM()\n" CLR_RESET);
 
     // RPLM allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -741,7 +741,7 @@ static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
 static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "  > " GREEN "printRPLM()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "printRPLM()\n" CLR_RESET);
 
     // Check structure
     if (rplm == NULL)
@@ -790,7 +790,7 @@ static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
  */
 static int checkRPLM(DecodingContext_t *dc, rplm_t *rplm)
 {
-    TRACE_INFO(SLICE, "    > " GREEN "checkRPLM()\n" RESET);
+    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkRPLM()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structure
@@ -816,7 +816,7 @@ static int checkRPLM(DecodingContext_t *dc, rplm_t *rplm)
  */
 static pwt_t *decodePWT(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " GREEN "decodePWT()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodePWT()\n" CLR_RESET);
 
     // PWT allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -846,7 +846,7 @@ static pwt_t *decodePWT(DecodingContext_t *dc, slice_t *slice)
  */
 static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " GREEN "decodeDRPM()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeDRPM()\n" CLR_RESET);
 
     // DRPM allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -917,7 +917,7 @@ static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
 static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "  > " GREEN "printDRPM()\n" RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "printDRPM()\n" CLR_RESET);
 
     // Check structure
     if (drpm == NULL)
@@ -961,7 +961,7 @@ static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
  */
 static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
 {
-    TRACE_INFO(SLICE, "    > " GREEN "checkDRPM()\n" RESET);
+    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkDRPM()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structure
@@ -1013,7 +1013,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
  */
 static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "> " GREEN "decodeSliceData()\n" RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceData()\n" CLR_RESET);
 
     // Initialization
     int retcode = SUCCESS;

@@ -115,7 +115,7 @@ void make_path_absolute(const char *path, char *path_absolute)
  */
 int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 {
-    TRACE_INFO(IO, " > " GREEN "mb_to_ycbcr()\n" RESET);
+    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_ycbcr()\n" CLR_RESET);
     int missing_mbs = 0;
 
     // Shortcut
@@ -207,7 +207,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
  */
 int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
 {
-    TRACE_INFO(IO, " > " GREEN "mb_to_rgb()\n" RESET);
+    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_rgb()\n" CLR_RESET);
     int missing_mbs = 0;
 
     // Shortcut

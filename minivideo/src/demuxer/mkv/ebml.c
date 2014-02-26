@@ -37,7 +37,7 @@
 
 int ebml_parse_header(Bitstream_t *bitstr)
 {
-    TRACE_INFO(MKV, GREEN "ebml_parse_header()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "ebml_parse_header()\n" CLR_RESET);
     int retcode = FAILURE;
 
     uint64_t headerSize = 0;

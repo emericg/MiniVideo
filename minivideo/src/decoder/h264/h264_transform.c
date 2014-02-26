@@ -121,7 +121,7 @@ static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag, i
  */
 void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkIdx)
 {
-    TRACE_1(TRANS, "<> " GREEN "transform4x4_luma()\n" RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_luma()\n" CLR_RESET);
 
     int c[4][4] = {{0}};
     int r[4][4] = {{0}};
@@ -168,7 +168,7 @@ void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkId
  */
 void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " GREEN "transform16x16_luma()\n" RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform16x16_luma()\n" CLR_RESET);
 
     // 1 (DC coefficients)
     int c1[4][4] = {{0}};
@@ -236,7 +236,7 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
  */
 void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkIdx)
 {
-    TRACE_1(TRANS, "<> " GREEN "transform8x8_luma()\n" RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform8x8_luma()\n" CLR_RESET);
 
     int c[8][8] = {{0}};
     int r[8][8] = {{0}};
@@ -286,7 +286,7 @@ void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkId
  */
 void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " GREEN "transform4x4_chroma()\n" RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma()\n" CLR_RESET);
 
     // Shortcuts
     pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
@@ -414,7 +414,7 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
  */
 void transform4x4_chroma_cat3(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " GREEN "transform4x4_chroma_cat3()\n" RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma_cat3()\n" CLR_RESET);
 
     TRACE_ERROR(TRANS, ">>> UNSUPPORTED (ChromaArrayType == 3)\n");
 }
@@ -1398,7 +1398,7 @@ static void idct8x8(int d[8][8], int r[8][8])
  */
 static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, int u[4][4])
 {
-    TRACE_1(TRANS, "> " GREEN "picture_construction_process_4x4()\n" RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1440,7 +1440,7 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
  */
 static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[4][4])
 {
-    TRACE_1(TRANS, "> " GREEN "picture_construction_process_4x4chroma()\n" RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4chroma()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1489,7 +1489,7 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
  */
 static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx, int u[8][8])
 {
-    TRACE_1(TRANS, "> " GREEN "picture_construction_process_8x8()\n" RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1531,7 +1531,7 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
  */
 static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[8][8])
 {
-    TRACE_1(TRANS, "> " GREEN "picture_construction_process_8x8chroma()\n" RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8chroma()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1579,7 +1579,7 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
  */
 static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][16])
 {
-    TRACE_1(TRANS, "> " GREEN "picture_construction_process_16x16()\n" RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_16x16()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut

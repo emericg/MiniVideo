@@ -49,7 +49,7 @@
 int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                   int picture_number, const int picture_extractionmode)
 {
-    TRACE_INFO(FILTER, GREEN "idr_filtering()\n" RESET);
+    TRACE_INFO(FILTER, BLD_GREEN "idr_filtering()\n" CLR_RESET);
     int retcode = FAILURE;
 
     int i = 0;

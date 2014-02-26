@@ -55,7 +55,7 @@
  */
 void minivideo_infos(void)
 {
-    printf(GREEN "\nminivideo_infos()\n" RESET);
+    printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
     printf("* Library version %d.%d-%d\n", minivideo_VERSION_MAJOR,
                                            minivideo_VERSION_MINOR,
                                            minivideo_VERSION_PATCH);
@@ -67,47 +67,47 @@ void minivideo_infos(void)
 #endif /* ENDIANNESS */
 
 #if ENABLE_DEBUG
-    printf("* DEBUG traces are " GREEN "ON\n" RESET);
+    printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* DEBUG traces are " RED "OFF\n" RESET);
+    printf("* DEBUG traces are " BLD_RED "OFF\n" CLR_RESET);
 #endif /* ENABLE_DEBUG */
 
 #if ENABLE_COLORS
-    printf("* COLORS are " GREEN "ON\n" RESET);
+    printf("* COLORS are " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* COLORS are OFF\n" RESET);
+    printf("* COLORS are OFF\n" CLR_RESET);
 #endif /* ENABLE_COLORS */
 
 #if ENABLE_STDINT
-    printf("* C99 integer support is " GREEN "ON\n" RESET);
+    printf("* C99 integer support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* C99 integer support is " RED "OFF\n" RESET);
+    printf("* C99 integer support is " BLD_RED "OFF\n" CLR_RESET);
     printf("* Integer support is emulated\n");
 #endif /* ENABLE_STDINT */
 
 #if ENABLE_STDBOOL
-    printf("* C99 boolean support is " GREEN "ON\n" RESET);
+    printf("* C99 boolean support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* C99 boolean support is " RED "OFF\n" RESET);
+    printf("* C99 boolean support is " BLD_RED "OFF\n" CLR_RESET);
     printf("* boolean support is emulated\n");
 #endif /* ENABLE_STDBOOL */
 
 #if ENABLE_JPEG
-    printf("* EXTERNAL JPEG support is " GREEN "ON\n" RESET);
+    printf("* EXTERNAL JPEG support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* EXTERNAL JPEG support is " RED "OFF\n" RESET);
+    printf("* EXTERNAL JPEG support is " BLD_RED "OFF\n" CLR_RESET);
 #endif /* ENABLE_JPEG */
 
 #if ENABLE_PNG
-    printf("* EXTERNAL PNG support is " GREEN "ON\n" RESET);
+    printf("* EXTERNAL PNG support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* EXTERNAL PNG support is " RED "OFF\n" RESET);
+    printf("* EXTERNAL PNG support is " BLD_RED "OFF\n" CLR_RESET);
 #endif /* ENABLE_PNG */
 
 #if ENABLE_STBIMWRITE
-    printf("* STB_IMAGE_WRITE support is " GREEN "ON\n" RESET);
+    printf("* STB_IMAGE_WRITE support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* STB_IMAGE_WRITE support is " RED "OFF\n" RESET);
+    printf("* STB_IMAGE_WRITE support is " BLD_RED "OFF\n" CLR_RESET);
 #endif /* ENABLE_STBIMWRITE */
 
 #if ENABLE_DEBUG
@@ -138,7 +138,7 @@ int minivideo_endianness(void)
     char *p = (char *)&i;
 
 #if ENABLE_DEBUG
-    printf(GREEN "\nminivideo_endianness()\n" RESET);
+    printf(BLD_GREEN "\nminivideo_endianness()\n" CLR_RESET);
 
     if (p[0] == 1)
     {
@@ -190,7 +190,7 @@ int minivideo_thumbnailer(const char *input_filepath,
                           const int picture_number,
                           const int picture_extractionmode)
 {
-    TRACE_INFO(MAIN, GREEN "minivideo_thumbnailer()\n" RESET);
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnailer()\n" CLR_RESET);
 
     int retcode = FAILURE;
     int picture_number_filtered = picture_number;
@@ -258,12 +258,12 @@ int minivideo_thumbnailer(const char *input_filepath,
     if (retcode == SUCCESS)
     {
         retcode = EXIT_SUCCESS;
-        TRACE_INFO(MAIN, YELLOW "Exiting minivideo thumbnailing function without errors.\n" RESET);
+        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo thumbnailing function without errors.\n" CLR_RESET);
     }
     else
     {
         retcode = EXIT_FAILURE;
-        TRACE_INFO(MAIN, YELLOW "Exiting minivideo thumbnailing function " RED "with errors!\n" RESET);
+        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo thumbnailing function " BLD_RED "with errors!\n" CLR_RESET);
     }
 
     return retcode;
@@ -278,7 +278,7 @@ int minivideo_extractor(const char *input_filepath,
                         const bool extract_subtitles,
                         const int output_format)
 {
-    TRACE_INFO(MAIN, GREEN "minivideo_extractor()\n" RESET);
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_extractor()\n" CLR_RESET);
 
     int retcode = FAILURE;
 
@@ -334,12 +334,12 @@ int minivideo_extractor(const char *input_filepath,
     if (retcode == SUCCESS)
     {
         retcode = EXIT_SUCCESS;
-        TRACE_INFO(MAIN, YELLOW "Exiting minivideo extracting function without errors.\n" RESET);
+        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo extracting function without errors.\n" CLR_RESET);
     }
     else
     {
         retcode = EXIT_FAILURE;
-        TRACE_INFO(MAIN, YELLOW "Exiting minivideo extracting " RED "with errors!\n" RESET);
+        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo extracting " BLD_RED "with errors!\n" CLR_RESET);
     }
 
     return retcode;

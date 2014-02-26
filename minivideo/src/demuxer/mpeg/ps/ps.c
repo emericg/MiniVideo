@@ -49,7 +49,7 @@
  */
 static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, SystemHeader_t *system_header)
 {
-    TRACE_INFO(MPS, GREEN "parse_pack_header()" RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_pack_header()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -89,7 +89,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, Sys
     // System header
     if (next_bits(bitstr, 32) == PES_SYSTEM_HEADER)
     {
-        TRACE_INFO(MPS, GREEN "parse_system_header()" RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+        TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
         skip_bits(bitstr, 32);
 
         system_header->header_length = read_bits(bitstr, 16);
@@ -139,7 +139,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, Sys
  */
 int parse_program_stream_map(Bitstream_t *bitstr, ProgramStreamMap_t *packet)
 {
-    TRACE_INFO(MPS, GREEN "parse_program_stream_map()" RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_map()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
     int retcode = SUCCESS;
     int i = 0, N = 0, N1 = 0, N2 = 0;
 
@@ -188,7 +188,7 @@ int parse_program_stream_map(Bitstream_t *bitstr, ProgramStreamMap_t *packet)
  */
 static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDirectory_t *packet)
 {
-    TRACE_INFO(MPS, GREEN "parse_program_stream_directory()" RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -262,7 +262,7 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDire
  */
 int ps_fileParse(VideoFile_t *video)
 {
-    TRACE_INFO(MPS, GREEN "ps_fileParse()\n" RESET);
+    TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
     int sid = 0;
 
@@ -330,15 +330,15 @@ int ps_fileParse(VideoFile_t *video)
                                 retcode = parse_pes_padding(bitstr, &pes_packet);
                                 break;
                             case SID_PRIVATE_STREAM_1:
-                                TRACE_2(MPS, GREEN "Private Stream 1 PES" RESET " @ %i\n", pes_packet.packet_start_offset);
+                                TRACE_2(MPS, BLD_GREEN "Private Stream 1 PES" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
                                 retcode = skip_pes(bitstr, &pes_packet);
                                 break;
                             case SID_PRIVATE_STREAM_2:
-                                TRACE_2(MPS, GREEN "Private Stream 2 PES" RESET " @ %i\n", pes_packet.packet_start_offset);
+                                TRACE_2(MPS, BLD_GREEN "Private Stream 2 PES" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
                                 retcode = skip_pes(bitstr, &pes_packet);
                                 break;
                             case SID_VIDEO:
-                                TRACE_INFO(MPS, GREEN "parse_pes_video()" RESET " @ %i\n", pes_packet.packet_start_offset);
+                                TRACE_INFO(MPS, BLD_GREEN "parse_pes_video()" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
                                 retcode = parse_pes(bitstr, &pes_packet);
                                 //print_pes(&pes_packet);
 
@@ -355,7 +355,7 @@ int ps_fileParse(VideoFile_t *video)
                                 }
                                 break;
                             case SID_AUDIO:
-                                TRACE_INFO(MPS, GREEN "parse_pes_audio()" RESET " @ %i\n", pes_packet.packet_start_offset);
+                                TRACE_INFO(MPS, BLD_GREEN "parse_pes_audio()" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
                                 retcode = parse_pes(bitstr, &pes_packet);
                                 //print_pes(&pes_packet);
 

@@ -44,7 +44,7 @@
  */
 int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, GREEN "> pes_packetizer()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> pes_packetizer()\n" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0;
 

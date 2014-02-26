@@ -38,7 +38,7 @@
 
 static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, GREEN "> write_pes()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> write_pes()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Write packets
@@ -100,7 +100,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
 static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, GREEN "> write_es()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> write_es()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     int i = 0;
@@ -173,7 +173,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
  */
 static int stream_infos(VideoFile_t *video, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, GREEN "> stream_infos()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structures
@@ -224,7 +224,7 @@ static int stream_infos(VideoFile_t *video, BitstreamMap_t *bitstream_map)
  */
 static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
 {
-    TRACE_INFO(MUXER, GREEN "> stream_output_filename()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Generate stream name
@@ -300,7 +300,7 @@ int muxer_export_samples(VideoFile_t *video,
                          BitstreamMap_t *bitstream_map,
                          const int output_format)
 {
-    TRACE_INFO(MUXER, GREEN "> muxer_export_sample()\n" RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> muxer_export_sample()\n" CLR_RESET);
 
     // Check stream
     int retcode = stream_infos(video, bitstream_map);

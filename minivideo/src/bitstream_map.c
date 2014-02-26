@@ -43,7 +43,7 @@
  */
 int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 {
-    TRACE_INFO(DEMUX, "<b> " BLUE "init_bitstream_map()\n" RESET);
+    TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (*bitstream_map != NULL)
@@ -107,7 +107,7 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
 {
     if ((*bitstream_map) != NULL)
     {
-        TRACE_INFO(DEMUX, "<b> " BLUE "free_bitstream_map()\n" RESET);
+        TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()\n" CLR_RESET);
 
         if ((*bitstream_map)->sample_type != NULL)
         {
@@ -158,7 +158,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
     }
     else
     {
-        TRACE_INFO(DEMUX, GREEN "print_bitstream_map()\n" RESET);
+        TRACE_INFO(DEMUX, BLD_GREEN "print_bitstream_map()\n" CLR_RESET);
 
         if (bitstream_map->stream_type == stream_VIDEO &&
             bitstream_map->sample_count > 0)

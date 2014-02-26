@@ -64,7 +64,7 @@
  */
 static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_yuv420()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv420()\n" CLR_RESET);
     int retcode = FAILURE;
     int missing_mbs = 0;
 
@@ -196,7 +196,7 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_yuv444()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv444()\n" CLR_RESET);
     int retcode = FAILURE;
     int missing_mbs = 0;
 
@@ -340,7 +340,7 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_jpg()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -446,7 +446,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_png()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_png()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -552,7 +552,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_bmp()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -583,7 +583,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, GREEN "export_idr_tga()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_tga()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -617,7 +617,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 int export_idr(DecodingContext_t *dc)
 {
-    TRACE_INFO(IO, GREEN "export_idr()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Picture file

@@ -78,7 +78,7 @@ static int code_from_bitstream_2d(DecodingContext_t *dc,
  */
 void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int startIdx, const int endIdx, const int maxNumCoeff, const int blkType, const int blkIdx)
 {
-    TRACE_1(CAVLC, "> " GREEN "residual_block_cavlc()\n" RESET);
+    TRACE_1(CAVLC, "> " BLD_GREEN "residual_block_cavlc()\n" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     // Shortcut
@@ -337,7 +337,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
         {
             coeffNum += run[i] + 1;
             coeffLevel[startIdx + coeffNum] = level[i];
-            TRACE_1(CAVLC, "# \e[1;35m" "coeffLevel[%i]" RESET "\t= %i\n", startIdx + coeffNum, coeffLevel[startIdx + coeffNum]);
+            TRACE_1(CAVLC, "# \e[1;35m" "coeffLevel[%i]" CLR_RESET "\t= %i\n", startIdx + coeffNum, coeffLevel[startIdx + coeffNum]);
         }
     }
 
@@ -366,7 +366,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
  */
 int read_ce_coefftoken(DecodingContext_t *dc, const int nC, int *TotalCoeffs, int *TrailingOnes)
 {
-    TRACE_3(CAVLC, GREEN "read_ce_coefftoken()\n" RESET);
+    TRACE_3(CAVLC, BLD_GREEN "read_ce_coefftoken()\n" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
 
@@ -671,7 +671,7 @@ int read_ce_coefftoken(DecodingContext_t *dc, const int nC, int *TotalCoeffs, in
  */
 int read_ce_levelprefix(DecodingContext_t *dc)
 {
-    TRACE_3(CAVLC, GREEN "read_ce_levelprefix()\n" RESET);
+    TRACE_3(CAVLC, BLD_GREEN "read_ce_levelprefix()\n" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     int leadingZeroBits = -1;
@@ -703,7 +703,7 @@ int read_ce_levelprefix(DecodingContext_t *dc)
  */
 int read_ce_totalzeros(DecodingContext_t *dc, const int vlcnum, const int chromadc)
 {
-    TRACE_3(CAVLC, GREEN "read_ce_totalzeros()\n" RESET);
+    TRACE_3(CAVLC, BLD_GREEN "read_ce_totalzeros()\n" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     int total_zeros = 0;
@@ -739,7 +739,7 @@ int read_ce_totalzeros(DecodingContext_t *dc, const int vlcnum, const int chroma
  */
 int read_ce_runbefore(DecodingContext_t *dc, const int vlcnum)
 {
-    TRACE_3(CAVLC, GREEN "read_ce_runbefore()\n" RESET);
+    TRACE_3(CAVLC, BLD_GREEN "read_ce_runbefore()\n" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     int run_before = 0;
@@ -776,7 +776,7 @@ static int code_from_bitstream_2d(DecodingContext_t *dc,
                                   const int tabwidth, const int tabheight,
                                   int *code)
 {
-    //TRACE_3(DCAVLC, GREEN "code_from_bitstream_2d()\n" RESET);
+    //TRACE_3(DCAVLC, BLD_GREEN "code_from_bitstream_2d()\n" CLR_RESET);
 
     const uint8_t *len = &lentab[0];
     const uint8_t *cod = &codtab[0];

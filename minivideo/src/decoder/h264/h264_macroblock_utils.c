@@ -41,9 +41,9 @@
 void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
 {
 #if ENABLE_DEBUG
-    printf("[MB] <> " GREEN "print_macroblock_layer()\n" RESET);
+    printf("[MB] <> " BLD_GREEN "print_macroblock_layer()\n" CLR_RESET);
 
-    printf("[MB] ============" BLUE " MB %i (%2i,%2i) " RESET "============\n", mb->mbAddr, mb->mbAddr_x, mb->mbAddr_y);
+    printf("[MB] ============" BLD_BLUE " MB %i (%2i,%2i) " CLR_RESET "============\n", mb->mbAddr, mb->mbAddr_x, mb->mbAddr_y);
     printf("[MB] - Mb position in file\t: 0x%X:%i (%i bits)\n", (mb->mbFileAddrStart) / 8, (mb->mbFileAddrStart) % 8, mb->mbFileAddrStart);
     printf("[MB] - Mb size\t\t\t: %i bits\n", mb->mbFileAddrStop - mb->mbFileAddrStart + 1);
     printf("[MB] - frame_num / idr_pic_id\t= %i / %i\n", dc->active_slice->frame_num, dc->active_slice->idr_pic_id);
@@ -283,7 +283,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
     printf("[MB]  - QPY\t\t\t: %i\n", mb->QPY);
     printf("[MB]  - QPC\t\t\t: %i, %i\n", mb->QPC[0], mb->QPC[1]);
 
-    printf("[MB] ==============" BLUE " Neighbors " RESET "=============\n");
+    printf("[MB] ==============" BLD_BLUE " Neighbors " CLR_RESET "=============\n");
     if (mb->mbAddrA >= 0)
     {
         printf("[MB] - macroblock A is available at address %i\n", mb->mbAddrA);
@@ -317,7 +317,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
         printf("[MB] - macroblock D is not available\n");
     }
 
-    printf("[MB] =============" BLUE " Predictions " RESET "============\n");
+    printf("[MB] =============" BLD_BLUE " Predictions " CLR_RESET "============\n");
     if (mb->mb_type == I_PCM)
     {
         printf("[MB] - Luma prediction\t\t: I_PCM macroblock, no prediction\n");
@@ -376,7 +376,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
 
     if (dc->entropy_coding_mode_flag)
     {
-        printf("[MB] ===========" BLUE " coded_block_flag " RESET "==========\n");
+        printf("[MB] ===========" BLD_BLUE " coded_block_flag " CLR_RESET "==========\n");
         int a = 0;
 
         if (mb->MbPartPredMode[0] == Intra_16x16)
@@ -418,7 +418,7 @@ void print_macroblock_pixel_residual(Macroblock_t *mb)
     int ra = 0;
     int zz = 0;
 
-    printf("[MB] ==============" BLUE " RESIDUAL Y " RESET "==============\n");
+    printf("[MB] ==============" BLD_BLUE " RESIDUAL Y " CLR_RESET "==============\n");
     if (mb->MbPartPredMode[0] == Intra_4x4)
     {
         for (blkGrp = 0; blkGrp < 4; blkGrp++)
@@ -499,7 +499,7 @@ void print_macroblock_pixel_residual(Macroblock_t *mb)
         printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
     }
 
-    printf("[MB] ==============" BLUE " RESIDUAL Cb " RESET "=============\n");
+    printf("[MB] ==============" BLD_BLUE " RESIDUAL Cb " CLR_RESET "=============\n");
     if (1 == 1)
     {
         blkGrp = 0;
@@ -535,7 +535,7 @@ void print_macroblock_pixel_residual(Macroblock_t *mb)
         printf("+-------------------+-------------------+\n\n");
     }
 
-    printf("[MB] ==============" BLUE " RESIDUAL Cr " RESET "=============\n");
+    printf("[MB] ==============" BLD_BLUE " RESIDUAL Cr " CLR_RESET "=============\n");
     if (1 == 1)
     {
         blkGrp = 0;
@@ -588,7 +588,7 @@ void print_macroblock_pixel_predicted(Macroblock_t *mb)
     if (mb->MbPartPredMode[0] == Intra_8x8)
         blkSize = 8;
 
-    printf("[MB] =============" BLUE " PREDICTED Y " RESET "=============\n");
+    printf("[MB] =============" BLD_BLUE " PREDICTED Y " CLR_RESET "=============\n");
     for (y = 0; y < 16; y++)
     {
         if (y % blkSize == 0)
@@ -607,7 +607,7 @@ void print_macroblock_pixel_predicted(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
 
-    printf("[MB] =============" BLUE " PREDICTED Cb " RESET "============\n");
+    printf("[MB] =============" BLD_BLUE " PREDICTED Cb " CLR_RESET "============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -626,7 +626,7 @@ void print_macroblock_pixel_predicted(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+\n\n");
 
-    printf("[MB] =============" BLUE " PREDICTED Cr " RESET "============\n");
+    printf("[MB] =============" BLD_BLUE " PREDICTED Cr " CLR_RESET "============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -662,7 +662,7 @@ void print_macroblock_pixel_final(Macroblock_t *mb)
     if (mb->MbPartPredMode[0] == Intra_8x8)
         blkSize = 8;
 
-    printf("[MB] ==============" BLUE " FINAL Y " RESET "==============\n");
+    printf("[MB] ==============" BLD_BLUE " FINAL Y " CLR_RESET "==============\n");
     for (y = 0; y < 16; y++)
     {
         if (y % blkSize == 0)
@@ -681,7 +681,7 @@ void print_macroblock_pixel_final(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+-------------------+-------------------+\n\n");
 
-    printf("[MB] ==============" BLUE " FINAL Cb " RESET "==============\n");
+    printf("[MB] ==============" BLD_BLUE " FINAL Cb " CLR_RESET "==============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)
@@ -700,7 +700,7 @@ void print_macroblock_pixel_final(Macroblock_t *mb)
     }
     printf("+-------------------+-------------------+\n\n");
 
-    printf("[MB] ==============" BLUE " FINAL Cr " RESET "==============\n");
+    printf("[MB] ==============" BLD_BLUE " FINAL Cr " CLR_RESET "==============\n");
     for (y = 0; y < 8; y++)
     {
         if (y % 4 == 0)

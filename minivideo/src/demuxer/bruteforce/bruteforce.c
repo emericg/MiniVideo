@@ -54,7 +54,7 @@
  */
 int bruteforce_fileParse(VideoFile_t *video, AVCodec_e video_codec)
 {
-    TRACE_INFO(DEMUX, GREEN "bruteforce_fileParse()\n" RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "bruteforce_fileParse()\n" CLR_RESET);
 
     // Search parameters
     int64_t search_offset = 0;

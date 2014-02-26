@@ -69,7 +69,7 @@ int h264_decode(VideoFile_t *input_video,
                 const int picture_number,
                 const int picture_extractionmode)
 {
-    TRACE_INFO(H264, GREEN "h264_decode()\n" RESET);
+    TRACE_INFO(H264, BLD_GREEN "h264_decode()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Init decoding context
@@ -119,7 +119,7 @@ int h264_decode(VideoFile_t *input_video,
                     dc->IdrPicFlag = true;
                     nalu_clean_sample(dc->bitstr);
 
-                    TRACE_INFO(MAIN, "> " GREEN "decodeIDR(%i)\n" RESET, dc->idrCounter);
+                    TRACE_INFO(MAIN, "> " BLD_GREEN "decodeIDR(%i)\n" CLR_RESET, dc->idrCounter);
 
                     if (decode_slice(dc))
                     {
@@ -196,7 +196,7 @@ int h264_decode(VideoFile_t *input_video,
 
         if (dc->idrCounter == picture_number)
         {
-            TRACE_INFO(H264, ">> " YELLOW "Decoding of %i IDR successfull!\n" RESET, dc->idrCounter);
+            TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!\n" CLR_RESET, dc->idrCounter);
             TRACE_INFO(H264, "H.264 decoding ended\n");
             retcode = SUCCESS;
             dc->decoderRunning = false;
@@ -231,7 +231,7 @@ int h264_decode(VideoFile_t *input_video,
  */
 DecodingContext_t *initDecodingContext(VideoFile_t *video)
 {
-    TRACE_INFO(H264, GREEN "initDecodingContext()\n" RESET);
+    TRACE_INFO(H264, BLD_GREEN "initDecodingContext()\n" CLR_RESET);
     DecodingContext_t *dc = NULL;
 
     if (video != NULL)
@@ -316,7 +316,7 @@ DecodingContext_t *initDecodingContext(VideoFile_t *video)
  */
 int checkDecodingContext(DecodingContext_t *dc)
 {
-    TRACE_INFO(H264, "> " GREEN "checkDecodingContext()\n" RESET);
+    TRACE_INFO(H264, "> " BLD_GREEN "checkDecodingContext()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (dc->bitstr == NULL)
@@ -389,7 +389,7 @@ int checkDecodingContext(DecodingContext_t *dc)
  */
 void freeDecodingContext(DecodingContext_t **dc_ptr)
 {
-    TRACE_INFO(H264, GREEN "freeDecodingContext()\n" RESET);
+    TRACE_INFO(H264, BLD_GREEN "freeDecodingContext()\n" CLR_RESET);
 
     // free DecodingContext content
     if ((*dc_ptr) != NULL)
@@ -442,7 +442,7 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
  */
 static int computeNormAdjust(DecodingContext_t *dc)
 {
-    TRACE_2(TRANS, "  > " GREEN "computeNormAdjust()\n" RESET);
+    TRACE_2(TRANS, "  > " BLD_GREEN "computeNormAdjust()\n" CLR_RESET);
     int retcode = FAILURE;
 
     if (dc != NULL)

@@ -112,7 +112,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb);
  */
 int intra_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_INFO(INTRA, "<> " GREEN "intra_prediction_process()\n" RESET);
+    TRACE_INFO(INTRA, "<> " BLD_GREEN "intra_prediction_process()\n" CLR_RESET);
     int retcode = FAILURE;
 
     if (mb->mb_type == I_PCM)
@@ -161,7 +161,7 @@ int intra_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
  */
 static int Intra_4x4_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_4x4_luma_prediction_process()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_luma_prediction_process()\n" CLR_RESET);
     int retcode = SUCCESS;
     int luma4x4BlkIdx = 0;
 
@@ -196,7 +196,7 @@ static int Intra_4x4_luma_prediction_process(DecodingContext_t *dc, Macroblock_t
  */
 static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma4x4BlkIdx)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_4x4_deriv_PredMode()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_deriv_PredMode()\n" CLR_RESET);
 /*
     // Table 8-2: Specification of Intra4x4PredMode[luma4x4BlkIdx] and associated names
     0   Intra_4x4_Vertical
@@ -315,7 +315,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
  */
 static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma4x4BlkIdx)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_4x4_pred_sample()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_pred_sample()\n" CLR_RESET);
     TRACE_1(INTRA, "  > blkIdx %i\n", luma4x4BlkIdx);
 
     // Shortcut
@@ -496,7 +496,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
  */
 static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Vertical()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 are marked
@@ -531,7 +531,7 @@ static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Horizontal()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ], with y = 0..3, are
@@ -568,7 +568,7 @@ static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_DC()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_DC()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -647,7 +647,7 @@ static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Diagonal_Down_Left()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Left()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -690,7 +690,7 @@ static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *
  */
 static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Diagonal_Down_Right()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Right()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and p[ -1, y ]
@@ -736,7 +736,7 @@ static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t 
  */
 static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Vertical_Right()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Right()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and
@@ -791,7 +791,7 @@ static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Horizontal_Down()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Down()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and
@@ -846,7 +846,7 @@ static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Vertical_Left()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Left()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -889,7 +889,7 @@ static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal_Up(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_4x4_Horizontal_Up()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Up()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..3 are
@@ -942,7 +942,7 @@ static int Intra_4x4_Horizontal_Up(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_8x8_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_8x8_luma_prediction_process()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_luma_prediction_process()\n" CLR_RESET);
     int retcode = SUCCESS;
     int luma8x8BlkIdx = 0;
 
@@ -977,7 +977,7 @@ static int Intra_8x8_luma_prediction_process(DecodingContext_t *dc, Macroblock_t
  */
 static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma8x8BlkIdx)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_8x8_deriv_PredMode()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_deriv_PredMode()\n" CLR_RESET);
 /*
     // Table 8-3: Specification of Intra8x8PredMode[luma8x8BlkIdx] and associated names
     0   Intra_8x8_Vertical
@@ -1107,7 +1107,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
  */
 static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma8x8BlkIdx)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_8x8_pred_sample()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_pred_sample()\n" CLR_RESET);
     TRACE_1(INTRA, "  > blkIdx %i\n", luma8x8BlkIdx);
 
     // Shortcut
@@ -1295,7 +1295,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
  */
 static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ipprime)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_8x8_sample_filtering()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_sample_filtering()\n" CLR_RESET);
 
     // Parameters copy
     ipprime->sample_left = ip->sample_left;
@@ -1366,7 +1366,7 @@ static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ippri
  */
 static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Vertical()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -1401,7 +1401,7 @@ static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Horizontal()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ], with y = 0..7, are marked
@@ -1436,7 +1436,7 @@ static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_DC()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_DC()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -1512,7 +1512,7 @@ static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Diagonal_Down_Left()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Left()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..15 are marked
@@ -1554,7 +1554,7 @@ static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *
  */
 static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Diagonal_Down_Right()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Right()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and p[ -1, y ]
@@ -1600,7 +1600,7 @@ static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t 
  */
 static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Vertical_Right()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Right()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and
@@ -1655,7 +1655,7 @@ static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Horizontal_Down()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Down()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and
@@ -1710,7 +1710,7 @@ static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Vertical_Left()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Left()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     The values of the prediction samples pred8x8L[ x, y ], with x, y = 0..7, are
@@ -1753,7 +1753,7 @@ static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_8x8_Horizontal_Up()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Up()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..7 are marked
@@ -1809,7 +1809,7 @@ static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_16x16_luma_prediction_process()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_16x16_luma_prediction_process()\n" CLR_RESET);
 /*
     // Table 8-4: Specification of Intra16x16PredMode and associated names
     0   Intra_16x16_Vertical
@@ -1944,7 +1944,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
  */
 static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_16x16_Vertical()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Vertical()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ x, -1 ]
@@ -1979,7 +1979,7 @@ static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_16x16_Horizontal()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Horizontal()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ -1, y ]
@@ -2016,7 +2016,7 @@ static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_16x16_DC()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_DC()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -2095,7 +2095,7 @@ static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_16x16_Plane()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Plane()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ x, -1 ] with
@@ -2156,7 +2156,7 @@ static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " GREEN "Intra_Chroma_prediction_process()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_Chroma_prediction_process()\n" CLR_RESET);
     TRACE_1(INTRA, "  > blkIdx %i\n", dc->CurrMbAddr);
 
     // Shortcuts
@@ -2337,7 +2337,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
  */
 static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_Chroma_DC()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_DC()\n" CLR_RESET);
 
     int retcode = SUCCESS;
     int sum = 0;
@@ -2453,7 +2453,7 @@ static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_Chroma_Horizontal()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Horizontal()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..MbHeightC - 1,
@@ -2488,7 +2488,7 @@ static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_Chroma_Vertical()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Vertical()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..MbWidthC - 1
@@ -2523,7 +2523,7 @@ static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " GREEN "Intra_Chroma_Plane()\n" RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Plane()\n" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ], with x = 0..MbWidthC - 1
@@ -2584,7 +2584,7 @@ static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " GREEN "ipcm_construction_process()\n" RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "ipcm_construction_process()\n" CLR_RESET);
     int retcode = FAILURE;
 
 #if ENABLE_IPCM

@@ -40,7 +40,7 @@
 
 static int mkv_parse_info(Bitstream_t *bitstr)
 {
-    TRACE_INFO(MKV, GREEN "mkv_parse_info()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_info()\n" CLR_RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
@@ -66,7 +66,7 @@ static int mkv_parse_info(Bitstream_t *bitstr)
 
 static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
 {
-    TRACE_INFO(MKV, GREEN "mkv_parse_seekhead_seek()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead_seek()\n" CLR_RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
@@ -110,7 +110,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
 
 static int mkv_parse_seekhead(Bitstream_t *bitstr)
 {
-    TRACE_INFO(MKV, GREEN "mkv_parse_seekhead()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead()\n" CLR_RESET);
     int retcode = FAILURE;
     uint64_t elementSize = read_ebml_size(bitstr);
     uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
@@ -139,7 +139,7 @@ static int mkv_parse_seekhead(Bitstream_t *bitstr)
 
 static int mkv_parse_segment(Bitstream_t *bitstr)
 {
-    TRACE_INFO(MKV, GREEN "ebml_parse_segment()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "ebml_parse_segment()\n" CLR_RESET);
     int retcode = FAILURE;
     uint64_t segmentSize = 0;
     uint64_t segmentOffset = 0;
@@ -212,7 +212,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
  */
 int mkv_fileParse(VideoFile_t *video)
 {
-    TRACE_INFO(MKV, GREEN "mkv_fileParse()\n" RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_fileParse()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Init bitstream to parse container infos

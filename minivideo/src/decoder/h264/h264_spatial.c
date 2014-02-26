@@ -55,7 +55,7 @@ int InverseRasterScan(const int a,
                       const int d,
                       const int e)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseRasterScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseRasterScan()\n" CLR_RESET);
 
     if (e == 1)
     {
@@ -120,7 +120,7 @@ void InverseMacroblockScan(const int mbAddr,
                            int *x,
                            int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseMacroblockScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseMacroblockScan()\n" CLR_RESET);
 
 #if ENABLE_MBAFF
     TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
@@ -149,7 +149,7 @@ void InverseMacroblockScan(const int mbAddr,
  */
 void InverseMacroblockPartitionScan(const int mbAddr, const int mbPartIdx, int *x, int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseMacroblockPartitionScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseMacroblockPartitionScan()\n" CLR_RESET);
 
     TRACE_WARNING(SPATIAL, ">>> UNIMPLEMENTED (InverseMacroblockPartitionScan)\n");
 /*
@@ -177,7 +177,7 @@ void InverseMacroblockPartitionScan(const int mbAddr, const int mbPartIdx, int *
  */
 void InverseSubMacroblockPartitionScan(const int mbAddr, const int mbPartIdx, const int subMbPartIdx, int *x, int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseSubMacroblockPartitionScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseSubMacroblockPartitionScan()\n" CLR_RESET);
 
     TRACE_WARNING(SPATIAL, ">>> UNIMPLEMENTED (InverseSubMacroblockPartitionScan)\n");
 /*
@@ -209,7 +209,7 @@ void InverseSubMacroblockPartitionScan(const int mbAddr, const int mbPartIdx, co
  */
 void InverseLuma4x4BlkScan(const int luma4x4BlkIdx, int *x, int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseLuma4x4BlkScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseLuma4x4BlkScan()\n" CLR_RESET);
 /*
     // Figure 6-10: Scan for 4x4 luma blocks
     -----------------
@@ -247,7 +247,7 @@ void InverseLuma4x4BlkScan(const int luma4x4BlkIdx, int *x, int *y)
  */
 void InverseLuma8x8BlkScan(const int luma8x8BlkIdx, int *x, int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseLuma8x8BlkScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseLuma8x8BlkScan()\n" CLR_RESET);
 /*
     // Figure 6-11: Scan for 8x8 luma blocks
     ---------
@@ -277,7 +277,7 @@ void InverseLuma8x8BlkScan(const int luma8x8BlkIdx, int *x, int *y)
  */
 void InverseChroma4x4BlkScan(const int chroma4x4BlkIdx, int *x, int *y)
 {
-    TRACE_1(SPATIAL, GREEN "   InverseChroma4x4BlkScan()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   InverseChroma4x4BlkScan()\n" CLR_RESET);
 /*
     // Figure x: Scan for 4x4 chroma blocks
     ---------
@@ -308,7 +308,7 @@ void InverseChroma4x4BlkScan(const int chroma4x4BlkIdx, int *x, int *y)
  */
 bool deriv_macroblock_availability(DecodingContext_t *dc, const int mbAddr)
 {
-    TRACE_1(SPATIAL, GREEN "deriv_macroblock_availability()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "deriv_macroblock_availability()\n" CLR_RESET);
 
     if (mbAddr < 0 || mbAddr > dc->CurrMbAddr || dc->mb_array[mbAddr] == NULL)
     {
@@ -332,7 +332,7 @@ bool deriv_macroblock_availability(DecodingContext_t *dc, const int mbAddr)
  */
 void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mbAddr)
 {
-    TRACE_1(SPATIAL, GREEN "     deriv_macroblockneighbours_availability()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "     deriv_macroblockneighbours_availability()\n" CLR_RESET);
 /*
     ----------------------------------------
     |  mbAddr D  |  mbAddr B  |  mbAddr C  |
@@ -429,7 +429,7 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
  */
 void deriv_macroblockneighbours(DecodingContext_t *dc, const int mbAddr)
 {
-    TRACE_1(SPATIAL, GREEN "     deriv_macroblockneighbours()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "     deriv_macroblockneighbours()\n" CLR_RESET);
 /*
     ----------------------------------------
     |  mbAddr D  |  mbAddr B  |  mbAddr C  |
@@ -462,7 +462,7 @@ void deriv_8x8lumablocks(DecodingContext_t *dc, const int luma8x8BlkIdx,
                          int *mbAddrA, int *luma8x8BlkIdxA,
                          int *mbAddrB, int *luma8x8BlkIdxB)
 {
-    TRACE_1(SPATIAL, GREEN "  deriv_8x8lumablocks()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "  deriv_8x8lumablocks()\n" CLR_RESET);
 /*
     // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
@@ -534,7 +534,7 @@ void deriv_8x8chromablocks_cat3(DecodingContext_t *dc, const int chroma8x8BlkIdx
                                 int *mbAddrA, int *chroma8x8BlkIdxA,
                                 int *mbAddrB, int *chroma8x8BlkIdxB)
 {
-    TRACE_1(SPATIAL, GREEN "  deriv_8x8chromablocks()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "  deriv_8x8chromablocks()\n" CLR_RESET);
 
     deriv_8x8lumablocks(dc, chroma8x8BlkIdx, mbAddrA, chroma8x8BlkIdxA, mbAddrB, chroma8x8BlkIdxB);
 }
@@ -560,7 +560,7 @@ void deriv_4x4lumablocks(DecodingContext_t *dc, const int luma4x4BlkIdx,
                          int *mbAddrA, int *luma4x4BlkIdxA,
                          int *mbAddrB, int *luma4x4BlkIdxB)
 {
-    TRACE_1(SPATIAL, GREEN "  deriv_4x4lumablocks()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "  deriv_4x4lumablocks()\n" CLR_RESET);
 /*
     // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
@@ -632,7 +632,7 @@ void deriv_4x4chromablocks(DecodingContext_t *dc, const int chroma4x4BlkIdx,
                            int *mbAddrA, int *chroma4x4BlkIdxA,
                            int *mbAddrB, int *chroma4x4BlkIdxB)
 {
-    TRACE_1(SPATIAL, GREEN "  deriv_4x4chromablocks()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "  deriv_4x4chromablocks()\n" CLR_RESET);
 /*
     // Table 6-2: Specification of input and output assignments for subclauses 6.4.11.1 to 6.4.11.7
     N      xD       yD
@@ -704,7 +704,7 @@ void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx
                                 int *mbAddrA, int *chroma4x4BlkIdxA,
                                 int *mbAddrB, int *chroma4x4BlkIdxB)
 {
-    TRACE_1(SPATIAL, GREEN "  deriv_4x4chromablocks_cat3()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "  deriv_4x4chromablocks_cat3()\n" CLR_RESET);
 
     deriv_4x4lumablocks(dc, chroma4x4BlkIdx, mbAddrA, chroma4x4BlkIdxA, mbAddrB, chroma4x4BlkIdxB);
 }
@@ -739,7 +739,7 @@ void deriv_4x4chromablocks_cat3(DecodingContext_t *dc, const int chroma4x4BlkIdx
 void deriv_neighbouringlocations(DecodingContext_t *dc, const bool lumaBlock,
                                  const int xN, const int yN, int *mbAddrN, int *xW, int *yW)
 {
-    TRACE_1(SPATIAL, GREEN "   deriv_neighbouringlocations()\n" RESET);
+    TRACE_1(SPATIAL, BLD_GREEN "   deriv_neighbouringlocations()\n" CLR_RESET);
 
     int maxW = 16;
     int maxH = 16;

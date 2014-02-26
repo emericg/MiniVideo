@@ -75,7 +75,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
  */
 int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 {
-    TRACE_INFO(MB, "<> " GREEN "macroblock_layer(" RESET "%i" GREEN ")\n" RESET, mbAddr);
+    TRACE_INFO(MB, "<> " BLD_GREEN "macroblock_layer(" CLR_RESET "%i" BLD_GREEN ")\n" CLR_RESET, mbAddr);
     int retcode = FAILURE;
 
     // Macroblock allocation
@@ -375,7 +375,7 @@ void freeMbArrayContent(DecodingContext_t *dc)
  */
 unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr)
 {
-    TRACE_3(MB, "> " GREEN "NextMbAddress()" "= %i\n" RESET, CurrMbAddr + 1);
+    TRACE_3(MB, "> " BLD_GREEN "NextMbAddress()" "= %i\n" CLR_RESET, CurrMbAddr + 1);
 
     return CurrMbAddr + 1;
 }
@@ -393,7 +393,7 @@ unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr)
  */
 static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_INFO(MB, "  > " GREEN "mb_pred()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "mb_pred()\n" CLR_RESET);
 
     if (mb->MbPartPredMode[0] == Intra_4x4 ||
         mb->MbPartPredMode[0] == Intra_8x8 ||
@@ -529,7 +529,7 @@ static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
  */
 static void sub_mb_pred(DecodingContext_t *dc, const unsigned int mb_type, unsigned int *sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "sub_mb_pred()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "sub_mb_pred()\n" CLR_RESET);
 
     // Shortcut
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -638,7 +638,7 @@ static void sub_mb_pred(DecodingContext_t *dc, const unsigned int mb_type, unsig
  */
 static int NumMbPart(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_2(MB, "  > " GREEN "NumMbPart()\n" RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "NumMbPart()\n" CLR_RESET);
     int retcode = 1;
 
     if (slice_type == 0 || slice_type == 5 ||
@@ -766,7 +766,7 @@ static int NumMbPart(const unsigned int slice_type, const unsigned int mb_type)
  */
 static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const int mbPartIdx)
 {
-    TRACE_2(MB, "  > " GREEN "MbPartPredMode()\n" RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "MbPartPredMode()\n" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 2 || slice_type == 7) // I slice
@@ -852,7 +852,7 @@ static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const
  */
 static int MbPartWidth(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "MbPartWidth()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartWidth()\n" CLR_RESET);
     int retcode = 0;
 
     TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartWidth)\n");
@@ -870,7 +870,7 @@ static int MbPartWidth(const unsigned int slice_type, const unsigned int mb_type
  */
 static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "MbPartHeight()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartHeight()\n" CLR_RESET);
     int retcode = 0;
 
     TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartHeight)\n");
@@ -887,7 +887,7 @@ static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_typ
  */
 static void MbPosition(Macroblock_t *mb, sps_t *sps)
 {
-    TRACE_2(MB, "  > " GREEN "MbPosition()\n" RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "MbPosition()\n" CLR_RESET);
 
     if (mb->mbAddr <= (sps->PicWidthInMbs * sps->FrameHeightInMbs))
     {
@@ -915,7 +915,7 @@ static void MbPosition(Macroblock_t *mb, sps_t *sps)
  */
 static int NumSubMbPart(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "NumSubMbPart()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "NumSubMbPart()\n" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -1000,7 +1000,7 @@ static int NumSubMbPart(const unsigned int slice_type, const unsigned int sub_mb
  */
 static int SubMbPredMode(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "SubMbPredMode()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPredMode()\n" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -1044,7 +1044,7 @@ static int SubMbPredMode(const unsigned int slice_type, const unsigned int sub_m
  */
 static int SubMbPartWidth(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "SubMbPartWidth()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartWidth()\n" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -1070,7 +1070,7 @@ static int SubMbPartWidth(const unsigned int slice_type, const unsigned int sub_
  */
 static int SubMbPartHeight(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " GREEN "SubMbPartHeight()\n" RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartHeight()\n" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -1102,7 +1102,7 @@ static int SubMbPartHeight(const unsigned int slice_type, const unsigned int sub
  */
 static void residual_luma(DecodingContext_t *dc, const int startIdx, const int endIdx)
 {
-    TRACE_INFO(MB, "<> " GREEN "residual_luma()\n" RESET);
+    TRACE_INFO(MB, "<> " BLD_GREEN "residual_luma()\n" CLR_RESET);
 
     // Shortcut
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -1222,7 +1222,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
  */
 static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int endIdx)
 {
-    TRACE_INFO(MB, "<> " GREEN "residual_chroma()\n" RESET);
+    TRACE_INFO(MB, "<> " BLD_GREEN "residual_chroma()\n" CLR_RESET);
 
     // Shortcuts
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];

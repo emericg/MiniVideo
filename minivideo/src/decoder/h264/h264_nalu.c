@@ -40,7 +40,7 @@
  */
 nalu_t *initNALU(void)
 {
-    TRACE_INFO(NALU, GREEN "initNALU()\n" RESET);
+    TRACE_INFO(NALU, BLD_GREEN "initNALU()\n" CLR_RESET);
 
     // NAL Unit allocation
     nalu_t *nalu = NULL;
@@ -66,7 +66,7 @@ nalu_t *initNALU(void)
  */
 void nalu_reset(nalu_t *nalu)
 {
-    TRACE_INFO(NALU, GREEN "nalu_reset()\n\n" RESET);
+    TRACE_INFO(NALU, BLD_GREEN "nalu_reset()\n\n" CLR_RESET);
 
     if (nalu != NULL)
     {
@@ -109,7 +109,7 @@ void nalu_reset(nalu_t *nalu)
  */
 int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
 {
-    TRACE_INFO(NALU, "> " GREEN "nalu_parse_header()\n" RESET);
+    TRACE_INFO(NALU, "> " BLD_GREEN "nalu_parse_header()\n" CLR_RESET);
     int retcode = FAILURE;
 
     // Set NAL Unit header offset
@@ -195,7 +195,7 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
  */
 int nalu_clean_sample(Bitstream_t *bitstr)
 {
-    TRACE_INFO(NALU, GREEN "nalu_clean_sample()\n" RESET);
+    TRACE_INFO(NALU, BLD_GREEN "nalu_clean_sample()\n" CLR_RESET);
 
     unsigned int buffer_offset_saved = bitstr->buffer_offset;
 

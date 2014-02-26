@@ -238,7 +238,7 @@ int parse_pes(Bitstream_t *bitstr, PesPacket_t *packet)
         {
             if (read_bits(bitstr, 8) != 0xFF)
             {
-                TRACE_ERROR(MPS, GREEN "wrong 'stuffing_byte'\n" RESET);
+                TRACE_ERROR(MPS, BLD_GREEN "wrong 'stuffing_byte'\n" CLR_RESET);
                 return FAILURE;
             }
         }
@@ -257,7 +257,7 @@ int parse_pes(Bitstream_t *bitstr, PesPacket_t *packet)
 
 void print_pes(PesPacket_t *packet)
 {
-    TRACE_INFO(MPS, GREEN "print_pes()\n" RESET);
+    TRACE_INFO(MPS, BLD_GREEN "print_pes()\n" CLR_RESET);
 
     TRACE_INFO(MPS, " packet_start_offset\t= 0x%08X\n", packet->packet_start_offset);
 
@@ -400,7 +400,7 @@ void print_pes(PesPacket_t *packet)
 
 int parse_pes_padding(Bitstream_t *bitstr, PesPacket_t *packet)
 {
-    TRACE_INFO(MPS, GREEN "  parse_pes_padding()\n" RESET);
+    TRACE_INFO(MPS, BLD_GREEN "  parse_pes_padding()\n" CLR_RESET);
     int retcode = SUCCESS;
     packet->PES_packet_length = read_bits(bitstr, 16);
 

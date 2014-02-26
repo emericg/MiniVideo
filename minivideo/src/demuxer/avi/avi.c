@@ -245,12 +245,12 @@ static int parse_JUNK(Bitstream_t *bitstr, AviList_t *list_header_parent, AviChu
 
         if (skip_bits(bitstr, jump) == FAILURE)
         {
-            TRACE_ERROR(AVI, GREEN "parse_JUNK()" RESET " >> Unable to skip %i bytes\n", chunk_header_child->dwSize);
+            TRACE_ERROR(AVI, BLD_GREEN "parse_JUNK()" CLR_RESET " >> Unable to skip %i bytes\n", chunk_header_child->dwSize);
             retcode = FAILURE;
         }
         else
         {
-            TRACE_1(AVI, GREEN "parse_JUNK()\n" RESET);
+            TRACE_1(AVI, BLD_GREEN "parse_JUNK()\n" CLR_RESET);
             retcode = SUCCESS;
         }
     }
@@ -270,7 +270,7 @@ static int parse_JUNK(Bitstream_t *bitstr, AviList_t *list_header_parent, AviChu
 
 static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
 {
-    TRACE_INFO(AVI, GREEN "parse_string()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_string()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (chunk_header == NULL)
@@ -318,7 +318,7 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
 
 static int parse_avih(Bitstream_t *bitstr, AviChunk_t *avih_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_avih()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_avih()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (avih_header == NULL)
@@ -369,7 +369,7 @@ static int parse_avih(Bitstream_t *bitstr, AviChunk_t *avih_header, avi_t *avi)
 
 static int parse_dmlh(Bitstream_t *bitstr, AviChunk_t *dmlh_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_dmlh()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_dmlh()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (dmlh_header == NULL)
@@ -397,7 +397,7 @@ static int parse_dmlh(Bitstream_t *bitstr, AviChunk_t *dmlh_header, avi_t *avi)
 
 static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, GREEN "parse_strh()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strh()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (strh_header == NULL)
@@ -457,7 +457,7 @@ static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *
 
 static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, GREEN "parse_strf()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strf()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (strf_header == NULL)
@@ -644,7 +644,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
  */
 static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_idx1()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -696,7 +696,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
                 // Set sample into bitstream map
                 if ((dwChunkId & 0x0000FFFF) == 0x7762) // wb: audio
                 {
-                    TRACE_3(AVI, BLUE "> AUDIO\n" RESET);
+                    TRACE_3(AVI, BLD_BLUE "> AUDIO\n" CLR_RESET);
                     int tid = 0;
                     int sid = video->tracks_audio[tid]->sample_count;
                     video->tracks_audio[tid]->sample_count++;
@@ -709,7 +709,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x6463) // dc: video
                 {
-                    TRACE_3(AVI, BLUE "> VIDEO\n" RESET);
+                    TRACE_3(AVI, BLD_BLUE "> VIDEO\n" CLR_RESET);
                     int tid = 0;
                     int sid = video->tracks_video[tid]->sample_count;
                     video->tracks_video[tid]->sample_count++;
@@ -726,7 +726,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7478) // tx: subtitles
                 {
-                    TRACE_3(AVI, BLUE "> TEXT\n" RESET);
+                    TRACE_3(AVI, BLD_BLUE "> TEXT\n" CLR_RESET);
                     int tid = 0;
                     int sid = video->tracks_subtitles[tid]->sample_count;
 
@@ -786,7 +786,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
  */
 static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, GREEN "parse_indx()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_indx()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (indx_header == NULL)
@@ -817,7 +817,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
 
         if (bIndexType == AVI_INDEX_OF_INDEXES)
         {
-            TRACE_INFO(AVI, GREEN "> AVI Super Index Chunk\n" RESET);
+            TRACE_INFO(AVI, BLD_GREEN "> AVI Super Index Chunk\n" CLR_RESET);
 
             uint32_t dwReserved[3];
             dwReserved[0] = endian_flip_32(read_bits(bitstr, 32));
@@ -841,7 +841,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
         else if (bIndexType == AVI_INDEX_OF_CHUNKS)
         {
             // AVI Standard Index Chunk // AVI Field Index Chunk
-            TRACE_INFO(AVI, GREEN "> AVI Standard Index Chunk\n" RESET);
+            TRACE_INFO(AVI, BLD_GREEN "> AVI Standard Index Chunk\n" CLR_RESET);
 
             // Alloc index entries
             int start = 0;
@@ -909,7 +909,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
  */
 static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_strl()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strl()\n" CLR_RESET);
     int retcode = SUCCESS;
     int track_id = 0;
 
@@ -982,7 +982,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
                 //    retcode = parse_strd(bitstr, &chunk_header, avi->tracks[track_id]);
                 //    break;
                 case fcc_strn:
-                    TRACE_INFO(AVI, GREEN "parse_strn()\n" RESET);
+                    TRACE_INFO(AVI, BLD_GREEN "parse_strn()\n" CLR_RESET);
                     print_chunk_header(&chunk_header);
                     retcode = parse_string(bitstr, &chunk_header);
                     break;
@@ -1033,7 +1033,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
  */
 static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_odml()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_odml()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (odml_header != NULL &&
@@ -1131,7 +1131,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
  */
 static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_movi()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_movi()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (movi_header != NULL &&
@@ -1202,7 +1202,7 @@ static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
 
 static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_INFO()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_INFO()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (INFO_header != NULL &&
@@ -1286,7 +1286,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
 
 static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "parse_hdrl()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_hdrl()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     if (hdrl_header != NULL &&
@@ -1474,7 +1474,7 @@ static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_
 
 static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
 {
-    TRACE_INFO(AVI, GREEN "avi_indexer()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "avi_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0, j = 0;
 
@@ -1582,7 +1582,7 @@ void avi_clean(avi_t *avi)
  */
 int avi_fileParse(VideoFile_t *video)
 {
-    TRACE_INFO(AVI, GREEN "avi_fileParse()\n" RESET);
+    TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Init bitstream to parse container infos
@@ -1638,7 +1638,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, GREEN "Unknown liist type\n" RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type\n" CLR_RESET);
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1661,7 +1661,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, GREEN "Unknown chuunk type\n" RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type\n" CLR_RESET);
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;
@@ -1699,7 +1699,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, GREEN "Unknown liist type\n" RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type\n" CLR_RESET);
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1722,7 +1722,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, GREEN "Unknown chuunk type\n" RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type\n" CLR_RESET);
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;

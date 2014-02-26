@@ -299,7 +299,7 @@ static void getContainer(VideoFile_t *video)
  */
 VideoFile_t *import_fileOpen(const char *filepath)
 {
-    TRACE_INFO(IO, GREEN "import_fileOpen()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileOpen()\n" CLR_RESET);
 
     // VideoFile allocation
     VideoFile_t *video = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
@@ -355,7 +355,7 @@ VideoFile_t *import_fileOpen(const char *filepath)
  */
 int import_fileClose(VideoFile_t **video_ptr)
 {
-    TRACE_INFO(IO, GREEN "import_fileClose()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileClose()\n" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -405,15 +405,15 @@ int import_fileClose(VideoFile_t **video_ptr)
 
 void import_fileStatus(VideoFile_t *videoFile)
 {
-    TRACE_INFO(IO, GREEN "import_fileStatus()\n" RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileStatus()\n" CLR_RESET);
 
     int i = 0;
 
     // File
     if (videoFile->file_pointer)
-        TRACE_1(IO, "file_pointer is " GREEN "open\n" RESET);
+        TRACE_1(IO, "file_pointer is " BLD_GREEN "open\n" CLR_RESET);
     else
-        TRACE_1(IO, "file_pointer is " RED "closed\n" RESET);
+        TRACE_1(IO, "file_pointer is " BLD_RED "closed\n" CLR_RESET);
 
 
     // File info

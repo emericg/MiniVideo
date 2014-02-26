@@ -122,7 +122,7 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd);
  */
 int decodeSPS(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "<> " GREEN "decodeSPS()\n" RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // SPS allocation
@@ -438,7 +438,7 @@ void freeSPS(sps_t **sps_ptr)
  */
 static int checkSPS(DecodingContext_t *dc, sps_t *sps)
 {
-    TRACE_INFO(PARAM, "> " GREEN "checkSPS()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "checkSPS()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check SPS structure
@@ -599,7 +599,7 @@ static int checkSPS(DecodingContext_t *dc, sps_t *sps)
 void printSPS(DecodingContext_t *dc)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(PARAM, "> " GREEN "printSPS()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "printSPS()\n" CLR_RESET);
 
     int i = 0;
 
@@ -722,7 +722,7 @@ void printSPS(DecodingContext_t *dc)
  */
 static void scaling_list_4x4(DecodingContext_t *dc, int i)
 {
-    TRACE_INFO(PARAM, "> " GREEN "scaling_list_4x4()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_4x4()\n" CLR_RESET);
 
     sps_t *sps = NULL;
     int lastScale = 8;
@@ -767,7 +767,7 @@ static void scaling_list_4x4(DecodingContext_t *dc, int i)
  */
 static void scaling_list_8x8(DecodingContext_t *dc, int i)
 {
-    TRACE_INFO(PARAM, "> " GREEN "scaling_list_8x8()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_8x8()\n" CLR_RESET);
 
     sps_t *sps = NULL;
     int lastScale = 8;
@@ -810,7 +810,7 @@ static void scaling_list_8x8(DecodingContext_t *dc, int i)
  */
 int decodePPS(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "<> " GREEN "decodePPS()\n" RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodePPS()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // PPS allocation
@@ -970,7 +970,7 @@ void freePPS(pps_t **pps_ptr)
  */
 static int checkPPS(DecodingContext_t *dc, pps_t *pps)
 {
-    TRACE_INFO(PARAM, "> " GREEN "checkPPS()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "checkPPS()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check PPS structure
@@ -1061,7 +1061,7 @@ static int checkPPS(DecodingContext_t *dc, pps_t *pps)
 void printPPS(DecodingContext_t *dc)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(PARAM, "> " GREEN "printPPS()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "printPPS()\n" CLR_RESET);
 
     int i = 0;
 
@@ -1149,7 +1149,7 @@ void printPPS(DecodingContext_t *dc)
  */
 int decodeSEI(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "<> " GREEN "decodeSEI()\n" RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSEI()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // SEI allocation
@@ -1195,7 +1195,7 @@ int decodeSEI(DecodingContext_t *dc)
  */
 static int checkSEI(DecodingContext_t *dc, sei_t *sei)
 {
-    TRACE_INFO(PARAM, "> " GREEN "checkSEI()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "checkSEI()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check SEI structure
@@ -1238,7 +1238,7 @@ void freeSEI(sei_t  **sei_ptr)
 void printSEI(DecodingContext_t *dc)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(PARAM, "> " GREEN "printSEI()\n" RESET);
+    TRACE_INFO(PARAM, "> " BLD_GREEN "printSEI()\n" CLR_RESET);
 
     // Shortcut
     sei_t *sei = dc->active_sei;
@@ -1272,7 +1272,7 @@ void printSEI(DecodingContext_t *dc)
  */
 static vui_t *decodeVUI(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "  > " GREEN "decodeVUI()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "decodeVUI()\n" CLR_RESET);
 
     // VUI allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -1389,7 +1389,7 @@ static vui_t *decodeVUI(DecodingContext_t *dc)
  */
 static int checkVUI(DecodingContext_t *dc, vui_t *vui)
 {
-    TRACE_INFO(PARAM, "  > " GREEN "checkVUI()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "checkVUI()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check VUI structure
@@ -1544,7 +1544,7 @@ static int checkVUI(DecodingContext_t *dc, vui_t *vui)
 void printVUI(vui_t *vui)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(PARAM, "  > " GREEN "printVUI()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "printVUI()\n" CLR_RESET);
 
     // Check VUI structure
     if (vui == NULL)
@@ -1642,7 +1642,7 @@ void printVUI(vui_t *vui)
  */
 hrd_t *decodeHRD(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "  > " GREEN "decodeHRD()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "decodeHRD()\n" CLR_RESET);
 
     // HRD allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -1698,7 +1698,7 @@ hrd_t *decodeHRD(DecodingContext_t *dc)
  */
 static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
 {
-    TRACE_INFO(PARAM, "  > " GREEN "checkHRD()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "checkHRD()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check HRD structure
@@ -1763,7 +1763,7 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
 void printHRD(hrd_t *hrd)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(PARAM, "  > " GREEN "printHRD()\n" RESET);
+    TRACE_INFO(PARAM, "  > " BLD_GREEN "printHRD()\n" CLR_RESET);
 
     // Check HRD structure
     if (hrd == NULL)

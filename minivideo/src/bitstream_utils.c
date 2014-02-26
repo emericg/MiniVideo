@@ -42,11 +42,11 @@
  */
 void bitstream_print_stats(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b>   bitstream offset  (byte) : " BLUE "%lli" RESET " / " BLUE "%lli\n" RESET, bitstr->bitstream_offset, bitstr->bitstream_size);
-    TRACE_1(BITS, "<b>   buffer offset     (byte) : " BLUE "%u" RESET " / " BLUE "%u\n" RESET, bitstr->buffer_offset/8, bitstr->buffer_size);
-    TRACE_1(BITS, "<b>   buffer offset     (bit)  : " BLUE "%u" RESET " / " BLUE "%u\n" RESET, bitstr->buffer_offset, bitstr->buffer_size*8);
-    TRACE_1(BITS, "<b>   buffer offset % 8 (bit)  : " BLUE "%u\n" RESET, bitstr->buffer_offset%8);
-    TRACE_1(BITS, "<b>   buffer discarded byte    : " BLUE "%u\n" RESET, bitstr->buffer_discarded_bytes);
+    TRACE_1(BITS, "<b>   bitstream offset  (byte) : " BLD_BLUE "%lli" CLR_RESET " / " BLD_BLUE "%lli\n" CLR_RESET, bitstr->bitstream_offset, bitstr->bitstream_size);
+    TRACE_1(BITS, "<b>   buffer offset     (byte) : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset/8, bitstr->buffer_size);
+    TRACE_1(BITS, "<b>   buffer offset     (bit)  : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset, bitstr->buffer_size*8);
+    TRACE_1(BITS, "<b>   buffer offset % 8 (bit)  : " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset%8);
+    TRACE_1(BITS, "<b>   buffer discarded byte    : " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_discarded_bytes);
 }
 
 /* ************************************************************************** */
@@ -59,7 +59,7 @@ void bitstream_print_stats(Bitstream_t *bitstr)
  */
 void bitstream_print_buffer(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b> " BLUE "bitstream_print_buffer()\n" RESET);
+    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_print_buffer()\n" CLR_RESET);
 
     int i = 0, j = 0;
     const int row = 21, line = 16;
@@ -96,7 +96,7 @@ void bitstream_print_buffer(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLUE "Current byte offset is %i\n" RESET, bitstream_get_absolute_byte_offset(bitstr));
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current byte offset is %i\n" CLR_RESET, bitstream_get_absolute_byte_offset(bitstr));
 }
 
 /* ************************************************************************** */
@@ -107,7 +107,7 @@ void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_bit_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLUE "Current bit offset is %i\n" RESET, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current bit offset is %i\n" CLR_RESET, bitstream_get_absolute_bit_offset(bitstr));
 }
 
 /* ************************************************************************** */
@@ -124,12 +124,12 @@ bool bitstream_check_alignment(Bitstream_t *bitstr)
 
     if ((bitstr->buffer_offset % 8) == 0)
     {
-        TRACE_1(BITS, "<b> " BLUE "Bitstream is aligned" RESET " at current byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is aligned" CLR_RESET " at current byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
         alignment = true;
     }
     else
     {
-        TRACE_1(BITS, "<b> " BLUE "Bitstream is NOT aligned" RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is NOT aligned" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
     }
 
     return alignment;
@@ -148,7 +148,7 @@ bool bitstream_check_alignment(Bitstream_t *bitstr)
  */
 bool bitstream_force_alignment(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b> " BLUE "bitstream_force_alignment()\n" RESET);
+    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_force_alignment()\n" CLR_RESET);
     bool alignment = true;
 
     // Check if bitstream is already aligned
@@ -195,7 +195,7 @@ bool bitstream_force_alignment(Bitstream_t *bitstr)
  */
 bool more_bitstream_data(Bitstream_t *bitstr)
 {
-    TRACE_2(BITS, "<b> " BLUE "more_bitstream_data()\n" RESET);
+    TRACE_2(BITS, "<b> " BLD_BLUE "more_bitstream_data()\n" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
@@ -237,7 +237,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
  */
 bool h264_more_rbsp_data(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLUE "h264_more_rbsp_data()\n" RESET);
+    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_data()\n" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
@@ -364,7 +364,7 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
  */
 bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLUE "h264_more_rbsp_trailing_data()\n" RESET);
+    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_trailing_data()\n" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
