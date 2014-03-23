@@ -26,25 +26,6 @@
 
 /* ************************************************************************** */
 
-//! Stream type
-typedef enum StreamType_e
-{
-    stream_UNKNOWN = 0,
-    stream_AUDIO   = 1,
-    stream_VIDEO   = 2,
-    stream_TEXT    = 3
-
-} StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
-
 //! Container file formats
 typedef enum ContainerFormat_e
 {
@@ -76,8 +57,8 @@ typedef enum AVCodec_e
     CODEC_MPEG_L3     = 4,  //!< MPEG 1/2 Audio Layer III
     CODEC_AAC         = 5,  //!< Advanced Audio Coding
     CODEC_AAC_HE      = 6,  //!< High Efficiency Advanced Audio Coding
-    CODEC_AC3         = 7,  //!< AC3, or Dobly Digital, or A/52A */
-    CODEC_EAC3        = 8,  //!< Enhanced AC3, or Dobly Digital Plus, or A/52B */
+    CODEC_AC3         = 7,  //!< AC3, or Dobly Digital, or A/52A
+    CODEC_EAC3        = 8,  //!< Enhanced AC3, or Dobly Digital Plus, or A/52B
     CODEC_DTS         = 9,
     CODEC_DTS_HD      = 10,
     CODEC_FLAC        = 11,
@@ -88,15 +69,20 @@ typedef enum AVCodec_e
     // Video codecs
     CODEC_MPEG12      = 32, //!< MPEG-1/2 videos
     CODEC_MPEG4       = 33, //!< MPEG-4 Part 2 "ASP" or XVID
-    CODEC_MSMPEG4     = 34, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft, NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_MSMPEG4     = 34, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
     CODEC_H263        = 35, //!< H.263, sometimes found inside "mobile" 3GP files
     CODEC_H264        = 36, //!< H.264 or MPEG-4 Part 10 "AVC"
-    CODEC_VC1         = 37, //!< VC1 or Windows Media Video
-    CODEC_VC2         = 38, //!< VC2 or Dirac
-    CODEC_VP4         = 39,
-    CODEC_VP6         = 40,
-    CODEC_VP8         = 41,
-    CODEC_VP9         = 42,
+    CODEC_VP4         = 37,
+    CODEC_VP6         = 38,
+    CODEC_VP8         = 39,
+    CODEC_VP9         = 40,
+    CODEC_VC1         = 41, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2         = 42, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_WMV1        = 42, //!< Windows Media Video 7
+    CODEC_WMV2        = 42, //!< Windows Media Video 8
+    CODEC_WMV3        = 43, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
+    CODEC_WMVA        = 44, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
+    CODEC_WVC1        = 45, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
 
     // Subtitles codecs
     CODEC_SRT         = 64, //!< SubRip (.srt)
@@ -118,6 +104,68 @@ typedef enum PictureFormat_e
     PICTURE_YUV420    = 6   //!< Planar YCbCr file with 4:2:0 subsampling
 
 } PictureFormat_e;
+
+/* ************************************************************************** */
+
+//! The color space used by the video
+typedef enum ColorSpace_e
+{
+    CS_UNKNOWN = 0,     //!< Unknown color space
+    CS_YUV     = 1,     //!< YUV (YCbCr) color space
+    CS_RGB     = 2      //!< RGB color space
+
+} ColorSpace_e;
+
+//! The subsampling format used by the video
+typedef enum Subsampling_e
+{
+    SS_UNKNOWN = 0,     //!< Unknown subsampling
+    SS_400     = 1,     //!< Greyscale
+    SS_420     = 2,     //!< 4:2:0 subsampling
+    SS_422     = 3,     //!< 4:2:2 subsampling
+    SS_444     = 4      //!< 4:4:4 subsampling
+
+} Subsampling_e;
+
+//! Frame rate (picture per second)
+typedef enum FrameRate_e
+{
+    FR_UNKNOWN = 0,   //!< Unknown frame rate
+    FR_24p,           //!< 24 frames
+    FR_24p_NTSC,      //!< 24 frames * 1000/1001 = 23.976 frames
+    FR_25p,
+    FR_30p,
+    FR_30p_NTSC,      //!< 30 frames * 1000/1001 = 29.970 frames
+    FR_48p,
+    FR_50p,
+    FR_50i,           //!< 50 interlaced fields (25 frames)
+    FR_60p,
+    FR_60i,           //!< 60 interlaced fields (30 frames)
+    FR_60i_NTSC,      //!< 60 interlaced fields * 1000/1001 = 59.940 interlaced fields (29.970 frames)
+    FR_72p
+
+} FrameRate_e;
+
+/* ************************************************************************** */
+
+//! Stream type
+typedef enum StreamType_e
+{
+    stream_UNKNOWN = 0,
+    stream_AUDIO   = 1,
+    stream_VIDEO   = 2,
+    stream_TEXT    = 3
+
+} StreamType_e;
+
+//! Stream level
+typedef enum StreamLevel_e
+{
+    stream_level_UNKNOWN = 0,
+    stream_level_PES     = 1,
+    stream_level_ES      = 2
+
+} StreamLevel_e;
 
 /* ************************************************************************** */
 

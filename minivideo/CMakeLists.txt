@@ -106,7 +106,6 @@ SET(minivideo_SRC
         src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
-    src/decoder/video.h
     src/decoder/h264/h264.c
         src/decoder/h264/h264_decodingcontext.h
         src/decoder/h264/h264_expgolomb.c
