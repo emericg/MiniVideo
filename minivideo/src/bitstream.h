@@ -32,8 +32,9 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Possible size for the bitstream data buffer.
+ * \brief Size used for the bitstream data buffer.
  *
+ * Other buffer sizes possible:
  *  32768   //  32 KiB
  *  65536   //  64 KiB
  * 131072   // 128 KiB
@@ -47,9 +48,15 @@
 /*!
  * \struct Bitstream_t
  * \brief Bitstream structure.
+ * \todo Massive cleanup of this API, need to address the bit/byte ambiguity of the variable names and function arguments.
  *
- * The bitsream structure is used to read from one to 1 to 64 unaligned bits from
- * a file. Data from files up to  are bufferized by slices of 256 KiB.
+ * The "Bitstream_t" structure and associated APU is used to map a file to a
+ * bitstream data buffer that can be read bit by bit instead of byte by byte.
+ * That capability is requiered to extract compressed data that aren't aligned
+ * with bytes boundaries.
+ *
+ * Data can be read from 1 to 64 unaligned bits from a file. These datas are
+ * bufferized by slices of size defined by the "BITSTREAM_BUFFER_SIZE" variable.
  *
  * Size and offset of the bitstream are stored using int64_t. This structure
  * should be able to handle files up to 1073741824 GiB if "Large File Support"
@@ -70,8 +77,9 @@ typedef struct Bitstream_t
     int64_t bitstream_size;              //!< Total bitstream size (in byte)
     int64_t bitstream_offset;            //!< Current offset into the bitstream (in byte)
 
-    uint8_t *buffer;                     //!< Buffer pointer
-    uint32_t buffer_size;                //!< Buffer size (in byte)
+    uint8_t *buffer;                     //!< Data buffer pointer
+    uint32_t buffer_size;                //!< Data buffer size (in byte)
+
     uint32_t buffer_offset;              //!< Current offset into the buffer (in bit)
     uint32_t buffer_discarded_bytes;     //!< Current number of byte removed during read ahead
 

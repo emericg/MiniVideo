@@ -931,22 +931,29 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
 {
     int retcode = FAILURE;
 
-    // Load next data if needed
+    // Check if destination is in the current buffer
     if ((bitstr->buffer_offset + n) > (bitstr->buffer_size * 8))
     {
-        if (n > bitstr->buffer_size)
-        {
-            // Must reload previous data and go directly to the offset we want
-            int64_t new_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + n);
-            retcode = bitstream_goto_offset(bitstr, new_offset);
-        }
-        else
+        // If not, check if its in the next one
+        if (n < (bitstr->buffer_size * 8))
         {
             // Refresh buffer
             retcode = buffer_feed_dynamic(bitstr, -1);
 
             // Skip n bits
             bitstr->buffer_offset += n;
+        }
+        else // Or somewhere else entierly
+        {
+            // Reload bitstream buffer from the byte offset we want
+            int64_t new_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + n);
+            retcode = bitstream_goto_offset(bitstr, new_offset/8);
+
+            // Then skip x bits ?
+            if ((new_offset % 8) != 0)
+            {
+                bitstr->buffer_offset += new_offset % 8;
+            }
         }
     }
     else
