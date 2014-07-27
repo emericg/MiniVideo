@@ -41,7 +41,7 @@ static int computeNormAdjust(DecodingContext_t *dc);
 /* ************************************************************************** */
 
 /*!
- * \brief Decode H.264 bitsream.
+ * \brief Decode H.264 bitstream.
  * \param *input_video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  * \param *output_directory The directory where to save exported pictures.
  * \param picture_format The picture file format.
