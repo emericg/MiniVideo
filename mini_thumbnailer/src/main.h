@@ -36,28 +36,6 @@ int main(int argc, char *argv[]);
 
 /* ************************************************************************** */
 
-//! Picture repartition mode
-typedef enum PictureRepartition_e
-{
-    PICTURE_UNFILTERED  = 0,
-    PICTURE_ORDERED     = 1,
-    PICTURE_DISTRIBUTED = 2
-} PictureRepartition_e;
-
-//! Picture file formats
-typedef enum PictureFormat_e
-{
-    PICTURE_UNKNOWN     = 0,
-    PICTURE_JPG         = 1,
-    PICTURE_PNG         = 2,
-    PICTURE_BMP         = 3,
-    PICTURE_TGA         = 4,
-    PICTURE_YUV420      = 5,
-    PICTURE_YUV444      = 6
-} PictureFormat_e;
-
-/* ************************************************************************** */
-
 // Colors for console output
 #if ENABLE_COLORS
     #define RESET  "\e[0;m" //!< Reset colored output to default terminal color

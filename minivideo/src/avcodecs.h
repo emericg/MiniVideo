@@ -26,6 +26,27 @@
 
 /* ************************************************************************** */
 
+//! Stream type
+typedef enum StreamType_e
+{
+    stream_UNKNOWN = 0,
+    stream_AUDIO   = 1,
+    stream_VIDEO   = 2,
+    stream_TEXT    = 3
+
+} StreamType_e;
+
+//! Stream level
+typedef enum StreamLevel_e
+{
+    stream_level_UNKNOWN = 0,
+    stream_level_PES     = 1,
+    stream_level_ES      = 2
+
+} StreamLevel_e;
+
+/* ************************************************************************** */
+
 //! Container file formats
 typedef enum ContainerFormat_e
 {
@@ -107,6 +128,15 @@ typedef enum PictureFormat_e
 
 /* ************************************************************************** */
 
+//! Picture extraction repartition mode
+typedef enum PictureRepartition_e
+{
+    PICTURE_UNFILTERED  = 0,
+    PICTURE_ORDERED     = 1,
+    PICTURE_DISTRIBUTED = 2
+
+} PictureRepartition_e;
+
 //! The color space used by the video
 typedef enum ColorSpace_e
 {
@@ -145,27 +175,6 @@ typedef enum FrameRate_e
     FR_72p
 
 } FrameRate_e;
-
-/* ************************************************************************** */
-
-//! Stream type
-typedef enum StreamType_e
-{
-    stream_UNKNOWN = 0,
-    stream_AUDIO   = 1,
-    stream_VIDEO   = 2,
-    stream_TEXT    = 3
-
-} StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
 
 /* ************************************************************************** */
 

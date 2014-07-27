@@ -38,7 +38,7 @@
  * \brief Depending on picture_extractionmode parameter, choose some IDR from the bitstreamMap_t structure and delete the others.
  * \param bitstream_map_pointer docme.
  * \param picture_number The number of thumbnail(s) we want to extract.
- * \param picture_extractionmode The method of distribution for thumbnails extraction.
+ * \param picture_extraction_mode The method of distribution for thumbnails extraction.
  * \return The number of picture available in the bitstream map (0 means error).
  *
  * The IDR filter aim to remove irrelevant frames from the decode stream. By irrelevant we mean:
@@ -47,7 +47,7 @@
  * - If specified, the filter select images spread over the duration of the film.
  */
 int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
-                  int picture_number, const int picture_extractionmode)
+                  int picture_number, const int picture_extraction_mode)
 {
     TRACE_INFO(FILTER, BLD_GREEN "idr_filtering()\n" CLR_RESET);
     int retcode = FAILURE;
@@ -83,7 +83,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             picture_number = map->sample_count_idr;
         }
 
-        if (picture_extractionmode == PICTURE_UNFILTERED)
+        if (picture_extraction_mode == PICTURE_UNFILTERED)
         {
             TRACE_1(FILTER, "PICTURE_UNFILTERED is specified: no need to process bitstream_map.\n");
             retcode = picture_number;
@@ -152,7 +152,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                 // Set idr (second cut)
                 for (i = 0; i < picture_number; i++)
                 {
-                    if (picture_extractionmode == PICTURE_ORDERED)
+                    if (picture_extraction_mode == PICTURE_ORDERED)
                     {
                         map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i]];
                         map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i]];
@@ -160,7 +160,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                         map_filtered->sample_offset[spspps + i] = map->sample_offset[temporary_sample_id[i]];
                         map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i]];
                     }
-                    else if (picture_extractionmode == PICTURE_DISTRIBUTED)
+                    else if (picture_extraction_mode == PICTURE_DISTRIBUTED)
                     {
                         map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i*frame_jump]];
                         map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i*frame_jump]];

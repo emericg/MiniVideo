@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     int picture_format = PICTURE_JPG;
     int picture_quality = 75;
     int picture_number = 1;
-    int picture_extractionmode = 0;
+    int picture_extraction_mode = 0;
 
 #if ENABLE_DEBUG
     std::cout << GREEN "main()" RESET << std::endl;
@@ -113,32 +113,32 @@ int main(int argc, char *argv[])
             {
                 if (strcmp(argv[i+1], "jpg") == 0)
                 {
-                    picture_format = PICTURE_JPG; // 0
+                    picture_format = PICTURE_JPG;
                     std::cout << "* picture_format : jpg" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "png") == 0)
                 {
-                    picture_format = PICTURE_PNG; // 1
+                    picture_format = PICTURE_PNG;
                     std::cout << "* picture_format : png" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "bmp") == 0)
                 {
-                    picture_format = PICTURE_BMP; // 2
+                    picture_format = PICTURE_BMP;
                     std::cout << "* picture_format : bmp" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "tga") == 0)
                 {
-                    picture_format = PICTURE_TGA; // 3
+                    picture_format = PICTURE_TGA;
                     std::cout << "* picture_format : tga" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "yuv420") == 0)
                 {
-                    picture_format = PICTURE_YUV420; // 4
+                    picture_format = PICTURE_YUV420;
                     std::cout << "* picture_format : yuv 4:2:0" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "yuv444") == 0)
                 {
-                    picture_format = PICTURE_YUV444; // 5
+                    picture_format = PICTURE_YUV444;
                     std::cout << "* picture_format : yuv 4:4:4" << std::endl;
                 }
                 else
@@ -201,17 +201,17 @@ int main(int argc, char *argv[])
             {
                 if (strcmp(argv[i+1], "unfiltered") == 0)
                 {
-                    picture_extractionmode = PICTURE_UNFILTERED; // 0
+                    picture_extraction_mode = PICTURE_UNFILTERED;
                     std::cout << "* extraction_mode : unfiltered" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "ordered") == 0)
                 {
-                    picture_extractionmode = PICTURE_ORDERED; // 1
+                    picture_extraction_mode = PICTURE_ORDERED;
                     std::cout << "* extraction_mode : ordered" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "distributed") == 0)
                 {
-                    picture_extractionmode = PICTURE_DISTRIBUTED; // 2
+                    picture_extraction_mode = PICTURE_DISTRIBUTED;
                     std::cout << "* extraction_mode : distributed" << std::endl;
                 }
                 else
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
         std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
 #endif /* ENABLE_DEBUG */
 
-        retcode = minivideo_thumbnailer(input_filepath, output_directory, picture_format, picture_quality, picture_number, picture_extractionmode);
+        retcode = minivideo_thumbnailer(input_filepath, output_directory, picture_format, picture_quality, picture_number, picture_extraction_mode);
     }
     else
     {

@@ -29,19 +29,8 @@
 
 /* ************************************************************************** */
 
-//! Picture repartition mode
-typedef enum PictureRepartition_e
-{
-    PICTURE_UNFILTERED  = 0,
-    PICTURE_ORDERED     = 1,
-    PICTURE_DISTRIBUTED = 2
-
-} PictureRepartition_e;
-
-/* ************************************************************************** */
-
 int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
-                  int picture_number, const int picture_extractionmode);
+                  int picture_number, const int picture_extraction_mode);
 
 /* ************************************************************************** */
 #endif /* PARSING_H */
