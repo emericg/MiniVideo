@@ -19,8 +19,8 @@
  * \date      2010
  */
 
-#ifndef MINITHUMBNAILER_HEADER_H
-#define MINITHUMBNAILER_HEADER_H
+#ifndef MINI_THUMBNAILER_HEADER_H
+#define MINI_THUMBNAILER_HEADER_H
 
 /* ************************************************************************** */
 
@@ -80,4 +80,4 @@ typedef enum PictureFormat_e
 #endif // ENABLE_COLORS
 
 /* ************************************************************************** */
-#endif // MINITHUMBNAILER_HEADER_H
+#endif // MINI_THUMBNAILER_HEADER_H

@@ -19,16 +19,16 @@
  * \date      2010
  */
 
-// mini_thumbnailer header
+// mini_thumbnailer
 #include "main.h"
+
+// minivideo library
+#include <minivideo.h>
 
 // C++ standard libraries
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-
-// minivideo library
-#include <minivideo.h>
 
 /* ************************************************************************** */
 

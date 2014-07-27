@@ -19,16 +19,16 @@
  * \date      2012
  */
 
-// mini_extractor header
+// mini_extractor
 #include "main.h"
+
+// minivideo library
+#include <minivideo.h>
 
 // C++ standard libraries
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-
-// minivideo library
-#include <minivideo.h>
 
 /* ************************************************************************** */
 

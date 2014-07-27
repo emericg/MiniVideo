@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      main.cpp
+ * \file      main.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2012
  */
 
-#ifndef MINIEXTRACTOR_HEADER_H
-#define MINIEXTRACTOR_HEADER_H
+#ifndef MINI_EXTRACTOR_HEADER_H
+#define MINI_EXTRACTOR_HEADER_H
 
 /* ************************************************************************** */
 
@@ -58,4 +58,4 @@ int main(int argc, char *argv[]);
 #endif // ENABLE_COLORS
 
 /* ************************************************************************** */
-#endif // MINITHUMBNAILER_HEADER_H
+#endif // MINI_EXTRACTOR_HEADER_H
