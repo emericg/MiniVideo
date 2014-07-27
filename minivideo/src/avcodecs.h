@@ -31,17 +31,17 @@ typedef enum ContainerFormat_e
 {
     CONTAINER_UNKNOWN = 0,
 
-    CONTAINER_ES      = 1,  //!< Plain ES format (not a container)
-    CONTAINER_ASF     = 2,  //!< "Advanced Systems Format" (.asf, .wma, .wmv)
-    CONTAINER_AVI     = 3,  //!< "Audio Video Interleave" (.avi)
+    CONTAINER_ES      = 1,  //!< Plain "Elementary Stream" format (not a container!)
+    CONTAINER_ASF     = 2,  //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv)
+    CONTAINER_AVI     = 3,  //!< AVI "Audio Video Interleave" (.avi)
     CONTAINER_FLAC    = 4,  //!< FLAC (.flac)
     CONTAINER_FLV     = 5,  //!< SWF "Small Web Format" (.flv)
     CONTAINER_OGG     = 6,  //!< OGG (.ogg, .ogv, ...)
     CONTAINER_MKV     = 7,  //!< Matroska (.mkv, .webm)
-    CONTAINER_MP3     = 8,  //!< MP3 ES format (not a container)
+    CONTAINER_MP3     = 8,  //!< MP3 "Elementary Stream" format (not a container!)
     CONTAINER_MP4     = 9,  //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
-    CONTAINER_MPEG_PS = 10, //!< MPEG Program Stream (.mpg, .vob, ...)
-    CONTAINER_MPEG_TS = 11  //!< MPEG Transport Stream (.ts, .mts, .m2ts, ...)
+    CONTAINER_MPEG_PS = 10, //!< MPEG "Program Stream" (.mpg, .vob, ...)
+    CONTAINER_MPEG_TS = 11  //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
 
 } ContainerFormat_e;
 
