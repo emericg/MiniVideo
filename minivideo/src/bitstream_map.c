@@ -53,43 +53,51 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
     }
     else
     {
-        *bitstream_map = (BitstreamMap_t*)calloc(1, sizeof(BitstreamMap_t));
-
-        if (*bitstream_map == NULL)
+        if (entries == 0)
         {
-            TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map!\n");
+            TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map: no entries to allocate!\n");
             retcode = FAILURE;
         }
         else
         {
-            (*bitstream_map)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
-            (*bitstream_map)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
-            (*bitstream_map)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
-            (*bitstream_map)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
-            (*bitstream_map)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
+            *bitstream_map = (BitstreamMap_t*)calloc(1, sizeof(BitstreamMap_t));
 
-            if ((*bitstream_map)->sample_type == NULL ||
-                (*bitstream_map)->sample_size == NULL ||
-                (*bitstream_map)->sample_offset == NULL ||
-                (*bitstream_map)->sample_pts == NULL ||
-                (*bitstream_map)->sample_dts == NULL)
+            if (*bitstream_map == NULL)
             {
-                TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
-
-                if ((*bitstream_map)->sample_type != NULL)
-                    free((*bitstream_map)->sample_type);
-                if ((*bitstream_map)->sample_size != NULL)
-                    free((*bitstream_map)->sample_size);
-                if ((*bitstream_map)->sample_offset != NULL)
-                    free((*bitstream_map)->sample_offset);
-                if ((*bitstream_map)->sample_pts != NULL)
-                    free((*bitstream_map)->sample_pts);
-                if ((*bitstream_map)->sample_dts != NULL)
-                    free((*bitstream_map)->sample_dts);
-
-                free(*bitstream_map);
-                *bitstream_map = NULL;
+                TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!\n");
                 retcode = FAILURE;
+            }
+            else
+            {
+                (*bitstream_map)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
+                (*bitstream_map)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
+                (*bitstream_map)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*bitstream_map)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*bitstream_map)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
+
+                if ((*bitstream_map)->sample_type == NULL ||
+                    (*bitstream_map)->sample_size == NULL ||
+                    (*bitstream_map)->sample_offset == NULL ||
+                    (*bitstream_map)->sample_pts == NULL ||
+                    (*bitstream_map)->sample_dts == NULL)
+                {
+                    TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
+
+                    if ((*bitstream_map)->sample_type != NULL)
+                        free((*bitstream_map)->sample_type);
+                    if ((*bitstream_map)->sample_size != NULL)
+                        free((*bitstream_map)->sample_size);
+                    if ((*bitstream_map)->sample_offset != NULL)
+                        free((*bitstream_map)->sample_offset);
+                    if ((*bitstream_map)->sample_pts != NULL)
+                        free((*bitstream_map)->sample_pts);
+                    if ((*bitstream_map)->sample_dts != NULL)
+                        free((*bitstream_map)->sample_dts);
+
+                    free(*bitstream_map);
+                    *bitstream_map = NULL;
+                    retcode = FAILURE;
+                }
             }
         }
     }
