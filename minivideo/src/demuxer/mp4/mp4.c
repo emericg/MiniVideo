@@ -239,7 +239,6 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
                 map->sample_type[sid] = sample_AUDIO;
             }
 
-
             // Set sample size
             map->sample_size[sid] = track->stsz_entry_size[i];
 
@@ -260,6 +259,14 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
 
 #if ENABLE_DEBUG
         TRACE_INFO(MP4, BLD_GREEN ">> track content recap:\n" CLR_RESET);
+        if (map->stream_type == stream_VIDEO)
+        {
+            TRACE_1(MP4, "Video Stream\n");
+        }
+        else if (map->stream_type == stream_AUDIO)
+        {
+            TRACE_1(MP4, "Audio Stream\n");
+        }
 
         TRACE_1(MP4, "sample_count\t: %u\n", map->sample_count);
         TRACE_1(MP4, "sample_count_idr\t: %u\n", map->sample_count_idr);
@@ -1188,10 +1195,10 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     retcode = parse_stsd(bitstr, &box_subheader, track);
                     break;
                 case BOX_STTS:
-                    //retcode = parse_stts(bitstr, box_subheader);
+                    retcode = parse_stts(bitstr, &box_subheader, track);
                     break;
                 case BOX_CTTS:
-                    //retcode = parse_ctts(bitstr, box_subheader);
+                    retcode = parse_ctts(bitstr, &box_subheader, track);
                     break;
                 case BOX_STSS:
                     retcode = parse_stss(bitstr, &box_subheader, track);
@@ -1217,7 +1224,7 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             }
 
             // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+            unsigned jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
             if (jump > 0)
             {
                 skip_bits(bitstr, jump*8);
@@ -2026,9 +2033,20 @@ int mp4_fileParse(VideoFile_t *video)
             }
         }
 
-        // Convert tracks
-        convertTrack(video, mp4.tracks[0]);
-        convertTrack(video, mp4.tracks[1]);
+        // Check if we have extracted tracks
+        if (mp4.tracks_count == 0)
+        {
+            TRACE_WARNING(MP4, "No tracks extracted!");
+            retcode = FAILURE;
+        }
+        else // Convert tracks
+        {
+            int i = 0;
+            for (i = 0; i < mp4.tracks_count; i++)
+            {
+                retcode = convertTrack(video, mp4.tracks[i]);
+            }
+        }
 
         // Free bitstream
         free_bitstream(&bitstr);
