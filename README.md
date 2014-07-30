@@ -9,7 +9,7 @@ MiniVideo is a small video decoding library developed from scratch in C, bundled
 MiniVideo has been tested with several CPU architectures (x86, SH4, mips, arm).  
 The build system uses CMake. Both library and test programs can be installed into your system.  
 
-MiniVideo has been developed in 2010-2011 during an internship I did in the company "httv". Its goal is to provide a source code that is easy to read and to understand, destined for learning purpose. After a clean-up pass, the code has been published early 2014 with httv permission under the LGPL v3 license (decoding backend) and GPLv3 (testing softwares).  
+MiniVideo has been developed in 2010/2011 during an internship I did in a French company called "httv". Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with httv permission under the LGPL v3 license (decoding backend) and GPLv3 (testing softwares).  
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos contents.
@@ -22,11 +22,11 @@ The minivideo library can:
 ### Supported container formats (import module)
 - Elementary stream H.264 ("Annex B" format) [.264]
 - Elementary stream MPEG-1/2 [.mpg, .mpeg]
-- PS (MPEG Program Stream) [.mpg, .vob, ...]
-- MP4 (MPEG ISO container) [.mp4, .mov, .3gp, ...]
-Work In Progress:
-* MKV (Matroska) [.mkv, .webm]
+- MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
+- MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]  
+**Work In Progress:**
 * AVI [.avi]
+* MKV (Matroska) [.mkv, .webm]
 
 ### Supported picture formats (export module)
 - bmp
@@ -139,7 +139,7 @@ H.264 unsupported features
 - SI and SP slices
 
 // UNSUPPORTED for HiP profile ("HIGH")
-- Major bug(s) inside CABAC decoding process (WIP)
+- CABAC decoding process still has a few bugs (WIP)
 - No deblocking filter
 - Interlaced coding (also PicAFF and MBAFF features)
 - 4:0:0 "greyscale" subsampling

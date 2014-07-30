@@ -38,6 +38,7 @@ TODO video library
 - MP4 parser:
   - timestamps
   - subtitles
+  - quite slow...
 - finish MKV parser
 - tracks_video_count sometimes not correclty set (and then bitsteammap not freed)
 

@@ -41,7 +41,8 @@ Account for each function called during execution of the program and generate a 
 http://valgrind.org/docs/manual/cl-manual.html
 
 ### GUIs
-- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind
+- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
+- qcachegrind (Qt 'only' version of kcachegrind)
 
 
 Cachegrind - CPU cache and branch-prediction profiler:
@@ -57,7 +58,8 @@ Account for each function called during execution of the program and show:
 http://valgrind.org/docs/manual/cg-manual.html
 
 ### GUIs
-- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind
+- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
+- qcachegrind (Qt 'only' version of kcachegrind)
 - qtcreator (http://qt-project.org/wiki/Category:Tools::QtCreator) Good integration of valgrind / cachegrind
 
 

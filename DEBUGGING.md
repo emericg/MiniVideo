@@ -22,9 +22,9 @@ Other GUI includes:
 - Nemiver (https://wiki.gnome.org/Apps/Nemiver)
 - DDD (http://www.gnu.org/software/ddd/)
 
-Debbugging with GDB
--------------------
+Debbugging with GDB prompt
+--------------------------
 
 > $ gdb --args ./myprogram -with -arguments
 
-Then, type "r" to run the program, and in case of a crash "bt" to print the backtrace.
+Then, type "r" to run the program, and in case of a crash "bt" to print the backtrace. "q" to exit.  
