@@ -303,24 +303,23 @@ int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
 
     int retcode = FAILURE;
 
-    // Allocate video structure and create a shortcut
-    *video_ptr = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
-    VideoFile_t *video = (*video_ptr);
-
-    if (video == NULL)
+    if (filepath == NULL)
     {
-        TRACE_ERROR(IO, "* Unable to allocate a VideoFile_t structure!\n");
+        TRACE_ERROR(IO, "* File path is invalid\n");
     }
     else
     {
-        if (filepath == NULL)
+        // Allocate video structure and create a shortcut
+        *video_ptr = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
+
+        if (*video_ptr == NULL)
         {
-            TRACE_ERROR(IO, "* File path is invalid\n");
-            free(*video_ptr);
-            *video_ptr = NULL;
+            TRACE_ERROR(IO, "* Unable to allocate a VideoFile_t structure!\n");
         }
         else
         {
+            VideoFile_t *video = (*video_ptr);
+
             // Set filepath in VideoFile_t
             strncpy(video->file_path, filepath, sizeof(video->file_path) - 1);
             TRACE_2(IO, "* File path (brut): '%s'\n", filepath);
