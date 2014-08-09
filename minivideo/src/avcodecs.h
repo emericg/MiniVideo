@@ -47,6 +47,21 @@ typedef enum StreamLevel_e
 
 /* ************************************************************************** */
 
+//! Sample type
+typedef enum SampleType_e
+{
+    sample_AUDIO = 0,
+
+    sample_VIDEO,
+    sample_VIDEO_IDR,
+    sample_VIDEO_PARAM,
+
+    sample_TEXT_FILE
+
+} SampleType_e;
+
+/* ************************************************************************** */
+
 //! Container file formats
 typedef enum ContainerFormat_e
 {
@@ -178,7 +193,7 @@ typedef enum FrameRate_e
 
 /* ************************************************************************** */
 
-const char *getContainerString(ContainerFormat_e container);
+const char *getContainerString(ContainerFormat_e container, int long_description);
 const char *getCodecString(StreamType_e type, AVCodec_e codec);
 const char *getPictureString(PictureFormat_e picture);
 

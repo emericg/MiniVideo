@@ -25,10 +25,9 @@
 #include <stdlib.h>
 
 // minivideo headers
+#include "bitstream.h"
 #include "minitraces.h"
 #include "avcodecs.h"
-
-#include "bitstream.h"
 
 /* ************************************************************************** */
 

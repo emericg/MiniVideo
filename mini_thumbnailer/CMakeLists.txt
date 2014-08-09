@@ -2,27 +2,32 @@ project(mini_thumbnailer)
 cmake_minimum_required(VERSION 2.6)
 
 
-# Find the custom "LibMiniVideo" module
+# Search for the custom "LibMiniVideo" module
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
 # FindLibMiniVideo.cmake
 FIND_PACKAGE(LibMiniVideo REQUIRED)
 
-IF(NOT LIBMINIVIDEO_FOUND)
-    MESSAGE(ERROR " > LibMiniVideo NOT FOUND !!!")
-ENDIF(NOT LIBMINIVIDEO_FOUND)
+IF(LIBMINIVIDEO_FOUND)
+    MESSAGE(STATUS "* LibMiniVideo found")
+ELSE(LIBMINIVIDEO_FOUND)
+    MESSAGE(ERROR " > LibMiniVideo not found!")
+ENDIF(LIBMINIVIDEO_FOUND)
 
 
 # FindDoxygen.cmake
 FIND_PACKAGE(Doxygen)
 
-IF(NOT DOXYGEN_FOUND)
+IF(DOXYGEN_FOUND)
+    MESSAGE(STATUS "* Doxygen found")
+ELSE(DOXYGEN_FOUND)
     MESSAGE(WARNING " > Doxygen not found")
-ENDIF(NOT DOXYGEN_FOUND)
+ENDIF(DOXYGEN_FOUND)
 
 
 # Use "release" and "-O2" for maximum speed.
 # Use "debug" if you want better support for GDB and Valgrind
+MESSAGE(STATUS "* Building in DEBUG mode. You can turn off debug mode by editing 'CMakeLists.txt'.")
 SET(CMAKE_BUILD_TYPE debug)
 SET(CMAKE_C_FLAGS "-O0")
 
@@ -35,6 +40,7 @@ SET(mini_thumbnailer_SRC src/main.cpp src/main.h)
 ADD_EXECUTABLE(mini_thumbnailer ${mini_thumbnailer_SRC})
 INCLUDE_DIRECTORIES(${LIBMINIVIDEO_INCLUDE_DIR})
 
+
 ## Link against STATIC library:
 ## Please set FIND_PACKAGE manually
 #FIND_PACKAGE(JPEG) # FindJPEG.cmake
@@ -44,9 +50,9 @@ INCLUDE_DIRECTORIES(${LIBMINIVIDEO_INCLUDE_DIR})
 #TARGET_LINK_LIBRARIES(mini_thumbnailer LibMiniVideo ${JPEG_LIBRARY} ${PNG_LIBRARY})
 
 
-## Link against SHARED library:
-LINK_DIRECTORIES(${LibMiniVideo_LIBRARY})
-TARGET_LINK_LIBRARIES(mini_thumbnailer "${LIBMINIVIDEO_LIBRARY}" )
+# Link against SHARED library:
+LINK_DIRECTORIES(${LIBMINIVIDEO_LIBRARY})
+TARGET_LINK_LIBRARIES(mini_thumbnailer ${LIBMINIVIDEO_LIBRARY} )
 
 # Instal the thumbnailer software into the system (optional step, requires root credentials)
 INSTALL(TARGETS mini_thumbnailer DESTINATION /usr/bin)

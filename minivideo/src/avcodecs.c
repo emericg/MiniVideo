@@ -25,47 +25,93 @@
 
 /* ************************************************************************** */
 
-const char *getContainerString(ContainerFormat_e container)
+const char *getContainerString(ContainerFormat_e container, int long_description)
 {
-    switch (container)
+    if (long_description == 1)
     {
+        switch (container)
+        {
         case CONTAINER_ES:
-            return "ES";
+            return "Plain 'Elementary Stream' format (not a container!)";
             break;
         case CONTAINER_ASF:
-            return "ASF";
+            return "ASF 'Advanced Systems Format' (.asf, .wma, .wmv)";
             break;
         case CONTAINER_AVI:
-            return "AVI";
+            return "AVI 'Audio Video Interleave' (.avi)";
             break;
         case CONTAINER_FLAC:
-            return "FLAC";
+            return "FLAC (.flac)";
             break;
         case CONTAINER_FLV:
-            return "FLV";
+            return "SWF 'Small Web Format' (.flv)";
             break;
         case CONTAINER_OGG:
-            return "OGG";
+            return "OGG (.ogg, .ogv, ...)";
             break;
         case CONTAINER_MKV:
-            return "MKV";
+            return "Matroska (.mkv, .webm)";
             break;
         case CONTAINER_MP3:
-            return "MP3";
+            return "MP3 'Elementary Stream' format (not a container!)";
             break;
         case CONTAINER_MP4:
-            return "MP4";
+            return "ISOM 'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
             break;
         case CONTAINER_MPEG_PS:
-            return "MPEG-PS";
+            return "MPEG 'Program Stream' (.mpg, .vob, ...)";
             break;
         case CONTAINER_MPEG_TS:
-            return "MPEG-TS";
+            return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
             break;
         case CONTAINER_UNKNOWN:
         default:
             return "UNKNOWN";
             break;
+        }
+    }
+    else // short description
+    {
+        switch (container)
+        {
+            case CONTAINER_ES:
+                return "ES";
+                break;
+            case CONTAINER_ASF:
+                return "ASF";
+                break;
+            case CONTAINER_AVI:
+                return "AVI";
+                break;
+            case CONTAINER_FLAC:
+                return "FLAC";
+                break;
+            case CONTAINER_FLV:
+                return "FLV";
+                break;
+            case CONTAINER_OGG:
+                return "OGG";
+                break;
+            case CONTAINER_MKV:
+                return "MKV";
+                break;
+            case CONTAINER_MP3:
+                return "MP3";
+                break;
+            case CONTAINER_MP4:
+                return "MP4";
+                break;
+            case CONTAINER_MPEG_PS:
+                return "MPEG-PS";
+                break;
+            case CONTAINER_MPEG_TS:
+                return "MPEG-TS";
+                break;
+            case CONTAINER_UNKNOWN:
+            default:
+                return "UNKNOWN";
+                break;
+        }
     }
 }
 

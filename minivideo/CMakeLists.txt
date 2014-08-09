@@ -7,20 +7,18 @@ cmake_minimum_required(VERSION 2.6)
 
 # Check for valid operating system
 IF(UNIX)
-    MESSAGE("** UNIX operating system found")
+    MESSAGE(STATUS "* UNIX operating system found")
 ELSE(UNIX)
-    MESSAGE("** This is an UNIX shared library, do not try to build it on a non UNIX system !")
+    MESSAGE(ERROR "* This is an UNIX shared library, non UNIX system are not (yet?) supported!")
 ENDIF(UNIX)
 
 
 # Pass various options to minivideo source code
 ###############################################################################
 
-SET(minivideo_VERSION_MAJOR 4)
+SET(minivideo_VERSION_MAJOR 5)
 SET(minivideo_VERSION_MINOR 0)
 SET(minivideo_VERSION_PATCH 0)
-
-SET(ENDIANNESS 1234) # "1234 if the target system is little endian, 4321 for big endian"
 
 SET(ENABLE_COLORS 1) # "Toggle colored terminal output"
 SET(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
@@ -34,40 +32,50 @@ SET(ENABLE_STBIMWRITE 1) # "Toggle internal stb_image_write library for bmp/png/
 IF(ENABLE_JPEG)
     FIND_PACKAGE(JPEG) # FindJPEG.cmake
 
-    IF(NOT JPEG_FOUND)
-        MESSAGE(WARNING "libjpeg not found !")
-        SET(ENABLE_JPEG 0) # Force disable
-    ENDIF(NOT JPEG_FOUND)
+    IF(JPEG_FOUND)
+        MESSAGE(STATUS "* libjpeg found")
+    ELSE(JPEG_FOUND)
+        SET(ENABLE_JPEG 0) # Disabling jpeg support
+        MESSAGE(WARNING "> libjpeg not found! disabling jpeg support.")
+    ENDIF(JPEG_FOUND)
 ENDIF(ENABLE_JPEG)
 
 # libpng module
 IF(ENABLE_PNG)
     FIND_PACKAGE(PNG) # FindPNG.cmake
 
-    IF(NOT PNG_FOUND)
-        MESSAGE(WARNING "libpng not found !")
-        SET(ENABLE_PNG 0) # Force disable
-    ENDIF(NOT PNG_FOUND)
+    IF(PNG_FOUND)
+        MESSAGE(STATUS "* libpng found")
+    ELSE(PNG_FOUND)
+        SET(ENABLE_PNG 0) # Disabling external png support. Internal "stb_image_write" will still provide png export.
+        MESSAGE(WARNING "> libpng not found! disabling external png support. Internal "stb_image_write" will still provide png export.")
+    ENDIF(PNG_FOUND)
 ENDIF(ENABLE_PNG)
 
 # Doxygen module
 FIND_PACKAGE(Doxygen) # FindDoxygen.cmake
 
+IF(DOXYGEN_FOUND)
+    MESSAGE(STATUS "* Doxygen found")
+ELSE(DOXYGEN_FOUND)
+    MESSAGE(WARNING " > Doxygen not found")
+ENDIF(DOXYGEN_FOUND)
+
 # Detect build type. You can change it using "-DCMAKE_BUILD_TYPE="
 IF(CMAKE_BUILD_TYPE STREQUAL "Release")
 
-    MESSAGE("** This is a RELEASE build. You can change it using -DCMAKE_BUILD_TYPE=Debug.")
+    MESSAGE(STATUS "* This is a RELEASE build. You can change it using -DCMAKE_BUILD_TYPE=Debug.")
     SET(ENABLE_DEBUG 0)
     SET(CMAKE_BUILD_TYPE release)
-    # Custom cflags ? Use "release mode" and "-O2" for maximum speed.
-    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    # Custom cflags? Use "release mode" and "-O2" for maximum speed.
+    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall")
 
 ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
 
-    MESSAGE("** This is a DEBUG build. You can change it using -DCMAKE_BUILD_TYPE=Release.")
+    MESSAGE("!! * This is a DEBUG build. You can change it using -DCMAKE_BUILD_TYPE=Release.")
     SET(ENABLE_DEBUG 1)
     SET(CMAKE_BUILD_TYPE debug)
-    # Custom cflags ? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
+    # Custom cflags? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
     SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Wshadow -Wno-sign-compare -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
 
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")

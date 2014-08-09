@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
 #endif /* ENABLE_DEBUG */
 
     // Argument(s) parsing
+    ////////////////////////////////////////////////////////////////////////////
+
     if (argc == 1)
     {
         std::cerr << "mini_thumbnailer: " RED "no argument" RESET  "!" << std::endl;
@@ -82,7 +84,7 @@ int main(int argc, char *argv[])
             {
                 //FIXME handle invalid intput file path
                 input_filepath = argv[i+1];
-                std::cout << "* input : " << input_filepath << std::endl;
+                std::cout << "* input: " << input_filepath << std::endl;
 
                 goodtogo = true;
                 i++;
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
             {
                 //FIXME handle invalid output directory path
                 output_directory = argv[i+1];
-                std::cout << "* output : " << output_directory << std::endl;
+                std::cout << "* output: " << output_directory << std::endl;
 
                 i++;
             }
@@ -114,32 +116,32 @@ int main(int argc, char *argv[])
                 if (strcmp(argv[i+1], "jpg") == 0)
                 {
                     picture_format = PICTURE_JPG;
-                    std::cout << "* picture_format : jpg" << std::endl;
+                    std::cout << "* picture_format: jpg" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "png") == 0)
                 {
                     picture_format = PICTURE_PNG;
-                    std::cout << "* picture_format : png" << std::endl;
+                    std::cout << "* picture_format: png" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "bmp") == 0)
                 {
                     picture_format = PICTURE_BMP;
-                    std::cout << "* picture_format : bmp" << std::endl;
+                    std::cout << "* picture_format: bmp" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "tga") == 0)
                 {
                     picture_format = PICTURE_TGA;
-                    std::cout << "* picture_format : tga" << std::endl;
+                    std::cout << "* picture_format: tga" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "yuv420") == 0)
                 {
                     picture_format = PICTURE_YUV420;
-                    std::cout << "* picture_format : yuv 4:2:0" << std::endl;
+                    std::cout << "* picture_format: yuv 4:2:0" << std::endl;
                 }
                 else if (strcmp(argv[i+1], "yuv444") == 0)
                 {
                     picture_format = PICTURE_YUV444;
-                    std::cout << "* picture_format : yuv 4:4:4" << std::endl;
+                    std::cout << "* picture_format: yuv 4:4:4" << std::endl;
                 }
                 else
                 {
@@ -160,7 +162,7 @@ int main(int argc, char *argv[])
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 100)
                 {
                     picture_quality = atoi(argv[i+1]);
-                    std::cout << "* picture_quality : " << picture_quality << std::endl;
+                    std::cout << "* picture_quality: " << picture_quality << std::endl;
                 }
                 else
                 {
@@ -181,7 +183,7 @@ int main(int argc, char *argv[])
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 1000)
                 {
                     picture_number = atoi(argv[i+1]);
-                    std::cout << "* picture_number : " << picture_number << std::endl;
+                    std::cout << "* picture_number: " << picture_number << std::endl;
                 }
                 else
                 {
@@ -237,20 +239,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (goodtogo)
-    {
-#if ENABLE_DEBUG
-        // Print informations about LibMiniVideo and system endianness
-        minivideo_infos();
-        minivideo_endianness();
-
-        // Let's get to work
-        std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
-#endif /* ENABLE_DEBUG */
-
-        retcode = minivideo_thumbnailer(input_filepath, output_directory, picture_format, picture_quality, picture_number, picture_extraction_mode);
-    }
-    else
+    if (goodtogo == false)
     {
         std::cout << "* Usage: " << std::endl;
         std::cout << "mini_thumbnailer -i <filepath> [-o <directory>] [-f picture_format][-q picture_quality][-n picture_number] [-e extraction_mode]" << std::endl;
@@ -262,18 +251,55 @@ int main(int argc, char *argv[])
         std::cout << GREEN " -n" RESET " : picture export number (between 1 and 100)" << std::endl;
         std::cout << GREEN " -e" RESET " : picture extraction mode (can be 'unfiltered', 'ordered' or 'distributed')" << std::endl;
     }
-
-    // Check exit code from the video backend
-    if (retcode == EXIT_SUCCESS)
-    {
-        std::cout << std::endl << YELLOW "mini_thumbnailer exited without errors. Have a nice day." RESET << std::endl;
-    }
     else
     {
-        std::cerr << std::endl << YELLOW "mini_thumbnailer exited " RED "with errors!" YELLOW " Have a nice day nonetheless..." RESET << std::endl;
+        // Thumbnail(s) extraction
+        ////////////////////////////////////////////////////////////////////////
+
+#if ENABLE_DEBUG
+        // Print informations about LibMiniVideo and system endianness
+        minivideo_infos();
+        minivideo_endianness();
+
+        // Let's get to work
+        std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
+#endif /* ENABLE_DEBUG */
+
+        int minivideo_retcode = 0;
+
+        // Open the video file
+        VideoFile_t *input_video = NULL;
+        minivideo_retcode = minivideo_open(input_filepath, &input_video);
+
+        if (minivideo_retcode == SUCCESS)
+        {
+            // Start container parsing
+            minivideo_retcode = minivideo_parse(input_video, false, true, false);
+
+            if (minivideo_retcode == SUCCESS)
+            {
+                // IDR frame filtering // Video decoding // Thumbnail export
+                minivideo_retcode = minivideo_decode(input_video, output_directory, picture_format,
+                                                     picture_quality, picture_number, picture_extraction_mode);
+            }
+
+            // Close the video file
+            minivideo_retcode = minivideo_close(&input_video);
+        }
+
+        // Convert library return code into program exit code
+        if (minivideo_retcode == SUCCESS)
+        {
+            retcode = EXIT_SUCCESS;
+            std::cout << std::endl << YELLOW "mini_thumbnailer exited without errors. Have a nice day." RESET << std::endl;
+        }
+        else
+        {
+            retcode = EXIT_FAILURE;
+            std::cerr << std::endl << YELLOW "mini_thumbnailer exited " RED "with errors!" YELLOW " Have a nice day nonetheless..." RESET << std::endl;
+        }
     }
 
-    // Let's get to rest
     return retcode;
 }
 

@@ -46,7 +46,7 @@ typedef struct TraceModule_t
 static TraceModule_t sv_trace_modules[] =
 {
     { "MAIN"      , "Library main functions"     , TRACE_LEVEL_DEBUG },
-    { "BITS"      , "Bitstream handling"         , TRACE_LEVEL_DEFAULT },
+    { "BITS"      , "Bitstream handling"         , TRACE_LEVEL_DEFAULT /*TRACE_LEVEL_DEBUG | TRACE_LEVEL_1*/ },
     { "I/O"       , "Input/Output related"       , TRACE_LEVEL_DEFAULT },
     { "TOOLS"     , "Various useful functions"   , TRACE_LEVEL_DEFAULT },
     { "DEMUX"     , "File parsing functions"     , TRACE_LEVEL_DEFAULT },

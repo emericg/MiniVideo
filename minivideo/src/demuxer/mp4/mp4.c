@@ -87,14 +87,20 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
         if (track->handlerType == HANDLER_AUDIO)
         {
             retcode = init_bitstream_map(&video->tracks_audio[video->tracks_audio_count], track->stsz_sample_count);
-            map = video->tracks_audio[video->tracks_audio_count];
-            video->tracks_audio_count++;
+            if (retcode == SUCCESS)
+            {
+                map = video->tracks_audio[video->tracks_audio_count];
+                video->tracks_audio_count++;
+            }
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
             retcode = init_bitstream_map(&video->tracks_video[video->tracks_video_count], track->stsz_sample_count + track->sps_count + track->pps_count);
-            map = video->tracks_video[video->tracks_video_count];
-            video->tracks_video_count++;
+            if (retcode == SUCCESS)
+            {
+                map = video->tracks_video[video->tracks_video_count];
+                video->tracks_video_count++;
+            }
         }
         else
         {
@@ -119,7 +125,7 @@ static bool convertTrack(VideoFile_t *video, Mp4Track_t *track)
         if (track->handlerType == HANDLER_AUDIO)
         {
             map->stream_type = stream_AUDIO;
-            map->bit_rate = track->sample_rate;
+            map->bitrate = track->sample_rate;
             map->sampling_rate = track->sample_size;
             map->channel_count = track->channel_count;
         }
@@ -1968,10 +1974,11 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  * \param *video A pointer to a VideoFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
- * This parser is based on the 'ISO/IEC 14496-12' international standard, part 12 :
+ * This parser is based on the 'ISO/IEC 14496-12' international standard, part 12:
  * 'ISO base media file format'.
  *
  * \todo Stop parsing if we are after the end of the 'moov' box.
+ * \todo Fix convertTrack() algorithms complexity.
  */
 int mp4_fileParse(VideoFile_t *video)
 {

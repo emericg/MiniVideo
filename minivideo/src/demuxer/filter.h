@@ -25,7 +25,7 @@
 #define PARSING_H
 
 // minivideo headers
-#include "../import.h"
+#include "../bitstream_map_struct.h"
 
 /* ************************************************************************** */
 

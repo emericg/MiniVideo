@@ -24,6 +24,7 @@
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 // minivideo headers
@@ -1400,7 +1401,7 @@ static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_
 
             mytrack->sample_alignment = true;
 
-            mytrack->bit_rate = track->strf.wBitsPerSample;
+            mytrack->bitrate = track->strf.wBitsPerSample;
             mytrack->sampling_rate = track->strf.nSamplesPerSec;
             mytrack->channel_count = track->strf.nChannels;
 
@@ -1456,8 +1457,8 @@ static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_
 
             mytrack->sample_alignment = true;
 
-            mytrack->encoding = 0;
-            mytrack->language_code = NULL;
+            mytrack->subtitles_encoding = 0;
+            strncpy(mytrack->language_code, "UND", 3);
             mytrack->subtitles_name = NULL;
         }
     }

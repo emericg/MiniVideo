@@ -31,18 +31,20 @@
 #include "../minitraces.h"
 
 #include "filter.h"
+#include "../import.h"
+#include "../bitstream_map.h"
 
 /* ************************************************************************** */
 
 /*!
  * \brief Depending on picture_extractionmode parameter, choose some IDR from the bitstreamMap_t structure and delete the others.
- * \param bitstream_map_pointer docme.
- * \param picture_number The number of thumbnail(s) we want to extract.
- * \param picture_extraction_mode The method of distribution for thumbnails extraction.
+ * \param **bitstream_map_pointer: docme.
+ * \param picture_number: The number of thumbnail(s) we want to extract.
+ * \param picture_extraction_mode: The method of distribution for thumbnails extraction.
  * \return The number of picture available in the bitstream map (0 means error).
  *
  * The IDR filter aim to remove irrelevant frames from the decode stream. By irrelevant we mean:
- * - Unicolor images (black or green screen) like the very first or very last frame of a stream.
+ * - Unicolor images (black or green screen) like the very first or very last frames of a stream.
  * - Images carrying less visual informations than the average.
  * - If specified, the filter select images spread over the duration of the film.
  */
@@ -56,8 +58,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
     int temporary_totalsamples_idr = 0;
     int temporary_sample_id[999] = {0};
 
-    if (bitstream_map_pointer == NULL ||
-        *bitstream_map_pointer == NULL)
+    if (bitstream_map_pointer == NULL || *bitstream_map_pointer == NULL)
     {
         TRACE_ERROR(FILTER, "Invalid bitstream_map structure!\n");
     }

@@ -31,15 +31,15 @@
 #include <unistd.h>
 
 // minivideo headers
-#include "minitraces.h"
-
 #include "import.h"
+#include "bitstream_map.h"
+#include "minitraces.h"
 
 /* ************************************************************************** */
 
 /*!
  * \brief Get various from a video filepath.
- * \param *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  *
  * Get absolute file path, file directory, file name and extension.
  * This function will only work with Unix-style file systems.
@@ -147,7 +147,7 @@ static void getInfosFromPath(VideoFile_t *video)
 
 /*!
  * \brief Get video file size.
- * \param *video A pointer to a VideoFile_t structure containing various informations about the file.
+ * \param *video: A pointer to a VideoFile_t structure containing various informations about the file.
  */
 static void getSize(VideoFile_t *video)
 {
@@ -175,7 +175,7 @@ static void getSize(VideoFile_t *video)
 
 /*!
  * \brief Get video container.
- * \param *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  *
  * This function check the first 8 bytes of a video file in order to find sign of
  * a known file container format.
@@ -271,7 +271,7 @@ static void getContainer(VideoFile_t *video)
         video->container = CONTAINER_AVI;
 
         // AVI: 52 49 46 46 xx xx xx xx
-        //       41 56 49 20 4C 49 53 54
+        //      41 56 49 20 4C 49 53 54
     }
 
     if (video->container == CONTAINER_UNKNOWN)
@@ -285,8 +285,8 @@ static void getContainer(VideoFile_t *video)
 
 /*!
  * \brief Open a file and check what's inside it.
- * \param *filepath The path of the file to load.
- * \return *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *filepath: The path of the file to load.
+ * \param[inout **video_ptr: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  *
  * Some more informations about supported files:
  * Size and offset are coded on int64_t (signed long long), so this library should
@@ -297,24 +297,27 @@ static void getContainer(VideoFile_t *video)
  *
  * These parameters will only work on POSIX compliant operating system.
  */
-VideoFile_t *import_fileOpen(const char *filepath)
+int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileOpen()\n" CLR_RESET);
 
-    // VideoFile allocation
-    VideoFile_t *video = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
+    int retcode = FAILURE;
+
+    // Allocate video structure and create a shortcut
+    *video_ptr = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
+    VideoFile_t *video = (*video_ptr);
 
     if (video == NULL)
     {
-        TRACE_ERROR(IO, "Unable to alloc new VideoFile_t structure!\n");
+        TRACE_ERROR(IO, "* Unable to allocate a VideoFile_t structure!\n");
     }
     else
     {
         if (filepath == NULL)
         {
             TRACE_ERROR(IO, "* File path is invalid\n");
-            free(video);
-            video = NULL;
+            free(*video_ptr);
+            *video_ptr = NULL;
         }
         else
         {
@@ -327,30 +330,32 @@ VideoFile_t *import_fileOpen(const char *filepath)
 
             if (video->file_pointer == NULL)
             {
-                TRACE_ERROR(IO, "Unable to open the video file!\n");
-                free(video);
-                video = NULL;
+                TRACE_ERROR(IO, "Unable to open the video file: '%s'!\n", filepath);
+                free(*video_ptr);
+                *video_ptr = NULL;
             }
             else
             {
                 TRACE_1(IO, "* File successfully opened\n");
 
-                // Get some informations from the video file
+                // Extract some informations from the video file
                 getInfosFromPath(video);
                 getSize(video);
                 getContainer(video);
+
+                retcode = SUCCESS;
             }
         }
     }
 
-    return video;
+    return retcode;
 }
 
 /* ************************************************************************** */
 
 /*!
  * \brief Close a file.
- * \param **video_ptr A pointer of pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param **video_ptr: A pointer of pointer to a VideoFile_t structure, containing every informations available about the current video file.
  * \return 1 if success, 0 otherwise.
  */
 int import_fileClose(VideoFile_t **video_ptr)
@@ -415,7 +420,6 @@ void import_fileStatus(VideoFile_t *videoFile)
     else
         TRACE_1(IO, "file_pointer is " BLD_RED "closed\n" CLR_RESET);
 
-
     // File info
     TRACE_1(IO, "* File path      : '%s'\n", videoFile->file_path);
     TRACE_1(IO, "* File directory : '%s'\n", videoFile->file_directory);
@@ -424,7 +428,7 @@ void import_fileStatus(VideoFile_t *videoFile)
     TRACE_1(IO, "* File size      : %i MiB  /  %i MB\n", videoFile->file_size / 1024 / 1024, videoFile->file_size / 1000 / 1000);
 
     // File format
-    TRACE_1(IO, "* File container :  '%s'\n", getContainerString(videoFile->container));
+    TRACE_1(IO, "* File container :  '%s'\n", getContainerString(videoFile->container, 1));
 
     // Audio track(s)
     TRACE_1(IO, "* %i audio track(s)\n", videoFile->tracks_audio_count);

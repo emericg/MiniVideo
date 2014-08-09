@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2010 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2014 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -18,7 +18,7 @@
  *
  * \file      minivideo.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2010
+ * \date      2014
  */
 
 // C standard libraries
@@ -50,21 +50,12 @@
 
 /* ************************************************************************** */
 
-/*!
- * \brief Print informations about the library into standard output.
- */
 void minivideo_infos(void)
 {
     printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
     printf("* Library version %d.%d-%d\n", minivideo_VERSION_MAJOR,
                                            minivideo_VERSION_MINOR,
                                            minivideo_VERSION_PATCH);
-
-#if ENDIANNESS == LITTLE_ENDIAN
-    printf("* ENDIANNESS is set to LITTLE_ENDIAN\n");
-#else
-    printf("* ENDIANNESS is set to BIG_ENDIAN\n");
-#endif /* ENDIANNESS */
 
 #if ENABLE_DEBUG
     printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
@@ -111,7 +102,7 @@ void minivideo_infos(void)
 #endif /* ENABLE_STBIMWRITE */
 
 #if ENABLE_DEBUG
-    printf("\n* Tracing test\n");
+    printf("\n* MiniVideo library tracing test:\n");
     TRACE_ERROR(MAIN, "TEST error\n");
     TRACE_WARNING(MAIN, "TEST warning\n");
     TRACE_INFO(MAIN, "TEST info\n");
@@ -123,14 +114,6 @@ void minivideo_infos(void)
 
 /* ************************************************************************** */
 
-/*!
- * \brief Determine endianness of the current system.
- * \return 4321 for big endian, 1234 for little endian, -1 if unable to determine endianness.
- *
- * To determine endianness, we use a character pointer to the bytes of an int,
- * and then check its first byte to see if it is 0 (meaning big endianness)
- * or 1 (meaning little endianness).
- */
 int minivideo_endianness(void)
 {
     int retcode = -1;
@@ -142,12 +125,12 @@ int minivideo_endianness(void)
 
     if (p[0] == 1)
     {
-        printf("* LITTLE_ENDIAN\n");
+        printf("* ENDIANNESS is set to LITTLE_ENDIAN\n");
         retcode = LITTLE_ENDIAN; // 1234
     }
     else
     {
-        printf("* BIG_ENDIAN\n");
+        printf("* ENDIANNESS is set to BIG_ENDIAN\n");
         retcode = BIG_ENDIAN; // 4321
     }
 #else
@@ -166,135 +149,29 @@ int minivideo_endianness(void)
 
 /* ************************************************************************** */
 
-/*!
- * \brief Open a file, check what's in it, parse it, then close it.
- * \param *input_filepath The file path of the video we want to decode.
- * \param *output_directory The directory where we want to save decoded thumbnail(s).
- * \param picture_format The picture format for thumbnail(s) we want to extract.
- * \param picture_quality The quality of thumbnail(s) we want to extract.
- * \param picture_number The number of thumbnail(s) we want to extract.
- * \param picture_extractionmode The method of distribution for thumbnails extraction.
- * \return 0 if picture(s) extraction is a success, 1 otherwise.
- *
- * The first step is to open the file with the given fileptath.
- * If the file is successfully opened, the program start gathering informations about
- * the file, print them, then try to parse it's container (if appropriate parser is
- * available) and start decoding one or more picture(s) from the video (if appropriate
- * decoder is available). Picture(s) is/are exported into selected file format.
- * The video is then closed, and the library is exited with return code.
- */
-int minivideo_thumbnailer(const char *input_filepath,
-                          const char *output_directory,
-                          const int picture_format,
-                          const int picture_quality,
-                          const int picture_number,
-                          const int picture_extractionmode)
+int minivideo_open(const char *input_filepath, VideoFile_t **input_video)
 {
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnailer()\n" CLR_RESET);
-
-    int retcode = FAILURE;
-    int picture_number_filtered = picture_number;
-
-    // Open the video file
-    VideoFile_t *input_video = import_fileOpen(input_filepath);
-
-    if (input_video != NULL)
-    {
-        // Start container parsing
-        switch (input_video->container)
-        {
-            case CONTAINER_UNKNOWN:
-                TRACE_ERROR(MAIN, "Unknown container format. Unable to parse that file!\n");
-                break;
-            case CONTAINER_MP4:
-                retcode = mp4_fileParse(input_video);
-                break;
-            case CONTAINER_MKV:
-                retcode = mkv_fileParse(input_video);
-                break;
-            case CONTAINER_ES:
-                retcode = bruteforce_fileParse(input_video, CODEC_H264);
-                break;
-            default:
-                TRACE_ERROR(MAIN, "Unable to parse given container format (id %i): no parser available!\n", input_video->container);
-                break;
-        }
-
-        if (retcode == SUCCESS)
-        {
-            // IDR frame filtering
-            picture_number_filtered = idr_filtering(&input_video->tracks_video[0],
-                                                    picture_number, picture_extractionmode);
-
-            if (picture_number_filtered == 0)
-                retcode = FAILURE;
-        }
-
-        if (retcode == SUCCESS)
-        {
-            // Print status
-            //import_fileStatus(input_video);
-
-            // Start video decoding
-            switch (input_video->tracks_video[0]->stream_codec)
-            {
-                case CODEC_UNKNOWN:
-                    TRACE_ERROR(MAIN, "Unknown video format. Unable to decode that file!\n");
-                    break;
-                case CODEC_H264:
-                    retcode = h264_decode(input_video, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
-                    break;
-                default:
-                    TRACE_ERROR(MAIN, "Unable to decode given file format (id %i): no decoder available!\n", input_video->tracks_video[0]->stream_codec);
-                    break;
-            }
-        }
-
-        // Close file
-        import_fileClose(&input_video);
-    }
-
-    // Convert return code into exit code
-    if (retcode == SUCCESS)
-    {
-        retcode = EXIT_SUCCESS;
-        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo thumbnailing function without errors.\n" CLR_RESET);
-    }
-    else
-    {
-        retcode = EXIT_FAILURE;
-        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo thumbnailing function " BLD_RED "with errors!\n" CLR_RESET);
-    }
-
-    return retcode;
+    return import_fileOpen(input_filepath, input_video);
 }
 
 /* ************************************************************************** */
 
-int minivideo_extractor(const char *input_filepath,
-                        const char *output_directory,
-                        const bool extract_audio,
-                        const bool extract_video,
-                        const bool extract_subtitles,
-                        const int output_format)
+int minivideo_parse(VideoFile_t *input_video,
+                    const bool extract_audio, const bool extract_video, const bool extract_subtitles)
 {
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_extractor()\n" CLR_RESET);
-
     int retcode = FAILURE;
 
-    // Open the video file
-    VideoFile_t *input_video = import_fileOpen(input_filepath);
-
-    if (input_video != NULL)
+    if (input_video == NULL)
+    {
+        TRACE_ERROR(MAIN, "Unable to parse NULL VideoFile_t struct!\n");
+    }
+    else
     {
         // Start container parsing
         switch (input_video->container)
         {
             case CONTAINER_UNKNOWN:
-                TRACE_ERROR(MAIN, "Unknown container format. Unable to parse that file!\n");
-                break;
-            case CONTAINER_MPEG_PS:
-                retcode = ps_fileParse(input_video);
+                TRACE_ERROR(MAIN, "Unwknown container file format: unable to parse this file!\n");
                 break;
             case CONTAINER_AVI:
                 retcode = avi_fileParse(input_video);
@@ -309,40 +186,108 @@ int minivideo_extractor(const char *input_filepath,
                 retcode = bruteforce_fileParse(input_video, CODEC_H264);
                 break;
             default:
-                TRACE_ERROR(MAIN, "Unable to parse given container format (id %i): no parser available!\n", input_video->container);
+                TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!\n",
+                            getContainerString(input_video->container, 0));
                 break;
         }
-
-        // Export audio and video PES stream
-        if (retcode == SUCCESS)
-        {
-            if (extract_audio)
-                retcode = muxer_export_samples(input_video, input_video->tracks_audio[0], output_format);
-
-            if (extract_video)
-                retcode = muxer_export_samples(input_video, input_video->tracks_video[0], output_format);
-
-            if (extract_subtitles)
-                retcode = muxer_export_samples(input_video, input_video->tracks_subtitles[0], output_format);
-        }
-
-        // Close file
-        import_fileClose(&input_video);
-    }
-
-    // Convert return code into exit code
-    if (retcode == SUCCESS)
-    {
-        retcode = EXIT_SUCCESS;
-        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo extracting function without errors.\n" CLR_RESET);
-    }
-    else
-    {
-        retcode = EXIT_FAILURE;
-        TRACE_INFO(MAIN, BLD_YELLOW "Exiting minivideo extracting " BLD_RED "with errors!\n" CLR_RESET);
     }
 
     return retcode;
+}
+
+/* ************************************************************************** */
+
+int minivideo_decode(VideoFile_t *input_video,
+                     const char *output_directory,
+                     const int picture_format,
+                     const int picture_quality,
+                     const int picture_number,
+                     const int picture_extractionmode)
+{
+    int retcode = FAILURE;
+
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()\n" CLR_RESET);
+
+    if (input_video != NULL && output_directory != NULL)
+    {
+        // IDR frame filtering
+        int picture_number_filtered = idr_filtering(&input_video->tracks_video[0],
+                                                    picture_number, picture_extractionmode);
+
+        if (picture_number_filtered == 0)
+        {
+            TRACE_ERROR(MAIN, "No picture to decode after filtering!\n");
+        }
+        else
+        {
+            // Print status
+            //import_fileStatus(input_video);
+
+            // Start video decoding
+            switch (input_video->tracks_video[0]->stream_codec)
+            {
+                case CODEC_UNKNOWN:
+                    TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!\n");
+                    break;
+                case CODEC_H264:
+                    retcode = h264_decode(input_video, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
+                    break;
+                default:
+                    TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!\n",
+                                getCodecString(stream_VIDEO, input_video->tracks_video[0]->stream_codec));
+                    break;
+            }
+        }
+    }
+    else
+    {
+        TRACE_ERROR(MAIN, "Unable to decode a NULL VideoFile_t struct!\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+int minivideo_extract(VideoFile_t *input_video,
+                      const char *output_directory,
+                      const bool extract_audio,
+                      const bool extract_video,
+                      const bool extract_subtitles,
+                      const int output_format)
+{
+    int retcode = FAILURE;
+
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_extract()\n" CLR_RESET);
+
+    if (input_video != NULL && output_directory != NULL)
+    {
+        // Print status
+        //import_fileStatus(input_video);
+
+        // Export audio and video PES stream
+        if (extract_audio)
+            retcode = muxer_export_samples(input_video, input_video->tracks_audio[0], output_format);
+
+        if (extract_video)
+            retcode = muxer_export_samples(input_video, input_video->tracks_video[0], output_format);
+
+        if (extract_subtitles)
+            retcode = muxer_export_samples(input_video, input_video->tracks_subtitles[0], output_format);
+    }
+    else
+    {
+        TRACE_ERROR(MAIN, "Unable to extract from a NULL VideoFile_t struct!\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+int minivideo_close(VideoFile_t **input_video)
+{
+    return import_fileClose(input_video);
 }
 
 /* ************************************************************************** */

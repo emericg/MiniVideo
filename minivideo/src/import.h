@@ -28,65 +28,11 @@
 #include <stdio.h>
 
 // minivideo headers
-#include "avcodecs.h"
-#include "bitstream_map.h"
+#include "videofile_struct.h"
 
 /* ************************************************************************** */
 
-/*!
- * \struct VideoFile_t
- * \brief Essential informations about a video file and its content.
- */
-typedef struct VideoFile_t
-{
-    // File
-    FILE *file_pointer;             //!< File pointer
-
-    // File info
-    char file_path[4096];           //!< Absolute path of the file
-    char file_directory[4096];      //!< Absolute path of the directory containing the file
-
-    int64_t file_size;              //!< File size in bytes
-    char file_name[255];            //!< File name with file extension
-    char file_extension[255];       //!< File extension, without dot
-
-    // File format
-    ContainerFormat_e container;    //!< Video file container
-
-    // A/V data
-    int tracks_audio_count;
-    BitstreamMap_t *tracks_audio[16];     //!< A list of all audio tracks
-
-    int tracks_video_count;
-    BitstreamMap_t *tracks_video[16];     //!< A list of all video tracks
-
-    int tracks_subtitles_count;
-    BitstreamMap_t *tracks_subtitles[16]; //!< A list of all subtitles tracks
-
-} VideoFile_t;
-
-/*!
- * \struct OutputFile_t
- * \brief Essential informations about a file.
- */
-typedef struct OutputFile_t
-{
-    // File
-    FILE *file_pointer;             //!< File pointer
-
-    // File info
-    char file_path[4096];           //!< Absolute path of the file
-    char file_directory[4096];      //!< Absolute path of the directory containing the file
-
-    int64_t file_size;              //!< File size in bytes
-    char file_name[255];            //!< File name with file extension
-    char file_extension[255];       //!< File extension, without dot
-
-} OutputFile_t;
-
-/* ************************************************************************** */
-
-VideoFile_t *import_fileOpen(const char *filepath);
+int import_fileOpen(const char *filepath, VideoFile_t **video_ptr);
 
 int import_fileClose(VideoFile_t **video_ptr);
 

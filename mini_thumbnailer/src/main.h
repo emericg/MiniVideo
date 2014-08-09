@@ -19,8 +19,8 @@
  * \date      2010
  */
 
-#ifndef MINI_THUMBNAILER_HEADER_H
-#define MINI_THUMBNAILER_HEADER_H
+#ifndef MINI_THUMBNAILER_H
+#define MINI_THUMBNAILER_H
 
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int main(int argc, char *argv[]);
 
 /* ************************************************************************** */
 
-#define VERSION_MAJOR 3
-#define VERSION_MINOR 3
+#define VERSION_MAJOR 4
+#define VERSION_MINOR 0
 
 #define ENABLE_DEBUG  1
 #define ENABLE_COLORS 1
@@ -58,4 +58,4 @@ int main(int argc, char *argv[]);
 #endif // ENABLE_COLORS
 
 /* ************************************************************************** */
-#endif // MINI_THUMBNAILER_HEADER_H
+#endif // MINI_THUMBNAILER_H

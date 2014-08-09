@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     int extract_subtitles_tracks = 0;
 
     bool output_format_specified = false;
-    int output_format = 0; // 0: PES / 1: ES
+    int output_format = 0;
 
 #if ENABLE_DEBUG
     std::cout << GREEN "main()" RESET << std::endl;
@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
 #endif /* ENABLE_DEBUG */
 
     // Argument(s) parsing
+    ////////////////////////////////////////////////////////////////////////////
+
     if (argc == 1)
     {
         std::cerr << "mini_extractor: " RED "no argument" RESET  "!" << std::endl;
@@ -89,7 +91,7 @@ int main(int argc, char *argv[])
             {
                 //FIXME handle invalid intput file path
                 input_filepath = argv[i+1];
-                std::cout << "* input : " << input_filepath << std::endl;
+                std::cout << "* input: " << input_filepath << std::endl;
 
                 goodtogo = true;
                 i++;
@@ -105,7 +107,7 @@ int main(int argc, char *argv[])
             {
                 //FIXME handle invalid output directory path
                 output_directory = argv[i+1];
-                std::cout << "* output : " << output_directory << std::endl;
+                std::cout << "* output: " << output_directory << std::endl;
 
                 i++;
             }
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
                     extract_audio_tracks = atoi(argv[i+1]);
-                    std::cout << "* extract_audio_tracks : " << extract_audio_tracks << std::endl;
+                    std::cout << "* extract_audio_tracks: " << extract_audio_tracks << std::endl;
                 }
                 else
                 {
@@ -143,7 +145,7 @@ int main(int argc, char *argv[])
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
                     extract_video_tracks = atoi(argv[i+1]);
-                    std::cout << "* extract_video_tracks : " << extract_video_tracks << std::endl;
+                    std::cout << "* extract_video_tracks: " << extract_video_tracks << std::endl;
                 }
                 else
                 {
@@ -165,7 +167,7 @@ int main(int argc, char *argv[])
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
                     extract_subtitles_tracks = atoi(argv[i+1]);
-                    std::cout << "* extract_subtitles_tracks : " << extract_subtitles_tracks << std::endl;
+                    std::cout << "* extract_subtitles_tracks: " << extract_subtitles_tracks << std::endl;
                 }
                 else
                 {
@@ -188,7 +190,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                output_format = 0;
+                output_format = stream_level_PES;
                 output_format_specified = true;
             }
         }
@@ -200,7 +202,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                output_format = 1;
+                output_format = stream_level_ES;
                 output_format_specified = true;
             }
         }
@@ -215,20 +217,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (goodtogo)
-    {
-#if ENABLE_DEBUG
-        // Print informations about LibMiniVideo and system endianness
-        minivideo_infos();
-        minivideo_endianness();
-
-        // Let's get to work
-        std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
-#endif /* ENABLE_DEBUG */
-
-        retcode = minivideo_extractor(input_filepath, output_directory, extract_audio, extract_video, extract_subtitles, output_format);
-    }
-    else
+    if (goodtogo == false)
     {
         std::cout << "* Usage: " << std::endl;
         std::cout << "mini_extractor -i <filepath> [-o <directory>] [-a audio_stream_count][-v video_stream_count][-s subtitles_stream_count] [-es] [-pes]" << std::endl;
@@ -241,18 +230,54 @@ int main(int argc, char *argv[])
         std::cout << GREEN " -es" RESET "  : Elementary Stream output format" << std::endl;
         std::cout << GREEN " -pes" RESET " : Packetized Elementary Stream output format" << std::endl;
     }
-
-    // Check exit code from the video backend
-    if (retcode == EXIT_SUCCESS)
-    {
-        std::cout << std::endl << YELLOW "mini_extractor exited without errors. Have a nice day." RESET << std::endl;
-    }
     else
     {
-        std::cerr << std::endl << YELLOW "mini_extractor exited " RED "with errors!" YELLOW " Have a nice day nonetheless..." RESET << std::endl;
+        // Stream(s) extraction
+        ////////////////////////////////////////////////////////////////////////
+
+#if ENABLE_DEBUG
+        // Print informations about LibMiniVideo and system endianness
+        minivideo_infos();
+        minivideo_endianness();
+
+        // Let's get to work
+        std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
+#endif /* ENABLE_DEBUG */
+
+        int minivideo_retcode = 0;
+
+        // Open the video file
+        VideoFile_t *input_video = NULL;
+        minivideo_retcode = minivideo_open(input_filepath, &input_video);
+
+        if (minivideo_retcode == SUCCESS)
+        {
+            // Start container parsing
+            minivideo_retcode = minivideo_parse(input_video, extract_audio, extract_video, extract_subtitles);
+
+            // Export audio and video PES stream
+            if (minivideo_retcode == SUCCESS)
+            {
+                retcode = minivideo_extract(input_video, output_directory, extract_audio, extract_video, extract_subtitles, output_format);
+            }
+
+            // Close the video file
+            minivideo_retcode = minivideo_close(&input_video);
+        }
+
+        // Convert library return code into program exit code
+        if (minivideo_retcode == SUCCESS)
+        {
+            retcode = EXIT_SUCCESS;
+            std::cout << std::endl << YELLOW "mini_extractor exited without errors. Have a nice day." RESET << std::endl;
+        }
+        else
+        {
+            retcode = EXIT_FAILURE;
+            std::cerr << std::endl << YELLOW "mini_extractor exited " RED "with errors!" YELLOW " Have a nice day nonetheless..." RESET << std::endl;
+        }
     }
 
-    // Let's get to rest
     return retcode;
 }
 

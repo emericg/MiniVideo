@@ -52,7 +52,7 @@ typedef struct DecodingContext_t
     int picture_extractionmode;      //!< The method of distribution for thumbnails extraction
     int picture_exported;            //!< Number of picture successfully exported
 
-    // Decoding context
+    // H.264 Decoding context
     ////////////////////////////////////////////////////////////////////////////
 
     bool decoderRunning;             //!< Set 'decoderRunning' to false to stop video decoding

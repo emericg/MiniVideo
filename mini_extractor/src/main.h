@@ -19,8 +19,8 @@
  * \date      2012
  */
 
-#ifndef MINI_EXTRACTOR_HEADER_H
-#define MINI_EXTRACTOR_HEADER_H
+#ifndef MINI_EXTRACTOR_H
+#define MINI_EXTRACTOR_H
 
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int main(int argc, char *argv[]);
 
 /* ************************************************************************** */
 
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 3
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
 
 #define ENABLE_DEBUG  1
 #define ENABLE_COLORS 1
@@ -58,4 +58,4 @@ int main(int argc, char *argv[]);
 #endif // ENABLE_COLORS
 
 /* ************************************************************************** */
-#endif // MINI_EXTRACTOR_HEADER_H
+#endif // MINI_EXTRACTOR_H
