@@ -25,6 +25,14 @@ FIND_LIBRARY(LIBMINIVIDEO_LIBRARY
     /home/your_user/you_can_add_your_custom_path_here
 )
 
+# VERY WIP BUT SO COOL
+#if (PNG_PNG_INCLUDE_DIR AND EXISTS "${PNG_PNG_INCLUDE_DIR}/png.h")
+#    file(STRINGS "${PNG_PNG_INCLUDE_DIR}/png.h" png_version_str REGEX "^#define[ \t]+PNG_LIBPNG_VER_STRING[ \t]+\".+\"")
+#
+#    string(REGEX REPLACE "^#define[ \t]+PNG_LIBPNG_VER_STRING[ \t]+\"([^\"]+)\".*" "\\1" PNG_VERSION_STRING "${png_version_str}")
+#    unset(png_version_str)
+#endif ()
+
 IF(NOT LIBMINIVIDEO_INCLUDE_DIR)
     SET(LIBMINIVIDEO_FOUND FALSE)
 ENDIF(NOT LIBMINIVIDEO_INCLUDE_DIR)

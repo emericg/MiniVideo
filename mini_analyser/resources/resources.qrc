@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/emblem-system.svg</file>
+        <file>icons/emblem-ubuntuone-synchronized.svg</file>
+        <file>icons/emblem-ubuntuone-unsynchronized.svg</file>
+        <file>icons/emblem-ubuntuone-updating.svg</file>
+        <file>icons/emblem-unreadable.svg</file>
+        <file>icons/gtk-info.svg</file>
+        <file>icons/help-contents.svg</file>
+        <file>icons/icon.svg</file>
+        <file>icons/package-install.svg</file>
+        <file>icons/package-remove.svg</file>
+        <file>icons/package-upgrade.svg</file>
+    </qresource>
+</RCC>

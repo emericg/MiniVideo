@@ -1,10 +1,12 @@
 # Build directories
-mini_thumbnailer/build/*
+mini_analyser/build/*
 mini_extractor/build/*
+mini_thumbnailer/build/*
 minivideo/build/*
 
 # QtCreator project files
 MiniVideo*
+*.pro.user
 
 # CMake temporary files
 CMakeCache.txt

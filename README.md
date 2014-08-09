@@ -17,22 +17,22 @@ The minivideo library can:
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
-  - please note that at the moment there is a major bug inside CABAC decoding process being worked on...
+  - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import module)
 - Elementary stream H.264 ("Annex B" format) [.264]
 - Elementary stream MPEG-1/2 [.mpg, .mpeg]
 - MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
 - MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]  
+- AVI [.avi]
 **Work In Progress:**
-* AVI [.avi]
 * MKV (Matroska) [.mkv, .webm]
 
 ### Supported picture formats (export module)
 - bmp
 - tga
 - tiff
-- png (if external libpng support is available)
+- png (external libpng support available)
 - jpeg (if external libjpeg support is available)
 
 
@@ -62,6 +62,10 @@ Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which de
 how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
 In case of problem, it may be necessary to manualy indicate the paths of these files.
 
+> $ cd mini_analyser/  
+> $ qmake  
+> $ make  
+
 > $ cd mini_extractor/build/  
 > $ cmake ..  
 > $ make  
@@ -74,6 +78,15 @@ Installation into the system, available for both testing softwares:
 > $ su  
 > $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
+
+Using mini_analyser
+-------------------
+
+> $ cd mini_analyser/build/  
+> $ export LD_LIBRARY_PATH=../../minivideo/build
+> $ ./mini_analyser
+
+Then drag and drop files to analyse them!
 
 Using mini_extractor
 --------------------
