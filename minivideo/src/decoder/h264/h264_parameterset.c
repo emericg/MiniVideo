@@ -349,10 +349,10 @@ int decodeSPS(DecodingContext_t *dc)
 
             //FIXME desalloc on a new SPS
 
-            // Macroblocks "table" allocation (on macroblock **mbs_data) :
+            // Macroblocks "table" allocation (on macroblock **mbs_data):
             dc->mb_array = (Macroblock_t**)calloc(dc->PicSizeInMbs, sizeof(Macroblock_t*));
 
-            // Macroblocks "chunk" allocation (on Macroblock_t *mbs_data) :
+            // Macroblocks "chunk" allocation (on Macroblock_t *mbs_data):
             //dc->mbs_data = (macroblock*)calloc(dc->PicSizeInMbs, sizeof(macroblock));
 
         sps->direct_8x8_inference_flag = read_bit(dc->bitstr);

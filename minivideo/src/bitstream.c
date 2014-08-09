@@ -33,6 +33,7 @@
 #include "minitraces.h"
 
 #include "bitstream.h"
+#include "bitstream_utils.h"
 
 /* ************************************************************************** */
 

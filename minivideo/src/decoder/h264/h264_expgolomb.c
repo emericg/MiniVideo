@@ -112,7 +112,7 @@ int read_se(Bitstream_t *bitstr)
     unsigned int codeNum = get_codeNum(bitstr);
     int se = (int)(pow(-1.0, codeNum+1) * ceil(codeNum/2.0));
 
-    TRACE_1(EXPGO, "read_se(k:%i) : %i\n", codeNum, se);
+    TRACE_1(EXPGO, "read_se(k:%i) = %i\n", codeNum, se);
     return se;
 }
 
