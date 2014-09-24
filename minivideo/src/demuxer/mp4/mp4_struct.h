@@ -58,6 +58,14 @@ typedef struct Mp4Track_t
     unsigned int codec;
     unsigned int handlerType;
 
+    uint32_t timescale;
+    uint64_t duration;
+    uint64_t creation_time;
+    uint64_t modification_time;
+
+    unsigned int bitrate_max;
+    unsigned int bitrate_avg;
+
         // Audio specific parameters
         unsigned int channel_count;
         unsigned int sample_size;
@@ -69,6 +77,9 @@ typedef struct Mp4Track_t
         unsigned int color_depth;
 
         // AVC specific parameters
+        unsigned int profile;
+        unsigned int level;
+
         unsigned int sps_count;
         unsigned int *sps_sample_size;
         int64_t *sps_sample_offset;
@@ -99,7 +110,12 @@ typedef struct Mp4Track_t
 
 typedef struct Mp4_t
 {
-    unsigned int tracks_count;
+    uint32_t timescale;
+    uint64_t duration;
+    uint64_t creation_time;
+    uint64_t modification_time;
+
+    uint32_t tracks_count;
     Mp4Track_t *tracks[16];
 
     int64_t box_moov_end;

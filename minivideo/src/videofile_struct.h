@@ -38,10 +38,9 @@
  */
 typedef struct VideoFile_t
 {
-    // File
     FILE *file_pointer;             //!< File pointer
 
-    // File info
+    // File infos
     char file_path[4096];           //!< Absolute path of the file
     char file_directory[4096];      //!< Absolute path of the directory containing the file
 
@@ -51,6 +50,11 @@ typedef struct VideoFile_t
 
     // File format
     ContainerFormat_e container;    //!< File container
+
+    // Meta datas // TODO metadata structure
+    unsigned int duration;          //!< File content duration in milliseconds
+    unsigned int creation_time;     //!< File (or probably container) creation time in milliseconds
+    unsigned int modification_time; //!< File (or probably container) modification time in milliseconds
 
     // A/V track(s) datas and infos
     int tracks_audio_count;

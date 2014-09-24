@@ -43,6 +43,10 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="tab_infos">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/package-install.svg</normaloff>:/icons/icons/package-install.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>Informations</string>
        </attribute>
@@ -70,6 +74,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="1" column="1" colspan="3">
@@ -82,6 +89,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -108,6 +118,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -161,6 +174,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="0">
@@ -187,6 +203,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="4" column="3">
@@ -200,6 +219,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="4" column="1">
@@ -212,6 +234,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -238,6 +263,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -294,6 +322,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="0" column="2">
@@ -313,6 +344,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -334,6 +368,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="1" column="2">
@@ -353,6 +390,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -374,6 +414,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="0">
@@ -393,6 +436,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -414,6 +460,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="5" column="0">
@@ -433,6 +482,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -454,6 +506,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="7" column="0">
@@ -473,6 +528,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -503,6 +561,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="0" column="2">
@@ -522,6 +583,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -543,6 +607,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="1" column="2">
@@ -562,6 +629,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -583,6 +653,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="2" column="2">
@@ -602,6 +675,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -623,6 +699,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="2">
@@ -642,6 +721,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -663,6 +745,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="4" column="2">
@@ -682,6 +767,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -703,6 +791,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="6" column="0">
@@ -722,6 +813,9 @@
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -743,6 +837,9 @@
              <property name="text">
               <string>Unknown</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
           </layout>
@@ -751,16 +848,28 @@
        </layout>
       </widget>
       <widget class="QWidget" name="tab_audio">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/audio-x-wav.svg</normaloff>:/icons/icons/audio-x-wav.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>Audio track(s)</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/video-x-generic.svg</normaloff>:/icons/icons/video-x-generic.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>Video track(s)</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_2">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>Sutitles track(s)</string>
        </attribute>
@@ -791,11 +900,11 @@
       </property>
       <item>
        <property name="text">
-        <string>Drag and drop files here to analyse them!</string>
+        <string>Drag and drop files to analyse them!</string>
        </property>
        <property name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/gtk-info.svg</normaloff>:/icons/icons/gtk-info.svg</iconset>
+         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
        </property>
       </item>
      </widget>
@@ -861,7 +970,7 @@ background: rgba(255, 170, 0, 128);</string>
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/help-contents.svg</normaloff>:/icons/icons/help-contents.svg</iconset>
+     <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -885,7 +994,7 @@ background: rgba(255, 170, 0, 128);</string>
   <action name="actionAboutQt">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/gtk-info.svg</normaloff>:/icons/icons/gtk-info.svg</iconset>
+     <normaloff>:/icons/icons/dialog-question.svg</normaloff>:/icons/icons/dialog-question.svg</iconset>
    </property>
    <property name="text">
     <string>About Qt</string>
@@ -894,7 +1003,7 @@ background: rgba(255, 170, 0, 128);</string>
   <action name="actionExit">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
+     <normaloff>:/icons/icons/application-exit.svg</normaloff>:/icons/icons/application-exit.svg</iconset>
    </property>
    <property name="text">
     <string>Exit</string>

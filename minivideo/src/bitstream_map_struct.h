@@ -44,19 +44,23 @@ typedef struct BitstreamMap_t
     StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
     AVCodec_e stream_codec;         //!< Stream codec
 
-    unsigned int bitrate;           //!< Bitrate
+    unsigned int duration;          //!< Stream duration (in milliseconds)
+    unsigned int creation_time;     //!< Stream creation time (ms?)
+    unsigned int modification_time; //!< Stream modification time (ms?)
+
+    unsigned int bitrate;           //!< Bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode
     char language_code[3];          //!< Language code (ISO 639-1 or ISO 639-2 format)
 
     // Video specific parameters
-    unsigned int width;             //!< Horizontal size in pixels
-    unsigned int height;            //!< Vertical size in pixels
+    unsigned int width;             //!< Horizontal size (in pixels)
+    unsigned int height;            //!< Vertical size (in pixels)
     unsigned int color_depth;       //!< Color resolution per channel
     unsigned int color_subsampling; //!< Color sub-sampling format
     double frame_rate;              //!< Frame rate (in frame/s)
 
     // Audio specific parameters
-    unsigned int sampling_rate;     //!< Sampling rate
+    unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int channel_count;     //!< Number of audio channels
 
     // Subtitles specific parameters

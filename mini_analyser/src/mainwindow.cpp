@@ -21,11 +21,13 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "utils.h"
 
 #include <iostream>
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDateTime>
 
 #include <QDropEvent>
 #include <QUrl>
@@ -57,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas(int)));
 
-    // Accept drag&drop
+    // Accept video files "drag & drop"
     setAcceptDrops(true);
 
     // Debug helper only
@@ -74,7 +76,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
-    // Check if the object dropped has an url (and so is a file)
+    // Check if the object dropped has an url (and is a file)
     if (e->mimeData()->hasUrls())
     {
         // TODO Filter by MimeType or file extension
@@ -87,7 +89,7 @@ void MainWindow::dropEvent(QDropEvent *e)
     foreach (const QUrl &url, e->mimeData()->urls())
     {
         const QString &fileName = url.toLocalFile();
-        std::cout << "Dropped file: "<< fileName.toStdString() << std::endl;
+        //std::cout << "Dropped file: "<< fileName.toStdString() << std::endl;
 
         loadFile(fileName);
     }
@@ -191,7 +193,7 @@ void MainWindow::closeFile()
             }
             else // No more file opened?
             {
-                ui->file_comboBox->addItem(QIcon(":/icons/icons/gtk-info.svg"), "Drag and drop files here to analyse them!");
+                ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"), "Drag and drop files to analyse them!");
                 ui->tabWidget->setEnabled(false);
                 emptyFileList = true;
             }
@@ -268,35 +270,14 @@ int MainWindow::printDatas(int fileIndex)
         ui->label_10->setText(QString::fromLocal8Bit(video->file_path));
         ui->label_11->setText(QString::fromLocal8Bit(video->file_extension));
         ui->label_12->setText(getContainerString(video->container, 1));
+        ui->label_13->setText(getSizeString(video->file_size));
+        ui->label_14->setText(getDurationString(video->duration));
 
-        QString filesize = "0";
-        if (video->file_size < 1024) // < 1 KiB
-        {
-            filesize = QString::number(video->file_size) + " bytes";
-        }
-        else if (video->file_size < 1048576) // < 1 MiB
-        {
-            filesize = QString::number(video->file_size / 1024.0, 'f', 2) + " KiB   /   "
-                       + QString::number(video->file_size / 1000, 'f', 2) + " KB   /   ("
-                       + QString::number(video->file_size) + " bytes)";
-        }
-        else if (video->file_size < 1073741824) // < 1 GiB
-        {
-            filesize = QString::number(video->file_size / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
-                       + QString::number(video->file_size / 1000 / 1000, 'f', 2) + " MB   /   ("
-                       + QString::number(video->file_size) + " bytes)";
-        }
-        else // < 1 GiB
-        {
-            filesize = QString::number(video->file_size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
-                       + QString::number(video->file_size / 1000 / 1000 / 1000, 'f', 2) + " GB   /   ("
-                       + QString::number(video->file_size) + " bytes)";
-        }
-        ui->label_13->setText(filesize);
-
-        //ui->label_14->setText() // duration
-        //ui->label_15->setText() // creation date
-        //ui->label_16->setText() // creation apps
+        QDate date(1904, 1, 1);
+        QTime time(0, 0, 0, 0);
+        QDateTime datetime(date, time);
+        datetime = datetime.addSecs(video->creation_time);
+        ui->label_15->setText(datetime.toString());
 
         // AUDIO
         ////////////////////////////////////////////////////////////////////////
@@ -305,7 +286,13 @@ int MainWindow::printDatas(int fileIndex)
         if (video->tracks_audio[atid] != NULL)
         {
             ui->label_25->setText("0"); // stream id
+            ui->label_26->setText(getTrackSizeString(video->tracks_audio[atid], video->file_size));
             ui->label_28->setText(getCodecString(stream_AUDIO, video->tracks_audio[atid]->stream_codec));
+
+            ui->label_30->setText(getDurationString(video->tracks_audio[atid]->duration));
+
+            ui->label_31->setText(QString::number(video->tracks_audio[atid]->bitrate));
+            //ui->label_32->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
 
             ui->label_53->setText(QString::number(video->tracks_audio[atid]->sampling_rate));
             ui->label_54->setText(QString::number(video->tracks_audio[atid]->channel_count));
@@ -318,10 +305,14 @@ int MainWindow::printDatas(int fileIndex)
         if (video->tracks_video[vtid] != NULL)
         {
             ui->label_33->setText("0"); // stream id
+            ui->label_57->setText(getTrackSizeString(video->tracks_video[vtid], video->file_size));
             ui->label_49->setText(getCodecString(stream_VIDEO, video->tracks_video[vtid]->stream_codec));
 
+            ui->label_60->setText(getDurationString(video->tracks_video[vtid]->duration));
+            ui->label_61->setText(QString::number(video->tracks_video[vtid]->bitrate));
+            //ui->label_62->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
             ui->label_50->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
-            ui->label_51->setText("16/9");
+            ui->label_51->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
             ui->label_52->setText(QString::number(video->tracks_video[vtid]->frame_rate));
             ui->label_55->setText(QString::number(video->tracks_video[vtid]->color_depth));
             ui->label_56->setText(QString::number(video->tracks_video[vtid]->color_subsampling));
@@ -346,3 +337,4 @@ void MainWindow::cleanDatas()
 }
 
 /* ************************************************************************** */
+

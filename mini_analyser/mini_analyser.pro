@@ -14,10 +14,12 @@ UI_DIR       = build/
 DESTDIR      = build/
 
 # mini_analyser files
-SOURCES     += src/main.cpp\
-               src/mainwindow.cpp
-HEADERS     += src/main.h\
-               src/mainwindow.h
+SOURCES     += src/main.cpp \
+               src/mainwindow.cpp \
+               src/utils.cpp
+HEADERS     += src/main.h \
+               src/mainwindow.h \
+               src/utils.h
 RESOURCES   += resources/resources.qrc
 FORMS       += ui/mainwindow.ui
 
