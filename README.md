@@ -5,15 +5,16 @@ MiniVideo
 Introduction
 ------------
 
-MiniVideo is a small video decoding library developed from scratch in C, bundled with small testing programs developed in C++.  
-MiniVideo has been tested with several CPU architectures (x86, SH4, mips, arm).  
+MiniVideo is a small **video decoding library developed from scratch** in C, bundled with small testing programs developed in C++.  
+MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The build system uses CMake. Both library and test programs can be installed into your system.  
 
-MiniVideo has been developed in 2010/2011 during an internship I did in a French company called "httv". Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with httv permission under the LGPL v3 license (decoding backend) and GPLv3 (testing softwares).  
+MiniVideo has been developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (decoding backend) and GPLv3 (testing softwares).  
 
 The minivideo library can:
-* Open video files with various container to demux and remux audios/videos contents.
+* Open video files with various container to demux and remux audios/videos content.
 * Open H.264 video stream and decode them to export intra-coded pictures.
+* Extract various metadatas from container and elementary stream.
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
@@ -25,15 +26,13 @@ The minivideo library can:
 - MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
 - MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]  
 - AVI [.avi]
-**Work In Progress:**
-* MKV (Matroska) [.mkv, .webm]
 
 ### Supported picture formats (export module)
 - bmp
 - tga
 - tiff
 - png (external libpng support available)
-- jpeg (if external libjpeg support is available)
+- jpeg (only if external libjpeg support is available)
 
 
 Building minivideo library
@@ -42,7 +41,7 @@ Building minivideo library
 > $ cd minivideo/build/  
 > $ cmake ..  
 > $ make  
->   
+>
 > $ su  
 > $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
