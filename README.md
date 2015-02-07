@@ -21,19 +21,18 @@ The minivideo library can:
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import module)
-- Elementary stream H.264 ("Annex B" format) [.264]
-- Elementary stream MPEG-1/2 [.mpg, .mpeg]
+- H.264 "elementary stream" ("Annex B" format) [.264]
+- MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
-- MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]  
+- MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]
 - AVI [.avi]
 
 ### Supported picture formats (export module)
-- bmp
-- tga
-- tiff
-- png (external libpng support available)
 - jpeg (only if external libjpeg support is available)
-
+- png (external libpng support available)
+- bmp
+- tiff
+- tga
 
 Building minivideo library
 --------------------------
@@ -45,21 +44,24 @@ Building minivideo library
 > $ su  
 > $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
-CMake parameters:
+Note: You can easily enable multithreaded build with the "make -jX" argument:
+> $ make  $(grep -c ^processor /proc/cpuinfo)  
+
+Note: You can tune CMake by adding extra arguments:
 > -DCMAKE_BUILD_TYPE=Release/Debug  
 > -DCMAKE_BUILD_Mode=Dynamic/Static  
 > -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/xxx.cmake  
 > -DCMAKE_INSTALL_PREFIX=/usr/bin  
 
-You can also change several build options into the "minivideo/CMakeLists.txt" file.
+You can also change several build options directly into the "minivideo/CMakeLists.txt" file.
 
 
-Building minivideo's testing softwares
+Building MiniVideo's testing softwares
 --------------------------------------
 
 Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
 how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
-In case of problem, it may be necessary to manualy indicate the paths of these files.
+In case of problem, it may be necessary to manually indicate the paths of these files.
 
 > $ cd mini_analyser/  
 > $ qmake  
@@ -144,7 +146,7 @@ H.264 unsupported features
 // UNSUPPORTED for BP and XP profiles
 - (FMO) Flexible Macroblock Ordering
 - (ASO) Arbitrary slice ordering
-- (RS) Redondant slice
+- (RS) Redundant slice
 
 // UNSUPPORTED for XP profile
 - Data partitioning
