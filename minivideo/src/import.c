@@ -415,9 +415,13 @@ void import_fileStatus(VideoFile_t *videoFile)
 
     // File
     if (videoFile->file_pointer)
+    {
         TRACE_1(IO, "file_pointer is " BLD_GREEN "open\n" CLR_RESET);
+    }
     else
+    {
         TRACE_1(IO, "file_pointer is " BLD_RED "closed\n" CLR_RESET);
+    }
 
     // File info
     TRACE_1(IO, "* File path      : '%s'\n", videoFile->file_path);

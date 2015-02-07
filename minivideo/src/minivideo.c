@@ -208,7 +208,7 @@ int minivideo_decode(VideoFile_t *input_video,
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()\n" CLR_RESET);
 
-    if (input_video != NULL && output_directory != NULL)
+    if (input_video != NULL)
     {
         // IDR frame filtering
         int picture_number_filtered = idr_filtering(&input_video->tracks_video[0],
@@ -241,7 +241,7 @@ int minivideo_decode(VideoFile_t *input_video,
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to decode a NULL VideoFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to start decoding because of an empty VideoFile_t structure! Parsing failed?\n");
     }
 
     return retcode;
