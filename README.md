@@ -40,12 +40,9 @@ Building minivideo library
 > $ cd minivideo/build/  
 > $ cmake ..  
 > $ make  
->
-> $ su  
-> $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 Note: You can easily enable multithreaded build with the "make -jX" argument:
-> $ make  $(grep -c ^processor /proc/cpuinfo)  
+> $ make -j$(grep -c ^processor /proc/cpuinfo)  
 
 Note: You can tune CMake by adding extra arguments:
 > -DCMAKE_BUILD_TYPE=Release/Debug  
@@ -53,7 +50,11 @@ Note: You can tune CMake by adding extra arguments:
 > -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/xxx.cmake  
 > -DCMAKE_INSTALL_PREFIX=/usr/bin  
 
-You can also change several build options directly into the "minivideo/CMakeLists.txt" file.
+Note: You can also change several build options directly into the "minivideo/CMakeLists.txt" file.
+
+Installation into the system, available for root user:
+>  $ su  
+>  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Building MiniVideo's testing softwares
@@ -75,9 +76,9 @@ In case of problem, it may be necessary to manually indicate the paths of these 
 > $ cmake ..  
 > $ make  
 
-Installation into the system, available for both testing softwares:
-> $ su  
-> $ make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+Installation into the system, available for root user with both testing softwares:
+>  $ su  
+>  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Using mini_analyser
