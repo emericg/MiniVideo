@@ -14,8 +14,9 @@ TODO test softwares
 - error when an invalid path is passed as argument with the -i option
 - error when an invalid path is passed as argument with the -o option
 - add a non-regression test suit
+- add a performance test suit
 - a "mini_analyser" with container and video stream infos would be awesome
-- a "mini_player" would definitly be an interesting thing to do
+- a "mini_player" would definitely be an interesting thing to do
 
 TODO video library
 ------------------
@@ -28,7 +29,7 @@ TODO video library
 - there is no more error handling after intra_prediction_process()
 
 // Bitstream
-- behavior regarding end_of_file (currently it only trigger exit(EXIT_FAILURE))
+- behavior regarding unexpected end_of_file (currently it only trigger exit(EXIT_FAILURE))
 - rename goto_offset_bitstream()
 - memory alignment for embedded platform
 
@@ -40,14 +41,14 @@ TODO video library
   - subtitles
   - quite slow...
 - finish MKV parser
-- tracks_video_count sometimes not correclty set (and then bitsteammap not freed)
+- tracks_video_count sometimes not correctly set (and then bitsteammap not freed)
 
 // Video decoder
 - CABAC bugfix
 - reimplement transformbypass_decoding() to use static data table
 - scaling_list extraction process common to SPS & PPS
 
-PERFORMANCE IMPROVMENTS
+PERFORMANCE IMPROVEMENTS
 -----------------------
 
 // MACROBLOCKS
