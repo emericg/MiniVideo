@@ -47,16 +47,16 @@
 #define BLD_CYAN   "\e[1;36m"
 #define BLD_WHITE  "\e[1;37m"
 
-#define OUT_BLACK  "\e[1;30m;47m" //!< Outlined colors
-#define OUT_RED    "\e[1;31m;47m"
-#define OUT_GREEN  "\e[1;32m;47m"
-#define OUT_YELLOW "\e[1;33m;47m"
-#define OUT_BLUE   "\e[1;34m;47m"
-#define OUT_PURPLE "\e[1;35m;47m"
-#define OUT_CYAN   "\e[1;36m;47m"
-#define OUT_WHITE  "\e[1;37m;47m"
+#define OUT_BLACK  "\e[1;30;47m" //!< Grey outlined colors
+#define OUT_RED    "\e[1;31;47m"
+#define OUT_GREEN  "\e[1;32;47m"
+#define OUT_YELLOW "\e[1;33;47m"
+#define OUT_BLUE   "\e[1;34;47m"
+#define OUT_PURPLE "\e[1;35;47m"
+#define OUT_CYAN   "\e[1;36;47m"
+#define OUT_WHITE  "\e[1;37;47m"
 
-#else // ENABLE_COLORS
+#else /* ENABLE_COLORS */
 
 #define CLR_RESET
 #define CLR_BLACK
