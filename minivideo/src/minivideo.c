@@ -53,9 +53,10 @@
 void minivideo_infos(void)
 {
     printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
-    printf("* Library version %d.%d-%d\n", minivideo_VERSION_MAJOR,
+    printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
                                            minivideo_VERSION_MINOR,
                                            minivideo_VERSION_PATCH);
+    printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
 
 #if ENABLE_DEBUG
     printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
