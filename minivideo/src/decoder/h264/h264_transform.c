@@ -293,7 +293,7 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
     sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Init
-    int i = 0, j = 0, k = 0;
+    unsigned int i = 0, j = 0, k = 0;
     int iCbCr = 0;
     int numChroma4x4Blks = (sps->MbWidthC/4) * (sps->MbHeightC/4);
 
@@ -843,7 +843,7 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
         int i = 0, j = 0;
 
         for (i = 0; i < 2; i++)
-            for (j = 0; j < 4; j++)
+            for (j = 0; j < 2; j++)
                 dcC[i][j] = c[i][j];
     }
     else
@@ -890,7 +890,7 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
     {
         int i = 0, j = 0;
 
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < 4; i++)
             for (j = 0; j < 4; j++)
                 dcC[i][j] = c[i][j];
     }
