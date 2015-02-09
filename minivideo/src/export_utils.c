@@ -214,7 +214,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
     sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
-    int i = 0;
+    unsigned int i = 0;
 
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;

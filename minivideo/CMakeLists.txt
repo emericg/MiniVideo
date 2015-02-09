@@ -35,8 +35,8 @@ IF(ENABLE_JPEG)
     IF(JPEG_FOUND)
         MESSAGE(STATUS "* libjpeg found")
     ELSE(JPEG_FOUND)
-        SET(ENABLE_JPEG 0) # Disabling jpeg support
-        MESSAGE(WARNING "> libjpeg not found! disabling jpeg support.")
+        MESSAGE(WARNING "> libjpeg not found! Disabling JPEG support.")
+        SET(ENABLE_JPEG 0)
     ENDIF(JPEG_FOUND)
 ENDIF(ENABLE_JPEG)
 
@@ -47,8 +47,8 @@ IF(ENABLE_PNG)
     IF(PNG_FOUND)
         MESSAGE(STATUS "* libpng found")
     ELSE(PNG_FOUND)
-        SET(ENABLE_PNG 0) # Disabling external png support. Internal "stb_image_write" will still provide png export.
-        MESSAGE(WARNING "> libpng not found! disabling external png support. Internal "stb_image_write" will still provide png export.")
+        MESSAGE(WARNING "> libpng not found! Disabling external PNG support. 'stb_image_write' library will still provide PNG export.")
+        SET(ENABLE_PNG 0)
     ENDIF(PNG_FOUND)
 ENDIF(ENABLE_PNG)
 
@@ -68,7 +68,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Release")
     SET(ENABLE_DEBUG 0)
     SET(CMAKE_BUILD_TYPE release)
     # Custom cflags? Use "release mode" and "-O2" for maximum speed.
-    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall")
+    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wno-unused")
 
 ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
 
@@ -93,10 +93,10 @@ CONFIGURE_FILE(
 SET(minivideo_SRC
     src/minivideo.c
         src/cmake_defines.h
-        src/minitraces.c
         src/typedef.h
         src/utils.c
         src/avcodecs.c
+        src/minitraces.c
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c

@@ -101,7 +101,7 @@ static void getInfosFromPath(VideoFile_t *video)
     char *pos_last_slash_p = strrchr(video->file_path, '/');
     if (pos_last_slash_p != NULL)
     {
-        int pos_last_slash_i = pos_last_slash_p - video->file_path + 1;
+        unsigned int pos_last_slash_i = pos_last_slash_p - video->file_path + 1;
         if (pos_last_slash_i > sizeof(video->file_directory) - 1)
         {
             pos_last_slash_i = sizeof(video->file_directory) - 1;
@@ -114,7 +114,7 @@ static void getInfosFromPath(VideoFile_t *video)
         char *pos_last_dot_p = strrchr(video->file_path, '.');
         if (pos_last_dot_p != NULL)
         {
-            int pos_last_dot_i = pos_last_dot_p - video->file_path - pos_last_slash_i;
+            unsigned int pos_last_dot_i = pos_last_dot_p - video->file_path - pos_last_slash_i;
             if (pos_last_dot_i > sizeof(video->file_name) - 1)
             {
                  pos_last_dot_i = sizeof(video->file_name) - 1;

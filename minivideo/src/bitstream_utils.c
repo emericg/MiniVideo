@@ -61,8 +61,8 @@ void bitstream_print_buffer(Bitstream_t *bitstr)
 {
     TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_print_buffer()\n" CLR_RESET);
 
-    int i = 0, j = 0;
-    const int row = 21, line = 16;
+    unsigned int i = 0, j = 0;
+    unsigned int row = 21, line = 16;
 
     while (i < (bitstr->buffer_size/row))
     {

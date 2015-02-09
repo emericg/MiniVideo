@@ -989,7 +989,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
                         retcode = FAILURE;
                     }
 
-                    int max_num_ref_frames = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id]->max_num_ref_frames;
+                    unsigned int max_num_ref_frames = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id]->max_num_ref_frames;
                     if (drpm->max_long_term_frame_idx_plus1 > max_num_ref_frames)
                     {
                         TRACE_WARNING(SLICE, "    - max_long_term_frame_idx_plus1 is %i but should be in range [0,max_num_ref_frames=%i]\n", drpm->max_long_term_frame_idx_plus1, max_num_ref_frames);

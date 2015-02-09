@@ -141,7 +141,7 @@ int bruteforce_fileParse(VideoFile_t *video, AVCodec_e video_codec)
 
 #if ENABLE_DEBUG
                 TRACE_INFO(DEMUX, "bitstream_map->totalsamples = %i\n", video->tracks_video[0]->sample_count);
-                int i = 0;
+                unsigned int i = 0;
                 for (i = 0; i < video->tracks_video[0]->sample_count; i++)
                 {
                     TRACE_1(DEMUX, "bitstream_map->sample_offset[%i] = %i\n", i, video->tracks_video[0]->sample_offset[i]);

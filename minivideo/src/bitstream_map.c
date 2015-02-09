@@ -191,7 +191,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
         if (bitstream_map->sample_count > 0)
         {
             TRACE_1(DEMUX, "SAMPLES\n");
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < bitstream_map->sample_count; i++)
             {
                 TRACE_1(DEMUX, "> sample_type      : %i\n", bitstream_map->sample_type[i]);

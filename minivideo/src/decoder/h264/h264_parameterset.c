@@ -318,7 +318,7 @@ int decodeSPS(DecodingContext_t *dc)
             sps->offset_for_top_to_bottom_field = read_se(dc->bitstr);
             sps->num_ref_frames_in_pic_order_cnt_cycle = read_ue(dc->bitstr);
 
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
             {
                 sps->offset_for_ref_frame[i] = read_se(dc->bitstr);
@@ -536,7 +536,7 @@ static int checkSPS(DecodingContext_t *dc, sps_t *sps)
                 retcode = FAILURE;
             }
 
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
             {
                 if (sps->offset_for_ref_frame[i] < (pow(-2, 31) + 1) ||  sps->offset_for_ref_frame[i] < (pow(2, 31) - 1))
@@ -601,7 +601,7 @@ void printSPS(DecodingContext_t *dc)
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printSPS()\n" CLR_RESET);
 
-    int i = 0;
+    unsigned int i = 0;
 
     // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
@@ -1063,7 +1063,7 @@ void printPPS(DecodingContext_t *dc)
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printPPS()\n" CLR_RESET);
 
-    int i = 0;
+    unsigned int i = 0;
 
     // Shortcut
     pps_t *pps = dc->pps_array[dc->active_pps];
@@ -1083,7 +1083,7 @@ void printPPS(DecodingContext_t *dc)
     TRACE_1(PARAM, "  - num_slice_groups_minus1\t\t\t= %i\n", pps->num_slice_groups_minus1);
     if (pps->num_slice_groups_minus1 > 0)
     {
-        int iGroup = 0;
+        unsigned int iGroup = 0;
         TRACE_1(PARAM, "  - slice_group_map_type\t\t\t= %i\n", pps->slice_group_map_type);
         if (pps->slice_group_map_type == 0)
         {
@@ -1661,7 +1661,7 @@ hrd_t *decodeHRD(DecodingContext_t *dc)
         hrd->bit_rate_scale = read_bits(dc->bitstr, 4);
         hrd->cpb_size_scale = read_bits(dc->bitstr, 4);
 
-        int SchedSelIdx = 0;
+        unsigned int SchedSelIdx = 0;
         for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
         {
             hrd->bit_rate_value_minus1[SchedSelIdx] = read_ue(dc->bitstr);
@@ -1719,7 +1719,7 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
         //TRACE_1(DPARAMS, "      - bit_rate_scale\t\t: %i\n", hrd->bit_rate_scale);
         //TRACE_1(DPARAMS, "      - cpb_size_scale\t\t: %i\n", hrd->cpb_size_scale);
 
-        int SchedSelIdx = 0;
+        unsigned int SchedSelIdx = 0;
         for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
         {
             if (hrd->bit_rate_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
@@ -1777,7 +1777,7 @@ void printHRD(hrd_t *hrd)
     TRACE_1(PARAM, "      - bit_rate_scale\t\t\t= %i\n", hrd->bit_rate_scale);
     TRACE_1(PARAM, "      - cpb_size_scale\t\t\t= %i\n", hrd->cpb_size_scale);
 
-    int SchedSelIdx = 0;
+    unsigned int SchedSelIdx = 0;
     for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
     {
         TRACE_1(PARAM, "      - bit_rate_value_minus1[%i]\t\t= %i\n", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);

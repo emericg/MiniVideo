@@ -290,7 +290,7 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
         }
         else
         {
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < chunk_header->dwSize; i++)
             {
                 string[i] = read_bits(bitstr, 8);
@@ -647,7 +647,6 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int i = 0;
 
     if (idx1_header == NULL)
     {
@@ -665,6 +664,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
 
         // Check if the tracks have already been indexed
         int track_left = 0;
+        unsigned int i = 0;
         for (i = 0; i < avi->tracks_count; i++)
         {
             if (avi->tracks[i]->track_indexed == false &&
@@ -826,7 +826,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
             dwReserved[2] = endian_flip_32(read_bits(bitstr, 32));
 
             // Parse super index entries
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < nEntriesInUse; i++)
             {
                 track->superindex_count++;
@@ -864,7 +864,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
 
             TRACE_1(AVI, " > qwOffset_base\t: %lli\n", qwOffset_base);
 
-            int i = 0;
+            unsigned int i = 0;
             for (i = start; i < track->index_count; i++)
             {
                 uint32_t dwOffset = endian_flip_32(read_bits(bitstr, 32));
@@ -1477,7 +1477,7 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int i = 0, j = 0;
+    unsigned int i = 0, j = 0;
 
     for (i = 0; i < avi->tracks_count; i++)
     {
@@ -1507,8 +1507,8 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
             if (retcode == SUCCESS)
             {
                 // Set sample into bitstream map
-                int k = 0;
-                int tid = 0; // only support 1 audio and 1 video track for now
+                unsigned int k = 0;
+                unsigned int tid = 0; // only support 1 audio and 1 video track for now
 
                 if (avi->tracks[i]->strh.fccType == fcc_auds)
                 {
@@ -1559,7 +1559,7 @@ void avi_clean(avi_t *avi)
 {
     if (avi)
     {
-        int i = 0;
+        unsigned int i = 0;
         for (i = 0; i < avi->tracks_count; i++)
         {
             if (avi->tracks[i])
@@ -1750,7 +1750,7 @@ int avi_fileParse(VideoFile_t *video)
             }
 
             // Check if we have our super index, or if the tracks have been indexed
-            int i = 0;
+            unsigned int i = 0;
             int track_indexed = 0, track_superindexed = 0;
 
             for (i = 0; i < avi.tracks_count; i++)
@@ -1762,7 +1762,7 @@ int avi_fileParse(VideoFile_t *video)
                     track_superindexed++;
             }
 
-            if ((track_indexed + track_superindexed) == avi.tracks_count)
+            if ((unsigned int)(track_indexed + track_superindexed) == avi.tracks_count)
             {
                 superrun = false;
             }

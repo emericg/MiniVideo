@@ -115,7 +115,7 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
 
     if (retcode == SUCCESS)
     {
-        int i = 0, j = 0;
+        unsigned int i = 0, j = 0;
 
         map->stream_level = stream_level_ES;
         map->stream_codec = track->codec;
@@ -176,9 +176,9 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         {
             int sid = i + track->sps_count + track->pps_count; // Sample id
 
-            int tempSample = 0;
+            unsigned int tempSample = 0;
             int range = 0, rangestart = 0, rangestop = 0, spc = 0;
-            int e = 0; // current entry on the Sample to Chunk Box (stsc) // range e-1 e
+            unsigned int e = 0; // current entry on the Sample to Chunk Box (stsc) // range e-1 e
             int f = 0; // chunk on a chunk range
 
             // Find the appropriate chunk for a sample i
@@ -491,8 +491,8 @@ static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_padb()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int i;
 
+    unsigned int i;
     unsigned int sample_count = read_bits(bitstr, 32);
 
     for (i = 0; i < ((sample_count + 1)/2); i++)
@@ -1534,7 +1534,7 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     track->codec = CODEC_H264;
 
     // Parse box content
-    int i = 0;
+    unsigned int i = 0;
 
     unsigned int configurationVersion = read_bits(bitstr, 8);
     unsigned int AVCProfileIndication = read_bits(bitstr, 8);
@@ -1746,7 +1746,7 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    int i = 0;
+    unsigned int i = 0;
     track->stss_entry_count = read_bits(bitstr, 32);
     track->stss_sample_number = (unsigned int*)calloc(track->stss_entry_count, sizeof(unsigned int));
 
@@ -1811,7 +1811,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    int i = 0;
+    unsigned int i = 0;
     track->stsc_entry_count = read_bits(bitstr, 32);
     track->stsc_first_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
     track->stsc_samples_per_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
@@ -1891,7 +1891,7 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsz()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int i = 0;
+    unsigned int i = 0;
     int field_size = 32;
 
     // Read FullBox attributs
@@ -1984,7 +1984,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    int i = 0;
+    unsigned int i = 0;
     track->stco_entry_count = read_bits(bitstr, 32);
     track->stco_chunk_offset = (int64_t*)calloc(track->stco_entry_count, sizeof(int64_t));
 
@@ -2119,7 +2119,7 @@ int mp4_fileParse(VideoFile_t *video)
         }
         else // Convert tracks
         {
-            int i = 0;
+            unsigned int i = 0;
             for (i = 0; i < mp4.tracks_count; i++)
             {
                 retcode = convertTrack(video, &mp4, mp4.tracks[i]);

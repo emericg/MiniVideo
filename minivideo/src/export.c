@@ -66,13 +66,13 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
 {
     TRACE_INFO(IO, BLD_GREEN "export_idr_yuv420()\n" CLR_RESET);
     int retcode = FAILURE;
-    int missing_mbs = 0;
+    unsigned int missing_mbs = 0;
 
     // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
-    int i = 0;
+    unsigned int i = 0;
 
     const unsigned int mb_lines_total = sps->PicHeightInMapUnits;
     const unsigned int mb_columns_total = sps->PicWidthInMbs;
@@ -198,7 +198,7 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
 {
     TRACE_INFO(IO, BLD_GREEN "export_idr_yuv444()\n" CLR_RESET);
     int retcode = FAILURE;
-    int missing_mbs = 0;
+    unsigned int missing_mbs = 0;
 
     // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
@@ -402,7 +402,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
     jpeg_start_compress(&cinfo, TRUE);
 
     // 5. writing data (JCS_YCbCr colorspace)
-    int i = 0, j = 0;
+    unsigned int i = 0, j = 0;
     unsigned char *offset_cb = buffer_ycbcr + img_width * img_height;
     unsigned char *offset_cr = buffer_ycbcr + img_width * img_height + img_width * img_height / 4 ;
     for (j = 0; j < img_height; j += 16)
@@ -477,7 +477,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
     // 0. png buffer
 
-    int y = 0;
+    unsigned int y = 0;
 /*
     png_bytep * row_pointers = NULL;
     row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * img_height);

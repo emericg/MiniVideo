@@ -325,7 +325,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
     else
     {
         // Luma
-        int i = 0;
+        unsigned int i = 0;
         for (i = 0; i < mb->NumMbPart; ++i)
         {
             if (mb->MbPartPredMode[i] == Intra_4x4)

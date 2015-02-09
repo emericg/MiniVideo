@@ -42,7 +42,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     int retcode = SUCCESS;
 
     // Write packets
-    int i = 0;
+    unsigned int i = 0;
     for (i = 0; i < bitstream_map->sample_count; i++)
     {
         size_t size   = (size_t)bitstream_map->sample_size[i];
@@ -103,7 +103,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     TRACE_INFO(MUXER, BLD_GREEN "> write_es()\n" CLR_RESET);
     int retcode = SUCCESS;
 
-    int i = 0;
+    unsigned int i = 0;
     for (i = 0; i < bitstream_map->sample_count; i++)
     {
         size_t size   = (size_t)bitstream_map->sample_size[i];

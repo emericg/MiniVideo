@@ -347,7 +347,7 @@ void freeMbArrayContent(DecodingContext_t *dc)
 {
     if (dc->mb_array != NULL)
     {
-        int i = 0;
+        unsigned int i = 0;
         for (i = 0; i < dc->PicSizeInMbs; i++)
         {
             if (dc->mb_array[i] != NULL)
@@ -452,7 +452,7 @@ static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
     else if (mb->MbPartPredMode[0] != Direct)
     {
         // ref_idx_l0
-        int mbPartIdx = 0;
+        unsigned int mbPartIdx = 0;
         for (mbPartIdx = 0; mbPartIdx < mb->NumMbPart; mbPartIdx++)
         {
             if ((dc->active_slice->num_ref_idx_l0_active_minus1 > 0 ||
@@ -785,7 +785,7 @@ static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const
                 retcode = Intra_16x16;
 
                 // Intra 16x16 Prediction Mode, see Table 7-11
-                int i = 1, j = 0;
+                unsigned int i = 1, j = 0;
                 for (i = 1; i < 5; i++)
                 {
                     for (j = 0; j < 6; j++)

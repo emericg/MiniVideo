@@ -46,7 +46,6 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> pes_packetizer()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int i = 0;
 
     // 3000 = ~ 33,333 * 90 (30 fps)
     // 3600 = ~ 40,000 * 90 (25 fps)
@@ -65,6 +64,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->frame_rate);
     }
 
+    unsigned int i = 0;
     for (i = 0; i < bitstream_map->sample_count; i++)
     {
         size_t size   = (size_t)bitstream_map->sample_size[i];
