@@ -377,7 +377,7 @@ static void freeTrack(Mp4Track_t **track_ptr)
 /*!
  * \brief Parse box header.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 4.2 Object Structure.
  *
  * bitstr pointer is not checked for performance reason.
@@ -480,12 +480,8 @@ static void print_box_header(Mp4Box_t *box_header)
 /*!
  * \brief Padding bits box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.7.6 Padding Bits Box.
-
- * In some streams the media samples do not occupy all bits of the bytes given
- * by the sample size, and are padded at the end to a byte boundary. In some
- * cases, it is necessary to record externally the number of padding bits used.
  */
 static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
@@ -546,7 +542,7 @@ static int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header)
 /*!
  * \brief File Type Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 4.3 File Type Box.
  */
 static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
@@ -599,13 +595,8 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /*!
  * \brief Progressive Download Information Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.3.1 Progressive Download Information Box.
- *
- * The Progressive download information box aids the progressive download of an
- * ISO file. The box contains pairs of numbers (to the end of the box)
- * specifying combinations of effective file download bitrate in units of
- * bytes/sec and a suggested initial playback delay in units of milliseconds.
  */
 static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
@@ -654,13 +645,8 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /*!
  * \brief Parse the container for metadata.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.2.1 Movie Box.
- *
- * The metadata for a presentation is stored in the single Movie Box which occurs
- * at the top-level of a file.
- * Normally this box is close to the beginning or end of the file, though this is not required.
- * This box does not contain informations, only other boxes.
  */
 static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
@@ -726,7 +712,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /*!
  * \brief Parse the Media Data Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.1.1 Media Data Box.
  *
  * This box contains the media data. In video tracks, this box would contain
@@ -754,7 +740,7 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header)
 /*!
  * \brief Track Header Box - Fullbox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.3.2 Track Header Box.
  *
  * This box specifies the characteristics of a single track.
@@ -920,16 +906,12 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /*!
  * \brief Parse the container for individual track or stream.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.3.3 Track Reference Box.
  *
  * This box provides a reference from the containing track to another track in the
- * presentation. These references are typed. A ‘hint’ reference links from the
- * containing hint track to the media data that it hints. A content description
- * reference ‘cdsc’ links a descriptive or metadata track to the content which it describes.
+ * presentation.
  * Exactly one Track Reference Box can be contained within the Track Box.
- * If this box is not present, the track is not referencing any other track in any
- * way. The reference array is sized to fill the reference type box.
  *
  * This box does not contain informations, only other boxes.
  */
@@ -999,7 +981,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /*!
  * \brief Media Header Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.4.2 Media Header Box.
  *
  * The media header box declares overall information that is media-independent,
@@ -1069,7 +1051,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header)
 /*!
  * \brief Media Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.4.1 Media Box.
  *
  * The media declaration container contains all the objects that declare information
@@ -1127,12 +1109,11 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Handler Reference Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.4.3 Handler Reference Box.
  *
  * This box within a Media Box declares the process by which the media-data in the
- * track is presented, and thus, the nature of the media in a track. For example,
- * a video track would be handled by a video handler.
+ * track is presented, and thus, the nature of the media in a track.
  */
 static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1178,7 +1159,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Media Information Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.4.4 Media Information Box.
  *
  * This box contains all the objects that declare characteristic information of
@@ -1236,7 +1217,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Sample Table Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.5.1 Sample Table Box.
  *
  * Parse the sample table box, container for the time/space map.
@@ -1311,7 +1292,7 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Sample Description Box.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.5.2 Sample Description Box.
  *
  * The SampleDescriptionBox contains information about codec types and some
@@ -1518,7 +1499,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief AVCConfigurationBox.
  *
- * From 'ISO/IEC 14496-15' specification :
+ * From 'ISO/IEC 14496-15' specification:
  * 5.2.4 Decoder configuration information.
  *
  * This subclause specifies the decoder configuration information for ISO/IEC
@@ -1604,7 +1585,7 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief BitRateBox.
  *
- * From 'ISO/IEC 14496-15' specification :
+ * From 'ISO/IEC 14496-15' specification:
  * 8.5.2 Sample Description Box.
  */
 static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
@@ -1637,28 +1618,11 @@ static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Decoding Time to Sample Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.6.1.2 Decoding Time to Sample Box.
  *
  * This box contains a compact version of a table that allows indexing from
  * decoding time to sample number.
- * Other tables give sample sizes and pointers, from the sample number. Each
- * entry in the table gives the number of consecutive samples with the same time
- * delta, and the delta of those samples. By adding the deltas a complete
- * time-to-sample map may be built.
- *
- * The Decoding Time to Sample Box contains decode time delta's:
- * DT(n+1) = DT(n) + STTS(n) where STTS(n) is the (uncompressed) table entry for
- * sample n.
- *
- * The sample entries are ordered by decoding time stamps; therefore the deltas
- * are all non-negative.
- *
- * The DT axis has a zero origin; DT(i) = SUM(for j=0 to i-1 of delta(j)), and
- * the sum of all deltas gives the length of the media in the track (not mapped
- * to the overall timescale, and not considering any edit list).
- *
- * The Edit List Box provides the initial CT value if it is non-empty (non-zero).
  */
 static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1689,16 +1653,10 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Composition Time to Sample Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.6.1.3 Composition Time to Sample Box.
  *
  * This box provides the offset between decoding time and composition time.
- * Since decoding time must be less than the composition time, the offsets are
- * expressed as unsigned numbers such that CT(n) = DT(n) + CTTS(n) where CTTS(n)
- * is the (uncompressed) table entry for sample n.
- *
- * The composition time to sample table is optional and must only be present if
- * DT and CT differ for any samples.
  */
 static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1729,12 +1687,10 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Sync Sample Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.6.2 Sync Sample Box.
  *
  * This box provides a compact marking of the random access points within the stream.
- * The table is arranged in strictly increasing order of sample number.
- * If the sync sample box is not present, every sample is a random access point.
  */
 static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1789,17 +1745,13 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Sample To Chunk Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.7.4 Sample To Chunk Box.
  *
  * Samples within the media data are grouped into chunks. Chunks can be of different
  * sizes, and the samples within a chunk can have different sizes. This table can
  * be used to find the chunk that contains a sample, its position, and the associated
  * sample description.
- * The table is compactly coded. Each entry gives the index of the first chunk of
- * a run of chunks with the same characteristics. By subtracting one entry here from
- * the previous one, you can compute how many chunks are in this run.
- * You can convert this to a sample count by multiplying by the appropriate samples-per-chunk.
  */
 static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1874,14 +1826,14 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Sample Size Boxes - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.7.3 Sample Size Box
  *
  * This box contains the sample count and a table giving the size in bytes of each
  * sample. This allows the media data itself to be unframed. The total number of
  * samples in the media is always indicated in the sample count.
  *
- * This box has two variants : STSZ and STZ2.
+ * This box has two variants: STSZ and STZ2.
  * - This variant has a fixed size 32-bit field for representing the sample
  *   sizes; it permits defining a constant size for all samples in a track.
  * - The STZ2 variant permits smaller size fields, to save space when the sizes
@@ -1959,20 +1911,12 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief Chunk Offset Box - FullBox.
  *
- * From 'ISO/IEC 14496-12' specification :
+ * From 'ISO/IEC 14496-12' specification:
  * 8.7.5 Chunk Offset Box.
  *
  * The chunk offset table gives the index of each chunk into the containing file.
  * There are two variants, permitting the use of 32-bit (STCO variant) or 64-bit
  * offsets (CO64 variant).
- * The latter is useful when managing very large presentations. At most one of
- * these variants will occur in any single instance of a sample table.
- *
- * Offsets are file offsets, not the offset into any box within the file (e.g. Media
- * Data Box). This permits referring to media data in files without any box structure.
- * It does also mean that care must be taken when constructing a self-contained ISO
- * file with its metadata (Movie Box) at the front, as the size of the Movie Box will
- * affect the chunk offsets to the media data.
  */
 static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
