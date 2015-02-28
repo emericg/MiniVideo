@@ -297,10 +297,11 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
         }
 
         // 9.2.3 Parsing process for run information
-        int total_zeros = 0, zerosLeft = 0, run_before = 0;
+        int zerosLeft = 0;
         if (TotalCoeffs < endIdx - startIdx + 1)
         {
             int vlcnum = TotalCoeffs - 1;
+            int total_zeros = 0;
 
             if (blkType != blk_CHROMA_DC_Cb && blkType != blk_CHROMA_DC_Cr)
                 total_zeros = read_ce_totalzeros(dc, vlcnum, 0);
@@ -319,7 +320,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
             if (zerosLeft > 0)
             {
                 int vlcnum = imin(zerosLeft - 1, RUNBEFORE_NUM_M1);
-                run_before = read_ce_runbefore(dc, vlcnum);
+                int run_before = read_ce_runbefore(dc, vlcnum);
                 run[i] = run_before;
             }
             else

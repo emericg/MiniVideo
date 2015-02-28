@@ -287,7 +287,7 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
 
             printf("[CABAC] " BLD_BLUE "CABAC RESIDUAL BLOCK\n" CLR_RESET);
 
-            printf("[CABAC] - from macroblock: %i\n", mb->mbAddr);
+            printf("[CABAC] - from macroblock: %u\n", mb->mbAddr);
             printf("[CABAC] - blkIdx   :  %i/x\n", blkIdx);
             printf("[CABAC] - blkType  :  %i\n", blkType);
             printf("[CABAC] - iYCbCr   :  %i\n", iYCbCr);
@@ -1700,16 +1700,13 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
 {
     TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()\n" CLR_RESET);
 
-    int mbAddrA = -1;
-    int mbAddrB = -1;
-
     int condTermFlagA = 1;
     int condTermFlagB = 1;
 
     int ctxIdxInc = 0;
 
-    mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
-    mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
+    int mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
+    int mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
 
     if (mbAddrA > -1 &&
         dc->mb_array[mbAddrA] != NULL)
