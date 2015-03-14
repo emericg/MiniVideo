@@ -1,3 +1,6 @@
+# Stash folder
+stash/
+
 # Build directories
 mini_analyser/build/*
 mini_extractor/build/*

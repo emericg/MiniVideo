@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.6)
 IF(UNIX)
     MESSAGE(STATUS "* UNIX operating system found")
 ELSE(UNIX)
-    MESSAGE(ERROR "* This is an UNIX shared library, non UNIX system are not (yet?) supported!")
+    MESSAGE(WARNING "* This is an UNIX shared library, non UNIX system are not (yet?) supported!")
 ENDIF(UNIX)
 
 

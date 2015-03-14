@@ -34,16 +34,18 @@
 // =============================================================================
 
 #if ENABLE_DEBUG == 1
-#define TRACES_ENABLED          1   // Enables traces
+#define ENABLE_TRACES    2   // Enables all traces levels
 #else
-#define TRACES_ENABLED          0   // Only error and warnings traces
+#define ENABLE_TRACES    1   // Only error and warnings traces
 #endif
 
 // Enable terminal colored output
 #if ENABLE_COLORS == 1
-#define DEBUG_WITH_COLORS       1
+#undef ENABLE_COLORS
+#define ENABLE_COLORS    1
 #else
-#define DEBUG_WITH_COLORS       0
+#undef ENABLE_COLORS
+#define ENABLE_COLORS    0
 #endif
 
 // Advanced debugging features

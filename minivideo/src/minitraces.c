@@ -160,7 +160,7 @@ void MiniTraces_info(void)
 void MiniTraces_print(const char *file, const int line, const char *func,
                       const unsigned level, const unsigned module, const char *payload, ...)
 {
-#if TRACES_ENABLED
+#if ENABLE_TRACES > 0
     if (module > trace_module_count)
     {
         printf("[TRACE][%s] module[%d] unknown\n", __FUNCTION__, (int)module);

@@ -82,7 +82,7 @@ typedef struct TraceModule_t
 
 /* ************************************************************************** */
 
-#if TRACES_ENABLED == 1
+#if ENABLE_TRACES == 2
 
 // TRACE MACROS, fully enabled
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
@@ -92,7 +92,7 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )       MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_2,    MODULE, __VA_ARGS__ )
 #define TRACE_3( MODULE, ... )       MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_3,    MODULE, __VA_ARGS__ )
 
-#else /* TRACES_ENABLED == 0 */
+#elif ENABLE_TRACES == 1
 
 // TRACE MACROS, release config
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
@@ -102,7 +102,17 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#endif /* TRACES_ENABLED */
+#else /* ENABLE_TRACES == 0 */
+
+// TRACE MACROS disabled
+#define TRACE_ERROR( MODULE, ... )
+#define TRACE_WARNING( MODULE, ... )
+#define TRACE_INFO( MODULE, ... )
+#define TRACE_1( MODULE, ... )
+#define TRACE_2( MODULE, ... )
+#define TRACE_3( MODULE, ... )
+
+#endif /* ENABLE_TRACES */
 
 /* ************************************************************************** */
 
@@ -140,7 +150,7 @@ typedef struct TraceModule_t
 #define OUT_CYAN   "\e[1;36;47m"
 #define OUT_WHITE  "\e[1;37;47m"
 
-#else /* ENABLE_COLORS */
+#else /* ENABLE_COLORS == 0 */
 
 #define CLR_RESET
 #define CLR_BLACK
