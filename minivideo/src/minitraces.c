@@ -19,7 +19,7 @@
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.4
+ * \version   0.42
  */
 
 // C standard libraries
@@ -54,7 +54,7 @@ static void print_trace_tick(void)
         time = (tp.tv_sec * 1000) + (tp.tv_nsec / 1000000);
     }
 
-    printf("[%lld] ", time);
+    printf("[%lld]", time);
 }
 
 /*!
@@ -70,13 +70,13 @@ static void print_trace_time(void)
 
     if (tm_info != NULL)
     {
-        char buffer[8];
-        strftime(buffer, 8, "%H:%M:%S", tm_info);
-        printf("[%s] ", buffer);
+        char buffer[12];
+        strftime(buffer, 12, "%H:%M:%S", tm_info);
+        printf("[%s]", buffer);
     }
     else
     {
-        printf("[0] ");
+        printf("[0]");
     }
 }
 
