@@ -19,7 +19,7 @@
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.42
+ * \version   0.43
  */
 
 #ifndef MINITRACES_H
@@ -120,7 +120,7 @@ typedef struct TraceModule_t
 
 #define CLR_RESET  "\e[0m" //!< Reset colored output to default color of the terminal
 
-// Regular colors
+// Regular colored text
 #define CLR_BLACK  "\e[0;30m"
 #define CLR_RED    "\e[0;31m"
 #define CLR_GREEN  "\e[0;32m"
@@ -130,7 +130,7 @@ typedef struct TraceModule_t
 #define CLR_CYAN   "\e[0;36m"
 #define CLR_WHITE  "\e[0;37m"
 
-// Bold colors
+// Bold colored text
 #define BLD_BLACK  "\e[1;30m"
 #define BLD_RED    "\e[1;31m"
 #define BLD_GREEN  "\e[1;32m"
@@ -140,15 +140,15 @@ typedef struct TraceModule_t
 #define BLD_CYAN   "\e[1;36m"
 #define BLD_WHITE  "\e[1;37m"
 
-// Grey outlined colors
-#define OUT_BLACK  "\e[1;30;47m"
-#define OUT_RED    "\e[1;31;47m"
-#define OUT_GREEN  "\e[1;32;47m"
-#define OUT_YELLOW "\e[1;33;47m"
-#define OUT_BLUE   "\e[1;34;47m"
-#define OUT_PURPLE "\e[1;35;47m"
-#define OUT_CYAN   "\e[1;36;47m"
-#define OUT_WHITE  "\e[1;37;47m"
+// Bold white text, colored outline
+#define OUT_BLACK  "\e[1;37;40m"
+#define OUT_RED    "\e[1;37;41m"
+#define OUT_GREEN  "\e[1;37;42m"
+#define OUT_YELLOW "\e[1;37;43m"
+#define OUT_BLUE   "\e[1;37;44m"
+#define OUT_PURPLE "\e[1;37;45m"
+#define OUT_CYAN   "\e[1;37;46m"
+#define OUT_WHITE  "\e[1;30;47m"
 
 #else /* ENABLE_COLORS == 0 */
 

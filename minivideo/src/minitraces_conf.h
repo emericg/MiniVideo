@@ -19,7 +19,7 @@
  * \file      minitraces_conf.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2015
- * \version   0.42
+ * \version   0.43
  */
 
 #ifndef MINITRACES_CONF_H

@@ -19,7 +19,7 @@
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.42
+ * \version   0.43
  */
 
 // C standard libraries
