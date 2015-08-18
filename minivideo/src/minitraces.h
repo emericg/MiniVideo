@@ -102,7 +102,7 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#else /* ENABLE_TRACES == 0 */
+#else // ENABLE_TRACES == 0
 
 // TRACE MACROS disabled
 #define TRACE_ERROR( MODULE, ... )
@@ -112,7 +112,7 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#endif /* ENABLE_TRACES */
+#endif // ENABLE_TRACES
 
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ typedef struct TraceModule_t
 #define OUT_CYAN   "\e[1;37;46m"
 #define OUT_WHITE  "\e[1;30;47m"
 
-#else /* ENABLE_COLORS == 0 */
+#else // ENABLE_COLORS == 0
 
 #define CLR_RESET
 #define CLR_BLACK
@@ -178,11 +178,11 @@ typedef struct TraceModule_t
 #define OUT_CYAN
 #define OUT_WHITE
 
-#endif /* ENABLE_COLORS */
+#endif // ENABLE_COLORS
 
 /* ************************************************************************** */
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif /* MINITRACES_H */
+#endif // MINITRACES_H

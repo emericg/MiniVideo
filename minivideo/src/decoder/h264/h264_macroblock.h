@@ -37,4 +37,4 @@ void freeMbArrayContent(DecodingContext_t *dc);
 unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr);
 
 /* ************************************************************************** */
-#endif /* H264_MACROBLOCK_H */
+#endif // H264_MACROBLOCK_H

@@ -21,20 +21,19 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 // minivideo headers
+#include "h264_parameterset.h"
+#include "h264_expgolomb.h"
+#include "h264_transform.h"
 #include "../../minitraces.h"
 #include "../../typedef.h"
 #include "../../utils.h"
 #include "../../bitstream_utils.h"
-#include "h264_expgolomb.h"
-#include "h264_transform.h"
 
-#include "h264_parameterset.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* ************************************************************************** */
 
@@ -706,7 +705,7 @@ void printSPS(DecodingContext_t *dc)
     {
         printVUI(sps->vui);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -877,10 +876,10 @@ int decodePPS(DecodingContext_t *dc)
                     //pps->slice_group_id[i] = read_bits(dc->bitstr, ceil(log2(pps->num_slice_groups_minus1 + 1)));
                 }
             }
-#else /* ENABLE_FMO */
+#else // ENABLE_FMO
             TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
             return UNSUPPORTED;
-#endif /* ENABLE_FMO */
+#endif // ENABLE_FMO
         }
 
         pps->num_ref_idx_l0_default_active_minus1 = read_ue(dc->bitstr);
@@ -915,10 +914,10 @@ int decodePPS(DecodingContext_t *dc)
                             scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList8x8[i-6], 64, dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix8x8Flag[i-6]);
                     }
                 }
-#else /* ENABLE_FMO */
+#else // ENABLE_FMO
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (FMO)\n");
                 return UNSUPPORTED;
-#endif /* ENABLE_FMO */
+#endif // ENABLE_FMO
             }
 
             pps->second_chroma_qp_index_offset = read_se(dc->bitstr);
@@ -1138,7 +1137,7 @@ void printPPS(DecodingContext_t *dc)
          }
     }
     TRACE_1(PARAM, "  - second_chroma_qp_index_offset\t\t= %i\n", pps->second_chroma_qp_index_offset);
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -1253,7 +1252,7 @@ void printSEI(DecodingContext_t *dc)
     // Print SEI values
     TRACE_WARNING(PARAM, ">>> UNIMPLEMENTED (printSEI)\n");
 
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -1623,7 +1622,7 @@ void printVUI(vui_t *vui)
         TRACE_1(PARAM, "    - num_reorder_frames\t\t\t= %i\n", vui->num_reorder_frames);
         TRACE_1(PARAM, "    - max_dec_frame_buffering\t\t= %i\n", vui->max_dec_frame_buffering);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -1789,7 +1788,7 @@ void printHRD(hrd_t *hrd)
     TRACE_1(PARAM, "      - cpb_removal_delay_length_minus1\t= %i\n", hrd->cpb_removal_delay_length_minus1);
     TRACE_1(PARAM, "      - dpb_output_delay_length_minus1\t= %i\n", hrd->dpb_output_delay_length_minus1);
     TRACE_1(PARAM, "      - time_offset_length\t\t\t= %i\n", hrd->time_offset_length);
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

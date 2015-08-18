@@ -254,7 +254,7 @@ typedef struct Macroblock_t
     // I_PCM sample levels
     uint8_t pcm_sample_luma[256];            // 16*16 pixels, the entire luma macroblock
     uint8_t pcm_sample_chroma[256];          // up to 16*16 pixels with 4:4:4 color subsampling
-#endif /* ENABLE_IPCM */
+#endif // ENABLE_IPCM
 
     // Luma sample levels (zig zag scanned)
     int LumaLevel4x4[16][16];               //!< An array of 16 blocks of (4x4) 16 coefficients
@@ -314,9 +314,9 @@ typedef struct Macroblock_t
 #if ENABLE_DEBUG
     unsigned mbFileAddrStart;               //!< The macroblock start address in bit
     unsigned mbFileAddrStop;                //!< The macroblock stop address in bit
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
 } Macroblock_t;
 
 /* ************************************************************************** */
-#endif /* H264_MACROBLOCK_STRUCT_H */
+#endif // H264_MACROBLOCK_STRUCT_H

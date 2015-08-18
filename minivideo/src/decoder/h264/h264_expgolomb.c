@@ -21,16 +21,15 @@
  * \date      2010
  */
 
+// minivideo headers
+#include "h264_expgolomb.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-
-#include "h264_expgolomb.h"
 
 /* ************************************************************************** */
 

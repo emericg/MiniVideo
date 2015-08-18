@@ -46,12 +46,12 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr);
 bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr);
 
 // Endianness
-inline uint16_t endian_flip_16(uint16_t src);
-inline uint16_t endian_flip_cut_16(uint16_t src, const int n);
-inline uint32_t endian_flip_32(uint32_t src);
-inline uint32_t endian_flip_cut_32(uint32_t src, const int n);
-inline uint64_t endian_flip_64(uint64_t src);
-inline uint64_t endian_flip_cut_64(uint64_t src, const int n);
+uint16_t endian_flip_16(uint16_t src);
+uint16_t endian_flip_cut_16(uint16_t src, const int n);
+uint32_t endian_flip_32(uint32_t src);
+uint32_t endian_flip_cut_32(uint32_t src, const int n);
+uint64_t endian_flip_64(uint64_t src);
+uint64_t endian_flip_cut_64(uint64_t src, const int n);
 
 /* ************************************************************************** */
-#endif /* BITSTREAM_UTILS_H */
+#endif // BITSTREAM_UTILS_H

@@ -22,14 +22,14 @@
  * \version   0.43
  */
 
+// MiniTraces header
+#include "minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-
-// MiniTraces header
-#include "minitraces.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -80,7 +80,7 @@ static void print_trace_time(void)
     }
 }
 
-#endif /* DEBUG_WITH_TIMESTAMPS */
+#endif // DEBUG_WITH_TIMESTAMPS
 
 /* ************************************************************************** */
 

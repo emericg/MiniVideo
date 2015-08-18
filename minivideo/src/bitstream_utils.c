@@ -21,18 +21,17 @@
  * \date      2012
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+// minivideo headers
+#include "bitstream.h"
+#include "minitraces.h"
 
 // C POSIX libraries
 #include <unistd.h>
 
-// minivideo headers
-#include "minitraces.h"
-
-#include "bitstream.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* ************************************************************************** */
 
@@ -400,7 +399,7 @@ bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint16_t endian_flip_16(uint16_t src)
+uint16_t endian_flip_16(uint16_t src)
 {
     TRACE_3(BITS, "    endian_flip_16()\n");
 
@@ -418,7 +417,7 @@ inline uint16_t endian_flip_16(uint16_t src)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint16_t endian_flip_cut_16(uint16_t src, const int n)
+uint16_t endian_flip_cut_16(uint16_t src, const int n)
 {
     TRACE_3(BITS, "    endian_flip_cut_16()\n");
 
@@ -442,7 +441,7 @@ inline uint16_t endian_flip_cut_16(uint16_t src, const int n)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint32_t endian_flip_32(uint32_t src)
+uint32_t endian_flip_32(uint32_t src)
 {
     TRACE_3(BITS, "    endian_flip_32()\n");
 
@@ -462,7 +461,7 @@ inline uint32_t endian_flip_32(uint32_t src)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint32_t endian_flip_cut_32(uint32_t src, const  int n)
+uint32_t endian_flip_cut_32(uint32_t src, const  int n)
 {
     TRACE_3(BITS, "    endian_flip_cut_32()\n");
 
@@ -488,7 +487,7 @@ inline uint32_t endian_flip_cut_32(uint32_t src, const  int n)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint64_t endian_flip_64(uint64_t src)
+uint64_t endian_flip_64(uint64_t src)
 {
     TRACE_3(BITS, "    endian_flip_64()\n");
 
@@ -512,7 +511,7 @@ inline uint64_t endian_flip_64(uint64_t src)
  *
  * Only useful for variable bigger than 1 byte!
  */
-inline uint64_t endian_flip_cut_64(uint64_t src, const int n)
+uint64_t endian_flip_cut_64(uint64_t src, const int n)
 {
     TRACE_3(BITS, "    endian_flip_cut_64()\n");
 

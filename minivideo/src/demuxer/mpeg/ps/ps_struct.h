@@ -127,4 +127,4 @@ typedef struct ProgramStreamDirectory_t
 } ProgramStreamDirectory_t;
 
 /* ************************************************************************** */
-#endif /* PARSER_MPEG_PS_STRUCT_H */
+#endif // PARSER_MPEG_PS_STRUCT_H

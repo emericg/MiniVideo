@@ -21,22 +21,14 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-
-// C POSIX library
-#include <unistd.h>
-
-#include "export.h"
-
 // minivideo headers
-#include "minitraces.h"
+#include "export.h"
 #include "utils.h"
 #include "typedef.h"
 #include "import.h"
 #include "export_utils.h"
 #include "decoder/h264/h264_decodingcontext.h"
+#include "minitraces.h"
 
 #if ENABLE_JPEG
     // libjpeg
@@ -54,6 +46,13 @@
     #define STB_IMAGE_WRITE_IMPLEMENTATION
     #include "stb_image_write.h"
 #endif
+
+// C POSIX library
+#include <unistd.h>
+
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
 
 /* ************************************************************************** */
 
@@ -432,7 +431,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
     free(buffer_ycbcr);
 
     retcode = SUCCESS;
-#endif /* ENABLE_JPEG */
+#endif // ENABLE_JPEG
 
     return retcode;
 }
@@ -538,7 +537,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
     // export to png
     retcode = stbi_write_png(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
 
-#endif /* ENABLE_PNG or ENABLE_STBIMWRITE */
+#endif // ENABLE_PNG or ENABLE_STBIMWRITE
 
     return retcode;
 }
@@ -569,7 +568,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
     // export to bmp
     retcode = stbi_write_bmp(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
 
-#endif
+#endif // ENABLE_STBIMWRITE
 
     return retcode;
 }
@@ -600,7 +599,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
     // export to bmp
     retcode = stbi_write_tga(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
 
-#endif
+#endif // ENABLE_STBIMWRITE
 
     return retcode;
 }
@@ -655,7 +654,7 @@ int export_idr(DecodingContext_t *dc)
             TRACE_WARNING(DIO, "No jpg export library available, trying png\n");
             dc->output_format++; // to png
         }
-    #endif /* ENABLE_JPEG */
+    #endif // ENABLE_JPEG
 
     #if ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_PNG)
@@ -663,7 +662,7 @@ int export_idr(DecodingContext_t *dc)
             TRACE_WARNING(DIO, "No png export library available, forcing YCbCr 4:2:0\n");
             dc->output_format = PICTURE_YUV420;
         }
-    #endif /* ENABLE_PNG */
+    #endif // ENABLE_PNG
 
     #if ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
@@ -671,7 +670,7 @@ int export_idr(DecodingContext_t *dc)
             TRACE_WARNING(DIO, "No bmp / tga export library available, forcing YCbCr 4:2:0\n");
             dc->output_format = PICTURE_YUV420;
         }
-    #endif /* ENABLE_STBIMWRITE */
+    #endif // ENABLE_STBIMWRITE
 #endif
 
     // Picture file extension checker

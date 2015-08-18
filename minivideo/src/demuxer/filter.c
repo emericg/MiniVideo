@@ -21,18 +21,17 @@
  * \date      2011
  */
 
+// minivideo headers
+#include "filter.h"
+#include "../import.h"
+#include "../bitstream_map.h"
+#include "../typedef.h"
+#include "../minitraces.h"
+
 // C standard library
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-// minivideo headers
-#include "../typedef.h"
-#include "../minitraces.h"
-
-#include "filter.h"
-#include "../import.h"
-#include "../bitstream_map.h"
 
 /* ************************************************************************** */
 
@@ -42,6 +41,8 @@
  * \param picture_number: The number of thumbnail(s) we want to extract.
  * \param picture_extraction_mode: The method of distribution for thumbnails extraction.
  * \return The number of picture available in the bitstream map (0 means error).
+ *
+ * \todo This needs work...
  *
  * The IDR filter aim to remove irrelevant frames from the decode stream. By irrelevant we mean:
  * - Unicolor images (black or green screen) like the very first or very last frames of a stream.
@@ -95,6 +96,9 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             int spspps = map->sample_count - map->sample_count_idr;
             int payload = 0;
 
+            // First cut (remove small frames)
+            ////////////////////////////////////////////////////////////////////
+
             // Compute average samples size
             for (i = spspps; i < map->sample_count; i++)
             {
@@ -104,19 +108,27 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             // Used to filter the frames that are below the threshold (33% of the average frame size)
             int frame_sizethreshold = (int)(((double)payload / (double)map->sample_count_idr) / 1.66);
 
-            // Used to filter the frames from the first and last 3%
-            // Note: for a movie, cut the last 33% to avoid spoilers & credits)
-            int frame_borders = (int)ceil(map->sample_count_idr * 0.03);
+            // If we have enough frames (let's say 48), filter the frames from the first and last 3%
+            // Note: for a movie, cut the last 33% to avoid spoilers & credits?
+            int frame_borders = 0;
+            if (map->sample_count_idr > 48)
+            {
+                frame_borders = (int)ceil(map->sample_count_idr * 0.03);
+                TRACE_1(FILTER, "frame_borders is %i\n", frame_borders);
+            }
 
-            // First cut
             for (i = frame_borders; i < (map->sample_count_idr - frame_borders); i++)
             {
-                TRACE_1(FILTER, "IDR %i (size: %i / threshold: %i)\n", i, map->sample_size[i + spspps], frame_sizethreshold);
-
                 if (map->sample_size[i + spspps] > frame_sizethreshold)
                 {
+                    TRACE_1(FILTER, "IDR %i (size: %i / threshold: %i)\n", i, map->sample_size[i + spspps], frame_sizethreshold);
+
                     temporary_sample_id[temporary_totalsamples_idr] = i + spspps;
                     temporary_totalsamples_idr++;
+                }
+                else
+                {
+                    TRACE_1(FILTER, "IDR %i (size: %i / threshold: %i) > REMOVED\n", i, map->sample_size[i + spspps], frame_sizethreshold);
                 }
             }
 
@@ -126,9 +138,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
 
             // Jump between two frames in PICTURE_DISTRIBUTED mode
             int frame_jump = (int)ceil(temporary_totalsamples_idr / (picture_number-1));
-
-            // Write bitstream_map_filtered
-            //(*bitstream_map_filtered) = (bitstreamMap_t*)calloc(1, sizeof(bitstreamMap_t));
+            TRACE_1(FILTER, "frame_jump is %i\n", frame_jump);
 
             // Init bitstream_map_filtered
             BitstreamMap_t *map_filtered = NULL;
@@ -137,6 +147,10 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             // Write bitstream_map_filtered
             if (retcode)
             {
+                map_filtered->stream_type = map->stream_type;
+                map_filtered->stream_level = map->stream_level;
+                map_filtered->stream_codec = map->stream_codec;
+
                 map_filtered->sample_count = spspps + temporary_totalsamples_idr;
                 map_filtered->sample_count_idr = temporary_totalsamples_idr;
 
@@ -150,7 +164,9 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                     map_filtered->sample_size[i] = map->sample_size[i];
                 }
 
-                // Set idr (second cut)
+                // Second cut (frame distribution)
+                ////////////////////////////////////////////////////////////////
+
                 for (i = 0; i < picture_number; i++)
                 {
                     if (picture_extraction_mode == PICTURE_ORDERED)
@@ -170,14 +186,25 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                         map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i*frame_jump]];
                     }
                 }
-
+/*
                 // Recap
                 print_bitstream_map(map);
                 print_bitstream_map(map_filtered);
+*/
 
                 // Erase bitstream_map and replace it with bitstream_map_filtered
-                free_bitstream_map(bitstream_map_pointer);
-                bitstream_map_pointer = &map_filtered;
+                //free_bitstream_map(bitstream_map_pointer);
+                //*bitstream_map_pointer = map_filtered;
+
+                free(map->sample_type);
+                free(map->sample_pts);
+                free(map->sample_offset);
+                free(map->sample_size);
+
+                map->sample_type = map_filtered->sample_type;
+                map->sample_pts = map_filtered->sample_pts;
+                map->sample_offset = map_filtered->sample_offset;
+                map->sample_size = map_filtered->sample_size;
 
                 // Exit
                 retcode = picture_number;

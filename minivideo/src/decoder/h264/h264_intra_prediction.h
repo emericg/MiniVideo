@@ -107,4 +107,4 @@ typedef struct intrapredChroma_t
 int intra_prediction_process(DecodingContext_t *dc, Macroblock_t *mb);
 
 /* ************************************************************************** */
-#endif /* H264_INTRA_PREDICTION_H */
+#endif // H264_INTRA_PREDICTION_H

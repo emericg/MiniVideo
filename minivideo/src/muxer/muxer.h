@@ -35,4 +35,4 @@ int muxer_export_samples(VideoFile_t *video,
                          const int output_format);
 
 /* ************************************************************************** */
-#endif /* MUXER_H */
+#endif // MUXER_H

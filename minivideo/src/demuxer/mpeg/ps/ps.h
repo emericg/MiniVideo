@@ -41,4 +41,4 @@
 int ps_fileParse(VideoFile_t *video);
 
 /* ************************************************************************** */
-#endif /* PARSER_MPEG_PS_H */
+#endif // PARSER_MPEG_PS_H

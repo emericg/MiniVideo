@@ -92,4 +92,4 @@ int initCabacContextVariables(DecodingContext_t *dc);
 int initCabacDecodingEngine(DecodingContext_t *dc);
 
 /* ************************************************************************** */
-#endif /* H264_CABAC_H */
+#endif // H264_CABAC_H

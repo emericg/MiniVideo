@@ -21,20 +21,19 @@
  * \date      2012
  */
 
+// minivideo headers
+#include "avi.h"
+#include "avi_struct.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-#include "../../bitstream.h"
-#include "../../bitstream_utils.h"
-
-#include "avi.h"
-#include "avi_struct.h"
 
 /* ************************************************************************** */
 
@@ -307,7 +306,7 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
                 printf("%c", string[i]);
             }
             printf("'\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
             free(string);
         }
     }

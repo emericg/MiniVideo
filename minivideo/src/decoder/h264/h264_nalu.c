@@ -21,16 +21,15 @@
  * \date      2010
  */
 
+// minivideo headers
+#include "h264_nalu.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-
-#include "h264_nalu.h"
 
 /* ************************************************************************** */
 

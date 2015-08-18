@@ -36,4 +36,4 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map);
 void print_bitstream_map(BitstreamMap_t *bitstream_map);
 
 /* ************************************************************************** */
-#endif /* BITSTREAM_MAP_H */
+#endif // BITSTREAM_MAP_H

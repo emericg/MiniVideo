@@ -21,10 +21,10 @@
  * \date      2013
  */
 
-#ifndef COLORS_H_
-#define COLORS_H_
+#ifndef COLORS_H
+#define COLORS_H
 /* ************************************************************************** */
-
+/*
 #if ENABLE_COLORS == 1
 
 #define CLR_RESET  "\e[0m"    //!< Reset colored output to default terminal color
@@ -56,7 +56,7 @@
 #define OUT_CYAN   "\e[1;36;47m"
 #define OUT_WHITE  "\e[1;37;47m"
 
-#else /* ENABLE_COLORS */
+#else // ENABLE_COLORS
 
 #define CLR_RESET
 #define CLR_BLACK
@@ -84,7 +84,7 @@
 #define OUT_CYAN
 #define OUT_WHITE
 
-#endif /* ENABLE_COLORS */
-
+#endif // ENABLE_COLORS
+*/
 /* ************************************************************************** */
-#endif /* COLORS_H_ */
+#endif // COLORS_H

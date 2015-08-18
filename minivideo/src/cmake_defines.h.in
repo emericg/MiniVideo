@@ -45,4 +45,4 @@
 #define ENABLE_PNG        @ENABLE_PNG@  //!< Toggle external libpng support
 
 /* ************************************************************************** */
-#endif /* CMAKE_DEFINES_H */
+#endif // CMAKE_DEFINES_H

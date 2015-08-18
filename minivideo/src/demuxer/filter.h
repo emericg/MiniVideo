@@ -33,4 +33,4 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
                   int picture_number, const int picture_extraction_mode);
 
 /* ************************************************************************** */
-#endif /* PARSING_H */
+#endif // PARSING_H

@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     std::cout << "* mini_thumbnailer version " << VERSION_MAJOR << "." << VERSION_MINOR << std::endl;
     std::cout << std::endl;
     std::cout << GREEN "main() arguments" RESET << std::endl;
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     // Argument(s) parsing
     ////////////////////////////////////////////////////////////////////////////
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 
         // Let's get to work
         std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
         int minivideo_retcode = 0;
 

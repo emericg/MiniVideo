@@ -21,19 +21,19 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
+
 
 // minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
+#include "h264.h"
 #include "h264_parameterset.h"
 #include "h264_slice.h"
 #include "h264_macroblock.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
 
-#include "h264.h"
-
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
 /* ************************************************************************** */
 
 static int computeNormAdjust(DecodingContext_t *dc);

@@ -108,9 +108,9 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n);
 int rewind_bits(Bitstream_t *bitstr, const unsigned int n);
 
 // Various operations
-inline int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr);
-inline int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr);
+int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr);
+int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr);
 int bitstream_goto_offset(Bitstream_t *bitstr, const int64_t n);
 
 /* ************************************************************************** */
-#endif /* BITSTREAM_H */
+#endif // BITSTREAM_H

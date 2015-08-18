@@ -35,4 +35,4 @@ void print_macroblock_pixel_predicted(Macroblock_t *mb);
 void print_macroblock_pixel_final(Macroblock_t *mb);
 
 /* ************************************************************************** */
-#endif /* H264_MACROBLOCK_UTILS_H */
+#endif // H264_MACROBLOCK_UTILS_H

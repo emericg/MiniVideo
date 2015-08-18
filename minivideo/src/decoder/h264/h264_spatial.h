@@ -36,12 +36,12 @@ int InverseRasterScan(const int a,
                       const int d,
                       const int e);
 
-inline int InverseRasterScan_x(const int a,
+int InverseRasterScan_x(const int a,
                                const int b,
                                const int c,
                                const int d);
 
-inline int InverseRasterScan_y(const int a,
+int InverseRasterScan_y(const int a,
                                const int b,
                                const int c,
                                const int d);
@@ -113,9 +113,9 @@ void deriv_neighbouringlocations(DecodingContext_t *dc,
                                  int *mbAddrN,
                                  int *xW, int *yW);
 
-inline int deriv_4x4lumablock_indices(const int xP, const int yP);
-inline int deriv_4x4chromablock_indices(const int xP, const int yP);
-inline int deriv_8x8lumablock_indices(const int xP, const int yP);
+int deriv_4x4lumablock_indices(const int xP, const int yP);
+int deriv_4x4chromablock_indices(const int xP, const int yP);
+int deriv_8x8lumablock_indices(const int xP, const int yP);
 
 /* ************************************************************************** */
-#endif /* H264_SPATIAL_H */
+#endif // H264_SPATIAL_H

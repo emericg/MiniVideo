@@ -42,4 +42,4 @@ typedef enum StartCodeFamily_e
 int bruteforce_fileParse(VideoFile_t *video, AVCodec_e video_codec);
 
 /* ************************************************************************** */
-#endif /* PARSER_BRUTEFORCE_H */
+#endif // PARSER_BRUTEFORCE_H

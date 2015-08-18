@@ -21,16 +21,15 @@
  * \date      2010
  */
 
+// minivideo headers
+#include "utils.h"
+#include "minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
-
-// Debug library, not mandatory
-#include "minitraces.h"
-
-#include "utils.h"
 
 /* ************************************************************************** */
 
@@ -140,7 +139,7 @@ void print2d(int **array2d, int arraySize)
         printf("|\n");
     }
     printf("+-------------------+\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

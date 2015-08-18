@@ -21,20 +21,19 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// minivideo headers
+#include "export_utils.h"
+#include "utils.h"
+#include "typedef.h"
+#include "minitraces.h"
 
 // C POSIX library
 #include <unistd.h>
 
-// minivideo headers
-#include "minitraces.h"
-#include "typedef.h"
-
-#include "utils.h"
-#include "export_utils.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* ************************************************************************** */
 

@@ -35,4 +35,4 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr);
 int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb);
 
 /* ************************************************************************** */
-#endif /* EXPORT_UTILS_H */
+#endif // EXPORT_UTILS_H

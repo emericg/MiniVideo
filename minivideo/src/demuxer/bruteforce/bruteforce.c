@@ -21,16 +21,16 @@
  * \date      2011
  */
 
+// minivideo headers
+#include "bruteforce.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-#include "../../bitstream.h"
-#include "../../bitstream_utils.h"
-#include "bruteforce.h"
 
 #define INITIAL_SEARCH_WINDOW  4194304 // 4MiB
 #define GUESS_BUFFERSIZE        262144 // 256 KiB
@@ -147,7 +147,7 @@ int bruteforce_fileParse(VideoFile_t *video, AVCodec_e video_codec)
                     TRACE_1(DEMUX, "bitstream_map->sample_offset[%i] = %i\n", i, video->tracks_video[0]->sample_offset[i]);
                     TRACE_1(DEMUX, "bitstream_map->sample_size[%i] = %i\n", i, video->tracks_video[0]->sample_size[i]);
                 }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
             }
         }
 

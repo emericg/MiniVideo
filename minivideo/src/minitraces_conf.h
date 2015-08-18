@@ -143,4 +143,4 @@ static TraceModule_t trace_modules_table[] =
 };
 
 /* ************************************************************************** */
-#endif /* MINITRACES_CONF_H */
+#endif // MINITRACES_CONF_H

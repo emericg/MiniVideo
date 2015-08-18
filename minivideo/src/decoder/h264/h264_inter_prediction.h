@@ -33,4 +33,4 @@
 int inter_prediction_process(DecodingContext_t *dc, Macroblock_t *mb);
 
 /* ************************************************************************** */
-#endif /* H264_INTER_PREDICTION_H */
+#endif // H264_INTER_PREDICTION_H

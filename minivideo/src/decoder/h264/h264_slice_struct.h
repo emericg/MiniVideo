@@ -248,4 +248,4 @@ typedef struct slice_t
 
 
 /* ************************************************************************** */
-#endif /* H264_SLICE_STRUCT_H */
+#endif // H264_SLICE_STRUCT_H

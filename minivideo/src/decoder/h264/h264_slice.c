@@ -21,23 +21,22 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-
 // minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-#include "../../export.h"
-#include "../../bitstream.h"
-#include "../../bitstream_utils.h"
+#include "h264_slice.h"
+#include "h264_slice_struct.h"
 #include "h264_expgolomb.h"
 #include "h264_cabac.h"
 #include "h264_macroblock.h"
 #include "h264.h"
+#include "../../typedef.h"
+#include "../../export.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
+#include "../../minitraces.h"
 
-#include "h264_slice.h"
-#include "h264_slice_struct.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
 
 /* ************************************************************************** */
 
@@ -305,10 +304,10 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 
         slice->slice_qs_delta = read_se(dc->bitstr);
         slice->SliceQSY = 26 + pps->pic_init_qs_minus26 + slice->slice_qs_delta;
-#else /* ENABLE_SWITCHING_SLICE */
+#else // ENABLE_SWITCHING_SLICE
         TRACE_ERROR(SLICE, ">>> UNSUPPORTED (slice_type == SP || slice_type == SI)\n");
         return UNSUPPORTED;
-#endif /* ENABLE_SWITCHING_SLICE */
+#endif // ENABLE_SWITCHING_SLICE
     }
 
     if (pps->deblocking_filter_control_present_flag)
@@ -463,7 +462,7 @@ static void printSliceHeader(DecodingContext_t *dc)
     {
         TRACE_1(SLICE, "  - slice_group_change_cycle\t= %i\n", slice->slice_group_change_cycle);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -774,7 +773,7 @@ static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
     {
         TRACE_1(SLICE, "    - ref_pic_list_modification_flag_l1 is not defined\n");
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -945,7 +944,7 @@ static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
             TRACE_1(SLICE, "    - max_long_term_frame_idx_plus1\t\t= %i\n", drpm->max_long_term_frame_idx_plus1);
         }
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -1091,12 +1090,12 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 TRACE_ERROR(DSLICE, ">>> UNSUPPORTED (interlaced mode)\n");
                 return UNSUPPORTED;
             }
-#endif /* ENABLE_MBAFF */
+#endif // ENABLE_MBAFF
 
             // Macroblock decoding
             retcode = macroblock_layer(dc, dc->CurrMbAddr);
         }
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_INTER_PRED
 
         // Macroblock decoding
         retcode = macroblock_layer(dc, dc->CurrMbAddr);
@@ -1119,8 +1118,8 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 slice->moreDataFlag = true;
             }
             else
-#endif /* ENABLE_MBAFF */
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_MBAFF
+#endif // ENABLE_INTER_PRED
             {
                 slice->end_of_slice_flag = read_ae(dc, SE_end_of_slice_flag);
                 if (slice->end_of_slice_flag)

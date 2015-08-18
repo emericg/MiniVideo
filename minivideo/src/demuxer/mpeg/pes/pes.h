@@ -47,4 +47,4 @@ int skip_pes(Bitstream_t *bitstr, PesPacket_t *pes);
 int skip_pes_data(Bitstream_t *bitstr, PesPacket_t *pes);
 
 /* ************************************************************************** */
-#endif /* PARSER_MPEG_PES_H */
+#endif // PARSER_MPEG_PES_H

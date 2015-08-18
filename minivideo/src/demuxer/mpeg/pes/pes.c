@@ -21,16 +21,15 @@
  * \date      2012
  */
 
+// minivideo headers
+#include "pes.h"
+#include "../../../typedef.h"
+#include "../../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-// minivideo headers
-#include "../../../minitraces.h"
-#include "../../../typedef.h"
-
-#include "pes.h"
 
 /* ************************************************************************** */
 

@@ -21,15 +21,15 @@
  * \date      2010
  */
 
+// minivideo headers
+#include "h264_spatial.h"
+#include "../../typedef.h"
+#include "../../utils.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <math.h>
 #include <limits.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-#include "../../utils.h"
-#include "h264_spatial.h"
 
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void InverseMacroblockScan(const int mbAddr,
 #if ENABLE_MBAFF
     TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
     return;
-#endif /* ENABLE_MBAFF */
+#endif // ENABLE_MBAFF
 
     *x = InverseRasterScan_x(mbAddr, 16, 16, PicWidthInSamplesL);
     *y = InverseRasterScan_y(mbAddr, 16, 16, PicWidthInSamplesL);
@@ -412,7 +412,7 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
     {
         TRACE_ERROR(SPATIAL, "     - macroblock D (mbAddr %i) should be available\n", mb->mbAddrD);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

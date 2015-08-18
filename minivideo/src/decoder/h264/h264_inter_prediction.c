@@ -22,10 +22,9 @@
  */
 
 // minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-
 #include "h264_inter_prediction.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
 
 /* ************************************************************************** */
 

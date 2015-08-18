@@ -32,4 +32,4 @@
 int export_idr(DecodingContext_t *dc);
 
 /* ************************************************************************** */
-#endif /* EXPORT_H */
+#endif // EXPORT_H

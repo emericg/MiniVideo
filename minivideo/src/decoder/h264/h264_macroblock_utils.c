@@ -21,15 +21,15 @@
  * \date      2014
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-
 // minivideo headers
+#include "h264_macroblock_utils.h"
 #include "../../minitraces.h"
 #include "../../utils.h"
 #include "../../typedef.h"
-#include "h264_macroblock_utils.h"
+
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
 
 /* ************************************************************************** */
 
@@ -401,7 +401,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
         }
     }
     printf("[MB] ======================================\n\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -568,7 +568,7 @@ void print_macroblock_pixel_residual(Macroblock_t *mb)
         }
         printf("+-------------------+-------------------+\n\n");
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -642,7 +642,7 @@ void print_macroblock_pixel_predicted(Macroblock_t *mb)
         printf("|\n");
     }
     printf("+-------------------+-------------------+\n\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -716,7 +716,7 @@ void print_macroblock_pixel_final(Macroblock_t *mb)
         printf("|\n");
     }
     printf("+-------------------+-------------------+\n\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

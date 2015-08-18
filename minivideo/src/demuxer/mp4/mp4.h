@@ -32,4 +32,4 @@
 int mp4_fileParse(VideoFile_t *video);
 
 /* ************************************************************************** */
-#endif /* PARSER_MP4_H */
+#endif // PARSER_MP4_H

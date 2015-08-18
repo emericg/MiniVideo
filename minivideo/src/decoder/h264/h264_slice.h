@@ -34,4 +34,4 @@ int decode_slice(DecodingContext_t *dc);
 void free_slice(slice_t **slice_ptr);
 
 /* ************************************************************************** */
-#endif /* H264_SLICE_H */
+#endif // H264_SLICE_H

@@ -85,79 +85,79 @@ void print2d(int **array2d, int arraySize);
 
 int is_prime(const unsigned int n);
 
-inline int fast_mod8(const int n);
+int fast_mod8(const int n);
 
-inline int fast_div8(const int n);
-
-/* ************************************************************************** */
-
-inline short smin(short a, short b);
-
-inline short smax(short a, short b);
-
-inline int imin(int a, int b);
-
-inline int imax(int a, int b);
-
-inline int imedian(int a, int b, int c);
-
-inline double dmin(double a, double b);
-
-inline double dmax(double a, double b);
-
-inline int64_t i64min(int64_t a, int64_t b);
-
-inline int64_t i64max(int64_t a, int64_t b);
-
-inline short sabs(short x);
-
-inline int iabs(int x);
-
-inline double dabs(double x);
-
-inline int64_t i64abs(int64_t x);
-
-inline double dabs2(double x);
-
-inline int iabs2(int x);
-
-inline int64_t i64abs2(int64_t x);
-
-inline int isign(int x);
-
-inline int isignab(int a, int b);
-
-inline int rshift_rnd(int x, int a);
-
-inline int rshift_rnd_sign(int x, int a);
-
-inline unsigned int rshift_rnd_us(unsigned int x, unsigned int a);
-
-inline int rshift_rnd_sf(int x, int a);
-
-inline int shift_off_sf(int x, int o, int a);
-
-inline unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a);
-
-inline int iClip1(int high, int x);
-
-inline short sClip1(short high, short x);
-
-inline double dClip1(double high, double x);
-
-inline int iClip3(int low, int high, int x);
-
-inline short sClip3(short low, short high, short x);
-
-inline double dClip3(double low, double high, double x);
+int fast_div8(const int n);
 
 /* ************************************************************************** */
 
-inline int iClip1_YCbCr(const int x, const int BitDepth);
+short smin(short a, short b);
 
-inline int iClip1_YCbCr_8(const int x);
+short smax(short a, short b);
 
-inline uint8_t Clip1_YCbCr_8(const int x);
+int imin(int a, int b);
+
+int imax(int a, int b);
+
+int imedian(int a, int b, int c);
+
+double dmin(double a, double b);
+
+double dmax(double a, double b);
+
+int64_t i64min(int64_t a, int64_t b);
+
+int64_t i64max(int64_t a, int64_t b);
+
+short sabs(short x);
+
+int iabs(int x);
+
+double dabs(double x);
+
+int64_t i64abs(int64_t x);
+
+double dabs2(double x);
+
+int iabs2(int x);
+
+int64_t i64abs2(int64_t x);
+
+int isign(int x);
+
+int isignab(int a, int b);
+
+int rshift_rnd(int x, int a);
+
+int rshift_rnd_sign(int x, int a);
+
+unsigned int rshift_rnd_us(unsigned int x, unsigned int a);
+
+int rshift_rnd_sf(int x, int a);
+
+int shift_off_sf(int x, int o, int a);
+
+unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a);
+
+int iClip1(int high, int x);
+
+short sClip1(short high, short x);
+
+double dClip1(double high, double x);
+
+int iClip3(int low, int high, int x);
+
+short sClip3(short low, short high, short x);
+
+double dClip3(double low, double high, double x);
 
 /* ************************************************************************** */
-#endif /* UTILS_H */
+
+int iClip1_YCbCr(const int x, const int BitDepth);
+
+int iClip1_YCbCr_8(const int x);
+
+uint8_t Clip1_YCbCr_8(const int x);
+
+/* ************************************************************************** */
+#endif // UTILS_H

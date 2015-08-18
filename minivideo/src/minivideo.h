@@ -27,7 +27,7 @@
 // Needed in order to use this library from a C++ software without problems.
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif // __cplusplus
 
 #include "avcodecs.h"
 #include "videofile_struct.h"
@@ -141,6 +141,6 @@ int minivideo_close(VideoFile_t **input_video);
 /* ************************************************************************** */
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif // __cplusplus
 
-#endif /* MINIVIDEO_H */
+#endif // MINIVIDEO_H

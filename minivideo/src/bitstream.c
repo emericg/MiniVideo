@@ -21,19 +21,18 @@
  * \date      2012
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+// minivideo headers
+#include "bitstream.h"
+#include "bitstream_utils.h"
+#include "minitraces.h"
 
 // C POSIX libraries
 #include <unistd.h>
 
-// minivideo headers
-#include "minitraces.h"
-
-#include "bitstream.h"
-#include "bitstream_utils.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* ************************************************************************** */
 
@@ -447,7 +446,7 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
         TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!\n", n);
         return FAILURE;
     } else
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     if (n == 1)
     {
@@ -568,7 +567,7 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
         TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 64 bits!\n", n);
         return FAILURE;
     } else
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     if (n == 1)
     {
@@ -681,7 +680,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
         TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     // Read one byte
     ////////////////////////////////////////////////////////////////////////
@@ -734,7 +733,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
         TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     // Read one byte
     ////////////////////////////////////////////////////////////////////////
@@ -841,7 +840,7 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
         return FAILURE;
     }
     else
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     if (n == 1)
     {
@@ -973,7 +972,7 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
     {
         TRACE_ERROR(BITS, "<b> " BLD_BLUE "skip_bits(%u)" CLR_RESET " Cannot skip bits at bit offset\n", n, bitstr->buffer_offset);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     return retcode;
 }
@@ -1017,7 +1016,7 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
     {
         TRACE_ERROR(BITS, "<b> " BLD_BLUE "rewind_bits(%u)" CLR_RESET " Cannot rewind bits at bit offset %u\n", n, bitstr->buffer_offset);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     return retcode;
 }
@@ -1083,7 +1082,7 @@ int bitstream_goto_offset(Bitstream_t *bitstr, const int64_t n)
     {
         TRACE_ERROR(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Cannot jump outside bitstream boundaries!\n", n);
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
     return retcode;
 }

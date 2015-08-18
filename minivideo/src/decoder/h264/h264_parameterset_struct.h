@@ -373,4 +373,4 @@ typedef struct sei_t
 } sei_t;
 
 /* ************************************************************************** */
-#endif /* H264_PARAMETER_SET_STRUCT_H */
+#endif // H264_PARAMETER_SET_STRUCT_H

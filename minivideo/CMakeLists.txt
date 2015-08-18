@@ -17,7 +17,7 @@ ENDIF(UNIX)
 ###############################################################################
 
 SET(minivideo_VERSION_MAJOR 5)
-SET(minivideo_VERSION_MINOR 0)
+SET(minivideo_VERSION_MINOR 1)
 SET(minivideo_VERSION_PATCH 0)
 
 SET(ENABLE_COLORS 1) # "Toggle colored terminal output"

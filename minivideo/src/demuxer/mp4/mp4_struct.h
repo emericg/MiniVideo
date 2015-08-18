@@ -229,4 +229,4 @@ typedef enum Mp4SampleEntry_e
 } Mp4SampleEntry_e;
 
 /* ************************************************************************** */
-#endif /* PARSER_MP4_STRUCT_H */
+#endif // PARSER_MP4_STRUCT_H

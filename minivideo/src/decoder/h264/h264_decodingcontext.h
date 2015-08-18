@@ -96,4 +96,4 @@ typedef struct DecodingContext_t
 } DecodingContext_t;
 
 /* ************************************************************************** */
-#endif /* H264_DECODING_CONTEXT_H */
+#endif // H264_DECODING_CONTEXT_H

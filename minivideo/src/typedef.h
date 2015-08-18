@@ -59,7 +59,7 @@
     typedef unsigned short     uint16_t;
     typedef unsigned int       uint32_t;
     typedef unsigned long long uint64_t;
-#endif /* ENABLE_STDINT */
+#endif // ENABLE_STDINT
 
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@
     // Software boolean implementation (if C99 <stdbool.h> is not available)
 
     typedef unsigned int   bool;
-    #define true	   1
-    #define false	   0
-#endif /* ENABLE_STDBOOL */
+    #define true       1
+    #define false      0
+#endif // ENABLE_STDBOOL
 
 /* ************************************************************************** */
-#endif /* TYPEDEF_H */
+#endif // TYPEDEF_H

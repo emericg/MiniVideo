@@ -119,4 +119,4 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu);
 int nalu_clean_sample(Bitstream_t *bitstr);
 
 /* ************************************************************************** */
-#endif /* H264_NALU_H */
+#endif // H264_NALU_H

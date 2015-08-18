@@ -21,19 +21,18 @@
  * \date      2011
  */
 
+// minivideo headers
+#include "h264_cabac.h"
+#include "h264_cabac_tables.h"
+#include "h264_spatial.h"
+#include "../../utils.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../utils.h"
-#include "h264_spatial.h"
-
-#include "h264_cabac.h"
-#include "h264_cabac_tables.h"
 
 /* ************************************************************************** */
 /*
@@ -322,7 +321,7 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
             }
         }
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -763,7 +762,7 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 460;
             else if (ctxBlockCat < 13)
                 prefix->ctxIdxOffset = 472;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
 
             prefix->bintable = (uint8_t **)binarization_fl1;
             prefix->bintable_x = 1;
@@ -797,7 +796,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 528;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 718;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
             }
             else
             {
@@ -821,7 +820,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 820;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 733;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
             }
 
             prefix->bintable = (uint8_t **)binarization_fl1;
@@ -856,7 +855,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 616;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 748;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
             }
             else
             {
@@ -880,7 +879,7 @@ static int getBinarization(DecodingContext_t *dc,
                     prefix->ctxIdxOffset = 908;
                 else if (ctxBlockCat == 13)
                     prefix->ctxIdxOffset = 757;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
             }
 
             prefix->bintable = (uint8_t **)binarization_fl1;
@@ -912,7 +911,7 @@ static int getBinarization(DecodingContext_t *dc,
                 prefix->ctxIdxOffset = 982;
             else if (ctxBlockCat == 13)
                 prefix->ctxIdxOffset = 766;
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
 
             prefix->bintable = (uint8_t **)binarization_tu14;
             prefix->bintable_x = 14;
@@ -1254,7 +1253,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
                 TRACE_ERROR(CABAC, "Error, ctxIdx value is too high, please extend cabac_context_init_I table!\n");
                 return FAILURE;
             }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
             else
             {
                 decodedSE[binIdx] = (uint8_t)DecodeDecision(dc, ctxIdx);
@@ -1276,7 +1275,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
             printf(")\n");
         }
 */
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
         // Compare bin string with binarization
         ////////////////////////////////////////////////////////////////////////
@@ -1633,7 +1632,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
             condTermFlagA = 0;
         }
         else
-#endif /* ENABLE_IPCM */
+#endif // ENABLE_IPCM
 
         if ((mbAddrA != dc->CurrMbAddr) &&
             (dc->mb_array[mbAddrA]->mb_type != P_Skip && dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
@@ -1662,7 +1661,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
             condTermFlagB = 0;
         }
         else
-#endif /* ENABLE_IPCM */
+#endif // ENABLE_IPCM
         if ((mbAddrB != dc->CurrMbAddr) &&
             (dc->mb_array[mbAddrB]->mb_type != P_Skip && dc->mb_array[mbAddrB]->mb_type != B_Skip) &&
             (((dc->mb_array[mbAddrB]->CodedBlockPatternLuma >> luma8x8BlkIdxB) & 1) != 0))
@@ -2449,7 +2448,7 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
             printf("[CABAC] codIOffset : %i\n\n", dc->active_slice->cc->codIOffset);
         }
     }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
     return binVal;
 }
 
@@ -2487,7 +2486,7 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
         printf("[CABAC] codIOffset : %i\n\n", cc->codIOffset);
     }
 */
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

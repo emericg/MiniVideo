@@ -35,4 +35,4 @@ unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool int
 unsigned int read_te(Bitstream_t *bitstr, int range);
 
 /* ************************************************************************** */
-#endif /* H264_EXPGOLOMB_H */
+#endif // H264_EXPGOLOMB_H

@@ -39,4 +39,4 @@ int import_fileClose(VideoFile_t **video_ptr);
 void import_fileStatus(VideoFile_t *videoFile);
 
 /* ************************************************************************** */
-#endif /* IMPORT_H */
+#endif // IMPORT_H

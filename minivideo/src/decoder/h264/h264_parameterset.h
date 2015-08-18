@@ -46,4 +46,4 @@ void printVUI(vui_t *vui);
 void printHRD(hrd_t *hrd);
 
 /* ************************************************************************** */
-#endif /* H264_PARAMETER_SET_H */
+#endif // H264_PARAMETER_SET_H

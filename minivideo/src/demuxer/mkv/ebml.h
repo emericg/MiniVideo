@@ -38,4 +38,4 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr);
 int64_t read_ebml_data_int(Bitstream_t *bitstr);
 
 /* ************************************************************************** */
-#endif /* PARSER_EBML_H */
+#endif // PARSER_EBML_H

@@ -35,4 +35,4 @@ void residual_block_cavlc(DecodingContext_t *dc,
                           const int blkType, const int blxIdx);
 
 /* ************************************************************************** */
-#endif /* H264_CAVLC_H */
+#endif // H264_CAVLC_H

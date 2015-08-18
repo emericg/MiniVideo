@@ -181,4 +181,4 @@ typedef enum pesStreamId_e
 } pesStreamId_e;
 
 /* ************************************************************************** */
-#endif /* PARSER_MPEG_PES_STRUCT_H */
+#endif // PARSER_MPEG_PES_STRUCT_H

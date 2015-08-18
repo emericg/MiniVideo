@@ -32,4 +32,4 @@
 int mkv_fileParse(VideoFile_t *video);
 
 /* ************************************************************************** */
-#endif /* PARSER_MKV_H */
+#endif // PARSER_MKV_H

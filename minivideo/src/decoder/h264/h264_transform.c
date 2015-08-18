@@ -21,18 +21,17 @@
  * \date      2010
  */
 
+// minivideo headers
+#include "h264_transform.h"
+#include "h264_spatial.h"
+#include "../../typedef.h"
+#include "../../utils.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-#include "../../utils.h"
-#include "h264_spatial.h"
-
-#include "h264_transform.h"
 
 /* ************************************************************************** */
 /*
@@ -512,7 +511,7 @@ static void print2x2(int block[2][2])
         printf("|\n");
     }
     printf("+-------------------+\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -546,7 +545,7 @@ static void print4x4(int block[4][4])
         printf("|\n");
     }
     printf("+-------------------+\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -580,7 +579,7 @@ static void print8_tx8(int block[8][8])
         printf("|\n");
     }
     printf("+---------------------------------------+\n");
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -657,7 +656,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
         return UNSUPPORTED;
     }
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_INTER_PRED
 
 #if ENABLE_SEPARATE_COLOUR_PLANES
     if (sps->separate_colour_plane_flag)
@@ -666,7 +665,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
         return UNSUPPORTED;
     }
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
 
     // Compute
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
@@ -709,7 +708,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
         return UNSUPPORTED;
     }
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_INTER_PRED
 
 #if ENABLE_SEPARATE_COLOUR_PLANES
     if (sps->separate_colour_plane_flag)
@@ -718,7 +717,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
         TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
         return UNSUPPORTED;
     }
-#endif /* ENABLE_SEPARATE_COLOUR_PLANES */
+#endif // ENABLE_SEPARATE_COLOUR_PLANES
 
     // Compute
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
@@ -1599,7 +1598,7 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
         return UNSUPPORTED;
     }
     else
-#endif /* ENABLE_MBAFF */
+#endif // ENABLE_MBAFF
     {
         int i = 0, j = 0;
         for (i = 0; i < 16; i++)

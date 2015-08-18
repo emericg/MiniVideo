@@ -21,13 +21,13 @@
  * \date      2012
  */
 
-// C standard libraries
-#include <stdlib.h>
-
 // minivideo headers
 #include "bitstream.h"
-#include "minitraces.h"
 #include "avcodecs.h"
+#include "minitraces.h"
+
+// C standard libraries
+#include <stdlib.h>
 
 /* ************************************************************************** */
 
@@ -202,7 +202,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
         }
     }
 
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

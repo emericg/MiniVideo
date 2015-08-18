@@ -32,4 +32,4 @@
 int avi_fileParse(VideoFile_t *video);
 
 /* ************************************************************************** */
-#endif /* PARSER_AVI_H */
+#endif // PARSER_AVI_H

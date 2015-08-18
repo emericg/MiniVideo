@@ -33,4 +33,4 @@
 int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map);
 
 /* ************************************************************************** */
-#endif /* PES_PACKETIZER_H */
+#endif // PES_PACKETIZER_H

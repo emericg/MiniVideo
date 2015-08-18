@@ -340,4 +340,4 @@ const uint8_t runbefore_codtab[TOTRUN_NUM][16] =
 };
 
 /* ************************************************************************** */
-#endif /* H264_CAVLC_TABLES_H */
+#endif // H264_CAVLC_TABLES_H

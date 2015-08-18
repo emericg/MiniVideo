@@ -22,13 +22,12 @@
  */
 
 // minivideo headers
-#include "../../minitraces.h"
-#include "../../utils.h"
-#include "../../typedef.h"
+#include "h264_intra_prediction.h"
 #include "h264_transform.h"
 #include "h264_spatial.h"
-
-#include "h264_intra_prediction.h"
+#include "../../typedef.h"
+#include "../../utils.h"
+#include "../../minitraces.h"
 
 /* ************************************************************************** */
 
@@ -1042,7 +1041,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
                 // the macroblock mbAddrN is a field coded macroblock.
                 if (MbaffFrameFlag == 1 && luma8x8BlkIdx == 2)
                     n = 3;
-#endif /* ENABLE_MBAFF */
+#endif // ENABLE_MBAFF
 
                 intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra4x4PredMode[blkA * 4 + n];
             }
@@ -2603,7 +2602,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
     {
         dy = 2;
     }
-#endif /* ENABLE_MBAFF */
+#endif // ENABLE_MBAFF
 
     InverseMacroblockScan(mb->mbAddr, dc->active_slice->MbaffFrameFlag, sps->PicWidthInSamplesL, &xP, &yP);
 
@@ -2624,7 +2623,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
     }
 
     retcode = SUCCESS;
-#endif /* ENABLE_IPCM */
+#endif // ENABLE_IPCM
 
     return retcode;
 }

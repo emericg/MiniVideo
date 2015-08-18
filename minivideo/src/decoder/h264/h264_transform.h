@@ -44,4 +44,4 @@ void inverse_scan_4x4(int LumaLevel[16], int c[4][4]);
 void inverse_scan_8x8(int LumaLevel[64], int c[8][8]);
 
 /* ************************************************************************** */
-#endif /* H264_TRANSFORM_H */
+#endif // H264_TRANSFORM_H

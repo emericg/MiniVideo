@@ -302,4 +302,4 @@ typedef enum bIndexSubType_e
 } bIndexSubType_e;
 
 /* ************************************************************************** */
-#endif /* PARSER_AVI_STRUCT_H */
+#endif // PARSER_AVI_STRUCT_H

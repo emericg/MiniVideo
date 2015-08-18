@@ -41,4 +41,4 @@ void freeDecodingContext(DecodingContext_t **dc_ptr);
 int checkDecodingContext(DecodingContext_t *dc);
 
 /* ************************************************************************** */
-#endif /* H264_H */
+#endif // H264_H

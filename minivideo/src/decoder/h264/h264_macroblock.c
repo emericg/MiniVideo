@@ -21,24 +21,23 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-
 // minivideo headers
-#include "../../minitraces.h"
-#include "../../utils.h"
-#include "../../typedef.h"
-#include "../../bitstream.h"
+#include "h264_macroblock.h"
+#include "h264_macroblock_utils.h"
 #include "h264_expgolomb.h"
 #include "h264_cavlc.h"
 #include "h264_cabac.h"
 #include "h264_spatial.h"
 #include "h264_intra_prediction.h"
 #include "h264_inter_prediction.h"
+#include "../../utils.h"
+#include "../../typedef.h"
+#include "../../bitstream.h"
+#include "../../minitraces.h"
 
-#include "h264_macroblock.h"
-#include "h264_macroblock_utils.h"
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
 
 /* ************************************************************************** */
 
@@ -103,7 +102,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
 #if ENABLE_DEBUG
         mb->mbFileAddrStart = bitstream_get_absolute_bit_offset(dc->bitstr);
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
 
         deriv_macroblockneighbours_availability(dc, mbAddr);
         MbPosition(mb, sps);
@@ -149,10 +148,10 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
             // CABAC initialization process //FIXME needed? See 'ITU-T H.264' recommendation 9.3.1.2
             initCabacDecodingEngine(dc);
-#else /* ENABLE_IPCM */
+#else // ENABLE_IPCM
             TRACE_ERROR(MB, "I_PCM decoding is currently disabled!\n");
             return UNSUPPORTED;
-#endif /* ENABLE_IPCM */
+#endif // ENABLE_IPCM
         }
         else
         {
@@ -185,7 +184,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 sub_mb_pred(dc, mb->mb_type, mb->sub_mb_type);
             }
             else
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_INTER_PRED
             {
                 TRACE_3(MB, "---- macroblock_layer - transform_size_8x8_flag & prediction modes\n");
 
@@ -231,7 +230,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                     if (transform_size_8x8_flag)
                         mb->MbPartPredMode[0] = MbPartPredMode(mb, slice->slice_type, 0);
                 }
-#endif /* ENABLE_INTER_PRED */
+#endif // ENABLE_INTER_PRED
             }
 
             if (mb->CodedBlockPatternLuma > 0 ||
@@ -304,7 +303,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                     print_macroblock_pixel_final(mb);
                 }
             }
-#endif /* ENABLE_DEBUG */
+#endif // ENABLE_DEBUG
         }
 
         TRACE_3(MB, "---- macroblock_layer - the end\n\n");

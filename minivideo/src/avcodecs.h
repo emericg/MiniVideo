@@ -198,4 +198,4 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec);
 const char *getPictureString(PictureFormat_e picture);
 
 /* ************************************************************************** */
-#endif /* AV_CODECS_H */
+#endif // AV_CODECS_H

@@ -93,4 +93,4 @@ typedef struct HierarchyDescriptor_t
 } HierarchyDescriptor_t;
 
 /* ************************************************************************** */
-#endif /* PARSER_PS_DESCRIPTOR_STRUCT_H */
+#endif // PARSER_PS_DESCRIPTOR_STRUCT_H

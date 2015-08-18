@@ -103,4 +103,4 @@ typedef enum EbmlDocType_e
 */
 
 /* ************************************************************************** */
-#endif /* PARSER_MKV_STRUCT_H */
+#endif // PARSER_MKV_STRUCT_H

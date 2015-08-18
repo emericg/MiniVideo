@@ -21,20 +21,18 @@
  * \date      2011
  */
 
+// minivideo headers
+#include "mkv.h"
+#include "mkv_struct.h"
+#include "ebml.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
+#include "../../typedef.h"
+#include "../../minitraces.h"
+
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
-
-// minivideo headers
-#include "../../minitraces.h"
-#include "../../typedef.h"
-
-#include "../../bitstream.h"
-#include "../../bitstream_utils.h"
-#include "ebml.h"
-
-#include "mkv.h"
-#include "mkv_struct.h"
 
 /* ************************************************************************** */
 
