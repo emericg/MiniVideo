@@ -232,17 +232,15 @@ int main(int argc, char *argv[])
     }
     else
     {
-        // Stream(s) extraction
-        ////////////////////////////////////////////////////////////////////////
-
-#if ENABLE_DEBUG
-        // Print informations about LibMiniVideo and system endianness
+        // Print informations about libMiniVideo and system endianness
         minivideo_infos();
         minivideo_endianness();
 
         // Let's get to work
         std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
-#endif // ENABLE_DEBUG
+
+// Stream(s) extraction
+////////////////////////////////////////////////////////////////////////
 
         int minivideo_retcode = 0;
 

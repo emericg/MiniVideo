@@ -54,53 +54,62 @@ void minivideo_infos(void)
 {
     printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
     printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
-                                           minivideo_VERSION_MINOR,
-                                           minivideo_VERSION_PATCH);
+                                             minivideo_VERSION_MINOR,
+                                             minivideo_VERSION_PATCH);
+
+#if defined(__GNUC__) || defined(__GNUG__)
+    printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+#elif defined(__clang__)
+    printf("* Library built with CLANG '%d.%d.%d'\n", __clang_major__, __clang_minor__, __clang_patch__);
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+    printf("* Library built with ICC '%d / %s'\n", __INTEL_COMPILER, __INTEL_COMPILER_BUILD_DATE);
+#endif
+
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
 
 #if ENABLE_DEBUG
     printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* DEBUG traces are " BLD_RED "OFF\n" CLR_RESET);
-#endif // ENABLE_DEBUG
+#endif
 
 #if ENABLE_COLORS
     printf("* COLORS are " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* COLORS are OFF\n" CLR_RESET);
-#endif // ENABLE_COLORS
+#endif
 
 #if ENABLE_STDINT
     printf("* C99 integer support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 integer support is " BLD_RED "OFF\n" CLR_RESET);
     printf("* Integer support is emulated\n");
-#endif // ENABLE_STDINT
+#endif
 
 #if ENABLE_STDBOOL
     printf("* C99 boolean support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 boolean support is " BLD_RED "OFF\n" CLR_RESET);
     printf("* boolean support is emulated\n");
-#endif // ENABLE_STDBOOL
+#endif
 
 #if ENABLE_JPEG
     printf("* EXTERNAL JPEG support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* EXTERNAL JPEG support is " BLD_RED "OFF\n" CLR_RESET);
-#endif // ENABLE_JPEG
+#endif
 
 #if ENABLE_PNG
     printf("* EXTERNAL PNG support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* EXTERNAL PNG support is " BLD_RED "OFF\n" CLR_RESET);
-#endif // ENABLE_PNG
+#endif
 
 #if ENABLE_STBIMWRITE
     printf("* STB_IMAGE_WRITE support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* STB_IMAGE_WRITE support is " BLD_RED "OFF\n" CLR_RESET);
-#endif // ENABLE_STBIMWRITE
+#endif
 
 #if ENABLE_DEBUG
     printf("\n* MiniVideo library tracing test:\n");
@@ -110,7 +119,7 @@ void minivideo_infos(void)
     TRACE_1(MAIN, "TEST lvl 1\n");
     TRACE_2(MAIN, "TEST lvl 2\n");
     TRACE_3(MAIN, "TEST lvl 3\n\n");
-#endif // ENABLE_DEBUG
+#endif
 }
 
 /* ************************************************************************** */
