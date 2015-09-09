@@ -104,7 +104,7 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         }
         else
         {
-            TRACE_ERROR(MP4, "We can only build bitstream map for audio and video tracks!\n");
+            TRACE_WARNING(MP4, "We can only build bitstream map for audio and video tracks! (track #%u handlerType: %u)\n", track->id, track->handlerType);
             retcode = FAILURE;
         }
     }
@@ -2065,7 +2065,17 @@ int mp4_fileParse(VideoFile_t *video)
             unsigned int i = 0;
             for (i = 0; i < mp4.tracks_count; i++)
             {
-                retcode = convertTrack(video, &mp4, mp4.tracks[i]);
+                convertTrack(video, &mp4, mp4.tracks[i]);
+            }
+
+            if (video->tracks_video_count == 0 &&  video->tracks_audio_count == 0)
+            {
+                TRACE_WARNING(MP4, "No tracks extracted!");
+                retcode = FAILURE;
+            }
+            else
+            {
+                retcode = SUCCESS;
             }
         }
 
