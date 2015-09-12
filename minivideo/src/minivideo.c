@@ -192,6 +192,9 @@ int minivideo_parse(VideoFile_t *input_video,
             case CONTAINER_MKV:
                 retcode = mkv_fileParse(input_video);
                 break;
+            case CONTAINER_MPEG_PS:
+                retcode = ps_fileParse(input_video);
+                break;
             case CONTAINER_ES:
                 retcode = bruteforce_fileParse(input_video, CODEC_H264);
                 break;
