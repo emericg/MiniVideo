@@ -64,8 +64,9 @@ const char *getContainerString(ContainerFormat_e container, int long_description
         case CONTAINER_MPEG_TS:
             return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
             break;
-        case CONTAINER_UNKNOWN:
+
         default:
+        case CONTAINER_UNKNOWN:
             return "UNKNOWN";
             break;
         }
@@ -107,8 +108,9 @@ const char *getContainerString(ContainerFormat_e container, int long_description
             case CONTAINER_MPEG_TS:
                 return "MPEG-TS";
                 break;
-            case CONTAINER_UNKNOWN:
+
             default:
+            case CONTAINER_UNKNOWN:
                 return "UNKNOWN";
                 break;
         }
@@ -123,9 +125,23 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
     {
         switch (codec)
         {
-            case CODEC_PCM:
-                return "PCM";
+            case CODEC_LPCM:
+                return "LPCM";
                 break;
+            case CODEC_DPCM:
+                return "DPCM";
+                break;
+            case CODEC_ADPCM:
+                return "ADPCM";
+                break;
+
+            case CODEC_APE:
+                return "Monkey's Audio";
+                break;
+            case CODEC_FLAC:
+                return "Free Lossless Audio Codec (FLAC)";
+                break;
+
             case CODEC_MPEG_L1:
                 return "MPEG-1/2 Layer 1";
                 break;
@@ -153,20 +169,24 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_DTS_HD:
                 return "DTS-HD";
                 break;
-            case CODEC_FLAC:
-                return "FLAC";
+            case CODEC_WMA:
+                return "WMA";
+                break;
+            case CODEC_MPC:
+                return "Musepack (MPC)";
+                break;
+            case CODEC_SPEEX:
+                return "Speex";
+                break;
+            case CODEC_VORBIS:
+                return "Ogg Vorbis";
                 break;
             case CODEC_OPUS:
                 return "OPUS";
                 break;
-            case CODEC_VORBIS:
-                return "VORBIS";
-                break;
-            case CODEC_WMA:
-                return "WMA";
-                break;
-            case CODEC_UNKNOWN:
+
             default:
+            case CODEC_UNKNOWN:
                 return "UNKNOWN";
                 break;
         }
@@ -176,10 +196,10 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
         switch (codec)
         {
             case CODEC_MPEG12:
-                return "MPEG-1/2";
+                return "MPEG-1/2 videos";
                 break;
             case CODEC_MPEG4:
-                return "XVID (MPEG-4 ASP)";
+                return "MPEG-4 ASP (XVID)";
                 break;
             case CODEC_MSMPEG4:
                 return "MS MPEG-4";
@@ -190,17 +210,34 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_H264:
                 return "H.264 (MPEG-4 AVC)";
                 break;
+            case CODEC_H265:
+                return "H.265 (MPEG-H HEVC)";
+                break;
+
             case CODEC_VC1:
                 return "VC1 (Windows Media Video)";
                 break;
             case CODEC_VC2:
                 return "VC2 (Dirac)";
                 break;
+            case CODEC_VC3:
+                return "VC3 (DNxHD)";
+                break;
+            case CODEC_VC5:
+                return "VC5 (CineForm)";
+                break;
+
             case CODEC_VP4:
                 return "VP4 (Ogg Theora)";
                 break;
+            case CODEC_VP5:
+                return "VP5";
+                break;
             case CODEC_VP6:
                 return "VP6";
+                break;
+            case CODEC_VP7:
+                return "VP7";
                 break;
             case CODEC_VP8:
                 return "VP8";
@@ -208,8 +245,16 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_VP9:
                 return "VP9";
                 break;
-        case CODEC_UNKNOWN:
+            case CODEC_VP10:
+                return "VP10";
+                break;
+
+            case CODEC_DAALA:
+                return "Daala";
+                break;
+
         default:
+        case CODEC_UNKNOWN:
             return "UNKNOWN";
             break;
 
@@ -228,8 +273,9 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_ASS:
                 return "Advanced SubStation Alpha";
                 break;
-            case CODEC_UNKNOWN:
+
             default:
+            case CODEC_UNKNOWN:
                 return "UNKNOWN";
                 break;
         }

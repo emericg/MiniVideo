@@ -87,43 +87,61 @@ typedef enum AVCodec_e
     CODEC_UNKNOWN     = 0,
 
     // Audio codecs
-    CODEC_PCM         = 1,  //!< Pulse-code modulation (not a codec) (PCM, LPCM, DPCM, ADPCM ?)
-    CODEC_MPEG_L1     = 2,  //!< MPEG 1/2 Audio Layer I
-    CODEC_MPEG_L2     = 3,  //!< MPEG 1/2 Audio Layer II
-    CODEC_MPEG_L3     = 4,  //!< MPEG 1/2 Audio Layer III
-    CODEC_AAC         = 5,  //!< Advanced Audio Coding
-    CODEC_AAC_HE      = 6,  //!< High Efficiency Advanced Audio Coding
-    CODEC_AC3         = 7,  //!< AC3, or Dobly Digital, or A/52A
-    CODEC_EAC3        = 8,  //!< Enhanced AC3, or Dobly Digital Plus, or A/52B
-    CODEC_DTS         = 9,
-    CODEC_DTS_HD      = 10,
-    CODEC_FLAC        = 11,
-    CODEC_OPUS        = 12,
-    CODEC_VORBIS      = 13, //!< Ogg Vorbis
-    CODEC_WMA         = 14, //!< Windows Media Audio
+    CODEC_LPCM        =  1, //!< Linear pulse-code modulation (not a codec) (PCM, LPCM)
+    CODEC_DPCM        =  2, //!< Linear pulse-code modulation (not a codec)
+    CODEC_ADPCM       =  3, //!< Linear pulse-code modulation (not a codec)
+
+    CODEC_APE         =  8, //!< Monkey's Audio
+    CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
+
+    CODEC_MPEG_L1     = 16, //!< MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L2     = 17, //!< MPEG 1/2 Audio Layer II
+    CODEC_MPEG_L3     = 18, //!< MPEG 1/2 Audio Layer III
+    CODEC_AAC         = 19, //!< Advanced Audio Coding
+    CODEC_AAC_HE      = 20, //!< High Efficiency Advanced Audio Coding
+    CODEC_AC3         = 21, //!< AC3, or Dobly Digital, or A/52A
+    CODEC_EAC3        = 22, //!< Enhanced AC3, or Dobly Digital Plus, or A/52B
+    CODEC_DTS         = 23,
+    CODEC_DTS_HD      = 24,
+    CODEC_WMA         = 25, //!< Windows Media Audio
+    CODEC_MPC         = 26, //!< Musepack
+    CODEC_SPEEX       = 27, //!< Xiph Speex
+    CODEC_VORBIS      = 28, //!< Xiph Ogg Vorbis
+    CODEC_OPUS        = 29, //!< Xiph Opus
 
     // Video codecs
-    CODEC_MPEG12      = 32, //!< MPEG-1/2 videos
-    CODEC_MPEG4       = 33, //!< MPEG-4 Part 2 "ASP" or XVID
-    CODEC_MSMPEG4     = 34, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
-    CODEC_H263        = 35, //!< H.263, sometimes found inside "mobile" 3GP files
-    CODEC_H264        = 36, //!< H.264 or MPEG-4 Part 10 "AVC"
-    CODEC_VP4         = 37,
-    CODEC_VP6         = 38,
-    CODEC_VP8         = 39,
-    CODEC_VP9         = 40,
-    CODEC_VC1         = 41, //!< VC-1 or Windows Media Video 9
-    CODEC_VC2         = 42, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
-    CODEC_WMV1        = 42, //!< Windows Media Video 7
-    CODEC_WMV2        = 42, //!< Windows Media Video 8
-    CODEC_WMV3        = 43, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
-    CODEC_WMVA        = 44, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
-    CODEC_WVC1        = 45, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
+    CODEC_MPEG12      = 64, //!< MPEG-1/2 videos, also known as H.262
+    CODEC_MPEG4       = 65, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
+    CODEC_MSMPEG4     = 66, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_H263        = 67, //!< H.263 and variants
+    CODEC_H264        = 68, //!< H.264 or MPEG-4 Part 10 "AVC"
+    CODEC_H265        = 69, //!< H.265 or MPEG-H Part 2 "HEVC" or ISO/IEC 23008-2
+
+    CODEC_WMV1        = 70, //!< Windows Media Video 7
+    CODEC_WMV2        = 71, //!< Windows Media Video 8
+    CODEC_WMV3        = 72, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
+    CODEC_WMVA        = 73, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
+    CODEC_WVC1        = 74, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
+
+    CODEC_VP4         = 75, //!< Xiph Ogg Theora
+    CODEC_VP5         = 76,
+    CODEC_VP6         = 77,
+    CODEC_VP7         = 78,
+    CODEC_VP8         = 79,
+    CODEC_VP9         = 80,
+    CODEC_VP10        = 81,
+
+    CODEC_VC1         = 82, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2         = 83, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_VC3         = 84, //!< VC-3, DNxHD is a popular implementation
+    CODEC_VC5         = 85, //!< VC-5 or CineForm
+
+    CODEC_DAALA       = 86, //!< Xiph Daala
 
     // Subtitles codecs
-    CODEC_SRT         = 64, //!< SubRip (.srt)
-    CODEC_SSA         = 65, //!< "SubStation Alpha" (.ssa)
-    CODEC_ASS         = 66, //!< "Advanced SubStation Alpha" (.ass)
+    CODEC_SRT        = 128, //!< SubRip (.srt)
+    CODEC_SSA        = 129, //!< "SubStation Alpha" (.ssa)
+    CODEC_ASS        = 130, //!< "Advanced SubStation Alpha" (.ass)
 
 } AVCodec_e;
 
@@ -162,7 +180,7 @@ typedef enum ColorSpace_e
 } ColorSpace_e;
 
 //! The subsampling format used by the video
-typedef enum Subsampling_e
+typedef enum SubSampling_e
 {
     SS_UNKNOWN = 0,     //!< Unknown subsampling
     SS_400     = 1,     //!< Greyscale
@@ -170,7 +188,7 @@ typedef enum Subsampling_e
     SS_422     = 3,     //!< 4:2:2 subsampling
     SS_444     = 4      //!< 4:4:4 subsampling
 
-} Subsampling_e;
+} SubSampling_e;
 
 //! Frame rate (picture per second)
 typedef enum FrameRate_e
@@ -185,6 +203,7 @@ typedef enum FrameRate_e
     FR_50p,
     FR_50i,           //!< 50 interlaced fields (25 frames)
     FR_60p,
+    FR_60p_NTSC,      //!< 60 frames * 1000/1001 = 59.970 frames
     FR_60i,           //!< 60 interlaced fields (30 frames)
     FR_60i_NTSC,      //!< 60 interlaced fields * 1000/1001 = 59.940 interlaced fields (29.970 frames)
     FR_72p
