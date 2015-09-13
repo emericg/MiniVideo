@@ -33,6 +33,7 @@
 
 // Qt
 #include <QApplication>
+#include "qglobal.h"
 
 /* ************************************************************************** */
 
@@ -58,6 +59,15 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // High DPI monitor?
+    if (app.devicePixelRatio() > 1)
+    {
+        app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    }
+#endif
+
+    // Initialize program window
     MainWindow w;
     w.show();
 
