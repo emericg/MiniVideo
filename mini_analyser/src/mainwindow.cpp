@@ -263,21 +263,23 @@ int MainWindow::printDatas(int fileIndex)
 
     if ((int)(videosList.size()) >= (fileIndex+1))
     {
-        retcode = 1;
         VideoFile_t *video = videosList.at(fileIndex);
 
-        ui->label_2->setText(QString::fromLocal8Bit(video->file_name));
-        ui->label_10->setText(QString::fromLocal8Bit(video->file_path));
-        ui->label_11->setText(QString::fromLocal8Bit(video->file_extension));
-        ui->label_12->setText(getContainerString(video->container, 1));
-        ui->label_13->setText(getSizeString(video->file_size));
-        ui->label_14->setText(getDurationString(video->duration));
+        ui->label_filename->setText(QString::fromLocal8Bit(video->file_name));
+        ui->label_fullpath->setText(QString::fromLocal8Bit(video->file_path));
+        ui->label_container->setText(getContainerString(video->container, 1));
+        ui->label_container_extension->setText(QString::fromLocal8Bit(video->file_extension));
+        ui->label_filesize->setText(getSizeString(video->file_size));
+        ui->label_duration->setText(getDurationString(video->duration));
 
-        QDate date(1904, 1, 1);
-        QTime time(0, 0, 0, 0);
-        QDateTime datetime(date, time);
-        datetime = datetime.addSecs(video->creation_time);
-        ui->label_15->setText(datetime.toString());
+        if (video->container == CONTAINER_MP4)
+        {
+            QDate date(1904, 1, 1);
+            QTime time(0, 0, 0, 0);
+            QDateTime datetime(date, time);
+            datetime = datetime.addSecs(video->creation_time);
+            ui->label_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
+        }
 
         // AUDIO
         ////////////////////////////////////////////////////////////////////////
@@ -285,17 +287,17 @@ int MainWindow::printDatas(int fileIndex)
         int atid = 0;
         if (video->tracks_audio[atid] != NULL)
         {
-            ui->label_25->setText("0"); // stream id
-            ui->label_26->setText(getTrackSizeString(video->tracks_audio[atid], video->file_size));
-            ui->label_28->setText(getCodecString(stream_AUDIO, video->tracks_audio[atid]->stream_codec));
+            ui->label_audio_id->setText("0"); // stream id
+            ui->label_audio_size->setText(getTrackSizeString(video->tracks_audio[atid], video->file_size));
+            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, video->tracks_audio[atid]->stream_codec));
 
-            ui->label_30->setText(getDurationString(video->tracks_audio[atid]->duration));
+            ui->label_audio_duration->setText(getDurationString(video->tracks_audio[atid]->duration));
 
-            ui->label_31->setText(QString::number(video->tracks_audio[atid]->bitrate));
-            //ui->label_32->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
+            ui->label_audio_bitrate->setText(QString::number(video->tracks_audio[atid]->bitrate));
+            //ui->label_audio_bitrate_mode->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
 
-            ui->label_53->setText(QString::number(video->tracks_audio[atid]->sampling_rate));
-            ui->label_54->setText(QString::number(video->tracks_audio[atid]->channel_count));
+            ui->label_audio_samplingrate->setText(QString::number(video->tracks_audio[atid]->sampling_rate));
+            ui->label_audio_channels->setText(QString::number(video->tracks_audio[atid]->channel_count));
         }
 
         // VIDEO
@@ -304,18 +306,18 @@ int MainWindow::printDatas(int fileIndex)
         int vtid = 0;
         if (video->tracks_video[vtid] != NULL)
         {
-            ui->label_33->setText("0"); // stream id
-            ui->label_57->setText(getTrackSizeString(video->tracks_video[vtid], video->file_size));
-            ui->label_49->setText(getCodecString(stream_VIDEO, video->tracks_video[vtid]->stream_codec));
+            ui->label_video_id->setText("0"); // stream id
+            ui->label_video_size->setText(getTrackSizeString(video->tracks_video[vtid], video->file_size));
+            ui->label_video_codec->setText(getCodecString(stream_VIDEO, video->tracks_video[vtid]->stream_codec));
 
-            ui->label_60->setText(getDurationString(video->tracks_video[vtid]->duration));
-            ui->label_61->setText(QString::number(video->tracks_video[vtid]->bitrate));
-            //ui->label_62->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
-            ui->label_50->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
-            ui->label_51->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
-            ui->label_52->setText(QString::number(video->tracks_video[vtid]->frame_rate));
-            ui->label_55->setText(QString::number(video->tracks_video[vtid]->color_depth));
-            ui->label_56->setText(QString::number(video->tracks_video[vtid]->color_subsampling));
+            ui->label_video_duration->setText(getDurationString(video->tracks_video[vtid]->duration));
+            ui->label_video_bitrate->setText(QString::number(video->tracks_video[vtid]->bitrate));
+            //ui->label_video_bitrate_mode->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
+            ui->label_video_def->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
+            ui->label_video_def->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
+            ui->label_video_framerate->setText(QString::number(video->tracks_video[vtid]->frame_rate));
+            ui->label_video_color_depth->setText(QString::number(video->tracks_video[vtid]->color_depth));
+            ui->label_video_color_subsampling->setText(QString::number(video->tracks_video[vtid]->color_subsampling));
         }
 
         // SUBS
@@ -324,8 +326,12 @@ int MainWindow::printDatas(int fileIndex)
         int stid = 0;
         if (video->tracks_subtitles[stid] != NULL)
         {
-            // TODO
+            // TODO ?
         }
+    }
+    else
+    {
+        retcode = 0;
     }
 
     return retcode;
