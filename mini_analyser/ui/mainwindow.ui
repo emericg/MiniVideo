@@ -34,6 +34,53 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="verticalSpacing">
+     <number>12</number>
+    </property>
+    <item row="1" column="0">
+     <widget class="QLabel" name="statusLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid rgb(255, 53, 3);
+background: rgba(255, 170, 0, 128);</string>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QComboBox" name="file_comboBox">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>Drag and drop files to analyse them!</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+       </property>
+      </item>
+     </widget>
+    </item>
     <item row="2" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
@@ -197,7 +244,7 @@
               </font>
              </property>
              <property name="text">
-              <string>File container</string>
+              <string>Container</string>
              </property>
             </widget>
            </item>
@@ -338,7 +385,7 @@
             </widget>
            </item>
            <item row="0" column="3">
-            <widget class="QLabel" name="label_video_def">
+            <widget class="QLabel" name="label_video_definition">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -384,7 +431,7 @@
             </widget>
            </item>
            <item row="1" column="3">
-            <widget class="QLabel" name="label_video_ar">
+            <widget class="QLabel" name="label_video_var">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -448,7 +495,7 @@
            <item row="5" column="2">
             <widget class="QLabel" name="label_40">
              <property name="text">
-              <string>Color subsampling</string>
+              <string>Color space</string>
              </property>
             </widget>
            </item>
@@ -604,7 +651,7 @@
            <item row="4" column="0">
             <widget class="QLabel" name="label_18">
              <property name="text">
-              <string>Duration</string>
+              <string>Codec</string>
              </property>
             </widget>
            </item>
@@ -623,7 +670,7 @@
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QLabel" name="label_audio_duration">
+            <widget class="QLabel" name="label_audio_codec">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -749,12 +796,12 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_17">
              <property name="text">
-              <string>Codec</string>
+              <string>Duration</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLabel" name="label_audio_codec">
+            <widget class="QLabel" name="label_audio_duration">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -782,6 +829,544 @@
        <attribute name="title">
         <string>Audio track(s)</string>
        </attribute>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>531</width>
+          <height>571</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Audio Track #1</string>
+        </property>
+        <widget class="QLabel" name="label_audio_size_2">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>60</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_lng_7">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>120</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_26">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>140</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Language</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_28">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Duration</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_lng_4">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>170</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_49">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>398</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Channel count</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_codec_2">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>258</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_channels_2">
+         <property name="geometry">
+          <rect>
+           <x>155</x>
+           <y>398</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_64">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>120</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Title</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_61">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>288</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Encoder</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_codec_3">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>278</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_lng_2">
+         <property name="geometry">
+          <rect>
+           <x>145</x>
+           <y>140</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_31">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>170</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Default track</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_duration_2">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>90</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_lng_3">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>170</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_32">
+         <property name="geometry">
+          <rect>
+           <x>295</x>
+           <y>170</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Forced</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_27">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>32</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Stream ID</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_44">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>370</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Sampling rate</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_samplingrate_2">
+         <property name="geometry">
+          <rect>
+           <x>155</x>
+           <y>370</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_23">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>258</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Codec</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_id_2">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>32</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_25">
+         <property name="geometry">
+          <rect>
+           <x>15</x>
+           <y>60</y>
+           <width>129</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Stream size</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_71">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>460</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Sample count</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_73">
+         <property name="geometry">
+          <rect>
+           <x>26</x>
+           <y>333</y>
+           <width>128</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Bitrate (mean)</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_video_bitrate_4">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>333</y>
+           <width>128</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_74">
+         <property name="geometry">
+          <rect>
+           <x>280</x>
+           <y>330</y>
+           <width>128</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>(highest)</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_video_bitrate_5">
+         <property name="geometry">
+          <rect>
+           <x>390</x>
+           <y>330</y>
+           <width>128</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_video_bitratemode_3">
+         <property name="geometry">
+          <rect>
+           <x>164</x>
+           <y>310</y>
+           <width>128</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_75">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>310</y>
+           <width>128</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Bitrate mode</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_audio_channels_3">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>460</y>
+           <width>129</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Unknown</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </widget>
       </widget>
       <widget class="QWidget" name="tab">
        <attribute name="icon">
@@ -791,6 +1376,680 @@
        <attribute name="title">
         <string>Video track(s)</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Video track #1</string>
+          </property>
+          <widget class="QLabel" name="label_50">
+           <property name="geometry">
+            <rect>
+             <x>12</x>
+             <y>500</y>
+             <width>132</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Color subsampling</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_id_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>42</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_51">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>370</y>
+             <width>132</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Frame rate</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_bitratemode_2">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>290</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_39">
+           <property name="geometry">
+            <rect>
+             <x>26</x>
+             <y>42</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stream ID</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_52">
+           <property name="geometry">
+            <rect>
+             <x>26</x>
+             <y>98</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Duration</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_53">
+           <property name="geometry">
+            <rect>
+             <x>16</x>
+             <y>290</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Bitrate mode</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_def_2">
+           <property name="geometry">
+            <rect>
+             <x>158</x>
+             <y>260</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_54">
+           <property name="geometry">
+            <rect>
+             <x>26</x>
+             <y>210</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Codec</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_bitrate_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>313</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_color_depth_2">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>446</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_55">
+           <property name="geometry">
+            <rect>
+             <x>26</x>
+             <y>70</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stream size</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_56">
+           <property name="geometry">
+            <rect>
+             <x>26</x>
+             <y>313</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Bitrate (mean)</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_size_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>70</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_duration_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>100</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_57">
+           <property name="geometry">
+            <rect>
+             <x>282</x>
+             <y>258</y>
+             <width>132</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Aspect Ratio</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_codec_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>210</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_ar_2">
+           <property name="geometry">
+            <rect>
+             <x>420</x>
+             <y>258</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_color_subsampling_2">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>500</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_58">
+           <property name="geometry">
+            <rect>
+             <x>12</x>
+             <y>446</y>
+             <width>132</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Color depth</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_framerate_2">
+           <property name="geometry">
+            <rect>
+             <x>158</x>
+             <y>370</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_59">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>260</y>
+             <width>132</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Definition</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_60">
+           <property name="geometry">
+            <rect>
+             <x>12</x>
+             <y>470</y>
+             <width>132</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Color space</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_color_subsampling_3">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>470</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_33">
+           <property name="geometry">
+            <rect>
+             <x>15</x>
+             <y>150</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Language</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_lng_5">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>150</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_codec_3">
+           <property name="geometry">
+            <rect>
+             <x>154</x>
+             <y>230</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_62">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>230</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Encoder</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_63">
+           <property name="geometry">
+            <rect>
+             <x>15</x>
+             <y>130</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Title</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_lng_6">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>130</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_65">
+           <property name="geometry">
+            <rect>
+             <x>12</x>
+             <y>530</y>
+             <width>132</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Color matrix</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_color_subsampling_4">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>530</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_bitrate_3">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>310</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_72">
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>310</y>
+             <width>128</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>(highest)</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_76">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>340</y>
+             <width>129</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Sample count</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_channels_4">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>340</y>
+             <width>129</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_framerate_3">
+           <property name="geometry">
+            <rect>
+             <x>418</x>
+             <y>372</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_77">
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>372</y>
+             <width>132</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Frame duration</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="icon">
@@ -800,57 +2059,191 @@
        <attribute name="title">
         <string>Sutitles track(s)</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Subtitles track #1</string>
+          </property>
+          <widget class="QLabel" name="label_video_id_3">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>32</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_66">
+           <property name="geometry">
+            <rect>
+             <x>5</x>
+             <y>140</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Language</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_67">
+           <property name="geometry">
+            <rect>
+             <x>5</x>
+             <y>120</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Title</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_68">
+           <property name="geometry">
+            <rect>
+             <x>16</x>
+             <y>32</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stream ID</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_video_size_3">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>60</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_lng_8">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>140</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_69">
+           <property name="geometry">
+            <rect>
+             <x>16</x>
+             <y>60</y>
+             <width>128</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stream size</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_lng_9">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>120</y>
+             <width>129</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_audio_codec_4">
+           <property name="geometry">
+            <rect>
+             <x>145</x>
+             <y>210</y>
+             <width>129</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Unknown</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_70">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>210</y>
+             <width>129</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Codec</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QComboBox" name="file_comboBox">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>Drag and drop files to analyse them!</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="statusLabel">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: 1px solid rgb(255, 53, 3);
-background: rgba(255, 170, 0, 128);</string>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
      </widget>
     </item>
    </layout>

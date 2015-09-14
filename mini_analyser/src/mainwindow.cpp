@@ -203,12 +203,12 @@ void MainWindow::closeFile()
 
 void MainWindow::About()
 {
-    QMessageBox about(QMessageBox::Information,
-                      tr("About mini_analyser"),
-                      tr("<big><b>mini_analyser</b></big><br><br>  mini_analyser is a software designed \
-                         to help you extract the maximum of informations and meta-datas from multimedia files.<br><br>\
-                         This application is part of the MiniVideo framework.<br><br>\
-                         Emeric Grange (emeric.grange@gmail.com)"),
+    QMessageBox about(QMessageBox::Information, tr("About mini_analyser"),
+                      tr("<big><b>mini_analyser</b></big> \
+                         <p align='justify'>mini_analyser is a software designed \
+                         to help you extract the maximum of informations and meta-datas from multimedia files.</p> \
+                         <p>This application is part of the MiniVideo framework.</p> \
+                         <p>Emeric Grange (emeric.grange@gmail.com)</p>"),
                          QMessageBox::Ok);
 
     about.setIconPixmap(QPixmap(":/icons/icons/icon.svg"));
@@ -293,7 +293,17 @@ int MainWindow::printDatas(int fileIndex)
 
             ui->label_audio_duration->setText(getDurationString(video->tracks_audio[atid]->duration));
 
-            ui->label_audio_bitrate->setText(QString::number(video->tracks_audio[atid]->bitrate));
+            double bitrate = video->tracks_audio[atid]->bitrate;
+            if (bitrate < 0.1)
+            {
+                for (int i = 0; i < video->tracks_audio[atid]->sample_count; i++)
+                    bitrate += video->tracks_audio[atid]->sample_size[i];
+                bitrate /= video->tracks_audio[atid]->duration / 1000.0;
+            }
+            bitrate /= 1024.0;
+            bitrate *= 8.0;
+
+            ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " KB/s");
             //ui->label_audio_bitrate_mode->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
 
             ui->label_audio_samplingrate->setText(QString::number(video->tracks_audio[atid]->sampling_rate));
@@ -311,11 +321,31 @@ int MainWindow::printDatas(int fileIndex)
             ui->label_video_codec->setText(getCodecString(stream_VIDEO, video->tracks_video[vtid]->stream_codec));
 
             ui->label_video_duration->setText(getDurationString(video->tracks_video[vtid]->duration));
-            ui->label_video_bitrate->setText(QString::number(video->tracks_video[vtid]->bitrate));
+
+            double bitrate = video->tracks_video[vtid]->bitrate;
+            if (bitrate < 0.1)
+            {
+                for (int i = 0; i < video->tracks_video[vtid]->sample_count; i++)
+                    bitrate += video->tracks_video[vtid]->sample_size[i];
+                bitrate /= video->tracks_video[vtid]->duration / 1000.0;
+            }
+            bitrate /= 1024.0;
+
+            ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
             //ui->label_video_bitrate_mode->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
-            ui->label_video_def->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
-            ui->label_video_def->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
-            ui->label_video_framerate->setText(QString::number(video->tracks_video[vtid]->frame_rate));
+            ui->label_video_definition->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
+            ui->label_video_var->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
+
+            double framerate = video->tracks_video[vtid]->frame_rate;
+            if (framerate < 0.1)
+            {
+                if (video->tracks_video[vtid]->duration && video->tracks_video[vtid]->sample_count)
+                {
+                    framerate = static_cast<double>(video->tracks_video[vtid]->sample_count / (static_cast<double>(video->tracks_video[vtid]->duration) / 1000.0));
+                }
+            }
+
+            ui->label_video_framerate->setText(QString::number(framerate));
             ui->label_video_color_depth->setText(QString::number(video->tracks_video[vtid]->color_depth));
             ui->label_video_color_subsampling->setText(QString::number(video->tracks_video[vtid]->color_subsampling));
         }

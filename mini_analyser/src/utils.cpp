@@ -73,20 +73,20 @@ QString getSizeString(const int64_t size_int)
         else if (size_int < 1048576) // < 1 MiB
         {
             size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB   /   "
-                      + QString::number(size_int / 1000.0, 'f', 2) + " KB   /   ("
-                      + QString::number(size_int) + " bytes)";
+                      + QString::number(size_int / 1000.0, 'f', 2) + " KB   /   "
+                      + QString::number(size_int) + " bytes";
         }
         else if (size_int < 1073741824) // < 1 GiB
         {
             size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
-                      + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB   /   ("
-                      + QString::number(size_int) + " bytes)";
+                      + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
+                      + QString::number(size_int) + " bytes";
         }
         else // < 1 GiB
         {
             size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
-                      + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   ("
-                      + QString::number(size_int) + " bytes)";
+                      + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
+                      + QString::number(size_int) + " bytes";
         }
     }
     else
