@@ -24,6 +24,7 @@
 // minivideo headers
 #include "avi.h"
 #include "avi_struct.h"
+#include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"
@@ -96,8 +97,9 @@ static void print_list_header(AviList_t *list_header)
         TRACE_2(AVI, "* LIST header\n");
     }
 
+    char fcc[5];
     TRACE_2(AVI, "* LIST size\t: %u\n", list_header->dwSize);
-    TRACE_2(AVI, "* LIST fcc\t: 0x%08X\n", list_header->dwFourCC);
+    TRACE_2(AVI, "* LIST fcc\t: 0x%08X ('%s')\n", list_header->dwFourCC, getFccString_le(list_header->dwFourCC, fcc));
 }
 
 /* ************************************************************************** */
@@ -180,8 +182,9 @@ static void print_chunk_header(AviChunk_t *chunk_header)
     TRACE_2(AVI, "* offset_s\t: %u\n", chunk_header->offset_start);
     TRACE_2(AVI, "* offset_e\t: %u\n", chunk_header->offset_end);
 
-    TRACE_2(AVI, "* CHUNK fcc\t: 0x%08X\n", chunk_header->dwFourCC);
+    char fcc[5];
     TRACE_2(AVI, "* CHUNK size: %u\n", chunk_header->dwSize);
+    TRACE_2(AVI, "* CHUNK fcc\t: 0x%08X ('%s')\n", chunk_header->dwFourCC, getFccString_le(chunk_header->dwFourCC, fcc));
 }
 
 /* ************************************************************************** */
@@ -301,11 +304,13 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
 
             // Chunk content
             TRACE_1(AVI, "> '");
+#if TRACE_1
             for (i = 0; i < chunk_header->dwSize; i++)
             {
                 printf("%c", string[i]);
             }
             printf("'\n");
+#endif
 #endif // ENABLE_DEBUG
             free(string);
         }
@@ -431,8 +436,9 @@ static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *
         print_chunk_header(strh_header);
 
         // Print strh content
-        TRACE_1(AVI, "> fccType\t\t: 0x%08X\n", track->strh.fccType);
-        TRACE_1(AVI, "> fccHandler\t: 0x%08X\n", track->strh.fccHandler);
+        char fcc[5];
+        TRACE_1(AVI, "> fccType\t\t: 0x%08X ('%s')\n", track->strh.fccType, getFccString_le(track->strh.fccType, fcc));
+        TRACE_1(AVI, "> fccHandler\t: 0x%08X ('%s')\n", track->strh.fccHandler, getFccString_le(track->strh.fccHandler, fcc));
         TRACE_1(AVI, "> dwFlags\t\t: %u\n", track->strh.dwFlags);
         TRACE_1(AVI, "> wPriority\t\t: %u\n", track->strh.wPriority);
         TRACE_1(AVI, "> wLanguage\t\t: %u\n", track->strh.wLanguage);
@@ -580,7 +586,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
                 else if (track->strf.wFormatTag == wftag_WAV)
                 {
                     TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
-                    track->strh.fccHandler = CODEC_PCM;
+                    track->strh.fccHandler = CODEC_LPCM;
 
                     if (byte_left >= 28)
                     {
@@ -646,6 +652,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     if (idx1_header == NULL)
     {
@@ -753,11 +760,11 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
 */
                 else
                 {
-                    TRACE_WARNING(AVI, "Unknown chunk type in idx1 (0x%08X)!\n", dwChunkId);
+                    TRACE_WARNING(AVI, "Unknown chunk type in idx1 (0x%08X) ('%s')!\n", dwChunkId, getFccString_le(dwChunkId, fcc));
                 }
 
                 // Print
-                TRACE_3(AVI, "> dwChunkId\t: 0x%08X\n", dwChunkId);
+                TRACE_3(AVI, "> dwChunkId\t: 0x%08X ('%s')\n", dwChunkId, getFccString_le(dwChunkId, fcc));
                 TRACE_3(AVI, "> dwFlags\t\t: %u\n", dwFlags);
                 TRACE_3(AVI, "> dwChunkOffset\t: %u\n", dwChunkOffset);
                 TRACE_3(AVI, "> dwChunkLength\t: %u\n", dwChunkLength);
@@ -806,11 +813,12 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
         uint32_t nEntriesInUse = endian_flip_32(read_bits(bitstr, 32));
         uint32_t dwChunkId = read_bits(bitstr, 32);
 
+        char fcc[5];
         TRACE_1(AVI, "> wLongsPerEntry\t: %u\n", wLongsPerEntry);
         TRACE_1(AVI, "> bIndexSubType\t: %u\n", bIndexSubType);
         TRACE_1(AVI, "> bIndexType\t: %u\n", bIndexType);
         TRACE_1(AVI, "> nEntriesInUse\t: %u\n", nEntriesInUse);
-        TRACE_1(AVI, "> dwChunkId\t: 0x%08X\n", dwChunkId);
+        TRACE_1(AVI, "> dwChunkId\t: 0x%08X ('%s')!\n", dwChunkId, getFccString_le(dwChunkId, fcc));
 
         // Index specifics code
         ////////////////////////////////////////////////////////////////////////
@@ -912,6 +920,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
     TRACE_INFO(AVI, BLD_GREEN "parse_strl()\n" CLR_RESET);
     int retcode = SUCCESS;
     int track_id = 0;
+    char fcc[5];
 
     if (strl_header != NULL ||
         strl_header->dwFourCC == fcc_strl)
@@ -957,7 +966,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) @ %i\n", list_header.dwFourCC);
+                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i\n", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
                     retcode = skip_list(bitstr, strl_header, &list_header);
                     break;
                 }
@@ -1035,6 +1044,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_odml()\n" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     if (odml_header != NULL &&
         odml_header->dwFourCC == fcc_odml)
@@ -1061,7 +1071,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) @ %i\n", list_header.dwFourCC);
+                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i\n", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
                     retcode = skip_list(bitstr, odml_header, &list_header);
                     break;
                 }
@@ -1080,7 +1090,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
                     retcode = parse_dmlh(bitstr, &chunk_header, avi);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type (0x%08X) @ %i\n", chunk_header.dwFourCC);
+                    TRACE_WARNING(AVI, "Unknown chunk type (0x%08X) ('%s') @ %i\n", chunk_header.dwFourCC, getFccString_le(chunk_header.dwFourCC, fcc));
                     retcode = skip_chunk(bitstr, odml_header, &chunk_header);
                     break;
                 }
@@ -1204,6 +1214,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_INFO()\n" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     if (INFO_header != NULL &&
         INFO_header->dwFourCC == fcc_INFO)
@@ -1230,7 +1241,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type\n");
+                    TRACE_WARNING(AVI, "Unknown list type ('%s')\n", getFccString_le(list_header.dwFourCC, fcc));
                     print_list_header(&list_header);
                     retcode = skip_list(bitstr, INFO_header, &list_header);
                     break;
@@ -1253,7 +1264,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
                     retcode = parse_JUNK(bitstr, INFO_header, &chunk_header);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type\n");
+                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')\n", getFccString_le(chunk_header.dwFourCC, fcc));
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, INFO_header, &chunk_header);
                     break;
@@ -1288,6 +1299,7 @@ static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_hdrl()\n" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     if (hdrl_header != NULL &&
         hdrl_header->dwFourCC == fcc_hdrl)
@@ -1320,7 +1332,7 @@ static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
                     retcode = parse_odml(bitstr, &list_header, avi);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type\n");
+                    TRACE_WARNING(AVI, "Unknown list type ('%s')\n", getFccString_le(list_header.dwFourCC, fcc));
                     print_list_header(&list_header);
                     retcode = skip_list(bitstr, hdrl_header, &list_header);
                     break;
@@ -1343,7 +1355,7 @@ static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
                     retcode = parse_JUNK(bitstr, hdrl_header, &chunk_header);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type\n");
+                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')\n", getFccString_le(chunk_header.dwFourCC, fcc));
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, hdrl_header, &chunk_header);
                     break;
@@ -1584,6 +1596,7 @@ int avi_fileParse(VideoFile_t *video)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(video, NULL);
@@ -1638,7 +1651,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type\n" CLR_RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)\n" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1661,7 +1674,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type\n" CLR_RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)\n" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;
@@ -1699,7 +1712,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type\n" CLR_RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)\n" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1722,7 +1735,7 @@ int avi_fileParse(VideoFile_t *video)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type\n" CLR_RESET);
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)\n" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;
