@@ -43,11 +43,11 @@ QString getDurationString(const int duration_int)
         }
         if (seconds > 0)
         {
-            duration_qstr += QString::number(seconds) + " sec";
+            duration_qstr += QString::number(seconds) + " sec ";
         }
         if (ms > 0)
         {
-            duration_qstr += " " + QString::number(ms) + " ms";
+            duration_qstr += QString::number(ms) + " ms";
         }
     }
     else
