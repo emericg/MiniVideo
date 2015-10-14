@@ -38,33 +38,36 @@
  */
 typedef struct VideoFile_t
 {
-    FILE *file_pointer;             //!< File pointer
+    FILE *file_pointer;             //!< File pointer used during the life of this video file
 
-    // File infos
-    char file_path[4096];           //!< Absolute path of the file
-    char file_directory[4096];      //!< Absolute path of the directory containing the file
-
+    // Generic file infos
     int64_t file_size;              //!< File size in bytes
+    char file_path[4096];           //!< Absolute path of the file (used to derive other paths/names/extention)
+    char file_directory[4096];      //!< Absolute path of the directory containing the file
     char file_name[255];            //!< File name with file extension
     char file_extension[255];       //!< File extension, without dot (may NOT correspond to the video container)
+    unsigned int file_creation_time;     //!< File creation time, from filesystem metadatas
+    unsigned int file_modification_time; //!< File modification time, from filesystem metadatas
 
-    // File format
-    ContainerFormat_e container;    //!< File container
+    ContainerFormat_e container;    //!< File format / container used by this video file
 
-    // Meta datas // TODO metadata structure
-    unsigned int duration;          //!< File content duration in milliseconds
-    unsigned int creation_time;     //!< File (or probably container) creation time in milliseconds
-    unsigned int modification_time; //!< File (or probably container) modification time in milliseconds
+    // Meta datas // TODO dedicated metadatas structures
+    char *creation_app;             //!< Container creation application
+    unsigned int creation_time;     //!< Container creation time in milliseconds
+    unsigned int modification_time; //!< Container modification time in milliseconds
+    unsigned int duration;          //!< Content duration in milliseconds
 
     // A/V track(s) datas and infos
     int tracks_audio_count;
-    BitstreamMap_t *tracks_audio[16];     //!< A list of all audio tracks
+    BitstreamMap_t *tracks_audio[16];     //!< A list of parsed audio tracks
 
     int tracks_video_count;
-    BitstreamMap_t *tracks_video[16];     //!< A list of all video tracks
+    BitstreamMap_t *tracks_video[16];     //!< A list of parsed video tracks
 
     int tracks_subtitles_count;
-    BitstreamMap_t *tracks_subtitles[16]; //!< A list of all subtitles tracks
+    BitstreamMap_t *tracks_subtitles[16]; //!< A list of parsed subtitles tracks
+
+    int tracks_others; //!< Other tracks found in the container but left unparsed
 
 } VideoFile_t;
 

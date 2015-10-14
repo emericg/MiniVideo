@@ -42,34 +42,45 @@ typedef struct BitstreamMap_t
 {
     StreamType_e stream_type;       //!< Is this an audio / video / subtitles stream?
     StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
+
+    // Generic metadatas
     AVCodec_e stream_codec;         //!< Stream codec
+    unsigned int stream_size;       //!< Size of the raw datas of this stream, used for stats
+
+    bool track_default;             //!<
+    bool track_forced;              //!<
+    char language_code[3];          //!< Language code (ISO 639-1 or ISO 639-2 format)
+
+    unsigned int bitrate;           //!< Bitrate (in bit/s)
+    unsigned int bitrate_mode;      //!< Bitrate mode
 
     unsigned int duration;          //!< Stream duration (in milliseconds)
     unsigned int creation_time;     //!< Stream creation time (ms?)
     unsigned int modification_time; //!< Stream modification time (ms?)
 
-    unsigned int bitrate;           //!< Bitrate (in bit/s)
-    unsigned int bitrate_mode;      //!< Bitrate mode
-    char language_code[3];          //!< Language code (ISO 639-1 or ISO 639-2 format)
-
-    // Video specific parameters
+    // Video specific metadatas
     unsigned int width;             //!< Horizontal size (in pixels)
     unsigned int height;            //!< Vertical size (in pixels)
+    unsigned int visible_width;     //!< Horizontal size (in pixels, without alignment)
+    unsigned int visible_height;    //!< Vertical size (in pixels, without alignment)
     unsigned int color_depth;       //!< Color resolution per channel
-    unsigned int color_subsampling; //!< Color sub-sampling format
+    unsigned int color_subsampling; //!< Chroma sub-sampling
+    unsigned int color_encoding;    //!< Internal color encoding
     double frame_rate;              //!< Frame rate (in frame/s)
+    unsigned int framerate_num;     //!< Frame rate
+    unsigned int framerate_base;    //!< Frame rate base
 
-    // Audio specific parameters
+    // Audio specific metadatas
     unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int channel_count;     //!< Number of audio channels
 
-    // Subtitles specific parameters
-    char *subtitles_name;           //!< Subtitles name
-    unsigned int subtitles_encoding;//!< Encoding format
+    // Subtitles specific metadatas
+    char *subtitles_name;           //!< Subtitles name?
+    unsigned int subtitles_encoding;//!< Text encoding
 
     // Samples infos
-    bool sample_alignment;          //!< Is every sample begining on an elementary stream / a nal header?
-    uint32_t sample_count;          //!< The total number of samples in the track
+    bool sample_alignment;          //!< Is every sample begining on an elementary stream / a NAL Header?
+    uint32_t sample_count;          //!< The total number of samples in this track
     uint32_t sample_count_idr;      //!< The total number of IDR samples in the (video) track, providing random access points within the stream
 
     // Samples arrays
@@ -79,10 +90,7 @@ typedef struct BitstreamMap_t
     int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds)
     int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds)
 
-    // Stats
-    unsigned int stream_size;
-
 } BitstreamMap_t;
 
 /* ************************************************************************** */
-#endif /* BITSTREAM_MAP_STRUCT_H */
+#endif // BITSTREAM_MAP_STRUCT_H
