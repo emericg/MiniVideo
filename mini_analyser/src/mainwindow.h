@@ -26,6 +26,9 @@
 // minivideo library
 #include <minivideo.h>
 
+// minianalyser
+#include "fourcchelper.h"
+
 #include <QMainWindow>
 #include <vector>
 
@@ -53,21 +56,39 @@ protected:
     void dragEnterEvent(QDragEnterEvent *ev);
 
 private slots:
-    int printDatas(int fileIndex);
+    int printDatas();
     int loadFile(const QString &file);
     void closeFile();
     void hideStatus();
+    void openFourCC();
 
 private:
     Ui::MainWindow *ui;
-
+    FourccHelper *fcc;
     QTimer *statusTimer;
 
     bool emptyFileList;
     std::vector <VideoFile_t *> videosList;
 
+    QString tabDropZoneText;
+    QIcon tabDropZoneIcon;
+    QString tabInfosText;
+    QIcon tabInfosIcon;
+    QString tabVideoText;
+    QIcon tabVideoIcon;
+    QString tabAudioText;
+    QIcon tabAudioIcon;
+    QString tabSubsText;
+    QIcon tabSubsIcon;
+    QString tabOtherText;
+    QIcon tabOtherIcon;
+
+    VideoFile_t *currentMediaFile();
+    int analyseFile(const QString &file);
+
+    void handleComboBox(const QString &file);
+    void handleTabWidget();
     void setStatus(const QString &text, int type, int duration = 0);
-    int getDatas(const QString &file);
     void cleanDatas();
 };
 

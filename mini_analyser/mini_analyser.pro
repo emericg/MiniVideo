@@ -16,12 +16,18 @@ DESTDIR      = build/
 # mini_analyser files
 SOURCES     += src/main.cpp \
                src/mainwindow.cpp \
-               src/utils.cpp
+               src/utils.cpp \
+               src/fourcchelper.cpp
+
 HEADERS     += src/main.h \
                src/mainwindow.h \
-               src/utils.h
+               src/utils.h \
+               src/fourcchelper.h
+
+FORMS       += ui/mainwindow.ui \
+               ui/fourcchelper.ui
+
 RESOURCES   += resources/resources.qrc
-FORMS       += ui/mainwindow.ui
 
 # minivideo library
 INCLUDEPATH += ../minivideo/src

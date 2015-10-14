@@ -45,8 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->statusLabel->hide();
 
+    fcc = NULL;
+
     emptyFileList = true;
-    ui->tabWidget->setDisabled(true);
 
     statusTimer = new QTimer;
     connect(statusTimer, SIGNAL(timeout()), this, SLOT(hideStatus()));
@@ -55,20 +56,41 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
+    connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourCC()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
 
-    connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas(int)));
+    connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas()));
+
+    // Save tabs titles and icons
+    tabDropZoneText = ui->tabWidget->tabText(0);
+    tabDropZoneIcon = ui->tabWidget->tabIcon(0);
+    tabInfosText = ui->tabWidget->tabText(1);
+    tabInfosIcon = ui->tabWidget->tabIcon(1);
+    tabAudioText = ui->tabWidget->tabText(2);
+    tabAudioIcon = ui->tabWidget->tabIcon(2);
+    tabVideoText = ui->tabWidget->tabText(3);
+    tabVideoIcon = ui->tabWidget->tabIcon(3);
+    tabSubsText = ui->tabWidget->tabText(4);
+    tabSubsIcon = ui->tabWidget->tabIcon(4);
+    tabOtherText = ui->tabWidget->tabText(5);
+    tabOtherIcon = ui->tabWidget->tabIcon(5);
+
+    // "Drop zone" is the default tab when starting up
+    handleTabWidget();
 
     // Accept video files "drag & drop"
     setAcceptDrops(true);
 
-    // Debug helper only
-    const QString file;
-    loadFile(file);
+    // Auto-load a media file? (debug feature)
+    //const QString file = "";
+    //loadFile(file);
 }
 
 MainWindow::~MainWindow()
 {
+    fcc->hide();
+    delete fcc;
+
     delete ui;
 }
 
@@ -80,6 +102,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
     if (e->mimeData()->hasUrls())
     {
         // TODO Filter by MimeType or file extension
+        // Use QMimeDatabase // Qt 5.5
+
         e->acceptProposedAction();
     }
 }
@@ -113,37 +137,128 @@ int MainWindow::loadFile(const QString &file)
 
     if (file.isEmpty() == false)
     {
-        setStatus("Working...", 1, 0);
+        setStatus("Working...", SUCCESS, 0);
 
-        retcode = getDatas(file);
+        retcode = analyseFile(file);
 
         if (retcode == 1)
         {
-            if (emptyFileList) // was (videosList.empty() == true)
-            {
-                ui->file_comboBox->removeItem(0);
-                emptyFileList = false;
-                ui->tabWidget->setEnabled(true);
-            }
-
-            ui->file_comboBox->addItem(file);
-            ui->file_comboBox->setCurrentIndex(ui->file_comboBox->count() - 1);
-            printDatas(ui->file_comboBox->currentIndex());
-
+            handleComboBox(file);
+            printDatas();
             hideStatus();
         }
         else
         {
-            setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", 0, 5000);
+            setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
         }
     }
 
     return retcode;
 }
 
-void MainWindow::setStatus(const QString &text, int type, int duration)
+/* ************************************************************************** */
+
+VideoFile_t *MainWindow::currentMediaFile()
 {
-    if (type == FAILURE)
+    VideoFile_t *media = NULL;
+
+    size_t fileIndex = ui->file_comboBox->currentIndex();
+
+
+    if (videosList.size() == 1)
+    {
+        media = videosList.at(0);
+    }
+    else if (fileIndex < videosList.size())
+    {
+        media = videosList.at(fileIndex);
+    }
+
+    return media;
+}
+
+void MainWindow::handleComboBox(const QString &file)
+{
+    // Is this the first file added?
+    if (emptyFileList)
+    {
+        if (videosList.empty() == true)
+        {
+            ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"), "Drag and drop files to analyse them!");
+        }
+        else
+        {
+            ui->file_comboBox->removeItem(0);
+            emptyFileList = false;
+        }
+    }
+
+    if (file.isEmpty() == false)
+    {
+        ui->file_comboBox->addItem(file);
+        ui->file_comboBox->setCurrentIndex(ui->file_comboBox->count() - 1);
+
+        //QIcon(":/icons/icons/audio-x-wav.svg")
+        //QIcon(":/icons/icons/video-x-generic.svg")
+    }
+}
+
+void MainWindow::handleTabWidget()
+{
+    ui->tabWidget->setEnabled(true);
+
+    // Clean up all tabs
+    while(ui->tabWidget->count() > 0)
+    {
+        ui->tabWidget->removeTab(0);
+    }
+
+    // Clean tabs
+    if (videosList.empty())
+    {
+        // Add only the "drop zone" tab
+        ui->tabWidget->addTab(ui->tab_dropzone, tabDropZoneIcon, tabDropZoneText);
+        ui->tabWidget->tabBar()->hide();
+        ui->tabWidget->setCurrentIndex(0);
+    }
+    else // Otherwise, adapt tabs to media file content
+    {
+        VideoFile_t *video = currentMediaFile();
+
+        ui->tabWidget->tabBar()->show();
+        ui->tabWidget->addTab(ui->tab_infos, tabInfosIcon, tabInfosText);
+
+        if (video->tracks_video_count)
+        {
+            // Add the "video" tab
+            ui->tabWidget->addTab(ui->tab_video, tabVideoIcon, tabVideoText);
+        }
+
+        if (video->tracks_audio_count)
+        {
+            // Add the "audio" tab
+            ui->tabWidget->addTab(ui->tab_audio, tabAudioIcon, tabAudioText);
+        }
+
+        if (video->tracks_subtitles_count)
+        {
+            // Add the "subtitles" tab
+            ui->tabWidget->addTab(ui->tab_subtitles, tabSubsIcon, tabSubsText);
+        }
+
+        if (video->tracks_others)
+        {
+            // Add the "others" tab
+            ui->tabWidget->addTab(ui->tab_others, tabOtherIcon, tabOtherText);
+        }
+    }
+}
+
+/* ************************************************************************** */
+
+void MainWindow::setStatus(const QString &text, int status, int duration)
+{
+    if (status == FAILURE)
     {
         ui->statusLabel->setStyleSheet("QLabel { border: 1px solid rgb(255, 53, 3);\nbackground: rgba(255, 170, 0, 128); }");
     }
@@ -154,7 +269,7 @@ void MainWindow::setStatus(const QString &text, int type, int duration)
 
     if (duration > 0)
     {
-        statusTimer->setInterval(5000);
+        statusTimer->setInterval(7500);
         statusTimer->start();
     }
 
@@ -172,7 +287,7 @@ void MainWindow::hideStatus()
 
 void MainWindow::closeFile()
 {
-    // First clean interface
+    // First clean the interface
     cleanDatas();
 
     // Then try to close the file's context
@@ -193,13 +308,17 @@ void MainWindow::closeFile()
             }
             else // No more file opened?
             {
-                ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"), "Drag and drop files to analyse them!");
-                ui->tabWidget->setEnabled(false);
                 emptyFileList = true;
+                QString empty;
+
+                handleTabWidget();
+                handleComboBox(empty);
             }
         }
     }
 }
+
+/* ************************************************************************** */
 
 void MainWindow::About()
 {
@@ -222,7 +341,7 @@ void MainWindow::AboutQt()
 
 /* ************************************************************************** */
 
-int MainWindow::getDatas(const QString &file)
+int MainWindow::analyseFile(const QString &file)
 {
     int retcode = FAILURE;
     char input_filepath[4096];
@@ -257,27 +376,29 @@ int MainWindow::getDatas(const QString &file)
     return retcode;
 }
 
-int MainWindow::printDatas(int fileIndex)
+int MainWindow::printDatas()
 {
     int retcode = 0;
 
-    if ((int)(videosList.size()) >= (fileIndex+1))
+    handleTabWidget();
+
+    VideoFile_t *media = currentMediaFile();
+
+    if (media)
     {
-        VideoFile_t *video = videosList.at(fileIndex);
+        ui->label_filename->setText(QString::fromLocal8Bit(media->file_name));
+        ui->label_fullpath->setText(QString::fromLocal8Bit(media->file_path));
+        ui->label_container->setText(getContainerString(media->container, 1));
+        ui->label_container_extension->setText(QString::fromLocal8Bit(media->file_extension));
+        ui->label_filesize->setText(getSizeString(media->file_size));
+        ui->label_duration->setText(getDurationString(media->duration));
 
-        ui->label_filename->setText(QString::fromLocal8Bit(video->file_name));
-        ui->label_fullpath->setText(QString::fromLocal8Bit(video->file_path));
-        ui->label_container->setText(getContainerString(video->container, 1));
-        ui->label_container_extension->setText(QString::fromLocal8Bit(video->file_extension));
-        ui->label_filesize->setText(getSizeString(video->file_size));
-        ui->label_duration->setText(getDurationString(video->duration));
-
-        if (video->container == CONTAINER_MP4)
+        if (media->container == CONTAINER_MP4)
         {
             QDate date(1904, 1, 1);
             QTime time(0, 0, 0, 0);
             QDateTime datetime(date, time);
-            datetime = datetime.addSecs(video->creation_time);
+            datetime = datetime.addSecs(media->creation_time);
             ui->label_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
         }
 
@@ -285,20 +406,20 @@ int MainWindow::printDatas(int fileIndex)
         ////////////////////////////////////////////////////////////////////////
 
         int atid = 0;
-        if (video->tracks_audio[atid] != NULL)
+        if (media->tracks_audio[atid] != NULL)
         {
             ui->label_audio_id->setText("0"); // stream id
-            ui->label_audio_size->setText(getTrackSizeString(video->tracks_audio[atid], video->file_size));
-            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, video->tracks_audio[atid]->stream_codec));
+            ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
+            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec));
 
-            ui->label_audio_duration->setText(getDurationString(video->tracks_audio[atid]->duration));
+            ui->label_audio_duration->setText(getDurationString(media->tracks_audio[atid]->duration));
 
-            double bitrate = video->tracks_audio[atid]->bitrate;
+            double bitrate = media->tracks_audio[atid]->bitrate;
             if (bitrate < 0.1)
             {
-                for (int i = 0; i < video->tracks_audio[atid]->sample_count; i++)
-                    bitrate += video->tracks_audio[atid]->sample_size[i];
-                bitrate /= video->tracks_audio[atid]->duration / 1000.0;
+                for (unsigned i = 0; i < media->tracks_audio[atid]->sample_count; i++)
+                    bitrate += media->tracks_audio[atid]->sample_size[i];
+                bitrate /= media->tracks_audio[atid]->duration / 1000.0;
             }
             bitrate /= 1024.0;
             bitrate *= 8.0;
@@ -306,55 +427,55 @@ int MainWindow::printDatas(int fileIndex)
             ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " KB/s");
             //ui->label_audio_bitrate_mode->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
 
-            ui->label_audio_samplingrate->setText(QString::number(video->tracks_audio[atid]->sampling_rate));
-            ui->label_audio_channels->setText(QString::number(video->tracks_audio[atid]->channel_count));
+            ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate));
+            ui->label_audio_channels->setText(QString::number(media->tracks_audio[atid]->channel_count));
         }
 
         // VIDEO
         ////////////////////////////////////////////////////////////////////////
 
         int vtid = 0;
-        if (video->tracks_video[vtid] != NULL)
+        if (media->tracks_video[vtid] != NULL)
         {
             ui->label_video_id->setText("0"); // stream id
-            ui->label_video_size->setText(getTrackSizeString(video->tracks_video[vtid], video->file_size));
-            ui->label_video_codec->setText(getCodecString(stream_VIDEO, video->tracks_video[vtid]->stream_codec));
+            ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
+            ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec));
 
-            ui->label_video_duration->setText(getDurationString(video->tracks_video[vtid]->duration));
+            ui->label_video_duration->setText(getDurationString(media->tracks_video[vtid]->duration));
 
-            double bitrate = video->tracks_video[vtid]->bitrate;
+            double bitrate = media->tracks_video[vtid]->bitrate;
             if (bitrate < 0.1)
             {
-                for (int i = 0; i < video->tracks_video[vtid]->sample_count; i++)
-                    bitrate += video->tracks_video[vtid]->sample_size[i];
-                bitrate /= video->tracks_video[vtid]->duration / 1000.0;
+                for (unsigned i = 0; i < media->tracks_video[vtid]->sample_count; i++)
+                    bitrate += media->tracks_video[vtid]->sample_size[i];
+                bitrate /= media->tracks_video[vtid]->duration / 1000.0;
             }
             bitrate /= 1024.0;
 
             ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
             //ui->label_video_bitrate_mode->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
-            ui->label_video_definition->setText(QString::number(video->tracks_video[vtid]->width) + " x " + QString::number(video->tracks_video[vtid]->height));
-            ui->label_video_var->setText(getAspectRatioString(video->tracks_video[vtid]->width, video->tracks_video[vtid]->height));
+            ui->label_video_definition->setText(QString::number(media->tracks_video[vtid]->width) + " x " + QString::number(media->tracks_video[vtid]->height));
+            ui->label_video_var->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
 
-            double framerate = video->tracks_video[vtid]->frame_rate;
+            double framerate = media->tracks_video[vtid]->frame_rate;
             if (framerate < 0.1)
             {
-                if (video->tracks_video[vtid]->duration && video->tracks_video[vtid]->sample_count)
+                if (media->tracks_video[vtid]->duration && media->tracks_video[vtid]->sample_count)
                 {
-                    framerate = static_cast<double>(video->tracks_video[vtid]->sample_count / (static_cast<double>(video->tracks_video[vtid]->duration) / 1000.0));
+                    framerate = static_cast<double>(media->tracks_video[vtid]->sample_count / (static_cast<double>(media->tracks_video[vtid]->duration) / 1000.0));
                 }
             }
 
             ui->label_video_framerate->setText(QString::number(framerate));
-            ui->label_video_color_depth->setText(QString::number(video->tracks_video[vtid]->color_depth));
-            ui->label_video_color_subsampling->setText(QString::number(video->tracks_video[vtid]->color_subsampling));
+            ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth));
+            ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
         }
 
         // SUBS
         ////////////////////////////////////////////////////////////////////////
 
         int stid = 0;
-        if (video->tracks_subtitles[stid] != NULL)
+        if (media->tracks_subtitles[stid] != NULL)
         {
             // TODO ?
         }
@@ -372,5 +493,17 @@ void MainWindow::cleanDatas()
     //
 }
 
-/* ************************************************************************** */
+void MainWindow::openFourCC()
+{
+    if (fcc)
+    {
+        fcc->show();
+    }
+    else
+    {
+        fcc = new FourccHelper();
+        fcc->show();
+    }
+}
 
+/* ************************************************************************** */
