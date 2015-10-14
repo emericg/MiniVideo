@@ -12,6 +12,7 @@ MiniVideo*
 *.pro.user
 
 # CMake temporary files
+CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
 Makefile
