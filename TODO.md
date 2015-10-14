@@ -15,7 +15,8 @@ TODO test softwares
 - error when an invalid path is passed as argument with the -o option
 - add a non-regression test suit
 - add a performance test suit
-- a "mini_analyser" with container and video stream infos would be awesome
+- a "micro_analyser" with container and track infos (DONE as mini_analyser)
+- a "mini_analyser" with container, track infos and video frame analysis would be very awesome
 - a "mini_player" would definitely be an interesting thing to do
 
 TODO video library
@@ -31,7 +32,7 @@ TODO video library
 // Bitstream
 - behavior regarding unexpected end_of_file (currently it only trigger exit(EXIT_FAILURE))
 - rename goto_offset_bitstream()
-- memory alignment for embedded platform
+- better aligned memory reads for embedded platform
 
 // Containers
 - AVI

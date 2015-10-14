@@ -9,7 +9,7 @@ MiniVideo is a small **video decoding library developed from scratch** in C, bun
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The build system uses CMake. Both library and test programs can be installed into your system.  
 
-MiniVideo has been developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (decoding backend) and GPLv3 (testing softwares).  
+MiniVideo has been developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
@@ -20,14 +20,18 @@ The minivideo library can:
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
-### Supported container formats (import module)
+### Supported container formats (import modules)
 - H.264 "elementary stream" ("Annex B" format) [.264]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
 - MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]
 - AVI [.avi]
 
-### Supported picture formats (export module)
+### Supported container formats (export modules)
+- Elementary Streams
+- MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
+
+### Supported picture formats (output modules)
 - jpeg (only if external libjpeg support is available)
 - png (external libpng support available)
 - bmp
