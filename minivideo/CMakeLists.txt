@@ -112,6 +112,7 @@ SET(minivideo_SRC
         src/demuxer/avi/avi.c src/demuxer/avi/avi_struct.h
         src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h
         src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
+        src/demuxer/wav/wav.c src/demuxer/wav/wav_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
     src/decoder/h264/h264.c
