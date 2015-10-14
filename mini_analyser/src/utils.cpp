@@ -131,7 +131,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, int64_t file_size)
             }
 
             // Percentage
-            int64_t sizepercent = ((double)size_int / (double)file_size) * 100.0;
+            double sizepercent = ((double)size_int / (double)file_size) * 100.0;
             size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
     }
