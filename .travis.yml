@@ -1,0 +1,15 @@
+language: c
+
+compiler:
+  - clang
+  - gcc
+
+os:
+  - linux
+  - osx
+
+before_script:
+  - cd minivideo/build
+  - cmake ..
+
+script: make
