@@ -1,0 +1,6 @@
+
+// suppress all "*** is never used" warnings
+unusedFunction
+unreadVariable
+
+// add your rules here!
