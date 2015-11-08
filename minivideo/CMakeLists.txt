@@ -6,82 +6,108 @@ project(minivideo)
 cmake_minimum_required(VERSION 2.6)
 
 # Check for valid operating system
-IF(UNIX)
-    MESSAGE(STATUS "* UNIX operating system found")
-ELSE(UNIX)
-    MESSAGE(WARNING "* This is an UNIX shared library, non UNIX system are not (yet?) supported!")
-ENDIF(UNIX)
+if(UNIX)
+    message(STATUS "* UNIX operating system")
+else()
+    message(WARNING "* This is an UNIX shared library, non UNIX system are not (yet?) supported!")
+endif()
 
 
 # Pass various options to minivideo source code
 ###############################################################################
 
-SET(minivideo_VERSION_MAJOR 5)
-SET(minivideo_VERSION_MINOR 1)
-SET(minivideo_VERSION_PATCH 0)
+set(minivideo_VERSION_MAJOR 5)
+set(minivideo_VERSION_MINOR 1)
+set(minivideo_VERSION_PATCH 0)
 
-SET(ENABLE_COLORS 1) # "Toggle colored terminal output"
-SET(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
-SET(ENABLE_STDBOOL 1) # "Toggle C99 <stdbool.h> usage"
+set(ENABLE_COLORS 1) # "Toggle colored terminal output"
+set(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
+set(ENABLE_STDBOOL 1) # "Toggle C99 <stdbool.h> usage"
 
-SET(ENABLE_JPEG 1) # "Toggle external libjpeg support"
-SET(ENABLE_PNG 1) # "Toggle external libpng support"
-SET(ENABLE_STBIMWRITE 1) # "Toggle internal stb_image_write library for bmp/png/tga support"
+set(ENABLE_JPEG 1) # "Toggle external libjpeg support"
+set(ENABLE_PNG 1) # "Toggle external libpng support"
+set(ENABLE_STBIMWRITE 1) # "Toggle internal stb_image_write library for bmp/png/tga support"
+
+
+# Dependencies
+###############################################################################
 
 # libjpeg module
-IF(ENABLE_JPEG)
-    FIND_PACKAGE(JPEG) # FindJPEG.cmake
+if(ENABLE_JPEG)
+    find_package(JPEG) # FindJPEG.cmake
 
-    IF(JPEG_FOUND)
-        MESSAGE(STATUS "* libjpeg found")
-    ELSE(JPEG_FOUND)
-        MESSAGE(WARNING "> libjpeg not found! Disabling JPEG support.")
-        SET(ENABLE_JPEG 0)
-    ENDIF(JPEG_FOUND)
-ENDIF(ENABLE_JPEG)
+    if(JPEG_FOUND)
+        message(STATUS "* libjpeg enabled")
+    else()
+        message(WARNING "> libjpeg not found! Disabling JPEG support.")
+        set(ENABLE_JPEG 0)
+    endif()
+endif()
 
 # libpng module
-IF(ENABLE_PNG)
-    FIND_PACKAGE(PNG) # FindPNG.cmake
+if(ENABLE_PNG)
+    find_package(PNG) # FindPNG.cmake
 
-    IF(PNG_FOUND)
-        MESSAGE(STATUS "* libpng found")
-    ELSE(PNG_FOUND)
-        MESSAGE(WARNING "> libpng not found! Disabling external PNG support. 'stb_image_write' library will still provide PNG export.")
-        SET(ENABLE_PNG 0)
-    ENDIF(PNG_FOUND)
-ENDIF(ENABLE_PNG)
+    if(PNG_FOUND)
+        message(STATUS "* libpng enabled")
+    else()
+        message(WARNING "> libpng not found! Disabling external PNG support. 'stb_image_write' library will still provide PNG export.")
+        set(ENABLE_PNG 0)
+    endif()
+endif()
 
 # Doxygen module
-FIND_PACKAGE(Doxygen) # FindDoxygen.cmake
+find_package(Doxygen) # FindDoxygen.cmake
 
-IF(DOXYGEN_FOUND)
-    MESSAGE(STATUS "* Doxygen found")
-ELSE(DOXYGEN_FOUND)
-    MESSAGE(WARNING " > Doxygen not found")
-ENDIF(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND)
+    message(STATUS "* Doxygen found, you can use it to generate a nice API documentation")
+endif(DOXYGEN_FOUND)
 
-# Detect build type. You can change it using "-DCMAKE_BUILD_TYPE="
-IF(CMAKE_BUILD_TYPE STREQUAL "Release")
+# C numerics library for Unix systems
+if(UNIX)
+    set(CMAKE_SHARED_LINKER_FLAGS "-lm")
+endif(UNIX)
 
-    MESSAGE(STATUS "* This is a RELEASE build. You can change it using -DCMAKE_BUILD_TYPE=Debug.")
-    SET(ENABLE_DEBUG 0)
-    SET(CMAKE_BUILD_TYPE release)
-    # Custom cflags? Use "release mode" and "-O2" for maximum speed.
-    SET(CMAKE_C_FLAGS "-O2 -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wno-unused")
 
-ELSE(CMAKE_BUILD_TYPE STREQUAL "Release")
+# Build options
+###############################################################################
 
-    MESSAGE("!! * This is a DEBUG build. You can change it using -DCMAKE_BUILD_TYPE=Release.")
-    SET(ENABLE_DEBUG 1)
-    SET(CMAKE_BUILD_TYPE debug)
+if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
+    message(STATUS "* Building with Clang compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    message(STATUS "* Building with GCC compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+    message(STATUS "* Building with Intel C compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    message(STATUS "* Building with Visual Studio C compiler")
+endif()
+
+# Generic build flags
+set(CMAKE_C_FLAGS "-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall")
+
+# Detect build type (default is release).
+# You can change this using "-DCMAKE_BUILD_TYPE=Debug/Release/RelWithDebInfo/MinSizeRel"
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+    message(WARNING" * This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release.")
+    set(ENABLE_DEBUG 1)
     # Custom cflags? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
-    SET(CMAKE_C_FLAGS "-O0 -g -lm -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Wshadow -Wno-sign-compare -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+    set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
 
-ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
+else()
+
+    message(STATUS "* This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug.")
+    set(ENABLE_DEBUG 0)
+    # Custom cflags? Use "release mode" and "-O2" for maximum speed.
+    set(CMAKE_C_FLAGS_RELEASE "-O2 -Wno-unused -Wno-sign-compare")
+
+endif()
+
 
 # Save options into a "cmake_defines.h" file, using "cmake_defines.h.in" template
-CONFIGURE_FILE(
+###############################################################################
+
+configure_file(
     "${CMAKE_SOURCE_DIR}/src/cmake_defines.h.in"
     "${CMAKE_SOURCE_DIR}/src/cmake_defines.h"
 )
@@ -90,7 +116,7 @@ CONFIGURE_FILE(
 # Source files
 ###############################################################################
 
-SET(minivideo_SRC
+set(minivideo_SRC
     src/minivideo.c
         src/cmake_defines.h
         src/typedef.h
@@ -141,23 +167,26 @@ SET(minivideo_SRC
 ###############################################################################
 
 # Third party libraries
-INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
+include_directories(${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
 # Build library
-ADD_LIBRARY(minivideo_shared SHARED ${minivideo_SRC})
-TARGET_LINK_LIBRARIES(minivideo_shared ${JPEG_LIBRARY} ${PNG_LIBRARY})
-SET_TARGET_PROPERTIES(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
+add_library(minivideo_shared SHARED ${minivideo_SRC})
+target_link_libraries(minivideo_shared ${JPEG_LIBRARY} ${PNG_LIBRARY})
+set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
 
-IF(CMAKE_BUILD_MODE STREQUAL "Static")
-    MESSAGE("** Static library will be built")
-    ADD_LIBRARY(minivideo_static STATIC ${minivideo_SRC})
-    TARGET_LINK_LIBRARIES(minivideo_static ${JPEG_LIBRARY} ${PNG_LIBRARY})
-    SET_TARGET_PROPERTIES(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
-ENDIF(CMAKE_BUILD_MODE STREQUAL "Static")
+if(CMAKE_BUILD_MODE STREQUAL "Static")
+    message("** Static library will be built")
+    add_library(minivideo_static STATIC ${minivideo_SRC})
+    target_link_libraries(minivideo_static ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
+endif(CMAKE_BUILD_MODE STREQUAL "Static")
 
 
 # Install the shared library and its header into the system (optional step, requires root credentials)
+# Relative to $<INSTALL_PREFIX>
 ###############################################################################
 
-INSTALL(TARGETS minivideo_shared DESTINATION lib)
-INSTALL(FILES src/minivideo.h DESTINATION include)
+if(UNIX)
+    install(TARGETS minivideo_shared DESTINATION lib/)
+    install(FILES src/minivideo.h DESTINATION include/)
+endif()
