@@ -1,6 +1,7 @@
 MiniVideo
 =========
 
+[![Build Status](https://travis-ci.org/emericg/MiniVideo.svg?branch=master)](https://travis-ci.org/emericg/MiniVideo)
 
 Introduction
 ------------
@@ -13,7 +14,7 @@ MiniVideo has been developed in 2010/2011 during an internship I did in a French
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
-* Open H.264 video stream and decode them to export intra-coded pictures.
+* Open H.264 compressed videos and decode them to export intra-coded pictures.
 * Extract various metadatas from container and elementary stream.
 
 ### Supported video codec (decoding)
