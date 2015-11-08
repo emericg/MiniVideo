@@ -170,12 +170,13 @@ set(minivideo_SRC
 include_directories(${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
 # Build library
+message("** Building shared library")
 add_library(minivideo_shared SHARED ${minivideo_SRC})
 target_link_libraries(minivideo_shared ${JPEG_LIBRARY} ${PNG_LIBRARY})
 set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
 
 if(CMAKE_BUILD_MODE STREQUAL "Static")
-    message("** Static library will be built")
+    message("** Building static library")
     add_library(minivideo_static STATIC ${minivideo_SRC})
     target_link_libraries(minivideo_static ${JPEG_LIBRARY} ${PNG_LIBRARY})
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
