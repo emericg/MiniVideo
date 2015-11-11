@@ -23,6 +23,7 @@
 #define FOURCCHELPER_H
 
 #include <QDialog>
+#include <QButtonGroup>
 
 namespace Ui {
 class FourccHelper;
@@ -37,8 +38,20 @@ public:
     ~FourccHelper();
 
 private slots:
+    void endiannessInfo();
+    void endiannessSwitch();
+
+    void asciiCopy();
+    void hexCopy();
+    void decCopy();
+    void int32Copy();
+    void binCopy();
+
     void asciiEdited();
     void hexEdited();
+    void decEdited();
+    void int32Edited();
+    void binEdited();
 
 private:
     Ui::FourccHelper *ui;

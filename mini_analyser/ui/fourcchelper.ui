@@ -18,7 +18,7 @@
     <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_4">
@@ -54,7 +54,13 @@
         </font>
        </property>
        <property name="inputMask">
-        <string>NNNN</string>
+        <string/>
+       </property>
+       <property name="maxLength">
+        <number>4</number>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -67,7 +73,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Copy this string to your clipboard...</string>
+        <string>Copy this string to clipboard</string>
        </property>
        <property name="text">
         <string/>
@@ -78,8 +84,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -124,7 +130,10 @@
         </font>
        </property>
        <property name="inputMask">
-        <string>HH HH HH HH</string>
+        <string>HHHHHHHH</string>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -137,7 +146,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Copy this string to your clipboard...</string>
+        <string>Copy this string to clipboard</string>
        </property>
        <property name="text">
         <string/>
@@ -148,8 +157,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -179,6 +188,9 @@
      </item>
      <item row="2" column="1">
       <widget class="QLineEdit" name="lineEdit_dec">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -199,10 +211,13 @@
        <property name="inputMask">
         <string>99 99 99 99 99 99</string>
        </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QPushButton" name="pushButton_dec">
+      <widget class="QPushButton" name="pushButton_copy_dec">
        <property name="maximumSize">
         <size>
          <width>32</width>
@@ -210,7 +225,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Copy this string to your clipboard...</string>
+        <string>Copy this string to clipboard</string>
        </property>
        <property name="text">
         <string/>
@@ -221,8 +236,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -272,10 +287,13 @@
        <property name="maxLength">
         <number>10</number>
        </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="3" column="2">
-      <widget class="QPushButton" name="pushButton_int32">
+      <widget class="QPushButton" name="pushButton_copy_int32">
        <property name="maximumSize">
         <size>
          <width>32</width>
@@ -283,7 +301,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Copy this string to your clipboard...</string>
+        <string>Copy this string to clipboard</string>
        </property>
        <property name="text">
         <string/>
@@ -294,8 +312,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -322,6 +340,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QLineEdit" name="lineEdit_bin">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -345,10 +366,13 @@
        <property name="maxLength">
         <number>32</number>
        </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="4" column="2">
-      <widget class="QPushButton" name="pushButton_bin">
+      <widget class="QPushButton" name="pushButton_copy_bin">
        <property name="maximumSize">
         <size>
          <width>32</width>
@@ -356,7 +380,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Copy this string to your clipboard...</string>
+        <string>Copy this string to clipboard</string>
        </property>
        <property name="text">
         <string/>
@@ -367,8 +391,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>24</width>
+         <height>24</height>
         </size>
        </property>
        <property name="autoDefault">
@@ -381,7 +405,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_5">
      <property name="styleSheet">
       <string notr="true">background: rgb(234, 255, 161)</string>
@@ -391,8 +415,8 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="pushButtonExit">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="pushButton_exit">
      <property name="text">
       <string>Exit</string>
      </property>
@@ -406,7 +430,66 @@
        <height>24</height>
       </size>
      </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QRadioButton" name="radioButton_le">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Endian architectures includes &lt;span style=&quot; font-weight:600;&quot;&gt;Intel x86&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;x86_64&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Atmel AVR&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Z80&lt;/span&gt;, and historically &lt;span style=&quot; font-weight:600;&quot;&gt;ARM, DEC Alpha&lt;/span&gt;...&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Bi Endian architectures (like &lt;span style=&quot; font-weight:600;&quot;&gt;IBM POWER&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;ARM&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;MIPS&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;DEC Alpha&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;SPARK V9&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;IA-64&lt;/span&gt;) supports both endianness, depending on system configuration usually set during boot process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Little Endian</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_be">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Big Endian architectures includes &lt;span style=&quot; font-weight:600;&quot;&gt;Motorola 68000&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;SuperH&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;SPARC&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;S/390&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Atmel AVR32&lt;/span&gt;, and historically &lt;span style=&quot; font-weight:600;&quot;&gt;IBM POWER&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;SPARK&lt;/span&gt;...&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Bi Endian architectures (like &lt;span style=&quot; font-weight:600;&quot;&gt;IBM POWER&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;ARM&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;MIPS&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;DEC Alpha&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;SPARK V9&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;IA-64&lt;/span&gt;) supports both endianness, depending on system configuration usually set during boot process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Big Endian</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_endianness">
+       <property name="maximumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
