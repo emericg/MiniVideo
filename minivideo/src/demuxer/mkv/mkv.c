@@ -46,7 +46,7 @@ static int mkv_parse_info(Bitstream_t *bitstr)
     TRACE_1(MKV, "* info size   = %llu\n", elementSize);
     TRACE_1(MKV, "* info offset = %llu\n", elementOffset);
 
-    while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
+    while ((uint64_t)bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
     {
         switch (read_ebml_eid(bitstr))
         {

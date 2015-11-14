@@ -58,7 +58,7 @@ int ebml_parse_header(Bitstream_t *bitstr)
         headerSize = read_ebml_size(bitstr);
         headerOffset = bitstream_get_absolute_byte_offset(bitstr);
 
-        while (bitstream_get_absolute_byte_offset(bitstr) < (headerSize + headerOffset))
+        while ((uint64_t)bitstream_get_absolute_byte_offset(bitstr) < (headerSize + headerOffset))
         {
             //switch (read_ebml_eid(bitstr))
             switch (read_bits(bitstr, 16))

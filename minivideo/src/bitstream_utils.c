@@ -207,7 +207,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
     }
     else
     {
-        if (bitstr->bitstream_sample_index == bitstr->bitstream_map->sample_count)
+        if ((uint32_t)bitstr->bitstream_sample_index == bitstr->bitstream_map->sample_count)
         {
             if ((bitstr->buffer_size - bitstr->buffer_offset) < 8)
             {

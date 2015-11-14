@@ -349,7 +349,7 @@ unsigned char * stbi_zlib_compress(unsigned char *data, int data_len, int *out_l
       i=0;
       j=0;
       while (j < data_len) {
-         for (i=0; i < blocklen; ++i) s1 += data[j+i], s2 += s1;
+         for (i=0; (unsigned int)i < blocklen; ++i) s1 += data[j+i], s2 += s1;
          s1 %= 65521, s2 %= 65521;
          j += blocklen;
          blocklen = 5552;

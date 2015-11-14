@@ -72,7 +72,7 @@ typedef struct Bitstream_t
     FILE *bitstream_file;                //!< File pointer
 
     BitstreamMap_t *bitstream_map;       //!< Bitstream map of existing A/V samples inside the file
-    int32_t bitstream_sample_index;      //!< Id of the A/V sample currently in use
+    uint32_t bitstream_sample_index;      //!< Id of the A/V sample currently in use
 
     int64_t bitstream_size;              //!< Total bitstream size (in byte)
     int64_t bitstream_offset;            //!< Current offset into the bitstream (in byte)
