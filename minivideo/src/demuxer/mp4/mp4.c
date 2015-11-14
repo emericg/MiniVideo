@@ -32,6 +32,7 @@
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 /* ************************************************************************** */
@@ -2000,7 +2001,8 @@ int mp4_fileParse(VideoFile_t *video)
     {
         // Init an MP4 structure
         Mp4_t mp4;
-        mp4.tracks_count = 0;
+        memset(&mp4, 0, sizeof(Mp4_t));
+
         mp4.box_moov_end = video->file_size;
 
         while (retcode == SUCCESS &&
