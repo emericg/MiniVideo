@@ -67,17 +67,27 @@ typedef enum ContainerFormat_e
 {
     CONTAINER_UNKNOWN = 0,
 
-    CONTAINER_ES      = 1,  //!< Plain "Elementary Stream" format (not a container!)
-    CONTAINER_ASF     = 2,  //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv)
-    CONTAINER_AVI     = 3,  //!< AVI "Audio Video Interleave" (.avi)
-    CONTAINER_FLAC    = 4,  //!< FLAC (.flac)
-    CONTAINER_FLV     = 5,  //!< SWF "Small Web Format" (.flv)
-    CONTAINER_OGG     = 6,  //!< OGG (.ogg, .ogv, ...)
-    CONTAINER_MKV     = 7,  //!< Matroska (.mkv, .webm)
-    CONTAINER_MP3     = 8,  //!< MP3 "Elementary Stream" format (not a container!)
-    CONTAINER_MP4     = 9,  //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
-    CONTAINER_MPEG_PS = 10, //!< MPEG "Program Stream" (.mpg, .vob, ...)
-    CONTAINER_MPEG_TS = 11  //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
+    // General purpose containers
+    CONTAINER_AVI     =  1, //!< AVI "Audio Video Interleave" (.avi, ...)
+    CONTAINER_ASF     =  2, //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
+    CONTAINER_MKV     =  3, //!< Matroska (.mkv, .mka, .webm)
+    CONTAINER_MP4     =  4, //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
+    CONTAINER_MPEG_PS =  5, //!< MPEG "Program Stream" (.mpg, .vob, ...)
+    CONTAINER_MPEG_TS =  6, //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
+    CONTAINER_MXF     =  7, //!< MXF "Material eXchange Format" (.mxf)
+    CONTAINER_FLV     =  8, //!< SWF "Small Web Format" (.flv)
+    CONTAINER_OGG     =  9, //!< OGG (.ogg, .ogv, .oga, ...)
+    CONTAINER_RM      = 10, //!< RealMedia (.rm, .rmvb)
+
+    // Audio containers
+    CONTAINER_FLAC    = 12, //!< FLAC "Free Lossless Audio Codec" (.flac)
+    CONTAINER_WAVE    = 13, //!< WAVE "Waveform Audio File Format" (.wav)
+
+    // ES formats (not containers!)
+    CONTAINER_ES      = 16, //!< Undefined "Elementary Stream"
+    CONTAINER_ES_AAC  = 17, //!< AAC "Elementary Stream"
+    CONTAINER_ES_AC3  = 18, //!< AC3 "Elementary Stream"
+    CONTAINER_ES_MP3  = 19, //!< MP3 "Elementary Stream"
 
 } ContainerFormat_e;
 
@@ -87,9 +97,9 @@ typedef enum AVCodec_e
     CODEC_UNKNOWN     = 0,
 
     // Audio codecs
-    CODEC_LPCM        =  1, //!< Linear pulse-code modulation (not a codec) (PCM, LPCM)
-    CODEC_DPCM        =  2, //!< Linear pulse-code modulation (not a codec)
-    CODEC_ADPCM       =  3, //!< Linear pulse-code modulation (not a codec)
+    CODEC_LPCM        =  1, //!< Linear pulse-code modulation (not a codec)
+    CODEC_DPCM        =  2, //!< Differential pulse-code modulation (not a codec)
+    CODEC_ADPCM       =  3, //!< Adaptative differential pulse-code modulation (not a codec)
 
     CODEC_APE         =  8, //!< Monkey's Audio
     CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
@@ -153,9 +163,11 @@ typedef enum PictureFormat_e
     PICTURE_BMP       = 1,
     PICTURE_JPG       = 2,
     PICTURE_PNG       = 3,
-    PICTURE_TGA       = 4,
-    PICTURE_YUV444    = 5,  //!< Planar YCbCr file without subsampling
-    PICTURE_YUV420    = 6   //!< Planar YCbCr file with 4:2:0 subsampling
+    PICTURE_WEBP      = 4,
+    PICTURE_TGA       = 5,
+
+    PICTURE_YUV444    = 16,  //!< Planar YCbCr file without subsampling
+    PICTURE_YUV420    = 17   //!< Planar YCbCr file with 4:2:0 subsampling
 
 } PictureFormat_e;
 

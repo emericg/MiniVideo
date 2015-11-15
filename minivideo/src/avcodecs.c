@@ -31,17 +31,20 @@ const char *getContainerString(ContainerFormat_e container, int long_description
     {
         switch (container)
         {
-        case CONTAINER_ES:
-            return "Plain 'Elementary Stream' format (not a container!)";
+        case CONTAINER_AVI:
+            return "AVI 'Audio Video Interleave' (.avi, ...)";
             break;
         case CONTAINER_ASF:
-            return "ASF 'Advanced Systems Format' (.asf, .wma, .wmv)";
+            return "ASF 'Advanced Systems Format' (.asf, .wma, .wmv, ...)";
             break;
-        case CONTAINER_AVI:
-            return "AVI 'Audio Video Interleave' (.avi)";
+        case CONTAINER_MKV:
+            return "Matroska (.mkv, .mka, .webm)";
             break;
-        case CONTAINER_FLAC:
-            return "FLAC (.flac)";
+        case CONTAINER_MP4:
+            return "ISOM 'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
+            break;
+        case CONTAINER_MXF:
+            return "MXF 'Material eXchange Format' (.mxf)";
             break;
         case CONTAINER_FLV:
             return "SWF 'Small Web Format' (.flv)";
@@ -49,20 +52,34 @@ const char *getContainerString(ContainerFormat_e container, int long_description
         case CONTAINER_OGG:
             return "OGG (.ogg, .ogv, ...)";
             break;
-        case CONTAINER_MKV:
-            return "Matroska (.mkv, .webm)";
-            break;
-        case CONTAINER_MP3:
-            return "MP3 'Elementary Stream' format (not a container!)";
-            break;
-        case CONTAINER_MP4:
-            return "ISOM 'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
+        case CONTAINER_RM:
+            return "RealMedia (.rm, .rmvb)";
             break;
         case CONTAINER_MPEG_PS:
             return "MPEG 'Program Stream' (.mpg, .vob, ...)";
             break;
         case CONTAINER_MPEG_TS:
             return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
+            break;
+
+        case CONTAINER_FLAC:
+            return "FLAC 'Free Lossless Audio Codec' (.flac)";
+            break;
+        case CONTAINER_WAVE:
+            return "WAVE 'Waveform Audio File Format' (.wav)";
+            break;
+
+        case CONTAINER_ES:
+            return "Undefined 'Elementary Stream'";
+            break;
+        case CONTAINER_ES_AAC:
+            return "AAC 'Elementary Stream'";
+            break;
+        case CONTAINER_ES_AC3:
+            return "AC3 'Elementary Stream'";
+            break;
+        case CONTAINER_ES_MP3:
+            return "MP3 'Elementary Stream'";
             break;
 
         default:
@@ -75,17 +92,20 @@ const char *getContainerString(ContainerFormat_e container, int long_description
     {
         switch (container)
         {
-            case CONTAINER_ES:
-                return "ES";
+            case CONTAINER_AVI:
+                return "AVI";
                 break;
             case CONTAINER_ASF:
                 return "ASF";
                 break;
-            case CONTAINER_AVI:
-                return "AVI";
+            case CONTAINER_MP4:
+                return "MP4";
                 break;
-            case CONTAINER_FLAC:
-                return "FLAC";
+            case CONTAINER_MKV:
+                return "MKV";
+                break;
+            case CONTAINER_MXF:
+                return "MXF";
                 break;
             case CONTAINER_FLV:
                 return "FLV";
@@ -93,20 +113,34 @@ const char *getContainerString(ContainerFormat_e container, int long_description
             case CONTAINER_OGG:
                 return "OGG";
                 break;
-            case CONTAINER_MKV:
-                return "MKV";
-                break;
-            case CONTAINER_MP3:
-                return "MP3";
-                break;
-            case CONTAINER_MP4:
-                return "MP4";
+            case CONTAINER_RM:
+                return "RM";
                 break;
             case CONTAINER_MPEG_PS:
                 return "MPEG-PS";
                 break;
             case CONTAINER_MPEG_TS:
                 return "MPEG-TS";
+                break;
+
+            case CONTAINER_FLAC:
+                return "FLAC";
+                break;
+            case CONTAINER_WAVE:
+                return "WAVE";
+                break;
+
+            case CONTAINER_ES:
+                return "ES";
+                break;
+            case CONTAINER_ES_AAC:
+                return "AAC ES";
+                break;
+            case CONTAINER_ES_AC3:
+                return "AC3 ES";
+                break;
+            case CONTAINER_ES_MP3:
+                return "MP3 ES";
                 break;
 
             default:
@@ -214,17 +248,20 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "H.265 (MPEG-H HEVC)";
                 break;
 
-            case CODEC_VC1:
-                return "VC1 (Windows Media Video)";
+            case CODEC_WMV1:
+                return "WMV1";
                 break;
-            case CODEC_VC2:
-                return "VC2 (Dirac)";
+            case CODEC_WMV2:
+                return "WMV2";
                 break;
-            case CODEC_VC3:
-                return "VC3 (DNxHD)";
+            case CODEC_WMV3:
+                return "WMV3";
                 break;
-            case CODEC_VC5:
-                return "VC5 (CineForm)";
+            case CODEC_WMVA:
+                return "WMVA";
+                break;
+            case CODEC_WVC1:
+                return "WVC1";
                 break;
 
             case CODEC_VP4:
@@ -247,6 +284,19 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 break;
             case CODEC_VP10:
                 return "VP10";
+                break;
+
+            case CODEC_VC1:
+                return "VC-1 (Windows Media Video)";
+                break;
+            case CODEC_VC2:
+                return "VC-2 (Dirac)";
+                break;
+            case CODEC_VC3:
+                return "VC-3 (DNxHD)";
+                break;
+            case CODEC_VC5:
+                return "VC-5 (CineForm)";
                 break;
 
             case CODEC_DAALA:
@@ -298,6 +348,9 @@ const char *getPictureString(PictureFormat_e picture)
             break;
         case PICTURE_PNG:
             return "PNG";
+            break;
+        case PICTURE_WEBP:
+            return "WebP";
             break;
         case PICTURE_TGA:
             return "TGA";
