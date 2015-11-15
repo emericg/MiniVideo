@@ -39,7 +39,7 @@
 
 /*!
  * \brief Get various from a video filepath.
- * \param *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  *
  * Get absolute file path, file directory, file name and extension.
  * This function will only work with Unix-style file systems.
@@ -147,7 +147,7 @@ static void getInfosFromPath(VideoFile_t *video)
 
 /*!
  * \brief Get video file size.
- * \param *video: A pointer to a VideoFile_t structure containing various informations about the file.
+ * \param[in] *video: A pointer to a VideoFile_t structure containing various informations about the file.
  */
 static void getSize(VideoFile_t *video)
 {
@@ -174,34 +174,58 @@ static void getSize(VideoFile_t *video)
 /* ************************************************************************** */
 
 /*!
- * \brief Get video container.
- * \param *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \brief Detect the container used by a multimedia file.
+ * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \return container: A ContainerFormat_e value.
  *
- * This function check the first 8 bytes of a video file in order to find sign of
- * a known file container format.
+ * This function check the first 16 bytes of a video file in order to find
+ * evidence of a known file container format.
  */
-static void getContainer(VideoFile_t *video)
+static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
 {
-    TRACE_2(IO, "getContainer()\n");
+    TRACE_2(IO, "getContainerUsingStartcodes()\n");
 
     // Set container to unknown
-    video->container = CONTAINER_UNKNOWN;
+    ContainerFormat_e container = CONTAINER_UNKNOWN;
 
-    // Read the first 8 bytes of the file
+    // Read the first bytes of the file
     rewind(video->file_pointer);
-    uint8_t buffer[8];
+    uint8_t buffer[16];
     fread(buffer, sizeof(uint8_t), sizeof(buffer), video->file_pointer);
 
     // Parse the file to find evidence of a container format
     if (buffer[0] == 0x47)
     {
-        TRACE_1(IO, "* File type      : TS (MPEG Transport Stream) container detected\n");
-        video->container = CONTAINER_MPEG_TS;
+        TRACE_1(IO, "* File type      : TS (MPEG 'Transport Stream') container detected\n");
+        container = CONTAINER_MPEG_TS;
     }
     else if (buffer[0] == 0x1A && buffer[1] == 0x45 && buffer[2] == 0xDF && buffer[3] == 0xA3)
     {
         TRACE_1(IO, "* File type      : EBML file detected, possibly MKV or WebM container\n");
-        video->container = CONTAINER_MKV;
+        container = CONTAINER_MKV;
+    }
+    else if (buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46)
+    {
+        // RIFF header:
+        // 52 49 46 46 xx xx xx xx // R I F F (size)
+        // then:
+        // 41 56 49 20 4C 49 53 54 // A V I   L I S T
+        // 57 41 56 45 66 6D 74 20 // W A V E f m t
+
+        if (buffer[8] == 0x41 && buffer[9] == 0x56 && buffer[10] == 0x49 && buffer[11] == 0x20)
+        {
+            TRACE_1(IO, "* File type      : AVI container detected\n");
+            container = CONTAINER_AVI;
+        }
+        else if (buffer[8] == 0x57 && buffer[9] == 0x41 && buffer[10] == 0x56 && buffer[11] == 0x45)
+        {
+            TRACE_1(IO, "* File type      : WAVE container detected\n");
+            container = CONTAINER_WAVE;
+        }
+        else
+        {
+            TRACE_WARNING(IO, "* File type      : Unknown RIFF container detected\n");
+        }
     }
     else if (buffer[0] == 0x00 && buffer[1] == 0x00)
     {
@@ -209,19 +233,19 @@ static void getContainer(VideoFile_t *video)
         {
             if (buffer[3] == 0xBA)
             {
-                TRACE_1(IO, "* File type      : PS (MPEG Program Stream) container detected\n");
-                video->container = CONTAINER_MPEG_PS;
+                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected\n");
+                container = CONTAINER_MPEG_PS;
             }
             else if (buffer[3] == 0xB3)
             {
-                TRACE_1(IO, "* File type      : MPEG12 / H.262 Elementary Stream detected (video data without container)\n");
-                video->container = CONTAINER_ES;
+                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)\n");
+                container = CONTAINER_ES;
                 //video->codec_video = CODEC_MPEG12;
             }
             else if (buffer[3] == 0x67)
             {
-                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (video data without container)\n");
-                video->container = CONTAINER_ES;
+                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)\n");
+                container = CONTAINER_ES;
                 //video->codec_video = CODEC_H264;
             }
         }
@@ -229,54 +253,219 @@ static void getContainer(VideoFile_t *video)
         {
             if (buffer[4] == 0xBA)
             {
-                TRACE_1(IO, "* File type      : PS (MPEG Program Stream) container detected\n");
-                video->container = CONTAINER_MPEG_PS;
+                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected\n");
+                container = CONTAINER_MPEG_PS;
             }
             else if (buffer[4] == 0xB3)
             {
-                TRACE_1(IO, "* File type      : MPEG12 / H.262 Elementary Stream detected (video data without container)\n");
-                video->container = CONTAINER_ES;
+                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)\n");
+                container = CONTAINER_ES;
                 //video->codec_video = CODEC_MPEG12;
             }
             else if (buffer[4] == 0x67)
             {
-                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (video data without container)\n");
-                video->container = CONTAINER_ES;
+                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)\n");
+                container = CONTAINER_ES;
                 //video->codec_video = CODEC_H264;
             }
         }
 
         if (buffer[4] == 0x66 && buffer[5] == 0x74 && buffer[6] == 0x79 && buffer[7] == 0x70)
         {
-            TRACE_1(IO, "* File type      : MP4 container detected\n");
-            video->container = CONTAINER_MP4;
+            // MP4: 00 00 xx xx 66 74 79 70 // (size) f t y p
 
-            // Box size on 4 bytes (ignored), then
-            // Box type on 4 bytes = "ftyp"
+            TRACE_1(IO, "* File type      : MP4 container detected\n");
+            container = CONTAINER_MP4;
         }
+    }
+    else if (buffer[0] == 0x06 && buffer[1] == 0x0E && buffer[2] == 0x2B && buffer[3] == 0x34)
+    {
+        TRACE_1(IO, "* File type      : MXF container detected\n");
+        container = CONTAINER_MXF;
     }
     else if (buffer[0] == 0x46 && buffer[1] == 0x4C && buffer[2] == 0x56 && buffer[3] == 0x01)
     {
         TRACE_1(IO, "* File type      : FLV container detected\n");
-        //video->container = CONTAINER_FLV;
+        container = CONTAINER_FLV;
     }
     else if (buffer[0] == 0x4F && buffer[1] == 0x67 && buffer[2] == 0x67 && buffer[3] == 0x53)
     {
         TRACE_1(IO, "* File type      : OGG container detected\n");
-        //video->container = CONTAINER_OGG;
+        container = CONTAINER_OGG;
     }
-    else if (buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46)
+    else if (buffer[0] == 0xFF && buffer[1] == 0xFB)
     {
-        TRACE_1(IO, "* File type      : AVI container detected\n");
-        video->container = CONTAINER_AVI;
-
-        // AVI: 52 49 46 46 xx xx xx xx
-        //      41 56 49 20 4C 49 53 54
+        TRACE_1(IO, "* File type      : MP3 container detected\n");
+        container = CONTAINER_ES_MP3;
     }
+
+    return container;
+}
+
+/*!
+ * \brief Detect the container used by a multimedia file.
+ * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \return container: A ContainerFormat_e value.
+ *
+ * This function check the file extension to guess the container. As this method
+ * is *definitely* not reliable (file extensions are set by users, and users
+ * make mistakes) this code is here mostly for fun. And to list extensions for
+ * whoever is interested.
+ */
+static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
+{
+    TRACE_2(IO, "getContainerUsingExtension()\n");
+
+    // Set container to unknown
+    ContainerFormat_e container = CONTAINER_UNKNOWN;
+
+    if (strlen(video->file_extension) > 0 && strlen(video->file_extension) < 255)
+    {
+        if (strncmp(video->file_extension, "avi", 255) == 0 ||
+            strncmp(video->file_extension, "divx", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : AVI container detected\n");
+            container = CONTAINER_AVI;
+        }
+        else if (strncmp(video->file_extension, "mkv", 255) == 0 ||
+                 strncmp(video->file_extension, "mka", 255) == 0 ||
+                 strncmp(video->file_extension, "mk3d", 255) == 0 ||
+                 strncmp(video->file_extension, "webm", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : MKV container detected\n");
+            container = CONTAINER_MKV;
+        }
+        else if (strncmp(video->file_extension, "mov", 255) == 0 ||
+                 strncmp(video->file_extension, "mp4", 255) == 0 ||
+                 strncmp(video->file_extension, "m4v", 255) == 0 ||
+                 strncmp(video->file_extension, "m4a", 255) == 0 ||
+                 strncmp(video->file_extension, "m4p", 255) == 0 ||
+                 strncmp(video->file_extension, "m4b", 255) == 0 ||
+                 strncmp(video->file_extension, "mp4v", 255)== 0 ||
+                 strncmp(video->file_extension, "mp4a", 255)== 0 ||
+                 strncmp(video->file_extension, "3gp", 255) == 0 ||
+                 strncmp(video->file_extension, "3g2", 255) == 0 ||
+                 strncmp(video->file_extension, "3gpp", 255)== 0 ||
+                 strncmp(video->file_extension, "qt", 255)  == 0 ||
+                 strncmp(video->file_extension, "f4v", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : MP4 container detected\n");
+            container = CONTAINER_MP4;
+        }
+        else if (strncmp(video->file_extension, "ps", 255) == 0  ||
+                 strncmp(video->file_extension, "vob", 255) == 0 ||
+                 strncmp(video->file_extension, "evo", 255) == 0 ||
+                 strncmp(video->file_extension, "m2p", 255) == 0 ||
+                 strncmp(video->file_extension, "m2v", 255) == 0 ||
+                 strncmp(video->file_extension, "mpg", 255) == 0 ||
+                 strncmp(video->file_extension, "mpeg", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : PS (MPEG 'Program Stream') container detected\n");
+            container = CONTAINER_MPEG_PS;
+        }
+        else if (strncmp(video->file_extension, "ts", 255) == 0  ||
+                 strncmp(video->file_extension, "trp", 255) == 0 ||
+                 strncmp(video->file_extension, "mts", 255) == 0 ||
+                 strncmp(video->file_extension, "m2ts", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : TS (MPEG 'Transport Stream') container detected\n");
+            container = CONTAINER_MPEG_TS;
+        }
+        else if (strncmp(video->file_extension, "asf", 255) == 0 ||
+                 strncmp(video->file_extension, "wma", 255) == 0 ||
+                 strncmp(video->file_extension, "wmv", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : ASF container detected\n");
+            container = CONTAINER_ASF;
+        }
+        else if (strncmp(video->file_extension, "ogg", 255) == 0 ||
+                 strncmp(video->file_extension, "ogv", 255) == 0 ||
+                 strncmp(video->file_extension, "oga", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : OGG container detected\n");
+            container = CONTAINER_OGG;
+        }
+        else if (strncmp(video->file_extension, "mxf", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : MXF container detected\n");
+            container = CONTAINER_MXF;
+        }
+        else if (strncmp(video->file_extension, "flv", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : SWF container detected\n");
+            container = CONTAINER_FLV;
+        }
+        else if (strncmp(video->file_extension, "flac", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : FLAC container detected\n");
+            container = CONTAINER_FLAC;
+            //codec = CODEC_FLAC;
+        }
+        else if (strncmp(video->file_extension, "wav", 255) == 0 ||
+                 strncmp(video->file_extension, "wave", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : WAVE container detected\n");
+            container = CONTAINER_WAVE;
+        }
+        else if (strncmp(video->file_extension, "rm", 255) == 0 ||
+                 strncmp(video->file_extension, "rmvb", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : RealMedia container detected\n");
+            container = CONTAINER_RM;
+        }
+        else if (strncmp(video->file_extension, "h264", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : H264 ES detected\n");
+            container = CONTAINER_ES;
+            //codec = CODEC_H264;
+        }
+        else if (strncmp(video->file_extension, "aac", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : AAC ES detected\n");
+            container = CONTAINER_ES_AAC;
+            //codec = CODEC_AAC;
+        }
+        else if (strncmp(video->file_extension, "ac3", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : AC3 ES detected\n");
+            container = CONTAINER_ES_AC3;
+            //codec = CODEC_AC3;
+        }
+        else if (strncmp(video->file_extension, "mp1", 255) == 0 ||
+                 strncmp(video->file_extension, "mp2", 255) == 0 ||
+                 strncmp(video->file_extension, "mp3", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : MP3 ES detected\n");
+            container = CONTAINER_ES_MP3;
+            //codec = CODEC_MP3;
+        }
+    }
+
+    return container;
+}
+
+/*!
+ * \brief Detect the container used by a multimedia file.
+ * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ */
+static void getContainer(VideoFile_t *video)
+{
+    video->container = CONTAINER_UNKNOWN;
+
+    // Detect container format using start codes
+    video->container = getContainerUsingStartcodes(video);
 
     if (video->container == CONTAINER_UNKNOWN)
     {
-        TRACE_ERROR(IO, "* Unknown file type: no known container detected\n");
+        TRACE_ERROR(IO, "* Unknown container format: startcodes detection failed...\n");
+
+        // Fallback: detect container format using file extension
+        video->container = getContainerUsingExtension(video);
+
+        if (video->container == CONTAINER_UNKNOWN)
+        {
+            TRACE_ERROR(IO, "* Unknown container format: file extension detection failed...\n");
+        }
     }
 }
 
@@ -286,7 +475,7 @@ static void getContainer(VideoFile_t *video)
 /*!
  * \brief Open a file and check what's inside it.
  * \param[in] *filepath: The path of the file to load.
- * \param[inout **video_ptr: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in,out] **video_ptr: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
  *
  * Some more informations about supported files:
  * Size and offset are coded on int64_t (signed long long), so this library should
@@ -354,7 +543,7 @@ int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
 
 /*!
  * \brief Close a file.
- * \param **video_ptr: A pointer of pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] **video_ptr: A pointer of pointer to a VideoFile_t structure, containing every informations available about the current video file.
  * \return 1 if success, 0 otherwise.
  */
 int import_fileClose(VideoFile_t **video_ptr)
@@ -407,6 +596,10 @@ int import_fileClose(VideoFile_t **video_ptr)
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Print various informations about a file.
+ * \param[in] *videoFile: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ */
 void import_fileStatus(VideoFile_t *videoFile)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileStatus()\n" CLR_RESET);
