@@ -310,7 +310,7 @@ bool deriv_macroblock_availability(DecodingContext_t *dc, const int mbAddr)
 {
     TRACE_1(SPATIAL, BLD_GREEN "deriv_macroblock_availability()\n" CLR_RESET);
 
-    if (mbAddr < 0 || mbAddr > dc->CurrMbAddr || dc->mb_array[mbAddr] == NULL)
+    if (mbAddr < 0 || (unsigned int)mbAddr > dc->CurrMbAddr || dc->mb_array[mbAddr] == NULL)
     {
         return false;
     }

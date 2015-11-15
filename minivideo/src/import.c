@@ -123,7 +123,7 @@ static void getInfosFromPath(VideoFile_t *video)
             // Set file name
             strncpy(video->file_name, pos_last_slash_p + 1, pos_last_dot_i);
 
-            // Set file extension
+            // Set file extension (without the dot)
             strncpy(video->file_extension, pos_last_dot_p + 1, sizeof(video->file_extension) - 1);
         }
         else

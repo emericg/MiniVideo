@@ -637,7 +637,7 @@ int export_idr(DecodingContext_t *dc)
         // picture_exported is only used by this function (incrementation is only done when picture is successfully exported)
         sprintf(framenum, "%d", dc->picture_exported);
 
-        strncat(PictureFile.file_name, framenum, sizeof(framenum) - 1);
+        strncat(PictureFile.file_name, framenum, 254);
     }
 
     // Check export format availability

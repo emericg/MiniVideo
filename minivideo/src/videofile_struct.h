@@ -45,7 +45,7 @@ typedef struct VideoFile_t
     char file_path[4096];           //!< Absolute path of the file (used to derive other paths/names/extention)
     char file_directory[4096];      //!< Absolute path of the directory containing the file
     char file_name[255];            //!< File name with file extension
-    char file_extension[255];       //!< File extension, without dot (may NOT correspond to the video container)
+    char file_extension[255];       //!< File extension, without dot (may NOT correspond to the file container)
     unsigned int file_creation_time;     //!< File creation time, from filesystem metadatas
     unsigned int file_modification_time; //!< File modification time, from filesystem metadatas
 
@@ -67,7 +67,7 @@ typedef struct VideoFile_t
     int tracks_subtitles_count;
     BitstreamMap_t *tracks_subtitles[16]; //!< A list of parsed subtitles tracks
 
-    int tracks_others; //!< Other tracks found in the container but left unparsed
+    int tracks_others; //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
 
 } VideoFile_t;
 

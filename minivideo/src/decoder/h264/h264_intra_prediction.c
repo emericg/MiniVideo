@@ -1826,6 +1826,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
     int xW = -1, yW = -1;
 
     intrapred16x16_t ip;
+    ip.phv = 0;
     ip.blkIdx = mb->mbAddr;
     ip.BitDepthY = dc->sps_array[pps->seq_parameter_set_id]->BitDepthY;
     ip.sample_left = false;
