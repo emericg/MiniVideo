@@ -26,42 +26,6 @@
 
 /* ************************************************************************** */
 
-//! Stream type
-typedef enum StreamType_e
-{
-    stream_UNKNOWN = 0,
-    stream_AUDIO   = 1,
-    stream_VIDEO   = 2,
-    stream_TEXT    = 3
-
-} StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
-
-/* ************************************************************************** */
-
-//! Sample type
-typedef enum SampleType_e
-{
-    sample_AUDIO = 0,
-
-    sample_VIDEO,
-    sample_VIDEO_IDR,
-    sample_VIDEO_PARAM,
-
-    sample_TEXT_FILE
-
-} SampleType_e;
-
-/* ************************************************************************** */
-
 //! Container file formats
 typedef enum ContainerFormat_e
 {
@@ -103,6 +67,7 @@ typedef enum AVCodec_e
 
     CODEC_APE         =  8, //!< Monkey's Audio
     CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
+    CODEC_ALAC        = 10, //!< Apple Lossless Audio Codec
 
     CODEC_MPEG_L1     = 16, //!< MPEG 1/2 Audio Layer I
     CODEC_MPEG_L2     = 17, //!< MPEG 1/2 Audio Layer II
@@ -170,6 +135,52 @@ typedef enum PictureFormat_e
     PICTURE_YUV420    = 17   //!< Planar YCbCr file with 4:2:0 subsampling
 
 } PictureFormat_e;
+
+/* ************************************************************************** */
+
+//! Stream type
+typedef enum StreamType_e
+{
+    stream_UNKNOWN = 0,
+    stream_AUDIO   = 1,
+    stream_VIDEO   = 2,
+    stream_TEXT    = 3
+
+} StreamType_e;
+
+//! Stream level
+typedef enum StreamLevel_e
+{
+    stream_level_UNKNOWN = 0,
+    stream_level_PES     = 1,
+    stream_level_ES      = 2
+
+} StreamLevel_e;
+
+//! Sample type
+typedef enum SampleType_e
+{
+    sample_AUDIO = 0,
+
+    sample_VIDEO,
+    sample_VIDEO_IDR,
+    sample_VIDEO_PARAM,
+
+    sample_TEXT_FILE
+
+} SampleType_e;
+
+//! Bitrate mode
+typedef enum BitrateMode_e
+{
+    BITRATE_UNKNOWN = 0,
+
+    BITRATE_CBR     = 1, //!< Constant Bitrate
+    BITRATE_VBR     = 2, //!< Variable Bitrate
+    BITRATE_ABR     = 3, //!< Average Bitrate
+    BITRATE_CVBR    = 4  //!< Constrained Variable Bitrate
+
+} BitrateMode_e;
 
 /* ************************************************************************** */
 

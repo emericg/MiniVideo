@@ -175,6 +175,9 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_FLAC:
                 return "Free Lossless Audio Codec (FLAC)";
                 break;
+            case CODEC_ALAC:
+                return "Apple Lossless Audio Codec (ALAC)";
+                break;
 
             case CODEC_MPEG_L1:
                 return "MPEG-1/2 Layer 1";
