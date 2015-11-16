@@ -88,9 +88,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    fcc->hide();
-    delete fcc;
-
     delete ui;
 }
 
@@ -406,8 +403,14 @@ int MainWindow::printDatas()
         ////////////////////////////////////////////////////////////////////////
 
         int atid = 0;
-        if (media->tracks_audio[atid] != NULL)
+        if (media->tracks_audio[atid] == NULL)
         {
+            ui->groupBox_audio->hide();
+        }
+        else
+        {
+            ui->groupBox_audio->show();
+
             ui->label_audio_id->setText("0"); // stream id
             ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
             ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec));
@@ -425,7 +428,14 @@ int MainWindow::printDatas()
             bitrate *= 8.0;
 
             ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " KB/s");
-            //ui->label_audio_bitrate_mode->setText(QString::number(video->tracks_audio[atid]->bitrate_mode));
+            if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CBR)
+                ui->label_audio_bitrate_mode->setText("CBR");
+            else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_VBR)
+                ui->label_audio_bitrate_mode->setText("VBR");
+            else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_ABR)
+                ui->label_audio_bitrate_mode->setText("ABR");
+            else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CVBR)
+                ui->label_audio_bitrate_mode->setText("CVBR");
 
             ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate));
             ui->label_audio_channels->setText(QString::number(media->tracks_audio[atid]->channel_count));
@@ -435,8 +445,14 @@ int MainWindow::printDatas()
         ////////////////////////////////////////////////////////////////////////
 
         int vtid = 0;
-        if (media->tracks_video[vtid] != NULL)
+        if (media->tracks_video[vtid] == NULL)
         {
+            ui->groupBox_video->hide();
+        }
+        else
+        {
+            ui->groupBox_video->show();
+
             ui->label_video_id->setText("0"); // stream id
             ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
             ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec));
@@ -453,7 +469,16 @@ int MainWindow::printDatas()
             bitrate /= 1024.0;
 
             ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
-            //ui->label_video_bitrate_mode->setText(QString::number(video->tracks_video[vtid]->bitrate_mode));
+
+            if (media->tracks_video[vtid]->bitrate_mode == BITRATE_CBR)
+                ui->label_audio_bitrate_mode->setText("CBR");
+            else if (media->tracks_video[vtid]->bitrate_mode == BITRATE_VBR)
+                ui->label_audio_bitrate_mode->setText("VBR");
+            else if (media->tracks_video[vtid]->bitrate_mode == BITRATE_ABR)
+                ui->label_audio_bitrate_mode->setText("ABR");
+            else if (media->tracks_video[vtid]->bitrate_mode == BITRATE_CVBR)
+                ui->label_audio_bitrate_mode->setText("CVBR");
+
             ui->label_video_definition->setText(QString::number(media->tracks_video[vtid]->width) + " x " + QString::number(media->tracks_video[vtid]->height));
             ui->label_video_var->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
 
