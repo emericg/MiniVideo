@@ -253,14 +253,31 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
             }
 
             // Set sample size
-            map->sample_size[sid] = track->stsz_entry_size[i];
+            if (track->stsz_entry_size)
+            {
+                map->sample_size[sid] = track->stsz_entry_size[i];
+            }
+            else
+            {
+                // Assume constant sample size
+                map->bitrate_mode = BITRATE_CBR;
+                map->sample_size = track->stsz_sample_size;
+            }
 
             // Set sample offset
             map->sample_offset[sid] = track->stco_chunk_offset[chunk] + 4;
 
             for (j = 1; j <= posinchunk; j++)
             {
-                map->sample_offset[sid] += track->stsz_entry_size[i - j];
+                if (track->stsz_entry_size)
+                {
+                    map->sample_offset[sid] += track->stsz_entry_size[i - j];
+                }
+                else
+                {
+                    // Assume constant sample size
+                    map->sample_offset[sid] += track->stsz_sample_size;
+                }
             }
 
             // Set sample presentation timecode
@@ -2083,6 +2100,10 @@ int mp4_fileParse(VideoFile_t *video)
 
         // Free bitstream
         free_bitstream(&bitstr);
+    }
+    else
+    {
+        retcode = FAILURE;
     }
 
     return retcode;
