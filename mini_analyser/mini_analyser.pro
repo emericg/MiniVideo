@@ -29,6 +29,10 @@ FORMS       += ui/mainwindow.ui \
 
 RESOURCES   += resources/resources.qrc
 
+# OS icons
+ICON         = resources/app/icon.icns
+RC_ICONS     = resources/app/icon.ico
+
 # minivideo library
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
