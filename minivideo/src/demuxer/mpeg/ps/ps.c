@@ -263,7 +263,6 @@ int ps_fileParse(VideoFile_t *video)
 {
     TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
-    int sid = 0;
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(video, NULL);
@@ -276,6 +275,8 @@ int ps_fileParse(VideoFile_t *video)
 
         if (retcode == SUCCESS)
         {
+            int sid = 0;
+
             video->tracks_audio[0]->stream_type = stream_AUDIO;
             video->tracks_audio[0]->stream_level = stream_level_PES;
             video->tracks_audio[0]->stream_codec = CODEC_MPEG_L3;
@@ -393,6 +394,10 @@ int ps_fileParse(VideoFile_t *video)
 
         // Free bitstream
         free_bitstream(&bitstr);
+    }
+    else
+    {
+        retcode = FAILURE;
     }
 
     return retcode;

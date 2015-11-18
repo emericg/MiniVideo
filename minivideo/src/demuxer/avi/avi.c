@@ -55,7 +55,7 @@ static int parse_list_header(Bitstream_t *bitstr, AviList_t *list_header)
 
     if (list_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid avi_list_t structure!\n");
+        TRACE_ERROR(AVI, "Invalid AviList_t structure!\n");
         retcode = FAILURE;
     }
     else
@@ -157,7 +157,7 @@ static int parse_chunk_header(Bitstream_t *bitstr, AviChunk_t *chunk_header)
 
     if (chunk_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid avi_chunk_t structure!\n");
+        TRACE_ERROR(AVI, "Invalid AviChunk_t structure!\n");
         retcode = FAILURE;
     }
     else
@@ -391,8 +391,10 @@ static int parse_dmlh(Bitstream_t *bitstr, AviChunk_t *dmlh_header, avi_t *avi)
         // Update the (unreliable) dwTotalFrames from the avi header
         avi->avih.dwTotalFrames = endian_flip_32(read_bits(bitstr, 32));
 
+#if ENABLE_DEBUG
         // Print dmlh content
         TRACE_1(AVI, "> dwTotalFrames\t: %u\n", avi->avih.dwTotalFrames);
+#endif
     }
 
     return retcode;
@@ -432,6 +434,7 @@ static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *
         track->strh.rcFrame_w = endian_flip_16(read_bits(bitstr, 16));
         track->strh.rcFrame_h = endian_flip_16(read_bits(bitstr, 16));
 
+#if ENABLE_DEBUG
         // Print chunk header
         print_chunk_header(strh_header);
 
@@ -454,6 +457,7 @@ static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *
         TRACE_1(AVI, "> rcFrame_y\t\t: %u\n", track->strh.rcFrame_y);
         TRACE_1(AVI, "> rcFrame_w\t\t: %u\n", track->strh.rcFrame_w);
         TRACE_1(AVI, "> rcFrame_h\t\t: %u\n", track->strh.rcFrame_h);
+#endif // ENABLE_DEBUG
     }
 
     return retcode;
@@ -1608,7 +1612,7 @@ int avi_fileParse(VideoFile_t *video)
         avi.tracks_count = 0;
         avi.movi_offset = 0;
 
-        // A convinient way to stop the parser
+        // A convenient way to stop the parser
         bool superrun = true;
 
         // Loop on 1st level list
@@ -1788,6 +1792,10 @@ int avi_fileParse(VideoFile_t *video)
 
         // Free bitstream
         free_bitstream(&bitstr);
+    }
+    else
+    {
+        retcode = FAILURE;
     }
 
     return retcode;

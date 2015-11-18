@@ -187,8 +187,8 @@ typedef struct avi_t
 
 typedef enum avi_fcc_e
 {
-    fcc_RIFF  = 0x52494646,
-    fcc_LIST  = 0x4C495354,
+    fcc_RIFF   = 0x52494646,
+    fcc_LIST   = 0x4C495354,
 
     fcc_auds   = 0x61756473,
     fcc_vids   = 0x76696473,
@@ -239,7 +239,7 @@ typedef enum avi_fcc_codecs_e
 
 /*!
  * Good ressource about these tags (search for WAVE_FORMAT_):
- * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h-source.html
+ * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html
  */
 typedef enum wFormatTag_e
 {

@@ -211,7 +211,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
 int mkv_fileParse(VideoFile_t *video)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_fileParse()\n" CLR_RESET);
-    int retcode = FAILURE;
+    int retcode = SUCCESS;
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(video, NULL);
@@ -227,6 +227,10 @@ int mkv_fileParse(VideoFile_t *video)
 
         // Free bitstream
         free_bitstream(&bitstr);
+    }
+    else
+    {
+        retcode = FAILURE;
     }
 
     return retcode;
