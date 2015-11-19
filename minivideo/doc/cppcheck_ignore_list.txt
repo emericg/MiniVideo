@@ -1,0 +1,13 @@
+
+// suppress all "*** is never used" warnings...
+unusedFunction
+unreadVariable
+
+// let me wory about that...
+variableScope
+
+// cppcheck is really bad at finding standard include headers, especially on Mac and Linux.
+// it's not necessary, nor recommended, but you can force include directories with (multiple) -I /path added to the cppcheck command line.
+missingIncludeSystem
+
+// add your rules here!
