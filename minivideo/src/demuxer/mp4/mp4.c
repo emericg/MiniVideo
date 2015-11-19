@@ -261,7 +261,7 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
             {
                 // Assume constant sample size
                 map->bitrate_mode = BITRATE_CBR;
-                map->sample_size = track->stsz_sample_size;
+                map->sample_size[sid] = track->stsz_sample_size;
             }
 
             // Set sample offset
