@@ -278,6 +278,16 @@ static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
             container = CONTAINER_MP4;
         }
     }
+    else if (buffer[0] == 0x4F && buffer[1] == 0x67 && buffer[2] == 0x67 && buffer[3] == 0x53)
+    {
+        TRACE_1(IO, "* File type      : OGG container detected\n");
+        container = CONTAINER_OGG;
+    }
+    else if (buffer[0] == 0x66 && buffer[1] == 0x61 && buffer[2] == 0x4C && buffer[3] == 0x43)
+    {
+        TRACE_1(IO, "* File type      : FLAC container detected\n");
+        container = CONTAINER_FLAC;
+    }
     else if (buffer[0] == 0x06 && buffer[1] == 0x0E && buffer[2] == 0x2B && buffer[3] == 0x34)
     {
         TRACE_1(IO, "* File type      : MXF container detected\n");
@@ -287,11 +297,6 @@ static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
     {
         TRACE_1(IO, "* File type      : FLV container detected\n");
         container = CONTAINER_FLV;
-    }
-    else if (buffer[0] == 0x4F && buffer[1] == 0x67 && buffer[2] == 0x67 && buffer[3] == 0x53)
-    {
-        TRACE_1(IO, "* File type      : OGG container detected\n");
-        container = CONTAINER_OGG;
     }
     else if (buffer[0] == 0xFF && buffer[1] == 0xFB)
     {
@@ -327,10 +332,11 @@ static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
             TRACE_1(IO, "* File extension  : AVI container detected\n");
             container = CONTAINER_AVI;
         }
-        else if (strncmp(video->file_extension, "mkv", 255) == 0 ||
+        else if (strncmp(video->file_extension, "webm", 255) == 0 ||
+                 strncmp(video->file_extension, "mkv", 255) == 0 ||
                  strncmp(video->file_extension, "mka", 255) == 0 ||
-                 strncmp(video->file_extension, "mk3d", 255) == 0 ||
-                 strncmp(video->file_extension, "webm", 255) == 0)
+                 strncmp(video->file_extension, "mks", 255) == 0 ||
+                 strncmp(video->file_extension, "mk3d", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : MKV container detected\n");
             container = CONTAINER_MKV;
@@ -380,7 +386,11 @@ static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
         }
         else if (strncmp(video->file_extension, "ogg", 255) == 0 ||
                  strncmp(video->file_extension, "ogv", 255) == 0 ||
-                 strncmp(video->file_extension, "oga", 255) == 0)
+                 strncmp(video->file_extension, "oga", 255) == 0 ||
+                 strncmp(video->file_extension, "ogx", 255) == 0 ||
+                 strncmp(video->file_extension, "ogm", 255) == 0 ||
+                 strncmp(video->file_extension, "spx", 255) == 0 ||
+                 strncmp(video->file_extension, "opus", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : OGG container detected\n");
             container = CONTAINER_OGG;
@@ -399,10 +409,10 @@ static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
         {
             TRACE_1(IO, "* File extension  : FLAC container detected\n");
             container = CONTAINER_FLAC;
-            //codec = CODEC_FLAC;
         }
         else if (strncmp(video->file_extension, "wav", 255) == 0 ||
-                 strncmp(video->file_extension, "wave", 255) == 0)
+                 strncmp(video->file_extension, "wave", 255) == 0 ||
+                 strncmp(video->file_extension, "amb", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : WAVE container detected\n");
             container = CONTAINER_WAVE;
@@ -511,7 +521,7 @@ int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
 
             // Set filepath in VideoFile_t
             strncpy(video->file_path, filepath, sizeof(video->file_path) - 1);
-            TRACE_2(IO, "* File path (brut): '%s'\n", filepath);
+            TRACE_INFO(IO, "* File path (raw): '%s'\n", filepath);
 
             // Open file, read only
             video->file_pointer = fopen(filepath, "r");
