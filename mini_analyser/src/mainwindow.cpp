@@ -439,6 +439,7 @@ int MainWindow::printDatas()
 
             ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate));
             ui->label_audio_channels->setText(QString::number(media->tracks_audio[atid]->channel_count));
+            ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample));
         }
 
         // VIDEO
