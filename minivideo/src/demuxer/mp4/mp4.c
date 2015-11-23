@@ -1374,7 +1374,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
             /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
 
-            track->sample_rate = read_bits(bitstr, 32);
+            track->sample_rate = read_bits(bitstr, 16);
 
         break;
 

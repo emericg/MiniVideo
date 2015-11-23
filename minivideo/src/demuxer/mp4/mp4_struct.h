@@ -222,9 +222,9 @@ typedef enum Mp4SampleEntry_e
     SAMPLE_AI1q = 0x0,           //!< AVC Intra 100 /  720
     SAMPLE_AI12 = 0x0,           //!< AVC Intra 100 / 1080
 
-    SAMPLE_MP4V = 0x6D703476,    //!< XVID
-    SAMPLE_MP4A = 0x6D703461,    //!< AAC
-    SAMPLE_AC3  = 0x61632D33     //!< AC3
+    SAMPLE_MP4V = 0x6D703476,    //!< MP4V / XVID
+    SAMPLE_MP4A = 0x6D703461,    //!< MP4A / AAC
+    SAMPLE_AC3  = 0x61632D33     //!< AC-3
 
 } Mp4SampleEntry_e;
 
