@@ -411,7 +411,6 @@ int MainWindow::printDatas()
         {
             ui->groupBox_audio->show();
 
-            ui->label_audio_id->setText("0"); // stream id
             ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
             ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec));
 
@@ -424,10 +423,10 @@ int MainWindow::printDatas()
                     bitrate += media->tracks_audio[atid]->sample_size[i];
                 bitrate /= media->tracks_audio[atid]->duration / 1000.0;
             }
-            bitrate /= 1024.0;
+            bitrate /= 1000.0;
             bitrate *= 8.0;
 
-            ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " KB/s");
+            ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
             if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CBR)
                 ui->label_audio_bitrate_mode->setText("CBR");
             else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_VBR)
@@ -454,7 +453,6 @@ int MainWindow::printDatas()
         {
             ui->groupBox_video->show();
 
-            ui->label_video_id->setText("0"); // stream id
             ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
             ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec));
 

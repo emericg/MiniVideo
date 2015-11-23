@@ -87,7 +87,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -455,82 +455,6 @@ background: rgba(255, 170, 0, 128);</string>
            <string>Video</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="8" column="0">
-            <widget class="QLabel" name="label_48">
-             <property name="text">
-              <string>Bitrate mode</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_34">
-             <property name="text">
-              <string>Stream ID</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_video_id">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_35">
-             <property name="text">
-              <string>Definition</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="label_video_definition">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_36">
-             <property name="text">
-              <string>Stream size</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_video_size">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="2">
             <widget class="QLabel" name="label_37">
              <property name="text">
@@ -554,14 +478,60 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Stream size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>Codec</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="label_video_size">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_video_codec">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
             <widget class="QLabel" name="label_46">
              <property name="text">
               <string>Frame rate</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="3">
+           <item row="0" column="3">
             <widget class="QLabel" name="label_video_framerate">
              <property name="font">
               <font>
@@ -577,15 +547,8 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QLabel" name="label_38">
-             <property name="text">
-              <string>Color depth</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="3">
-            <widget class="QLabel" name="label_video_color_depth">
+           <item row="3" column="3">
+            <widget class="QLabel" name="label_video_duration">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -600,42 +563,17 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="2">
-            <widget class="QLabel" name="label_40">
+           <item row="3" column="2">
+            <widget class="QLabel" name="label_41">
              <property name="text">
-              <string>Color space</string>
+              <string>Duration</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="3">
-            <widget class="QLabel" name="label_video_color_subsampling">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_35">
              <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QLabel" name="label_video_bitratemode">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              <string>Definition</string>
              </property>
             </widget>
            </item>
@@ -643,6 +581,22 @@ background: rgba(255, 170, 0, 128);</string>
             <widget class="QLabel" name="label_47">
              <property name="text">
               <string>Bitrate</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_video_definition">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -662,22 +616,15 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_41">
+           <item row="5" column="2">
+            <widget class="QLabel" name="label_48">
              <property name="text">
-              <string>Duration</string>
+              <string>Bitrate mode</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_42">
-             <property name="text">
-              <string>Codec</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="label_video_duration">
+           <item row="5" column="3">
+            <widget class="QLabel" name="label_video_bitratemode">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -692,8 +639,38 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="label_video_codec">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_38">
+             <property name="text">
+              <string>Color depth</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="label_video_color_depth">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Color space</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="label_video_color_subsampling">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -718,151 +695,13 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_21">
-             <property name="text">
-              <string>Stream ID</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_audio_id">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_24">
-             <property name="text">
-              <string>Language</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="label_audio_lng">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_22">
-             <property name="text">
-              <string>Stream size</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_audio_size">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2" rowspan="2">
-            <widget class="QLabel" name="label_45">
-             <property name="text">
-              <string>Channel count</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3" rowspan="2">
-            <widget class="QLabel" name="label_audio_channels">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0" rowspan="2">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>Duration</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" rowspan="2">
-            <widget class="QLabel" name="label_audio_duration">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2" rowspan="2">
-            <widget class="QLabel" name="label_43">
-             <property name="text">
-              <string>Sampling rate</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3" rowspan="2">
-            <widget class="QLabel" name="label_audio_samplingrate">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0" rowspan="2">
             <widget class="QLabel" name="label_18">
              <property name="text">
               <string>Codec</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="1" rowspan="2">
+           <item row="0" column="1">
             <widget class="QLabel" name="label_audio_codec">
              <property name="font">
               <font>
@@ -878,14 +717,37 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="2" rowspan="2">
-            <widget class="QLabel" name="label_78">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_24">
              <property name="text">
-              <string>Bit per sample</string>
+              <string>Language</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="3" rowspan="2">
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>Channel count</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="label_audio_channels">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
             <widget class="QLabel" name="label_audio_bitpersample">
              <property name="font">
               <font>
@@ -901,14 +763,122 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_19">
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_78">
              <property name="text">
-              <string>Bitrate</string>
+              <string>Bit per sample</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_audio_samplingrate">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>Sampling rate</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>Stream size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="label_audio_size">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Duration</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="label_audio_duration">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="label_audio_bitrate_mode">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>Bitrate mode</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="label_audio_lng">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
             <widget class="QLabel" name="label_audio_bitrate">
              <property name="font">
               <font>
@@ -924,26 +894,10 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_20">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_19">
              <property name="text">
-              <string>Bitrate mode</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLabel" name="label_audio_bitrate_mode">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Unknown</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              <string>Bitrate</string>
              </property>
             </widget>
            </item>
