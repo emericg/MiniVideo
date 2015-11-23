@@ -131,13 +131,15 @@ set(minivideo_SRC
         src/export_utils.c
         src/stb_image_write.h
     src/demuxer/filter.c
-        src/demuxer/bruteforce/bruteforce.c
-        src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
+    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h
+    src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
+    src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
+    src/demuxer/bruteforce/bruteforce.c
+    src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
         src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h
         src/demuxer/mpeg/ts/ts_struct.h
+    src/demuxer/riff/riff.c src/demuxer/riff/riff_struct.h
         src/demuxer/avi/avi.c src/demuxer/avi/avi_struct.h
-        src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h
-        src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
         src/demuxer/wav/wav.c src/demuxer/wav/wav_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
