@@ -72,35 +72,39 @@ endif(UNIX)
 # Build options
 ###############################################################################
 
-if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
-    message(STATUS "* Building with Clang compiler")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    message(STATUS "* Building with GCC compiler")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
-    message(STATUS "* Building with Intel C compiler")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-    message(STATUS "* Building with Visual Studio C compiler")
-endif()
-
 # Generic build flags
-set(CMAKE_C_FLAGS "-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+set(CMAKE_C_FLAGS "-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
 
-# Detect build type (default is release).
+# Detect build type (default is release)
 # You can change this using "-DCMAKE_BUILD_TYPE=Debug/Release/RelWithDebInfo/MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-    message(WARNING" * This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release.")
     set(ENABLE_DEBUG 1)
+    message(WARNING" * This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release.")
+
     # Custom cflags? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wextra -Wshadow")
 
 else()
 
-    message(STATUS "* This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug.")
     set(ENABLE_DEBUG 0)
+    message(STATUS "* This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug.")
+
     # Custom cflags? Use "release mode" and "-O2" for maximum speed.
     set(CMAKE_C_FLAGS_RELEASE "-O2 -Wno-sign-compare")
 
+endif()
+
+# Add per-compiler custom rules
+if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
+    message(STATUS "* Building with Clang compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    message(STATUS "* Building with GCC compiler")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-but-set-variable ")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+    message(STATUS "* Building with Intel C compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    message(STATUS "* Building with Visual Studio C compiler")
 endif()
 
 
