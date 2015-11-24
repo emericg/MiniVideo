@@ -1806,10 +1806,10 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         {
             // Print box header
             print_box_header(box_header);
-
+#if TRACE_1
             // Print box content
             TRACE_1(MP4, "> entry_count\t: %u\n", track->stsc_entry_count);
-/*
+
             TRACE_1(MP4, "> first_chunk\t: [");
             for (i = 0; i < track->stsc_entry_count; i++)
             {
@@ -1830,7 +1830,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 printf("%u, ", track->stsc_sample_description_index[i]);
             }
             printf("]\n");
-*/
+#endif // TRACE_1
         }
 #endif // ENABLE_DEBUG
     }

@@ -81,7 +81,6 @@ static int parse_JUNK(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffC
 }
 
 /* ************************************************************************** */
-/* ************************************************************************** */
 
 static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 {
@@ -113,10 +112,9 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 #if ENABLE_DEBUG
             // Chunk Header
             print_chunk_header(chunk_header);
-
+#if TRACE_1
             // Chunk content
             TRACE_1(AVI, "> '");
-#if TRACE_1
             for (i = 0; i < chunk_header->dwSize; i++)
             {
                 printf("%c", string[i]);
@@ -308,6 +306,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             track->strf.biClrUsed = endian_flip_32(read_bits(bitstr, 32));
             track->strf.biClrImportant = endian_flip_32(read_bits(bitstr, 32));
 
+#if ENABLE_DEBUG
             TRACE_1(AVI, "> biSize\t\t: %u\n", track->strf.biSize);
             TRACE_1(AVI, "> biWidth\t\t: %i\n", track->strf.biWidth);
             TRACE_1(AVI, "> biHeight\t\t: %i\n", track->strf.biHeight);
@@ -319,6 +318,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             TRACE_1(AVI, "> biYPelsPerMeter\t: %i\n", track->strf.biYPelsPerMeter);
             TRACE_1(AVI, "> biClrUsed\t\t: %u\n", track->strf.biClrUsed);
             TRACE_1(AVI, "> biClrImportant\t: %u\n", track->strf.biClrImportant);
+#endif // ENABLE_DEBUG
         }
         else if (track->strh.fccType == fcc_auds)
         {

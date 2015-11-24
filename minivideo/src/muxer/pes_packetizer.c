@@ -160,8 +160,8 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             // header extension data length (+5 if PTS, +5 if DTS)
             pes_header[8] = (uint8_t)(pes_header_size - 9);
         }
-/*
-#if ENABLE_DEBUG
+
+#if TRACE_1
         {
             // Print PES header
             TRACE_1(DMUXER, " > header : 0x");
@@ -172,8 +172,8 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             }
             printf("\n");
         }
-#endif
-*/
+#endif // TRACE_1
+
         // Write packet header + data
         ////////////////////////////////////////////////////////////////////////
 
