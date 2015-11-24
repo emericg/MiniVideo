@@ -130,6 +130,7 @@ set(minivideo_SRC
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c
+        src/bitstream_map_struct.h
     src/import.c
     src/export.c
         src/export_utils.c
@@ -144,7 +145,7 @@ set(minivideo_SRC
         src/demuxer/mpeg/ts/ts_struct.h
     src/demuxer/riff/riff.c src/demuxer/riff/riff_struct.h
         src/demuxer/avi/avi.c src/demuxer/avi/avi_struct.h
-        src/demuxer/wav/wav.c src/demuxer/wav/wav_struct.h
+        src/demuxer/wave/wave.c src/demuxer/wave/wave_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
     src/decoder/h264/h264.c
