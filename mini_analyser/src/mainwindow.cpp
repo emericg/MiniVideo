@@ -384,7 +384,9 @@ int MainWindow::printDatas()
     if (media)
     {
         ui->label_filename->setText(QString::fromLocal8Bit(media->file_name));
+        ui->label_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
         ui->label_fullpath->setText(QString::fromLocal8Bit(media->file_path));
+        ui->label_fullpath->setToolTip(QString::fromLocal8Bit(media->file_path));
         ui->label_container->setText(getContainerString(media->container, 1));
         ui->label_container_extension->setText(QString::fromLocal8Bit(media->file_extension));
         ui->label_filesize->setText(getSizeString(media->file_size));
@@ -417,7 +419,7 @@ int MainWindow::printDatas()
             ui->label_audio_duration->setText(getDurationString(media->tracks_audio[atid]->duration));
 
             double bitrate = media->tracks_audio[atid]->bitrate;
-            if (bitrate < 0.1)
+            if (bitrate < 1.0)
             {
                 for (unsigned i = 0; i < media->tracks_audio[atid]->sample_count; i++)
                     bitrate += media->tracks_audio[atid]->sample_size[i];
@@ -425,8 +427,8 @@ int MainWindow::printDatas()
             }
             bitrate /= 1000.0;
             bitrate *= 8.0;
-
             ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
+
             if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CBR)
                 ui->label_audio_bitrate_mode->setText("CBR");
             else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_VBR)
@@ -436,9 +438,9 @@ int MainWindow::printDatas()
             else if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CVBR)
                 ui->label_audio_bitrate_mode->setText("CVBR");
 
-            ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate));
+            ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate) + " Hz");
             ui->label_audio_channels->setText(QString::number(media->tracks_audio[atid]->channel_count));
-            ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample));
+            ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
         }
 
         // VIDEO
@@ -459,14 +461,14 @@ int MainWindow::printDatas()
             ui->label_video_duration->setText(getDurationString(media->tracks_video[vtid]->duration));
 
             double bitrate = media->tracks_video[vtid]->bitrate;
-            if (bitrate < 0.1)
+            if (bitrate < 1.0)
             {
                 for (unsigned i = 0; i < media->tracks_video[vtid]->sample_count; i++)
                     bitrate += media->tracks_video[vtid]->sample_size[i];
                 bitrate /= media->tracks_video[vtid]->duration / 1000.0;
             }
-            bitrate /= 1024.0;
-
+            bitrate /= 1000.0;
+            bitrate *= 8.0;
             ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
 
             if (media->tracks_video[vtid]->bitrate_mode == BITRATE_CBR)
@@ -482,7 +484,7 @@ int MainWindow::printDatas()
             ui->label_video_var->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
 
             double framerate = media->tracks_video[vtid]->frame_rate;
-            if (framerate < 0.1)
+            if (framerate < 1.0)
             {
                 if (media->tracks_video[vtid]->duration && media->tracks_video[vtid]->sample_count)
                 {
@@ -491,8 +493,8 @@ int MainWindow::printDatas()
             }
 
             ui->label_video_framerate->setText(QString::number(framerate));
-            ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth));
-            ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
+            ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
+            //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
         }
 
         // SUBS

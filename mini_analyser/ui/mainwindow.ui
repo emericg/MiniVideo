@@ -253,7 +253,7 @@ background: rgba(255, 170, 0, 128);</string>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLabel { background-color : rgb(255, 252, 230); color : rgb(0, 0, 0); }</string>
+              <string notr="true">QLabel { background-color : rgb(218, 218, 218); color : rgb(0, 0, 0); }</string>
              </property>
              <property name="text">
               <string>Unknown</string>
@@ -423,10 +423,13 @@ background: rgba(255, 170, 0, 128);</string>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLabel { background-color : rgb(255, 252, 230); color : rgb(0, 0, 0); }</string>
+              <string notr="true">QLabel { background-color : rgb(218, 218, 218); color : rgb(0, 0, 0); }</string>
              </property>
              <property name="text">
               <string>Unknown</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
