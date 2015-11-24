@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      wav.h
+ * \file      wave.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2015
  */
 
-#ifndef PARSER_WAV_H
-#define PARSER_WAV_H
+#ifndef PARSER_WAVE_H
+#define PARSER_WAVE_H
 
 // minivideo headers
 #include "../../import.h"
 
 /* ************************************************************************** */
 
-int wav_fileParse(VideoFile_t *video);
+int wave_fileParse(VideoFile_t *video);
 
 /* ************************************************************************** */
-#endif // PARSER_WAV_H
+#endif // PARSER_WAVE_H
