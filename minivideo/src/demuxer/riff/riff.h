@@ -35,6 +35,8 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header);
 
 void print_list_header(RiffList_t *list_header);
 
+int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child);
+
 int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header);
 
 void print_chunk_header(RiffChunk_t *chunk_header);

@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 /* ************************************************************************** */
 
@@ -44,12 +43,12 @@
  */
 int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
 {
-    TRACE_3(WAV, "parse_list_header()\n");
+    TRACE_3(RIF, "parse_list_header()\n");
     int retcode = SUCCESS;
 
     if (list_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid RiffList_t structure!\n");
+        TRACE_ERROR(RIF, "Invalid RiffList_t structure!\n");
         retcode = FAILURE;
     }
     else
@@ -64,7 +63,7 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
         if (list_header->dwList != fcc_RIFF &&
             list_header->dwList != fcc_LIST)
         {
-            TRACE_1(WAV, "We are looking for a RIFF list, however this is neither a LIST nor a RIFF (0x%04X)\n", list_header->dwList);
+            TRACE_1(RIF, "We are looking for a RIFF list, however this is neither a LIST nor a RIFF (0x%04X)\n", list_header->dwList);
             retcode = FAILURE;
         }
     }
@@ -81,30 +80,71 @@ void print_list_header(RiffList_t *list_header)
 {
     if (list_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid RiffList_t structure!\n");
+        TRACE_ERROR(RIF, "Invalid RiffList_t structure!\n");
     }
     else
     {
-        TRACE_2(WAV, "* offset_s   : %u\n", list_header->offset_start);
-        TRACE_2(WAV, "* offset_e   : %u\n", list_header->offset_end);
+        TRACE_2(RIF, "* offset_s   : %u\n", list_header->offset_start);
+        TRACE_2(RIF, "* offset_e   : %u\n", list_header->offset_end);
 
         if (list_header->dwList == fcc_RIFF)
         {
-            TRACE_2(WAV, "* RIFF header\n");
+            TRACE_2(RIF, "* RIFF header\n");
         }
         else
         {
-            TRACE_2(WAV, "* LIST header\n");
+            TRACE_2(RIF, "* LIST header\n");
         }
 
         char fcc[5];
-        TRACE_2(WAV, "* LIST size : %u\n", list_header->dwSize);
-        TRACE_2(WAV, "* LIST fcc  : 0x%08X ('%s')\n",
+        TRACE_2(RIF, "* LIST size : %u\n", list_header->dwSize);
+        TRACE_2(RIF, "* LIST fcc  : 0x%08X ('%s')\n",
                 list_header->dwFourCC,
                 getFccString_le(list_header->dwFourCC, fcc));
     }
 }
 
+/* ************************************************************************** */
+
+/*!
+ * \brief Skip a list header and content.
+ */
+int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child)
+{
+    int retcode = FAILURE;
+
+    if (list_header_child->dwSize != 0)
+    {
+        int64_t jump = list_header_child->dwSize * 8;
+        int64_t offset = bitstream_get_absolute_byte_offset(bitstr);
+
+        // Check that we do not jump outside the parent list boundaries
+        if ((offset + jump) > list_header_parent->offset_end)
+        {
+            jump = list_header_parent->offset_end - offset;
+        }
+
+        if (skip_bits(bitstr, jump) == FAILURE)
+        {
+            TRACE_ERROR(RIF, "> skip_list() >> Unable to skip %i bytes!\n", list_header_child->dwSize);
+            retcode = FAILURE;
+        }
+        else
+        {
+            TRACE_1(RIF, "> skip_list() >> %i bytes\n", list_header_child->dwSize);
+            retcode = SUCCESS;
+        }
+    }
+    else
+    {
+        TRACE_WARNING(RIF, "> skip_list() >> do it yourself!\n");
+        retcode = FAILURE;
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!
@@ -114,17 +154,17 @@ void print_list_header(RiffList_t *list_header)
  */
 int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 {
-    TRACE_3(WAV, "parse_chunk_header()\n");
+    TRACE_3(RIF, "parse_chunk_header()\n");
     int retcode = SUCCESS;
 
     if (chunk_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid RiffChunk_t structure!\n");
+        TRACE_ERROR(RIF, "Invalid RiffChunk_t structure!\n");
         retcode = FAILURE;
     }
     else
     {
-        // Parse WAVE chunk header
+        // Parse RIFF chunk header
         chunk_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
         chunk_header->dwFourCC     = read_bits(bitstr, 32);
         chunk_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
@@ -143,16 +183,16 @@ void print_chunk_header(RiffChunk_t *chunk_header)
 {
     if (chunk_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid RiffChunk_t structure!\n");
+        TRACE_ERROR(RIF, "Invalid RiffChunk_t structure!\n");
     }
     else
     {
-        TRACE_2(WAV, "* offset_s  : %u\n", chunk_header->offset_start);
-        TRACE_2(WAV, "* offset_e  : %u\n", chunk_header->offset_end);
+        TRACE_2(RIF, "* offset_s  : %u\n", chunk_header->offset_start);
+        TRACE_2(RIF, "* offset_e  : %u\n", chunk_header->offset_end);
 
         char fcc[5];
-        TRACE_2(WAV, "* CHUNK size: %u\n", chunk_header->dwSize);
-        TRACE_2(WAV, "* CHUNK fcc : 0x%08X ('%s')\n",
+        TRACE_2(RIF, "* CHUNK size: %u\n", chunk_header->dwSize);
+        TRACE_2(RIF, "* CHUNK fcc : 0x%08X ('%s')\n",
                 chunk_header->dwFourCC,
                 getFccString_le(chunk_header->dwFourCC, fcc));
     }
@@ -180,18 +220,18 @@ int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t 
 
         if (skip_bits(bitstr, jump) == FAILURE)
         {
-            TRACE_ERROR(WAV, "> skip_chunk() >> Unable to skip %i bytes!\n", chunk_header_child->dwSize);
+            TRACE_ERROR(RIF, "> skip_chunk() >> Unable to skip %i bytes!\n", chunk_header_child->dwSize);
             retcode = FAILURE;
         }
         else
         {
-            TRACE_1(WAV, "> skip_chunk() >> %i bytes\n", chunk_header_child->dwSize);
+            TRACE_1(RIF, "> skip_chunk() >> %i bytes\n", chunk_header_child->dwSize);
             retcode = SUCCESS;
         }
     }
     else
     {
-        TRACE_WARNING(WAV, "> skip_chunk() >> do it yourself!\n");
+        TRACE_WARNING(RIF, "> skip_chunk() >> do it yourself!\n");
         retcode = FAILURE;
     }
 
