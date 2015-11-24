@@ -76,7 +76,8 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                for (int i = 0; i < 16; i++)
+                int i = 0;
+                for (i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
 
                 //SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}

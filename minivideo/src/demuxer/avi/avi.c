@@ -1285,7 +1285,7 @@ static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_
             mytrack->sample_alignment = true;
 
             mytrack->subtitles_encoding = 0;
-            strncpy(mytrack->language_code, "UND", 3);
+            //strncpy(mytrack->language_code, "UND", 3);
             mytrack->subtitles_name = NULL;
         }
     }
