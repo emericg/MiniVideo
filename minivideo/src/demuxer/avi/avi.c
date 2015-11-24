@@ -24,6 +24,7 @@
 // minivideo headers
 #include "avi.h"
 #include "avi_struct.h"
+#include "../riff/riff.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -41,197 +42,8 @@
 static int avi_indexer_initmap(VideoFile_t *video, AviTrack_t *track, int index_entry_count);
 
 /* ************************************************************************** */
-/* ************************************************************************** */
 
-/*!
- * \brief Parse a list header.
- *
- * bitstr pointer is not checked for performance reason.
- */
-static int parse_list_header(Bitstream_t *bitstr, AviList_t *list_header)
-{
-    TRACE_3(AVI, "parse_list_header()\n");
-    int retcode = SUCCESS;
-
-    if (list_header == NULL)
-    {
-        TRACE_ERROR(AVI, "Invalid AviList_t structure!\n");
-        retcode = FAILURE;
-    }
-    else
-    {
-        // Parse AVI list header
-        list_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
-        list_header->dwList       = read_bits(bitstr, 32);
-        list_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
-        list_header->dwFourCC     = read_bits(bitstr, 32);
-        list_header->offset_end   = list_header->offset_start + list_header->dwSize + 8;
-
-        if (list_header->dwList != fcc_RIFF &&
-            list_header->dwList != fcc_LIST)
-        {
-            TRACE_1(AVI, "We are looking for a AVI list, however this is neither a LIST nor a RIFF (0x%04X)\n", list_header->dwList);
-            retcode = FAILURE;
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Print an AVI list header.
- */
-static void print_list_header(AviList_t *list_header)
-{
-    TRACE_2(AVI, "* offset_s\t: %u\n", list_header->offset_start);
-    TRACE_2(AVI, "* offset_e\t: %u\n", list_header->offset_end);
-
-    if (list_header->dwList == fcc_RIFF)
-    {
-        TRACE_2(AVI, "* RIFF header\n");
-    }
-    else
-    {
-        TRACE_2(AVI, "* LIST header\n");
-    }
-
-    char fcc[5];
-    TRACE_2(AVI, "* LIST size\t: %u\n", list_header->dwSize);
-    TRACE_2(AVI, "* LIST fcc\t: 0x%08X ('%s')\n", list_header->dwFourCC, getFccString_le(list_header->dwFourCC, fcc));
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Skip a list header and content.
- */
-static int skip_list(Bitstream_t *bitstr, AviList_t *list_header_parent, AviList_t *list_header_child)
-{
-    int retcode = FAILURE;
-
-    if (list_header_child->dwSize != 0)
-    {
-        int64_t jump = list_header_child->dwSize * 8;
-        int64_t offset = bitstream_get_absolute_byte_offset(bitstr);
-
-        // Check that we do not jump outside the parent list boundaries
-        if ((offset + jump) > list_header_parent->offset_end)
-        {
-            jump = list_header_parent->offset_end - offset;
-        }
-
-        if (skip_bits(bitstr, jump) == FAILURE)
-        {
-            TRACE_ERROR(AVI, "> skip_list() >> Unable to skip %i bytes!\n", list_header_child->dwSize);
-            retcode = FAILURE;
-        }
-        else
-        {
-            TRACE_1(AVI, "> skip_list() >> %i bytes\n", list_header_child->dwSize);
-            retcode = SUCCESS;
-        }
-    }
-    else
-    {
-        TRACE_WARNING(AVI, "> skip_list() >> do it yourself!\n");
-        retcode = FAILURE;
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/*!
- * \brief Parse box header.
- *
- * bitstr pointer is not checked for performance reason.
- */
-static int parse_chunk_header(Bitstream_t *bitstr, AviChunk_t *chunk_header)
-{
-    TRACE_3(AVI, "parse_chunk_header()\n");
-    int retcode = SUCCESS;
-
-    if (chunk_header == NULL)
-    {
-        TRACE_ERROR(AVI, "Invalid AviChunk_t structure!\n");
-        retcode = FAILURE;
-    }
-    else
-    {
-        // Parse AVI chunk header
-        chunk_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
-        chunk_header->dwFourCC     = read_bits(bitstr, 32);
-        chunk_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
-        chunk_header->offset_end   = chunk_header->offset_start + chunk_header->dwSize + 8;
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Print an AVI chunk header.
- */
-static void print_chunk_header(AviChunk_t *chunk_header)
-{
-    TRACE_2(AVI, "* offset_s\t: %u\n", chunk_header->offset_start);
-    TRACE_2(AVI, "* offset_e\t: %u\n", chunk_header->offset_end);
-
-    char fcc[5];
-    TRACE_2(AVI, "* CHUNK size: %u\n", chunk_header->dwSize);
-    TRACE_2(AVI, "* CHUNK fcc\t: 0x%08X ('%s')\n", chunk_header->dwFourCC, getFccString_le(chunk_header->dwFourCC, fcc));
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Skip a chunk header and content.
- */
-static int skip_chunk(Bitstream_t *bitstr, AviList_t *list_header_parent, AviChunk_t *chunk_header_child)
-{
-    int retcode = FAILURE;
-
-    if (chunk_header_child->dwSize != 0)
-    {
-        int64_t jump = chunk_header_child->dwSize * 8;
-        int64_t offset = bitstream_get_absolute_byte_offset(bitstr);
-
-        // Check that we do not jump outside the parent list boundaries
-        if ((offset + jump) > list_header_parent->offset_end)
-        {
-            jump = list_header_parent->offset_end - offset;
-        }
-
-        if (skip_bits(bitstr, jump) == FAILURE)
-        {
-            TRACE_ERROR(AVI, "> skip_chunk() >> Unable to skip %i bytes!\n", chunk_header_child->dwSize);
-            retcode = FAILURE;
-        }
-        else
-        {
-            TRACE_1(AVI, "> skip_chunk() >> %i bytes\n", chunk_header_child->dwSize);
-            retcode = SUCCESS;
-        }
-    }
-    else
-    {
-        TRACE_WARNING(AVI, "> skip_chunk() >> do it yourself!\n");
-        retcode = FAILURE;
-    }
-
-    print_chunk_header(chunk_header_child);
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-static int parse_JUNK(Bitstream_t *bitstr, AviList_t *list_header_parent, AviChunk_t *chunk_header_child)
+static int parse_JUNK(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child)
 {
     int retcode = FAILURE;
 
@@ -271,7 +83,7 @@ static int parse_JUNK(Bitstream_t *bitstr, AviList_t *list_header_parent, AviChu
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
+static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_string()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -321,7 +133,7 @@ static int parse_string(Bitstream_t *bitstr, AviChunk_t *chunk_header)
 
 /* ************************************************************************** */
 
-static int parse_avih(Bitstream_t *bitstr, AviChunk_t *avih_header, avi_t *avi)
+static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_avih()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -372,7 +184,7 @@ static int parse_avih(Bitstream_t *bitstr, AviChunk_t *avih_header, avi_t *avi)
 
 /* ************************************************************************** */
 
-static int parse_dmlh(Bitstream_t *bitstr, AviChunk_t *dmlh_header, avi_t *avi)
+static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_dmlh()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -402,7 +214,7 @@ static int parse_dmlh(Bitstream_t *bitstr, AviChunk_t *dmlh_header, avi_t *avi)
 
 /* ************************************************************************** */
 
-static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *track)
+static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, AviTrack_t *track)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_strh()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -465,7 +277,7 @@ static int parse_strh(Bitstream_t *bitstr, AviChunk_t *strh_header, AviTrack_t *
 
 /* ************************************************************************** */
 
-static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *track)
+static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t *track)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_strf()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -652,7 +464,7 @@ static int parse_strf(Bitstream_t *bitstr, AviChunk_t *strf_header, AviTrack_t *
  * The index as described is the index you will find in AVI 1.0 files. It is
  * placed after the movi list in the RIFF AVI List.
  */
-static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_header, avi_t *avi)
+static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, RiffChunk_t *idx1_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -795,7 +607,7 @@ static int parse_idx1(Bitstream_t *bitstr, VideoFile_t *video, AviChunk_t *idx1_
  * the array is known. The field nEntriesInUse allows a chunk to be allocated
  * longer than the actual number of used elements in the array.
  */
-static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *track)
+static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t *track)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_indx()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -919,7 +731,7 @@ static int parse_indx(Bitstream_t *bitstr, AviChunk_t *indx_header, AviTrack_t *
  *
  * The Stream header list only contains chunk.
  */
-static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
+static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_strl()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -964,7 +776,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
-                AviList_t list_header;
+                RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
                 switch (list_header.dwFourCC)
@@ -980,7 +792,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
             }
             else
             {
-                AviChunk_t chunk_header;
+                RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
 
                 switch (chunk_header.dwFourCC)
@@ -1044,7 +856,7 @@ static int parse_strl(Bitstream_t *bitstr, AviList_t *strl_header, avi_t *avi)
  *
  * The ODML list only contains chunk.
  */
-static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
+static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_odml()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1069,7 +881,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
-                AviList_t list_header;
+                RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
                 switch (list_header.dwFourCC)
@@ -1085,7 +897,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
             }
             else
             {
-                AviChunk_t chunk_header;
+                RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
 
                 switch (chunk_header.dwFourCC)
@@ -1143,7 +955,7 @@ static int parse_odml(Bitstream_t *bitstr, AviList_t *odml_header, avi_t *avi)
  * - xxtx: subtitle chunk.
  * - ix..: standard index block.
  */
-static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
+static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_movi()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1167,7 +979,7 @@ static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
-                AviList_t list_header;
+                RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
                 switch (list_header.dwFourCC)
@@ -1182,7 +994,7 @@ static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
             }
             else
             {
-                AviChunk_t chunk_header;
+                RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
 
                 switch (chunk_header.dwFourCC)
@@ -1214,7 +1026,7 @@ static int parse_movi(Bitstream_t *bitstr, AviList_t *movi_header, avi_t *avi)
 
 /* ************************************************************************** */
 
-static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
+static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_INFO()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1239,7 +1051,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
-                AviList_t list_header;
+                RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
                 switch (list_header.dwFourCC)
@@ -1256,7 +1068,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
             }
             else
             {
-                AviChunk_t chunk_header;
+                RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
 
                 switch (chunk_header.dwFourCC)
@@ -1299,7 +1111,7 @@ static int parse_INFO(Bitstream_t *bitstr, AviList_t *INFO_header, avi_t *avi)
 
 /* ************************************************************************** */
 
-static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
+static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_hdrl()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1324,7 +1136,7 @@ static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
-                AviList_t list_header;
+                RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
                 switch (list_header.dwFourCC)
@@ -1347,7 +1159,7 @@ static int parse_hdrl(Bitstream_t *bitstr, AviList_t *hdrl_header, avi_t *avi)
             }
             else
             {
-                AviChunk_t chunk_header;
+                RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
 
                 switch (chunk_header.dwFourCC)
@@ -1508,7 +1320,7 @@ static int avi_indexer(Bitstream_t *bitstr, VideoFile_t *video, avi_t *avi)
                 bitstream_goto_offset(bitstr, avi->tracks[i]->superindex_entries[j].offset);
 
                 // IX header
-                AviChunk_t ix_chunk;
+                RiffChunk_t ix_chunk;
                 parse_chunk_header(bitstr, &ix_chunk);
                 print_chunk_header(&ix_chunk);
 
@@ -1621,7 +1433,7 @@ int avi_fileParse(VideoFile_t *video)
                bitstream_get_absolute_byte_offset(bitstr) < video->file_size)
         {
             // Read RIFF header
-            AviList_t RIFF_header;
+            RiffList_t RIFF_header;
             retcode = parse_list_header(bitstr, &RIFF_header);
             print_list_header(&RIFF_header);
 
@@ -1640,7 +1452,7 @@ int avi_fileParse(VideoFile_t *video)
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
                     {
-                        AviList_t list_header;
+                        RiffList_t list_header;
                         retcode = parse_list_header(bitstr, &list_header);
 
                         switch (list_header.dwFourCC)
@@ -1666,7 +1478,7 @@ int avi_fileParse(VideoFile_t *video)
                     }
                     else
                     {
-                        AviChunk_t chunk_header;
+                        RiffChunk_t chunk_header;
                         retcode = parse_chunk_header(bitstr, &chunk_header);
 
                         switch (chunk_header.dwFourCC)
@@ -1707,7 +1519,7 @@ int avi_fileParse(VideoFile_t *video)
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
                     {
-                        AviList_t list_header;
+                        RiffList_t list_header;
                         retcode = parse_list_header(bitstr, &list_header);
 
                         switch (list_header.dwFourCC)
@@ -1727,7 +1539,7 @@ int avi_fileParse(VideoFile_t *video)
                     }
                     else
                     {
-                        AviChunk_t chunk_header;
+                        RiffChunk_t chunk_header;
                         retcode = parse_chunk_header(bitstr, &chunk_header);
 
                         switch (chunk_header.dwFourCC)

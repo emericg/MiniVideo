@@ -29,57 +29,6 @@
 
 /* ************************************************************************** */
 
-/*!
- * \struct AviList_t
- * \brief Basic data structures for AVI.
- *
- * There are 2 types of atoms in AVI files: LIST and CHUNK.
- *
- * - dwFourCC describes the type of the chunk.
- * - dwSize contains the size of the chunk or list, including the first byte
- *   after the dwSize value. In the case of Lists, this includes the 4 bytes
- *   taken by dwFourCC!
- *
- * The offset_start value indicate the start of the LIST, after dwList and
- * dwSize, but not including dwFourCC.
- *
- * The value of dwList can be 'RIFF' ('RIFF-List') or 'LIST' ('List').
- */
-typedef struct AviList_t
-{
-    int64_t offset_start;
-    int64_t offset_end;
-
-    // List parameters
-    uint32_t dwList;
-    uint32_t dwSize;
-    uint32_t dwFourCC;
-
-} AviList_t;
-
-/*!
- * \struct AviChunk_t
- * \brief Basic data structures for AVI.
- *
- * Very similar to AviList_t, but:
- * - dwSize contains the size of the chunk, including the first byte after the
- *   dwSize value.
- * - Cannot contain other AviList_t or AviChunk_t elements.
- */
-typedef struct AviChunk_t
-{
-    int64_t offset_start;
-    int64_t offset_end;
-
-    // Chunk parameters
-    uint32_t dwFourCC;
-    uint32_t dwSize;
-
-} AviChunk_t;
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
 typedef struct AviStreamFormat_t
 {
     // BITMAPINFOHEADER
@@ -187,9 +136,6 @@ typedef struct avi_t
 
 typedef enum avi_fcc_e
 {
-    fcc_RIFF   = 0x52494646,
-    fcc_LIST   = 0x4C495354,
-
     fcc_auds   = 0x61756473,
     fcc_vids   = 0x76696473,
     fcc_txts   = 0x74787473,
@@ -227,7 +173,7 @@ typedef enum avi_fcc_codecs_e
     // Audio
 
     // Video
-    fcc_xvid = 0x78766964, //!< Mpeg 4 part 2
+    fcc_xvid = 0x78766964, //!< MPEG-4 part 2
     fcc_XVID = 0x58564944,
     fcc_FMP4 = 0x464D5034,
     fcc_DIVX = 0x44495658, //!< DivX 4 > 6
