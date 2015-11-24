@@ -30,11 +30,14 @@
 #include "import.h"
 
 // Demuxers
-#include "demuxer/bruteforce/bruteforce.h"
-#include "demuxer/mpeg/ps/ps.h"
 #include "demuxer/avi/avi.h"
-#include "demuxer/mp4/mp4.h"
 #include "demuxer/mkv/mkv.h"
+#include "demuxer/mp4/mp4.h"
+#include "demuxer/mp3/mp3.h"
+#include "demuxer/wave/wave.h"
+#include "demuxer/mpeg/ps/ps.h"
+
+#include "demuxer/bruteforce/bruteforce.h"
 #include "demuxer/filter.h"
 
 // Decoder
@@ -189,14 +192,17 @@ int minivideo_parse(VideoFile_t *input_video,
             case CONTAINER_MP4:
                 retcode = mp4_fileParse(input_video);
                 break;
-            case CONTAINER_MKV:
-                retcode = mkv_fileParse(input_video);
+            case CONTAINER_WAVE:
+                retcode = wave_fileParse(input_video);
                 break;
             case CONTAINER_MPEG_PS:
                 retcode = ps_fileParse(input_video);
                 break;
             case CONTAINER_ES:
                 retcode = bruteforce_fileParse(input_video, CODEC_H264);
+                break;
+            case CONTAINER_ES_MP3:
+                retcode = mp3_fileParse(input_video);
                 break;
             default:
                 TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!\n",

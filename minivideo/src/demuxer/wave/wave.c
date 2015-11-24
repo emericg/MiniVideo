@@ -22,8 +22,8 @@
  */
 
 // minivideo headers
-#include "wav.h"
-#include "wav_struct.h"
+#include "wave.h"
+#include "wave_struct.h"
 #include "../riff/riff.h"
 #include "../riff/riff_struct.h"
 #include "../../utils.h"
