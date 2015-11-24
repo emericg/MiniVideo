@@ -45,11 +45,11 @@ typedef struct BitstreamMap_t
 
     // Generic metadatas
     AVCodec_e stream_codec;         //!< Stream codec
-    unsigned int stream_size;       //!< Size of the raw datas of this stream, used for stats
+    uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats // to be removed?
 
     bool track_default;             //!<
     bool track_forced;              //!<
-    char language_code[3];          //!< Language code (ISO 639-1 or ISO 639-2 format)
+    unsigned char language_code[3]; //!< Language code (ISO 639-1 or ISO 639-2 format)
 
     unsigned int bitrate;           //!< Bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode
@@ -71,8 +71,13 @@ typedef struct BitstreamMap_t
     unsigned int framerate_base;    //!< Frame rate base
 
     // Audio specific metadatas
-    unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int channel_count;     //!< Number of audio channels
+    unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
+    unsigned int bit_per_sample;    //!< Sampling rate (in Hertz)
+
+    unsigned int pcm_sample_size;   //!< PCM sample size in bytes
+    unsigned int pcm_sample_format; //!< PCM sample format (signed, unsigned, float, ...)
+    unsigned int pcm_sample_endianness; //!< PCM samples endianness (little, big)
 
     // Subtitles specific metadatas
     char *subtitles_name;           //!< Subtitles name?
