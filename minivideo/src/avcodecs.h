@@ -114,9 +114,9 @@ typedef enum AVCodec_e
     CODEC_DAALA       = 86, //!< Xiph Daala
 
     // Subtitles codecs
-    CODEC_SRT        = 128, //!< SubRip (.srt)
-    CODEC_SSA        = 129, //!< "SubStation Alpha" (.ssa)
-    CODEC_ASS        = 130, //!< "Advanced SubStation Alpha" (.ass)
+    CODEC_SRT         = 128, //!< SubRip (.srt)
+    CODEC_SSA         = 129, //!< "SubStation Alpha" (.ssa)
+    CODEC_ASS         = 130, //!< "Advanced SubStation Alpha" (.ass)
 
 } AVCodec_e;
 
@@ -142,6 +142,7 @@ typedef enum PictureFormat_e
 typedef enum StreamType_e
 {
     stream_UNKNOWN = 0,
+
     stream_AUDIO   = 1,
     stream_VIDEO   = 2,
     stream_TEXT    = 3
@@ -152,6 +153,7 @@ typedef enum StreamType_e
 typedef enum StreamLevel_e
 {
     stream_level_UNKNOWN = 0,
+
     stream_level_PES     = 1,
     stream_level_ES      = 2
 
@@ -197,6 +199,7 @@ typedef enum PictureRepartition_e
 typedef enum ColorSpace_e
 {
     CS_UNKNOWN = 0,     //!< Unknown color space
+
     CS_YUV     = 1,     //!< YUV (YCbCr) color space
     CS_RGB     = 2      //!< RGB color space
 
@@ -206,6 +209,7 @@ typedef enum ColorSpace_e
 typedef enum SubSampling_e
 {
     SS_UNKNOWN = 0,     //!< Unknown subsampling
+
     SS_400     = 1,     //!< Greyscale
     SS_420     = 2,     //!< 4:2:0 subsampling
     SS_422     = 3,     //!< 4:2:2 subsampling
@@ -217,19 +221,23 @@ typedef enum SubSampling_e
 typedef enum FrameRate_e
 {
     FR_UNKNOWN = 0,   //!< Unknown frame rate
+
     FR_24p,           //!< 24 frames
-    FR_24p_NTSC,      //!< 24 frames * 1000/1001 = 23.976 frames
+    FR_24p_NTSC,      //!< (24 frames * 1000) / 1001 = 23.976 frames/s
     FR_25p,
     FR_30p,
-    FR_30p_NTSC,      //!< 30 frames * 1000/1001 = 29.970 frames
+    FR_30p_NTSC,      //!< (30 frames * 1000) / 1001 = 29.970 frames/s
     FR_48p,
+    FR_48p_NTSC,      //!< (48 frames * 1000) / 1001 = 47.952 frames/s
     FR_50p,
     FR_50i,           //!< 50 interlaced fields (25 frames)
     FR_60p,
-    FR_60p_NTSC,      //!< 60 frames * 1000/1001 = 59.970 frames
+    FR_60p_NTSC,      //!< (60 frames * 1000) / 1001 = 59.970 frames/s
     FR_60i,           //!< 60 interlaced fields (30 frames)
     FR_60i_NTSC,      //!< 60 interlaced fields * 1000/1001 = 59.940 interlaced fields (29.970 frames)
-    FR_72p
+    FR_72p,
+    FR_120p,
+    FR_240p
 
 } FrameRate_e;
 
