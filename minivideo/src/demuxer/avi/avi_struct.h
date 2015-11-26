@@ -167,40 +167,82 @@ typedef enum avi_fcc_e
 
 } avi_fcc_e;
 
+//! TwoCC used by indexes
+typedef enum avi_tcc_e
+{
+    tcc_AC            = 0x4143, //!< AC : Unknow entry ?
+    tcc_DIBbits       = 0x6462, //!< db : Device Independent Bitmap (uncompressed video frame)
+    tcc_DIBcompressed = 0x6463, //!< dc : Device Independent Bitmap (video frame)
+    tcc_INDEX         = 0x6978, //!< ix : Index entry
+    tcc_PALchange     = 0x7063, //!< pc : Palette Change
+    tcc_TEXT          = 0x7478, //!< tx : Subtitles entry
+    tcc_SUB           = 0x7362, //!< sb : Subtitles entry ?
+    tcc_WAVEbytes     = 0x7762, //!< wb : Wave Bytes (audio frame)
+    tcc_xx            = 0x7878  //!< xx : Unknow entry ? Let's assume that its the same as 'dc'.
 
+} avi_tcc_e;
+
+/*!
+ * Good ressource about these FourCC:
+ * http://www.fourcc.org/codecs.php
+ *
+ * Upper and lower cases are present, because we never know what will hit us
+ * with those AVI containers...
+ * These FourCC are set in big endian in this enum, so you may want to flip them
+ * if you are reading them from Windows specific stuff (ex: WVF structures).
+ */
 typedef enum avi_fcc_codecs_e
 {
-    // Audio
-
     // Video
-    fcc_xvid = 0x78766964, //!< MPEG-4 part 2
+    fcc_AVC1 = 0x41564331, //!< H.264 / MPEG-4 part 10
+    fcc_avc1 = 0x61766331,
+    fcc_AVCC = 0x41564343,
+    fcc_avcc = 0x61766363,
+    fcc_H264 = 0x48323634,
+    fcc_h264 = 0x68323634,
+    fcc_X264 = 0x58323634,
+    fcc_x264 = 0x78323634,
+
+    fcc_xvid = 0x78766964, //!< xvid / MPEG-4 part 2
     fcc_XVID = 0x58564944,
     fcc_FMP4 = 0x464D5034,
-    fcc_DIVX = 0x44495658, //!< DivX 4 > 6
-    fcc_DX50 = 0x44583530, //!< DivX 5.x
-    fcc_MP42 = 0x4D503432, //!< DivX 3.11
-    fcc_dvsd = 0x64767364  //!< DV
+    fcc_divx = 0x64697678, //!< DivX 4 -> 6
+    fcc_DIVX = 0x44495658,
+    fcc_DX50 = 0x44583530, //!< DivX 5
+
+    fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
+    fcc_DIV2 = 0x44495632,
+    fcc_DIV3 = 0x44495633,
+    fcc_DIV4 = 0x44495634,
+    fcc_DIV5 = 0x44495635,
+
+    fcc_MPEG = 0x4D504547, //!< MPEG-1 or 2
+    fcc_mpeg = 0x6D706567,
+    fcc_MPG1 = 0x4D504731,
+    fcc_mpg1 = 0x6D706731,
+    fcc_MPG2 = 0x4D504732,
+    fcc_mpg2 = 0x6D706732,
+
+    fcc_MPG4 = 0x4D504734, //!< Microsoft MPEG-4 (version 1 ?)
+    fcc_MP41 = 0x4D503431, //!< Microsoft MPEG-4 (version 1 ?)
+    fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
+    fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
+
+    fcc_WMV1 = 0x574D5631, //!< Windows Media Video codecs
+    fcc_WMV2 = 0x574D5632,
+    fcc_WMV3 = 0x574D5633,
+    fcc_WVC1 = 0x57564331,
+
+    fcc_dvsd = 0x64767364, //!< DV
+    fcc_DVSD = 0x44565344,
+
+    fcc_VYUV = 0x56595556, //!< Uncompressed YUV types
+    fcc_YUY2 = 0x59555932
 
 } avi_fcc_codecs_e;
 
-/*!
- * Good ressource about these tags (search for WAVE_FORMAT_):
- * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html
- */
-typedef enum wFormatTag_e
-{
-    wftag_UNKNOWN = 0,
-    wftag_PCM    = 0x0001,
-    wftag_MP1    = 0x0050,
-    wftag_MP3    = 0x0055,
-    wftag_AC3    = 0x2000,
-    wftag_DTS    = 0x2001,
-    wftag_AAC    = 0x00FF,
-    wftag_WAV    = 0xFFFE
-
-} wFormatTag_e;
-
-typedef enum avi_flags_dwFlags_e
+//! Flags for dwFlags member of AVIMAINHEADER
+typedef enum avi_flags_avih_e
 {
     AVIF_HASINDEX        = 0x00000010, //!< Index at end of file?
     AVIF_MUSTUSEINDEX    = 0x00000020,
@@ -209,8 +251,16 @@ typedef enum avi_flags_dwFlags_e
     AVIF_WASCAPTUREFILE  = 0x00010000,
     AVIF_COPYRIGHTED     = 0x00020000
 
-} avi_flags_dwFlags_e;
+} avi_flags_avih_e;
 
+typedef enum avi_flags_sf_e
+{
+    AVISF_DISABLED         = 0x00000001,
+    AVISF_VIDEO_PALCHANGES = 0x00010000
+
+} avi_flags_sf_e;
+
+//! Flags for dwFlags member of AVI indexes
 typedef enum avi_flags_dwCaps_e
 {
     AVIFC_CANREAD        = 0x00000001,
@@ -220,26 +270,31 @@ typedef enum avi_flags_dwCaps_e
 
 } avi_flags_dwCaps_e;
 
-typedef enum avi_flags_indexes_e
+//! Flags for dwFlags member of old 'idx1' AVI indexes
+typedef enum avi_flags_idx1_e
 {
     AVIIF_LIST           = 0x00000001, //!< Chunk is a 'LIST'.
     AVIIF_KEYFRAME       = 0x00000010, //!< This frame is a key frame.
-    AVIIF_NOTIME         = 0x00000100, //!< This frame doesn't take any time.
-    AVIIF_COMPUSE        = 0x0FFF0000, //!< These bits are for compressor use.
+    AVIIF_NO_TIME        = 0x00000100, //!< This frame doesn't take any time.
+    AVIIF_COMPRESSOR     = 0x0FFF0000, //!< These bits are for compressor use.
 
     AVIIF_FIRSTPART      = 0x00000000, //!< No infos...
     AVIIF_LASTPART       = 0x00000000  //!< No infos...
 
-} avi_flags_indexes_e;
+} avi_flags_idx1_e;
 
+//! Flags for standart 'indx' AVI indexes
 typedef enum bIndexType_e
 {
-    AVI_INDEX_OF_INDEXES = 0x00,
-    AVI_INDEX_OF_CHUNKS  = 0x01,
-    AVI_INDEX_IS_DATA    = 0x80
+    AVI_INDEX_OF_INDEXES      = 0x00,
+    AVI_INDEX_OF_CHUNKS       = 0x01,
+    AVI_INDEX_OF_TIMED_CHUNKS = 0x02,
+    AVI_INDEX_OF_SUB_2FIELD   = 0x03,
+    AVI_INDEX_IS_DATA         = 0x80
 
 } bIndexType_e;
 
+//! Sub-flags for standart 'indx' AVI indexes
 typedef enum bIndexSubType_e
 {
     AVI_INDEX_NOSUBTYPE  = 0x00,

@@ -25,6 +25,7 @@
 #include "avi.h"
 #include "avi_struct.h"
 #include "../riff/riff.h"
+#include "../wave/wave_struct.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -338,7 +339,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             TRACE_1(AVI, "> wBitsPerSample\t: %u\n", track->strf.wBitsPerSample);
 
             // Parse WAVEFORMATEX extention
-            if (track->strf.wFormatTag == wftag_UNKNOWN)
+            if (track->strf.wFormatTag == 0)
             {
                 TRACE_2(AVI, "> EXT > No wave format TAG\n");
                 track->strh.fccHandler = CODEC_UNKNOWN;
@@ -347,7 +348,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             {
                 int byte_left = strf_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-                if (track->strf.wFormatTag == wftag_MP1)
+                if (track->strf.wFormatTag == WAVE_FORMAT_MP1)
                 {
                     TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
                     track->strh.fccHandler = CODEC_MPEG_L1;
@@ -376,7 +377,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                         TRACE_1(AVI, "> dwPTSHigh\t: %u\n", dwPTSHigh);
                     }
                 }
-                else if (track->strf.wFormatTag == wftag_MP3)
+                else if (track->strf.wFormatTag == WAVE_FORMAT_MP3)
                 {
                     TRACE_1(AVI, "> EXT > MPEGLAYER3WAVEFORMAT\n");
                     track->strh.fccHandler = CODEC_MPEG_L3;
@@ -399,7 +400,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                         TRACE_1(AVI, "> nCodecDelay\t: %u\n", nCodecDelay);
                     }
                 }
-                else if (track->strf.wFormatTag == wftag_WAV)
+                else if (track->strf.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
                 {
                     TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
                     track->strh.fccHandler = CODEC_LPCM;
@@ -432,20 +433,29 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                                 SubFormat_GUID[12], SubFormat_GUID[13], SubFormat_GUID[14], SubFormat_GUID[15]);
                     }
                 }
-                else if  (track->strf.wFormatTag == wftag_AAC)
+                else if (track->strf.wFormatTag == WAVE_FORMAT_AAC)
                 {
                     TRACE_1(AVI, "> EXT > AAC\n");
                     track->strh.fccHandler = CODEC_AAC;
                 }
-                else if  (track->strf.wFormatTag == wftag_AC3)
+                else if (track->strf.wFormatTag == WAVE_FORMAT_AC3)
                 {
                     TRACE_1(AVI, "> EXT > AC3\n");
                     track->strh.fccHandler = CODEC_AC3;
                 }
-                else if  (track->strf.wFormatTag == wftag_DTS)
+                else if (track->strf.wFormatTag == WAVE_FORMAT_DTS)
                 {
                     TRACE_1(AVI, "> EXT > DTS\n");
                     track->strh.fccHandler = CODEC_DTS;
+                }
+                else if (track->strf.wFormatTag == WAVE_FORMAT_WMAS ||
+                         track->strf.wFormatTag == WAVE_FORMAT_WMA1 ||
+                         track->strf.wFormatTag == WAVE_FORMAT_WMA2 ||
+                         track->strf.wFormatTag == WAVE_FORMAT_WMAP ||
+                         track->strf.wFormatTag == WAVE_FORMAT_WMAL)
+                {
+                    TRACE_1(AVI, "> EXT > WMA\n");
+                    track->strh.fccHandler = CODEC_WMA;
                 }
             }
         }
