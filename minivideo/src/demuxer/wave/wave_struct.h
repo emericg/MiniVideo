@@ -37,12 +37,37 @@ typedef struct fmtChunk_t
     uint32_t nAvgBytesPerSec;     //!< Data rate
     uint16_t nBlockAlign;         //!< Data block size (bytes)
     uint16_t wBitsPerSample;      //!< Bits per sample
-    uint16_t cbSize;              //!< Size of the extension (0 or 22)
 
     // fmt chunk extension
-    uint16_t wValidBitsPerSample; //!< Number of valid bits
-    uint32_t dwChannelMask;       //!< Speaker position mask
-    uint8_t SubFormat[16];        //!< GUID, including the data format code
+    uint16_t cbSize;              //!< Size of the extension
+
+        // PCM
+        uint16_t wValidBitsPerSample; //!< Number of valid bits
+        uint32_t dwChannelMask;       //!< Speaker position mask
+        uint8_t SubFormat[16];        //!< GUID, including the data format code
+            //SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}
+            //SUBTYPE_AMBISONIC_B_FORMAT_IEEE_FLOAT {00000003-0721-11d3-8644-C8C1CA000000}
+
+        // MP1
+        uint16_t fwHeadLayer;
+        uint32_t dwHeadBitrate;
+        uint16_t fwHeadMode;
+        uint16_t fwHeadModeExt;
+        uint16_t wHeadEmphasis;
+        uint16_t fwHeadFlag;
+        uint32_t dwPTSLow;
+        uint32_t dwPTSHigh;
+
+        // MP3
+        uint16_t wID;
+        uint32_t fdwFlags;
+        uint16_t nBlockSize;
+        uint16_t nFramesPerBlock;
+        uint16_t nCodecDelay;
+
+        // WAVE extension
+        uint16_t wSamplesPerBlock;
+        uint16_t wReserved;
 
 } fmtChunk_t;
 
@@ -99,7 +124,13 @@ typedef enum WaveFormatTag_e
 
     WAVE_FORMAT_AC3        = 0x2000,
     WAVE_FORMAT_DTS        = 0x2001,
-    WAVE_FORMAT_AAC        = 0x00FF,
+    WAVE_FORMAT_AAC        = 0x00FF, //!< AAC or A52
+
+    WAVE_FORMAT_WMAS       = 0x000A, //!< WMA 9 Speech
+    WAVE_FORMAT_WMA1       = 0x0160, //!< WMA version 1
+    WAVE_FORMAT_WMA2       = 0x0161, //!< WMA (v2) 7, 8, 9 Series
+    WAVE_FORMAT_WMAP       = 0x0162, //!< WMA 9 Professional
+    WAVE_FORMAT_WMAL       = 0x0163, //!< WMA 9 Lossless
 
     WAVE_FORMAT_EXTENSIBLE = 0xFFFE
 

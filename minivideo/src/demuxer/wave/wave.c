@@ -65,23 +65,52 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             wave->fmt.wBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
         }
 
-        // the following is WIP
         if (fmt_header->dwSize >= 18)
         {
             wave->fmt.cbSize = endian_flip_16(read_bits(bitstr, 16));
 
-            // extension
-            if (wave->fmt.cbSize == 22 || fmt_header->dwSize >= 30)
+            // TODO always check remaining size in chunk
+
+            if (WAVE_FORMAT_PCM)
             {
+                wave->fmt.cbSize = endian_flip_16(read_bits(bitstr, 16));
+
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                 int i = 0;
                 for (i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
+            }
+            else if (WAVE_FORMAT_MP1)
+            {
+                wave->fmt.fwHeadLayer = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.dwHeadBitrate = endian_flip_32(read_bits(bitstr, 32));
+                wave->fmt.fwHeadMode = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.fwHeadModeExt = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.wHeadEmphasis = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.fwHeadFlag = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.dwPTSLow = endian_flip_32(read_bits(bitstr, 32));
+                wave->fmt.dwPTSHigh = endian_flip_32(read_bits(bitstr, 32));
+            }
+            else if (WAVE_FORMAT_MP3)
+            {
+                wave->fmt.wID = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.fdwFlags = endian_flip_32(read_bits(bitstr, 32));
+                wave->fmt.nBlockSize = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.nFramesPerBlock = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.nCodecDelay = endian_flip_16(read_bits(bitstr, 16));
+            }
+            else if (WAVE_FORMAT_EXTENSIBLE)
+            {
+                wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.wSamplesPerBlock = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
+                wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                //SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}
-                //SUBTYPE_AMBISONIC_B_FORMAT_IEEE_FLOAT {00000003-0721-11d3-8644-C8C1CA000000}
+                int i = 0;
+                for (i = 0; i < 16; i++)
+                    wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
             }
             else
             {
@@ -100,15 +129,16 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         TRACE_1(WAV, "> nAvgBytesPerSec : %u\n", wave->fmt.nAvgBytesPerSec);
         TRACE_1(WAV, "> nBlockAlign     : %u\n", wave->fmt.nBlockAlign);
         TRACE_1(WAV, "> wBitsPerSample  : %u\n", wave->fmt.wBitsPerSample);
-        TRACE_1(WAV, "> cbSize          : %u\n", wave->fmt.cbSize);
 
-        // fmt extension?
-        if (wave->fmt.cbSize >= 22)
+        // Extension
+        if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18)
         {
-            TRACE_1(WAV, "> wBitsPerSample  : %u\n", wave->fmt.wValidBitsPerSample);
-            TRACE_1(WAV, "> cbSize          : %u\n", wave->fmt.dwChannelMask);
+            TRACE_1(WAV, "> cbSize             : %u\n", wave->fmt.cbSize);
 
-            TRACE_1(WAV, "> SubFormat       : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}\n",
+            TRACE_1(WAV, "> wValidBitsPerSample: %u\n", wave->fmt.wValidBitsPerSample);
+            TRACE_1(WAV, "> dwChannelMask      : %u\n", wave->fmt.dwChannelMask);
+
+            TRACE_1(WAV, "> SubFormat : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}\n",
                     wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
                     wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
                     wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
@@ -230,7 +260,8 @@ static int wave_indexer_initmap(VideoFile_t *video, wave_t *wave)
         track->stream_type  = stream_AUDIO;
         track->stream_level = stream_level_ES;
 
-        if (wave->fmt.wFormatTag == WAVE_FORMAT_PCM)
+        if (wave->fmt.wFormatTag == WAVE_FORMAT_PCM ||
+            wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
         {
             track->stream_codec = CODEC_LPCM;
 
@@ -259,8 +290,11 @@ static int wave_indexer_initmap(VideoFile_t *video, wave_t *wave)
             track->pcm_sample_size = 0;
             track->pcm_sample_endianness = 0;
         }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1 ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_MP3)
+        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1)
+        {
+            track->stream_codec = CODEC_MPEG_L1;
+        }
+        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP3)
         {
             track->stream_codec = CODEC_MPEG_L3;
         }
@@ -276,6 +310,14 @@ static int wave_indexer_initmap(VideoFile_t *video, wave_t *wave)
                  wave->fmt.wFormatTag == WAVE_FORMAT_DTS_MS)
         {
             track->stream_codec = CODEC_DTS;
+        }
+        else if (wave->fmt.wFormatTag == WAVE_FORMAT_WMA1 ||
+                 wave->fmt.wFormatTag == WAVE_FORMAT_WMA2 ||
+                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAL ||
+                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAP ||
+                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAS)
+        {
+            track->stream_codec = CODEC_WMA;
         }
 
         track->channel_count = wave->fmt.nChannels;
