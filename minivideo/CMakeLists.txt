@@ -127,6 +127,7 @@ set(minivideo_SRC
         src/utils.c
         src/avcodecs.c
         src/minitraces.c
+        src/minitraces_conf.h
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c
