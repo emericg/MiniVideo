@@ -44,8 +44,9 @@ typedef struct BitstreamMap_t
     StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
 
     // Generic metadatas
-    AVCodec_e stream_codec;         //!< Stream codec
     uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats // to be removed?
+    AVCodec_e stream_codec;         //!< Codec used by this track
+    unsigned char *stream_encoder;  //!< Encoder used to generate the track's datas
 
     bool track_default;             //!<
     bool track_forced;              //!<
@@ -72,6 +73,7 @@ typedef struct BitstreamMap_t
 
     // Audio specific metadatas
     unsigned int channel_count;     //!< Number of audio channels
+    unsigned int channel_mode;      //!< Channels configuration
     unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int bit_per_sample;    //!< Sampling rate (in Hertz)
 

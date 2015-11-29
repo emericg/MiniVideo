@@ -186,6 +186,68 @@ typedef enum BitrateMode_e
 
 /* ************************************************************************** */
 
+//! Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field
+typedef enum AudioSpeakers_e
+{
+    SPEAKER_FRONT_LEFT              = 0x1,
+    SPEAKER_FRONT_RIGHT             = 0x2,
+    SPEAKER_FRONT_CENTER            = 0x4,
+    SPEAKER_LOW_FREQUENCY           = 0x8,
+    SPEAKER_BACK_LEFT               = 0x10,
+    SPEAKER_BACK_RIGHT              = 0x20,
+    SPEAKER_FRONT_LEFT_OF_CENTER    = 0x40,
+    SPEAKER_FRONT_RIGHT_OF_CENTER   = 0x80,
+    SPEAKER_BACK_CENTER             = 0x100,
+    SPEAKER_SIDE_LEFT               = 0x200,
+    SPEAKER_SIDE_RIGHT              = 0x400,
+    SPEAKER_TOP_CENTER              = 0x800,
+    SPEAKER_TOP_FRONT_LEFT          = 0x1000,
+    SPEAKER_TOP_FRONT_CENTER        = 0x2000,
+    SPEAKER_TOP_FRONT_RIGHT         = 0x4000,
+    SPEAKER_TOP_BACK_LEFT           = 0x8000,
+    SPEAKER_TOP_BACK_CENTER         = 0x10000,
+    SPEAKER_TOP_BACK_RIGHT          = 0x20000
+
+} AudioSpeakers_e;
+
+//! MPEG audio channel modes
+typedef enum MPEGChannelMode_e
+{
+    CHAN_MONO           = 0,
+    CHAN_STEREO         = 1,
+    CHAN_STEREO_JOINT   = 2,
+    CHAN_DUAL           = 3
+
+} MPEGChannelMode_e;
+
+//! Audio channel modes
+typedef enum ChannelMode_e
+{
+    CHANS_UNKNOWN       = 0,
+
+    CHANS_MONO          = 1,
+    CHANS_STEREO        = 2,
+    CHANS_30            = 3,
+    CHANS_QUAD          = 4,
+    CHANS_50            = 5,
+    CHANS_60            = 6,
+    CHANS_70            = 7,
+
+    CHANS_SURROUND_21   = 16,
+    CHANS_SURROUND_31   = 17,
+    CHANS_SURROUND_41   = 18,
+    CHANS_SURROUND_51   = 19,
+    CHANS_SURROUND_71   = 20,
+    CHANS_SURROUND_91   = 21,
+    CHANS_SURROUND_111  = 22,
+
+    CHANS_SURROUND_102  = 32,
+    CHANS_SURROUND_222  = 33
+
+} ChannelMode_e;
+
+/* ************************************************************************** */
+
 //! Picture extraction repartition mode
 typedef enum PictureRepartition_e
 {
