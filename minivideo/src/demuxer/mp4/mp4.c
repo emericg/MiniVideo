@@ -124,9 +124,6 @@ static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         map->creation_time = (float)track->creation_time / mp4->timescale * 1000;
         map->modification_time = (float)track->modification_time / mp4->timescale * 1000;
 
-        map->bitrate = track->bitrate_avg;
-        //track->bitrate_max
-
         map->sample_alignment = true;
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
 
