@@ -50,7 +50,7 @@ QString getSizeString(const int64_t size_int);
  * \param file_size: File size in bytes.
  * \return Track size QString.
  */
-QString getTrackSizeString(const BitstreamMap_t *track, int64_t file_size);
+QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size);
 
 /*!
  * \brief Get an aspect ratio string from a video definition.

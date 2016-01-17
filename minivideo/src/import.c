@@ -300,7 +300,7 @@ static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
     }
     else if (buffer[0] == 0xFF && buffer[1] == 0xFB)
     {
-        TRACE_1(IO, "* File type      : MP3 container detected\n");
+        TRACE_1(IO, "* File type      : MP3 Elementary Stream detected\n");
         container = CONTAINER_ES_MP3;
     }
 

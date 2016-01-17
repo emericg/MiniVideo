@@ -209,6 +209,9 @@ int minivideo_parse(VideoFile_t *input_video,
                             getContainerString(input_video->container, 0));
                 break;
         }
+
+        // Compute some metadatas from parsed metadatas
+        computeBitRates(input_video);
     }
 
     return retcode;

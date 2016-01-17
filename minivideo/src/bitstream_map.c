@@ -206,3 +206,62 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
+
+static void computeBitRateTrack(BitstreamMap_t *t)
+{
+    if (t)
+    {
+        uint64_t bytes = 0;
+        bool cbr = true;
+
+        for (int j = 0; j < t->sample_count; j++)
+        {
+            bytes += t->sample_size[j];
+
+            if (t->sample_size[0] != t->sample_size[j])
+                cbr = false;
+        }
+
+        if (cbr == true)
+        {
+            t->bitrate_mode = BITRATE_CBR;
+        }
+        else
+        {
+            // check if we have AVBR / CVBR ?
+            t->bitrate_mode = BITRATE_VBR;
+        }
+
+        // Set stream size
+        if (t->stream_size == 0)
+            t->stream_size = bytes;
+
+        // Set gross bitrate value
+        if (t->bitrate == 0)
+            t->bitrate = round(((double)t->stream_size / (double)t->duration) * 8.0);
+    }
+}
+
+/* ************************************************************************** */
+
+bool computeBitRates(VideoFile_t *video)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
+    bool retcode = SUCCESS;
+
+    for (int i = 0; i < video->tracks_video_count; i++)
+    {
+        computeBitRateTrack(video->tracks_video[i]);
+    }
+
+    for (int i = 0; i < video->tracks_audio_count; i++)
+    {
+        computeBitRateTrack(video->tracks_audio[i]);
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */

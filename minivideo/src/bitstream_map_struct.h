@@ -46,11 +46,14 @@ typedef struct BitstreamMap_t
     // Generic metadatas
     uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats // to be removed?
     AVCodec_e stream_codec;         //!< Codec used by this track
-    unsigned char *stream_encoder;  //!< Encoder used to generate the track's datas
+    char *stream_encoder;           //!< Encoder used to generate the track's datas
+
+    unsigned int track_id;          //!< Id of the track
+    char *track_title;              //!< Title
+    char track_language[3];         //!< Language code (ISO 639-1 or ISO 639-2 format)
 
     bool track_default;             //!<
     bool track_forced;              //!<
-    unsigned char language_code[3]; //!< Language code (ISO 639-1 or ISO 639-2 format)
 
     unsigned int bitrate;           //!< Bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode

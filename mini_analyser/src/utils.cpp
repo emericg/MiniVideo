@@ -99,40 +99,47 @@ QString getSizeString(const int64_t size_int)
     return size_qstr;
 }
 
-QString getTrackSizeString(const BitstreamMap_t *track, int64_t file_size)
+QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size)
 {
     QString size_qstr;
-    int64_t size_int = 0;
 
     if (track != NULL)
     {
-        for (unsigned i = 0; i < track->sample_count; i++)
+        // Compute stream if needed
+        if (track->stream_size == 0)
         {
-            size_int += track->sample_size[i];
+            for (unsigned i = 0; i < track->sample_count; i++)
+            {
+                track->stream_size += track->sample_size[i];
+            }
         }
 
-        if (size_int > 0)
+        if (track->stream_size > 0)
         {
-            if (size_int < 1024) // < 1 KiB
+            if (track->stream_size < 1024) // < 1 KiB
             {
-                size_qstr = QString::number(size_int) + " bytes";
+                size_qstr = QString::number(track->stream_size) + " bytes";
             }
-            else if (size_int < 1048576) // < 1 MiB
+            else if (track->stream_size < 1048576) // < 1 MiB
             {
-                size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB";
+                size_qstr = QString::number(track->stream_size / 1024.0, 'f', 2) + " KiB";
             }
-            else if (size_int < 1073741824) // < 1 GiB
+            else if (track->stream_size < 1073741824) // < 1 GiB
             {
-                size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB";
+                size_qstr = QString::number(track->stream_size / 1024.0 / 1024.0, 'f', 2) + " MiB";
             }
             else // < 1 GiB
             {
-                size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
+                size_qstr = QString::number(track->stream_size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
             }
 
             // Percentage
-            double sizepercent = ((double)size_int / (double)file_size) * 100.0;
-            size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
+            double sizepercent = ((double)track->stream_size / (double)file_size) * 100.0;
+
+            if (sizepercent < 0.1)
+                size_qstr += " (< 0.1%)";
+            else
+                size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
     }
     else

@@ -466,7 +466,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="1" column="3">
-            <widget class="QLabel" name="label_video_var">
+            <widget class="QLabel" name="label_video_ar">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -843,7 +843,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="3" column="3">
-            <widget class="QLabel" name="label_audio_bitrate_mode">
+            <widget class="QLabel" name="label_audio_bitratemode">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -958,7 +958,7 @@ background: rgba(255, 170, 0, 128);</string>
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
-          <widget class="QLabel" name="label_audio_lng_7">
+          <widget class="QLabel" name="label_audio_title">
            <property name="geometry">
             <rect>
              <x>230</x>
@@ -1076,7 +1076,7 @@ background: rgba(255, 170, 0, 128);</string>
             <string>Encoder</string>
            </property>
           </widget>
-          <widget class="QLabel" name="label_audio_codec_3">
+          <widget class="QLabel" name="label_audio_encoder">
            <property name="geometry">
             <rect>
              <x>230</x>
@@ -1229,7 +1229,7 @@ background: rgba(255, 170, 0, 128);</string>
             <string>Codec</string>
            </property>
           </widget>
-          <widget class="QLabel" name="label_audio_id_2">
+          <widget class="QLabel" name="label_audio_id">
            <property name="geometry">
             <rect>
              <x>230</x>
@@ -1286,7 +1286,7 @@ background: rgba(255, 170, 0, 128);</string>
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
-          <widget class="QLabel" name="label_audio_channels_3">
+          <widget class="QLabel" name="label_audio_samplecount">
            <property name="geometry">
             <rect>
              <x>230</x>
@@ -1590,7 +1590,7 @@ background: rgba(255, 170, 0, 128);</string>
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QLabel" name="label_video_id_2">
+                  <widget class="QLabel" name="label_video_id">
                    <property name="font">
                     <font>
                      <weight>75</weight>
@@ -1682,7 +1682,7 @@ background: rgba(255, 170, 0, 128);</string>
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QLabel" name="label_video_lng_5">
+                  <widget class="QLabel" name="label_video_lng">
                    <property name="font">
                     <font>
                      <weight>75</weight>
@@ -1715,42 +1715,10 @@ background: rgba(255, 170, 0, 128);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_video_codec_2">
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Unknown</string>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_62">
                    <property name="text">
                     <string>Encoder</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_video_encoder">
-                   <property name="font">
-                    <font>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Unknown</string>
-                   </property>
-                   <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1762,7 +1730,7 @@ background: rgba(255, 170, 0, 128);</string>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLabel" name="label_video_def_2">
+                  <widget class="QLabel" name="label_video_definition_2">
                    <property name="font">
                     <font>
                      <weight>75</weight>
@@ -1924,6 +1892,38 @@ background: rgba(255, 170, 0, 128);</string>
                  </item>
                  <item row="6" column="3">
                   <widget class="QLabel" name="label_video_framerate_3">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Unknown</string>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" colspan="3">
+                  <widget class="QLabel" name="label_video_encoder">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Unknown</string>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" colspan="3">
+                  <widget class="QLabel" name="label_video_codec_2">
                    <property name="font">
                     <font>
                      <weight>75</weight>
