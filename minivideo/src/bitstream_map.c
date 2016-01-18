@@ -214,8 +214,9 @@ static void computeBitRateTrack(BitstreamMap_t *t)
     {
         uint64_t bytes = 0;
         bool cbr = true;
+        int j = 0;
 
-        for (int j = 0; j < t->sample_count; j++)
+        for (j = 0; j < t->sample_count; j++)
         {
             bytes += t->sample_size[j];
 
@@ -249,13 +250,14 @@ bool computeBitRates(VideoFile_t *video)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
     bool retcode = SUCCESS;
+    int i = 0;
 
-    for (int i = 0; i < video->tracks_video_count; i++)
+    for (i = 0; i < video->tracks_video_count; i++)
     {
         computeBitRateTrack(video->tracks_video[i]);
     }
 
-    for (int i = 0; i < video->tracks_audio_count; i++)
+    for (i = 0; i < video->tracks_audio_count; i++)
     {
         computeBitRateTrack(video->tracks_audio[i]);
     }
