@@ -56,11 +56,12 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size);
  * \brief Get an aspect ratio string from a video definition.
  * \param x: Video width in pixel.
  * \param y: Video height in pixel.
- * \return Aspect Ratio QString.
+ * \param detailed: Also print the name of the format.
+ * \return QString with the aspect ratio.
  *
  * See http://en.wikipedia.org/wiki/Aspect_ratio_(image) for more infos.
  */
-QString getAspectRatioString(const int x, const int y);
+QString getAspectRatioString(const int x, const int y, bool detailed = false);
 
 /*!
  * \brief Get a bitrate string from a bitrate in byte.

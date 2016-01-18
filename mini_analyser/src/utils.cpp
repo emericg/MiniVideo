@@ -152,35 +152,91 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size)
     return size_qstr;
 }
 
-QString getAspectRatioString(const int x, const int y)
+QString getAspectRatioString(const int x, const int y, bool detailed)
 {
     QString aspectratio_qstr;
 
     double ar_d = static_cast<double>(x) / static_cast<double>(y);
 
-    if (ar_d > 1.75 && ar_d < 1.79)
+    if (ar_d > 1.767 && ar_d < 1.787)
     {
-        aspectratio_qstr = "16/9";
+        aspectratio_qstr = "16:9";
     }
-    else if (ar_d > 1.65 && ar_d < 1.67)
+    else if (ar_d > 1.656 && ar_d < 1.676)
     {
-        aspectratio_qstr = "5/3";
+        aspectratio_qstr = "5:3";
+
+        if (detailed)
+            aspectratio_qstr = " (35mm)";
     }
     else if (ar_d > 1.59 && ar_d < 1.61)
     {
-        aspectratio_qstr = "16/10";
+        aspectratio_qstr = "16:10";
+    }
+    else if (ar_d > 1.545 && ar_d < 1.565)
+    {
+        aspectratio_qstr = "14:9";
     }
     else if (ar_d > 1.49 && ar_d < 1.51)
     {
-        aspectratio_qstr = "3/2";
+        aspectratio_qstr = "3:2";
     }
-    else if (ar_d > 1.32 && ar_d < 1.34)
+    else if (ar_d > 1.42 && ar_d < 1.44)
     {
-        aspectratio_qstr = "4/3";
+        aspectratio_qstr = "1.43:1";
+
+        if (detailed)
+            aspectratio_qstr = " (IMAX)";
+    }
+    else if (ar_d > 1.323 && ar_d < 1.343)
+    {
+        aspectratio_qstr = "4:3";
     }
     else if (ar_d > 1.24 && ar_d < 1.26)
     {
-        aspectratio_qstr = "5/4";
+        aspectratio_qstr = "5:4";
+    }
+    else if (ar_d > 1.84 && ar_d < 1.86)
+    {
+        aspectratio_qstr = "1.85:1";
+
+        if (detailed)
+            aspectratio_qstr = " (Widescreen)";
+    }
+    else if (ar_d > 1.99 && ar_d < 2.01)
+    {
+        aspectratio_qstr = "2.0:1";
+
+        if (detailed)
+            aspectratio_qstr = " (Univisium)";
+    }
+    else if (ar_d > 2.19 && ar_d < 2.21)
+    {
+        aspectratio_qstr = "2.20:1";
+
+        if (detailed)
+            aspectratio_qstr = " (70 mm)";
+    }
+    else if (ar_d > 2.34 && ar_d < 2.36)
+    {
+        aspectratio_qstr = "2.35:1";
+
+        if (detailed)
+            aspectratio_qstr = " (CinemaScope)";
+    }
+    else if (ar_d > 2.39 && ar_d < 2.41)
+    {
+        aspectratio_qstr = "2.39:1";
+
+        if (detailed)
+            aspectratio_qstr = " (35 mm anamorphic)";
+    }
+    else if (ar_d > 2.75 && ar_d < 2.77)
+    {
+        aspectratio_qstr = "2.76:1";
+
+        if (detailed)
+            aspectratio_qstr = " (Ultra Panavision 70)";
     }
     else
     {
