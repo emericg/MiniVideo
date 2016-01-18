@@ -439,7 +439,7 @@ int MainWindow::printDatas()
 
             double bitrate = static_cast<double>(media->tracks_audio[atid]->bitrate);
             ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
-            ui->label_audio_bitrate_mean->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
+            ui->label_audio_bitrate_gross->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
 
             if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CBR)
             {
@@ -505,7 +505,7 @@ int MainWindow::printDatas()
 
             double bitrate = static_cast<double>(media->tracks_video[vtid]->bitrate);
             ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 6) + " Kb/s");
-            ui->label_video_bitrate_2->setText(QString::number(bitrate, 'g', 6) + " Kb/s");
+            ui->label_video_bitrate_gross->setText(QString::number(bitrate, 'g', 6) + " Kb/s");
 
             if (media->tracks_video[vtid]->bitrate_mode == BITRATE_CBR)
             {
@@ -531,7 +531,7 @@ int MainWindow::printDatas()
             ui->label_video_definition->setText(QString::number(media->tracks_video[vtid]->width) + " x " + QString::number(media->tracks_video[vtid]->height));
             ui->label_video_definition_2->setText(QString::number(media->tracks_video[vtid]->width) + " x " + QString::number(media->tracks_video[vtid]->height));
             ui->label_video_ar->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
-            ui->label_video_ar_2->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
+            ui->label_video_ar_2->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height, true));
 
             double framerate = media->tracks_video[vtid]->frame_rate;
             if (framerate < 1.0)
@@ -544,12 +544,11 @@ int MainWindow::printDatas()
             double frameduration = 1000.0 / framerate; // in ms
 
             ui->label_video_samplecount->setText(QString::number(media->tracks_video[vtid]->sample_count));
-            ui->label_video_framerate_3->setText(QString::number(frameduration, 'g', 4) + " ms");
+            ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
 
             ui->label_video_framerate->setText(QString::number(framerate));
             ui->label_video_framerate_2->setText(QString::number(framerate));
             ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
-            ui->label_video_color_depth_2->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
             //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
         }
 
