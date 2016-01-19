@@ -208,7 +208,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = "2.0:1";
 
         if (detailed)
-            aspectratio_qstr = " (Univisium)";
+            aspectratio_qstr += " (Univisium)";
     }
     else if (ar_d > 2.19 && ar_d < 2.21)
     {

@@ -23,8 +23,6 @@
 #include "ui_mainwindow.h"
 #include "utils.h"
 
-#include <iostream>
-
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
@@ -35,6 +33,9 @@
 #include <QMimeData>
 
 #include <QTimer>
+
+#include <iostream>
+#include <cmath>
 
 /* ************************************************************************** */
 
@@ -383,12 +384,11 @@ int MainWindow::printDatas()
 
     if (media)
     {
-        ui->label_filename->setText(QString::fromLocal8Bit(media->file_name));
+        ui->label_filename->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
         ui->label_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
         ui->label_fullpath->setText(QString::fromLocal8Bit(media->file_path));
         ui->label_fullpath->setToolTip(QString::fromLocal8Bit(media->file_path));
         ui->label_container->setText(getContainerString(media->container, 1));
-        ui->label_container_extension->setText(QString::fromLocal8Bit(media->file_extension));
         ui->label_filesize->setText(getSizeString(media->file_size));
         ui->label_duration->setText(getDurationString(media->duration));
 
@@ -462,7 +462,7 @@ int MainWindow::printDatas()
                 ui->label_audio_bitratemode_2->setText("CVBR");
             }
 
-            ui->label_audio_samplecount->setText(QString::number(media->tracks_audio[atid]->sample_count));
+            //ui->label_audio_samplecount->setText(QString::number(media->tracks_audio[atid]->sample_count));
 
             ui->label_audio_samplingrate->setText(QString::number(media->tracks_audio[atid]->sampling_rate) + " Hz");
             ui->label_audio_samplingrate_2->setText(QString::number(media->tracks_audio[atid]->sampling_rate) + " Hz");
@@ -544,12 +544,19 @@ int MainWindow::printDatas()
             double frameduration = 1000.0 / framerate; // in ms
 
             ui->label_video_samplecount->setText(QString::number(media->tracks_video[vtid]->sample_count));
+            ui->label_video_samplecount_idr->setText(QString::number(media->tracks_video[vtid]->sample_count_idr));
+            ui->label_video_samplecount_other->setText(QString::number(media->tracks_video[vtid]->sample_count - media->tracks_video[vtid]->sample_count_idr));
             ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
 
             ui->label_video_framerate->setText(QString::number(framerate));
             ui->label_video_framerate_2->setText(QString::number(framerate));
             ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
             //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
+
+            uint64_t rawsize = media->tracks_video[vtid]->width * media->tracks_video[vtid]->height * (24 / 8);
+            rawsize *= media->tracks_video[vtid]->sample_count;
+            uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(media->tracks_video[vtid]->stream_size));
+            ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
         }
 
         // SUBS

@@ -44,7 +44,7 @@ typedef struct BitstreamMap_t
     StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
 
     // Generic metadatas
-    uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats // to be removed?
+    uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats
     AVCodec_e stream_codec;         //!< Codec used by this track
     char *stream_encoder;           //!< Encoder used to generate the track's datas
 
