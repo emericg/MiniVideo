@@ -167,7 +167,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = "5:3";
 
         if (detailed)
-            aspectratio_qstr = " (35mm)";
+            aspectratio_qstr += " (35mm)";
     }
     else if (ar_d > 1.59 && ar_d < 1.61)
     {
@@ -186,7 +186,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = "1.43:1";
 
         if (detailed)
-            aspectratio_qstr = " (IMAX)";
+            aspectratio_qstr += " (IMAX)";
     }
     else if (ar_d > 1.323 && ar_d < 1.343)
     {
@@ -201,7 +201,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = "1.85:1";
 
         if (detailed)
-            aspectratio_qstr = " (Widescreen)";
+            aspectratio_qstr += " (Widescreen)";
     }
     else if (ar_d > 1.99 && ar_d < 2.01)
     {
@@ -215,28 +215,28 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = "2.20:1";
 
         if (detailed)
-            aspectratio_qstr = " (70 mm)";
+            aspectratio_qstr += " (70 mm)";
     }
     else if (ar_d > 2.34 && ar_d < 2.36)
     {
         aspectratio_qstr = "2.35:1";
 
         if (detailed)
-            aspectratio_qstr = " (CinemaScope)";
+            aspectratio_qstr += " (CinemaScope)";
     }
-    else if (ar_d > 2.39 && ar_d < 2.41)
+    else if (ar_d > 2.38 && ar_d < 2.40)
     {
         aspectratio_qstr = "2.39:1";
 
         if (detailed)
-            aspectratio_qstr = " (35 mm anamorphic)";
+            aspectratio_qstr += " (35 mm anamorphic)";
     }
     else if (ar_d > 2.75 && ar_d < 2.77)
     {
         aspectratio_qstr = "2.76:1";
 
         if (detailed)
-            aspectratio_qstr = " (Ultra Panavision 70)";
+            aspectratio_qstr += " (Ultra Panavision 70)";
     }
     else
     {
