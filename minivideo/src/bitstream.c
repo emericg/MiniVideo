@@ -945,14 +945,19 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
         }
         else // Or somewhere else entierly
         {
-            // Reload bitstream buffer from the byte offset we want
-            int64_t new_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + n);
-            retcode = bitstream_goto_offset(bitstr, new_offset/8);
+            int64_t new_bit_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + n);
 
-            // Then skip x bits ?
-            if ((new_offset % 8) != 0)
+            // Do not jump to the last byte of the file?
+            //if (new_bit_offset/8 >= bitstr->bitstream_size)
             {
-                bitstr->buffer_offset += new_offset % 8;
+                // Reload bitstream buffer from the byte offset we want
+                retcode = bitstream_goto_offset(bitstr, new_bit_offset/8);
+
+                // Then skip x bits ?
+                if ((new_bit_offset % 8) != 0)
+                {
+                    bitstr->buffer_offset += new_bit_offset % 8;
+                }
             }
         }
     }
@@ -1022,6 +1027,13 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
+
+int64_t bitstream_get_full_size(Bitstream_t *bitstr)
+{
+    return bitstr->bitstream_size;
+}
+
 /* ************************************************************************** */
 
 /*!
