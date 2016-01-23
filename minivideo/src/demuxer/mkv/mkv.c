@@ -201,14 +201,14 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
 
 /*!
  * \brief Parse a mkv file.
- * \param *video A pointer to a VideoFile_t structure.
+ * \param *video A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
  * This parser is based on the official MKV specification.
  * - http://www.matroska.org/technical/specs/index.html
  * - http://www.matroska.org/files/matroska.pdf
  */
-int mkv_fileParse(VideoFile_t *video)
+int mkv_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;

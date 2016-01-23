@@ -25,7 +25,7 @@
 #define BITSTREAM_MAP_H
 
 // minivideo headers
-#include "videofile_struct.h"
+#include "mediafile_struct.h"
 #include "bitstream_map_struct.h"
 
 /* ************************************************************************** */
@@ -36,7 +36,7 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map);
 
 void print_bitstream_map(BitstreamMap_t *bitstream_map);
 
-bool computeBitRates(VideoFile_t *video);
+bool computeBitRates(MediaFile_t *video);
 
 /* ************************************************************************** */
 #endif // BITSTREAM_MAP_H

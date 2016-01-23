@@ -30,7 +30,7 @@ extern "C" {
 #endif // __cplusplus
 
 #include "avcodecs.h"
-#include "videofile_struct.h"
+#include "mediafile_struct.h"
 
 /* ************************************************************************** */
 
@@ -67,35 +67,35 @@ void minivideo_infos(void);
 int minivideo_endianness(void);
 
 /*!
- * \brief Open a file and return a VideoFile_t context.
+ * \brief Open a file and return a MediaFile_t context.
  * \param[in] *input_filepath: The file path of the video we want to open.
- * \param[out] **input_video: The VideoFile_t context to create.
+ * \param[out] **input_media: The MediaFile_t context to create.
  * \return TODO ERROR CODE (0 if file opening is a success, 1 otherwise).
  *
  * The first step in the decoding process is to open the file with the given fileptath.
  * If the file is successfully opened, the program start gathering informations about
  * the file, print them if in debug mode.
  */
-int minivideo_open(const char *input_filepath, VideoFile_t **input_video);
+int minivideo_open(const char *input_filepath, MediaFile_t **input_media);
 
 /*!
- * \brief Parse a video file and fill the VideoFile_t context with the extracted infos.
- * \param *input_video: The VideoFile_t context to use.
+ * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
+ * \param *input_media: The MediaFile_t context to use.
  * \param extract_audio: Enable audio track parsing.
  * \param extract_video: Enable video track parsing.
  * \param extract_subtitles: Enable subtitles track parsing.
  * \return TODO ERROR CODE (0 if container parsing is a success, 1 otherwise).
  *
  * The second step in the decoding process is to parse the file's container infos
- * (if appropriate parser is available) and fill the VideoFile_t structure with
+ * (if appropriate parser is available) and fill the MediaFile_t structure with
  * the tracks samples informations.
  */
-int minivideo_parse(VideoFile_t *input_video,
+int minivideo_parse(MediaFile_t *input_media,
                     const bool extract_audio, const bool extract_video, const bool extract_subtitles);
 
 /*!
  * \brief Decode a video file and export thumbnails.
- * \param *input_video: The VideoFile_t context to use.
+ * \param *input_media: The MediaFile_t context to use.
  * \param *output_directory: The directory where we want to save decoded thumbnail(s).
  * \param picture_format: The picture format for thumbnail(s) we want to extract.
  * \param picture_quality: The quality of thumbnail(s) we want to extract.
@@ -108,7 +108,7 @@ int minivideo_parse(VideoFile_t *input_video,
  *
  * \todo Split this function into filtering /decoding / extraction stages.
  */
-int minivideo_decode(VideoFile_t *input_video,
+int minivideo_decode(MediaFile_t *input_media,
                      const char *output_directory,
                      const int picture_format,
                      const int picture_quality,
@@ -117,7 +117,7 @@ int minivideo_decode(VideoFile_t *input_video,
 
 /*!
  * \brief Extract selected tracks from a video file and export in separated ES files.
- * \param *input_video: The VideoFile_t context to use.
+ * \param *input_media: The MediaFile_t context to use.
  * \param *output_directory: The directory where we want to export track(s).
  * \param extract_audio: True to extract audio tracks.
  * \param extract_video: True to extract video tracks.
@@ -125,7 +125,7 @@ int minivideo_decode(VideoFile_t *input_video,
  * \param output_format: Can be '1' for PES format or '2' for ES format.
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  */
-int minivideo_extract(VideoFile_t *input_video,
+int minivideo_extract(MediaFile_t *input_media,
                       const char *output_directory,
                       const bool extract_audio,
                       const bool extract_video,
@@ -134,9 +134,9 @@ int minivideo_extract(VideoFile_t *input_video,
 
 /*!
  * \brief Close a video file.
- * \param input_video: The VideoFile_t context to destroy.
+ * \param input_media: The MediaFile_t context to destroy.
  */
-int minivideo_close(VideoFile_t **input_video);
+int minivideo_close(MediaFile_t **input_media);
 
 /* ************************************************************************** */
 #ifdef __cplusplus

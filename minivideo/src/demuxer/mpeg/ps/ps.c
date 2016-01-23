@@ -253,13 +253,13 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDire
 
 /*!
  * \brief Parse a mp4 file.
- * \param *video A pointer to a VideoFile_t structure.
+ * \param *video A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
  * This parser is based on the 'ISO/IEC 13818-1' international standard, part 1:
  * 'Transmission multiplexing and synchronization'.
  */
-int ps_fileParse(VideoFile_t *video)
+int ps_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;

@@ -156,20 +156,20 @@ int MainWindow::loadFile(const QString &file)
 
 /* ************************************************************************** */
 
-VideoFile_t *MainWindow::currentMediaFile()
+MediaFile_t *MainWindow::currentMediaFile()
 {
-    VideoFile_t *media = NULL;
+    MediaFile_t *media = NULL;
 
     size_t fileIndex = ui->file_comboBox->currentIndex();
 
 
-    if (videosList.size() == 1)
+    if (mediaList.size() == 1)
     {
-        media = videosList.at(0);
+        media = mediaList.at(0);
     }
-    else if (fileIndex < videosList.size())
+    else if (fileIndex < mediaList.size())
     {
-        media = videosList.at(fileIndex);
+        media = mediaList.at(fileIndex);
     }
 
     return media;
@@ -180,7 +180,7 @@ void MainWindow::handleComboBox(const QString &file)
     // Is this the first file added?
     if (emptyFileList)
     {
-        if (videosList.empty() == true)
+        if (mediaList.empty() == true)
         {
             ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"), "Drag and drop files to analyse them!");
         }
@@ -212,7 +212,7 @@ void MainWindow::handleTabWidget()
     }
 
     // Clean tabs
-    if (videosList.empty())
+    if (mediaList.empty())
     {
         // Add only the "drop zone" tab
         ui->tabWidget->addTab(ui->tab_dropzone, tabDropZoneIcon, tabDropZoneText);
@@ -221,30 +221,30 @@ void MainWindow::handleTabWidget()
     }
     else // Otherwise, adapt tabs to media file content
     {
-        VideoFile_t *video = currentMediaFile();
+        MediaFile_t *media = currentMediaFile();
 
         ui->tabWidget->tabBar()->show();
         ui->tabWidget->addTab(ui->tab_infos, tabInfosIcon, tabInfosText);
 
-        if (video->tracks_video_count)
+        if (media->tracks_video_count)
         {
             // Add the "video" tab
             ui->tabWidget->addTab(ui->tab_video, tabVideoIcon, tabVideoText);
         }
 
-        if (video->tracks_audio_count)
+        if (media->tracks_audio_count)
         {
             // Add the "audio" tab
             ui->tabWidget->addTab(ui->tab_audio, tabAudioIcon, tabAudioText);
         }
 
-        if (video->tracks_subtitles_count)
+        if (media->tracks_subtitles_count)
         {
             // Add the "subtitles" tab
             ui->tabWidget->addTab(ui->tab_subtitles, tabSubsIcon, tabSubsText);
         }
 
-        if (video->tracks_others)
+        if (media->tracks_others)
         {
             // Add the "others" tab
             ui->tabWidget->addTab(ui->tab_others, tabOtherIcon, tabOtherText);
@@ -290,11 +290,11 @@ void MainWindow::closeFile()
 
     // Then try to close the file's context
     int fileIndex = ui->file_comboBox->currentIndex();
-    if (videosList.empty() == false)
+    if (mediaList.empty() == false)
     {
-        if ((int)(videosList.size()) >= (fileIndex + 1))
+        if ((int)(mediaList.size()) >= (fileIndex + 1))
         {
-            videosList.erase(videosList.begin() + fileIndex);
+            mediaList.erase(mediaList.begin() + fileIndex);
 
             // Remove the entry from the comboBox
             ui->file_comboBox->removeItem(fileIndex);
@@ -348,17 +348,17 @@ int MainWindow::analyseFile(const QString &file)
     {
         strcpy(input_filepath, file.toLocal8Bit());
 
-        // Create and open the video file
-        VideoFile_t *input_video = NULL;
-        retcode = minivideo_open(input_filepath, &input_video);
+        // Create and open the media file
+        MediaFile_t *input_media = NULL;
+        retcode = minivideo_open(input_filepath, &input_media);
 
         if (retcode == SUCCESS)
         {
-            retcode = minivideo_parse(input_video, true, true, true);
+            retcode = minivideo_parse(input_media, true, true, true);
 
             if (retcode == SUCCESS)
             {
-                videosList.push_back(input_video);
+                mediaList.push_back(input_media);
             }
             else
             {
@@ -380,7 +380,7 @@ int MainWindow::printDatas()
 
     handleTabWidget();
 
-    VideoFile_t *media = currentMediaFile();
+    MediaFile_t *media = currentMediaFile();
 
     if (media)
     {
@@ -563,7 +563,7 @@ int MainWindow::printDatas()
         ////////////////////////////////////////////////////////////////////////
 
         int stid = 0;
-        if (media->tracks_subtitles[stid] != NULL)
+        if (media->tracks_subt[stid] != NULL)
         {
             // TODO ?
         }

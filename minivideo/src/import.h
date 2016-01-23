@@ -28,15 +28,15 @@
 #include <stdio.h>
 
 // minivideo headers
-#include "videofile_struct.h"
+#include "mediafile_struct.h"
 
 /* ************************************************************************** */
 
-int import_fileOpen(const char *filepath, VideoFile_t **video_ptr);
+int import_fileOpen(const char *filepath, MediaFile_t **video_ptr);
 
-int import_fileClose(VideoFile_t **video_ptr);
+int import_fileClose(MediaFile_t **video_ptr);
 
-void import_fileStatus(VideoFile_t *videoFile);
+void import_fileStatus(MediaFile_t *videoFile);
 
 /* ************************************************************************** */
 #endif // IMPORT_H

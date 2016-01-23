@@ -29,14 +29,14 @@
 
 /* ************************************************************************** */
 
-int h264_decode(VideoFile_t *input_video,
+int h264_decode(MediaFile_t *input_video,
                 const char *output_directory,
                 const int picture_format,
                 const int picture_quality,
                 const int picture_number,
                 const int picture_extractionmode);
 
-DecodingContext_t *initDecodingContext(VideoFile_t *video);
+DecodingContext_t *initDecodingContext(MediaFile_t *video);
 void freeDecodingContext(DecodingContext_t **dc_ptr);
 int checkDecodingContext(DecodingContext_t *dc);
 

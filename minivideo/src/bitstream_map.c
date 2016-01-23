@@ -246,7 +246,7 @@ static void computeBitRateTrack(BitstreamMap_t *t)
 
 /* ************************************************************************** */
 
-bool computeBitRates(VideoFile_t *video)
+bool computeBitRates(MediaFile_t *video)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
     bool retcode = SUCCESS;

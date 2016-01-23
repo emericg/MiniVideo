@@ -68,7 +68,7 @@ private:
     QTimer *statusTimer;
 
     bool emptyFileList;
-    std::vector <VideoFile_t *> videosList;
+    std::vector <MediaFile_t *> mediaList;
 
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;
@@ -83,7 +83,7 @@ private:
     QString tabOtherText;
     QIcon tabOtherIcon;
 
-    VideoFile_t *currentMediaFile();
+    MediaFile_t *currentMediaFile();
     int analyseFile(const QString &file);
 
     void handleComboBox(const QString &file);

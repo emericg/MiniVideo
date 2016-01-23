@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
         int minivideo_retcode = 0;
 
         // Open the video file
-        VideoFile_t *input_video = NULL;
+        MediaFile_t *input_video = NULL;
         minivideo_retcode = minivideo_open(input_filepath, &input_video);
 
         if (minivideo_retcode == SUCCESS)

@@ -247,7 +247,7 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int wave_indexer_initmap(VideoFile_t *video, wave_t *wave)
+static int wave_indexer_initmap(MediaFile_t *video, wave_t *wave)
 {
     // Init a bitstreamMap_t for each wave track
     int retcode = init_bitstream_map(&video->tracks_audio[0], 1);
@@ -340,7 +340,7 @@ static int wave_indexer_initmap(VideoFile_t *video, wave_t *wave)
 
 /* ************************************************************************** */
 
-static int wave_indexer(Bitstream_t *bitstr, VideoFile_t *video, wave_t *wave)
+static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *video, wave_t *wave)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -362,7 +362,7 @@ static int wave_indexer(Bitstream_t *bitstr, VideoFile_t *video, wave_t *wave)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int wave_fileParse(VideoFile_t *video)
+int wave_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;

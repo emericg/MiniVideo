@@ -39,12 +39,12 @@
 
 /*!
  * \brief Get various from a video filepath.
- * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  *
  * Get absolute file path, file directory, file name and extension.
  * This function will only work with Unix-style file systems.
  */
-static void getInfosFromPath(VideoFile_t *video)
+static void getInfosFromPath(MediaFile_t *video)
 {
     TRACE_2(IO, "getInfosFromPath()\n");
 
@@ -147,9 +147,9 @@ static void getInfosFromPath(VideoFile_t *video)
 
 /*!
  * \brief Get video file size.
- * \param[in] *video: A pointer to a VideoFile_t structure containing various informations about the file.
+ * \param[in] *video: A pointer to a MediaFile_t structure containing various informations about the file.
  */
-static void getSize(VideoFile_t *video)
+static void getSize(MediaFile_t *video)
 {
     TRACE_2(IO, "getSize()\n");
 
@@ -175,13 +175,13 @@ static void getSize(VideoFile_t *video)
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \return container: A ContainerFormat_e value.
  *
  * This function check the first 16 bytes of a video file in order to find
  * evidence of a known file container format.
  */
-static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
+static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *video)
 {
     TRACE_2(IO, "getContainerUsingStartcodes()\n");
 
@@ -309,7 +309,7 @@ static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \return container: A ContainerFormat_e value.
  *
  * This function check the file extension to guess the container. As this method
@@ -317,7 +317,7 @@ static ContainerFormat_e getContainerUsingStartcodes(VideoFile_t *video)
  * make mistakes) this code is here mostly for fun. And to list extensions for
  * whoever is interested.
  */
-static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
+static ContainerFormat_e getContainerUsingExtension(MediaFile_t *video)
 {
     TRACE_2(IO, "getContainerUsingExtension()\n");
 
@@ -456,9 +456,9 @@ static ContainerFormat_e getContainerUsingExtension(VideoFile_t *video)
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *video: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  */
-static void getContainer(VideoFile_t *video)
+static void getContainer(MediaFile_t *video)
 {
     video->container = CONTAINER_UNKNOWN;
 
@@ -485,7 +485,7 @@ static void getContainer(VideoFile_t *video)
 /*!
  * \brief Open a file and check what's inside it.
  * \param[in] *filepath: The path of the file to load.
- * \param[in,out] **video_ptr: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in,out] **video_ptr: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  *
  * Some more informations about supported files:
  * Size and offset are coded on int64_t (signed long long), so this library should
@@ -496,7 +496,7 @@ static void getContainer(VideoFile_t *video)
  *
  * These parameters will only work on POSIX compliant operating system.
  */
-int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
+int import_fileOpen(const char *filepath, MediaFile_t **video_ptr)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileOpen()\n" CLR_RESET);
 
@@ -509,17 +509,17 @@ int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
     else
     {
         // Allocate video structure and create a shortcut
-        *video_ptr = (VideoFile_t*)calloc(1, sizeof(VideoFile_t));
+        *video_ptr = (MediaFile_t*)calloc(1, sizeof(MediaFile_t));
 
         if (*video_ptr == NULL)
         {
-            TRACE_ERROR(IO, "* Unable to allocate a VideoFile_t structure!\n");
+            TRACE_ERROR(IO, "* Unable to allocate a MediaFile_t structure!\n");
         }
         else
         {
-            VideoFile_t *video = (*video_ptr);
+            MediaFile_t *video = (*video_ptr);
 
-            // Set filepath in VideoFile_t
+            // Set filepath in MediaFile_t
             strncpy(video->file_path, filepath, sizeof(video->file_path) - 1);
             TRACE_INFO(IO, "* File path (raw): '%s'\n", filepath);
 
@@ -553,10 +553,10 @@ int import_fileOpen(const char *filepath, VideoFile_t **video_ptr)
 
 /*!
  * \brief Close a file.
- * \param[in] **video_ptr: A pointer of pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] **video_ptr: A pointer of pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \return 1 if success, 0 otherwise.
  */
-int import_fileClose(VideoFile_t **video_ptr)
+int import_fileClose(MediaFile_t **video_ptr)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileClose()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -590,7 +590,7 @@ int import_fileClose(VideoFile_t **video_ptr)
 
         for (i = 0; i < 16/*(*video_ptr)->tracks_subtitles_count*/; i++)
         {
-            free_bitstream_map(&(*video_ptr)->tracks_subtitles[i]);
+            free_bitstream_map(&(*video_ptr)->tracks_subt[i]);
         }
 
         {
@@ -608,9 +608,9 @@ int import_fileClose(VideoFile_t **video_ptr)
 
 /*!
  * \brief Print various informations about a file.
- * \param[in] *videoFile: A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param[in] *videoFile: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  */
-void import_fileStatus(VideoFile_t *videoFile)
+void import_fileStatus(MediaFile_t *videoFile)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileStatus()\n" CLR_RESET);
 
@@ -656,8 +656,8 @@ void import_fileStatus(VideoFile_t *videoFile)
     TRACE_1(IO, "* %i subtitles track(s)\n", videoFile->tracks_subtitles_count);
     for (i = 0; i < videoFile->tracks_audio_count; i++)
     {
-        if (videoFile->tracks_subtitles[i])
-            print_bitstream_map(videoFile->tracks_subtitles[i]);
+        if (videoFile->tracks_subt[i])
+            print_bitstream_map(videoFile->tracks_subt[i]);
     }
 }
 

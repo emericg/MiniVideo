@@ -170,7 +170,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
  * \brief Check video and bitstream_map structures, then track infos.
  * \return SUCCESS if so.
  */
-static int stream_infos(VideoFile_t *video, BitstreamMap_t *bitstream_map)
+static int stream_infos(MediaFile_t *video, BitstreamMap_t *bitstream_map)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -221,7 +221,7 @@ static int stream_infos(VideoFile_t *video, BitstreamMap_t *bitstream_map)
  * \brief Export a PES packet into a file.
  * \return SUCCESS if so.
  */
-static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
+static int stream_output_filename(MediaFile_t *video, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -268,7 +268,7 @@ static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_
             else
                 strncat(output_filename, ".h264", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_MPEG4)
+        else if (bitstream_map->stream_codec == CODEC_MPEG4_ASP)
         {
             if (output_format == 0)
                 strncat(output_filename, ".mpgv", 254);
@@ -295,7 +295,7 @@ static int stream_output_filename(VideoFile_t *video, BitstreamMap_t *bitstream_
  * \brief Export a PES packet into a file.
  * \return SUCCESS if so.
  */
-int muxer_export_samples(VideoFile_t *video,
+int muxer_export_samples(MediaFile_t *video,
                          BitstreamMap_t *bitstream_map,
                          const int output_format)
 {

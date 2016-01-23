@@ -38,7 +38,7 @@
 
 /*!
  * \brief Init a new bitstream.
- * \param *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \param *bitstream_map A pointer to a bitstreamMap_t structure, containing informations about video payload datas.
  * \return *bitstr A pointer to our newly allocated bitstream structure.
  *
@@ -49,7 +49,7 @@
  * Otherwise, an available bitstream_map structure mean that we have encapsulated
  * video data, and we must bufferize data sample by sample.
  */
-Bitstream_t *init_bitstream(VideoFile_t *video, BitstreamMap_t *bitstream_map)
+Bitstream_t *init_bitstream(MediaFile_t *video, BitstreamMap_t *bitstream_map)
 {
     TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()\n" CLR_RESET);
     Bitstream_t *bitstr = NULL;
@@ -57,7 +57,7 @@ Bitstream_t *init_bitstream(VideoFile_t *video, BitstreamMap_t *bitstream_map)
     if (video == NULL ||
         video->file_pointer == NULL)
     {
-        TRACE_ERROR(BITS, "<b> Unable to use VideoFile_t structure!\n");
+        TRACE_ERROR(BITS, "<b> Unable to use MediaFile_t structure!\n");
     }
     else
     {
@@ -328,7 +328,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
  * \brief Destroy a bitstream and it's buffer.
  * \param **bitstr_ptr The bitstream to freed.
  *
- * This function do not freed VideoFile_t structure.
+ * This function do not freed MediaFile_t structure.
  */
 void free_bitstream(Bitstream_t **bitstr_ptr)
 {

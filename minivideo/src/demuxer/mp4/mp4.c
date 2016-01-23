@@ -61,14 +61,14 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
 /*!
  * \brief Convert a videoTrack_t structure into a bitstreamMap_t.
- * \param *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \param *track A pointer to the videoTrack_t structure we want to extract data from.
  * \param idr_only Set to true if we only want to extract IDR samples.
  *
  * - Use STSZ box content to get back all samples.
  * - Use STSS box content to get back IDR samples only.
  */
-static bool convertTrack(VideoFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
+static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
 {
     TRACE_INFO(MP4, BLD_GREEN "convertTrack()\n" CLR_RESET);
     bool retcode = SUCCESS;
@@ -1387,7 +1387,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             }
             else if (box_subheader.type == SAMPLE_MP4V)
             {
-                track->codec = CODEC_MPEG4;
+                track->codec = CODEC_MPEG4_ASP;
                 TRACE_1(MP4, "> Video track is using XVID codec\n");
             }
             else
@@ -1994,7 +1994,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
 /*!
  * \brief Parse a mp4 file.
- * \param *video A pointer to a VideoFile_t structure.
+ * \param *video A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
  * This parser is based on the 'ISO/IEC 14496-12' international standard, part 12:
@@ -2003,7 +2003,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  * \todo Stop parsing if we are after the end of the 'moov' box.
  * \todo Fix convertTrack() algorithms complexity.
  */
-int mp4_fileParse(VideoFile_t *video)
+int mp4_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(MP4, BLD_GREEN "mp4_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;

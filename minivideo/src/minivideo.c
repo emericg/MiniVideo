@@ -162,56 +162,56 @@ int minivideo_endianness(void)
 
 /* ************************************************************************** */
 
-int minivideo_open(const char *input_filepath, VideoFile_t **input_video)
+int minivideo_open(const char *input_filepath, MediaFile_t **input_media)
 {
-    return import_fileOpen(input_filepath, input_video);
+    return import_fileOpen(input_filepath, input_media);
 }
 
 /* ************************************************************************** */
 
-int minivideo_parse(VideoFile_t *input_video,
+int minivideo_parse(MediaFile_t *input_media,
                     const bool extract_audio, const bool extract_video, const bool extract_subtitles)
 {
     int retcode = FAILURE;
 
-    if (input_video == NULL)
+    if (input_media == NULL)
     {
-        TRACE_ERROR(MAIN, "Unable to parse NULL VideoFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!\n");
     }
     else
     {
         // Start container parsing
-        switch (input_video->container)
+        switch (input_media->container)
         {
             case CONTAINER_UNKNOWN:
                 TRACE_ERROR(MAIN, "Unwknown container file format: unable to parse this file!\n");
                 break;
             case CONTAINER_AVI:
-                retcode = avi_fileParse(input_video);
+                retcode = avi_fileParse(input_media);
                 break;
             case CONTAINER_MP4:
-                retcode = mp4_fileParse(input_video);
+                retcode = mp4_fileParse(input_media);
                 break;
             case CONTAINER_WAVE:
-                retcode = wave_fileParse(input_video);
+                retcode = wave_fileParse(input_media);
                 break;
             case CONTAINER_MPEG_PS:
-                retcode = ps_fileParse(input_video);
+                retcode = ps_fileParse(input_media);
                 break;
             case CONTAINER_ES:
-                retcode = bruteforce_fileParse(input_video, CODEC_H264);
+                retcode = bruteforce_fileParse(input_media, CODEC_H264);
                 break;
             case CONTAINER_ES_MP3:
-                retcode = mp3_fileParse(input_video);
+                retcode = mp3_fileParse(input_media);
                 break;
             default:
                 TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!\n",
-                            getContainerString(input_video->container, 0));
+                            getContainerString(input_media->container, 0));
                 break;
         }
 
         // Compute some metadatas from parsed metadatas
-        computeBitRates(input_video);
+        computeBitRates(input_media);
     }
 
     return retcode;
@@ -219,7 +219,7 @@ int minivideo_parse(VideoFile_t *input_video,
 
 /* ************************************************************************** */
 
-int minivideo_decode(VideoFile_t *input_video,
+int minivideo_decode(MediaFile_t *input_media,
                      const char *output_directory,
                      const int picture_format,
                      const int picture_quality,
@@ -230,10 +230,10 @@ int minivideo_decode(VideoFile_t *input_video,
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()\n" CLR_RESET);
 
-    if (input_video != NULL)
+    if (input_media != NULL)
     {
         // IDR frame filtering
-        int picture_number_filtered = idr_filtering(&input_video->tracks_video[0],
+        int picture_number_filtered = idr_filtering(&input_media->tracks_video[0],
                                                     picture_number, picture_extractionmode);
 
         if (picture_number_filtered == 0)
@@ -243,27 +243,27 @@ int minivideo_decode(VideoFile_t *input_video,
         else
         {
             // Print status
-            //import_fileStatus(input_video);
+            //import_fileStatus(input_media);
 
             // Start video decoding
-            switch (input_video->tracks_video[0]->stream_codec)
+            switch (input_media->tracks_video[0]->stream_codec)
             {
                 case CODEC_UNKNOWN:
                     TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!\n");
                     break;
                 case CODEC_H264:
-                    retcode = h264_decode(input_video, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
+                    retcode = h264_decode(input_media, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
                     break;
                 default:
                     TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!\n",
-                                getCodecString(stream_VIDEO, input_video->tracks_video[0]->stream_codec));
+                                getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec));
                     break;
             }
         }
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to start decoding because of an empty VideoFile_t structure! Parsing failed?\n");
+        TRACE_ERROR(MAIN, "Unable to start decoding because of an empty MediaFile_t structure! Parsing failed?\n");
     }
 
     return retcode;
@@ -271,7 +271,7 @@ int minivideo_decode(VideoFile_t *input_video,
 
 /* ************************************************************************** */
 
-int minivideo_extract(VideoFile_t *input_video,
+int minivideo_extract(MediaFile_t *input_media,
                       const char *output_directory,
                       const bool extract_audio,
                       const bool extract_video,
@@ -282,24 +282,24 @@ int minivideo_extract(VideoFile_t *input_video,
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_extract()\n" CLR_RESET);
 
-    if (input_video != NULL && output_directory != NULL)
+    if (input_media != NULL && output_directory != NULL)
     {
         // Print status
-        //import_fileStatus(input_video);
+        //import_fileStatus(input_media);
 
         // Export audio and video PES stream
         if (extract_audio)
-            retcode = muxer_export_samples(input_video, input_video->tracks_audio[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_audio[0], output_format);
 
         if (extract_video)
-            retcode = muxer_export_samples(input_video, input_video->tracks_video[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_video[0], output_format);
 
         if (extract_subtitles)
-            retcode = muxer_export_samples(input_video, input_video->tracks_subtitles[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_subt[0], output_format);
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to extract from a NULL VideoFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to extract from a NULL MediaFile_t struct!\n");
     }
 
     return retcode;
@@ -307,9 +307,9 @@ int minivideo_extract(VideoFile_t *input_video,
 
 /* ************************************************************************** */
 
-int minivideo_close(VideoFile_t **input_video)
+int minivideo_close(MediaFile_t **input_media)
 {
-    return import_fileClose(input_video);
+    return import_fileClose(input_media);
 }
 
 /* ************************************************************************** */

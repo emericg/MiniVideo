@@ -42,7 +42,7 @@ static int computeNormAdjust(DecodingContext_t *dc);
 
 /*!
  * \brief Decode H.264 bitstream.
- * \param *input_video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *input_video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \param *output_directory The directory where to save exported pictures.
  * \param picture_format The picture file format.
  * \param picture_quality The quality we want for exported picture [1;100].
@@ -62,7 +62,7 @@ static int computeNormAdjust(DecodingContext_t *dc);
  * then start the decoding process, which loop on NAL Units found in the bitstream.
  * Each NAL Unit is processed following it's content type.
  */
-int h264_decode(VideoFile_t *input_video,
+int h264_decode(MediaFile_t *input_video,
                 const char *output_directory,
                 const int picture_format,
                 const int picture_quality,
@@ -223,13 +223,13 @@ int h264_decode(VideoFile_t *input_video,
 
 /*!
  * \brief Free decoding context.
- * \param *video A pointer to a VideoFile_t structure, containing every informations available about the current video file.
+ * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \return A pointer to the newlee allocated DecodingContext.
  *
- * Initialize the DecodingContext and it's bitstream (with a VideoFile_t passed in parameters),
+ * Initialize the DecodingContext and it's bitstream (with a MediaFile_t passed in parameters),
  * then NAL Unit structure, then init all pointer's (sps, pps, sei) to NULL.
  */
-DecodingContext_t *initDecodingContext(VideoFile_t *video)
+DecodingContext_t *initDecodingContext(MediaFile_t *video)
 {
     TRACE_INFO(H264, BLD_GREEN "initDecodingContext()\n" CLR_RESET);
     DecodingContext_t *dc = NULL;
@@ -385,7 +385,7 @@ int checkDecodingContext(DecodingContext_t *dc)
  * - Active Slice.
  * - All existing macroblocks.
  *
- * The VideoFile_t is not freed.
+ * The MediaFile_t is not freed.
  */
 void freeDecodingContext(DecodingContext_t **dc_ptr)
 {

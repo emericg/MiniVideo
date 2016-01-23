@@ -18,38 +18,38 @@
  *
  * \file      videofile_struct.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
+ * \date      2016
  */
 
-#ifndef VIDEOFILE_STRUCT_H
-#define VIDEOFILE_STRUCT_H
-
-// C standard library
-#include <stdio.h>
+#ifndef MEDIAFILE_STRUCT_H
+#define MEDIAFILE_STRUCT_H
 
 // minivideo headers
 #include "avcodecs.h"
 #include "bitstream_map_struct.h"
 
+// C standard library
+#include <stdio.h>
+
 /* ************************************************************************** */
 
 /*!
- * \brief Essential informations about a video file and its content.
+ * \brief Essential informations about a media file and its content.
  */
-typedef struct VideoFile_t
+typedef struct MediaFile_t
 {
-    FILE *file_pointer;             //!< File pointer used during the life of this video file
+    FILE *file_pointer;                 //!< File pointer used during the life of this media file
 
     // Generic file infos
-    int64_t file_size;              //!< File size in bytes
-    char file_path[4096];           //!< Absolute path of the file (used to derive other paths/names/extention)
-    char file_directory[4096];      //!< Absolute path of the directory containing the file
-    char file_name[255];            //!< File name with file extension
-    char file_extension[255];       //!< File extension, without dot (may NOT correspond to the file container)
-    unsigned int file_creation_time;     //!< File creation time, from filesystem metadatas
-    unsigned int file_modification_time; //!< File modification time, from filesystem metadatas
+    int64_t file_size;                  //!< File size in bytes
+    char file_path[4096];               //!< Absolute path of the file (used to derive other paths/names/extention)
+    char file_directory[4096];          //!< Absolute path of the directory containing the file
+    char file_name[255];                //!< File name with file extension
+    char file_extension[255];           //!< File extension, without dot (may NOT correspond to the file container)
+    unsigned int file_creation_time;    //!< File creation time, from filesystem metadatas
+    unsigned int file_modification_time;//!< File modification time, from filesystem metadatas
 
-    ContainerFormat_e container;    //!< File format / container used by this video file
+    ContainerFormat_e container;        //!< File format / container used by this video file
 
     // Meta datas // TODO dedicated metadatas structures
     char *creation_app;             //!< Container creation application
@@ -59,17 +59,17 @@ typedef struct VideoFile_t
 
     // A/V track(s) datas and infos
     int tracks_audio_count;
-    BitstreamMap_t *tracks_audio[16];     //!< A list of parsed audio tracks
+    BitstreamMap_t *tracks_audio[16];   //!< A list of parsed audio tracks
 
     int tracks_video_count;
-    BitstreamMap_t *tracks_video[16];     //!< A list of parsed video tracks
+    BitstreamMap_t *tracks_video[16];   //!< A list of parsed video tracks
 
     int tracks_subtitles_count;
-    BitstreamMap_t *tracks_subtitles[16]; //!< A list of parsed subtitles tracks
+    BitstreamMap_t *tracks_subt[16];    //!< A list of parsed subtitles tracks
 
-    int tracks_others; //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
+    int tracks_others;                  //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
 
-} VideoFile_t;
+} MediaFile_t;
 
 /*!
  * \brief Essential informations about a file.
@@ -90,4 +90,4 @@ typedef struct OutputFile_t
 } OutputFile_t;
 
 /* ************************************************************************** */
-#endif /* VIDEOFILE_STRUCT_H */
+#endif /* MEDIAFILE_STRUCT_H */

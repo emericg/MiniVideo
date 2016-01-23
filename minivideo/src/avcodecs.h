@@ -86,7 +86,7 @@ typedef enum AVCodec_e
 
     // Video codecs
     CODEC_MPEG12      = 64, //!< MPEG-1/2 videos, also known as H.262
-    CODEC_MPEG4       = 65, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
+    CODEC_MPEG4_ASP   = 65, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
     CODEC_MSMPEG4     = 66, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
     CODEC_H263        = 67, //!< H.263 and variants
     CODEC_H264        = 68, //!< H.264 or MPEG-4 Part 10 "AVC"

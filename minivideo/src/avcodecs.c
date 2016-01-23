@@ -235,7 +235,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
             case CODEC_MPEG12:
                 return "MPEG-1/2 videos";
                 break;
-            case CODEC_MPEG4:
+            case CODEC_MPEG4_ASP:
                 return "MPEG-4 ASP (XVID)";
                 break;
             case CODEC_MSMPEG4:
