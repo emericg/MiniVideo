@@ -15,8 +15,7 @@ TODO test softwares
 - error when an invalid path is passed as argument with the -o option
 - add a non-regression test suit
 - add a performance test suit
-- a "micro_analyser" with container and track infos (DONE as mini_analyser)
-- a "mini_analyser" with container, track infos and video frame analysis would be very awesome
+- a "mini_analyser" with metadatas reader, container structure, AND video frame analysis would be very awesome
 - a "mini_player" would definitely be an interesting thing to do
 
 TODO video library
@@ -24,6 +23,7 @@ TODO video library
 
 // General features
 - make make_path_absolute() works (to be able to choose picture export directory)
+- webp export
 
 // Error codes handling
 - replace remaining exit(EXIT_FAILURE) by callbacks
@@ -34,15 +34,10 @@ TODO video library
 - rename goto_offset_bitstream()
 - better aligned memory reads for embedded platform
 
-// Containers
-- AVI
-  - subtitles
-- MP4 parser:
-  - timestamps
-  - subtitles
-  - quite slow...
-- finish MKV parser
-- tracks_video_count sometimes not correctly set (and then bitsteammap not freed)
+// Containers (next on the TODO list)
+- MP3 parser
+- MKV parser
+- MPEG TS parser
 
 // Video decoder
 - CABAC bugfix

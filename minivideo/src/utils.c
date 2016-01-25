@@ -33,40 +33,6 @@
 
 /* ************************************************************************** */
 
-char *getFccString_le(const int fcc_in, char *fcc_out)
-{
-    if (fcc_out)
-    {
-        fcc_out[0] = (fcc_in >> 24) & 0xFF;
-        fcc_out[1] = (fcc_in >> 16) & 0xFF;
-        fcc_out[2] = (fcc_in >>  8) & 0xFF;
-        fcc_out[3] = (fcc_in >>  0) & 0xFF;
-        fcc_out[4] = '\0';
-
-        return fcc_out;
-    }
-
-    return "0000";
-}
-
-char *getFccString_be(const int fcc_in, char *fcc_out)
-{
-    if (fcc_out)
-    {
-        fcc_out[0] = (fcc_in >>  0) & 0xFF;
-        fcc_out[1] = (fcc_in >>  8) & 0xFF;
-        fcc_out[2] = (fcc_in >> 16) & 0xFF;
-        fcc_out[3] = (fcc_in >> 24) & 0xFF;
-        fcc_out[4] = '\0';
-
-        return fcc_out;
-    }
-
-    return "0000";
-}
-
-/* ************************************************************************** */
-
 int **malloc2d(const int x, const int y)
 {
     int **array2d = (int **)malloc(x * sizeof(int *));

@@ -29,6 +29,13 @@
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Parse AVI files.
+ * \param *video A pointer to a MediaFile_t structure.
+ * \return retcode 1 if succeed, 0 otherwise.
+ *
+ * This parser is compatible with the 'OpenDML AVI File Format Extensions'.
+ */
 int avi_fileParse(MediaFile_t *video);
 
 /* ************************************************************************** */

@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2014 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -18,7 +18,7 @@
  *
  * \file      minivideo.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
+ * \date      2016
  */
 
 // Library public header
@@ -210,8 +210,9 @@ int minivideo_parse(MediaFile_t *input_media,
                 break;
         }
 
-        // Compute some metadatas from parsed metadatas
+        // Compute some additional metadatas
         computeBitRates(input_media);
+        computeCodecs(input_media);
     }
 
     return retcode;
@@ -256,7 +257,7 @@ int minivideo_decode(MediaFile_t *input_media,
                     break;
                 default:
                     TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!\n",
-                                getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec));
+                                getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec, true));
                     break;
             }
         }

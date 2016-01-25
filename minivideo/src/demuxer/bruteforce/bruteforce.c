@@ -37,21 +37,6 @@
 
 /* ************************************************************************** */
 
-/*!
- * \brief Parse a file, the brute-force way.
- * \param *video A pointer to a MediaFile_t structure.
- * \param video_codec docme.
- * \return retcode 1 if succeed, 0 otherwise.
- *
- * \todo Handle idr_only == false.
- * \todo Handle INITIAL_SEARCH_WINDOW.
- *
- * This parser is just brutally searching for 3 bytes start codes, for instance
- * 0x000001 for mpeg videos and 0x9D012A for VP8 videos.
- *
- * It will only successfuly parse "ES" files containing only one audio or video
- * track.
- */
 int bruteforce_fileParse(MediaFile_t *video, AVCodec_e video_codec)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "bruteforce_fileParse()\n" CLR_RESET);

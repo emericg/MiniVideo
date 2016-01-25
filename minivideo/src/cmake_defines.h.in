@@ -39,6 +39,7 @@
 #define ENABLE_COLORS     @ENABLE_COLORS@  //!< Toggle colored terminal output
 #define ENABLE_STDINT     @ENABLE_STDINT@  //!< Toggle C99 <stdint.h> usage
 #define ENABLE_STDBOOL    @ENABLE_STDBOOL@  //!< Toggle C99 <stdbool.h> usage
+#define ENABLE_STDALIGN   @ENABLE_STDALIGN@  //!< Toggle C11 <stdalign.h> usage
 
 #define ENABLE_STBIMWRITE @ENABLE_STBIMWRITE@  //!< Toggle bundled stb_image_write support
 #define ENABLE_JPEG       @ENABLE_JPEG@  //!< Toggle external libjpeg support

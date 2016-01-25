@@ -362,14 +362,14 @@ static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *video, wave_t *wave)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int wave_fileParse(MediaFile_t *video)
+int wave_fileParse(MediaFile_t *media)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {
@@ -391,7 +391,7 @@ int wave_fileParse(MediaFile_t *video)
             // Loop on 2st level chunks
             while (superrun == true &&
                    retcode == SUCCESS &&
-                   bitstream_get_absolute_byte_offset(bitstr) < (video->file_size - 8))
+                   bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 8))
             {
                 RiffChunk_t chunk_header;
                 retcode = parse_chunk_header(bitstr, &chunk_header);
@@ -449,7 +449,7 @@ int wave_fileParse(MediaFile_t *video)
         }
 
         // Go for the indexation
-        retcode = wave_indexer(bitstr, video, &wave),
+        retcode = wave_indexer(bitstr, media, &wave),
 
         // Free bitstream
         free_bitstream(&bitstr);

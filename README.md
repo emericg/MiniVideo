@@ -15,26 +15,28 @@ MiniVideo has been developed in 2010/2011 during an internship I did in a French
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
 * Open H.264 compressed videos and decode them to export intra-coded pictures.
-* Extract various metadatas from container and elementary stream.
+* Extract various metadatas from container and elementary streams.
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import modules)
+- AVI [.avi]
+- WAVE [.wav]
+- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
+- MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
+- MP3 "elementary stream" (.mp3)
 - H.264 "elementary stream" ("Annex B" format) [.264]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
-- MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
-- MP4 (MPEG-4 ISO container) [.mp4, .mov, .3gp, ...]
-- AVI [.avi]
 
 ### Supported container formats (export modules)
 - Elementary Streams
-- MPEG-PS (MPEG Program Stream) [.mpg, .mpeg, .vob, ...]
+- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 ### Supported picture formats (output modules)
-- jpeg (only if external libjpeg support is available)
-- png (external libpng support available)
+- jpeg (when libjpeg support is available)
+- png (internal OR when libpng support available)
 - bmp
 - tiff
 - tga

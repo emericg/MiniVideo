@@ -24,6 +24,7 @@
 // minivideo headers
 #include "bitstream.h"
 #include "avcodecs.h"
+#include "fourcc.h"
 #include "minitraces.h"
 
 // C standard libraries
@@ -182,7 +183,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
             TRACE_WARNING(DEMUX, "Unknown elementary stream type!\n");
         }
 
-        TRACE_1(DEMUX, "Track codec:     '%s'\n", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec));
+        TRACE_1(DEMUX, "Track codec:     '%s'\n", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec, true));
 
         TRACE_INFO(DEMUX, "> samples alignment: %i\n", bitstream_map->sample_alignment);
         TRACE_INFO(DEMUX, "> samples count    : %i\n", bitstream_map->sample_count);
@@ -246,20 +247,53 @@ static void computeBitRateTrack(BitstreamMap_t *t)
 
 /* ************************************************************************** */
 
-bool computeBitRates(MediaFile_t *video)
+bool computeBitRates(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
     bool retcode = SUCCESS;
     int i = 0;
 
-    for (i = 0; i < video->tracks_video_count; i++)
+    for (i = 0; i < media->tracks_video_count; i++)
     {
-        computeBitRateTrack(video->tracks_video[i]);
+        if (media->tracks_video[i])
+        {
+            computeBitRateTrack(media->tracks_video[i]);
+        }
     }
 
-    for (i = 0; i < video->tracks_audio_count; i++)
+    for (i = 0; i < media->tracks_audio_count; i++)
     {
-        computeBitRateTrack(video->tracks_audio[i]);
+        if (media->tracks_audio[i])
+        {
+            computeBitRateTrack(media->tracks_audio[i]);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+bool computeCodecs(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()\n" CLR_RESET);
+    bool retcode = SUCCESS;
+    int i = 0;
+
+    for (i = 0; i < media->tracks_video_count; i++)
+    {
+        if (media->tracks_video[i] && media->tracks_video[i]->stream_codec == CODEC_UNKNOWN)
+        {
+             media->tracks_video[i]->stream_codec = getCodecFromFourCC(media->tracks_video[i]->stream_fcc);
+        }
+    }
+
+    for (i = 0; i < media->tracks_audio_count; i++)
+    {
+        if (media->tracks_audio[i] && media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
+        {
+            media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
+        }
     }
 
     return retcode;

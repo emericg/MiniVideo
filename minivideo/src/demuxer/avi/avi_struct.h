@@ -182,65 +182,6 @@ typedef enum avi_tcc_e
 
 } avi_tcc_e;
 
-/*!
- * Good ressource about these FourCC:
- * http://www.fourcc.org/codecs.php
- *
- * Upper and lower cases are present, because we never know what will hit us
- * with those AVI containers...
- * These FourCC are set in big endian in this enum, so you may want to flip them
- * if you are reading them from Windows specific stuff (ex: WVF structures).
- */
-typedef enum avi_fcc_codecs_e
-{
-    // Video
-    fcc_AVC1 = 0x41564331, //!< H.264 / MPEG-4 part 10
-    fcc_avc1 = 0x61766331,
-    fcc_AVCC = 0x41564343,
-    fcc_avcc = 0x61766363,
-    fcc_H264 = 0x48323634,
-    fcc_h264 = 0x68323634,
-    fcc_X264 = 0x58323634,
-    fcc_x264 = 0x78323634,
-
-    fcc_xvid = 0x78766964, //!< xvid / MPEG-4 part 2
-    fcc_XVID = 0x58564944,
-    fcc_FMP4 = 0x464D5034,
-    fcc_divx = 0x64697678, //!< DivX 4 -> 6
-    fcc_DIVX = 0x44495658,
-    fcc_DX50 = 0x44583530, //!< DivX 5
-
-    fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
-    fcc_DIV2 = 0x44495632,
-    fcc_DIV3 = 0x44495633,
-    fcc_DIV4 = 0x44495634,
-    fcc_DIV5 = 0x44495635,
-
-    fcc_MPEG = 0x4D504547, //!< MPEG-1 or 2
-    fcc_mpeg = 0x6D706567,
-    fcc_MPG1 = 0x4D504731,
-    fcc_mpg1 = 0x6D706731,
-    fcc_MPG2 = 0x4D504732,
-    fcc_mpg2 = 0x6D706732,
-
-    fcc_MPG4 = 0x4D504734, //!< Microsoft MPEG-4 (version 1 ?)
-    fcc_MP41 = 0x4D503431, //!< Microsoft MPEG-4 (version 1 ?)
-    fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
-    fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
-
-    fcc_WMV1 = 0x574D5631, //!< Windows Media Video codecs
-    fcc_WMV2 = 0x574D5632,
-    fcc_WMV3 = 0x574D5633,
-    fcc_WVC1 = 0x57564331,
-
-    fcc_dvsd = 0x64767364, //!< DV
-    fcc_DVSD = 0x44565344,
-
-    fcc_VYUV = 0x56595556, //!< Uncompressed YUV types
-    fcc_YUY2 = 0x59555932
-
-} avi_fcc_codecs_e;
-
 //! Flags for dwFlags member of AVIMAINHEADER
 typedef enum avi_flags_avih_e
 {

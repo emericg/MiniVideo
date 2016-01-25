@@ -29,7 +29,30 @@
 
 /* ************************************************************************** */
 
-int mp3_fileParse(VideoFile_t *video);
+/**
+ * \brief Parser MP3 files.
+ * \param *media A pointer to a MediaFile_t structure.
+ * \return retcode 1 if succeed, 0 otherwise.
+ *
+ * This parser index the content of MP3 Elementary Streams. It implements
+ * ISO/IEC 11172-3 and ISO/IEC 13818-3 specifications.
+ *
+ * ID3 tags (v1, v2 and Lyrics) are ignored:
+ * - http://www.id3.org/ID3v1
+ * - http://www.id3.org/id3v2.4.0-structure
+ * - http://www.id3.org/id3v2.4.0-frames
+ *
+ * APE tags are ignored:
+ * - http://wiki.hydrogenaudio.org/index.php?title=APEv2_specification
+ *
+ * Xing and Lame header are ignored:
+ * - http://www.mp3-tech.org/programmer/sources/vbrheadersdk.zip
+ * - http://gabriel.mp3-tech.org/mp3infotag.html
+ *
+ * VBR Info header are not supported.
+ * - http://www.iis.fraunhofer.de/bf/amm/download/MP3%20VBR-Header%20Software%20Development%20Kit.zip
+ */
+int mp3_fileParse(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // PARSER_MP3_H

@@ -29,7 +29,12 @@
 
 /* ************************************************************************** */
 
-int wave_fileParse(MediaFile_t *video);
+/*!
+ * \brief Parse WAVE files.
+ * \param *media A pointer to a MediaFile_t structure.
+ * \return retcode 1 if succeed, 0 otherwise.
+ */
+int wave_fileParse(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // PARSER_WAVE_H

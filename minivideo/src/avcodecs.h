@@ -24,6 +24,9 @@
 #ifndef AV_CODECS_H
 #define AV_CODECS_H
 
+#include "typedef.h"
+#include "avutils.h"
+
 /* ************************************************************************** */
 
 //! Container file formats
@@ -74,10 +77,13 @@ typedef enum AVCodec_e
     CODEC_MPEG_L3     = 18, //!< MPEG 1/2 Audio Layer III
     CODEC_AAC         = 19, //!< Advanced Audio Coding
     CODEC_AAC_HE      = 20, //!< High Efficiency Advanced Audio Coding
+
     CODEC_AC3         = 21, //!< AC3, or Dobly Digital, or A/52A
     CODEC_EAC3        = 22, //!< Enhanced AC3, or Dobly Digital Plus, or A/52B
+
     CODEC_DTS         = 23,
     CODEC_DTS_HD      = 24,
+
     CODEC_WMA         = 25, //!< Windows Media Audio
     CODEC_MPC         = 26, //!< Musepack
     CODEC_SPEEX       = 27, //!< Xiph Speex
@@ -88,7 +94,7 @@ typedef enum AVCodec_e
     CODEC_MPEG12      = 64, //!< MPEG-1/2 videos, also known as H.262
     CODEC_MPEG4_ASP   = 65, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
     CODEC_MSMPEG4     = 66, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
-    CODEC_H263        = 67, //!< H.263 and variants
+    CODEC_H263        = 67, //!< H.263 and its numerous variants
     CODEC_H264        = 68, //!< H.264 or MPEG-4 Part 10 "AVC"
     CODEC_H265        = 69, //!< H.265 or MPEG-H Part 2 "HEVC" or ISO/IEC 23008-2
 
@@ -98,25 +104,43 @@ typedef enum AVCodec_e
     CODEC_WMVA        = 73, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
     CODEC_WVC1        = 74, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
 
-    CODEC_VP4         = 75, //!< Xiph Ogg Theora
-    CODEC_VP5         = 76,
-    CODEC_VP6         = 77,
-    CODEC_VP7         = 78,
-    CODEC_VP8         = 79,
-    CODEC_VP9         = 80,
-    CODEC_VP10        = 81,
+    CODEC_VP3         = 75, //!< On2 VP3 Video
+    CODEC_VP4         = 76, //!< On2 VP4 Video / Xiph Ogg Theora
+    CODEC_VP5         = 77, //!< On2 VP5 Video
+    CODEC_VP6         = 78, //!< On2 VP6 Video
+    CODEC_VP7         = 79, //!< On2 VP7 Video
+    CODEC_VP8         = 80, //!< Google VP8
+    CODEC_VP9         = 81, //!< Google VP9
+    CODEC_VP10        = 82, //!< Google VP10
 
-    CODEC_VC1         = 82, //!< VC-1 or Windows Media Video 9
-    CODEC_VC2         = 83, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
-    CODEC_VC3         = 84, //!< VC-3, DNxHD is a popular implementation
-    CODEC_VC5         = 85, //!< VC-5 or CineForm
+    CODEC_DAALA       = 83, //!< Xiph Daala
 
-    CODEC_DAALA       = 86, //!< Xiph Daala
+    CODEC_VC1         = 84, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2         = 85, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_VC3         = 86, //!< VC-3, Avid DNxHD is a popular implementation
+    CODEC_VC5         = 87, //!< VC-5 or CineForm
+
+    CODEC_PRORES_4444       = 88, //!< Apple ProRes 4444
+    CODEC_PRORES_4444_XQ    = 89, //!< Apple ProRes 4444 (XQ)
+    CODEC_PRORES_422_HQ     = 90, //!< Apple ProRes 422 (HQ)
+    CODEC_PRORES_442        = 91, //!< Apple ProRes 422
+    CODEC_PRORES_442_PROXY  = 92, //!< Apple ProRes 422 (Proxy)
+    CODEC_PRORES_442_LT     = 93, //!< Apple ProRes 422 (LT)
+
+    // Raw video codecs
+
+    // Deprecated video codecs
+    CODEC_CINEPAK     = 190, //!< Cinepak
+    CODEC_SVQ1        = 191, //!< Sorenson Video
+    CODEC_SVQ3        = 192, //!< Sorenson Video 3
+    CODEC_IV31        = 193, //!< Intel Indeo Video 3
+    CODEC_IV41        = 194, //!< Intel Indeo Video 4
+    CODEC_IV50        = 195, //!< Intel Indeo Video 5
 
     // Subtitles codecs
-    CODEC_SRT         = 128, //!< SubRip (.srt)
-    CODEC_SSA         = 129, //!< "SubStation Alpha" (.ssa)
-    CODEC_ASS         = 130, //!< "Advanced SubStation Alpha" (.ass)
+    CODEC_SRT           = 200, //!< SubRip (.srt)
+    CODEC_SSA         = 201, //!< "SubStation Alpha" (.ssa)
+    CODEC_ASS         = 202, //!< "Advanced SubStation Alpha" (.ass)
 
 } AVCodec_e;
 
@@ -138,176 +162,9 @@ typedef enum PictureFormat_e
 
 /* ************************************************************************** */
 
-//! Stream type
-typedef enum StreamType_e
-{
-    stream_UNKNOWN = 0,
-
-    stream_AUDIO   = 1,
-    stream_VIDEO   = 2,
-    stream_TEXT    = 3
-
-} StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
-
-//! Sample type
-typedef enum SampleType_e
-{
-    sample_AUDIO = 0,
-
-    sample_VIDEO,
-    sample_VIDEO_IDR,
-    sample_VIDEO_PARAM,
-
-    sample_TEXT_FILE
-
-} SampleType_e;
-
-//! Bitrate mode
-typedef enum BitrateMode_e
-{
-    BITRATE_UNKNOWN = 0,
-
-    BITRATE_CBR     = 1, //!< Constant Bitrate
-    BITRATE_VBR     = 2, //!< Variable Bitrate
-    BITRATE_ABR     = 3, //!< Average Bitrate
-    BITRATE_CVBR    = 4  //!< Constrained Variable Bitrate
-
-} BitrateMode_e;
-
-/* ************************************************************************** */
-
-//! Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field
-typedef enum AudioSpeakers_e
-{
-    SPEAKER_FRONT_LEFT              = 0x1,
-    SPEAKER_FRONT_RIGHT             = 0x2,
-    SPEAKER_FRONT_CENTER            = 0x4,
-    SPEAKER_LOW_FREQUENCY           = 0x8,
-    SPEAKER_BACK_LEFT               = 0x10,
-    SPEAKER_BACK_RIGHT              = 0x20,
-    SPEAKER_FRONT_LEFT_OF_CENTER    = 0x40,
-    SPEAKER_FRONT_RIGHT_OF_CENTER   = 0x80,
-    SPEAKER_BACK_CENTER             = 0x100,
-    SPEAKER_SIDE_LEFT               = 0x200,
-    SPEAKER_SIDE_RIGHT              = 0x400,
-    SPEAKER_TOP_CENTER              = 0x800,
-    SPEAKER_TOP_FRONT_LEFT          = 0x1000,
-    SPEAKER_TOP_FRONT_CENTER        = 0x2000,
-    SPEAKER_TOP_FRONT_RIGHT         = 0x4000,
-    SPEAKER_TOP_BACK_LEFT           = 0x8000,
-    SPEAKER_TOP_BACK_CENTER         = 0x10000,
-    SPEAKER_TOP_BACK_RIGHT          = 0x20000
-
-} AudioSpeakers_e;
-
-//! MPEG audio channel modes
-typedef enum MPEGChannelMode_e
-{
-    CHAN_MONO           = 0,
-    CHAN_STEREO         = 1,
-    CHAN_STEREO_JOINT   = 2,
-    CHAN_DUAL           = 3
-
-} MPEGChannelMode_e;
-
-//! Audio channel modes
-typedef enum ChannelMode_e
-{
-    CHANS_UNKNOWN       = 0,
-
-    CHANS_MONO          = 1,
-    CHANS_STEREO        = 2,
-    CHANS_30            = 3,
-    CHANS_QUAD          = 4,
-    CHANS_50            = 5,
-    CHANS_60            = 6,
-    CHANS_70            = 7,
-
-    CHANS_SURROUND_21   = 16,
-    CHANS_SURROUND_31   = 17,
-    CHANS_SURROUND_41   = 18,
-    CHANS_SURROUND_51   = 19,
-    CHANS_SURROUND_71   = 20,
-    CHANS_SURROUND_91   = 21,
-    CHANS_SURROUND_111  = 22,
-
-    CHANS_SURROUND_102  = 32,
-    CHANS_SURROUND_222  = 33
-
-} ChannelMode_e;
-
-/* ************************************************************************** */
-
-//! Picture extraction repartition mode
-typedef enum PictureRepartition_e
-{
-    PICTURE_UNFILTERED  = 0,
-    PICTURE_ORDERED     = 1,
-    PICTURE_DISTRIBUTED = 2
-
-} PictureRepartition_e;
-
-//! The color space used by the video
-typedef enum ColorSpace_e
-{
-    CS_UNKNOWN = 0,     //!< Unknown color space
-
-    CS_YUV     = 1,     //!< YUV (YCbCr) color space
-    CS_RGB     = 2      //!< RGB color space
-
-} ColorSpace_e;
-
-//! The subsampling format used by the video
-typedef enum SubSampling_e
-{
-    SS_UNKNOWN = 0,     //!< Unknown subsampling
-
-    SS_400     = 1,     //!< Greyscale
-    SS_420     = 2,     //!< 4:2:0 subsampling
-    SS_422     = 3,     //!< 4:2:2 subsampling
-    SS_444     = 4      //!< 4:4:4 subsampling
-
-} SubSampling_e;
-
-//! Frame rate (picture per second)
-typedef enum FrameRate_e
-{
-    FR_UNKNOWN = 0,   //!< Unknown frame rate
-
-    FR_24p,           //!< 24 frames
-    FR_24p_NTSC,      //!< (24 frames * 1000) / 1001 = 23.976 frames/s
-    FR_25p,
-    FR_30p,
-    FR_30p_NTSC,      //!< (30 frames * 1000) / 1001 = 29.970 frames/s
-    FR_48p,
-    FR_48p_NTSC,      //!< (48 frames * 1000) / 1001 = 47.952 frames/s
-    FR_50p,
-    FR_50i,           //!< 50 interlaced fields (25 frames)
-    FR_60p,
-    FR_60p_NTSC,      //!< (60 frames * 1000) / 1001 = 59.970 frames/s
-    FR_60i,           //!< 60 interlaced fields (30 frames)
-    FR_60i_NTSC,      //!< 60 interlaced fields * 1000/1001 = 59.940 interlaced fields (29.970 frames)
-    FR_72p,
-    FR_120p,
-    FR_240p
-
-} FrameRate_e;
-
-/* ************************************************************************** */
-
-const char *getContainerString(ContainerFormat_e container, int long_description);
-const char *getCodecString(StreamType_e type, AVCodec_e codec);
-const char *getPictureString(PictureFormat_e picture);
+const char *getContainerString(ContainerFormat_e container, bool long_description);
+const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description);
+const char *getPictureString(PictureFormat_e picture, bool long_description);
 
 /* ************************************************************************** */
 #endif // AV_CODECS_H

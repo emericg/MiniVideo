@@ -55,6 +55,7 @@ typedef struct Mp4Box_t
 typedef struct Mp4Track_t
 {
     unsigned int id;
+    unsigned int fcc;
     unsigned int codec;
     unsigned int handlerType;
 
@@ -62,6 +63,7 @@ typedef struct Mp4Track_t
     uint64_t duration;
     uint64_t creation_time;
     uint64_t modification_time;
+    uint8_t language[3];
 
     unsigned int bitrate_max;
     unsigned int bitrate_avg;
@@ -214,8 +216,14 @@ typedef enum Mp4HandlerType_e
  */
 typedef enum Mp4SampleEntry_e
 {
-    SAMPLE_AVC1 = 0x61766331,    //!< AVC-1/H.264
-    SAMPLE_AVCC = 0x61766343,    //!< AVC-1/H.264
+    SAMPLE_AVC1 = 0x61766331,    //!< H.264
+    SAMPLE_AVCC = 0x61766343,
+
+    SAMPLE_HVC1 = 0x68766331,    //!< H.265
+    SAMPLE_HEVC = 0x68657663,
+
+    SAMPLE_CFHD = 0x43464844,
+
     SAMPLE_AI55 = 0x0,           //!< AVC Intra  50 / 1080 interlace
     SAMPLE_AI5q = 0x0,           //!< AVC Intra  50 /  720
     SAMPLE_AI15 = 0x0,           //!< AVC Intra 100 / 1080 interlace

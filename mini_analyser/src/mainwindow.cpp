@@ -418,6 +418,12 @@ int MainWindow::printDatas()
         {
             ui->groupBox_audio->show();
 
+            //QString title_plural = "";
+            //if (media->tracks_audio_count > 1)
+            //    title_plural = "s";
+
+            ui->groupBox_tab_audio->setTitle(tr("Audio track") + " #" + QString::number(media->tracks_audio[atid]->track_id));
+
             ui->label_audio_id->setText(QString::number(media->tracks_audio[atid]->track_id));
 
             if (media->tracks_audio[atid]->track_title)
@@ -431,8 +437,17 @@ int MainWindow::printDatas()
 
             ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
             ui->label_audio_size_2->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
-            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec));
-            ui->label_audio_codec_2->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec));
+            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, false));
+            ui->label_audio_codec_2->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, true));
+
+            char fcc_str[4];
+            {
+                fcc_str[3] = (media->tracks_audio[atid]->stream_fcc >>  0) & 0xFF;
+                fcc_str[2] = (media->tracks_audio[atid]->stream_fcc >>  8) & 0xFF;
+                fcc_str[1] = (media->tracks_audio[atid]->stream_fcc >> 16) & 0xFF;
+                fcc_str[0] = (media->tracks_audio[atid]->stream_fcc >> 24) & 0xFF;
+            }
+            ui->label_audio_fcc->setText(QString::fromLatin1(fcc_str, 4));
 
             ui->label_audio_duration->setText(getDurationString(media->tracks_audio[atid]->duration));
             ui->label_audio_duration_2->setText(getDurationString(media->tracks_audio[atid]->duration));
@@ -470,6 +485,13 @@ int MainWindow::printDatas()
             ui->label_audio_channels_2->setText(QString::number(media->tracks_audio[atid]->channel_count));
             ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
             ui->label_audio_bitpersample_2->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
+
+            uint64_t rawsize = media->tracks_audio[atid]->sampling_rate * media->tracks_audio[atid]->channel_count * (media->tracks_audio[atid]->bit_per_sample / 8);
+            rawsize *= media->tracks_audio[atid]->duration;
+            rawsize /= 1024.0;
+
+            uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(media->tracks_audio[atid]->stream_size));
+            ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
         }
 
         // VIDEO
@@ -484,6 +506,13 @@ int MainWindow::printDatas()
         {
             ui->groupBox_video->show();
 
+            //QString title_plural = "";
+            //if (media->tracks_video_count > 1)
+            //    title_plural = "s";
+            //ui->tab_video->setTitle(tr("Video track") + title_plural);
+
+            ui->groupBox_tab_video->setTitle(tr("Video track") + " #" + QString::number(media->tracks_video[vtid]->track_id));
+
             ui->label_video_id->setText(QString::number(media->tracks_video[vtid]->track_id));
 
             if (media->tracks_video[vtid]->track_title)
@@ -497,8 +526,17 @@ int MainWindow::printDatas()
 
             ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
             ui->label_video_size_2->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
-            ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec));
-            ui->label_video_codec_2->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec));
+            ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, false));
+            ui->label_video_codec_2->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, true));
+
+            char fcc_str[4];
+            {
+                fcc_str[3] = (media->tracks_video[vtid]->stream_fcc >>  0) & 0xFF;
+                fcc_str[2] = (media->tracks_video[vtid]->stream_fcc >>  8) & 0xFF;
+                fcc_str[1] = (media->tracks_video[vtid]->stream_fcc >> 16) & 0xFF;
+                fcc_str[0] = (media->tracks_video[vtid]->stream_fcc >> 24) & 0xFF;
+            }
+            ui->label_video_fcc->setText(QString::fromLatin1(fcc_str, 4));
 
             ui->label_video_duration->setText(getDurationString(media->tracks_video[vtid]->duration));
             ui->label_video_duration_2->setText(getDurationString(media->tracks_video[vtid]->duration));
@@ -548,12 +586,12 @@ int MainWindow::printDatas()
             ui->label_video_samplecount_other->setText(QString::number(media->tracks_video[vtid]->sample_count - media->tracks_video[vtid]->sample_count_idr));
             ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
 
-            ui->label_video_framerate->setText(QString::number(framerate));
-            ui->label_video_framerate_2->setText(QString::number(framerate));
+            ui->label_video_framerate->setText(QString::number(framerate) + " fps");
+            ui->label_video_framerate_2->setText(QString::number(framerate) + " fps");
             ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
             //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
 
-            uint64_t rawsize = media->tracks_video[vtid]->width * media->tracks_video[vtid]->height * (24 / 8);
+            uint64_t rawsize = media->tracks_video[vtid]->width * media->tracks_video[vtid]->height * (media->tracks_video[vtid]->color_depth / 8);
             rawsize *= media->tracks_video[vtid]->sample_count;
             uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(media->tracks_video[vtid]->stream_size));
             ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");

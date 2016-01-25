@@ -25,9 +25,9 @@
 
 /* ************************************************************************** */
 
-const char *getContainerString(ContainerFormat_e container, int long_description)
+const char *getContainerString(ContainerFormat_e container, bool long_description)
 {
-    if (long_description == 1)
+    if (long_description)
     {
         switch (container)
         {
@@ -38,10 +38,10 @@ const char *getContainerString(ContainerFormat_e container, int long_description
             return "ASF 'Advanced Systems Format' (.asf, .wma, .wmv, ...)";
             break;
         case CONTAINER_MKV:
-            return "Matroska (.mkv, .mka, .webm)";
+            return "MKV 'Matroska' (.mkv, .mka, .webm)";
             break;
         case CONTAINER_MP4:
-            return "ISOM 'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
+            return "'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
             break;
         case CONTAINER_MXF:
             return "MXF 'Material eXchange Format' (.mxf)";
@@ -153,30 +153,48 @@ const char *getContainerString(ContainerFormat_e container, int long_description
 
 /* ************************************************************************** */
 
-const char *getCodecString(StreamType_e type, AVCodec_e codec)
+const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description)
 {
     if (type == stream_AUDIO)
     {
         switch (codec)
         {
             case CODEC_LPCM:
-                return "LPCM";
+                if (long_description)
+                    return "LPCM (Linear Pulse Code Modulation)";
+                else
+                    return "LPCM";
                 break;
             case CODEC_DPCM:
-                return "DPCM";
+                if (long_description)
+                    return "DPCM (Differential Pulse Code Modulation)";
+                else
+                    return "DPCM";
                 break;
             case CODEC_ADPCM:
-                return "ADPCM";
+                if (long_description)
+                    return "ADPCM (Adaptative Differential Pulse Code Modulation)";
+                else
+                    return "ADPCM";
                 break;
 
             case CODEC_APE:
-                return "Monkey's Audio";
+                if (long_description)
+                    return "APE (Monkey's Audio)";
+                else
+                    return "APE";
                 break;
             case CODEC_FLAC:
-                return "Free Lossless Audio Codec (FLAC)";
+                if (long_description)
+                    return "FLAC (Free Lossless Audio Codec)";
+                else
+                    return "FLAC";
                 break;
             case CODEC_ALAC:
-                return "Apple Lossless Audio Codec (ALAC)";
+                if (long_description)
+                    return "ALAC (Apple Lossless Audio Codec)";
+                else
+                    return "ALAC";
                 break;
 
             case CODEC_MPEG_L1:
@@ -186,19 +204,34 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "MPEG-1/2 Layer 2";
                 break;
             case CODEC_MPEG_L3:
-                return "MPEG-1/2 Layer 3 (MP3)";
+                if (long_description)
+                    return "MP3";
+                else
+                    return "MP3 (MPEG-1/2 Layer 3)";
                 break;
             case CODEC_AAC:
-                return "AAC";
+                if (long_description)
+                    return "AAC (Advance Audio Coding)";
+                else
+                    return "AAC";
                 break;
             case CODEC_AAC_HE:
-                return "HE-AAC";
+                if (long_description)
+                    return "HE-AAC (High Efficiency Advance Audio Coding)";
+                else
+                    return "HE-AAC";
                 break;
             case CODEC_AC3:
-                return "AC3 (DolbyDigital)";
+                if (long_description)
+                    return "AC3 (DolbyDigital)";
+                else
+                    return "AC3";
                 break;
             case CODEC_EAC3:
-                return "EAC3 (DolbyDigital+)";
+                if (long_description)
+                    return "EAC3 (DolbyDigital+)";
+                else
+                    return "EAC3";
                 break;
             case CODEC_DTS:
                 return "DTS";
@@ -207,10 +240,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "DTS-HD";
                 break;
             case CODEC_WMA:
-                return "WMA";
+                if (long_description)
+                    return "WMA (Windows Media Audio)";
+                else
+                    return "WMA";
                 break;
             case CODEC_MPC:
-                return "Musepack (MPC)";
+                return "MPC (Musepack)";
                 break;
             case CODEC_SPEEX:
                 return "Speex";
@@ -233,10 +269,10 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
         switch (codec)
         {
             case CODEC_MPEG12:
-                return "MPEG-1/2 videos";
+                return "MPEG-1/2";
                 break;
             case CODEC_MPEG4_ASP:
-                return "MPEG-4 ASP (XVID)";
+                return "MPEG-4 part 2 'ASP' (XVID)";
                 break;
             case CODEC_MSMPEG4:
                 return "MS MPEG-4";
@@ -245,10 +281,16 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "H.263";
                 break;
             case CODEC_H264:
-                return "H.264 (MPEG-4 AVC)";
+                if (long_description)
+                    return "H.264 (MPEG-4 part 10 'AVC')";
+                else
+                    return "H.264";
                 break;
             case CODEC_H265:
-                return "H.265 (MPEG-H HEVC)";
+                if (long_description)
+                    return "H.265 (MPEG-H part 2 'HEVC')";
+                else
+                    return "H.265";
                 break;
 
             case CODEC_WMV1:
@@ -267,6 +309,9 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "WVC1";
                 break;
 
+            case CODEC_VP3:
+                return "VP3";
+                break;
             case CODEC_VP4:
                 return "VP4 (Ogg Theora)";
                 break;
@@ -289,8 +334,15 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "VP10";
                 break;
 
+            case CODEC_DAALA:
+                return "Daala";
+                break;
+
             case CODEC_VC1:
-                return "VC-1 (Windows Media Video)";
+                if (long_description)
+                    return "VC-1";
+                else
+                    return "VC-1 (Windows Media Video)";
                 break;
             case CODEC_VC2:
                 return "VC-2 (Dirac)";
@@ -302,15 +354,29 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
                 return "VC-5 (CineForm)";
                 break;
 
-            case CODEC_DAALA:
-                return "Daala";
+            case CODEC_PRORES_4444:
+                return "Apple ProRes 4444";
+                break;
+            case CODEC_PRORES_4444_XQ:
+                return "Apple ProRes 4444 (XQ)";
+                break;
+            case CODEC_PRORES_422_HQ:
+                return "Apple ProRes 422 (HQ)";
+                break;
+            case CODEC_PRORES_442:
+                return "Apple ProRes 422";
+                break;
+            case CODEC_PRORES_442_PROXY:
+                return "Apple ProRes 422 (Proxy)";
+                break;
+            case CODEC_PRORES_442_LT:
+                return "Apple ProRes 422 (LT)";
                 break;
 
-        default:
-        case CODEC_UNKNOWN:
-            return "UNKNOWN";
-            break;
-
+            default:
+            case CODEC_UNKNOWN:
+                return "UNKNOWN";
+                break;
         }
     }
     else if (type == stream_TEXT)
@@ -339,7 +405,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec)
 
 /* ************************************************************************** */
 
-const char *getPictureString(PictureFormat_e picture)
+const char *getPictureString(PictureFormat_e picture, bool long_description)
 {
     switch (picture)
     {

@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2014 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -18,7 +18,7 @@
  *
  * \file      minivideo.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
+ * \date      2016
  */
 
 #ifndef MINIVIDEO_H

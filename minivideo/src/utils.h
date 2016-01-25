@@ -73,12 +73,6 @@ static const int zigzag_8x8_2d[64][2] =
 
 /* ************************************************************************** */
 
-char *getFccString_le(const int fcc_in, char *fcc_out);
-
-char *getFccString_be(const int fcc_in, char *fcc_out);
-
-/* ************************************************************************** */
-
 int **malloc2d(const int x, const int y);
 
 int **calloc2d(const int x, const int y);

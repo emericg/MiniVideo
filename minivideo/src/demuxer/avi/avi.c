@@ -27,6 +27,7 @@
 #include "../riff/riff.h"
 #include "../wave/wave_struct.h"
 #include "../../utils.h"
+#include "../../fourcc.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"
@@ -1219,6 +1220,7 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
     int retcode = SUCCESS;
     BitstreamMap_t *mytrack = NULL;
 
+
     if (track->strh.fccType == fcc_auds)
     {
         // Audio track
@@ -1231,6 +1233,7 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_AUDIO;
+            mytrack->stream_fcc   = track->strh.fccHandler;
 
             // We cannot rely on the fccHandler from the container,
             // but we should have extracted the correct codec infos from strh
@@ -1258,6 +1261,7 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_VIDEO;
+            mytrack->stream_fcc   = track->strh.fccHandler;
 
             if (track->strh.fccHandler == fcc_xvid ||
                 track->strh.fccHandler == fcc_XVID ||
@@ -1290,6 +1294,7 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_TEXT;
+            mytrack->stream_fcc   = track->strh.fccHandler;
             mytrack->stream_codec = CODEC_SRT;
 
             mytrack->sample_alignment = true;
@@ -1411,13 +1416,6 @@ void avi_clean(avi_t *avi)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-/*!
- * \brief Parse an avi file.
- * \param *video A pointer to a MediaFile_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
- *
- * This parser is compatible with the 'OpenDML AVI File Format Extensions'.
- */
 int avi_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()\n" CLR_RESET);

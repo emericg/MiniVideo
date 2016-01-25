@@ -75,4 +75,20 @@
 #endif // ENABLE_STDBOOL
 
 /* ************************************************************************** */
+
+#if ENABLE_STDALIGN
+    #include <stdlib.h>
+    #include <stdalign.h>
+#else
+    // Aligned malloc from POSIX implementation (if C11 <stdalign.h> is not available)
+
+    void *aligned_alloc( size_t alignment, size_t size )
+    {
+        void *__memptr = NULL;
+        posix_memalign(&__memptr, alignment, size);
+        return __memptr;
+    }
+#endif // ENABLE_STDALIGN
+
+/* ************************************************************************** */
 #endif // TYPEDEF_H

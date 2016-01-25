@@ -240,7 +240,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
     }
     else
     {
-        aspectratio_qstr = QString::number(ar_d, 'g', 3);
+        aspectratio_qstr = QString::number(ar_d, 'g', 3) + ":1";
     }
 
     //std::cout << "getAspectRatioString(" << x << "," << y << ") > '" << aspectratio_qstr.toStdString() << "'" << std::endl;

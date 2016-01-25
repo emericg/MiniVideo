@@ -29,6 +29,17 @@
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Parse mp4/mov files.
+ * \param *video A pointer to a MediaFile_t structure.
+ * \return retcode 1 if succeed, 0 otherwise.
+ *
+ * This parser is based on the 'ISO/IEC 14496-12' international standard, part 12:
+ * 'ISO base media file format'.
+ *
+ * \todo Stop parsing if we are after the end of the 'moov' box.
+ * \todo Fix convertTrack() algorithms complexity.
+ */
 int mp4_fileParse(MediaFile_t *video);
 
 /* ************************************************************************** */

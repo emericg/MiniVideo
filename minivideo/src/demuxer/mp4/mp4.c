@@ -41,8 +41,12 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 
 static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
-static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header);
+
+static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+    static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+
 static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
         static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
         static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
             static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
@@ -118,20 +122,24 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         unsigned int i = 0, j = 0;
 
         map->stream_level = stream_level_ES;
+        map->stream_fcc = track->fcc;
         map->stream_codec = track->codec;
 
-        map->duration = (float)track->duration / mp4->timescale * 1000;
-        map->creation_time = (float)track->creation_time / mp4->timescale * 1000;
-        map->modification_time = (float)track->modification_time / mp4->timescale * 1000;
+        map->duration = (double)track->duration / (double)track->timescale * 1000.0;
+        map->creation_time = (double)track->creation_time / (double)track->timescale * 1000.0;
+        map->modification_time = (double)track->modification_time / (double)track->timescale * 1000.0;
 
         map->sample_alignment = true;
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
+
+        map->track_id = track->id;
 
         if (track->handlerType == HANDLER_AUDIO)
         {
             map->stream_type = stream_AUDIO;
             map->sampling_rate = track->sample_rate;
             map->channel_count = track->channel_count;
+            map->bit_per_sample = track->sample_size;
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
@@ -141,7 +149,16 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
             map->color_depth = track->color_depth;
             map->sample_count_idr = track->stss_entry_count;
 
-            if (track->codec == CODEC_H264)
+            map->framerate_num = track->timescale * 1000;
+
+            if(track->stsz_sample_count == 0)
+                map->framerate_base = 1001; // p_elst->i_media_time; // LOL FIXME
+            else
+                map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * 1000.0);
+
+            map->frame_rate = (double)map->framerate_num / (double)map->framerate_base;
+
+            if (track->codec == CODEC_H264 || track->codec == CODEC_H265)
             {
                 // Set SPS
                 for (i = 0; i < track->sps_count; i++)
@@ -748,7 +765,6 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header)
     return retcode;
 }
 
-
 /* ************************************************************************** */
 
 /*!
@@ -824,6 +840,92 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         TRACE_1(MP4, "> height\t: %u\n", height);
     }
 #endif // ENABLE_DEBUG
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Edit Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ *
+ *
+ */
+static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_edst()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Print trak box header
+    print_box_header(box_header);
+
+    while (retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS)
+        {
+            switch (box_subheader.type)
+            {
+                case BOX_ELST:
+                    retcode = parse_elst(bitstr, &box_subheader, track);
+                    break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader);
+                    break;
+            }
+
+            // Go to the next box
+            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+            if (jump > 0)
+            {
+                skip_bits(bitstr, jump*8);
+            }
+        }
+    }
+
+    return retcode;
+}
+
+/*!
+ * \brief Edit List Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ *
+ */
+static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_elst()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    if (box_header->version == 1)
+    {
+
+    }
+    else // if (version == 0)
+    {
+        uint32_t entries = read_bits(bitstr, 32);
+
+        int i = 0;
+        for (i = 0; i < entries; i++)
+        {
+            uint32_t segmentDuration = read_bits(bitstr, 32);
+            uint32_t mediaTime = read_bits(bitstr, 32);
+            uint32_t mediaRate = read_bits(bitstr, 16);
+            uint32_t mediaRatrete = read_bits(bitstr, 16);
+        }
+    }
 
     return retcode;
 }
@@ -968,7 +1070,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     retcode = parse_tkhd(bitstr, &box_subheader, mp4->tracks[track_id]);
                     break;
                 case BOX_EDTS:
-                    //retcode = parse_edts(bitstr, &box_subheader, mp4->tracks[track_id]);
+                    retcode = parse_edts(bitstr, &box_subheader, mp4->tracks[track_id]);
                     break;
                 case BOX_MDIA:
                     retcode = parse_mdia(bitstr, &box_subheader, mp4->tracks[track_id]);
@@ -1001,7 +1103,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  * The media header box declares overall information that is media-independent,
  * and relevant to characteristics of the media in a track.
  */
-static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header)
+static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_mdhd()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1010,34 +1112,28 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header)
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    uint64_t creation_time = 0;
-    uint64_t modification_time = 0;
-    uint32_t timescale = 0;
-    uint64_t duration = 0;
-    uint32_t language[3] = {0};
-
     // Read box content
     if (box_header->version == 1)
     {
-        creation_time = read_bits_64(bitstr, 64);
-        modification_time = read_bits_64(bitstr, 64);
-        timescale = read_bits(bitstr, 32);
-        duration = read_bits_64(bitstr, 64);
+        track->creation_time = read_bits_64(bitstr, 64);
+        track->modification_time = read_bits_64(bitstr, 64);
+        track->timescale = read_bits(bitstr, 32);
+        track->duration = read_bits_64(bitstr, 64);
     }
     else // if (version == 0)
     {
-        creation_time = read_bits(bitstr, 32);
-        modification_time = read_bits(bitstr, 32);
-        timescale = read_bits(bitstr, 32);
-        duration = read_bits(bitstr, 32);
+        track->creation_time = read_bits(bitstr, 32);
+        track->modification_time = read_bits(bitstr, 32);
+        track->timescale = read_bits(bitstr, 32);
+        track->duration = read_bits(bitstr, 32);
     }
 
     /*unsigned int pad =*/ read_bit(bitstr);
 
     // ISO-639-2/T language code
-    language[0] = read_bits(bitstr, 5);
-    language[1] = read_bits(bitstr, 5);
-    language[2] = read_bits(bitstr, 5);
+    track->language[0] = read_bits(bitstr, 5);
+    track->language[1] = read_bits(bitstr, 5);
+    track->language[2] = read_bits(bitstr, 5);
 
     /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
 
@@ -1047,13 +1143,13 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header)
         print_box_header(box_header);
 
         // Print mdhd box content
-        TRACE_1(MP4, "> creation_time\t: %llu\n", creation_time);
-        TRACE_1(MP4, "> modification_time\t: %llu\n", modification_time);
-        TRACE_1(MP4, "> timescale\t\t: %u\n", timescale);
-        TRACE_1(MP4, "> duration\t\t: %llu\n", duration);
-        TRACE_1(MP4, "> language[0]\t: %u\n", language[0]);
-        TRACE_1(MP4, "> language[1]\t: %u\n", language[1]);
-        TRACE_1(MP4, "> language[2]\t: %u\n", language[2]);
+        TRACE_1(MP4, "> creation_time\t: %llu\n", track->creation_time);
+        TRACE_1(MP4, "> modification_time\t: %llu\n", track->modification_time);
+        TRACE_1(MP4, "> timescale\t\t: %u\n", track->timescale);
+        TRACE_1(MP4, "> duration\t\t: %llu\n", track->duration);
+        TRACE_1(MP4, "> language[0]\t: %u\n", track->language[0]);
+        TRACE_1(MP4, "> language[1]\t: %u\n", track->language[1]);
+        TRACE_1(MP4, "> language[2]\t: %u\n", track->language[2]);
     }
 #endif // ENABLE_DEBUG
 
@@ -1093,7 +1189,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             switch (box_subheader.type)
             {
                 case BOX_MDHD:
-                    retcode = parse_mdhd(bitstr, &box_subheader);
+                    retcode = parse_mdhd(bitstr, &box_subheader, track);
                     break;
                 case BOX_HDLR:
                     retcode = parse_hdlr(bitstr, &box_subheader, track);
@@ -1338,6 +1434,8 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     /*unsigned int entry_count =*/ read_bits(bitstr, 32);
 
+    track->fcc = box_subheader.type; // save fourcc as backup
+
     // Then parse subbox content
     switch (track->handlerType)
     {
@@ -1378,17 +1476,27 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         case HANDLER_VIDEO:
 
             // VisualSampleEntry
-            // Box Types: ‘avc1’, ‘avcC’, ‘m4ds’, ’btrt’
+            // Box Types: 'avc1', 'm4ds', 'hev1', 'CFHD'
 
             if (box_subheader.type == SAMPLE_AVC1)
             {
                 track->codec = CODEC_H264;
                 TRACE_1(MP4, "> Video track is using H.264 codec\n");
             }
+            else if (box_subheader.type == SAMPLE_HVC1)
+            {
+                track->codec = CODEC_H265;
+                TRACE_1(MP4, "> Video track is using H.265 codec\n");
+            }
             else if (box_subheader.type == SAMPLE_MP4V)
             {
                 track->codec = CODEC_MPEG4_ASP;
                 TRACE_1(MP4, "> Video track is using XVID codec\n");
+            }
+            else if (box_subheader.type == SAMPLE_CFHD)
+            {
+                track->codec = CODEC_VC5;
+                TRACE_1(MP4, "> Video track is using CineForm codec\n");
             }
             else
             {
@@ -1992,17 +2100,6 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-/*!
- * \brief Parse a mp4 file.
- * \param *video A pointer to a MediaFile_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
- *
- * This parser is based on the 'ISO/IEC 14496-12' international standard, part 12:
- * 'ISO base media file format'.
- *
- * \todo Stop parsing if we are after the end of the 'moov' box.
- * \todo Fix convertTrack() algorithms complexity.
- */
 int mp4_fileParse(MediaFile_t *video)
 {
     TRACE_INFO(MP4, BLD_GREEN "mp4_fileParse()\n" CLR_RESET);
@@ -2065,9 +2162,9 @@ int mp4_fileParse(MediaFile_t *video)
         }
 
         // File metadatas
-        video->duration = (float)mp4.duration / mp4.timescale * 1000;
-        video->creation_time = (float)mp4.creation_time ;// / mp4.timescale * 1000;
-        video->modification_time = (float)mp4.modification_time ;// / mp4.timescale * 1000;
+        video->duration = (double)mp4.duration / mp4.timescale * 1000.0;
+        video->creation_time = (double)mp4.creation_time ;
+        video->modification_time = (double)mp4.modification_time ;
 
         // Tracks metadatas
         // Check if we have extracted tracks

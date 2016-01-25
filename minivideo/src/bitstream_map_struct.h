@@ -45,6 +45,7 @@ typedef struct BitstreamMap_t
 
     // Generic metadatas
     uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats
+    uint32_t stream_fcc;            //!< Fourcc
     AVCodec_e stream_codec;         //!< Codec used by this track
     char *stream_encoder;           //!< Encoder used to generate the track's datas
 

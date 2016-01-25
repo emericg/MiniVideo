@@ -37,9 +37,9 @@
 
 /* ************************************************************************** */
 
-int mp3_fileParse(VideoFile_t *video)
+int mp3_fileParse(MediaFile_t *video)
 {
-    int retcode = FAILURE;
+    int retcode = SUCCESS;
 
     TRACE_INFO(MP3, BLD_GREEN "mp3_fileParse()\n" CLR_RESET);
 

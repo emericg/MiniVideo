@@ -29,16 +29,31 @@
 
 /* ************************************************************************** */
 
-//! Start code used by codec family
-typedef enum StartCodeFamily_e
+//! Start codes used by elementary stream of different codec families.
+typedef enum StartCodes_e
 {
     STARTCODE_MPEG = 0x000001,
     STARTCODE_VP8  = 0x9D012A
 
-} StartCodeFamily_e;
+} StartCodes_e;
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Parse elementary stream files, the "brute-force" way.
+ * \param *video A pointer to a MediaFile_t structure.
+ * \param video_codec docme.
+ * \return retcode 1 if succeed, 0 otherwise.
+ *
+ * \todo Handle idr_only == false.
+ * \todo Handle INITIAL_SEARCH_WINDOW.
+ *
+ * This parser is just brutally searching for 3 bytes start codes, for instance
+ * 0x000001 for mpeg videos and 0x9D012A for VP8 videos.
+ *
+ * It will only successfuly parse "ES" files containing only one audio or video
+ * track.
+ */
 int bruteforce_fileParse(MediaFile_t *video, AVCodec_e video_codec);
 
 /* ************************************************************************** */
