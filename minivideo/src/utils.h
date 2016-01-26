@@ -29,9 +29,17 @@
 
 /* ************************************************************************** */
 
-#define MAX(x,y) (((x) > (y)) ? (x):(y))
+#define ALIGN_ADDR(_addr,_align) {\
+   if (_align>1) {\
+       int _dec = (_addr%_align);\
+       if (_dec != 0) _addr += _align - _dec;\
+   }}
 
-#define MIN(x,y) (((x) < (y)) ? (x):(y))
+#define ALIGN(x, y) (((x) + ((y) - 1)) & ~((y) - 1))
+
+#define MAX(x, y) (((x) > (y)) ? (x):(y))
+
+#define MIN(x, y) (((x) < (y)) ? (x):(y))
 
 #define BITS_TO_BYTES (x) (((x) + 7) >> 3)
 
