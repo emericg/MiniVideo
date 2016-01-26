@@ -29,6 +29,7 @@
 
 // C standard libraries
 #include <stdlib.h>
+#include <math.h>
 
 /* ************************************************************************** */
 
@@ -215,7 +216,7 @@ static void computeBitRateTrack(BitstreamMap_t *t)
     {
         uint64_t bytes = 0;
         bool cbr = true;
-        int j = 0;
+        unsigned j = 0;
 
         for (j = 0; j < t->sample_count; j++)
         {

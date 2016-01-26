@@ -231,14 +231,14 @@ typedef enum Mp4SampleEntry_e
     SAMPLE_RAW_ = 0x72617720,    //!< unsigned linear PCM (16-bit, little endian)
     SAMPLE_TOWS = 0x746F7773,    //!< signed linear PCM (big endian)
     SAMPLE_SWOT = 0x73776F74,    //!< signed linear PCM (little endian)
-
+/*
     SAMPLE_in24 = 'in24', //!< 24-bit, big endian, linear PCM
     SAMPLE_in32 = 'in32', //!< 32-bit, big endian, linear PCM
     SAMPLE_fl32 = 'fl32', //!< 32-bit floating point PCM (Presumably IEEE 32-bit; byte order?)
     SAMPLE_fl64 = 'fl64', //!< 64-bit floating point PCM (Presumably IEEE 64-bit; byte order?)
     SAMPLE_alaw = 'alaw', //!< A-law logarithmic PCM
     SAMPLE_ulaw = 'ulaw', //!< mu-law logarithmic PCM
-
+*/
 } Mp4SampleEntry_e;
 
 /* ************************************************************************** */

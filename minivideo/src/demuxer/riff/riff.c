@@ -24,6 +24,7 @@
 // minivideo headers
 #include "riff.h"
 #include "riff_struct.h"
+#include "../../fourcc.h"
 #include "../../utils.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"

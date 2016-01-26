@@ -24,6 +24,7 @@
 // minivideo headers
 #include "mp4.h"
 #include "mp4_struct.h"
+#include "../../fourcc.h"
 #include "../../typedef.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -917,7 +918,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     {
         uint32_t entries = read_bits(bitstr, 32);
 
-        int i = 0;
+        unsigned i = 0;
         for (i = 0; i < entries; i++)
         {
             uint32_t segmentDuration = read_bits(bitstr, 32);

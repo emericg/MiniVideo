@@ -194,7 +194,7 @@ int h264_decode(MediaFile_t *input_video,
             TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)\n", dc->errorCounter);
         }
 
-        if (dc->idrCounter == picture_number)
+        if (dc->idrCounter == (unsigned)picture_number)
         {
             TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!\n" CLR_RESET, dc->idrCounter);
             TRACE_INFO(H264, "H.264 decoding ended\n");

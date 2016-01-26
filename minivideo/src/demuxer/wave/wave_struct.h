@@ -122,9 +122,9 @@ typedef enum WaveFormatTag_e
     WAVE_FORMAT_MP1        = 0x0050,
     WAVE_FORMAT_MP3        = 0x0055,
 
-    WAVE_FORMAT_AC3        = 0x2000,
+    WAVE_FORMAT_AC3        = 0x2000, //!< AC3 or A52
     WAVE_FORMAT_DTS        = 0x2001,
-    WAVE_FORMAT_AAC        = 0x00FF, //!< AAC or A52
+    WAVE_FORMAT_AAC        = 0x00FF, //!< AAC
 
     WAVE_FORMAT_WMAS       = 0x000A, //!< WMA 9 Speech
     WAVE_FORMAT_WMA1       = 0x0160, //!< WMA version 1

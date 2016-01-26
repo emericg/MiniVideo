@@ -30,6 +30,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"
+#include "../../fourcc.h"
 #include "../../minitraces.h"
 
 // C standard libraries

@@ -38,5 +38,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map);
 
 bool computeBitRates(MediaFile_t *video);
 
+bool computeCodecs(MediaFile_t *video);
+
 /* ************************************************************************** */
 #endif // BITSTREAM_MAP_H
