@@ -64,11 +64,16 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size);
 QString getAspectRatioString(const int x, const int y, bool detailed = false);
 
 /*!
- * \brief Get a bitrate string from a bitrate in byte.
- * \param bitrate_int: Bitrate in bytes.
- * \return Bitrate QString.
+ * \brief Get a bitrate string from a bitrate in bytes.
+ * \param bitrate: Bitrate in bytes.
+ * \return Bitrate QString with the bitrate per second.
+ *
+ * Depending on the bitrate, the unit will be:
+ * - Kb/s with 0 digits after the decimal point (if less than 10 Mb/s)
+ * - Mb/s with 2 digits after the decimal point (if less than 100 Mb/s)
+ * - Mb/s with 0 digits after the decimal point (if more than 100 Mb/s)
  */
-QString getBitrateString(const int bitrate_int);
+QString getBitrateString(const int bitrate);
 
 /* ************************************************************************** */
 #endif // UTILS_H

@@ -437,7 +437,7 @@ int MainWindow::printDatas()
 
             ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
             ui->label_audio_size_2->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
-            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, false));
+            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, true));
             ui->label_audio_codec_2->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, true));
 
             char fcc_str[4];
@@ -452,9 +452,8 @@ int MainWindow::printDatas()
             ui->label_audio_duration->setText(getDurationString(media->tracks_audio[atid]->duration));
             ui->label_audio_duration_2->setText(getDurationString(media->tracks_audio[atid]->duration));
 
-            double bitrate = static_cast<double>(media->tracks_audio[atid]->bitrate);
-            ui->label_audio_bitrate->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
-            ui->label_audio_bitrate_gross->setText(QString::number(bitrate, 'g', 4) + " Kb/s");
+            ui->label_audio_bitrate->setText(getBitrateString(media->tracks_audio[atid]->bitrate));
+            ui->label_audio_bitrate_gross->setText(getBitrateString(media->tracks_audio[atid]->bitrate));
 
             if (media->tracks_audio[atid]->bitrate_mode == BITRATE_CBR)
             {
@@ -526,7 +525,7 @@ int MainWindow::printDatas()
 
             ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
             ui->label_video_size_2->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
-            ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, false));
+            ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, true));
             ui->label_video_codec_2->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, true));
 
             char fcc_str[4];
@@ -541,9 +540,8 @@ int MainWindow::printDatas()
             ui->label_video_duration->setText(getDurationString(media->tracks_video[vtid]->duration));
             ui->label_video_duration_2->setText(getDurationString(media->tracks_video[vtid]->duration));
 
-            double bitrate = static_cast<double>(media->tracks_video[vtid]->bitrate);
-            ui->label_video_bitrate->setText(QString::number(bitrate, 'g', 6) + " Kb/s");
-            ui->label_video_bitrate_gross->setText(QString::number(bitrate, 'g', 6) + " Kb/s");
+            ui->label_video_bitrate->setText(getBitrateString(media->tracks_video[vtid]->bitrate));
+            ui->label_video_bitrate_gross->setText(getBitrateString(media->tracks_video[vtid]->bitrate));
 
             if (media->tracks_video[vtid]->bitrate_mode == BITRATE_CBR)
             {
@@ -581,13 +579,27 @@ int MainWindow::printDatas()
             }
             double frameduration = 1000.0 / framerate; // in ms
 
-            ui->label_video_samplecount->setText(QString::number(media->tracks_video[vtid]->sample_count));
-            ui->label_video_samplecount_idr->setText(QString::number(media->tracks_video[vtid]->sample_count_idr));
-            ui->label_video_samplecount_other->setText(QString::number(media->tracks_video[vtid]->sample_count - media->tracks_video[vtid]->sample_count_idr));
-            ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
+            QString samplecount = "<b>" + QString::number(media->tracks_video[vtid]->sample_count) + "</b>";
+            QString samplerepartition;
+            if (media->tracks_video[vtid]->sample_count_idr)
+            {
+                samplecount += "      (" + QString::number(media->tracks_video[vtid]->sample_count_idr) + " IDR  /  ";
+                samplecount += QString::number(media->tracks_video[vtid]->sample_count - media->tracks_video[vtid]->sample_count_idr) + " others)";
+
+                double idr_ratio = static_cast<double>(media->tracks_video[vtid]->sample_count_idr) / static_cast<double>(media->tracks_video[vtid]->sample_count) * 100.0;
+                samplerepartition = tr("IDR represents <b>") + QString::number(idr_ratio, 'g', 2) + "%</b> " + tr("of the samples");
+                samplerepartition += ", or 1 every <b></b> ms.";
+
+                ui->label_video_samplerepart->setText(samplerepartition);
+            }
+
+            ui->label_video_samplecount->setText(samplecount);
 
             ui->label_video_framerate->setText(QString::number(framerate) + " fps");
+
             ui->label_video_framerate_2->setText(QString::number(framerate) + " fps");
+            ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
+
             ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
             //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
 
@@ -603,7 +615,7 @@ int MainWindow::printDatas()
         int stid = 0;
         if (media->tracks_subt[stid] != NULL)
         {
-            // TODO ?
+            // TODO
         }
     }
     else

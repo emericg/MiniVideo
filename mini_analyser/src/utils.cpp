@@ -248,7 +248,36 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
     return aspectratio_qstr;
 }
 
-QString getBitrateString(const int bitrate_int)
+QString getBitrateString(const int bitrate)
+{
+    QString bitrate_qstr;
+
+    if (bitrate > 0)
+    {
+        if (bitrate < 10000) // < 10 MB
+        {
+            bitrate_qstr = QString::number(bitrate, 'f', 0) + " Kb/s";
+        }
+        else if (bitrate < 100000) // < 100 MB
+        {
+            bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 2) + " Mb/s";
+        }
+        else
+        {
+            bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 0) + " Mb/s";
+        }
+    }
+    else
+    {
+        bitrate_qstr = "NULL bitrate";
+    }
+
+    //std::cout << "getBitrateString(" << bitrate_int << ") > '" << bitrate_qstr.toStdString() << "'" << std::endl;
+
+    return bitrate_qstr;
+}
+
+QString getBitrateString_1024(const int bitrate_int)
 {
     QString bitrate_qstr;
 
@@ -259,6 +288,10 @@ QString getBitrateString(const int bitrate_int)
             bitrate_qstr = QString::number(bitrate_int / 1024.0, 'f', 2) + " KiB/s";
         }
         else if (bitrate_int < 1073741824) // < 1 GiB
+        {
+            bitrate_qstr = QString::number(bitrate_int / 1024.0 / 1024.0, 'f', 2) + " MiB/s";
+        }
+        else
         {
             bitrate_qstr = QString::number(bitrate_int / 1024.0 / 1024.0, 'f', 2) + " MiB/s";
         }

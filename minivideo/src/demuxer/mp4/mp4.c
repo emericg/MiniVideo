@@ -1434,6 +1434,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     /*unsigned int entry_count =*/ read_bits(bitstr, 32);
 
+    char fcc[5];
     track->fcc = box_subheader.type; // save fourcc as backup
 
     // Then parse subbox content
@@ -1454,10 +1455,16 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 track->codec = CODEC_AC3;
                 TRACE_1(MP4, "> Audio track is using AC3 codec\n");
             }
+            else if (box_subheader.type == SAMPLE_SWOT)
+            {
+                track->codec = CODEC_AC3;
+                TRACE_1(MP4, "> Audio track is using AC3 codec\n");
+            }
             else
             {
                 track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in audio track\n");
+                TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)\n",
+                              getFccString_le(box_subheader.type, fcc));
             }
 
             /*const unsigned int reserved[0] =*/ read_bits(bitstr, 32);
@@ -1501,7 +1508,8 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             else
             {
                 track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in video track\n");
+                TRACE_WARNING(MP4, "> Unknown codec in video track (%s)\n",
+                              getFccString_le(box_subheader.type, fcc));
             }
 
             /*unsigned int pre_defined =*/ read_bits(bitstr, 16);

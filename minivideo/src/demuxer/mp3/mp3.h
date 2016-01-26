@@ -34,8 +34,8 @@
  * \param *media A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
- * This parser index the content of MP3 Elementary Streams. It implements
- * ISO/IEC 11172-3 and ISO/IEC 13818-3 specifications.
+ * This parser index the content of MP1, MP2 and MP3 Elementary Streams.
+ * It implements ISO/IEC 11172-3 and ISO/IEC 13818-3 specifications.
  *
  * ID3 tags (v1, v2 and Lyrics) are ignored:
  * - http://www.id3.org/ID3v1
