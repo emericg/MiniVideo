@@ -63,18 +63,20 @@ typedef enum AVCodec_e
 {
     CODEC_UNKNOWN     = 0,
 
-    // Audio codecs
-    CODEC_LPCM        =  1, //!< Linear pulse-code modulation (not a codec)
-    CODEC_DPCM        =  2, //!< Differential pulse-code modulation (not a codec)
-    CODEC_ADPCM       =  3, //!< Adaptative differential pulse-code modulation (not a codec)
+    // Raw audio
+    CODEC_LPCM        =  1, //!< Linear pulse-code modulation
+    CODEC_LogPCM      =  2, //!< Logarithmic pulse-code modulation
+    CODEC_DPCM        =  3, //!< Differential pulse-code modulation
+    CODEC_ADPCM       =  4, //!< Adaptative differential pulse-code modulation
 
+    // Audio codecs
     CODEC_APE         =  8, //!< Monkey's Audio
     CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
     CODEC_ALAC        = 10, //!< Apple Lossless Audio Codec
 
-    CODEC_MPEG_L1     = 16, //!< MPEG 1/2 Audio Layer I
-    CODEC_MPEG_L2     = 17, //!< MPEG 1/2 Audio Layer II
-    CODEC_MPEG_L3     = 18, //!< MPEG 1/2 Audio Layer III
+    CODEC_MPEG_L1     = 16, //!< MP1, or MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L2     = 17, //!< MP2, or MPEG 1/2 Audio Layer II
+    CODEC_MPEG_L3     = 18, //!< MP3, or MPEG 1/2 Audio Layer III
     CODEC_AAC         = 19, //!< Advanced Audio Coding
     CODEC_AAC_HE      = 20, //!< High Efficiency Advanced Audio Coding
 
@@ -127,8 +129,6 @@ typedef enum AVCodec_e
     CODEC_PRORES_442_PROXY  = 92, //!< Apple ProRes 422 (Proxy)
     CODEC_PRORES_442_LT     = 93, //!< Apple ProRes 422 (LT)
 
-    // Raw video codecs
-
     // Deprecated video codecs
     CODEC_CINEPAK     = 190, //!< Cinepak
     CODEC_SVQ1        = 191, //!< Sorenson Video
@@ -137,8 +137,10 @@ typedef enum AVCodec_e
     CODEC_IV41        = 194, //!< Intel Indeo Video 4
     CODEC_IV50        = 195, //!< Intel Indeo Video 5
 
+    // Raw video
+
     // Subtitles codecs
-    CODEC_SRT           = 200, //!< SubRip (.srt)
+    CODEC_SRT         = 200, //!< SubRip (.srt)
     CODEC_SSA         = 201, //!< "SubStation Alpha" (.ssa)
     CODEC_ASS         = 202, //!< "Advanced SubStation Alpha" (.ass)
 

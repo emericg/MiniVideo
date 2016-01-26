@@ -161,7 +161,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
         {
             case CODEC_LPCM:
                 if (long_description)
-                    return "LPCM (Linear Pulse Code Modulation)";
+                    return "Linear PCM (Linear Pulse Code Modulation)";
+                else
+                    return "LPCM";
+                break;
+            case CODEC_LogPCM:
+                if (long_description)
+                    return "Logarithmic PCM (Logarithmic Pulse Code Modulation)";
                 else
                     return "LPCM";
                 break;
@@ -198,16 +204,22 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 break;
 
             case CODEC_MPEG_L1:
-                return "MPEG-1/2 Layer 1";
+                if (long_description)
+                    return "MP1 (MPEG-1/2 Layer 1)";
+                else
+                    return "MP1";
                 break;
             case CODEC_MPEG_L2:
-                return "MPEG-1/2 Layer 2";
+                if (long_description)
+                    return "MP2 (MPEG-1/2 Layer 2)";
+                else
+                    return "MP2";
                 break;
             case CODEC_MPEG_L3:
                 if (long_description)
-                    return "MP3";
-                else
                     return "MP3 (MPEG-1/2 Layer 3)";
+                else
+                    return "MP3";
                 break;
             case CODEC_AAC:
                 if (long_description)
@@ -260,7 +272,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
             default:
             case CODEC_UNKNOWN:
-                return "UNKNOWN";
+                return "Unknown";
                 break;
         }
     }
@@ -272,7 +284,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 return "MPEG-1/2";
                 break;
             case CODEC_MPEG4_ASP:
-                return "MPEG-4 part 2 'ASP' (XVID)";
+                return "MPEG-4 part 2 'ASP'";
                 break;
             case CODEC_MSMPEG4:
                 return "MS MPEG-4";
@@ -375,7 +387,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
             default:
             case CODEC_UNKNOWN:
-                return "UNKNOWN";
+                return "Unknown";
                 break;
         }
     }
@@ -395,12 +407,12 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
             default:
             case CODEC_UNKNOWN:
-                return "UNKNOWN";
+                return "Unknown";
                 break;
         }
     }
 
-    return "UNKNOWN";
+    return "Unknown";
 }
 
 /* ************************************************************************** */
