@@ -23,7 +23,7 @@ set(minivideo_VERSION_PATCH 0)
 set(ENABLE_COLORS 1) # "Toggle colored terminal output"
 set(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
 set(ENABLE_STDBOOL 1) # "Toggle C99 <stdbool.h> usage"
-set(ENABLE_STDALIGN 0) # "Toggle C11 <stdalign.h> usage"
+set(ENABLE_STDALIGN 1) # "Toggle C11 <stdalign.h> usage"
 
 set(ENABLE_JPEG 1) # "Toggle external libjpeg support"
 set(ENABLE_PNG 1) # "Toggle external libpng support"
