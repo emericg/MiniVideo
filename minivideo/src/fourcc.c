@@ -67,12 +67,36 @@ char *getFccString_be(const int fcc_in, char *fcc_out)
 
 /* ************************************************************************** */
 
-AVCodec_e getCodecFromFourCC(uint32_t fcc)
+AVCodec_e getCodecFromFourCC(const uint32_t fcc)
 {
     AVCodec_e codec = CODEC_UNKNOWN;
 
     switch (fcc)
     {
+    case fcc_MPEG:
+    case fcc_mpeg:
+    case fcc_MPG1:
+    case fcc_mpg1:
+    case fcc_MPG2:
+    case fcc_mpg2:
+        codec = CODEC_MPEG12;
+        break;
+
+    case fcc_xvid:
+    case fcc_XVID:
+    case fcc_FMP4:
+    case fcc_MP4V:
+    case fcc_divx:
+    case fcc_DIVX:
+    case fcc_DX50:
+    case fcc_DX60:
+    case fcc_DIV1:
+    case fcc_DIV2:
+    case fcc_DIV4:
+    case fcc_DIV5:
+        codec = CODEC_MPEG4_ASP;
+        break;
+
     case fcc_AVC1:
     case fcc_avc1:
     case fcc_AVCC:
@@ -95,20 +119,6 @@ AVCodec_e getCodecFromFourCC(uint32_t fcc)
         codec = CODEC_H265;
         break;
 
-    case fcc_xvid:
-    case fcc_XVID:
-    case fcc_FMP4:
-    case fcc_MP4V:
-    case fcc_divx:
-    case fcc_DIVX:
-    case fcc_DX50:
-    case fcc_DIV1:
-    case fcc_DIV2:
-    case fcc_DIV4:
-    case fcc_DIV5:
-        codec = CODEC_MPEG4_ASP;
-        break;
-
     case fcc_MPG4:
     case fcc_MP41:
     case fcc_MP42:
@@ -121,13 +131,23 @@ AVCodec_e getCodecFromFourCC(uint32_t fcc)
         codec = CODEC_MSMPEG4;
         break;
 
-    case fcc_MPEG:
-    case fcc_mpeg:
-    case fcc_MPG1:
-    case fcc_mpg1:
-    case fcc_MPG2:
-    case fcc_mpg2:
-        codec = CODEC_MPEG12;
+    case fcc_D263:
+    case fcc_H263:
+    case fcc_L263:
+    case fcc_M263:
+    case fcc_S263:
+    case fcc_T263:
+    case fcc_U263:
+    case fcc_X263:
+        codec = CODEC_H263;
+        break;
+
+    case fcc_BBCD:
+        codec = CODEC_VC2;
+        break;
+
+    case fcc_AVdn:
+        codec = CODEC_VC3;
         break;
 
     case fcc_CFHD:

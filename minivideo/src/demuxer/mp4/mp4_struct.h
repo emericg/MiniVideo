@@ -224,15 +224,20 @@ typedef enum Mp4SampleEntry_e
 
     SAMPLE_CFHD = 0x43464844,
 
-    SAMPLE_AI55 = 0x0,           //!< AVC Intra  50 / 1080 interlace
-    SAMPLE_AI5q = 0x0,           //!< AVC Intra  50 /  720
-    SAMPLE_AI15 = 0x0,           //!< AVC Intra 100 / 1080 interlace
-    SAMPLE_AI1q = 0x0,           //!< AVC Intra 100 /  720
-    SAMPLE_AI12 = 0x0,           //!< AVC Intra 100 / 1080
-
     SAMPLE_MP4V = 0x6D703476,    //!< MP4V / XVID
     SAMPLE_MP4A = 0x6D703461,    //!< MP4A / AAC
-    SAMPLE_AC3  = 0x61632D33     //!< AC-3
+    SAMPLE_AC3  = 0x61632D33,    //!< AC-3
+
+    SAMPLE_RAW_ = 0x72617720,    //!< unsigned linear PCM (16-bit, little endian)
+    SAMPLE_TOWS = 0x746F7773,    //!< signed linear PCM (big endian)
+    SAMPLE_SWOT = 0x73776F74,    //!< signed linear PCM (little endian)
+
+    SAMPLE_in24 = 'in24', //!< 24-bit, big endian, linear PCM
+    SAMPLE_in32 = 'in32', //!< 32-bit, big endian, linear PCM
+    SAMPLE_fl32 = 'fl32', //!< 32-bit floating point PCM (Presumably IEEE 32-bit; byte order?)
+    SAMPLE_fl64 = 'fl64', //!< 64-bit floating point PCM (Presumably IEEE 64-bit; byte order?)
+    SAMPLE_alaw = 'alaw', //!< A-law logarithmic PCM
+    SAMPLE_ulaw = 'ulaw', //!< mu-law logarithmic PCM
 
 } Mp4SampleEntry_e;
 

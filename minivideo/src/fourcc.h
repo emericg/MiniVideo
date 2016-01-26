@@ -43,6 +43,46 @@
 typedef enum fourcc_list_e
 {
     // Video codecs
+    fcc_MPEG = 0x4D504547, //!< MPEG-1/2
+    fcc_mpeg = 0x6D706567,
+    fcc_MPG1 = 0x4D504731,
+    fcc_mpg1 = 0x6D706731,
+    fcc_MPG2 = 0x4D504732,
+    fcc_mpg2 = 0x6D706732,
+
+    fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
+    fcc_DIV2 = 0x44495632,
+    fcc_DIV4 = 0x44495634,
+    fcc_DIV5 = 0x44495635,
+    fcc_divx = 0x64697678, //!< DivX 4 -> 6
+    fcc_DIVX = 0x44495658,
+    fcc_DX50 = 0x44583530, //!< DivX 5
+    fcc_DX60 = 0x44583630, //!< DivX 6
+
+    fcc_MPG4 = 0x4D504734, //!< Microsoft MPEG-4
+    fcc_MP41 = 0x4D503431, //!< Microsoft MPEG-4 (version 1)
+    fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
+    fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
+    fcc_DIV3 = 0x44495633,
+    fcc_WMV7 = 0x574D5637,
+    fcc_WMV8 = 0x574D5638,
+    fcc_AP41 = 0x41503431,
+    fcc_COL1 = 0x434F4C31,
+
+    fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP"
+    fcc_XVID = 0x58564944,
+    fcc_FMP4 = 0x464D5034,
+    fcc_MP4V = 0x6D703476,
+
+    fcc_D263 = 0x44323633, //!< H.263
+    fcc_H263 = 0x48323633,
+    fcc_L263 = 0x4C323633,
+    fcc_M263 = 0x4D323633,
+    fcc_S263 = 0x53323633,
+    fcc_T263 = 0x54323633,
+    fcc_U263 = 0x55323633,
+    fcc_X263 = 0x58323633,
+
     fcc_AVC1 = 0x41564331, //!< H.264 / MPEG-4 part 10 "AVC"
     fcc_avc1 = 0x61766331,
     fcc_AVCC = 0x41564343,
@@ -70,6 +110,10 @@ typedef enum fourcc_list_e
     fcc_VP90 = 0x56503930,
     fcc_VP10 = 0x56503130,
 
+    fcc_BBCD = 0x42424344, //!< DNxHD / VC-2
+
+    fcc_AVdn = 0x4156646E, //!< DNxHD / VC-3
+
     fcc_CFHD = 0x43464844, //!< CineForm / VC-5
     fcc_cfhd = 0x63666864,
 
@@ -80,36 +124,6 @@ typedef enum fourcc_list_e
     fcc_apco = 0x6170636f, //!< Apple ProRes 422 (Proxy)
     fcc_apcs = 0x61706373, //!< Apple ProRes 422 (LT)
 
-    fcc_MPEG = 0x4D504547, //!< MPEG-1/2
-    fcc_mpeg = 0x6D706567,
-    fcc_MPG1 = 0x4D504731,
-    fcc_mpg1 = 0x6D706731,
-    fcc_MPG2 = 0x4D504732,
-    fcc_mpg2 = 0x6D706732,
-
-    fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP
-    fcc_XVID = 0x58564944,
-    fcc_FMP4 = 0x464D5034,
-    fcc_MP4V = 0x6D703476,
-    fcc_divx = 0x64697678, //!< DivX 4 -> 6
-    fcc_DIVX = 0x44495658,
-    fcc_DX50 = 0x44583530, //!< DivX 5
-
-    fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
-    fcc_DIV2 = 0x44495632,
-    fcc_DIV4 = 0x44495634,
-    fcc_DIV5 = 0x44495635,
-
-    fcc_MPG4 = 0x4D504734, //!< Microsoft MPEG-4
-    fcc_MP41 = 0x4D503431, //!< Microsoft MPEG-4 (version 1)
-    fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
-    fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
-    fcc_DIV3 = 0x44495633,
-    fcc_WMV7 = 0x574D5637,
-    fcc_WMV8 = 0x574D5638,
-    fcc_AP41 = 0x41503431,
-    fcc_COL1 = 0x434F4C31,
-
     fcc_WMV1 = 0x574D5631, //!< Windows Media Video codecs
     fcc_WMV2 = 0x574D5632,
     fcc_WMV3 = 0x574D5633,
@@ -118,13 +132,13 @@ typedef enum fourcc_list_e
     fcc_dvsd = 0x64767364, //!< DV
     fcc_DVSD = 0x44565344,
 
-    fcc_AI55 = 0x41,           //!< AVC Intra  50 / 1080 interlace
-    fcc_AI5q = 0x41,           //!< AVC Intra  50 /  720
-    fcc_AI15 = 0x41,           //!< AVC Intra 100 / 1080 interlace
-    fcc_AI1q = 0x41,           //!< AVC Intra 100 /  720
-    fcc_AI12 = 0x41,           //!< AVC Intra 100 / 1080
+    fcc_AI55 = 0x41493535, //!< AVC Intra  50 / 1080 interlaced
+    fcc_AI5q = 0x41493571, //!< AVC Intra  50 /  720
+    fcc_AI15 = 0x41493135, //!< AVC Intra 100 / 1080 interlaced
+    fcc_AI1q = 0x41493171, //!< AVC Intra 100 /  720
+    fcc_AI12 = 0x41493132, //!< AVC Intra 100 / 1080
 
-    // Uncompressed videos
+    // Uncompressed video
     fcc_VYUV = 0x56595556, //!< Uncompressed YUV types
     fcc_YUY2 = 0x59555932,
 
@@ -135,11 +149,12 @@ typedef enum fourcc_list_e
     fcc_AC3  = 0x41432D33, //!< Ac-3
     fcc_ac3  = 0x61632D33  //!< ac-3
 
+    // Uncompressed audio
 } fourcc_list_e;
 
 /* ************************************************************************** */
 
-AVCodec_e getCodecFromFourCC(uint32_t fcc);
+AVCodec_e getCodecFromFourCC(const uint32_t fcc);
 
 char *getFccString_le(const int fcc_in, char *fcc_out);
 
