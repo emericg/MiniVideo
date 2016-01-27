@@ -406,6 +406,26 @@ int MainWindow::printDatas()
             ui->label_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
         }
 
+        // Container efficiency
+        {
+            uint64_t trackssize = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                if (media->tracks_audio[i])
+                    trackssize += media->tracks_audio[i]->stream_size;
+                if (media->tracks_video[i])
+                    trackssize += media->tracks_video[i]->stream_size;
+                if (media->tracks_subt[i])
+                    trackssize += media->tracks_subt[i]->stream_size;
+                //if (media->tracks_others[i])
+                //    trackssize += media->tracks_others[i]->stream_size;
+            }
+
+            uint64_t overhead = media->file_size - trackssize;
+
+            ui->label_container_overhead->setText(getSizeString(overhead));
+        }
+
         // AUDIO
         ////////////////////////////////////////////////////////////////////////
 
