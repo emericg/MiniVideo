@@ -422,8 +422,9 @@ int MainWindow::printDatas()
             }
 
             uint64_t overhead = media->file_size - trackssize;
+            double overheadpercent = (static_cast<double>(overhead) / static_cast<double>(media->file_size)) * 100.0;
 
-            ui->label_container_overhead->setText(getSizeString(overhead));
+            ui->label_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
         }
 
         // AUDIO
