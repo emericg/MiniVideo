@@ -36,14 +36,12 @@ typedef struct Mp4Box_t
     int64_t offset_end;     //!< Absolute position of the last byte of this box
 
     // Box parameters
-    int32_t size;           //!< Box size in number of bytes in this box, including all its fields and contained
-    int64_t largesize;
-
-    uint32_t type;          //!< Identifies the box type, see ISO/IEC 14496-12 Table 1
-    uint8_t type_uuid[16];  //!< UUID
+    int64_t size;           //!< Box size in bytes, including all its fields and contained boxes
+    uint32_t boxtype;       //!< A fourCC identifying the box type, see ISO/IEC 14496-12 Table 1
+    uint8_t usertype[16];   //!< 16 bytes "extended type"; its bloat but I don't want to handle each potential deallocation
 
     // FullBox parameters
-    uint8_t version;        //!< Specifies the version of this box, used for compatibility reason
+    uint8_t version;        //!< Specifies the version of the format used by this box (used for compatibility)
     uint32_t flags;         //!< 24b bitfield
 
 } Mp4Box_t;

@@ -430,38 +430,35 @@ static int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
         box_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
 
         // Read box size
-        box_header->size = read_bits(bitstr, 32);
+        box_header->size = (int64_t)read_bits(bitstr, 32);
+
+        // Read box type
+        box_header->boxtype = read_bits(bitstr, 32);
 
         if (box_header->size == 0)
         {
-            box_header->largesize = bitstr->bitstream_size - box_header->offset_start;
-
-            if (box_header->largesize > 0xFFFFFFFF)
-            {
-                box_header->size = 1;
-            }
-            else
-            {
-                box_header->size = (uint32_t)box_header->largesize;
-            }
+            // the size is the remaining space in the file
+            box_header->size = bitstr->bitstream_size - box_header->offset_start;
         }
         else if (box_header->size == 1)
         {
-            box_header->largesize = (int64_t)read_bits_64(bitstr, 64);
+            // the size is actually a 64b field coded right after the box type
+            box_header->size = (int64_t)read_bits_64(bitstr, 64);
         }
 
         // Set end offset
         box_header->offset_end = box_header->offset_start + box_header->size;
 
-        // Read box type
-        box_header->type = read_bits(bitstr, 32);
-
-        if (box_header->type == BOX_UUID)
+        if (box_header->boxtype == BOX_UUID)
         {
-            int i = 0;
-            for (i = 0; i < 16; i++)
+            //box_header->usertype = malloc(16);
+            //if (box_header->usertype)
             {
-                box_header->type_uuid[i] = (uint8_t)read_bits(bitstr, 8);
+                int i = 0;
+                for (i = 0; i < 16; i++)
+                {
+                    box_header->usertype[i] = (uint8_t)read_bits(bitstr, 8);
+                }
             }
         }
 
@@ -481,20 +478,23 @@ static int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 static void print_box_header(Mp4Box_t *box_header)
 {
 #if ENABLE_DEBUG
-    TRACE_2(MP4, "* start offset\t: %u\n", box_header->offset_start);
-    TRACE_2(MP4, "* end offset\t: %u\n", box_header->offset_end);
+    TRACE_2(MP4, "* start offset\t: %lli\n", box_header->offset_start);
+    TRACE_2(MP4, "* end offset\t: %lli\n", box_header->offset_end);
 
     // Print Box header
-    TRACE_2(MP4, "* box size\t\t: %u\n", box_header->size);
     if (box_header->size == 1)
     {
-        TRACE_2(MP4, "* box largesize\t: %u\n", box_header->largesize);
+        TRACE_2(MP4, "* box largesize\t: %lli\n", box_header->size);
+    }
+    else
+    {
+        TRACE_2(MP4, "* box size\t\t: %lli\n", box_header->size);
     }
 
-    TRACE_2(MP4, "* box type\t\t: 0x%X\n", box_header->type);
-    if (box_header->type == BOX_UUID) // "uuid"
+    TRACE_2(MP4, "* box type\t\t: 0x%X\n", box_header->boxtype);
+    if (box_header->boxtype == BOX_UUID)
     {
-        TRACE_2(MP4, "* box uuid\t\t: %s\n", box_header->type_uuid);
+        TRACE_2(MP4, "* box usertype\t: '%s'\n", box_header->usertype);
     }
 
     // Print FullBox header
@@ -553,19 +553,19 @@ static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
  */
 static int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_unknown_box()\n" CLR_RESET);
-    int retcode = SUCCESS;
-
 #if ENABLE_DEBUG
-    {
-        // Print box header
-        print_box_header(box_header);
+    char fcc[5];
+    TRACE_WARNING(MP4, BLD_GREEN "parse_unknown_box('%s' @ %lli; size is %u)\n" CLR_RESET,
+                  getFccString_le(box_header->boxtype, fcc), box_header->offset_start,
+                  box_header->offset_end - box_header->offset_start);
 
-        // Print box content
-    }
+    // Print box header
+    print_box_header(box_header);
+
+    // Print box content
 #endif // ENABLE_DEBUG
 
-    return retcode;
+    return SUCCESS;
 }
 
 /* ************************************************************************** */
@@ -607,6 +607,8 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
 #if ENABLE_DEBUG
     {
+        char fcc[5];
+
         // Print box header
         print_box_header(box_header);
 
@@ -615,7 +617,8 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         TRACE_1(MP4, "> minor_version\t: %i\n", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
         {
-            TRACE_1(MP4, "> compatible_brands[%i]\t: 0x%X\n", i, compatible_brands[i]);
+            TRACE_1(MP4, "> compatible_brands[%i]\t: '%s' (0x%X)\n",
+                    i, getFccString_le(compatible_brands[i], fcc), compatible_brands[i]);
         }
     }
 #endif // ENABLE_DEBUG
@@ -699,7 +702,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         // Then parse subbox content
         if (retcode == SUCCESS)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_MVHD:
                     retcode = parse_mvhd(bitstr, &box_subheader, mp4);
@@ -872,7 +875,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         // Then parse subbox content
         if (retcode == SUCCESS)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_ELST:
                     retcode = parse_elst(bitstr, &box_subheader, track);
@@ -1065,7 +1068,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         // Then parse subbox content
         if (retcode == SUCCESS)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_TKHD:
                     retcode = parse_tkhd(bitstr, &box_subheader, mp4->tracks[track_id]);
@@ -1187,7 +1190,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         // Then parse subbox content
         if (retcode == SUCCESS)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_MDHD:
                     retcode = parse_mdhd(bitstr, &box_subheader, track);
@@ -1298,7 +1301,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         if (retcode == SUCCESS &&
             bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_DINF:
                     //retcode = parse_unknown_box(bitstr, box_subheader); //FIXME
@@ -1352,7 +1355,7 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         // Then parse subbox content
         if (retcode == SUCCESS)
         {
-            switch (box_subheader.type)
+            switch (box_subheader.boxtype)
             {
                 case BOX_STSD:
                     retcode = parse_stsd(bitstr, &box_subheader, track);
@@ -1436,7 +1439,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     /*unsigned int entry_count =*/ read_bits(bitstr, 32);
 
     char fcc[5];
-    track->fcc = box_subheader.type; // save fourcc as backup
+    track->fcc = box_subheader.boxtype; // save fourcc as backup
 
     // Then parse subbox content
     switch (track->handlerType)
@@ -1446,17 +1449,17 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             // AudioSampleEntry
             // Box Types: ‘mp4a’
 
-            if (box_subheader.type == SAMPLE_MP4A)
+            if (box_subheader.boxtype == SAMPLE_MP4A)
             {
                 track->codec = CODEC_AAC;
                 TRACE_1(MP4, "> Audio track is using AAC codec\n");
             }
-            else if (box_subheader.type == SAMPLE_AC3)
+            else if (box_subheader.boxtype == SAMPLE_AC3)
             {
                 track->codec = CODEC_AC3;
                 TRACE_1(MP4, "> Audio track is using AC3 codec\n");
             }
-            else if (box_subheader.type == SAMPLE_SWOT)
+            else if (box_subheader.boxtype == SAMPLE_SWOT)
             {
                 track->codec = CODEC_AC3;
                 TRACE_1(MP4, "> Audio track is using AC3 codec\n");
@@ -1465,7 +1468,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             {
                 track->codec = CODEC_UNKNOWN;
                 TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)\n",
-                              getFccString_le(box_subheader.type, fcc));
+                              getFccString_le(box_subheader.boxtype, fcc));
             }
 
             /*const unsigned int reserved[0] =*/ read_bits(bitstr, 32);
@@ -1486,22 +1489,22 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             // VisualSampleEntry
             // Box Types: 'avc1', 'm4ds', 'hev1', 'CFHD'
 
-            if (box_subheader.type == SAMPLE_AVC1)
+            if (box_subheader.boxtype == SAMPLE_AVC1)
             {
                 track->codec = CODEC_H264;
                 TRACE_1(MP4, "> Video track is using H.264 codec\n");
             }
-            else if (box_subheader.type == SAMPLE_HVC1)
+            else if (box_subheader.boxtype == SAMPLE_HVC1)
             {
                 track->codec = CODEC_H265;
                 TRACE_1(MP4, "> Video track is using H.265 codec\n");
             }
-            else if (box_subheader.type == SAMPLE_MP4V)
+            else if (box_subheader.boxtype == SAMPLE_MP4V)
             {
                 track->codec = CODEC_MPEG4_ASP;
                 TRACE_1(MP4, "> Video track is using XVID codec\n");
             }
-            else if (box_subheader.type == SAMPLE_CFHD)
+            else if (box_subheader.boxtype == SAMPLE_CFHD)
             {
                 track->codec = CODEC_VC5;
                 TRACE_1(MP4, "> Video track is using CineForm codec\n");
@@ -1510,7 +1513,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             {
                 track->codec = CODEC_UNKNOWN;
                 TRACE_WARNING(MP4, "> Unknown codec in video track (%s)\n",
-                              getFccString_le(box_subheader.type, fcc));
+                              getFccString_le(box_subheader.boxtype, fcc));
             }
 
             /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
@@ -1571,7 +1574,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 ////////////////////////////////////////////////////////////////
                 if (retcode == SUCCESS)
                 {
-                    switch (box_subsubheader.type)
+                    switch (box_subsubheader.boxtype)
                     {
                         case BOX_AVCC:
                             retcode = parse_avcC(bitstr, &box_subsubheader, track);
@@ -1982,7 +1985,7 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    if (box_header->type == BOX_STSZ)
+    if (box_header->boxtype == BOX_STSZ)
     {
         track->stsz_sample_size = read_bits(bitstr, 32);
         track->stsz_sample_count = read_bits(bitstr, 32);
@@ -2070,7 +2073,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     }
     else
     {
-        if (box_header->type == BOX_CO64)
+        if (box_header->boxtype == BOX_CO64)
         {
             for (i = 0; i < track->stco_entry_count; i++)
             {
@@ -2136,7 +2139,7 @@ int mp4_fileParse(MediaFile_t *video)
             // Then parse box content
             if (retcode == SUCCESS)
             {
-                switch (box_header.type)
+                switch (box_header.boxtype)
                 {
                     case BOX_FTYP:
                         retcode = parse_ftyp(bitstr, &box_header, &mp4);
@@ -2154,7 +2157,10 @@ int mp4_fileParse(MediaFile_t *video)
                         retcode = parse_mdat(bitstr, &box_header);
                         break;
                     case BOX_FREE:
-                        //retcode = parse_unknown_box(bitstr, &box_header); //FIXME
+                        retcode = parse_unknown_box(bitstr, &box_header); //FIXME
+                        break;
+                    case BOX_UUID:
+                        retcode = parse_unknown_box(bitstr, &box_header); //FIXME
                         break;
                     default:
                         retcode = parse_unknown_box(bitstr, &box_header);
