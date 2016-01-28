@@ -48,9 +48,10 @@ QString getSizeString(const int64_t size_int);
  * \brief Compute a track size string from a track structure.
  * \param track: Track structure.
  * \param file_size: File size in bytes.
+ * \param detailed: More precise sizes.
  * \return Track size QString.
  */
-QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size);
+QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const bool detailed = false);
 
 /*!
  * \brief Get an aspect ratio string from a video definition.
@@ -65,7 +66,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed = false);
 
 /*!
  * \brief Get a bitrate string from a bitrate in bytes.
- * \param bitrate: Bitrate in bytes.
+ * \param bitrate: Bitrate in bits.
  * \return Bitrate QString with the bitrate per second.
  *
  * Depending on the bitrate, the unit will be:

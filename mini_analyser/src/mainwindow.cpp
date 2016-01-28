@@ -424,7 +424,10 @@ int MainWindow::printDatas()
             uint64_t overhead = media->file_size - trackssize;
             double overheadpercent = (static_cast<double>(overhead) / static_cast<double>(media->file_size)) * 100.0;
 
-            ui->label_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
+            if (overheadpercent < 0.01)
+                ui->label_container_overhead->setText("<b>~0.1%</b>   >   " + getSizeString(overhead));
+            else if (overheadpercent <= 100)
+                ui->label_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
         }
 
         // AUDIO
@@ -457,7 +460,7 @@ int MainWindow::printDatas()
             }
 
             ui->label_audio_size->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
-            ui->label_audio_size_2->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size));
+            ui->label_audio_size_2->setText(getTrackSizeString(media->tracks_audio[atid], media->file_size, true));
             ui->label_audio_codec->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, true));
             ui->label_audio_codec_2->setText(getCodecString(stream_AUDIO, media->tracks_audio[atid]->stream_codec, true));
 
@@ -503,8 +506,12 @@ int MainWindow::printDatas()
             ui->label_audio_samplingrate_2->setText(QString::number(media->tracks_audio[atid]->sampling_rate) + " Hz");
             ui->label_audio_channels->setText(QString::number(media->tracks_audio[atid]->channel_count));
             ui->label_audio_channels_2->setText(QString::number(media->tracks_audio[atid]->channel_count));
-            ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
-            ui->label_audio_bitpersample_2->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
+
+            if (media->tracks_audio[atid]->bit_per_sample)
+            {
+                ui->label_audio_bitpersample->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
+                ui->label_audio_bitpersample_2->setText(QString::number(media->tracks_audio[atid]->bit_per_sample) + " bits");
+            }
 
             uint64_t rawsize = media->tracks_audio[atid]->sampling_rate * media->tracks_audio[atid]->channel_count * (media->tracks_audio[atid]->bit_per_sample / 8);
             rawsize *= media->tracks_audio[atid]->duration;
@@ -545,7 +552,7 @@ int MainWindow::printDatas()
             }
 
             ui->label_video_size->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
-            ui->label_video_size_2->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size));
+            ui->label_video_size_2->setText(getTrackSizeString(media->tracks_video[vtid], media->file_size, true));
             ui->label_video_codec->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, true));
             ui->label_video_codec_2->setText(getCodecString(stream_VIDEO, media->tracks_video[vtid]->stream_codec, true));
 

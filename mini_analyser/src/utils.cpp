@@ -99,7 +99,7 @@ QString getSizeString(const int64_t size_int)
     return size_qstr;
 }
 
-QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size)
+QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const bool detailed)
 {
     QString size_qstr;
 
@@ -114,6 +114,8 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size)
             }
         }
 
+        qint64 size_int = track->stream_size;
+
         if (track->stream_size > 0)
         {
             if (track->stream_size < 1024) // < 1 KiB
@@ -122,22 +124,43 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size)
             }
             else if (track->stream_size < 1048576) // < 1 MiB
             {
-                size_qstr = QString::number(track->stream_size / 1024.0, 'f', 2) + " KiB";
+                if (detailed)
+                {
+                    size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB   /   "
+                              + QString::number(size_int / 1000.0, 'f', 2) + " KB   /   "
+                              + QString::number(size_int) + " bytes  ";
+                }
+                else
+                    size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB";
             }
             else if (track->stream_size < 1073741824) // < 1 GiB
             {
-                size_qstr = QString::number(track->stream_size / 1024.0 / 1024.0, 'f', 2) + " MiB";
+                if (detailed)
+                {
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
+                              + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
+                              + QString::number(size_int) + " bytes  ";
+                }
+                else
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB";
             }
             else // < 1 GiB
             {
-                size_qstr = QString::number(track->stream_size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
+                if (detailed)
+                {
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
+                              + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
+                              + QString::number(size_int) + " bytes  ";
+                }
+                else
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
             }
 
             // Percentage
-            double sizepercent = ((double)track->stream_size / (double)file_size) * 100.0;
+            double sizepercent = ((double)size_int / (double)file_size) * 100.0;
 
             if (sizepercent < 0.1)
-                size_qstr += " (< 0.1%)";
+                size_qstr += " (~0.1%)";
             else
                 size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
@@ -254,46 +277,17 @@ QString getBitrateString(const int bitrate)
 
     if (bitrate > 0)
     {
-        if (bitrate < 10000) // < 10 MB
+        if (bitrate < 10000) // < 10 Mb
         {
             bitrate_qstr = QString::number(bitrate, 'f', 0) + " Kb/s";
         }
-        else if (bitrate < 100000) // < 100 MB
+        else if (bitrate < 100000) // < 100 Mb
         {
             bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 2) + " Mb/s";
         }
         else
         {
             bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 0) + " Mb/s";
-        }
-    }
-    else
-    {
-        bitrate_qstr = "NULL bitrate";
-    }
-
-    //std::cout << "getBitrateString(" << bitrate_int << ") > '" << bitrate_qstr.toStdString() << "'" << std::endl;
-
-    return bitrate_qstr;
-}
-
-QString getBitrateString_1024(const int bitrate_int)
-{
-    QString bitrate_qstr;
-
-    if (bitrate_int > 0)
-    {
-        if (bitrate_int < 1048576) // < 1 MiB
-        {
-            bitrate_qstr = QString::number(bitrate_int / 1024.0, 'f', 2) + " KiB/s";
-        }
-        else if (bitrate_int < 1073741824) // < 1 GiB
-        {
-            bitrate_qstr = QString::number(bitrate_int / 1024.0 / 1024.0, 'f', 2) + " MiB/s";
-        }
-        else
-        {
-            bitrate_qstr = QString::number(bitrate_int / 1024.0 / 1024.0, 'f', 2) + " MiB/s";
         }
     }
     else
