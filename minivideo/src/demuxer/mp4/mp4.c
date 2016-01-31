@@ -228,13 +228,16 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
             map->color_depth = track->color_depth;
             map->sample_count_idr = track->stss_entry_count;
 
-            map->framerate_num = track->timescale * 1000;
+            uint32_t scalefactor = 1;
+            map->framerate_num = track->timescale * scalefactor;
 
             if(track->stsz_sample_count == 0)
-                map->framerate_base = 1001; // p_elst->i_media_time; // LOL FIXME
+                map->framerate_base = track->mediatime * scalefactor; // used for "progressive download" files
             else
-                map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * 1000.0);
+                map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
 
+            TRACE_WARNING(MP4, "framerate_num: %u  / framerate_base: %u\n",
+                          map->framerate_num, map->framerate_base);
             map->frame_rate = (double)map->framerate_num / (double)map->framerate_base;
 
             if (track->codec == CODEC_H264 || track->codec == CODEC_H265)
@@ -993,9 +996,11 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         for (i = 0; i < entries; i++)
         {
             uint32_t segmentDuration = read_bits(bitstr, 32);
-            uint32_t mediaTime = read_bits(bitstr, 32);
-            uint32_t mediaRate = read_bits(bitstr, 16);
-            uint32_t mediaRatrete = read_bits(bitstr, 16);
+            track->mediatime = read_bits(bitstr, 32);
+            uint32_t mediaRate = read_bits(bitstr, 32);
+
+            // we only need one "mediaTime", used to compute framerate of "progressive download" files
+            break;
         }
     }
 

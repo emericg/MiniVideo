@@ -58,6 +58,7 @@ typedef struct Mp4Track_t
     unsigned int handlerType;
 
     uint32_t timescale;
+    uint32_t mediatime;
     uint64_t duration;
     uint64_t creation_time;
     uint64_t modification_time;
