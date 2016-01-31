@@ -37,6 +37,20 @@
 /* ************************************************************************** */
 
 /*!
+ * \brief Size used for the bitstream data buffer.
+ *
+ * Other buffer sizes possible:
+ *  32768   //  32 KiB
+ *  65536   //  64 KiB
+ * 131072   // 128 KiB
+ * 262144   // 256 KiB
+ * 524288   // 512 KiB
+ */
+#define BITSTREAM_BUFFER_SIZE 131072
+
+/* ************************************************************************** */
+
+/*!
  * \brief Init a new bitstream.
  * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \param *bitstream_map A pointer to a bitstreamMap_t structure, containing informations about video payload datas.
@@ -924,8 +938,15 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
  * \param n The number of bits to skip.
  * \return 1 if success, 0 otherwise.
  *
- * If n is bigger than the buffer size, we do a jump directly to the offset we
- * want. That will trigger a buffer refresh.
+ * skip_bits() is designed and optimized to handle small bit jumps INSIDE the bitstream buffer.
+ *
+ * However:
+ * - If jumping 'n' bits takes us outside of the remaining bitstream buffer space,
+ * bitstream_goto_offset() will be used (triggering a buffer refresh).
+ * - If your jump is bigger than the bitsteam buffer size, save some time and use
+ * bitstream_goto_offset() directy.
+ * - If your jump is bigger than 2^32 bits, don't trigger an integer overflow
+ * and use bitstream_goto_offset() directy.
  */
 int skip_bits(Bitstream_t *bitstr, const unsigned int n)
 {
@@ -991,7 +1012,7 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
  * \return 1 if success, 0 otherwise.
  *
  * If rewinding is impossible due to the current buffer_offset being smaller
- * than n, we do a jump directly to the offset we want. That will trigger a
+ * than 'n', we do a jump directly to the offset we want. That will trigger a
  * buffer refresh.
  */
 int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
@@ -1024,40 +1045,6 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
 #endif // ENABLE_DEBUG
 
     return retcode;
-}
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-int64_t bitstream_get_full_size(Bitstream_t *bitstr)
-{
-    return bitstr->bitstream_size;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Return the absolute byte offset into the bitstream.
- * \param *bitstr The bitstream to use.
- * \return The absolute byte offset into the bitstream.
- */
-int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr)
-{
-    return (int64_t)(bitstr->bitstream_offset + bitstr->buffer_offset/8 + bitstr->buffer_discarded_bytes);
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Return the absolute bit offset into the bitstream.
- * \param *bitstr The bitstream to use.
- * \return The absolute bit offset into the bitstream.
- *
- * Be careful of integer overflow if file is more than 134217728 GiB?
- */
-int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr)
-{
-    return (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + bitstr->buffer_discarded_bytes*8);
 }
 
 /* ************************************************************************** */
@@ -1097,6 +1084,40 @@ int bitstream_goto_offset(Bitstream_t *bitstr, const int64_t n)
 #endif // ENABLE_DEBUG
 
     return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int64_t bitstream_get_full_size(Bitstream_t *bitstr)
+{
+    return bitstr->bitstream_size;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Return the current byte offset in the bitstream (may left a few bits behind...).
+ * \param *bitstr The bitstream to use.
+ * \return The absolute byte offset into the bitstream.
+ */
+int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr)
+{
+    return (int64_t)(bitstr->bitstream_offset + bitstr->buffer_offset/8 + bitstr->buffer_discarded_bytes);
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Return the current absolute bit offset in the bitstream.
+ * \param *bitstr The bitstream to use.
+ * \return The absolute bit offset into the bitstream.
+ *
+ * Be careful of integer overflow if file is more than 134217728 GiB?
+ */
+int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr)
+{
+    return (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + bitstr->buffer_discarded_bytes*8);
 }
 
 /* ************************************************************************** */
