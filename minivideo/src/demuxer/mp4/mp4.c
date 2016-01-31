@@ -792,22 +792,10 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     retcode = parse_mvhd(bitstr, &box_subheader, mp4);
                     break;
                 case BOX_IODS:
-                    //retcode = parse_iods(bitstr, &box_subheader, mp4); //FIXME
+                    //retcode = parse_iods(bitstr, &box_subheader, mp4);
                     break;
                 case BOX_TRAK:
-                {
                     retcode = parse_trak(bitstr, &box_subheader, mp4);
-/*
-                    {
-                        if (convertTrack(video, track))
-                        {
-                            parsing_done = true;
-                            retcode = SUCCESS;
-                        }
-                    }
-                    freeTrack(&track);
-*/
-                }
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader);
@@ -1317,8 +1305,10 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print hdlr box content
-        TRACE_1(MP4, "> pre_defined\t: %u\n", pre_defined);
-        TRACE_1(MP4, "> handler_type\t: 0x%X\n", track->handlerType);
+        char fcc[5];
+        TRACE_1(MP4, "> pre_defined   : %u\n", pre_defined);
+        TRACE_1(MP4, "> handler_type  : 0x%X (%s)\n", track->handlerType,
+                getFccString_le(track->handlerType, fcc));
     }
 #endif // ENABLE_DEBUG
 
@@ -1326,7 +1316,6 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         track->handlerType != HANDLER_VIDEO)
     {
         TRACE_1(MP4, "Not an audio or video track, ignoring\n");
-        retcode = FAILURE;
     }
 
     return retcode;
@@ -1368,7 +1357,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             switch (box_subheader.boxtype)
             {
                 case BOX_DINF:
-                    //retcode = parse_unknown_box(bitstr, box_subheader); //FIXME
+                    //retcode = parse_unknown_box(bitstr, box_subheader);
                     break;
                 case BOX_STBL:
                     retcode = parse_stbl(bitstr, &box_subheader, track);
@@ -2201,16 +2190,16 @@ int mp4_fileParse(MediaFile_t *video)
                         retcode = parse_moov(bitstr, &box_header, &mp4);
                         break;
                     case BOX_MOOF:
-                        //retcode = parse_unknown_box(bitstr, &box_header); //FIXME
+                        //retcode = parse_unknown_box(bitstr, &box_header);
                         break;
                     case BOX_MDAT:
                         retcode = parse_mdat(bitstr, &box_header);
                         break;
                     case BOX_FREE:
-                        retcode = parse_unknown_box(bitstr, &box_header); //FIXME
+                        //retcode = parse_unknown_free(bitstr, &box_header);
                         break;
                     case BOX_UUID:
-                        retcode = parse_unknown_box(bitstr, &box_header); //FIXME
+                        //retcode = parse_unknown_uuid(bitstr, &box_header);
                         break;
                     default:
                         retcode = parse_unknown_box(bitstr, &box_header);
