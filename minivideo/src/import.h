@@ -32,11 +32,11 @@
 
 /* ************************************************************************** */
 
-int import_fileOpen(const char *filepath, MediaFile_t **video_ptr);
+int import_fileOpen(const char *filepath, MediaFile_t **media_ptr);
 
-int import_fileClose(MediaFile_t **video_ptr);
+int import_fileClose(MediaFile_t **media_ptr);
 
-void import_fileStatus(MediaFile_t *videoFile);
+void import_fileStatus(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // IMPORT_H
