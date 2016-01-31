@@ -57,6 +57,9 @@ typedef struct Mp4Track_t
     unsigned int codec;
     unsigned int handlerType;
 
+    char name[128];
+    char compressor[32];
+
     uint32_t timescale;
     uint32_t mediatime;
     uint64_t duration;
@@ -139,40 +142,45 @@ typedef struct Mp4_t
  */
 typedef enum Mp4BoxType_e
 {
-    BOX_FTYP = 0x66747970,                      //!< * file type and compatibility
-    BOX_PDIN = 0x7064696e,                      //!< progressive download information
-    BOX_MOOV = 0x6D6F6F76,                      //!< * container for all metadata
-        BOX_MVHD = 0x6D766864,                  //!< * movie header, overall declarations
+    BOX_FTYP = 0x66747970,                      //!< (*) file type and compatibility
+    BOX_PDIN = 0x7064696E,                      //!< progressive download information
+
+    BOX_UDTA = 0x75647461,                      //!< user data box
+
+    BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
+        BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations
         BOX_IODS = 0x696F6473,                  //!<
-        BOX_TRAK = 0x7472616B,                  //!< * container for individual track or stream
-            BOX_TKHD = 0x746b6864,              //!< * track header, overall information about the track
+        BOX_TRAK = 0x7472616B,                  //!< (*) container for individual track or stream
+            BOX_TKHD = 0x746b6864,              //!< (*) track header, overall information about the track
             BOX_TREF = 0x74726566,              //!< track reference container
+            BOX_TRGR = 0x74726772,              //!< track grouping indication
             BOX_EDTS = 0x65647473,              //!< edit list container
                 BOX_ELST = 0x656C7374,          //!< an edit list
-            BOX_MDIA = 0x6D646961,              //!< * container for all the media information in a track
-                BOX_MDHD = 0x6D646864,          //!< * media header, overall information about the media
-                BOX_HDLR = 0x68646C72,          //!< * handler, declares the media (handler) type
-                BOX_MINF = 0x6D696E66,          //!< * media information container
-                    BOX_VMHD = 0x766D6864,      //!<
-                    BOX_SMHD = 0x736D6864,      //!<
-                    BOX_HMHD = 0x686D6864,      //!<
-                    BOX_NMHD = 0x6E6D6864,      //!<
-                    BOX_DINF = 0x64696E66,              //!< * data information box, container
-                        BOX_DREF = 0x64726566,          //!< * data reference box, declares source(s) of media data in track
+            BOX_MDIA = 0x6D646961,              //!< (*) container for all the media information in a track
+                BOX_MDHD = 0x6D646864,          //!< (*) media header, overall information about the media
+                BOX_HDLR = 0x68646C72,          //!< (*) handler, declares the media (handler) type
+                BOX_MINF = 0x6D696E66,          //!< (*) media information container
+                    BOX_VMHD = 0x766D6864,      //!< video media header
+                    BOX_SMHD = 0x736D6864,      //!< sound media header
+                    BOX_HMHD = 0x686D6864,      //!< hint media header
+                    BOX_NMHD = 0x6E6D6864,      //!< null media header
+                    BOX_DINF = 0x64696E66,              //!< (*) data information box, container
+                        BOX_DREF = 0x64726566,          //!< (*) data reference box, declares source(s) of media data in track
                             BOX_URL = 0x75726C20,       //!<
-                    BOX_STBL = 0x7374626C,              //!< * sample table box, container for the time/space map
-                        BOX_STSD = 0x73747364,          //!< * sample descriptions (codec types, initialization, etc)
-                            BOX_AVC1 = 0x61766331,      //!< SampleEntry > VisualSampleEntry > AVCSampleEntry
-                                BOX_AVCC = 0x61766343,  //!< AVCConfigurationBox
-                                BOX_BTRT = 0x62747274,  //!<
-                                BOX_CLAP = 0x00000000,  //!<
-                                BOX_PASP = 0x00000000,  //!<
-                        BOX_STTS = 0x73747473,          //!< * time to sample (decoding)
-                        BOX_CTTS = 0x63747473,          //!< time to sample (composition / presentation)
-                        BOX_STSC = 0x73747363,          //!< * sample to chunk, partial data-offset information
+                    BOX_STBL = 0x7374626C,              //!< (*) sample table box, container for the time/space map
+                        BOX_STSD = 0x73747364,          //!< (*) sample descriptions (codec types, initialization, etc)
+                            BOX_AVCC = 0x61766343,      //!< AVC configuration box
+                            BOX_BTRT = 0x62747274,      //!< bitrate box
+                            BOX_CLAP = 0x636C6170,      //!< clean aperture box
+                            BOX_COLR = 0x636f6C72,      //!< color infos box
+                            BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
+                        BOX_STTS = 0x73747473,          //!< (*) (decoding) time to sample
+                        BOX_CTTS = 0x63747473,          //!< (composition / presentation) time to sample
+                        BOX_CSLG = 0x63736c67,          //!< composition to decode timeline mapping
+                        BOX_STSC = 0x73747363,          //!< (*) sample to chunk, partial data-offset information
                         BOX_STSZ = 0x7374737A,          //!< sample sizes (framing)
-                        BOX_STZ2 = 0x73747A32,          //!< compact sample sizes
-                        BOX_STCO = 0x7374636F,          //!< * chunk offset, partial data-offset information
+                        BOX_STZ2 = 0x73747A32,          //!< compact sample sizes (framing)
+                        BOX_STCO = 0x7374636F,          //!< (*) chunk offset, partial data-offset information
                         BOX_CO64 = 0x636F3634,          //!< 64b chunk offset
                         BOX_STSS = 0x73747373,          //!< sync sample table (random access points)
                         BOX_STSH = 0x73747368,          //!< shadow sync sample table
@@ -182,14 +190,35 @@ typedef enum Mp4BoxType_e
                         BOX_SBGP = 0x73626770,          //!< sample-to-group
                         BOX_SGPD = 0x73677064,          //!< sample group description
                         BOX_SUBS = 0x73756273,          //!< sub-sample information
+                        BOX_SAIZ = 0x7361697A,          //!< sample auxiliary information sizes
+                        BOX_SAIO = 0x7375626F,          //!< sample auxiliary information offsets
+
     BOX_MOOF = 0x6D6F6F66,                      //!< movie fragment
+        BOX_MFHD = 0x6D666864,                  //!< (*) movie fragment header
+            BOX_TRAF = 0x74726166,              //!< track fragment
+                BOX_TFHD = 0x74666866,          //!< (*) track fragment header
+                BOX_TRUN = 0x7472756E,          //!< track fragment run
+                BOX_TFDT = 0x74666474,          //!< track fragment decode time
+
+    BOX_MFRA = 0x6D667261,                      //!< movie fragment random access
+        BOX_TFRA = 0x74667261,                  //!< track fragment random access
+        BOX_MFRO = 0x6d66726f,                  //!< (*) movie fragment random access offset
+
     BOX_MDAT = 0x6D646174,                      //!< media data container
+
     BOX_META = 0x6D657461,                      //!< metadata
+        // TODO
+
     BOX_MECO = 0x6D65636F,                      //!< additional metadata container
+        BOX_MERE = 0x6D657265,                  //!< metabox relation
+
+    BOX_STYP = 0x73747970,                      //!< segment type
+    BOX_SIDX = 0x73696478,                      //!< segment index, provides a compact index of one media stream
+    BOX_SSIX = 0x73736978,                      //!< subsegment index
+    BOX_PRFT = 0x70726674,                      //!< producer reference time
 
     BOX_FREE = 0x66726565,                      //!< free space
     BOX_SKIP = 0x736B6970,                      //!< free space
-    BOX_UDTA = 0x75647461,                      //!< user data box
     BOX_UUID = 0x75756964                       //!< user data box
 
 } Mp4BoxType_e;
