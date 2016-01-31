@@ -33,6 +33,7 @@
 /*!
  * \struct BitstreamMap_t
  * \brief Structure used to keep tracks of audio and video payload data extracted from container file.
+ * \todo split into per codec metadatas structures
  *
  * This structure basically represent an audio or a video track. It contains
  * general informations about the track type and the positions of all the
@@ -44,7 +45,7 @@ typedef struct BitstreamMap_t
     StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
 
     // Generic metadatas
-    uint64_t stream_size;           //!< Size of the raw datas of this stream, used for stats
+    uint64_t stream_size;           //!< Size (in bytes) of the raw datas of this stream, used for stats
     uint32_t stream_fcc;            //!< Fourcc
     AVCodec_e stream_codec;         //!< Codec used by this track
     char *stream_encoder;           //!< Encoder used to generate the track's datas
@@ -59,11 +60,11 @@ typedef struct BitstreamMap_t
     unsigned int bitrate;           //!< Bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode
 
-    unsigned int duration;          //!< Stream duration (in milliseconds)
+    unsigned int duration_ms;          //!< Stream duration (in milliseconds)
     unsigned int creation_time;     //!< Stream creation time (ms?)
     unsigned int modification_time; //!< Stream modification time (ms?)
 
-    // Video specific metadatas
+    // Video metadatas
     unsigned int width;             //!< Horizontal size (in pixels)
     unsigned int height;            //!< Vertical size (in pixels)
     unsigned int visible_width;     //!< Horizontal size (in pixels, without alignment)
@@ -75,15 +76,16 @@ typedef struct BitstreamMap_t
     unsigned int framerate_num;     //!< Frame rate
     unsigned int framerate_base;    //!< Frame rate base
 
-    // Audio specific metadatas
+    // Audio metadatas
     unsigned int channel_count;     //!< Number of audio channels
     unsigned int channel_mode;      //!< Channels configuration
     unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
-    unsigned int bit_per_sample;    //!< Sampling rate (in Hertz)
+    unsigned int bit_per_sample;    //!< Bit per sample (in bits)
 
-    unsigned int pcm_sample_size;   //!< PCM sample size in bytes
-    unsigned int pcm_sample_format; //!< PCM sample format (signed, unsigned, float, ...)
-    unsigned int pcm_sample_endianness; //!< PCM samples endianness (little, big)
+        // PCM specific metadatas
+        unsigned int pcm_sample_size;   //!< PCM sample size (in bytes)
+        unsigned int pcm_sample_format; //!< PCM sample format (signed, unsigned, float, ...)
+        unsigned int pcm_sample_endianness; //!< PCM samples endianness (little, big)
 
     // Subtitles specific metadatas
     char *subtitles_name;           //!< Subtitles name?
@@ -96,8 +98,8 @@ typedef struct BitstreamMap_t
 
     // Samples arrays
     uint32_t *sample_type;          //!< Type (for each samples of the track)
-    uint32_t *sample_size;          //!< Size in byte
-    int64_t *sample_offset;         //!< Offset in byte
+    uint32_t *sample_size;          //!< Size (in byte)
+    int64_t *sample_offset;         //!< Offset (in byte)
     int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds)
     int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds)
 

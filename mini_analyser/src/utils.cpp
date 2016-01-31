@@ -20,18 +20,18 @@
  */
 
 #include "utils.h"
-#include <iostream>
+#include <QDebug>
 
-QString getDurationString(const int duration_int)
+QString getDurationString(const unsigned duration)
 {
     QString duration_qstr;
 
-    if (duration_int > 0)
+    if (duration > 0)
     {
-        int hours = duration_int / 3600000;
-        int minutes = (duration_int - (hours * 3600000)) / 60000;
-        int seconds = (duration_int - (hours * 3600000) - (minutes * 60000)) / 1000;
-        int ms = (duration_int - (hours * 3600000) - (minutes * 60000)) - (seconds * 1000);
+        unsigned hours = duration / 3600000;
+        unsigned minutes = (duration - (hours * 3600000)) / 60000;
+        unsigned seconds = (duration - (hours * 3600000) - (minutes * 60000)) / 1000;
+        unsigned ms = (duration - (hours * 3600000) - (minutes * 60000)) - (seconds * 1000);
 
         if (hours > 0)
         {
@@ -55,38 +55,38 @@ QString getDurationString(const int duration_int)
         duration_qstr = "NULL duration";
     }
 
-    //std::cout << "getDurationString(" << duration_int << ") > '" << duration_qstr.toStdString() << "'" << std::endl;
+    //qDebug() << "getDurationString(" << duration << ") >" << duration_qstr;
 
     return duration_qstr;
 }
 
-QString getSizeString(const int64_t size_int)
+QString getSizeString(const int64_t size)
 {
     QString size_qstr;
 
-    if (size_int > 0)
+    if (size > 0)
     {
-        if (size_int < 1024) // < 1 KiB
+        if (size < 1024) // < 1 KiB
         {
-            size_qstr = QString::number(size_int) + " bytes";
+            size_qstr = QString::number(size) + " bytes";
         }
-        else if (size_int < 1048576) // < 1 MiB
+        else if (size < 1048576) // < 1 MiB
         {
-            size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB   /   "
-                      + QString::number(size_int / 1000.0, 'f', 2) + " KB   /   "
-                      + QString::number(size_int) + " bytes";
+            size_qstr = QString::number(size / 1024.0, 'f', 2) + " KiB   /   "
+                      + QString::number(size / 1000.0, 'f', 2) + " KB   /   "
+                      + QString::number(size) + " bytes";
         }
-        else if (size_int < 1073741824) // < 1 GiB
+        else if (size < 1073741824) // < 1 GiB
         {
-            size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
-                      + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
-                      + QString::number(size_int) + " bytes";
+            size_qstr = QString::number(size / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
+                      + QString::number(size / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
+                      + QString::number(size) + " bytes";
         }
         else // < 1 GiB
         {
-            size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
-                      + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
-                      + QString::number(size_int) + " bytes";
+            size_qstr = QString::number(size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
+                      + QString::number(size / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
+                      + QString::number(size) + " bytes";
         }
     }
     else
@@ -94,7 +94,7 @@ QString getSizeString(const int64_t size_int)
         size_qstr = "NULL size";
     }
 
-    //std::cout << "getDurationString(" << size_int << ") > '" << size_qstr.toStdString() << "'" << std::endl;
+    //qDebug() << "getDurationString(" << size << ") >" << size_qstr;
 
     return size_qstr;
 }
@@ -105,6 +105,7 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const
 
     if (track != NULL)
     {
+/*
         // Compute stream if needed
         if (track->stream_size == 0)
         {
@@ -113,7 +114,7 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const
                 track->stream_size += track->sample_size[i];
             }
         }
-
+*/
         qint64 size_int = track->stream_size;
 
         if (track->stream_size > 0)
@@ -164,18 +165,18 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const
             else
                 size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
+
+        //qDebug() << "getTrackSizeString(" << size_int << ") >" << size_qstr;
     }
     else
     {
         size_qstr = "NULL track size";
     }
 
-    //std::cout << "getTrackSizeString(" << size_int << ") > '" << size_qstr.toStdString() << "'" << std::endl;
-
     return size_qstr;
 }
 
-QString getAspectRatioString(const int x, const int y, bool detailed)
+QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
 {
     QString aspectratio_qstr;
 
@@ -266,28 +267,28 @@ QString getAspectRatioString(const int x, const int y, bool detailed)
         aspectratio_qstr = QString::number(ar_d, 'g', 3) + ":1";
     }
 
-    //std::cout << "getAspectRatioString(" << x << "," << y << ") > '" << aspectratio_qstr.toStdString() << "'" << std::endl;
+    //qDebug() << "getAspectRatioString(" << x << "," << y << ") >" << aspectratio_qstr;
 
     return aspectratio_qstr;
 }
 
-QString getBitrateString(const int bitrate)
+QString getBitrateString(const unsigned bitrate)
 {
     QString bitrate_qstr;
 
     if (bitrate > 0)
     {
-        if (bitrate < 10000) // < 10 Mb
+        if (bitrate < 10000000) // < 10 Mb
         {
-            bitrate_qstr = QString::number(bitrate, 'f', 0) + " Kb/s";
+            bitrate_qstr = QString::number(bitrate / 1000.0, 'g', 5) + " Kb/s";
         }
-        else if (bitrate < 100000) // < 100 Mb
+        else if (bitrate < 100000000) // < 100 Mb
         {
-            bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 2) + " Mb/s";
+            bitrate_qstr = QString::number(bitrate / 1000.0 / 1000.0, 'f', 2) + " Mb/s";
         }
         else
         {
-            bitrate_qstr = QString::number(bitrate / 1000.0, 'f', 0) + " Mb/s";
+            bitrate_qstr = QString::number(bitrate / 1000.0 / 1000.0, 'f', 0) + " Mb/s";
         }
     }
     else
@@ -295,7 +296,7 @@ QString getBitrateString(const int bitrate)
         bitrate_qstr = "NULL bitrate";
     }
 
-    //std::cout << "getBitrateString(" << bitrate_int << ") > '" << bitrate_qstr.toStdString() << "'" << std::endl;
+    //qDebug() << "getBitrateString(" << bitrate << ") >" << bitrate_qstr;
 
     return bitrate_qstr;
 }

@@ -17,7 +17,7 @@ endif()
 ###############################################################################
 
 set(minivideo_VERSION_MAJOR 6)
-set(minivideo_VERSION_MINOR 0)
+set(minivideo_VERSION_MINOR 1)
 set(minivideo_VERSION_PATCH 0)
 
 set(ENABLE_COLORS 1) # "Toggle colored terminal output"

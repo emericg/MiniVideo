@@ -758,9 +758,6 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
         // Bytes left in the strl list
         int byte_left = strl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-        // Bytes left in the lists / chunks inside the strl list
-        int jump = 0;
-
         // Init a new AviTrack_t structure to store strl content
         track_id = avi->tracks_count;
         avi->tracks[track_id] = (AviTrack_t*)calloc(1, sizeof(AviTrack_t));
@@ -781,7 +778,8 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
         }
 
         // Loop on "strl" content
-        while (retcode == SUCCESS &&
+        while (avi->run == true &&
+               retcode == SUCCESS &&
                byte_left > 12 &&
                bitstream_get_absolute_byte_offset(bitstr) < strl_header->offset_end)
         {
@@ -798,8 +796,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the list we just left?
-                jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                jumpy_riff(bitstr, strl_header, list_header.offset_end);
             }
             else
             {
@@ -835,14 +832,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the chunk we just left?
-                jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            }
-
-            // Skip the byte left before the next list / chunk
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
+                jumpy_riff(bitstr, strl_header, chunk_header.offset_end);
             }
 
             // Byte left in the strl list?
@@ -882,11 +872,9 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
         // Bytes left in the odml list
         int byte_left = odml_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-        // Bytes left in the lists / chunks inside the odml list
-        int jump = 0;
-
         // Loop on "odml" content
-        while (retcode == SUCCESS &&
+        while (avi->run == true &&
+               retcode == SUCCESS &&
                byte_left > 12 &&
                bitstream_get_absolute_byte_offset(bitstr) < odml_header->offset_end)
         {
@@ -903,8 +891,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the list we just left?
-                jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                jumpy_riff(bitstr, odml_header, list_header.offset_end);
             }
             else
             {
@@ -922,14 +909,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the chunk we just left?
-                jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            }
-
-            // Skip the byte left before the next list / chunk
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
+                jumpy_riff(bitstr, odml_header, chunk_header.offset_end);
             }
 
             // Byte left in the odml list?
@@ -985,7 +965,8 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
 
         // Loop on "movi" content
         // Only useful if we want to index the content by hand
-        while (retcode == SUCCESS &&
+        while (avi->run == true &&
+               retcode == SUCCESS &&
                bitstream_get_absolute_byte_offset(bitstr) < movi_header->offset_end)
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
@@ -1002,6 +983,8 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                     retcode = skip_list(bitstr, movi_header, &list_header);
                     break;
                 }
+
+                jumpy_riff(bitstr, movi_header, list_header.offset_end);
             }
             else
             {
@@ -1017,12 +1000,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                     break;
                 }
 
-                // Go to the next box
-                int jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-                if (jump > 0)
-                {
-                    skip_bits(bitstr, jump*8);
-                }
+                jumpy_riff(bitstr, movi_header, chunk_header.offset_end);
             }
         }
     }
@@ -1052,11 +1030,9 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
         // Bytes left in the INFO list
         int byte_left = INFO_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-        // Bytes left in the lists / chunks inside the INFO list
-        int jump = 0;
-
         // Loop on "INFO" content
-        while (retcode == SUCCESS &&
+        while (avi->run == true &&
+               retcode == SUCCESS &&
                byte_left > 12 &&
                bitstream_get_absolute_byte_offset(bitstr) < INFO_header->offset_end)
         {
@@ -1074,8 +1050,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the list?
-                jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                jumpy_riff(bitstr, INFO_header, list_header.offset_end);
             }
             else
             {
@@ -1097,14 +1072,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the chunk?
-                jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            }
-
-            // Jump to the next list / chunk
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
+                jumpy_riff(bitstr, INFO_header, chunk_header.offset_end);
             }
 
             // Byte left in the INFO box?
@@ -1137,11 +1105,9 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
         // Bytes left in the hdrl list
         int byte_left = hdrl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-        // Bytes left in the lists / chunks inside the hdrl list
-        int jump = 0;
-
         // Loop on "hdrl" content
-        while (retcode == SUCCESS &&
+        while (avi->run == true &&
+               retcode == SUCCESS &&
                byte_left > 12 &&
                bitstream_get_absolute_byte_offset(bitstr) < hdrl_header->offset_end)
         {
@@ -1165,8 +1131,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the list we just left?
-                jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                jumpy_riff(bitstr, hdrl_header, list_header.offset_end);
             }
             else
             {
@@ -1188,14 +1153,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     break;
                 }
 
-                // Byte left in the chunk we just left?
-                jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            }
-
-            // Skip the byte left before the next list / chunk
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
+                jumpy_riff(bitstr, hdrl_header, chunk_header.offset_end);
             }
 
             // Byte left in the hdrl list?
@@ -1433,10 +1391,10 @@ int avi_fileParse(MediaFile_t *video)
         avi.movi_offset = 0;
 
         // A convenient way to stop the parser
-        bool superrun = true;
+        avi.run = true;
 
         // Loop on 1st level list
-        while (superrun == true &&
+        while (avi.run == true &&
                retcode == SUCCESS &&
                bitstream_get_absolute_byte_offset(bitstr) < video->file_size)
         {
@@ -1445,17 +1403,12 @@ int avi_fileParse(MediaFile_t *video)
             retcode = parse_list_header(bitstr, &RIFF_header);
             print_list_header(&RIFF_header);
 
-            // Bytes left in the RIFF list
-            int byte_left = RIFF_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-
-            // Bytes left in the lists / chunks inside the RIFF list
-            int jump = 0;
-
             if (RIFF_header.dwList == fcc_RIFF &&
                 RIFF_header.dwFourCC == fcc_AVI_)
             {
                 // Loop on 2nd level list/chunk
-                while (retcode == SUCCESS &&
+                while (avi.run == true &&
+                       retcode == SUCCESS &&
                        bitstream_get_absolute_byte_offset(bitstr) < RIFF_header.dwSize)
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
@@ -1481,8 +1434,7 @@ int avi_fileParse(MediaFile_t *video)
                             break;
                         }
 
-                        // Byte left in the list we just left?
-                        jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -1504,25 +1456,16 @@ int avi_fileParse(MediaFile_t *video)
                             break;
                         }
 
-                        // Byte left in the chunk we just left?
-                        jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
-
-                    // Jump to the next list / chunk
-                    if (jump > 0)
-                    {
-                        skip_bits(bitstr, jump*8);
-                    }
-
-                    // Byte left in the RIFF list?
-                    byte_left = RIFF_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
                 }
             }
             else if (RIFF_header.dwList == fcc_RIFF &&
                      RIFF_header.dwFourCC == fcc_AVIX)
             {
                 // Loop on 2nd level list/chunk
-                while (retcode == SUCCESS &&
+                while (avi.run == true &&
+                       retcode == SUCCESS &&
                        bitstream_get_absolute_byte_offset(bitstr) < RIFF_header.dwSize)
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
@@ -1542,8 +1485,7 @@ int avi_fileParse(MediaFile_t *video)
                             break;
                         }
 
-                        // Byte left in the list we just left?
-                        jump = list_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -1565,18 +1507,8 @@ int avi_fileParse(MediaFile_t *video)
                             break;
                         }
 
-                        // Byte left in the chunk we just left?
-                        jump = chunk_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
+                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
-
-                    // Jump to the next list / chunk
-                    if (jump > 0)
-                    {
-                        skip_bits(bitstr, jump*8);
-                    }
-
-                    // Byte left in the RIFF list?
-                    byte_left = RIFF_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
                 }
             }
             else
@@ -1600,7 +1532,7 @@ int avi_fileParse(MediaFile_t *video)
 
             if ((unsigned int)(track_indexed + track_superindexed) == avi.tracks_count)
             {
-                superrun = false;
+                avi.run = false;
             }
         }
 

@@ -36,7 +36,6 @@
 // C standard libraries
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -64,6 +63,10 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             wave->fmt.nAvgBytesPerSec = endian_flip_32(read_bits(bitstr, 32));
             wave->fmt.nBlockAlign = endian_flip_16(read_bits(bitstr, 16));
             wave->fmt.wBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
+        }
+        else
+        {
+            TRACE_WARNING(WAV, "OMG EMPTY fmt CHUNK\n");
         }
 
         if (fmt_header->dwSize >= 18)
@@ -271,22 +274,23 @@ static int wave_indexer_initmap(MediaFile_t *video, wave_t *wave)
                 track->stream_size = wave->fact.dwSampleLength * (wave->fmt.wBitsPerSample*8) * wave->fmt.nChannels;
 
                 if (wave->fmt.nSamplesPerSec)
-                    track->duration = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
+                    track->duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
             }
             else
             {
                 track->stream_size = wave->data.datasSize; // may not be necessary
 
                 if (wave->fmt.wBitsPerSample)
-                    track->duration = wave->fmt.nSamplesPerSec * (wave->fmt.wBitsPerSample/8) * wave->fmt.nChannels;
+                {
+                    track->duration_ms = wave->fmt.nSamplesPerSec * (wave->fmt.wBitsPerSample/8) * wave->fmt.nChannels;
+                    //track->duration = wave->fmt.nSamplesPerSec / (wave->fmt.nSamplesPerSec * wave->fmt.nChannels * (wave->fmt.wBitsPerSample/8));
+                }
             }
 
-            track->bitrate = wave->fmt.nSamplesPerSec * (wave->fmt.wBitsPerSample*8) * wave->fmt.nChannels;
+            track->bitrate = wave->fmt.nSamplesPerSec * wave->fmt.wBitsPerSample * wave->fmt.nChannels;
             track->bitrate_mode = BITRATE_CBR;
 
-            TRACE_1(WAV, "track->bitrate %u \n", track->bitrate);
-
-            // PCM only
+            // PCM specific metadatas
             track->pcm_sample_format = 0;
             track->pcm_sample_size = 0;
             track->pcm_sample_endianness = 0;
@@ -321,6 +325,19 @@ static int wave_indexer_initmap(MediaFile_t *video, wave_t *wave)
             track->stream_codec = CODEC_WMA;
         }
 
+        // backup computations
+        {
+            if (track->duration_ms == 0 && wave->fmt.nAvgBytesPerSec)
+            {
+                track->duration_ms = ((double)wave->data.datasSize / (double)wave->fmt.nAvgBytesPerSec) * 1000.0;
+            }
+
+            if (track->stream_size == 0)
+            {
+                track->stream_size = wave->data.datasSize;
+            }
+        }
+
         track->channel_count = wave->fmt.nChannels;
         track->sampling_rate = wave->fmt.nSamplesPerSec;
         track->bit_per_sample = wave->fmt.wBitsPerSample;
@@ -353,7 +370,7 @@ static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *video, wave_t *wave)
     {
         if (video->tracks_audio[0])
         {
-            video->duration = video->tracks_audio[0]->duration;
+            video->duration = video->tracks_audio[0]->duration_ms;
         }
     }
 
@@ -379,18 +396,19 @@ int wave_fileParse(MediaFile_t *media)
         memset(&wave, 0, sizeof(wave));
 
         // A convenient way to stop the parser
-        bool superrun = true;
+        wave.run = true;
 
         // Read RIFF header
         RiffList_t RIFF_header;
         retcode = parse_list_header(bitstr, &RIFF_header);
         print_list_header(&RIFF_header);
 
+        // First level chunk
         if (RIFF_header.dwList == fcc_RIFF &&
             RIFF_header.dwFourCC == fcc_WAVE)
         {
             // Loop on 2st level chunks
-            while (superrun == true &&
+            while (wave.run == true &&
                    retcode == SUCCESS &&
                    bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 8))
             {
@@ -418,34 +436,7 @@ int wave_fileParse(MediaFile_t *media)
                     break;
                 }
 
-                int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
-                if (current_pos != chunk_header.offset_end)
-                {
-                    TRACE_WARNING(WAV, "WAVE parser is not where its supposed to be (%lli instead of %lli)\n",
-                                  current_pos, chunk_header.offset_end);
-
-                    int64_t jump = 0;
-
-                    // Jump to the next list / chunk
-                    if (current_pos < chunk_header.offset_end)
-                    {
-                        jump = chunk_header.offset_end - current_pos;
-
-                        if (jump < (INT_MAX/8))
-                            skip_bits(bitstr, (unsigned int)(jump*8));
-                        else
-                            bitstream_goto_offset(bitstr, chunk_header.offset_end);
-                    }
-                    else
-                    {
-                        jump = current_pos - chunk_header.offset_end;
-
-                        if (jump > (INT_MIN/8))
-                            rewind_bits(bitstr, (unsigned int)(jump*8));
-                        else
-                            bitstream_goto_offset(bitstr, chunk_header.offset_end);
-                    }
-                }
+                jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
             }
         }
 

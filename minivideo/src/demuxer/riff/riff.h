@@ -43,5 +43,7 @@ void print_chunk_header(RiffChunk_t *chunk_header);
 
 int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child);
 
+int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end);
+
 /* ************************************************************************** */
 #endif // PARSER_RIFF_H

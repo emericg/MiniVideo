@@ -30,19 +30,19 @@
 
 /*!
  * \brief Get a duration string from a duration in milliseconds.
- * \param duration_int: Duration in milliseconds.
+ * \param duration: Duration in milliseconds.
  * \return Duration QString.
  */
-QString getDurationString(const int duration_int);
+QString getDurationString(const unsigned duration);
 
 /*!
  * \brief Get a size string from a size in bytes.
- * \param size_int: File size in bytes.
+ * \param size: File size in bytes.
  * \return File size QString.
  *
  * Print size in (G/M/K)iB, (G/M/K)B and bytes.
  */
-QString getSizeString(const int64_t size_int);
+QString getSizeString(const int64_t size);
 
 /*!
  * \brief Compute a track size string from a track structure.
@@ -62,7 +62,7 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const
  *
  * See http://en.wikipedia.org/wiki/Aspect_ratio_(image) for more infos.
  */
-QString getAspectRatioString(const int x, const int y, bool detailed = false);
+QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed = false);
 
 /*!
  * \brief Get a bitrate string from a bitrate in bytes.
@@ -74,7 +74,7 @@ QString getAspectRatioString(const int x, const int y, bool detailed = false);
  * - Mb/s with 2 digits after the decimal point (if less than 100 Mb/s)
  * - Mb/s with 0 digits after the decimal point (if more than 100 Mb/s)
  */
-QString getBitrateString(const int bitrate);
+QString getBitrateString(const unsigned bitrate);
 
 /* ************************************************************************** */
 #endif // UTILS_H

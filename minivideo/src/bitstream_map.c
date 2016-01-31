@@ -238,11 +238,17 @@ static void computeBitRateTrack(BitstreamMap_t *t)
 
         // Set stream size
         if (t->stream_size == 0)
+        {
             t->stream_size = bytes;
+        }
 
-        // Set gross bitrate value
+        // Set gross bitrate value (in bps)
         if (t->bitrate == 0)
-            t->bitrate = round(((double)t->stream_size / (double)t->duration) * 8.0);
+        {
+            t->bitrate = round(((double)t->stream_size / (double)(t->duration_ms)));
+            t->bitrate *= 1000; // ms to s
+            t->bitrate *= 8; // B to b
+        }
     }
 }
 
@@ -251,8 +257,9 @@ static void computeBitRateTrack(BitstreamMap_t *t)
 bool computeBitRates(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
+
     bool retcode = SUCCESS;
-    int i = 0;
+    unsigned i = 0;
 
     for (i = 0; i < media->tracks_video_count; i++)
     {
@@ -278,8 +285,9 @@ bool computeBitRates(MediaFile_t *media)
 bool computeCodecs(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()\n" CLR_RESET);
+
     bool retcode = SUCCESS;
-    int i = 0;
+    unsigned i = 0;
 
     for (i = 0; i < media->tracks_video_count; i++)
     {

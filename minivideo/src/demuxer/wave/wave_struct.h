@@ -34,12 +34,12 @@ typedef struct fmtChunk_t
     uint16_t wFormatTag;          //!< Format code
     uint16_t nChannels;           //!< Number of interleaved channels
     uint32_t nSamplesPerSec;      //!< Sampling rate (blocks per second)
-    uint32_t nAvgBytesPerSec;     //!< Data rate
-    uint16_t nBlockAlign;         //!< Data block size (bytes)
-    uint16_t wBitsPerSample;      //!< Bits per sample
+    uint32_t nAvgBytesPerSec;     //!< Data rate (in bytes)
+    uint16_t nBlockAlign;         //!< Data block size (in bytes)
+    uint16_t wBitsPerSample;      //!< Bits per sample (in bits)
 
     // fmt chunk extension
-    uint16_t cbSize;              //!< Size of the extension
+    uint16_t cbSize;              //!< Size of the extension (in bytes)
 
         // PCM
         uint16_t wValidBitsPerSample; //!< Number of valid bits
@@ -80,7 +80,7 @@ typedef struct factChunk_t
 typedef struct dataChunk_t
 {
     int64_t datasOffset;          //!< Offset of the first sample of this data chunk
-    int64_t datasSize;            //!< Size of all the samples of this data chunk
+    int64_t datasSize;            //!< Size of all the samples of this data chunk (in bytes)
 
 } dataChunk_t;
 
@@ -93,12 +93,12 @@ typedef struct cueChunk_t
 //! Structure for WAVE audio infos
 typedef struct wave_t
 {
+    bool run; //!< A convenient way to stop the parser from any sublevel
+
     fmtChunk_t fmt;
     factChunk_t fact;
     dataChunk_t data;
     cueChunk_t cue;
-
-    //WaveTrack_t *tracks[16];
 
 } wave_t;
 

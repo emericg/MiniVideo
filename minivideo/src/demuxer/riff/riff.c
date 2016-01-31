@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 /* ************************************************************************** */
 
@@ -237,6 +238,87 @@ int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t 
     }
 
     print_chunk_header(chunk_header_child);
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Jumpy protect your parsing - RIFF edition.
+ * \param parent: The RiffList_t containing the current list / chunk we're in.
+ * \param offset_end: The end offset of the current list / chunk we're in.
+ *
+ * 'Jumpy' is in charge of checking your position into the stream after your
+ * parser finish parsing a box / list / chunk / element, never leaving you
+ * stranded  in the middle of nowhere with no easy way to get back on track.
+ * It will check available informations to known if the current element has been
+ * fully parsed, and if not perform a jump (or even a rewind) to the next known
+ * element.
+ */
+int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
+{
+    int retcode = FAILURE;
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+
+    if (current_pos != offset_end)
+    {
+        int64_t file_size = bitstream_get_full_size(bitstr);
+
+#if ENABLE_DEBUG
+        TRACE_WARNING(RIF, ">>> Using jumpy_riff() !!!\n");
+        TRACE_WARNING(RIF, ">>> endbox offset seems to be %lli \n", offset_end);
+#endif // ENABLE_DEBUG
+
+        // If the current box have a parent, and its offset_end is 'valid' (not past file size)
+        if (parent && parent->offset_end < file_size)
+        {
+            // If the current offset_end is past its parent offset_end, its probably
+            // broken, and so we will use the one from its parent
+            if (offset_end > parent->offset_end)
+            {
+                offset_end = parent->offset_end;
+            }
+        }
+        else // no parent (or parent with broken offset_end)
+        {
+            // If the current offset_end is past file size
+            if (offset_end > file_size)
+                offset_end = file_size;
+        }
+
+        // If the offset_end is the last byte of the file, we do not need to jump
+        // The parser will pick that fact and finish up
+        if (offset_end >= file_size)
+        {
+            bitstr->bitstream_offset = bitstream_get_full_size(bitstr);
+            return SUCCESS;
+        }
+
+        // Now, do we need to go forward or backward to reach our goal?
+        // Then, can we move in our current buffer or do we need to reload a new one?
+        if (current_pos < offset_end)
+        {
+            int64_t jump = offset_end - current_pos;
+
+            if (jump < (UINT_MAX/8))
+                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+            else
+                retcode = bitstream_goto_offset(bitstr, offset_end);
+        }
+        else
+        {
+            int64_t rewind = current_pos - offset_end;
+
+            if (rewind > 0)
+            {
+                if (rewind > (UINT_MAX/8))
+                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                else
+                    retcode = bitstream_goto_offset(bitstr, offset_end);
+            }
+        }
+    }
 
     return retcode;
 }

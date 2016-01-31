@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 
 /* ************************************************************************** */
 
@@ -62,6 +63,89 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
 
 /* ************************************************************************** */
+/* ************************************************************************** */
+
+
+/*!
+ * \brief Jumpy protect your parsing - MP4 edition.
+ * \param parent: The box containing the current box we're in.
+ * \param current: The current box we're in.
+ *
+ * 'Jumpy' is in charge of checking your position into the stream after your
+ * parser finish parsing a box / list / chunk / element, never leaving you
+ * stranded  in the middle of nowhere with no easy way to get back on track.
+ * It will check available informations to known if the current element has been
+ * fully parsed, and if not perform a jump (or even a rewind) to the next known
+ * element.
+ */
+int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
+{
+    int retcode = FAILURE;
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+
+    if (current_pos != current->offset_end)
+    {
+        int64_t file_size = bitstream_get_full_size(bitstr);
+        int64_t offset_end = current->offset_end;
+
+#if ENABLE_DEBUG
+        TRACE_WARNING(RIF, ">>> Using jumpy_mp4() !!!\n");
+        TRACE_WARNING(RIF, ">>> endbox offset seems to be %lli \n", offset_end);
+#endif // ENABLE_DEBUG
+
+        // If the current box have a parent, and its offset_end is 'valid' (not past file size)
+        if (parent && parent->offset_end < file_size)
+        {
+            // If the current offset_end is past its parent offset_end, its probably
+            // broken, and so we will use the one from its parent
+            if (offset_end > parent->offset_end)
+            {
+                offset_end = parent->offset_end;
+            }
+        }
+        else // no parent (or parent with broken offset_end)
+        {
+            // If the current offset_end is past file size
+            if (offset_end > file_size)
+                offset_end = file_size;
+        }
+
+        // If the offset_end is the last byte of the file, we do not need to jump
+        // The parser will pick that fact and finish up
+        if (offset_end >= file_size)
+        {
+            bitstr->bitstream_offset = bitstream_get_full_size(bitstr);
+            return SUCCESS;
+        }
+
+        // Now, do we need to go forward or backward to reach our goal?
+        // Then, can we move in our current buffer or do we need to reload a new one?
+        if (current_pos < offset_end)
+        {
+            int64_t jump = offset_end - current_pos;
+
+            if (jump < (UINT_MAX/8))
+                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+            else
+                retcode = bitstream_goto_offset(bitstr, offset_end);
+        }
+        else
+        {
+            int64_t rewind = current_pos - offset_end;
+
+            if (rewind > 0)
+            {
+                if (rewind > (UINT_MAX/8))
+                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                else
+                    retcode = bitstream_goto_offset(bitstr, offset_end);
+            }
+        }
+    }
+
+    return retcode;
+}
+
 /* ************************************************************************** */
 
 /*!
@@ -111,14 +195,13 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         else
         {
             TRACE_WARNING(MP4, "We can only build bitstream map for audio and video tracks! (track #%u handlerType: %u)\n", track->id, track->handlerType);
-            retcode = FAILURE;
         }
     }
 
     // Build bitstream map
     ////////////////////////////////////////////////////////////////////////////
 
-    if (retcode == SUCCESS)
+    if (retcode == SUCCESS && map)
     {
         unsigned int i = 0, j = 0;
 
@@ -126,7 +209,7 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         map->stream_fcc = track->fcc;
         map->stream_codec = track->codec;
 
-        map->duration = (double)track->duration / (double)track->timescale * 1000.0;
+        map->duration_ms = (double)track->duration / (double)track->timescale * 1000.0;
         map->creation_time = (double)track->creation_time / (double)track->timescale * 1000.0;
         map->modification_time = (double)track->modification_time / (double)track->timescale * 1000.0;
 
@@ -278,6 +361,8 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
                 map->bitrate_mode = BITRATE_CBR;
                 map->sample_size[sid] = track->stsz_sample_size;
             }
+
+            // track->bitrate_max
 
             // Set sample offset
             map->sample_offset[sid] = track->stco_chunk_offset[chunk] + 4;
@@ -690,10 +775,11 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     // Print moov box header
     print_box_header(box_header);
-    mp4->box_moov_end = box_header->offset_end;
+    int64_t box_moov_end = box_header->offset_end;
 
-    while (retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < box_moov_end)
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -730,12 +816,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     break;
             }
 
-            // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -762,9 +843,6 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header)
 
     // Print mdat box header
     print_box_header(box_header);
-
-    // Skip mdat box content
-    bitstream_goto_offset(bitstr, box_header->offset_end);
 
     return retcode;
 }
@@ -885,12 +963,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
             }
 
-            // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -1058,7 +1131,8 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         mp4->tracks_count++;
     }
 
-    while (retcode == SUCCESS &&
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
     {
         // Parse subbox header
@@ -1084,12 +1158,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     break;
             }
 
-            // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -1206,12 +1275,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
             }
 
-            // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -1314,12 +1378,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
             }
 
-            // Go to the next box
-            int jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -1389,12 +1448,7 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
             }
 
-            // Go to the next box
-            unsigned jump = box_subheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-            if (jump > 0)
-            {
-                skip_bits(bitstr, jump*8);
-            }
+            jumpy_mp4(bitstr, box_header, &box_subheader);
         }
     }
 
@@ -1587,12 +1641,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                             break;
                     }
 
-                    // Go to the next box
-                    int jump = box_subsubheader.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-                    if (jump > 0)
-                    {
-                        skip_bits(bitstr, jump*8);
-                    }
+                    jumpy_mp4(bitstr, box_header, &box_subheader);
                 }
             }
 /*
@@ -2126,10 +2175,11 @@ int mp4_fileParse(MediaFile_t *video)
         Mp4_t mp4;
         memset(&mp4, 0, sizeof(Mp4_t));
 
-        mp4.box_moov_end = video->file_size;
+        // A convenient way to stop the parser
+        mp4.run = true;
 
-        while (retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < mp4.box_moov_end &&
+        while (mp4.run == true &&
+               retcode == SUCCESS &&
                bitstream_get_absolute_byte_offset(bitstr) < video->file_size)
         {
             // Read box header
@@ -2167,12 +2217,7 @@ int mp4_fileParse(MediaFile_t *video)
                         break;
                 }
 
-                // Go to the next box
-                int jump = box_header.offset_end - bitstream_get_absolute_byte_offset(bitstr);
-                if (jump > 0)
-                {
-                    skip_bits(bitstr, jump*8);
-                }
+                jumpy_mp4(bitstr, NULL, &box_header);
             }
         }
 

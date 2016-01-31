@@ -110,6 +110,8 @@ typedef struct Mp4Track_t
 
 typedef struct Mp4_t
 {
+    bool run; //!< A convenient way to stop the parser from any sublevel
+
     uint32_t timescale;
     uint64_t duration;
     uint64_t creation_time;
@@ -117,8 +119,6 @@ typedef struct Mp4_t
 
     uint32_t tracks_count;
     Mp4Track_t *tracks[16];
-
-    int64_t box_moov_end;
 
 } Mp4_t;
 
@@ -201,10 +201,13 @@ typedef enum Mp4BoxType_e
  */
 typedef enum Mp4HandlerType_e
 {
-    HANDLER_AUDIO = 0x736F756E,
-    HANDLER_VIDEO = 0x76696465,
-    HANDLER_HINT  = 0x68696E74,
-    HANDLER_META  = 0x6D657461
+    HANDLER_AUDIO = 0x736F756E, //!< 'soun'
+    HANDLER_VIDEO = 0x76696465, //!< 'vide'
+    HANDLER_HINT  = 0x68696E74, //!< 'hint'
+    HANDLER_META  = 0x6D657461  //!< 'meta'
+
+    // sdsm // SceneDescriptionStream
+    // odsm // ObjectDescriptorStream
 
 } Mp4HandlerType_e;
 
@@ -214,7 +217,7 @@ typedef enum Mp4HandlerType_e
  */
 typedef enum Mp4SampleEntry_e
 {
-    SAMPLE_AVC1 = 0x61766331,    //!< H.264
+    SAMPLE_AVC1 = 0x61766331,    //!< H.264 ('avc1')
     SAMPLE_AVCC = 0x61766343,
 
     SAMPLE_HVC1 = 0x68766331,    //!< H.265
@@ -222,9 +225,9 @@ typedef enum Mp4SampleEntry_e
 
     SAMPLE_CFHD = 0x43464844,
 
-    SAMPLE_MP4V = 0x6D703476,    //!< MP4V / XVID
-    SAMPLE_MP4A = 0x6D703461,    //!< MP4A / AAC
-    SAMPLE_AC3  = 0x61632D33,    //!< AC-3
+    SAMPLE_MP4V = 0x6D703476,    //!< XVID ('mp4v')
+    SAMPLE_MP4A = 0x6D703461,    //!< AAC ('mp4a')
+    SAMPLE_AC3  = 0x61632D33,    //!< AC-3 ('ac-3')
 
     SAMPLE_RAW_ = 0x72617720,    //!< unsigned linear PCM (16-bit, little endian)
     SAMPLE_TOWS = 0x746F7773,    //!< signed linear PCM (big endian)

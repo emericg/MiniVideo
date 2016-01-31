@@ -33,6 +33,8 @@
  * \brief Parse WAVE files.
  * \param *media A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
+ *
+ * The WAVE parser only set metadatas and does not index the PCM samples.
  */
 int wave_fileParse(MediaFile_t *media);
 

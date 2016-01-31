@@ -2040,7 +2040,7 @@ background: rgba(255, 170, 0, 128);</string>
                 </size>
                </property>
                <property name="text">
-                <string>Sample count</string>
+                <string>Frame count</string>
                </property>
               </widget>
              </item>

@@ -49,25 +49,25 @@ typedef struct MediaFile_t
     unsigned int file_creation_time;    //!< File creation time, from filesystem metadatas
     unsigned int file_modification_time;//!< File modification time, from filesystem metadatas
 
+    // Generic meta datas
+    char *creation_app;                 //!< Container creation application
+    unsigned int creation_time;         //!< Container creation time in milliseconds
+    unsigned int modification_time;     //!< Container modification time in milliseconds
+    unsigned int duration;              //!< Content duration in milliseconds
+
     ContainerFormat_e container;        //!< File format / container used by this video file
 
-    // Meta datas // TODO dedicated metadatas structures
-    char *creation_app;             //!< Container creation application
-    unsigned int creation_time;     //!< Container creation time in milliseconds
-    unsigned int modification_time; //!< Container modification time in milliseconds
-    unsigned int duration;          //!< Content duration in milliseconds
-
     // A/V track(s) datas and infos
-    int tracks_audio_count;
+    unsigned int tracks_audio_count;
     BitstreamMap_t *tracks_audio[16];   //!< A list of parsed audio tracks
 
-    int tracks_video_count;
+    unsigned int tracks_video_count;
     BitstreamMap_t *tracks_video[16];   //!< A list of parsed video tracks
 
-    int tracks_subtitles_count;
+    unsigned int tracks_subtitles_count;
     BitstreamMap_t *tracks_subt[16];    //!< A list of parsed subtitles tracks
 
-    int tracks_others;                  //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
+    unsigned int tracks_others_count;   //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
 
 } MediaFile_t;
 
