@@ -298,9 +298,10 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
         TRACE_1(IO, "* File type      : FLV container detected\n");
         container = CONTAINER_FLV;
     }
-    else if (buffer[0] == 0xFF && buffer[1] == 0xFB)
+    else if (buffer[0] == 0xFF &&
+             (buffer[1] == 0xFE || buffer[1] == 0xFD ||buffer[1] == 0xFB))
     {
-        TRACE_1(IO, "* File type      : MP3 Elementary Stream detected\n");
+        TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected\n");
         container = CONTAINER_ES_MP3;
     }
 
