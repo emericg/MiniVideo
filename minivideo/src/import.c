@@ -424,13 +424,15 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
             TRACE_1(IO, "* File extension  : RealMedia container detected\n");
             container = CONTAINER_RM;
         }
-        else if (strncmp(media->file_extension, "h264", 255) == 0)
+        else if (strncmp(media->file_extension, "264", 255) == 0 ||
+                 strncmp(media->file_extension, "h264", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : H.264 ES detected\n");
             container = CONTAINER_ES;
             //codec = CODEC_H264;
         }
-        else if (strncmp(media->file_extension, "h265", 255) == 0)
+        else if (strncmp(media->file_extension, "265", 255) == 0 ||
+                 strncmp(media->file_extension, "h265", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : H.265 ES detected\n");
             container = CONTAINER_ES;
