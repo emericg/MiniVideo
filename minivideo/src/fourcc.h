@@ -96,6 +96,8 @@ typedef enum fourcc_list_e
     fcc_hvc1 = 0x68766331,
     fcc_HEVC = 0x48455643,
     fcc_hevc = 0x68657663,
+    fcc_HEV1 = 0x48455631,
+    fcc_hev1 = 0x68657631,
     fcc_H265 = 0x48323635,
     fcc_h265 = 0x68323635,
     fcc_X265 = 0x58323635,
@@ -150,6 +152,7 @@ typedef enum fourcc_list_e
     fcc_ac3  = 0x61632D33  //!< ac-3
 
     // Uncompressed audio
+
 } fourcc_list_e;
 
 /* ************************************************************************** */

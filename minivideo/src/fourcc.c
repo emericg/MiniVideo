@@ -112,6 +112,8 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_hvc1:
     case fcc_HEVC:
     case fcc_hevc:
+    case fcc_HEV1:
+    case fcc_hev1:
     case fcc_H265:
     case fcc_h265:
     case fcc_X265:
