@@ -204,6 +204,17 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
         map->stream_fcc = track->fcc;
         map->stream_codec = track->codec;
 
+        if (track->compressor)
+        {
+            map->stream_encoder = malloc(sizeof(track->compressor));
+            strncpy(map->stream_encoder, track->compressor, sizeof(track->compressor));
+        }
+        if (track->name)
+        {
+            map->track_title = malloc(sizeof(track->name));
+            strncpy(map->track_title, track->name, sizeof(track->name));
+        }
+
         map->duration_ms = (double)track->duration / (double)track->timescale * 1000.0;
         map->creation_time = (double)track->creation_time / (double)track->timescale * 1000.0;
         map->modification_time = (double)track->modification_time / (double)track->timescale * 1000.0;
@@ -228,18 +239,23 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
             map->color_depth = track->color_depth;
             map->sample_count_idr = track->stss_entry_count;
 
-            uint32_t scalefactor = 1;
-            map->framerate_num = track->timescale * scalefactor;
+            // Framerate
+            {
+                uint32_t scalefactor = 1;
+                map->framerate_num = track->timescale * scalefactor;
 
-            if(track->stsz_sample_count == 0)
-                map->framerate_base = track->mediatime * scalefactor; // used for "progressive download" files
-            else
-                map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
+                if(track->stsz_sample_count == 0)
+                    map->framerate_base = track->mediatime * scalefactor; // used for "progressive download" files
+                else
+                    map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
 
-            TRACE_WARNING(MP4, "framerate_num: %u  / framerate_base: %u\n",
-                          map->framerate_num, map->framerate_base);
-            map->frame_rate = (double)map->framerate_num / (double)map->framerate_base;
+                map->frame_rate = (double)map->framerate_num / (double)map->framerate_base;
 
+                TRACE_1(MP4, "framerate_num: %u  / framerate_base: %u\n",
+                        map->framerate_num, map->framerate_base);
+            }
+
+            // Codec specific metadata
             if (track->codec == CODEC_H264 || track->codec == CODEC_H265)
             {
                 // Set SPS
@@ -792,7 +808,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     retcode = parse_mvhd(bitstr, &box_subheader, mp4);
                     break;
                 case BOX_IODS:
-                    //retcode = parse_iods(bitstr, &box_subheader, mp4);
+                    retcode = parse_unknown_box(bitstr, &box_subheader);
                     break;
                 case BOX_TRAK:
                     retcode = parse_trak(bitstr, &box_subheader, mp4);
@@ -1294,10 +1310,25 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     unsigned int pre_defined = read_bits(bitstr, 32);
     track->handlerType = read_bits(bitstr, 32);
 
-    unsigned int reserved[3] = {0};
+    unsigned int reserved[3];
     reserved[0] = read_bits(bitstr, 32);
     reserved[1] = read_bits(bitstr, 32);
     reserved[2] = read_bits(bitstr, 32);
+
+    int bytes_left = box_header->size - 32;
+    if (bytes_left > 0)
+    {
+        // we only store 128 characters
+        if (bytes_left > 128) bytes_left = 128;
+        // check if the bytes_left is also coded in the first byte
+        int namesize = next_bits(bitstr, 8);
+
+        int i = 0;
+        for (i = 0; i < bytes_left; i++)
+        {
+            track->name[i] = read_bits(bitstr, 8);
+        }
+    }
 
 #if ENABLE_DEBUG
     {
@@ -1306,9 +1337,11 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Print hdlr box content
         char fcc[5];
-        TRACE_1(MP4, "> pre_defined   : %u\n", pre_defined);
-        TRACE_1(MP4, "> handler_type  : 0x%X (%s)\n", track->handlerType,
+        TRACE_1(MP4, "> pre_defined  : %u\n", pre_defined);
+        TRACE_1(MP4, "> handler_type : 0x%X (%s)\n", track->handlerType,
                 getFccString_le(track->handlerType, fcc));
+        TRACE_1(MP4, "> name         : '%s'\n", track->name);
+
     }
 #endif // ENABLE_DEBUG
 
@@ -1357,7 +1390,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             switch (box_subheader.boxtype)
             {
                 case BOX_DINF:
-                    //retcode = parse_unknown_box(bitstr, box_subheader);
+                    retcode = parse_unknown_box(bitstr, &box_subheader);
                     break;
                 case BOX_STBL:
                     retcode = parse_stbl(bitstr, &box_subheader, track);
@@ -1578,10 +1611,10 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
             unsigned int frame_count = read_bits(bitstr, 16);
 
-            uint8_t compressorname[32] = {0};
-            for (i = 0; i < 32; i++)
+            uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
+            for (i = 0; i < 31; i++)
             {
-                compressorname[i] = (uint8_t)read_bits(bitstr, 8);
+                track->compressor[i] = (uint8_t)read_bits(bitstr, 8);
             }
 
             track->color_depth = read_bits(bitstr, 16);
@@ -1601,7 +1634,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 TRACE_1(MP4, "> horizresolution\t: 0x%X\n", horizresolution);
                 TRACE_1(MP4, "> vertresolution\t: 0x%X\n", vertresolution);
                 TRACE_1(MP4, "> frame_count\t: %u\n", frame_count);
-                TRACE_1(MP4, "> compressor\t: '%s'\n", compressorname);
+                TRACE_1(MP4, "> compressor\t: '%s'\n", track->compressor);
                 TRACE_1(MP4, "> color depth\t: %u\n", track->color_depth);
             }
 #endif // ENABLE_DEBUG
@@ -2186,20 +2219,23 @@ int mp4_fileParse(MediaFile_t *video)
                     case BOX_PDIN:
                         retcode = parse_pdin(bitstr, &box_header, &mp4);
                         break;
+                    case BOX_SIDX:
+                        retcode = parse_unknown_box(bitstr, &box_header);
+                        break;
                     case BOX_MOOV:
                         retcode = parse_moov(bitstr, &box_header, &mp4);
                         break;
                     case BOX_MOOF:
-                        //retcode = parse_unknown_box(bitstr, &box_header);
+                        retcode = parse_unknown_box(bitstr, &box_header);
                         break;
                     case BOX_MDAT:
                         retcode = parse_mdat(bitstr, &box_header);
                         break;
                     case BOX_FREE:
-                        //retcode = parse_unknown_free(bitstr, &box_header);
+                        retcode = parse_unknown_box(bitstr, &box_header);
                         break;
                     case BOX_UUID:
-                        //retcode = parse_unknown_uuid(bitstr, &box_header);
+                        retcode = parse_unknown_box(bitstr, &box_header);
                         break;
                     default:
                         retcode = parse_unknown_box(bitstr, &box_header);

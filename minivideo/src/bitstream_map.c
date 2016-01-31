@@ -118,26 +118,37 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
     {
         TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()\n" CLR_RESET);
 
+        // Textual metadatas
+        if ((*bitstream_map)->stream_encoder != NULL)
+        {
+            free((*bitstream_map)->stream_encoder);
+        }
+        if ((*bitstream_map)->track_title != NULL)
+        {
+            free((*bitstream_map)->track_title);
+        }
+        if ((*bitstream_map)->subtitles_name != NULL)
+        {
+            free((*bitstream_map)->subtitles_name);
+        }
+
+        // Sample tables
         if ((*bitstream_map)->sample_type != NULL)
         {
             free((*bitstream_map)->sample_type);
         }
-
         if ((*bitstream_map)->sample_size != NULL)
         {
             free((*bitstream_map)->sample_size);
         }
-
         if ((*bitstream_map)->sample_offset != NULL)
         {
             free((*bitstream_map)->sample_offset);
         }
-
         if ((*bitstream_map)->sample_pts != NULL)
         {
             free((*bitstream_map)->sample_pts);
         }
-
         if ((*bitstream_map)->sample_dts != NULL)
         {
             free((*bitstream_map)->sample_dts);
