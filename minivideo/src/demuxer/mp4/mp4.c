@@ -88,11 +88,6 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
         int64_t file_size = bitstream_get_full_size(bitstr);
         int64_t offset_end = current->offset_end;
 
-#if ENABLE_DEBUG
-        TRACE_WARNING(RIF, ">>> Using jumpy_mp4() !!!\n");
-        TRACE_WARNING(RIF, ">>> endbox offset seems to be %lli \n", offset_end);
-#endif // ENABLE_DEBUG
-
         // If the current box have a parent, and its offset_end is 'valid' (not past file size)
         if (parent && parent->offset_end < file_size)
         {

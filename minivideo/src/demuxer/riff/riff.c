@@ -265,11 +265,6 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
     {
         int64_t file_size = bitstream_get_full_size(bitstr);
 
-#if ENABLE_DEBUG
-        TRACE_WARNING(RIF, ">>> Using jumpy_riff() !!!\n");
-        TRACE_WARNING(RIF, ">>> endbox offset seems to be %lli \n", offset_end);
-#endif // ENABLE_DEBUG
-
         // If the current box have a parent, and its offset_end is 'valid' (not past file size)
         if (parent && parent->offset_end < file_size)
         {
