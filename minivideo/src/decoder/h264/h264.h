@@ -36,7 +36,7 @@ int h264_decode(MediaFile_t *input_video,
                 const int picture_number,
                 const int picture_extractionmode);
 
-DecodingContext_t *initDecodingContext(MediaFile_t *video);
+DecodingContext_t *initDecodingContext(MediaFile_t *media);
 void freeDecodingContext(DecodingContext_t **dc_ptr);
 int checkDecodingContext(DecodingContext_t *dc);
 

@@ -52,7 +52,7 @@
 
 /*!
  * \brief Init a new bitstream.
- * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
+ * \param *media A pointer to a MediaFile_t structure, containing every informations available about the current media file.
  * \param *bitstream_map A pointer to a bitstreamMap_t structure, containing informations about video payload datas.
  * \return *bitstr A pointer to our newly allocated bitstream structure.
  *
@@ -63,13 +63,13 @@
  * Otherwise, an available bitstream_map structure mean that we have encapsulated
  * video data, and we must bufferize data sample by sample.
  */
-Bitstream_t *init_bitstream(MediaFile_t *video, BitstreamMap_t *bitstream_map)
+Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 {
     TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()\n" CLR_RESET);
     Bitstream_t *bitstr = NULL;
 
-    if (video == NULL ||
-        video->file_pointer == NULL)
+    if (media == NULL ||
+        media->file_pointer == NULL)
     {
         TRACE_ERROR(BITS, "<b> Unable to use MediaFile_t structure!\n");
     }
@@ -85,7 +85,7 @@ Bitstream_t *init_bitstream(MediaFile_t *video, BitstreamMap_t *bitstream_map)
         else
         {
             // Bitstream structure initialization
-            bitstr->bitstream_file = video->file_pointer;
+            bitstr->bitstream_file = media->file_pointer;
 
             // Use a bitstream_map if available
             if (bitstream_map != NULL)
@@ -93,7 +93,7 @@ Bitstream_t *init_bitstream(MediaFile_t *video, BitstreamMap_t *bitstream_map)
             else
                 bitstr->bitstream_map = NULL;
 
-            bitstr->bitstream_size = video->file_size;
+            bitstr->bitstream_size = media->file_size;
             bitstr->bitstream_offset = 0;
             bitstr->bitstream_sample_index = 0;
 

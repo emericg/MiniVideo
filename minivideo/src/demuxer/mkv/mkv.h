@@ -31,14 +31,14 @@
 
 /*!
  * \brief Parse MKV files.
- * \param *video A pointer to a MediaFile_t structure.
+ * \param *media A pointer to a MediaFile_t structure.
  * \return retcode 1 if succeed, 0 otherwise.
  *
  * This parser is based on the official MKV specification.
  * - http://www.matroska.org/technical/specs/index.html
  * - http://www.matroska.org/files/matroska.pdf
  */
-int mkv_fileParse(MediaFile_t *video);
+int mkv_fileParse(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // PARSER_MKV_H

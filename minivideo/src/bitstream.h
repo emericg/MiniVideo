@@ -73,7 +73,7 @@ typedef struct Bitstream_t
 
 /* ************************************************************************** */
 
-Bitstream_t *init_bitstream(MediaFile_t *video, BitstreamMap_t *bitstream_map);
+Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map);
 void free_bitstream(Bitstream_t **bitstr_ptr);
 
 int buffer_feed_next_sample(Bitstream_t *bitstr);

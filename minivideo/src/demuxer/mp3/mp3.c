@@ -97,7 +97,7 @@ static int mp3_indexer_initmap(MediaFile_t *media, mp3_t *mp3)
 
 /* ************************************************************************** */
 
-static int mp3_indexer(MediaFile_t *video, mp3_t *mp3)
+static int mp3_indexer(MediaFile_t *media, mp3_t *mp3)
 {
     TRACE_INFO(MP3, BLD_GREEN "mp3_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -106,12 +106,12 @@ static int mp3_indexer(MediaFile_t *video, mp3_t *mp3)
     if (mp3->audio_vbr == true)
     {
         mp3->audio_bitrate_vbr = (uint32_t)((double)mp3->audio_bitrate_vbr / (double)mp3->sample_count);
-        video->tracks_audio[0]->bitrate_mode = BITRATE_VBR;
+        media->tracks_audio[0]->bitrate_mode = BITRATE_VBR;
     }
     else
     {
         mp3->audio_bitrate_vbr = mp3->audio_bitrate_cbr;
-        video->tracks_audio[0]->bitrate_mode = BITRATE_CBR;
+        media->tracks_audio[0]->bitrate_mode = BITRATE_CBR;
     }
 
     // Stream duration
@@ -134,11 +134,11 @@ static int mp3_indexer(MediaFile_t *video, mp3_t *mp3)
         mp3->media_duration_s = ((double)mp3->sample_count * (double)mp3->mpeg_sampleperframe) / (double)mp3->audio_samplingrate;
     }
 
-    video->duration = mp3->media_duration_s * 1000.0;
-    video->tracks_audio[0]->duration_ms = mp3->media_duration_s * 1000.0;
+    media->duration = mp3->media_duration_s * 1000.0;
+    media->tracks_audio[0]->duration_ms = mp3->media_duration_s * 1000.0;
 
-    video->tracks_audio[0]->sample_count = mp3->sample_count;
-    video->tracks_audio[0]->stream_size = mp3->total_size;
+    media->tracks_audio[0]->sample_count = mp3->sample_count;
+    media->tracks_audio[0]->stream_size = mp3->total_size;
 
     return retcode;
 }
@@ -367,19 +367,19 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3)
 
 /* ************************************************************************** */
 
-int mp3_fileParse(MediaFile_t *video)
+int mp3_fileParse(MediaFile_t *media)
 {
     int retcode = SUCCESS;
 
     TRACE_INFO(MP3, BLD_GREEN "mp3_fileParse()\n" CLR_RESET);
 
-    int64_t stream_size  = video->file_size;
+    int64_t stream_size  = media->file_size;
     int64_t frame_offset = 0;
     uint32_t frame_header = 0;
     bool first_frame_parsed = false;
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {
@@ -393,7 +393,7 @@ int mp3_fileParse(MediaFile_t *video)
         // Loop on 1st level elements
         while (mp3.run == true &&
                retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < (video->file_size - 128))
+               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 128))
         {
             // Seek to the next frame offset // Assume the MP3 frames will not be bigger than 4Gib
             uint32_t jump_bits = (uint32_t)(frame_offset - bitstream_get_absolute_byte_offset(bitstr)) * 8;
@@ -482,8 +482,8 @@ int mp3_fileParse(MediaFile_t *video)
 
         if (retcode == SUCCESS)
         {
-            retcode = mp3_indexer_initmap(video, &mp3);
-            retcode = mp3_indexer(video, &mp3);
+            retcode = mp3_indexer_initmap(media, &mp3);
+            retcode = mp3_indexer(media, &mp3);
         }
     }
     else

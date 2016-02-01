@@ -199,13 +199,13 @@ static int mkv_parse_segment(Bitstream_t *bitstr)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int mkv_fileParse(MediaFile_t *video)
+int mkv_fileParse(MediaFile_t *media)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {

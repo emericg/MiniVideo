@@ -30,7 +30,7 @@
 
 /* ************************************************************************** */
 
-int muxer_export_samples(MediaFile_t *video,
+int muxer_export_samples(MediaFile_t *media,
                          BitstreamMap_t *bitstream_map,
                          const int output_format);
 

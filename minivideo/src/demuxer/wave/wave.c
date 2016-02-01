@@ -251,15 +251,15 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int wave_indexer_initmap(MediaFile_t *video, wave_t *wave)
+static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 {
     // Init a bitstreamMap_t for each wave track
-    int retcode = init_bitstream_map(&video->tracks_audio[0], 1);
+    int retcode = init_bitstream_map(&media->tracks_audio[0], 1);
 
     if (retcode == SUCCESS)
     {
-        BitstreamMap_t *track = video->tracks_audio[video->tracks_audio_count];
-        video->tracks_audio_count++;
+        BitstreamMap_t *track = media->tracks_audio[media->tracks_audio_count];
+        media->tracks_audio_count++;
 
         track->stream_type  = stream_AUDIO;
         track->stream_level = stream_level_ES;
@@ -358,19 +358,19 @@ static int wave_indexer_initmap(MediaFile_t *video, wave_t *wave)
 
 /* ************************************************************************** */
 
-static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *video, wave_t *wave)
+static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Convert index into a bitstream map
-    retcode = wave_indexer_initmap(video, wave);
+    retcode = wave_indexer_initmap(media, wave);
 
     if (retcode == SUCCESS)
     {
-        if (video->tracks_audio[0])
+        if (media->tracks_audio[0])
         {
-            video->duration = video->tracks_audio[0]->duration_ms;
+            media->duration = media->tracks_audio[0]->duration_ms;
         }
     }
 

@@ -41,7 +41,7 @@ typedef enum StartCodes_e
 
 /*!
  * \brief Parse elementary stream files, the "brute-force" way.
- * \param *video A pointer to a MediaFile_t structure.
+ * \param *media A pointer to a MediaFile_t structure.
  * \param video_codec docme.
  * \return retcode 1 if succeed, 0 otherwise.
  *
@@ -54,7 +54,7 @@ typedef enum StartCodes_e
  * It will only successfuly parse "ES" files containing only one audio or video
  * track.
  */
-int bruteforce_fileParse(MediaFile_t *video, AVCodec_e video_codec);
+int bruteforce_fileParse(MediaFile_t *media, AVCodec_e video_codec);
 
 /* ************************************************************************** */
 #endif // PARSER_BRUTEFORCE_H

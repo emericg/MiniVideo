@@ -41,7 +41,7 @@
 
 /* ************************************************************************** */
 
-static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_entry_count);
+static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_entry_count);
 
 /* ************************************************************************** */
 
@@ -475,7 +475,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
  * The index as described is the index you will find in AVI 1.0 files. It is
  * placed after the movi list in the RIFF AVI List.
  */
-static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *video, RiffChunk_t *idx1_header, avi_t *avi)
+static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -504,7 +504,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *video, RiffChunk_t *idx1
                 avi->tracks[i]->superindex_count == 0)
             {
                 track_left++;
-                retcode = avi_indexer_initmap(video, avi->tracks[i], index_entry_count);
+                retcode = avi_indexer_initmap(media, avi->tracks[i], index_entry_count);
             }
         }
 
@@ -532,44 +532,44 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *video, RiffChunk_t *idx1
                 {
                     TRACE_3(AVI, BLD_BLUE "> AUDIO\n" CLR_RESET);
                     int tid = 0;
-                    int sid = video->tracks_audio[tid]->sample_count;
-                    video->tracks_audio[tid]->sample_count++;
+                    int sid = media->tracks_audio[tid]->sample_count;
+                    media->tracks_audio[tid]->sample_count++;
 
-                    video->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
-                    video->tracks_audio[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
-                    video->tracks_audio[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_audio[tid]->sample_dts[sid] = -1;
-                    video->tracks_audio[tid]->sample_pts[sid] = -1;
+                    media->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
+                    media->tracks_audio[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
+                    media->tracks_audio[tid]->sample_size[sid] = (int64_t)dwChunkLength;
+                    media->tracks_audio[tid]->sample_dts[sid] = -1;
+                    media->tracks_audio[tid]->sample_pts[sid] = -1;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x6463) // dc: video
                 {
                     TRACE_3(AVI, BLD_BLUE "> VIDEO\n" CLR_RESET);
                     int tid = 0;
-                    int sid = video->tracks_video[tid]->sample_count;
-                    video->tracks_video[tid]->sample_count++;
+                    int sid = media->tracks_video[tid]->sample_count;
+                    media->tracks_video[tid]->sample_count++;
 
                     if (dwFlags == AVIIF_KEYFRAME)
-                        video->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
+                        media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
                     else
-                        video->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
+                        media->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
 
-                    video->tracks_video[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
-                    video->tracks_video[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_video[tid]->sample_dts[sid] = -1;
-                    video->tracks_video[tid]->sample_pts[sid] = -1;
+                    media->tracks_video[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
+                    media->tracks_video[tid]->sample_size[sid] = (int64_t)dwChunkLength;
+                    media->tracks_video[tid]->sample_dts[sid] = -1;
+                    media->tracks_video[tid]->sample_pts[sid] = -1;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7478) // tx: subtitles
                 {
                     TRACE_3(AVI, BLD_BLUE "> TEXT\n" CLR_RESET);
                     int tid = 0;
-                    int sid = video->tracks_subt[tid]->sample_count;
+                    int sid = media->tracks_subt[tid]->sample_count;
 
-                    video->tracks_subt[tid]->sample_type[sid] = sample_TEXT_FILE;
-                    video->tracks_subt[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
-                    video->tracks_subt[tid]->sample_size[sid] = (int64_t)dwChunkLength;
-                    video->tracks_subt[tid]->sample_dts[sid] = -1;
-                    video->tracks_subt[tid]->sample_pts[sid] = -1;
-                    video->tracks_subt[tid]->sample_count++;
+                    media->tracks_subt[tid]->sample_type[sid] = sample_TEXT_FILE;
+                    media->tracks_subt[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
+                    media->tracks_subt[tid]->sample_size[sid] = (int64_t)dwChunkLength;
+                    media->tracks_subt[tid]->sample_dts[sid] = -1;
+                    media->tracks_subt[tid]->sample_pts[sid] = -1;
+                    media->tracks_subt[tid]->sample_count++;
                 }
 /*
                 else if ((dwChunkId & 0x0000FFFF) == 0x6462) // db: Uncompressed video frame (RGB)
@@ -1172,22 +1172,21 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_entry_count)
+static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_entry_count)
 {
     // Init a bitstreamMap_t for each avi track
     int retcode = SUCCESS;
     BitstreamMap_t *mytrack = NULL;
 
-
     if (track->strh.fccType == fcc_auds)
     {
         // Audio track
-        retcode = init_bitstream_map(&video->tracks_audio[video->tracks_audio_count], index_entry_count);
+        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], index_entry_count);
 
         if (retcode == SUCCESS)
         {
-            mytrack = video->tracks_audio[video->tracks_audio_count];
-            video->tracks_audio_count++;
+            mytrack = media->tracks_audio[media->tracks_audio_count];
+            media->tracks_audio_count++;
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_AUDIO;
@@ -1210,12 +1209,12 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
     else if (track->strh.fccType == fcc_vids)
     {
         // Video track
-        retcode = init_bitstream_map(&video->tracks_video[video->tracks_video_count], index_entry_count);
+        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], index_entry_count);
 
         if (retcode == SUCCESS)
         {
-            mytrack = video->tracks_video[video->tracks_video_count];
-            video->tracks_video_count++;
+            mytrack = media->tracks_video[media->tracks_video_count];
+            media->tracks_video_count++;
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_VIDEO;
@@ -1243,12 +1242,12 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
     else if (track->strh.fccType == fcc_txts)
     {
         // Subtitles track
-        retcode = init_bitstream_map(&video->tracks_subt[video->tracks_subtitles_count], index_entry_count);
-        video->tracks_subtitles_count++;
+        retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], index_entry_count);
+        media->tracks_subtitles_count++;
 
         if (retcode == SUCCESS)
         {
-            mytrack = video->tracks_video[video->tracks_video_count];
+            mytrack = media->tracks_video[media->tracks_video_count];
 
             mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_TEXT;
@@ -1273,7 +1272,7 @@ static int avi_indexer_initmap(MediaFile_t *video, AviTrack_t *track, int index_
 
 /* ************************************************************************** */
 
-static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *video, avi_t *avi)
+static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_indexer()\n" CLR_RESET);
     int retcode = SUCCESS;
@@ -1302,7 +1301,7 @@ static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *video, avi_t *avi)
             }
 
             // Convert index into a bitstream map
-            retcode = avi_indexer_initmap(video, avi->tracks[i], avi->tracks[i]->index_count);
+            retcode = avi_indexer_initmap(media, avi->tracks[i], avi->tracks[i]->index_count);
 
             if (retcode == SUCCESS)
             {
@@ -1314,32 +1313,32 @@ static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *video, avi_t *avi)
                 {
                     for (k = 0; k < avi->tracks[i]->index_count; k++)
                     {
-                        int sid = video->tracks_audio[tid]->sample_count;
-                        video->tracks_audio[tid]->sample_count++;
+                        int sid = media->tracks_audio[tid]->sample_count;
+                        media->tracks_audio[tid]->sample_count++;
 
-                        video->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
-                        video->tracks_audio[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
-                        video->tracks_audio[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
-                        video->tracks_audio[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
-                        video->tracks_audio[tid]->sample_pts[sid] = -1;
+                        media->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
+                        media->tracks_audio[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
+                        media->tracks_audio[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
+                        media->tracks_audio[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
+                        media->tracks_audio[tid]->sample_pts[sid] = -1;
                     }
                 }
                 else if (avi->tracks[i]->strh.fccType == fcc_vids)
                 {
                     for (k = 0; k < avi->tracks[i]->index_count; k++)
                     {
-                        int sid = video->tracks_video[tid]->sample_count;
-                        video->tracks_video[tid]->sample_count++;
+                        int sid = media->tracks_video[tid]->sample_count;
+                        media->tracks_video[tid]->sample_count++;
 
                         if (avi->tracks[i]->index_entries[i].flags == AVIIF_KEYFRAME)
-                            video->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
+                            media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
                         else
-                            video->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
+                            media->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
 
-                        video->tracks_video[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
-                        video->tracks_video[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
-                        video->tracks_video[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
-                        video->tracks_video[tid]->sample_pts[sid] = -1;
+                        media->tracks_video[tid]->sample_offset[sid] = avi->tracks[i]->index_entries[k].offset;
+                        media->tracks_video[tid]->sample_size[sid] = avi->tracks[i]->index_entries[k].size;
+                        media->tracks_video[tid]->sample_dts[sid] = avi->tracks[i]->index_entries[k].pts;
+                        media->tracks_video[tid]->sample_pts[sid] = -1;
                     }
                 }
                 else if (avi->tracks[i]->strh.fccType == fcc_txts)
@@ -1374,14 +1373,14 @@ void avi_clean(avi_t *avi)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int avi_fileParse(MediaFile_t *video)
+int avi_fileParse(MediaFile_t *media)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {
@@ -1396,7 +1395,7 @@ int avi_fileParse(MediaFile_t *video)
         // Loop on 1st level list
         while (avi.run == true &&
                retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < video->file_size)
+               bitstream_get_absolute_byte_offset(bitstr) < media->file_size)
         {
             // Read RIFF header
             RiffList_t RIFF_header;
@@ -1444,7 +1443,7 @@ int avi_fileParse(MediaFile_t *video)
                         switch (chunk_header.dwFourCC)
                         {
                         case fcc_idx1:
-                            retcode = parse_idx1(bitstr, video, &chunk_header, &avi);
+                            retcode = parse_idx1(bitstr, media, &chunk_header, &avi);
                             break;
                         case fcc_JUNK:
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
@@ -1495,7 +1494,7 @@ int avi_fileParse(MediaFile_t *video)
                         switch (chunk_header.dwFourCC)
                         {
                         case fcc_idx1:
-                            retcode = parse_idx1(bitstr, video, &chunk_header, &avi);
+                            retcode = parse_idx1(bitstr, media, &chunk_header, &avi);
                             break;
                         case fcc_JUNK:
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
@@ -1537,7 +1536,7 @@ int avi_fileParse(MediaFile_t *video)
         }
 
         // Go for the indexation
-        retcode = avi_indexer(bitstr, video, &avi),
+        retcode = avi_indexer(bitstr, media, &avi),
 
         // Free avi_t structure content
         avi_clean(&avi);

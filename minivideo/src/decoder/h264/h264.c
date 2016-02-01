@@ -223,18 +223,18 @@ int h264_decode(MediaFile_t *input_video,
 
 /*!
  * \brief Free decoding context.
- * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
+ * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
  * \return A pointer to the newlee allocated DecodingContext.
  *
  * Initialize the DecodingContext and it's bitstream (with a MediaFile_t passed in parameters),
  * then NAL Unit structure, then init all pointer's (sps, pps, sei) to NULL.
  */
-DecodingContext_t *initDecodingContext(MediaFile_t *video)
+DecodingContext_t *initDecodingContext(MediaFile_t *media)
 {
     TRACE_INFO(H264, BLD_GREEN "initDecodingContext()\n" CLR_RESET);
     DecodingContext_t *dc = NULL;
 
-    if (video != NULL)
+    if (media != NULL)
     {
         // DecodingContext allocation
         dc = (DecodingContext_t*)calloc(1, sizeof(DecodingContext_t));
@@ -252,8 +252,8 @@ DecodingContext_t *initDecodingContext(MediaFile_t *video)
             dc->picture_extractionmode = 0;
 
             // Init input bitstream
-            dc->VideoFile = video;
-            dc->bitstr = init_bitstream(video, video->tracks_video[0]);
+            dc->VideoFile = media;
+            dc->bitstr = init_bitstream(media, media->tracks_video[0]);
 
             if (dc->bitstr == NULL)
             {

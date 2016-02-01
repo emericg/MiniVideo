@@ -167,16 +167,16 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 /* ************************************************************************** */
 
 /*!
- * \brief Check video and bitstream_map structures, then track infos.
+ * \brief Check media and bitstream_map structures, then track infos.
  * \return SUCCESS if so.
  */
-static int stream_infos(MediaFile_t *video, BitstreamMap_t *bitstream_map)
+static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structures
-    if (video && bitstream_map)
+    if (media && bitstream_map)
     {
         if (bitstream_map->stream_type == stream_AUDIO)
         {
@@ -221,13 +221,13 @@ static int stream_infos(MediaFile_t *video, BitstreamMap_t *bitstream_map)
  * \brief Export a PES packet into a file.
  * \return SUCCESS if so.
  */
-static int stream_output_filename(MediaFile_t *video, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
+static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Generate stream name
-    strncpy(output_filename, video->file_name, 254);
+    strncpy(output_filename, media->file_name, 254);
 
     // Track number
     // TODO
@@ -295,23 +295,23 @@ static int stream_output_filename(MediaFile_t *video, BitstreamMap_t *bitstream_
  * \brief Export a PES packet into a file.
  * \return SUCCESS if so.
  */
-int muxer_export_samples(MediaFile_t *video,
+int muxer_export_samples(MediaFile_t *media,
                          BitstreamMap_t *bitstream_map,
                          const int output_format)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> muxer_export_sample()\n" CLR_RESET);
 
     // Check stream
-    int retcode = stream_infos(video, bitstream_map);
+    int retcode = stream_infos(media, bitstream_map);
 
     if (retcode == SUCCESS)
     {
         // Stream output file name
         char output_filename[255];
-        stream_output_filename(video, bitstream_map, output_filename, output_format);
+        stream_output_filename(media, bitstream_map, output_filename, output_format);
 
         // Create & open PES stream file
-        FILE *f_src = video->file_pointer;
+        FILE *f_src = media->file_pointer;
         FILE *f_dst = fopen(output_filename, "wb");
 
         if (f_dst == NULL)

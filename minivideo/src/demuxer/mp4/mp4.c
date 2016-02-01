@@ -145,20 +145,20 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
 
 /*!
  * \brief Convert a videoTrack_t structure into a bitstreamMap_t.
- * \param *video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
+ * \param *media A pointer to a MediaFile_t structure, containing every informations available about the current video file.
  * \param *track A pointer to the videoTrack_t structure we want to extract data from.
  * \param idr_only Set to true if we only want to extract IDR samples.
  *
  * - Use STSZ box content to get back all samples.
  * - Use STSS box content to get back IDR samples only.
  */
-static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
+static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 {
     TRACE_INFO(MP4, BLD_GREEN "convertTrack()\n" CLR_RESET);
     bool retcode = SUCCESS;
     BitstreamMap_t *map = NULL;
 
-    if (video == NULL || track == NULL)
+    if (media == NULL || track == NULL)
     {
         TRACE_ERROR(MP4, "Cannot access audio or video tracks from the MP4 parser!\n");
         retcode = FAILURE;
@@ -171,20 +171,20 @@ static bool convertTrack(MediaFile_t *video, Mp4_t *mp4, Mp4Track_t *track)
     {
         if (track->handlerType == HANDLER_AUDIO)
         {
-            retcode = init_bitstream_map(&video->tracks_audio[video->tracks_audio_count], track->stsz_sample_count);
+            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
-                map = video->tracks_audio[video->tracks_audio_count];
-                video->tracks_audio_count++;
+                map = media->tracks_audio[media->tracks_audio_count];
+                media->tracks_audio_count++;
             }
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
-            retcode = init_bitstream_map(&video->tracks_video[video->tracks_video_count], track->stsz_sample_count + track->sps_count + track->pps_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->stsz_sample_count + track->sps_count + track->pps_count);
             if (retcode == SUCCESS)
             {
-                map = video->tracks_video[video->tracks_video_count];
-                video->tracks_video_count++;
+                map = media->tracks_video[media->tracks_video_count];
+                media->tracks_video_count++;
             }
         }
         else
@@ -2183,13 +2183,13 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int mp4_fileParse(MediaFile_t *video)
+int mp4_fileParse(MediaFile_t *media)
 {
     TRACE_INFO(MP4, BLD_GREEN "mp4_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {
@@ -2202,7 +2202,7 @@ int mp4_fileParse(MediaFile_t *video)
 
         while (mp4.run == true &&
                retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < video->file_size)
+               bitstream_get_absolute_byte_offset(bitstr) < media->file_size)
         {
             // Read box header
             Mp4Box_t box_header;
@@ -2247,9 +2247,9 @@ int mp4_fileParse(MediaFile_t *video)
         }
 
         // File metadatas
-        video->duration = (double)mp4.duration / mp4.timescale * 1000.0;
-        video->creation_time = (double)mp4.creation_time ;
-        video->modification_time = (double)mp4.modification_time ;
+        media->duration = (double)mp4.duration / mp4.timescale * 1000.0;
+        media->creation_time = (double)mp4.creation_time ;
+        media->modification_time = (double)mp4.modification_time ;
 
         // Tracks metadatas
         // Check if we have extracted tracks
@@ -2263,10 +2263,10 @@ int mp4_fileParse(MediaFile_t *video)
             unsigned int i = 0;
             for (i = 0; i < mp4.tracks_count; i++)
             {
-                convertTrack(video, &mp4, mp4.tracks[i]);
+                convertTrack(media, &mp4, mp4.tracks[i]);
             }
 
-            if (video->tracks_video_count == 0 &&  video->tracks_audio_count == 0)
+            if (media->tracks_video_count == 0 &&  media->tracks_audio_count == 0)
             {
                 TRACE_WARNING(MP4, "No tracks extracted!");
                 retcode = FAILURE;
