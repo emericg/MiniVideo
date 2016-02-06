@@ -95,7 +95,8 @@ void bitstream_print_buffer(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current byte offset is %i\n" CLR_RESET, bitstream_get_absolute_byte_offset(bitstr));
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current byte offset is %lli\n" CLR_RESET,
+               bitstream_get_absolute_byte_offset(bitstr));
 }
 
 /* ************************************************************************** */
@@ -106,7 +107,8 @@ void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_bit_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current bit offset is %i\n" CLR_RESET, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current bit offset is %lli\n" CLR_RESET,
+               bitstream_get_absolute_bit_offset(bitstr));
 }
 
 /* ************************************************************************** */
@@ -123,12 +125,14 @@ bool bitstream_check_alignment(Bitstream_t *bitstr)
 
     if ((bitstr->buffer_offset % 8) == 0)
     {
-        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is aligned" CLR_RESET " at current byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is aligned" CLR_RESET " at current byte offset %lli\n",
+                bitstream_get_absolute_byte_offset(bitstr));
         alignment = true;
     }
     else
     {
-        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is NOT aligned" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is NOT aligned" CLR_RESET " at current byte offset %lli + %i bit(s)\n",
+                bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
     }
 
     return alignment;
