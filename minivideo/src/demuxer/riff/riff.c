@@ -265,7 +265,7 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
     {
         int64_t file_size = bitstream_get_full_size(bitstr);
 
-        // If the current box have a parent, and its offset_end is 'valid' (not past file size)
+        // If the current list/chunk has a parent, and its offset_end is 'valid' (not past file size)
         if (parent && parent->offset_end < file_size)
         {
             // If the current offset_end is past its parent offset_end, its probably
@@ -282,11 +282,11 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
                 offset_end = file_size;
         }
 
-        // If the offset_end is the last byte of the file, we do not need to jump
+        // If the offset_end is past the last byte of the file, we do not need to jump
         // The parser will pick that fact and finish up
         if (offset_end >= file_size)
         {
-            bitstr->bitstream_offset = bitstream_get_full_size(bitstr);
+            bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
 

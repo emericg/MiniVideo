@@ -373,11 +373,6 @@ int mp3_fileParse(MediaFile_t *media)
 
     TRACE_INFO(MP3, BLD_GREEN "mp3_fileParse()\n" CLR_RESET);
 
-    int64_t stream_size  = media->file_size;
-    int64_t frame_offset = 0;
-    uint32_t frame_header = 0;
-    bool first_frame_parsed = false;
-
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(media, NULL);
 
@@ -390,10 +385,16 @@ int mp3_fileParse(MediaFile_t *media)
         // A convenient way to stop the parser
         mp3.run = true;
 
+        // stuff
+        int64_t min_frame_size = 128;
+        int64_t frame_offset = 0;
+        uint32_t frame_header = 0;
+        bool first_frame_parsed = false;
+
         // Loop on 1st level elements
         while (mp3.run == true &&
                retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 128))
+               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - min_frame_size))
         {
             // Seek to the next frame offset // Assume the MP3 frames will not be bigger than 4Gib
             uint32_t jump_bits = (uint32_t)(frame_offset - bitstream_get_absolute_byte_offset(bitstr)) * 8;
@@ -425,7 +426,7 @@ int mp3_fileParse(MediaFile_t *media)
             else if ((frame_header & 0xFFFFFF00) == 0x54414700)
             {
                 TRACE_INFO(MP3, "> ID3v1 tag @ %lli\n", frame_offset);
-                frame_offset = stream_size;
+                mp3.run = false;
             }
             else if ((frame_header & 0xFFFFFF00) == 0x49443300)
             {
