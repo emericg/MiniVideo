@@ -60,7 +60,7 @@ QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const
  * \param detailed: Also print the name of the format.
  * \return QString with the aspect ratio.
  *
- * See http://en.wikipedia.org/wiki/Aspect_ratio_(image) for more infos.
+ * More infos: http://en.wikipedia.org/wiki/Aspect_ratio_(image)
  */
 QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed = false);
 

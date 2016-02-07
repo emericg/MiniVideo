@@ -191,7 +191,7 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
         aspectratio_qstr = "5:3";
 
         if (detailed)
-            aspectratio_qstr += " (35mm)";
+            aspectratio_qstr += " (35mm film)";
     }
     else if (ar_d > 1.59 && ar_d < 1.61)
     {
@@ -225,28 +225,35 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
         aspectratio_qstr = "1.85:1";
 
         if (detailed)
-            aspectratio_qstr += " (Widescreen)";
+            aspectratio_qstr += " (US / UK widescreen)";
+    }
+    else if (ar_d > 1.886 && ar_d < 1.906)
+    {
+        aspectratio_qstr = "1.896:1";
+
+        if (detailed)
+            aspectratio_qstr += " (DCI / SMPTE digital cinema)";
     }
     else if (ar_d > 1.99 && ar_d < 2.01)
     {
         aspectratio_qstr = "2.0:1";
 
         if (detailed)
-            aspectratio_qstr += " (Univisium)";
+            aspectratio_qstr += " (SuperScope / Univisium)";
     }
     else if (ar_d > 2.19 && ar_d < 2.21)
     {
         aspectratio_qstr = "2.20:1";
 
         if (detailed)
-            aspectratio_qstr += " (70 mm)";
+            aspectratio_qstr += " (70 mm film)";
     }
     else if (ar_d > 2.34 && ar_d < 2.36)
     {
         aspectratio_qstr = "2.35:1";
 
         if (detailed)
-            aspectratio_qstr += " (CinemaScope)";
+            aspectratio_qstr += " (35 mm anamorphic)";
     }
     else if (ar_d > 2.38 && ar_d < 2.40)
     {
