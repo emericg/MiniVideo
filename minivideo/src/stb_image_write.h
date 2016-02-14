@@ -451,7 +451,7 @@ unsigned char *stbi_write_png_to_mem(unsigned char *pixels, int stride_bytes, in
       memcpy(filt+j*(x*n+1)+1, line_buffer, x*n);
    }
    free(line_buffer);
-   zlib = stbi_zlib_compress(filt, y*( x*n+1), &zlen, 8); // increase 8 to get smaller but use more memory
+   zlib = stbi_zlib_compress(filt, y*(x*n+1), &zlen, 8); // increase 8 to get smaller but use more memory
    free(filt);
    if (!zlib) return 0;
 

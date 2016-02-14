@@ -21,8 +21,6 @@
  * \date      2010
  */
 
-
-
 // minivideo headers
 #include "h264.h"
 #include "h264_parameterset.h"
@@ -40,28 +38,6 @@ static int computeNormAdjust(DecodingContext_t *dc);
 
 /* ************************************************************************** */
 
-/*!
- * \brief Decode H.264 bitstream.
- * \param *input_video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
- * \param *output_directory The directory where to save exported pictures.
- * \param picture_format The picture file format.
- * \param picture_quality The quality we want for exported picture [1;100].
- * \param picture_number The number of thumbnail(s) we want to extract.
- * \param picture_extractionmode The method of distribution for thumbnails extraction.
- * \return 1 if succeed, 0 otherwise.
- *
- * This decoder is based on the 'ITU-T H.264' recommendation:
- * 'Advanced Video Coding for generic audiovisual services'
- * It also correspond to 'ISO/IEC 14496-10' international standard, part 10:
- * 'Advanced Video Coding'.
- *
- * You can download the H.264 specification for free on the ITU website:
- * http://www.itu.int/rec/T-REC-H.264
- *
- * The very first step to H.264 bitstream decoding. Initialize DecodingContext,
- * then start the decoding process, which loop on NAL Units found in the bitstream.
- * Each NAL Unit is processed following it's content type.
- */
 int h264_decode(MediaFile_t *input_video,
                 const char *output_directory,
                 const int picture_format,
