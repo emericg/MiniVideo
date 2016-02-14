@@ -182,28 +182,14 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
 
     double ar_d = static_cast<double>(x) / static_cast<double>(y);
 
-    if (ar_d > 1.767 && ar_d < 1.787)
-    {
-        aspectratio_qstr = "16:9";
-    }
-    else if (ar_d > 1.656 && ar_d < 1.676)
-    {
-        aspectratio_qstr = "5:3";
 
-        if (detailed)
-            aspectratio_qstr += " (35mm film)";
-    }
-    else if (ar_d > 1.59 && ar_d < 1.61)
+    if (ar_d > 1.24 && ar_d < 1.26)
     {
-        aspectratio_qstr = "16:10";
+        aspectratio_qstr = "5:4";
     }
-    else if (ar_d > 1.545 && ar_d < 1.565)
+    else if (ar_d > 1.323 && ar_d < 1.343)
     {
-        aspectratio_qstr = "14:9";
-    }
-    else if (ar_d > 1.49 && ar_d < 1.51)
-    {
-        aspectratio_qstr = "3:2";
+        aspectratio_qstr = "4:3";
     }
     else if (ar_d > 1.42 && ar_d < 1.44)
     {
@@ -212,13 +198,28 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
         if (detailed)
             aspectratio_qstr += " (IMAX)";
     }
-    else if (ar_d > 1.323 && ar_d < 1.343)
+    else if (ar_d > 1.49 && ar_d < 1.51)
     {
-        aspectratio_qstr = "4:3";
+        aspectratio_qstr = "3:2";
     }
-    else if (ar_d > 1.24 && ar_d < 1.26)
+    else if (ar_d > 1.545 && ar_d < 1.565)
     {
-        aspectratio_qstr = "5:4";
+        aspectratio_qstr = "14:9";
+    }
+    else if (ar_d > 1.59 && ar_d < 1.61)
+    {
+        aspectratio_qstr = "16:10";
+    }
+    else if (ar_d > 1.656 && ar_d < 1.676)
+    {
+        aspectratio_qstr = "5:3";
+
+        if (detailed)
+            aspectratio_qstr += " (35mm film)";
+    }
+    else if (ar_d > 1.767 && ar_d < 1.787)
+    {
+        aspectratio_qstr = "16:9";
     }
     else if (ar_d > 1.84 && ar_d < 1.86)
     {
@@ -241,7 +242,7 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
         if (detailed)
             aspectratio_qstr += " (SuperScope / Univisium)";
     }
-    else if (ar_d > 2.19 && ar_d < 2.21)
+    else if (ar_d > 2.19 && ar_d < 2.22)
     {
         aspectratio_qstr = "2.20:1";
 
@@ -260,7 +261,14 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
         aspectratio_qstr = "2.39:1";
 
         if (detailed)
-            aspectratio_qstr += " (35 mm anamorphic)";
+            aspectratio_qstr += " (35 mm modern anamorphic)";
+    }
+    else if (ar_d > 2.54 && ar_d < 2.56)
+    {
+        aspectratio_qstr = "2.55:1";
+
+        if (detailed)
+            aspectratio_qstr += " (Cinemascope)";
     }
     else if (ar_d > 2.75 && ar_d < 2.77)
     {
