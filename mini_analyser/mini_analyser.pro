@@ -29,7 +29,7 @@ FORMS       += ui/mainwindow.ui \
 
 RESOURCES   += resources/resources.qrc
 
-# OS icons
+# OS icons (Mac and Windows)
 ICON         = resources/app/icon.icns
 RC_ICONS     = resources/app/icon.ico
 
@@ -37,3 +37,28 @@ RC_ICONS     = resources/app/icon.ico
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo
+
+# Mac OS X target
+unix:macx {
+    # Force RPATH to look into the 'Frameworks' dir? Doesn't really seems to work...
+    #QMAKE_RPATHDIR += @executable_path/../Frameworks
+
+    # Force Qt to use a particular SDK version
+    #QMAKE_MAC_SDK = macosx10.11
+
+    # Copy libraries into the package
+    QT_DIR = /usr/local/lib/
+    FW_DIR = build/$${TARGET}.app/Contents/Frameworks
+    QMAKE_POST_LINK += (mkdir -p $${FW_DIR})
+    QMAKE_POST_LINK += && (cp ../minivideo/build/libminivideo.dylib $${FW_DIR})
+    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtCore.framework $${FW_DIR})
+    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtGui.framework $${FW_DIR})
+    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtWidgets.framework $${FW_DIR})
+
+    # Use bundled libraries (rewrite rpaths)
+    APP = build/$${TARGET}.app/Contents/MacOS/$${TARGET}
+    QMAKE_POST_LINK += && (install_name_tool -change $${PWD}/build/libminivideo.dylib @executable_path/../Frameworks/libminivideo.dylib $${APP})
+    QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtCore.framework/Versions/5/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore $${APP})
+    QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtGui.framework/Versions/5/QtGui @executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui $${APP})
+    QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtWidgets.framework/Versions/5/QtWidgets @executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets $${APP})
+}
