@@ -35,30 +35,27 @@ typedef enum StreamType_e
 
     stream_AUDIO   = 1,
     stream_VIDEO   = 2,
-    stream_TEXT    = 3
+    stream_TEXT    = 3,
+
+    stream_MENU    = 4,
+    stream_TMCD    = 5
 
 } StreamType_e;
-
-//! Stream level
-typedef enum StreamLevel_e
-{
-    stream_level_UNKNOWN = 0,
-
-    stream_level_PES     = 1,
-    stream_level_ES      = 2
-
-} StreamLevel_e;
 
 //! Sample type
 typedef enum SampleType_e
 {
-    sample_AUDIO = 0,
+    sample_UNKNOWN = 0,
+
+    sample_AUDIO,
 
     sample_VIDEO,
     sample_VIDEO_IDR,
     sample_VIDEO_PARAM,
 
-    sample_TEXT_FILE
+    sample_TEXT_FILE,
+
+    sample_OTHER
 
 } SampleType_e;
 

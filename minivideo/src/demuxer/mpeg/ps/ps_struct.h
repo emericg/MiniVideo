@@ -29,15 +29,43 @@
 
 /* ************************************************************************** */
 
+typedef struct MpegPs_t
+{
+    bool run; //!< A convenient way to stop the parser from any sublevel
+
+    unsigned mpeg_version;
+
+    unsigned stat_packheader;
+    unsigned stat_systemheader;
+    unsigned stat_packet_psm;
+    unsigned stat_packet_psd;
+    unsigned stat_packet_private;
+    unsigned stat_packet_audio;
+    unsigned stat_packet_video;
+    unsigned stat_packet_other;
+
+} MpegPs_t;
+
+typedef struct MpegPsInternal_t
+{
+    bool run; //!< A convenient way to stop the parser from any sublevel
+
+    MpegPs_t mps;
+
+} MpegPsInternal_t;
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
 /*!
  * \struct PackHeader_t
- * \brief PS "pack header" structure.
+ * \brief 'Program Stream pack header' structure.
  *
- * H.222 / table 2-33.
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-33 – Program Stream pack header.
  */
 typedef struct PackHeader_t
 {
-    uint32_t pack_start_code;
     uint64_t system_clock_reference_base;
     uint16_t system_clock_reference_extension;
     uint32_t program_mux_rate;
@@ -47,14 +75,13 @@ typedef struct PackHeader_t
 
 /*!
  * \struct SystemHeader_t
- * \brief PS "system header" structure.
+ * \brief 'Program Stream system header' structure.
  *
- * H.222 / table 2-34.
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-34 – Program Stream system header.
  */
 typedef struct SystemHeader_t
 {
-    uint32_t system_header_start_code;
-    uint16_t header_length;
     uint32_t rate_bound;
     uint8_t audio_bound;
     uint8_t fixed_flag;
@@ -73,15 +100,13 @@ typedef struct SystemHeader_t
 
 /*!
  * \struct ProgramStreamMap_t
- * \brief PS "program stream map" structure.
+ * \brief 'Program Stream map' structure.
  *
- * H.222 / table 2-35.
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-35 – Program Stream map.
  */
 typedef struct ProgramStreamMap_t
 {
-    uint32_t packet_start_code_prefix;
-    uint8_t map_stream_id;
-    uint16_t program_stream_map_length;
     uint8_t current_next_indicator;
     uint8_t program_stream_map_version;
     uint16_t program_stream_map_info_length;
@@ -100,15 +125,13 @@ typedef struct ProgramStreamMap_t
 
 /*!
  * \struct ProgramStreamDirectory_t
- * \brief PS "program stream directory" structure.
+ * \brief 'Program Stream directory' structure.
  *
- * H.222 / table 2-36.
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-36 – Program Stream directory packet.
  */
 typedef struct ProgramStreamDirectory_t
 {
-    uint32_t packet_start_code_prefix;
-    uint8_t directory_stream_id;
-    uint16_t PES_packet_length;
     uint16_t number_of_access_units;
 
     uint64_t prev_directory_offset;

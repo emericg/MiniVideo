@@ -47,8 +47,7 @@ static int mp3_indexer_initmap(MediaFile_t *media, mp3_t *mp3)
         BitstreamMap_t *track = media->tracks_audio[media->tracks_audio_count];
         media->tracks_audio_count++;
 
-        track->stream_type  = stream_AUDIO;
-        track->stream_level = stream_level_ES;
+        track->stream_type = stream_AUDIO;
 
         if (mp3->mpeg_layer == 1)
             track->stream_codec = CODEC_MPEG_L1;

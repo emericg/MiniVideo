@@ -28,10 +28,11 @@
 #include "../pes/pes_struct.h"
 #include "../../../typedef.h"
 #include "../../../minitraces.h"
+#include "../../../bitstream_utils.h"
 
 // C standard libraries
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 /* ************************************************************************** */
@@ -40,43 +41,46 @@
  * \brief Parse a pack header structure.
  * \param *bitstr The bitstream to use.
  * \param *pack_header A pointer to a pack_header structure.
- * \param *system_header A pointer to a system_header structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \return 1 if succeed, 0 otherwise.
  *
- * This parser is based on the 'ISO/IEC 13818-1' international standard, part 1:
- * 'Transmission multiplexing and synchronization'.
+ * From 'ISO/IEC 13818-1' specification:
+ * 2.5.3.3 Pack layer of Program Stream.
+ * Table 2-33 – Program Stream pack header
  */
-static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, SystemHeader_t *system_header)
+static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeader_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_pack_header()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_pack_header()" CLR_RESET " @ %lli\n",
+               header->offset_start);
+
     int retcode = SUCCESS;
     int i = 0;
 
-    pack_header->pack_start_code = PES_PACK_HEADER;
+    // Pack Headers do not have lengh field, rewind 2 bytes
+    rewind_bits(bitstr, 16);
 
     if (read_bits(bitstr, 2) != 1)
     {
-        TRACE_ERROR(MPS, "wrong 'marker_bit'\n");
+        TRACE_ERROR(MPS, "wrong 'marker_bits'\n");
         return FAILURE;
     }
 
-    pack_header->system_clock_reference_base = read_bits(bitstr, 3) << 30;
+    packet->system_clock_reference_base = read_bits(bitstr, 3) << 30;
     MARKER_BIT
-    pack_header->system_clock_reference_base += read_bits(bitstr, 15) << 15;
+    packet->system_clock_reference_base += read_bits(bitstr, 15) << 15;
     MARKER_BIT
-    pack_header->system_clock_reference_base += read_bits(bitstr, 15);
+    packet->system_clock_reference_base += read_bits(bitstr, 15);
     MARKER_BIT
-    pack_header->system_clock_reference_extension = read_bits(bitstr, 9);
+    packet->system_clock_reference_extension = read_bits(bitstr, 9);
     MARKER_BIT
-    pack_header->program_mux_rate = read_bits(bitstr, 22);
+    packet->program_mux_rate = read_bits(bitstr, 22);
     MARKER_BIT
     MARKER_BIT
-    int reserved = read_bits(bitstr, 5);
+    /*unsigned reserved =*/ read_bits(bitstr, 5);
 
-    pack_header->pack_stuffing_length = read_bits(bitstr, 3);
+    packet->pack_stuffing_length = read_bits(bitstr, 3);
 
     // Stuffing
-    for (i = 0; i < pack_header->pack_stuffing_length; i++)
+    for (i = 0; i < packet->pack_stuffing_length; i++)
     {
         if (read_bits(bitstr, 8) != 0xFF)
         {
@@ -85,40 +89,90 @@ static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, Sys
         }
     }
 
-    // System header
-    if (next_bits(bitstr, 32) == PES_SYSTEM_HEADER)
+    // System header // TODO split into its own function?
+    if (next_bits(bitstr, 32) == 0x000001BB)
     {
-        TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
-        skip_bits(bitstr, 32);
+        TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli\n",
+                   bitstream_get_absolute_byte_offset(bitstr) - 4);
+        skip_bits(bitstr, 48); // start code + size
 
-        system_header->header_length = read_bits(bitstr, 16);
-        MARKER_BIT
-        system_header->rate_bound = read_bits(bitstr, 22);
-        MARKER_BIT
-        system_header->audio_bound = read_bits(bitstr, 6);
-        system_header->fixed_flag = read_bits(bitstr, 1);
-        system_header->CSPS_flag = read_bits(bitstr, 1);
-        system_header->system_audio_lock_flag = read_bits(bitstr, 1);
-        system_header->system_video_lock_flag = read_bits(bitstr, 1);
-        MARKER_BIT
-        system_header->video_bound = read_bits(bitstr, 5);
-        system_header->packet_rate_restriction_flag = read_bits(bitstr, 1);
+        SystemHeader_t system_header;
 
-        int reserved_bits = read_bits(bitstr, 7);
+        MARKER_BIT
+        system_header.rate_bound = read_bits(bitstr, 22);
+        MARKER_BIT
+        system_header.audio_bound = read_bits(bitstr, 6);
+        system_header.fixed_flag = read_bits(bitstr, 1);
+        system_header.CSPS_flag = read_bits(bitstr, 1);
+        system_header.system_audio_lock_flag = read_bits(bitstr, 1);
+        system_header.system_video_lock_flag = read_bits(bitstr, 1);
+        MARKER_BIT
+        system_header.video_bound = read_bits(bitstr, 5);
+        system_header.packet_rate_restriction_flag = read_bits(bitstr, 1);
+
+        /*unsigned reserved_bits =*/ read_bits(bitstr, 7);
 
         // stack it?
         while (next_bit(bitstr) == 1)
         {
-            system_header->stream_id = read_bits(bitstr, 8);
+            system_header.stream_id = read_bits(bitstr, 8);
             MARKER_BIT
             MARKER_BIT
-            system_header->PSTD_buffer_bound_scale = read_bits(bitstr, 1);
-            system_header->PSTD_buffer_size_bound = read_bits(bitstr, 13);
+            system_header.PSTD_buffer_bound_scale = read_bits(bitstr, 1);
+            system_header.PSTD_buffer_size_bound = read_bits(bitstr, 13);
         }
     }
     else
     {
         TRACE_2(MPS, " > No system_header()\n");
+    }
+
+    // Pack header have no length field, so we just have to parse them correctly
+    header->offset_end = bitstream_get_absolute_byte_offset(bitstr);
+    header->payload_length = header->offset_end - header->offset_start - 4;
+
+    return retcode;
+}
+
+/*!
+ * \brief Parse a system header structure.
+ * \param *bitstr The bitstream to use.
+ * \param *system_header A pointer to a system_header structure.
+ * \return 1 if succeed, 0 otherwise.
+ *
+ * From 'ISO/IEC 13818-1' specification:
+ * 2.5.3.5 System header.
+ * Table 2-34 – Program Stream system header
+ */
+static int parse_system_header(Bitstream_t *bitstr, PesHeader_t *header, SystemHeader_t *packet)
+{
+    int retcode = SUCCESS;
+
+    TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli\n",
+               header->offset_start);
+
+    MARKER_BIT
+    packet->rate_bound = read_bits(bitstr, 22);
+    MARKER_BIT
+    packet->audio_bound = read_bits(bitstr, 6);
+    packet->fixed_flag = read_bits(bitstr, 1);
+    packet->CSPS_flag = read_bits(bitstr, 1);
+    packet->system_audio_lock_flag = read_bits(bitstr, 1);
+    packet->system_video_lock_flag = read_bits(bitstr, 1);
+    MARKER_BIT
+    packet->video_bound = read_bits(bitstr, 5);
+    packet->packet_rate_restriction_flag = read_bits(bitstr, 1);
+
+    /*unsigned reserved_bits =*/ read_bits(bitstr, 7);
+
+    // stack it?
+    while (next_bit(bitstr) == 1)
+    {
+        packet->stream_id = read_bits(bitstr, 8);
+        MARKER_BIT
+        MARKER_BIT
+        packet->PSTD_buffer_bound_scale = read_bits(bitstr, 1);
+        packet->PSTD_buffer_size_bound = read_bits(bitstr, 13);
     }
 
     return retcode;
@@ -128,28 +182,28 @@ static int parse_pack_header(Bitstream_t *bitstr, PackHeader_t *pack_header, Sys
 
 /*!
  * \brief Parse a program stream map structure.
- * \param *bitstr A bitstream.
+ * \param *bitstr The bitstream to use.
+ * \param *header PES packet header.
  * \param *packet A program stream map structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \return 1 if succeed, 0 otherwise.
  *
  * \todo Parse desciptors.
  *
- * H.222 / 2.5.4 Program Stream map.
+ * From 'ISO/IEC 13818-1' specification:
+ * 2.5.4 Program Stream map
+ * Table 2-35 – Program Stream map
  */
-int parse_program_stream_map(Bitstream_t *bitstr, ProgramStreamMap_t *packet)
+int parse_program_stream_map(Bitstream_t *bitstr, PesHeader_t *header, ProgramStreamMap_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_map()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_map()" CLR_RESET " @ %lli\n",
+               header->offset_start);
     int retcode = SUCCESS;
-    int i = 0, N = 0, N1 = 0, N2 = 0;
+    int i = 0, N1 = 0, N2 = 0;
 
-    packet->packet_start_code_prefix = 0x000001;
-    packet->map_stream_id = 0xBC;
-
-    packet->program_stream_map_length = read_bits(bitstr, 16);
     packet->current_next_indicator = read_bit(bitstr);
-    int reserved1 = read_bits(bitstr, 2);
+    /*int reserved1 =*/ read_bits(bitstr, 2);
     packet->program_stream_map_version = read_bits(bitstr, 5);
-    int reserved2 = read_bits(bitstr, 7);
+    /*int reserved2 =*/ read_bits(bitstr, 7);
     MARKER_BIT
     packet->program_stream_map_info_length = read_bits(bitstr, 16);
     for (i = 0; i < N1; i++)
@@ -179,21 +233,21 @@ int parse_program_stream_map(Bitstream_t *bitstr, ProgramStreamMap_t *packet)
 
 /*!
  * \brief Parse a program stream directory structure.
- * \param *bitstr A bitstream.
+ * \param *bitstr The bitstream to use.
  * \param *packet A program stream directory structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \return 1 if succeed, 0 otherwise.
  *
- * H.222 / 2.5.5 Program Stream directory.
+ * From 'ISO/IEC 13818-1' specification:
+ * 2.5.5 Program Stream directory
+ * Table 2-36 – Program Stream directory packet
  */
-static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDirectory_t *packet)
+static int parse_program_stream_directory(Bitstream_t *bitstr, PesHeader_t *header, ProgramStreamDirectory_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %i\n", bitstream_get_absolute_byte_offset(bitstr) - 4);
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %lli\n",
+               header->offset_start);
     int retcode = SUCCESS;
     int i = 0;
 
-    packet->packet_start_code_prefix = 0x000001;
-    packet->directory_stream_id = 0xFF;
-    packet->PES_packet_length = read_bits(bitstr, 16);
     packet->number_of_access_units = read_bits(bitstr, 15);
     MARKER_BIT
 
@@ -226,7 +280,7 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDire
 
         packet->reference_offset = read_bits(bitstr, 16);
         MARKER_BIT
-        int reserved1 = read_bits(bitstr, 3);
+        /*unsigned reserved1 =*/ read_bits(bitstr, 3);
 
         packet->PTS = read_bits(bitstr, 3) << 30;
         MARKER_BIT
@@ -242,7 +296,7 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDire
 
         packet->intra_coded_indicator = read_bit(bitstr);
         packet->coding_parameters_indicator = read_bits(bitstr, 2);
-        int reserved2 = read_bits(bitstr, 4);
+        /*unsigned reserved2 =*/ read_bits(bitstr, 4);
     }
 
     return retcode;
@@ -251,149 +305,176 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, ProgramStreamDire
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-/*!
- * \brief Parse a mp4 file.
- * \param *video A pointer to a MediaFile_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
- *
- * This parser is based on the 'ISO/IEC 13818-1' international standard, part 1:
- * 'Transmission multiplexing and synchronization'.
- */
-int ps_fileParse(MediaFile_t *video)
+int ps_fileParse(MediaFile_t *media)
 {
-    TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
     int retcode = SUCCESS;
 
+    TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
+
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(video, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
 
     if (bitstr != NULL)
     {
-        // Init bitstream_map to store container infos
-        retcode = init_bitstream_map(&video->tracks_audio[0], 999999);
-        retcode = init_bitstream_map(&video->tracks_video[0], 999999);
+        // Init an MpegPs structure
+        MpegPs_t mpg;
+        memset(&mpg, 0, sizeof(MpegPs_t));
 
-        if (retcode == SUCCESS)
+        // A convenient way to stop the parser
+        mpg.run = true;
+
+        // stuff
+        const int64_t min_packet_size = 4;
+
+        // Loop on PES packets
+        while (mpg.run == true &&
+               retcode == SUCCESS &&
+               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - min_packet_size))
         {
-            int sid = 0;
+            // Init
+            PackHeader_t pack_header = { 0 };
+            SystemHeader_t system_header = { 0 };
 
-            video->tracks_audio[0]->stream_type = stream_AUDIO;
-            video->tracks_audio[0]->stream_level = stream_level_PES;
-            video->tracks_audio[0]->stream_codec = CODEC_MPEG_L3;
-            video->tracks_audio[0]->sample_alignment = false;
+            PesHeader_t pes_header = { 0 };
+            PesPacket_t pes_packet = { 0 };
+            ProgramStreamMap_t pes_streammap = { 0 };
+            ProgramStreamDirectory_t pes_streamdirectory = { 0 };
 
-            video->tracks_video[0]->stream_type = stream_VIDEO;
-            video->tracks_video[0]->stream_level = stream_level_PES;
-            video->tracks_video[0]->stream_codec = CODEC_MPEG12;
-            video->tracks_video[0]->sample_alignment = false;
+            // Parse packet header
+            parse_pes_header(bitstr, &pes_header);
 
-            // Read bitstream
-            while (retcode == SUCCESS &&
-                   (bitstream_get_absolute_byte_offset(bitstr) + 4) < video->file_size &&
-                   next_bits(bitstr, 32) != PES_PROGRAM_END)
+            switch (pes_header.stream_id)
             {
-                PackHeader_t pack_header;
-                SystemHeader_t system_header;
+            case SID_PACK_HEADER:
+                retcode = parse_pack_header(bitstr, &pes_header, &pack_header);
+                mpg.stat_packheader++;
+                break;
+            case SID_SYSTEM_HEADER:
+                retcode = parse_system_header(bitstr, &pes_header, &system_header);
+                mpg.stat_systemheader++;
+                break;
 
-                if (read_bits(bitstr, 32) == PES_PACK_HEADER)
+            case SID_PROGRAM_STREAM_MAP:
+                retcode = parse_program_stream_map(bitstr, &pes_header, &pes_streammap);
+                mpg.stat_packet_psm++;
+                break;
+            case SID_PROGRAM_STREAM_DIRECTORY:
+                retcode = parse_program_stream_directory(bitstr, &pes_header, &pes_streamdirectory);
+                mpg.stat_packet_psd++;
+                break;
+            case SID_PRIVATE_STREAM_2:
+                TRACE_2(MPS, BLD_GREEN "Private Stream 2 PES" CLR_RESET " @ %lli\n", pes_header.offset_start);
+                mpg.stat_packet_private++;
+                break;
+            case SID_PADDING:
+                retcode = parse_pes_padding(bitstr, &pes_header, &pes_packet);
+                mpg.stat_packet_other++;
+                break;
+
+            case 0xC1: case 0xC2: case 0xC3: case 0xC4: case 0xC5: case 0xC6:
+            case 0xC7: case 0xC8: case 0xC9: case 0xCA: case 0xCB: case 0xCC:
+            case 0xCD: case 0xCE: case 0xCF: case 0xD0: case 0xD1: case 0xD2:
+            case 0xD3: case 0xD4: case 0xD5: case 0xD6: case 0xD7: case 0xD8:
+            case 0xD9: case 0xDA: case 0xDB: case 0xDC: case 0xDD: case 0xDE:
+            case 0xDF: case SID_PRIVATE_STREAM_1: case SID_AUDIO:
+            {
+                TRACE_INFO(MPS, BLD_GREEN "parse_pes_audio()" CLR_RESET " @ %lli\n", pes_header.offset_start);
+
+                // Find a trackid
+                unsigned track_id = pes_header.stream_id - 0xC0;
+                if (pes_header.stream_id == SID_PRIVATE_STREAM_1)
+                    track_id = 0;
+
+                // If a private stream is in the stream, the 'regular' trackid order is shifted
+                //while (media->tracks_audio[track_id] == NULL)
+                //    track_id--;
+
+                // Init bitstream_map (as needed) to store samples
+                if (media->tracks_audio[track_id] == NULL)
                 {
-                    // Parse pack & system header
-                    retcode = parse_pack_header(bitstr, &pack_header, &system_header);
-
-                    // Then loop on PES
-                    while (retcode == SUCCESS &&
-                           (bitstream_get_absolute_byte_offset(bitstr) + 4) < video->file_size &&
-                           next_bits(bitstr, 32) != PES_PACK_HEADER &&
-                           next_bits(bitstr, 32) != PES_PROGRAM_END)
-                    {
-                        // Init
-                        PesPacket_t pes_packet;
-                        ProgramStreamMap_t pes_streammap;
-                        ProgramStreamDirectory_t pes_streamdirectory;
-
-                        // Parse start code
-                        pes_packet.packet_start_offset = bitstream_get_absolute_byte_offset(bitstr);
-                        pes_packet.packet_start_code   = read_bits(bitstr, 24);
-                        pes_packet.stream_id           = (uint8_t)read_bits(bitstr, 8);
-
-                        if (pes_packet.packet_start_code == PES_PACKETSTARTCODE)
-                        {
-                            switch (pes_packet.stream_id)
-                            {
-                            case SID_PROGRAM_STREAM_MAP:
-                                retcode = parse_program_stream_map(bitstr, &pes_streammap);
-                                break;
-                            case SID_PROGRAM_STREAM_DIRECTORY:
-                                retcode = parse_program_stream_directory(bitstr, &pes_streamdirectory);
-                                break;
-                            case SID_PADDING:
-                                retcode = parse_pes_padding(bitstr, &pes_packet);
-                                break;
-                            case SID_PRIVATE_STREAM_1:
-                                TRACE_2(MPS, BLD_GREEN "Private Stream 1 PES" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
-                                retcode = skip_pes(bitstr, &pes_packet);
-                                break;
-                            case SID_PRIVATE_STREAM_2:
-                                TRACE_2(MPS, BLD_GREEN "Private Stream 2 PES" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
-                                retcode = skip_pes(bitstr, &pes_packet);
-                                break;
-                            case SID_VIDEO:
-                                TRACE_INFO(MPS, BLD_GREEN "parse_pes_video()" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
-                                retcode = parse_pes(bitstr, &pes_packet);
-                                //print_pes(&pes_packet);
-
-                                // Set sample into the bitstream_map
-                                video->tracks_video[0]->sample_count++;
-                                sid = video->tracks_video[0]->sample_count;
-                                if (sid < 999999)
-                                {
-                                    video->tracks_video[0]->sample_type[sid] = sample_VIDEO;
-                                    video->tracks_video[0]->sample_size[sid] = pes_packet.PES_packet_length + 6;
-                                    video->tracks_video[0]->sample_offset[sid] = pes_packet.packet_start_offset;
-                                    video->tracks_video[0]->sample_pts[sid] = pes_packet.PTS;
-                                    video->tracks_video[0]->sample_dts[sid] = pes_packet.DTS;
-                                }
-                                break;
-                            case SID_AUDIO:
-                                TRACE_INFO(MPS, BLD_GREEN "parse_pes_audio()" CLR_RESET " @ %i\n", pes_packet.packet_start_offset);
-                                retcode = parse_pes(bitstr, &pes_packet);
-                                //print_pes(&pes_packet);
-
-                                // Set sample into the bitstream_map
-                                video->tracks_audio[0]->sample_count++;
-                                sid = video->tracks_audio[0]->sample_count;
-                                if (sid < 999999)
-                                {
-                                    video->tracks_audio[0]->sample_type[sid] = sample_AUDIO;
-                                    video->tracks_audio[0]->sample_size[sid] = pes_packet.PES_packet_length + 6;
-                                    video->tracks_audio[0]->sample_offset[sid] = pes_packet.packet_start_offset;
-                                    video->tracks_audio[0]->sample_pts[sid] = pes_packet.PTS;
-                                    video->tracks_audio[0]->sample_dts[sid] = pes_packet.DTS;
-                                }
-                                break;
-                            default:
-                                TRACE_WARNING(MPS, "Unknown PES type (0x%06X%02X) @ %i\n", pes_packet.packet_start_code, pes_packet.stream_id, pes_packet.packet_start_offset);
-                                retcode = skip_pes(bitstr, &pes_packet);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            TRACE_ERROR(MPS, "No valid packet_start_code at %i\n", pes_packet.packet_start_offset);
-                            retcode = FAILURE;
-                        }
-                    }
+                    retcode = init_bitstream_map(&media->tracks_audio[track_id], 999999);
+                    media->tracks_audio_count++;
+                    media->tracks_audio[track_id]->stream_type = stream_AUDIO;
                 }
-                else
+
+                retcode = parse_pes(bitstr, &pes_header, &pes_packet);
+                parse_pes_a(bitstr, &pes_header, &pes_packet, media->tracks_audio[track_id]);
+                mpg.stat_packet_audio++;
+
+                // Set sample into the bitstream_map
+                unsigned sample_id = media->tracks_audio[track_id]->sample_count++;
+                if (sample_id < 999999)
                 {
-                    TRACE_ERROR(MPS, "No pack header\n");
-                    retcode = FAILURE;
+                    media->tracks_audio[track_id]->sample_type[sample_id] = sample_AUDIO;
+                    media->tracks_audio[track_id]->sample_size[sample_id] = pes_header.payload_length - pes_packet.PES_header_data_length;
+                    media->tracks_audio[track_id]->sample_offset[sample_id] = pes_header.offset_start + 6 + pes_packet.PES_header_data_length;
+                    media->tracks_audio[track_id]->sample_pts[sample_id] = pes_packet.PTS;
+                    media->tracks_audio[track_id]->sample_dts[sample_id] = pes_packet.DTS;
                 }
             }
+            break;
+
+            case 0xE1: case 0xE2: case 0xE3: case 0xE4: case 0xE5:
+            case 0xE6: case 0xE7: case 0xE8: case 0xE9: case 0xEA:
+            case 0xEB: case 0xEC: case 0xED: case 0xEE: case 0xEF:
+            case SID_VIDEO:
+            {
+                TRACE_INFO(MPS, BLD_GREEN "parse_pes_video()" CLR_RESET " @ %lli\n", pes_header.offset_start + 6);
+
+                // Init bitstream_map (as needed) to store samples
+                unsigned track_id = pes_header.stream_id - 0xE0;
+                if (media->tracks_video[track_id] == NULL)
+                {
+                    retcode = init_bitstream_map(&media->tracks_video[track_id], 999999);
+                    media->tracks_video_count++;
+                    media->tracks_video[track_id]->stream_type = stream_VIDEO;
+                }
+
+                retcode = parse_pes(bitstr, &pes_header, &pes_packet);
+                parse_pes_v(bitstr, &pes_header, &pes_packet, media->tracks_video[track_id]);
+                mpg.stat_packet_video++;
+
+                // Set sample into the bitstream_map
+                unsigned sample_id = media->tracks_video[track_id]->sample_count++;
+                if (sample_id < 999999)
+                {
+                    media->tracks_video[track_id]->sample_type[sample_id] = sample_VIDEO;
+                    media->tracks_video[track_id]->sample_size[sample_id] = pes_header.payload_length - pes_packet.PES_header_data_length;
+                    media->tracks_video[track_id]->sample_offset[sample_id] = pes_header.offset_start + 6 + pes_packet.PES_header_data_length;
+                    media->tracks_video[track_id]->sample_pts[sample_id] = pes_packet.PTS;
+                    media->tracks_video[track_id]->sample_dts[sample_id] = pes_packet.DTS;
+                }
+            }
+            break;
+
+            case SID_PROGRAM_END:
+                mpg.stat_packet_other++;
+                mpg.run = false;
+                break;
+
+            default:
+                TRACE_WARNING(MPS, "Unknown PES packet type (0x%02X) @ %lli\n",
+                              pes_header.stream_id, pes_header.offset_start);
+                mpg.stat_packet_other++;
+                break;
+            }
+
+            jumpy_pes(bitstr, &pes_header);
         }
 
         // Free bitstream
         free_bitstream(&bitstr);
+
+        // Recap
+        TRACE_INFO(MPS, "MPEG PS (version %u) stats\n", mpg.mpeg_version);
+        TRACE_INFO(MPS, "- Pack Headers:    %u\n", mpg.stat_packheader);
+        TRACE_INFO(MPS, "- System Headers:  %u\n", mpg.stat_systemheader);
+        TRACE_INFO(MPS, "- PSM packets:     %u\n", mpg.stat_packet_psm);
+        TRACE_INFO(MPS, "- PSD packets:     %u\n", mpg.stat_packet_psd);
+        TRACE_INFO(MPS, "- Private packets: %u\n", mpg.stat_packet_private);
+        TRACE_INFO(MPS, "- Audio packets:   %u\n", mpg.stat_packet_audio);
+        TRACE_INFO(MPS, "- Video packets:   %u\n", mpg.stat_packet_video);
+        TRACE_INFO(MPS, "- Unknown packets: %u\n", mpg.stat_packet_other);
     }
     else
     {

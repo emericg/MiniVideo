@@ -26,22 +26,36 @@
 
 // minivideo headers
 #include "../../../bitstream.h"
+#include "../../../minitraces.h"
 #include "pes_struct.h"
 
 /* ************************************************************************** */
 
 #define MARKER_BIT \
     if (read_bit(bitstr) != 1) { \
-        TRACE_ERROR(MP4, "wrong 'marker_bit' (M1)\n"); \
+        TRACE_ERROR(MPS, "wrong 'marker_bit' (M1)\n"); \
         return FAILURE; \
     }
-
+/*
+#define MARKER_BITS (x) \
+    if (read_bits(bitstr, x) != 2) { \
+        TRACE_ERROR(MPS, "wrong 'marker_bits' (Mx)\n"); \
+        return FAILURE; \
+    }
+*/
 /* ************************************************************************** */
 
-int parse_pes(Bitstream_t *bitstr, PesPacket_t *packet);
-void print_pes(PesPacket_t *packet);
+int jumpy_pes(Bitstream_t *bitstr, PesHeader_t *header);
 
-int parse_pes_padding(Bitstream_t *bitstr, PesPacket_t *packet);
+int parse_pes_header(Bitstream_t *bitstr, PesHeader_t *header);
+
+int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet);
+void print_pes(PesHeader_t *header, PesPacket_t *packet);
+
+int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, BitstreamMap_t *map);
+int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, BitstreamMap_t *map);
+
+int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet);
 
 int skip_pes(Bitstream_t *bitstr, PesPacket_t *pes);
 int skip_pes_data(Bitstream_t *bitstr, PesPacket_t *pes);

@@ -73,13 +73,15 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
 
     switch (fcc)
     {
-    case fcc_MPEG:
-    case fcc_mpeg:
     case fcc_MPG1:
     case fcc_mpg1:
+        codec = CODEC_MPEG1;
+        break;
+    case fcc_MPEG:
+    case fcc_mpeg:
     case fcc_MPG2:
     case fcc_mpg2:
-        codec = CODEC_MPEG12;
+        codec = CODEC_MPEG2;
         break;
 
     case fcc_xvid:

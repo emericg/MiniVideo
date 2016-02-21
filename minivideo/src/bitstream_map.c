@@ -37,7 +37,7 @@
  * \brief Initialize a bitstream_map structure with a fixed number of entries.
  * \param bitstream_map A pointer to the *bitstreamMap_t structure to initialize.
  * \param entries The number of sample to init into the bitstreamMap_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \return 1 if succeed, 0 otherwise.
  *
  * Everything inside the bitstreamMap_t structure is set to 0, even the number
  * of entries (sample_count).
@@ -199,7 +199,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 
         TRACE_INFO(DEMUX, "> samples alignment: %i\n", bitstream_map->sample_alignment);
         TRACE_INFO(DEMUX, "> samples count    : %i\n", bitstream_map->sample_count);
-        TRACE_INFO(DEMUX, "> IDR samples count: %i\n", bitstream_map->sample_count_idr);
+        TRACE_INFO(DEMUX, "> IDR samples count: %i\n", bitstream_map->frame_count_idr);
 
         if (bitstream_map->sample_count > 0)
         {
@@ -229,14 +229,30 @@ static void computeBitRateTrack(BitstreamMap_t *t)
         bool cbr = true;
         unsigned j = 0;
 
+        if (t->sample_alignment)
+        {
+            t->frame_count = t->sample_count;
+        }
+        if (t->stream_intracoded)
+        {
+            t->frame_count_idr = t->frame_count;
+        }
+
         for (j = 0; j < t->sample_count; j++)
         {
             bytes += t->sample_size[j];
 
             if (t->sample_size[0] != t->sample_size[j])
                 cbr = false;
+
+            if (t->sample_alignment == false)
+            {
+                if (t->sample_pts[j] || t->sample_dts[j])
+                    t->frame_count++;
+            }
         }
 
+        // Set bitrate mode
         if (cbr == true)
         {
             t->bitrate_mode = BITRATE_CBR;
@@ -253,8 +269,18 @@ static void computeBitRateTrack(BitstreamMap_t *t)
             t->stream_size = bytes;
         }
 
+        // Video frame duration
+        if (t->stream_type == stream_VIDEO && t->frame_duration == 0 && t->frame_rate != 0)
+            t->frame_duration = 1000.0 / t->frame_rate;
+
+        // Set stream duration
+        if (t->duration_ms == 0)
+        {
+            t->duration_ms = (double)t->frame_count * t->frame_duration;
+        }
+
         // Set gross bitrate value (in bps)
-        if (t->bitrate == 0)
+        if (t->bitrate == 0 && t->duration_ms != 0)
         {
             t->bitrate = round(((double)t->stream_size / (double)(t->duration_ms)));
             t->bitrate *= 1000; // ms to s

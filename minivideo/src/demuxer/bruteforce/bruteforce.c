@@ -53,7 +53,6 @@ int bruteforce_fileParse(MediaFile_t *media, AVCodec_e video_codec)
     if (bitstr != NULL && media->tracks_video[0] != NULL)
     {
         media->tracks_video[0]->stream_type = stream_VIDEO;
-        media->tracks_video[0]->stream_level = stream_level_ES;
         media->tracks_video[0]->stream_codec = video_codec;
         media->tracks_video[0]->sample_alignment = true;
 
@@ -96,7 +95,7 @@ int bruteforce_fileParse(MediaFile_t *media, AVCodec_e video_codec)
                                 media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_IDR;
 
                                 media->tracks_video[0]->sample_count++;
-                                media->tracks_video[0]->sample_count_idr++;
+                                media->tracks_video[0]->frame_count_idr++;
                                 TRACE_1(DEMUX, "* IDR nal unit found at byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
                             }
                             else

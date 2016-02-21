@@ -1188,9 +1188,8 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
             mytrack = media->tracks_audio[media->tracks_audio_count];
             media->tracks_audio_count++;
 
-            mytrack->stream_level = stream_level_ES;
-            mytrack->stream_type  = stream_AUDIO;
-            mytrack->stream_fcc   = track->strh.fccHandler;
+            mytrack->stream_type = stream_AUDIO;
+            mytrack->stream_fcc  = track->strh.fccHandler;
 
             // We cannot rely on the fccHandler from the container,
             // but we should have extracted the correct codec infos from strh
@@ -1216,9 +1215,8 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
             mytrack = media->tracks_video[media->tracks_video_count];
             media->tracks_video_count++;
 
-            mytrack->stream_level = stream_level_ES;
-            mytrack->stream_type  = stream_VIDEO;
-            mytrack->stream_fcc   = track->strh.fccHandler;
+            mytrack->stream_type = stream_VIDEO;
+            mytrack->stream_fcc  = track->strh.fccHandler;
 
             if (track->strh.fccHandler == fcc_xvid ||
                 track->strh.fccHandler == fcc_XVID ||
@@ -1249,7 +1247,6 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
         {
             mytrack = media->tracks_video[media->tracks_video_count];
 
-            mytrack->stream_level = stream_level_ES;
             mytrack->stream_type  = stream_TEXT;
             mytrack->stream_fcc   = track->strh.fccHandler;
             mytrack->stream_codec = CODEC_SRT;

@@ -41,10 +41,11 @@ typedef enum ContainerFormat_e
     CONTAINER_MP4     =  4, //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
     CONTAINER_MPEG_PS =  5, //!< MPEG "Program Stream" (.mpg, .vob, ...)
     CONTAINER_MPEG_TS =  6, //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
-    CONTAINER_MXF     =  7, //!< MXF "Material eXchange Format" (.mxf)
-    CONTAINER_FLV     =  8, //!< SWF "Small Web Format" (.flv)
-    CONTAINER_OGG     =  9, //!< OGG (.ogg, .ogv, .oga, ...)
-    CONTAINER_RM      = 10, //!< RealMedia (.rm, .rmvb)
+    CONTAINER_MPEG_MT =  7, //!< MPEG "Media Transport" (.mt, .mmt)
+    CONTAINER_MXF     =  8, //!< MXF "Material eXchange Format" (.mxf)
+    CONTAINER_FLV     =  9, //!< SWF "Small Web Format" (.flv)
+    CONTAINER_OGG     = 10, //!< OGG (.ogg, .ogv, .oga, ...)
+    CONTAINER_RM      = 11, //!< RealMedia (.rm, .rmvb)
 
     // Audio containers
     CONTAINER_FLAC    = 12, //!< FLAC "Free Lossless Audio Codec" (.flac)
@@ -93,43 +94,45 @@ typedef enum AVCodec_e
     CODEC_OPUS        = 29, //!< Xiph Opus
 
     // Video codecs
-    CODEC_MPEG12      = 64, //!< MPEG-1/2 videos, also known as H.262
-    CODEC_MPEG4_ASP   = 65, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
-    CODEC_MSMPEG4     = 66, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
-    CODEC_H263        = 67, //!< H.263 and its numerous variants
-    CODEC_H264        = 68, //!< H.264 or MPEG-4 Part 10 "AVC"
-    CODEC_H265        = 69, //!< H.265 or MPEG-H Part 2 "HEVC" or ISO/IEC 23008-2
+    CODEC_MPEG1       = 64, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
+    CODEC_H261        = 65, //!< H.261
+    CODEC_MPEG2       = 66, //!< H.262 or MPEG-2 Part 2 (ISO/IEC 13818-2)
+    CODEC_MPEG4_ASP   = 67, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
+    CODEC_MSMPEG4     = 68, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_H263        = 69, //!< H.263 (and its numerous variants)
+    CODEC_H264        = 70, //!< H.264 or MPEG-4 Part 10 "AVC"
+    CODEC_H265        = 71, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
 
-    CODEC_WMV1        = 70, //!< Windows Media Video 7
-    CODEC_WMV2        = 71, //!< Windows Media Video 8
-    CODEC_WMV3        = 72, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
-    CODEC_WMVA        = 73, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
-    CODEC_WVC1        = 74, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
+    CODEC_WMV1        = 72, //!< Windows Media Video 7
+    CODEC_WMV2        = 73, //!< Windows Media Video 8
+    CODEC_WMV3        = 74, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
+    CODEC_WMVA        = 75, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
+    CODEC_WVC1        = 76, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
 
-    CODEC_VP3         = 75, //!< On2 VP3 Video
-    CODEC_VP4         = 76, //!< On2 VP4 Video / Xiph Ogg Theora
-    CODEC_VP5         = 77, //!< On2 VP5 Video
-    CODEC_VP6         = 78, //!< On2 VP6 Video
-    CODEC_VP7         = 79, //!< On2 VP7 Video
-    CODEC_VP8         = 80, //!< Google VP8
-    CODEC_VP9         = 81, //!< Google VP9
-    CODEC_VP10        = 82, //!< Google VP10
+    CODEC_VP3         = 77, //!< On2 VP3 Video
+    CODEC_VP4         = 78, //!< On2 VP4 Video / Xiph Ogg Theora
+    CODEC_VP5         = 79, //!< On2 VP5 Video
+    CODEC_VP6         = 80, //!< On2 VP6 Video
+    CODEC_VP7         = 81, //!< On2 VP7 Video
+    CODEC_VP8         = 82, //!< Google VP8
+    CODEC_VP9         = 83, //!< Google VP9
+    CODEC_VP10        = 84, //!< Google VP10
 
-    CODEC_DAALA       = 83, //!< Xiph Daala
+    CODEC_DAALA       = 85, //!< Xiph Daala
 
-    CODEC_VC1         = 84, //!< VC-1 or Windows Media Video 9
-    CODEC_VC2         = 85, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
-    CODEC_VC3         = 86, //!< VC-3, Avid DNxHD is a popular implementation
-    CODEC_VC5         = 87, //!< VC-5 or CineForm
+    CODEC_VC1         = 86, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2         = 87, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_VC3         = 88, //!< VC-3, Avid DNxHD is a popular implementation
+    CODEC_VC5         = 89, //!< VC-5 or CineForm
 
-    CODEC_PRORES_4444       = 88, //!< Apple ProRes 4444
-    CODEC_PRORES_4444_XQ    = 89, //!< Apple ProRes 4444 (XQ)
-    CODEC_PRORES_422_HQ     = 90, //!< Apple ProRes 422 (HQ)
-    CODEC_PRORES_442        = 91, //!< Apple ProRes 422
-    CODEC_PRORES_442_PROXY  = 92, //!< Apple ProRes 422 (Proxy)
-    CODEC_PRORES_442_LT     = 93, //!< Apple ProRes 422 (LT)
+    CODEC_PRORES_4444       = 90, //!< Apple ProRes 4444
+    CODEC_PRORES_4444_XQ    = 91, //!< Apple ProRes 4444 (XQ)
+    CODEC_PRORES_422_HQ     = 92, //!< Apple ProRes 422 (HQ)
+    CODEC_PRORES_442        = 93, //!< Apple ProRes 422
+    CODEC_PRORES_442_PROXY  = 94, //!< Apple ProRes 422 (Proxy)
+    CODEC_PRORES_442_LT     = 95, //!< Apple ProRes 422 (LT)
 
-    // Deprecated video codecs
+    // "Deprecated" video codecs
     CODEC_CINEPAK     = 190, //!< Cinepak
     CODEC_SVQ1        = 191, //!< Sorenson Video
     CODEC_SVQ3        = 192, //!< Sorenson Video 3

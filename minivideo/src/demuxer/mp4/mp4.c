@@ -145,8 +145,8 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
 
 /*!
  * \brief Convert a videoTrack_t structure into a bitstreamMap_t.
- * \param *media A pointer to a MediaFile_t structure, containing every informations available about the current video file.
- * \param *track A pointer to the videoTrack_t structure we want to extract data from.
+ * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param *track: A pointer to the mp4 track structure we want to extract data from.
  * \param idr_only Set to true if we only want to extract IDR samples.
  *
  * - Use STSZ box content to get back all samples.
@@ -200,7 +200,6 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
     {
         unsigned int i = 0, j = 0;
 
-        map->stream_level = stream_level_ES;
         map->stream_fcc = track->fcc;
         map->stream_codec = track->codec;
 
@@ -219,7 +218,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         map->creation_time = (double)track->creation_time / (double)track->timescale * 1000.0;
         map->modification_time = (double)track->modification_time / (double)track->timescale * 1000.0;
 
-        map->sample_alignment = true;
+        map->sample_alignment = true; // TODO not very true
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
 
         map->track_id = track->id;
@@ -237,7 +236,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             map->width = track->width;
             map->height = track->height;
             map->color_depth = track->color_depth;
-            map->sample_count_idr = track->stss_entry_count;
+            map->frame_count_idr = track->stss_entry_count;
 
             // Framerate
             {
@@ -413,7 +412,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         }
 
         TRACE_1(MP4, "sample_count\t: %u\n", map->sample_count);
-        TRACE_1(MP4, "sample_count_idr\t: %u\n", map->sample_count_idr);
+        TRACE_1(MP4, "sample_count_idr\t: %u\n", map->frame_count_idr);
 /*
         for (i = 0; i < map->sample_count; i++)
         {

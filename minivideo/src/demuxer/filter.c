@@ -74,15 +74,15 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
         }
 
         // Check if we have enough IDR samples inside the video
-        if (map->sample_count_idr == 0)
+        if (map->frame_count_idr == 0)
         {
-            TRACE_WARNING(FILTER, "No IDR samples inside the stream, 0 pictures will be extracted!\n", map->sample_count_idr);
+            TRACE_WARNING(FILTER, "No IDR samples inside the stream, 0 pictures will be extracted!\n", map->frame_count_idr);
             picture_number = 0;
         }
-        else if (map->sample_count_idr < picture_number)
+        else if (map->frame_count_idr < picture_number)
         {
-            TRACE_WARNING(FILTER, "Not enough IDR samples inside the stream, only %i pictures will be extracted!\n", map->sample_count_idr);
-            picture_number = map->sample_count_idr;
+            TRACE_WARNING(FILTER, "Not enough IDR samples inside the stream, only %i pictures will be extracted!\n", map->frame_count_idr);
+            picture_number = map->frame_count_idr;
         }
 
         if (picture_extraction_mode == PICTURE_UNFILTERED)
@@ -93,7 +93,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
         else
         {
             // Warning: this is not true anymore, must count that manually
-            int spspps = map->sample_count - map->sample_count_idr;
+            int spspps = map->sample_count - map->frame_count_idr;
             int payload = 0;
 
             // First cut (remove small frames)
@@ -106,18 +106,18 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             }
 
             // Used to filter the frames that are below the threshold (33% of the average frame size)
-            int frame_sizethreshold = (int)(((double)payload / (double)map->sample_count_idr) / 1.66);
+            int frame_sizethreshold = (int)(((double)payload / (double)map->frame_count_idr) / 1.66);
 
             // If we have enough frames (let's say 48), filter the frames from the first and last 3%
             // Note: for a movie, cut the last 33% to avoid spoilers & credits?
             int frame_borders = 0;
-            if (map->sample_count_idr > 48)
+            if (map->frame_count_idr > 48)
             {
-                frame_borders = (int)ceil(map->sample_count_idr * 0.03);
+                frame_borders = (int)ceil(map->frame_count_idr * 0.03);
                 TRACE_1(FILTER, "frame_borders is %i\n", frame_borders);
             }
 
-            for (i = frame_borders; i < (map->sample_count_idr - frame_borders); i++)
+            for (i = frame_borders; i < (map->frame_count_idr - frame_borders); i++)
             {
                 if (map->sample_size[i + spspps] > frame_sizethreshold)
                 {
@@ -148,11 +148,10 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             if (retcode)
             {
                 map_filtered->stream_type = map->stream_type;
-                map_filtered->stream_level = map->stream_level;
                 map_filtered->stream_codec = map->stream_codec;
 
                 map_filtered->sample_count = spspps + temporary_totalsamples_idr;
-                map_filtered->sample_count_idr = temporary_totalsamples_idr;
+                map_filtered->frame_count_idr = temporary_totalsamples_idr;
 
                 // Copy SPS and PPS
                 for (i = 0; i < spspps; i++)

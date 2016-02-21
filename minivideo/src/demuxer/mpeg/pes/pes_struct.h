@@ -30,19 +30,36 @@
 /* ************************************************************************** */
 
 /*!
+ * \struct PesHeader_t
+ * \brief PES packet header structure.
+ *
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-17 – PES packet.
+ */
+typedef struct PesHeader_t
+{
+    int64_t offset_start;   //!< Absolute position of the very first byte of this PES (including start code)
+    int64_t offset_end;     //!< Absolute position of the last byte of this PES
+
+    uint32_t start_code;    //!< should be 0x000001
+    uint8_t stream_id;
+    int16_t packet_length;  //!< Full packet length
+    int16_t payload_length; //!< Payload length only
+
+} PesHeader_t;
+
+/*!
  * \struct PesPacket_t
  * \brief PES packet structure.
  *
- * H.222 / table 2-17.
+ * From 'ISO/IEC 13818-1' specification:
+ * Table 2-17 – PES packet.
  */
 typedef struct PesPacket_t
 {
-    uint32_t packet_start_code;  //!< 0x000001
-    uint32_t packet_start_offset;
-    uint8_t stream_id;
-    uint16_t PES_packet_length;
+    uint32_t mpeg_version;
 
-    // Regular PES parameters
+    // "Regular" PES parameters
     uint8_t PES_scrambling_control;
     uint8_t PES_priority;
     uint8_t data_alignment_indicator;
@@ -63,14 +80,14 @@ typedef struct PesPacket_t
     uint16_t ESCR_extension;
     uint32_t ES_rate;
 
-    // trick mode
+    // Trick mode
     uint8_t trick_mode_control;
     uint8_t field_id;
     uint8_t intra_slice_refresh;
     uint8_t frequency_truncation;
     uint8_t rep_cntrl;
 
-    // additional_copy_info_flag
+    // Additional_copy_info_flag
     uint8_t additional_copy_info;
 
     // PES_CRC_flag
@@ -118,6 +135,7 @@ typedef enum trickMode_e
     TM_FREEZE_FRAME = 0x2,
     TM_FAST_REVERSE = 0x3,
     TM_SLOW_REVERSE = 0x4
+
 } trickMode_e;
 
 /*!
@@ -132,40 +150,17 @@ typedef enum fieldId_e
     FID_BOTTOM   = 0x1,
     FID_FRAME    = 0x2,
     FID_RESERVED = 0x3
+
 } fieldId_e;
 
 /*!
- * \enum pesFullStartCodes_e
- * \brief Specify the type of Packetized Elementary Stream.
- *
- * 32b full start code = 24b packet_start_code + 8b stream_id.
- * H.222 / table 2-18.
- */
-typedef enum pesFullStartCodes_e
-{
-    PES_PACKETSTARTCODE          = 0x000001,
-
-    PES_PROGRAM_END              = 0x000001B9,
-    PES_PACK_HEADER              = 0x000001BA,
-    PES_SYSTEM_HEADER            = 0x000001BB,
-    PES_PROGRAM_STREAM_MAP       = 0x000001BC,
-    PES_PRIVATE_STREAM_1         = 0x000001BD,
-    PES_PADDING                  = 0x000001BE,
-    PES_PRIVATE_STREAM_2         = 0x000001BF,
-    PES_VIDEO                    = 0x000001E0,
-    PES_AUDIO                    = 0x000001C0,
-    // stuff...
-    PES_PROGRAM_STREAM_DIRECTORY = 0x000001FF
-} pesFullStartCodes_e;
-
-/*!
- * \enum pesStreamId_e
+ * \enum PesStreamId_e
  * \brief Specify the type of Packetized Elementary Stream.
  *
  * 8b stream_id only.
  * H.222 / table 2-18.
  */
-typedef enum pesStreamId_e
+typedef enum PesStreamId_e
 {
     SID_PROGRAM_END              = 0xB9,
     SID_PACK_HEADER              = 0xBA,
@@ -174,11 +169,28 @@ typedef enum pesStreamId_e
     SID_PRIVATE_STREAM_1         = 0xBD,
     SID_PADDING                  = 0xBE,
     SID_PRIVATE_STREAM_2         = 0xBF,
-    SID_VIDEO                    = 0xE0,
-    SID_AUDIO                    = 0xC0,
-    // stuff...
+
+    SID_AUDIO                    = 0xC0, //!< audio: C0 to DF
+    SID_VIDEO                    = 0xE0, //!< video: E0 to EF
+
+    SID_ECM_STREAM               = 0xF0,
+    SID_EMM_STREAM               = 0xF1,
+    SID_DSMCC_STREAM             = 0xF2,
+    SID_CEI13522_STREAM          = 0xF3,
+    SID_2221A                    = 0xF4,
+    SID_2221B                    = 0xF5,
+    SID_2221C                    = 0xF6,
+    SID_2221D                    = 0xF7,
+    SID_2221E                    = 0xF8,
+    SID_ANC_DATA                 = 0xF9,
+    SID_SLPACKETIZED_STREAM      = 0xFA,
+    SID_FLEXMUX_STREAM           = 0xFB,
+
+    SID_RESERVED                 = 0xFC, //!< reserved: FC to FE
+
     SID_PROGRAM_STREAM_DIRECTORY = 0xFF
-} pesStreamId_e;
+
+} PesStreamId_e;
 
 /* ************************************************************************** */
 #endif // PARSER_MPEG_PES_STRUCT_H

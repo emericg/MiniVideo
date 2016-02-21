@@ -262,7 +262,6 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         media->tracks_audio_count++;
 
         track->stream_type  = stream_AUDIO;
-        track->stream_level = stream_level_ES;
 
         if (wave->fmt.wFormatTag == WAVE_FORMAT_PCM ||
             wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
@@ -344,7 +343,7 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
         // SAMPLES
         track->sample_alignment = true;
-        track->sample_count = track->sample_count_idr = 1;
+        track->sample_count = track->frame_count_idr = 1;
 
         track->sample_type[0] = 1;
         track->sample_size[0] = wave->data.datasSize;

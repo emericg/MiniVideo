@@ -61,6 +61,9 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
         case CONTAINER_MPEG_TS:
             return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
             break;
+        case CONTAINER_MPEG_MT:
+            return "MPEG 'Media Transport'";
+            break;
 
         case CONTAINER_FLAC:
             return "FLAC 'Free Lossless Audio Codec' (.flac)";
@@ -121,6 +124,9 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
                 break;
             case CONTAINER_MPEG_TS:
                 return "MPEG-TS";
+                break;
+            case CONTAINER_MPEG_MT:
+                return "MPEG-MT";
                 break;
 
             case CONTAINER_FLAC:
@@ -280,8 +286,14 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
     {
         switch (codec)
         {
-            case CODEC_MPEG12:
-                return "MPEG-1/2";
+            case CODEC_MPEG1:
+                return "MPEG-1";
+                break;
+            case CODEC_H261:
+                return "H.261";
+                break;
+            case CODEC_MPEG2:
+                return "MPEG-2";
                 break;
             case CODEC_MPEG4_ASP:
                 return "MPEG-4 part 2 'ASP'";

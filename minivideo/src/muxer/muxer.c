@@ -257,7 +257,8 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
     else // if (bitstream_map->stream_type == stream_VIDEO)
     {
 
-        if (bitstream_map->stream_codec == CODEC_MPEG12)
+        if (bitstream_map->stream_codec == CODEC_MPEG1 ||
+            bitstream_map->stream_codec == CODEC_MPEG2)
         {
             strncat(output_filename, ".mpegv", 254);
         }
@@ -321,12 +322,14 @@ int muxer_export_samples(MediaFile_t *media,
         }
         else
         {
+/*
             if (bitstream_map->stream_level == stream_level_PES)
             {
                 // Write PES packets
                 retcode = write_pes(f_src, f_dst, bitstream_map);
             }
             else if (bitstream_map->stream_level == stream_level_ES)
+*/
             {
                 if (output_format == 0)
                 {
@@ -338,10 +341,6 @@ int muxer_export_samples(MediaFile_t *media,
                     // Just write ES
                     retcode = write_es(f_src, f_dst, bitstream_map);
                 }
-            }
-            else
-            {
-                TRACE_ERROR(MUXER, " > Unrecognized stream level (nor PES or ES), nothing exported!\n");
             }
 
             // Close stream file

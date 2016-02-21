@@ -33,7 +33,11 @@
 /*!
  * \struct BitstreamMap_t
  * \brief Structure used to keep tracks of audio and video payload data extracted from container file.
- * \todo split into per codec metadatas structures
+ *
+ * \todo massive cleanup / reorganization
+ * \todo clarify units and metadatas 'availability'
+ * \todo split into 'per container' metadatas structures
+ * \todo split into 'per codec' metadatas structures
  *
  * This structure basically represent an audio or a video track. It contains
  * general informations about the track type and the positions of all the
@@ -41,26 +45,26 @@
  */
 typedef struct BitstreamMap_t
 {
-    StreamType_e stream_type;       //!< Is this an audio / video / subtitles stream?
-    StreamLevel_e stream_level;     //!< Does the stream contains PES or ES elements?
-
     // Generic metadatas
+    StreamType_e stream_type;       //!< Is this an audio / video / subtitles stream?
     uint64_t stream_size;           //!< Size (in bytes) of the raw datas of this stream, used for stats
-    uint32_t stream_fcc;            //!< Fourcc
+
+    uint32_t stream_fcc;            //!< FourCC
     AVCodec_e stream_codec;         //!< Codec used by this track
+    bool stream_intracoded;         //!< True if the stream is intra coded
     char *stream_encoder;           //!< Encoder used to generate the track's datas
 
-    unsigned int track_id;          //!< Id of the track
+    // Track metadatas (if the container support them)
+    unsigned int track_id;          //!< Id of the track (as set by the container)
     char *track_title;              //!< Title
     char track_language[3];         //!< Language code (ISO 639-1 or ISO 639-2 format)
-
     bool track_default;             //!<
     bool track_forced;              //!<
 
     unsigned int bitrate;           //!< Bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode
 
-    unsigned int duration_ms;          //!< Stream duration (in milliseconds)
+    unsigned int duration_ms;       //!< Stream duration (in milliseconds)
     unsigned int creation_time;     //!< Stream creation time (ms?)
     unsigned int modification_time; //!< Stream modification time (ms?)
 
@@ -72,36 +76,42 @@ typedef struct BitstreamMap_t
     unsigned int color_depth;       //!< Color resolution per channel
     unsigned int color_subsampling; //!< Chroma sub-sampling
     unsigned int color_encoding;    //!< Internal color encoding
+    double aspectratio;             //!< Aspect ratio (if set directly by the container)
+
     double frame_rate;              //!< Frame rate (in frame/s)
-    unsigned int framerate_num;     //!< Frame rate
-    unsigned int framerate_base;    //!< Frame rate base
+    double frame_duration;          //!< Frame duration (in ms)
+    unsigned int framerate_num;     //!< Frame rate numerator
+    unsigned int framerate_base;    //!< Frame rate denominator
 
     // Audio metadatas
     unsigned int channel_count;     //!< Number of audio channels
     unsigned int channel_mode;      //!< Channels configuration
     unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int bit_per_sample;    //!< Bit per sample (in bits)
+        unsigned int sample_per_frames;     //!< audio samples per audio frame
 
         // PCM specific metadatas
-        unsigned int pcm_sample_size;   //!< PCM sample size (in bytes)
-        unsigned int pcm_sample_format; //!< PCM sample format (signed, unsigned, float, ...)
+        unsigned int pcm_sample_size;       //!< PCM sample size (in bytes)
+        unsigned int pcm_sample_format;     //!< PCM sample format (signed, unsigned, float, ...)
         unsigned int pcm_sample_endianness; //!< PCM samples endianness (little, big)
 
     // Subtitles specific metadatas
     char *subtitles_name;           //!< Subtitles name?
     unsigned int subtitles_encoding;//!< Text encoding
 
-    // Samples infos
-    bool sample_alignment;          //!< Is every sample begining on an elementary stream / a NAL Header?
+    // Sample infos
+    bool sample_alignment;          //!< True if every container sample is a proper audio/video frame
+
     uint32_t sample_count;          //!< The total number of samples in this track
-    uint32_t sample_count_idr;      //!< The total number of IDR samples in the (video) track, providing random access points within the stream
+    uint32_t frame_count;           //!< Number of audio/video frames
+    uint32_t frame_count_idr;       //!< Number of video IDR frames
 
     // Samples arrays
     uint32_t *sample_type;          //!< Type (for each samples of the track)
     uint32_t *sample_size;          //!< Size (in byte)
     int64_t *sample_offset;         //!< Offset (in byte)
-    int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds)
-    int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds)
+    int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds?)
+    int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds?)
 
 } BitstreamMap_t;
 

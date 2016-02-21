@@ -523,6 +523,10 @@ int MainWindow::printDatas()
 
             uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(media->tracks_audio[atid]->stream_size));
             ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
+
+            ui->label_audio_samplecount->setText(QString::number(media->tracks_audio[atid]->sample_count));
+            ui->label_audio_framecount->setText(QString::number(media->tracks_audio[atid]->frame_count));
+            ui->label_audio_frameduration->setText(QString::number(media->tracks_audio[atid]->frame_duration));
         }
 
         // VIDEO
@@ -612,13 +616,15 @@ int MainWindow::printDatas()
             double frameduration = 1000.0 / framerate; // in ms
 
             QString samplecount = "<b>" + QString::number(media->tracks_video[vtid]->sample_count) + "</b>";
+            QString framecount = "<b>" + QString::number(media->tracks_video[vtid]->frame_count) + "</b>";
             QString samplerepartition;
-            if (media->tracks_video[vtid]->sample_count_idr)
-            {
-                samplecount += "      (" + QString::number(media->tracks_video[vtid]->sample_count_idr) + " IDR  /  ";
-                samplecount += QString::number(media->tracks_video[vtid]->sample_count - media->tracks_video[vtid]->sample_count_idr) + " others)";
 
-                double idr_ratio = static_cast<double>(media->tracks_video[vtid]->sample_count_idr) / static_cast<double>(media->tracks_video[vtid]->sample_count) * 100.0;
+            if (media->tracks_video[vtid]->frame_count_idr)
+            {
+                framecount += "      (" + QString::number(media->tracks_video[vtid]->frame_count_idr) + " IDR  /  ";
+                framecount += QString::number(media->tracks_video[vtid]->frame_count - media->tracks_video[vtid]->frame_count_idr) + " others)";
+
+                double idr_ratio = static_cast<double>(media->tracks_video[vtid]->frame_count_idr) / static_cast<double>(media->tracks_video[vtid]->sample_count) * 100.0;
                 samplerepartition = tr("IDR frames makes <b>") + QString::number(idr_ratio, 'g', 2) + "%</b> " + tr("of the samples");
                 samplerepartition += "<br> one every <b>X</b> ms (statistically) ";
 
@@ -626,6 +632,7 @@ int MainWindow::printDatas()
             }
 
             ui->label_video_samplecount->setText(samplecount);
+            ui->label_video_framecount->setText(framecount);
 
             ui->label_video_framerate->setText(QString::number(framerate) + " fps");
 
