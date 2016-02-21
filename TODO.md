@@ -33,11 +33,24 @@ TODO video library
 - behavior regarding unexpected end_of_file (currently it only trigger exit(EXIT_FAILURE))
 - rename goto_offset_bitstream()
 - better aligned memory reads for embedded platform
+- big endian support probably doesn't work anymore
 
-// Containers (next on the TODO list)
-- MP3 parser
+// File parsers
+- MP4 parser (improvements)
+  - faster!
+  - progressive streaming support
+- AVI parser
+  - global overhaul
+- WAVE parser
+  - Sample index
+- MPEG PS parser (improvements)
+  - multiple frames per PES packet?
+  - IDR detection
+  - tag_descriptors
 - MKV parser
 - MPEG TS parser
+- MXF parser (maybe)
+- ASF parser (maybe)
 
 // Video decoder
 - CABAC bugfix
@@ -45,7 +58,7 @@ TODO video library
 - scaling_list extraction process common to SPS & PPS
 
 PERFORMANCE IMPROVEMENTS
------------------------
+------------------------
 
 // MACROBLOCKS
 - Replace residual_block_cabac() AND residual_block_cavlc() calls by a single function pointer residual_block()
