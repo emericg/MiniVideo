@@ -16,24 +16,34 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      ts_struct.h
+ * \file      ts.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#ifndef PARSER_MPEG_TS_STRUCT_H
-#define PARSER_MPEG_TS_STRUCT_H
+#ifndef PARSER_MPEG_TS_H
+#define PARSER_MPEG_TS_H
 
 // minivideo headers
-#include "../../../typedef.h"
+#include "../../../import.h"
+#include "../../../bitstream.h"
 
 /* ************************************************************************** */
 
-typedef struct MpegTs_t
-{
-    bool run; //!< A convenient way to stop the parser from any sublevel
-
-} MpegTs_t;
+/*!
+ * \brief Parse a MPEG "Transport Stream" file.
+ * \param *media[in,out]: A pointer to a MediaFile_t structure.
+ * \return 1 if succeed, 0 otherwise.
+ *
+ * This parser implements the 'MPEG Transport Stream', from section 2.4
+ * of MPEG-1/2 Part 1 specification 'Transmission multiplexing and synchronization'.
+ *
+ * You can find this specification under different names:
+ * - ISO/IEC 11172-1 (MPEG-1 Part 1).
+ * - ISO/IEC 13818-1 (MPEG-1 Part 2).
+ * - ITU-T H.222.0.
+ */
+int ts_fileParse(MediaFile_t *media);
 
 /* ************************************************************************** */
-#endif // PARSER_MPEG_TS_STRUCT_H
+#endif // PARSER_MPEG_TS_H

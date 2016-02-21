@@ -144,8 +144,9 @@ set(minivideo_SRC
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
     src/demuxer/bruteforce/bruteforce.c
     src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
+        src/demuxer/mpeg/descriptor_struct.h
         src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h
-        src/demuxer/mpeg/ts/ts_struct.h
+        src/demuxer/mpeg/ts/ts.c src/demuxer/mpeg/ts/ts_struct.h
     src/demuxer/riff/riff.c src/demuxer/riff/riff_struct.h
         src/demuxer/avi/avi.c src/demuxer/avi/avi_struct.h
         src/demuxer/wave/wave.c src/demuxer/wave/wave_struct.h

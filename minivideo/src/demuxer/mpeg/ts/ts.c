@@ -16,24 +16,58 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      ts_struct.h
+ * \file      ts.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#ifndef PARSER_MPEG_TS_STRUCT_H
-#define PARSER_MPEG_TS_STRUCT_H
-
 // minivideo headers
+#include "ts.h"
+#include "ts_struct.h"
+#include "../pes/pes.h"
+#include "../pes/pes_struct.h"
 #include "../../../typedef.h"
+#include "../../../minitraces.h"
+#include "../../../bitstream_utils.h"
+
+// C standard libraries
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 /* ************************************************************************** */
 
-typedef struct MpegTs_t
+int ts_fileParse(MediaFile_t *media)
 {
-    bool run; //!< A convenient way to stop the parser from any sublevel
+    int retcode = SUCCESS;
 
-} MpegTs_t;
+    TRACE_INFO(MPS, BLD_GREEN "ts_fileParse()\n" CLR_RESET);
+
+    // Init bitstream to parse container infos
+    Bitstream_t *bitstr = init_bitstream(media, NULL);
+
+    if (bitstr != NULL)
+    {
+        // Init an MpegPs structure
+        MpegTs_t mts;
+        memset(&mts, 0, sizeof(MpegTs_t));
+
+        // A convenient way to stop the parser
+        mts.run = true;
+
+        {
+            // TODO
+        }
+
+        // Free bitstream
+        free_bitstream(&bitstr);
+    }
+    else
+    {
+        retcode = FAILURE;
+    }
+
+    return retcode;
+}
 
 /* ************************************************************************** */
-#endif // PARSER_MPEG_TS_STRUCT_H

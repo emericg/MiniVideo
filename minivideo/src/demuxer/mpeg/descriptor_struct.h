@@ -21,8 +21,8 @@
  * \date      2012
  */
 
-#ifndef PARSER_PS_DESCRIPTOR_STRUCT_H
-#define PARSER_PS_DESCRIPTOR_STRUCT_H
+#ifndef PROGRAM_ELEMENT_DESCRIPTORS_STRUCT_H
+#define PROGRAM_ELEMENT_DESCRIPTORS_STRUCT_H
 
 // minivideo
 #include "../../typedef.h"
@@ -93,4 +93,4 @@ typedef struct HierarchyDescriptor_t
 } HierarchyDescriptor_t;
 
 /* ************************************************************************** */
-#endif // PARSER_PS_DESCRIPTOR_STRUCT_H
+#endif // PROGRAM_ELEMENT_DESCRIPTORS_STRUCT_H
