@@ -31,8 +31,8 @@
 
 /*!
  * \brief Parse AVI files.
- * \param *media A pointer to a MediaFile_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \param *media[in,out]: A pointer to a MediaFile_t structure.
+ * \return 1 if succeed, 0 otherwise.
  *
  * This parser is compatible with the 'OpenDML AVI File Format Extensions'.
  */

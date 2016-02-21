@@ -41,9 +41,9 @@ typedef enum StartCodes_e
 
 /*!
  * \brief Parse elementary stream files, the "brute-force" way.
- * \param *media A pointer to a MediaFile_t structure.
- * \param video_codec docme.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \param *media[in,out]: A pointer to a MediaFile_t structure.
+ * \param video_codec: docme.
+ * \return 1 if succeed, 0 otherwise.
  *
  * \todo Handle idr_only == false.
  * \todo Handle INITIAL_SEARCH_WINDOW.

@@ -30,15 +30,22 @@
 
 /* ************************************************************************** */
 
-#define MARKER_BIT \
-    if (read_bit(bitstr) != 1) { \
-        TRACE_ERROR(MP4, "wrong 'marker_bit' (M1)\n"); \
-        return FAILURE; \
-    }
-
-/* ************************************************************************** */
-
-int ps_fileParse(MediaFile_t *video);
+/*!
+ * \brief Parse a MPEG "Program Stream" file.
+ * \param *media[in,out]: A pointer to a MediaFile_t structure.
+ * \return 1 if succeed, 0 otherwise.
+ *
+ * This parser implements the 'MPEG Program Stream file format', from section 2.5
+ * of MPEG-1/2 Part 1 specification 'Transmission multiplexing and synchronization'.
+ *
+ * (DVD version allows only 1 video and 8 audio streams)
+ *
+ * You can find this specification under different names:
+ * - ISO/IEC 11172-1 (MPEG-1 Part 1).
+ * - ISO/IEC 13818-1 (MPEG-1 Part 2).
+ * - ITU-T H.222.0.
+ */
+int ps_fileParse(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // PARSER_MPEG_PS_H

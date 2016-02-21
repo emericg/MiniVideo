@@ -29,10 +29,10 @@
 
 /* ************************************************************************** */
 
-/**
+/*!
  * \brief Parser MP3 files.
- * \param *media A pointer to a MediaFile_t structure.
- * \return retcode 1 if succeed, 0 otherwise.
+ * \param *media[in,out]: A pointer to a MediaFile_t structure.
+ * \return 1 if succeed, 0 otherwise.
  *
  * This parser index the content of MP1, MP2 and MP3 Elementary Streams.
  * It implements ISO/IEC 11172-3 and ISO/IEC 13818-3 specifications.
