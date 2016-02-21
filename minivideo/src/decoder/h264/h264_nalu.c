@@ -93,7 +93,7 @@ void nalu_reset(nalu_t *nalu)
 
 /*!
  * \brief Parse the content of a NAL Unit header.
- * \param *bitstr The bitstream.
+ * \param *bitstr The bitstream to use.
  * \param *nalu A NAL Unit structure.
  * \return 0 if no NAL Unit is found, 1 otherwise.
  *

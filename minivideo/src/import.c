@@ -562,7 +562,7 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
 
 /*!
  * \brief Close a file.
- * \param[in] **media_ptr: A pointer of pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in,out] **media_ptr: A pointer of pointer to a MediaFile_t structure.
  * \return 1 if success, 0 otherwise.
  */
 int import_fileClose(MediaFile_t **media_ptr)
