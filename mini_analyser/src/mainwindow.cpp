@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusLabel->hide();
 
     fcc = NULL;
+    hexeditor = NULL;
 
     emptyFileList = true;
 
@@ -58,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
     connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourCC()));
+    connect(ui->actionHexEditor, SIGNAL(triggered()), this, SLOT(openHexEditor()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
 
     connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas()));
@@ -682,5 +684,19 @@ void MainWindow::openFourCC()
         fcc->show();
     }
 }
+
+void MainWindow::openHexEditor()
+{
+    if (hexeditor)
+    {
+        hexeditor->show();
+    }
+    else
+    {
+        hexeditor = new HexEditor();
+        hexeditor->show();
+    }
+}
+
 
 /* ************************************************************************** */

@@ -28,6 +28,7 @@
 
 // minianalyser
 #include "fourcchelper.h"
+#include "hexeditor.h"
 
 #include <QMainWindow>
 #include <vector>
@@ -61,10 +62,12 @@ private slots:
     void closeFile();
     void hideStatus();
     void openFourCC();
+    void openHexEditor();
 
 private:
     Ui::MainWindow *ui;
     FourccHelper *fcc;
+    HexEditor *hexeditor;
     QTimer *statusTimer;
 
     bool emptyFileList;

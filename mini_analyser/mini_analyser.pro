@@ -17,15 +17,25 @@ DESTDIR      = build/
 SOURCES     += src/main.cpp \
                src/mainwindow.cpp \
                src/utils.cpp \
-               src/fourcchelper.cpp
+               src/fourcchelper.cpp \
+               src/hexeditor.cpp \
+               src/qhexedit.cpp \
+               src/chunks.cpp \
+               src/commands.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
                src/utils.h \
-               src/fourcchelper.h
+               src/fourcchelper.h \
+               src/hexeditor.h \
+               src/qhexedit.h \
+               src/chunks.h \
+               src/commands.h
+
 
 FORMS       += ui/mainwindow.ui \
-               ui/fourcchelper.ui
+               ui/fourcchelper.ui \
+               ui/hexeditor.ui
 
 RESOURCES   += resources/resources.qrc
 

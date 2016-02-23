@@ -2231,16 +2231,7 @@ background: rgba(255, 170, 0, 128);</string>
         <string>Sutitles track(s)</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_8">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <property name="spacing">
@@ -2475,6 +2466,7 @@ background: rgba(255, 170, 0, 128);</string>
    <addaction name="actionClose"/>
    <addaction name="separator"/>
    <addaction name="actionFourCC"/>
+   <addaction name="actionHexEditor"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
    <addaction name="actionAboutQt"/>
@@ -2545,6 +2537,18 @@ background: rgba(255, 170, 0, 128);</string>
    </property>
    <property name="text">
     <string>FourCC's</string>
+   </property>
+  </action>
+  <action name="actionHexEditor">
+   <property name="icon">
+    <iconset>
+     <normaloff>../resources/icons/hexeditor.svg</normaloff>../resources/icons/hexeditor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>HexEditor</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the hexadecimal editor</string>
    </property>
   </action>
  </widget>

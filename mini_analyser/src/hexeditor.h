@@ -42,6 +42,8 @@ private:
     Ui::HexEditor *ui;
     QHexEdit *hexEdit;
 
+    void loadFile(const QString &fileName);
+
 };
 
 #endif // HEXEDITOR_H
