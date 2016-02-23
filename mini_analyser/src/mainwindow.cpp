@@ -28,6 +28,7 @@
 #include <QDateTime>
 
 #include <QDropEvent>
+#include <QFile>
 #include <QUrl>
 #include <QDebug>
 #include <QMimeData>
@@ -687,13 +688,29 @@ void MainWindow::openFourCC()
 
 void MainWindow::openHexEditor()
 {
+
+    // Open current MediaFile in HexEditor
+    // If it doesn't exist, open an empty file
+    QString file;
+    MediaFile_t* mediaFile = currentMediaFile();
+    if (mediaFile)
+    {
+        file = QString(currentMediaFile()->file_path);
+    }
+    else
+    {
+        file = QString("");
+    }
+
     if (hexeditor)
     {
+        hexeditor->loadFile(file);
         hexeditor->show();
     }
     else
     {
         hexeditor = new HexEditor();
+        hexeditor->loadFile(file);
         hexeditor->show();
     }
 }

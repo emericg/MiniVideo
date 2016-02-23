@@ -19,6 +19,7 @@
  * \date      2016
  */
 
+
 #include "hexeditor.h"
 #include "ui_hexeditor.h"
 
@@ -28,10 +29,6 @@ HexEditor::HexEditor(QWidget *parent) :
 {
     ui->setupUi(this);
     hexEdit = new QHexEdit(this);
-    hexEdit->setData("zazertyuioqsdfghjkl");
-    hexEdit->resize(604, 485);
-
-
 }
 
 HexEditor::~HexEditor()
@@ -39,16 +36,20 @@ HexEditor::~HexEditor()
     delete ui;
 }
 
-/*void HexEditor::loadFile(const QString &fileName)
+void HexEditor::resizeEvent(QResizeEvent *event)
+{
+    hexEdit->resize(event->size());
+
+}
+
+void HexEditor::loadFile(const QString &fileName)
 {
     file.setFileName(fileName);
     if (!hexEdit->setData(file)) {
-        QMessageBox::warning(this, tr("QHexEdit"),
+        /*QMessageBox::warning(this, tr("QHexEdit"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(fileName)
-                             .arg(file.errorString()));
+                             .arg(file.errorString()));*/
         return;
     }
-    setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File loaded"), 2000);
-}*/
+}

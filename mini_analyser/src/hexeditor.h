@@ -24,7 +24,7 @@
 
 #include <QWidget>
 #include "qhexedit.h"
-
+#include "QResizeEvent"
 
 namespace Ui {
 class HexEditor;
@@ -37,12 +37,17 @@ class HexEditor : public QWidget
 public:
     explicit HexEditor(QWidget *parent = 0);
     ~HexEditor();
+    void loadFile(const QString &fileName);
 
 private:
     Ui::HexEditor *ui;
     QHexEdit *hexEdit;
 
-    void loadFile(const QString &fileName);
+    QString curFile;
+    QFile file;
+
+    void resizeEvent(QResizeEvent *event);
+
 
 };
 

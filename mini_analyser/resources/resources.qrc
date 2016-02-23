@@ -18,6 +18,7 @@
         <file>icons/package-remove.svg</file>
         <file>icons/package-upgrade.svg</file>
         <file>icons/video-x-generic.svg</file>
+        <file>icons/hexeditor.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>img/dropzone.png</file>
