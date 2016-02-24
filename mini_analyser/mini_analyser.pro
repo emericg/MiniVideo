@@ -19,18 +19,18 @@ SOURCES     += src/main.cpp \
                src/utils.cpp \
                src/fourcchelper.cpp \
                src/hexeditor.cpp \
-               src/qhexedit.cpp \
-               src/chunks.cpp \
-               src/commands.cpp
+               src/thirdparty/qhexedit2/qhexedit.cpp \
+               src/thirdparty/qhexedit2/chunks.cpp \
+               src/thirdparty/qhexedit2/commands.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
                src/utils.h \
                src/fourcchelper.h \
                src/hexeditor.h \
-               src/qhexedit.h \
-               src/chunks.h \
-               src/commands.h
+               src/thirdparty/qhexedit2/qhexedit.h \
+               src/thirdparty/qhexedit2/chunks.h \
+               src/thirdparty/qhexedit2/commands.h
 
 
 FORMS       += ui/mainwindow.ui \

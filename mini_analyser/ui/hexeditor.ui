@@ -11,9 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Hex Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resources.qrc">
+    <normaloff>:/icons/icons/hexeditor.svg</normaloff>:/icons/icons/hexeditor.svg</iconset>
   </property>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

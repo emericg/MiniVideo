@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>800</height>
+    <width>700</width>
+    <height>815</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>620</width>
+    <width>700</width>
     <height>800</height>
    </size>
   </property>
@@ -2253,8 +2253,8 @@ background: rgba(255, 170, 0, 128);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>618</width>
-             <height>607</height>
+             <width>678</width>
+             <height>622</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2541,8 +2541,8 @@ background: rgba(255, 170, 0, 128);</string>
   </action>
   <action name="actionHexEditor">
    <property name="icon">
-    <iconset>
-     <normaloff>../resources/icons/hexeditor.svg</normaloff>../resources/icons/hexeditor.svg</iconset>
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/icons/icons/hexeditor.svg</normaloff>:/icons/icons/hexeditor.svg</iconset>
    </property>
    <property name="text">
     <string>HexEditor</string>

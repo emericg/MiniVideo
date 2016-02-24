@@ -23,7 +23,7 @@
 #define HEXEDITOR_H
 
 #include <QWidget>
-#include "qhexedit.h"
+#include "thirdparty/qhexedit2/qhexedit.h"
 #include "QResizeEvent"
 
 namespace Ui {

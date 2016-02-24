@@ -29,6 +29,7 @@ HexEditor::HexEditor(QWidget *parent) :
 {
     ui->setupUi(this);
     hexEdit = new QHexEdit(this);
+    hexEdit->setReadOnly(true);
 }
 
 HexEditor::~HexEditor()
@@ -46,10 +47,6 @@ void HexEditor::loadFile(const QString &fileName)
 {
     file.setFileName(fileName);
     if (!hexEdit->setData(file)) {
-        /*QMessageBox::warning(this, tr("QHexEdit"),
-                             tr("Cannot read file %1:\n%2.")
-                             .arg(fileName)
-                             .arg(file.errorString()));*/
         return;
     }
 }
