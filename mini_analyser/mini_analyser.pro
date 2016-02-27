@@ -5,7 +5,7 @@
 
 TARGET       = mini_analyser
 TEMPLATE     = app
-QT          += core gui widgets
+QT          += core gui widgets svg
 
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
@@ -32,7 +32,6 @@ HEADERS     += src/main.h \
                src/thirdparty/qhexedit2/chunks.h \
                src/thirdparty/qhexedit2/commands.h
 
-
 FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \
                ui/hexeditor.ui
@@ -55,15 +54,16 @@ unix:macx {
 
     # Force Qt to use a particular SDK version
     #QMAKE_MAC_SDK = macosx10.11
+    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 
     # Copy libraries into the package
     QT_DIR = /usr/local/lib/
     FW_DIR = build/$${TARGET}.app/Contents/Frameworks
     QMAKE_POST_LINK += (mkdir -p $${FW_DIR})
     QMAKE_POST_LINK += && (cp ../minivideo/build/libminivideo.dylib $${FW_DIR})
-    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtCore.framework $${FW_DIR})
-    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtGui.framework $${FW_DIR})
-    QMAKE_POST_LINK += && (cp -R $${QT_DIR}/QtWidgets.framework $${FW_DIR})
+    QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtCore.framework/ ]; then cp -R $${QT_DIR}/QtCore.framework $${FW_DIR}; fi)
+    QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtGui.framework/ ]; then cp -R $${QT_DIR}/QtGui.framework $${FW_DIR}; fi)
+    QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtWidgets.framework/ ]; then cp -R $${QT_DIR}/QtWidgets.framework $${FW_DIR}; fi)
 
     # Use bundled libraries (rewrite rpaths)
     APP = build/$${TARGET}.app/Contents/MacOS/$${TARGET}
