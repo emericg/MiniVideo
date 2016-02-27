@@ -3,10 +3,19 @@
         <file>icons/application-exit.svg</file>
         <file>icons/applications-fonts.svg</file>
         <file>icons/audio-x-wav.svg</file>
+        <file>icons/custom-detach.svg</file>
+        <file>icons/custom-hexeditor.svg</file>
+        <file>icons/custom-info.svg</file>
+        <file>icons/custom-switch.svg</file>
         <file>icons/dialog-error.svg</file>
         <file>icons/dialog-information.svg</file>
         <file>icons/dialog-question.svg</file>
         <file>icons/dialog-warning.svg</file>
+        <file>icons/emblem-default.svg</file>
+        <file>icons/emblem-downloads.svg</file>
+        <file>icons/emblem-important.svg</file>
+        <file>icons/emblem-new.svg</file>
+        <file>icons/emblem-readonly.svg</file>
         <file>icons/emblem-system.svg</file>
         <file>icons/emblem-ubuntuone-synchronized.svg</file>
         <file>icons/emblem-ubuntuone-unsynchronized.svg</file>
@@ -18,7 +27,6 @@
         <file>icons/package-remove.svg</file>
         <file>icons/package-upgrade.svg</file>
         <file>icons/video-x-generic.svg</file>
-        <file>icons/hexeditor.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>img/dropzone.png</file>
