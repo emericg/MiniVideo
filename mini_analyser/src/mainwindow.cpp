@@ -209,22 +209,25 @@ void MainWindow::handleTabWidget()
 {
     ui->tabWidget->setEnabled(true);
 
-    // Clean up all tabs
-    while(ui->tabWidget->count() > 0)
+    // Save the current tab index if we want to restore it later
+    int tab_saved = ui->tabWidget->currentIndex();
+
+    // Remove all tabs
+    while (ui->tabWidget->count() > 0)
     {
         ui->tabWidget->removeTab(0);
     }
 
-    // Clean tabs
     if (mediaList.empty())
     {
-        // Add only the "drop zone" tab
+        // No media ? Re-add only the "drop zone" tab
         ui->tabWidget->addTab(ui->tab_dropzone, tabDropZoneIcon, tabDropZoneText);
         ui->tabWidget->tabBar()->hide();
         ui->tabWidget->setCurrentIndex(0);
     }
-    else // Otherwise, adapt tabs to media file content
+    else
     {
+        // Otherwise, adapt tabs to selected media file content
         MediaFile_t *media = currentMediaFile();
 
         ui->tabWidget->tabBar()->show();
@@ -252,6 +255,12 @@ void MainWindow::handleTabWidget()
         {
             // Add the "others" tab
             ui->tabWidget->addTab(ui->tab_others, tabOtherIcon, tabOtherText);
+        }
+
+        // Restore the same tab (if possible)
+        if (tab_saved > 0 && tab_saved <= ui->tabWidget->count())
+        {
+            ui->tabWidget->setCurrentIndex(tab_saved);
         }
     }
 }
