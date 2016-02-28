@@ -34,10 +34,59 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="verticalSpacing">
-     <number>12</number>
-    </property>
-    <item row="1" column="0">
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pushButton_file_detach">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="pushButton_file_exit">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4">
      <widget class="QLabel" name="statusLabel">
       <property name="minimumSize">
        <size>
@@ -54,40 +103,13 @@ background: rgba(255, 170, 0, 128);</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QComboBox" name="file_comboBox">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>Drag and drop files to get them analysed!</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="0">
+    <item row="2" column="0" colspan="4">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -129,7 +151,7 @@ background: rgba(255, 170, 0, 128);</string>
            <enum>QLayout::SetFixedSize</enum>
           </property>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label_drop_icon">
             <property name="maximumSize">
              <size>
               <width>256</width>
@@ -148,7 +170,7 @@ background: rgba(255, 170, 0, 128);</string>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="label_drop_text">
             <property name="font">
              <font>
               <pointsize>16</pointsize>
@@ -2228,10 +2250,19 @@ background: rgba(255, 170, 0, 128);</string>
          <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
        </attribute>
        <attribute name="title">
-        <string>Sutitles track(s)</string>
+        <string>Subtitles track(s)</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_8">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <property name="spacing">
@@ -2254,7 +2285,7 @@ background: rgba(255, 170, 0, 128);</string>
              <x>0</x>
              <y>0</y>
              <width>678</width>
-             <height>622</height>
+             <height>634</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2441,6 +2472,59 @@ background: rgba(255, 170, 0, 128);</string>
       </widget>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QComboBox" name="file_comboBox">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>Drag and drop files to get them analysed!</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_file_reload">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -2463,13 +2547,11 @@ background: rgba(255, 170, 0, 128);</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
-   <addaction name="actionClose"/>
    <addaction name="separator"/>
    <addaction name="actionFourCC"/>
    <addaction name="actionHexEditor"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
-   <addaction name="actionAboutQt"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
   </widget>
@@ -2482,13 +2564,13 @@ background: rgba(255, 170, 0, 128);</string>
     <string>Open</string>
    </property>
    <property name="toolTip">
-    <string>Open a new file and analyze it!</string>
+    <string>Open a multimedia file and analyze it!</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+     <normaloff>:/icons/icons/help-contents.svg</normaloff>:/icons/icons/help-contents.svg</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -2510,6 +2592,9 @@ background: rgba(255, 170, 0, 128);</string>
    </property>
   </action>
   <action name="actionAboutQt">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/icons/icons/dialog-question.svg</normaloff>:/icons/icons/dialog-question.svg</iconset>
@@ -2521,7 +2606,7 @@ background: rgba(255, 170, 0, 128);</string>
   <action name="actionExit">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/application-exit.svg</normaloff>:/icons/icons/application-exit.svg</iconset>
+     <normaloff>:/icons/icons/package-remove.svg</normaloff>:/icons/icons/package-remove.svg</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -2538,11 +2623,14 @@ background: rgba(255, 170, 0, 128);</string>
    <property name="text">
     <string>FourCC's</string>
    </property>
+   <property name="toolTip">
+    <string>Open the FourCC helper</string>
+   </property>
   </action>
   <action name="actionHexEditor">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/hexeditor.svg</normaloff>:/icons/icons/hexeditor.svg</iconset>
+     <normaloff>:/icons/icons/custom-hexeditor.svg</normaloff>:/icons/icons/custom-hexeditor.svg</iconset>
    </property>
    <property name="text">
     <string>HexEditor</string>

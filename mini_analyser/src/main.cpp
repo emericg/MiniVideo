@@ -33,7 +33,7 @@
 
 // Qt
 #include <QApplication>
-#include "qglobal.h"
+#include <QtCore/qglobal.h>
 
 /* ************************************************************************** */
 

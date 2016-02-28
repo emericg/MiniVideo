@@ -19,7 +19,6 @@
  * \date      2016
  */
 
-
 #include "hexeditor.h"
 #include "ui_hexeditor.h"
 
@@ -40,7 +39,6 @@ HexEditor::~HexEditor()
 void HexEditor::resizeEvent(QResizeEvent *event)
 {
     hexEdit->resize(event->size());
-
 }
 
 void HexEditor::loadFile(const QString &fileName)

@@ -22,9 +22,10 @@
 #ifndef HEXEDITOR_H
 #define HEXEDITOR_H
 
-#include <QWidget>
 #include "thirdparty/qhexedit2/qhexedit.h"
-#include "QResizeEvent"
+
+#include <QWidget>
+#include <QResizeEvent>
 
 namespace Ui {
 class HexEditor;
@@ -47,8 +48,6 @@ private:
     QFile file;
 
     void resizeEvent(QResizeEvent *event);
-
-
 };
 
 #endif // HEXEDITOR_H

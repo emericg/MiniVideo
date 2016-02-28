@@ -167,7 +167,6 @@ MediaFile_t *MainWindow::currentMediaFile()
 
     size_t fileIndex = ui->file_comboBox->currentIndex();
 
-
     if (mediaList.size() == 1)
     {
         media = mediaList.at(0);
@@ -688,32 +687,26 @@ void MainWindow::openFourCC()
 
 void MainWindow::openHexEditor()
 {
-
-    // Open current MediaFile in HexEditor
-    // If it doesn't exist, open an empty file
     QString file;
-    MediaFile_t* mediaFile = currentMediaFile();
+    MediaFile_t *mediaFile = currentMediaFile();
+
     if (mediaFile)
     {
+        // Open current MediaFile in HexEditor
         file = QString(currentMediaFile()->file_path);
-    }
-    else
-    {
-        file = QString("");
-    }
 
-    if (hexeditor)
-    {
-        hexeditor->loadFile(file);
-        hexeditor->show();
-    }
-    else
-    {
-        hexeditor = new HexEditor();
-        hexeditor->loadFile(file);
-        hexeditor->show();
+        if (hexeditor)
+        {
+            hexeditor->loadFile(file);
+            hexeditor->show();
+        }
+        else
+        {
+            hexeditor = new HexEditor();
+            hexeditor->loadFile(file);
+            hexeditor->show();
+        }
     }
 }
-
 
 /* ************************************************************************** */
