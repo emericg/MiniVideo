@@ -97,16 +97,6 @@ typedef enum AudioSpeakers_e
 
 } AudioSpeakers_e;
 
-//! MPEG audio channel modes
-typedef enum MPEGChannelMode_e
-{
-    CHAN_MONO           = 0,
-    CHAN_STEREO         = 1,
-    CHAN_STEREO_JOINT   = 2,
-    CHAN_DUAL           = 3
-
-} MPEGChannelMode_e;
-
 //! Audio channel modes
 typedef enum ChannelMode_e
 {
@@ -144,51 +134,48 @@ typedef enum PictureRepartition_e
 
 } PictureRepartition_e;
 
-//! The color space used by the video
-typedef enum ColorSpace_e
+//! The color model used by the video
+typedef enum ColorModel_e
 {
-    CS_UNKNOWN = 0,     //!< Unknown color space
+    CLR_UNKNOWN = 0,     //!< Unknown color model
 
-    CS_YUV     = 1,     //!< YUV (YCbCr) color space
-    CS_RGB     = 2      //!< RGB color space
+    CLR_RGB     = 1,
+    CLR_YCbCr   = 2,
+    CLR_YCgCo   = 3,
 
-} ColorSpace_e;
+} ColorModel_e;
+
+//! The color matrix used by the video
+typedef enum ColorMatrix_e
+{
+    CM_UNKNOWN = 0,
+
+    CM_sRGB,
+    CM_sYCC,
+    CM_xvYCC,
+    CM_XYZ,
+    CM_PAL,
+    CM_NTSC,
+    CM_SMPTE170M,
+    CM_SMPTE240M,
+    CM_bt470,
+    CM_bt601,
+    CM_bt709,
+    CM_bt2020,
+
+} ColorMatrix_e;
 
 //! The subsampling format used by the video
 typedef enum SubSampling_e
 {
     SS_UNKNOWN = 0,     //!< Unknown subsampling
 
-    SS_400     = 1,     //!< Greyscale
+    SS_400     = 1,     //!< 4:0:0 greyscale subsampling
     SS_420     = 2,     //!< 4:2:0 subsampling
     SS_422     = 3,     //!< 4:2:2 subsampling
     SS_444     = 4      //!< 4:4:4 subsampling
 
 } SubSampling_e;
-
-//! Frame rate (picture per second)
-typedef enum FrameRate_e
-{
-    FR_UNKNOWN = 0,   //!< Unknown frame rate
-
-    FR_24p,           //!< 24 frames
-    FR_24p_NTSC,      //!< (24 frames * 1000) / 1001 = 23.976 frames/s
-    FR_25p,
-    FR_30p,
-    FR_30p_NTSC,      //!< (30 frames * 1000) / 1001 = 29.970 frames/s
-    FR_48p,
-    FR_48p_NTSC,      //!< (48 frames * 1000) / 1001 = 47.952 frames/s
-    FR_50p,
-    FR_50i,           //!< 50 interlaced fields (25 frames)
-    FR_60p,
-    FR_60p_NTSC,      //!< (60 frames * 1000) / 1001 = 59.970 frames/s
-    FR_60i,           //!< 60 interlaced fields (30 frames)
-    FR_60i_NTSC,      //!< 60 interlaced fields * 1000/1001 = 59.940 interlaced fields (29.970 frames)
-    FR_72p,
-    FR_120p,
-    FR_240p
-
-} FrameRate_e;
 
 /* ************************************************************************** */
 #endif // AV_UTILS_H

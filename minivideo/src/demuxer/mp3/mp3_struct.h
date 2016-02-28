@@ -57,6 +57,18 @@ typedef struct mp3_t
 
 /* ************************************************************************** */
 
+//! MPEG audio channel modes
+typedef enum MPEGChannelMode_e
+{
+    CHAN_MONO           = 0,
+    CHAN_STEREO         = 1,
+    CHAN_STEREO_JOINT   = 2,
+    CHAN_DUAL           = 3
+
+} MPEGChannelMode_e;
+
+/* ************************************************************************** */
+
 //! Audio version ID // Sampling Rate Index
 static const uint32_t samplingrate_index_table[3][4] =
 {
