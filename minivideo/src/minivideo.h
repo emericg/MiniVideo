@@ -30,6 +30,7 @@ extern "C" {
 #endif // __cplusplus
 
 #include "avcodecs.h"
+#include "fourcc.h"
 #include "mediafile_struct.h"
 
 /* ************************************************************************** */

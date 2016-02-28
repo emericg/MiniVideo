@@ -161,7 +161,7 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
 
 const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description)
 {
-    if (type == stream_AUDIO)
+    if (type == stream_AUDIO || type == stream_UNKNOWN)
     {
         switch (codec)
         {
@@ -275,14 +275,10 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_OPUS:
                 return "OPUS";
                 break;
-
-            default:
-            case CODEC_UNKNOWN:
-                return "Unknown";
-                break;
         }
     }
-    else if (type == stream_VIDEO)
+
+    if (type == stream_VIDEO || type == stream_UNKNOWN)
     {
         switch (codec)
         {
@@ -396,14 +392,10 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_PRORES_442_LT:
                 return "Apple ProRes 422 (LT)";
                 break;
-
-            default:
-            case CODEC_UNKNOWN:
-                return "Unknown";
-                break;
         }
     }
-    else if (type == stream_TEXT)
+
+    if (type == stream_TEXT || type == stream_UNKNOWN)
     {
         switch (codec)
         {
@@ -415,11 +407,6 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 break;
             case CODEC_ASS:
                 return "Advanced SubStation Alpha";
-                break;
-
-            default:
-            case CODEC_UNKNOWN:
-                return "Unknown";
                 break;
         }
     }

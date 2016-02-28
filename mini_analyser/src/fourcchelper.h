@@ -29,6 +29,9 @@ namespace Ui {
 class FourccHelper;
 }
 
+/*!
+ * \brief The FourccHelper class
+ */
 class FourccHelper : public QDialog
 {
     Q_OBJECT
@@ -38,23 +41,33 @@ public:
     ~FourccHelper();
 
 private slots:
+    void asciiSwitch();
+
     void endiannessInfo();
     void endiannessSwitch();
 
     void asciiCopy();
     void hexCopy();
-    void decCopy();
-    void int32Copy();
     void binCopy();
+    void int32LECopy();
+    void int32BECopy();
 
     void asciiEdited();
     void hexEdited();
-    void decEdited();
-    void int32Edited();
     void binEdited();
+    void int32LEEdited();
+    void int32BEEdited();
+
+    void fourccConvertion(int from);
+    void findCodec();
 
 private:
     Ui::FourccHelper *ui;
+
+    int endianness_system;
+    int endianness_gui;
+
+    QByteArray internal_hex;
 };
 
 #endif // FOURCCHELPER_H

@@ -22,10 +22,21 @@
 #include "fourcchelper.h"
 #include "ui_fourcchelper.h"
 
+// minivideo library
+#include <minivideo.h>
+
 #include <QDesktopServices>
 #include <QUrl>
 
-#include <iostream>
+#include <QDebug>
+
+uint32_t endian_flip_32(uint32_t src)
+{
+    return ( ((src & 0x000000FF) << 24)
+           | ((src & 0x0000FF00) <<  8)
+           | ((src & 0x00FF0000) >>  8)
+           | ((src & 0xFF000000) >> 24) );
+}
 
 FourccHelper::FourccHelper(QWidget *parent) :
     QDialog(parent),
@@ -33,29 +44,61 @@ FourccHelper::FourccHelper(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Detect system endianness and use it as default for the GUI
+    if (BYTE_ORDER == LITTLE_ENDIAN)
+    {
+        endianness_gui = LITTLE_ENDIAN;
+        endianness_system = LITTLE_ENDIAN;
+        ui->radioButton_le->toggle();
+    }
+    else
+    {
+        endianness_gui = LITTLE_ENDIAN;
+        endianness_system = LITTLE_ENDIAN;
+        ui->radioButton_be->toggle();
+    }
+
     connect(ui->pushButton_exit, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(ui->pushButton_endianness, SIGNAL(clicked(bool)), this, SLOT(endiannessInfo()));
 
     connect(ui->lineEdit_ascii, SIGNAL(textEdited(QString)), this, SLOT(asciiEdited()));
     connect(ui->lineEdit_hex, SIGNAL(textEdited(QString)), this, SLOT(hexEdited()));
-    //connect(ui->lineEdit_dec, SIGNAL(textEdited(QString)), this, SLOT(decEdited()));
-    connect(ui->lineEdit_int32, SIGNAL(textEdited(QString)), this, SLOT(int32Edited()));
-    //connect(ui->lineEdit_bin, SIGNAL(textEdited(QString)), this, SLOT(binEdited()));
+    connect(ui->lineEdit_int32_LE, SIGNAL(textEdited(QString)), this, SLOT(int32LEEdited()));
+    connect(ui->lineEdit_int32_BE, SIGNAL(textEdited(QString)), this, SLOT(int32BEEdited()));
 
+    connect(ui->pushButton_switch_ascii, SIGNAL(clicked(bool)), this, SLOT(asciiSwitch()));
     connect(ui->pushButton_copy_ascii, SIGNAL(clicked(bool)), this, SLOT(asciiCopy()));
     connect(ui->pushButton_copy_hex, SIGNAL(clicked(bool)), this, SLOT(hexCopy()));
-    connect(ui->pushButton_copy_dec, SIGNAL(clicked(bool)), this, SLOT(decCopy()));
-    connect(ui->pushButton_copy_int32, SIGNAL(clicked(bool)), this, SLOT(int32Copy()));
     connect(ui->pushButton_copy_bin, SIGNAL(clicked(bool)), this, SLOT(binCopy()));
+    connect(ui->pushButton_copy_int32le, SIGNAL(clicked(bool)), this, SLOT(int32LECopy()));
+    connect(ui->pushButton_copy_int32be, SIGNAL(clicked(bool)), this, SLOT(int32BECopy()));
 
-    connect(ui->radioButton_le, SIGNAL(clicked(bool)), this, SLOT(endiannessSwitch()));
-    connect(ui->radioButton_be, SIGNAL(clicked(bool)), this, SLOT(endiannessSwitch()));
+    // Endianness feature is disabled
+    ui->frame_endianness->hide();
+    //connect(ui->radioButton_le, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
+    //connect(ui->radioButton_be, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
 }
 
 FourccHelper::~FourccHelper()
 {
     close();
     delete ui;
+}
+
+void FourccHelper::asciiSwitch()
+{
+    // We don't actually swap ASCII but hex, so we do not loose the unknown
+    // ASCII characters during the swap
+
+    // Swap internal_hex
+    QByteArray hex_in = internal_hex;
+    internal_hex.clear();
+    for (int i = 0; i < hex_in.length(); i++)
+    {
+        internal_hex.append(hex_in.at(hex_in.length() - i-1));
+    }
+
+    fourccConvertion(0);
 }
 
 void FourccHelper::endiannessInfo()
@@ -65,38 +108,168 @@ void FourccHelper::endiannessInfo()
 
 void FourccHelper::endiannessSwitch()
 {
+    // Update internal setting
+    if (endianness_gui == LITTLE_ENDIAN)
+        endianness_gui = BIG_ENDIAN;
+    else
+        endianness_gui = LITTLE_ENDIAN;
+
+    // Note:
+    // I'm not entierly sure what to do with endianness here. Should we switch
+    // everything or just the hex / i32 / binary representation of the ASCII string?
+}
+
+void FourccHelper::asciiEdited()
+{
+    internal_hex = ui->lineEdit_ascii->text().toLocal8Bit();
+    fourccConvertion(1);
+}
+
+void FourccHelper::hexEdited()
+{
+    internal_hex = QByteArray::fromHex(ui->lineEdit_hex->text().toLocal8Bit());
+
+    fourccConvertion(2);
+}
+
+void FourccHelper::int32LEEdited()
+{
+    QString string = ui->lineEdit_int32_LE->text();
+    unsigned i32 = string.toUInt(0, 10);
+
+    internal_hex.clear();
+    for (int i = 0; i < 4; i++)
+    {
+        char w = (i32 >> (i*8)) & 0xFF;
+        if (w > 0)
+            internal_hex.append(QString::number(w, 16));
+    }
+
+    internal_hex = QByteArray::fromHex(internal_hex);
+    fourccConvertion(3);
+}
+
+void FourccHelper::int32BEEdited()
+{
+    int pos = ui->lineEdit_int32_BE->cursorPosition();
+
+    // TODO
+
+    fourccConvertion(4);
+
+    ui->lineEdit_int32_BE->setCursorPosition(pos);
+}
+
+void FourccHelper::binEdited()
+{
     // TODO
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void FourccHelper::fourccConvertion(int from)
+{
+    QString ascii_str = "";
+    QString hex_str = "";
+    unsigned i32le = 0, i32be = 0;
+
+    if (internal_hex.size())
+    {
+        // We have a new QByteArray internal_hex value!
+        ascii_str = QString::fromLocal8Bit(internal_hex);
+        hex_str = QString::fromLocal8Bit(internal_hex.toHex());
+
+        for (int i = 0; i < internal_hex.size(); i++)
+        {
+            i32be += internal_hex.at(i) << (i*8);
+
+            i32le <<= 8;
+            i32le += internal_hex.at(i);
+        }
+/*
+        qDebug() << "QByteArray hex (size:" << internal_hex.size() << ")  >> " << internal_hex;
+        qDebug() << "]]] ASCII :" << ascii_str;
+        qDebug() << "]]] HEX   :" << hex_str;
+        qDebug() << "]]] BIN   :" << QString::number(i32le, 2).rightJustified(32, '0');
+        qDebug() << "]]] i32le :" << QString::number(i32le, 10);
+        qDebug() << "]]] i32be :" << QString::number(i32be, 10);
+*/
+    }
+
+    // Update the QLineEdits
+    if (from != 1)
+        ui->lineEdit_ascii->setText(ascii_str);
+    if (from != 2)
+        ui->lineEdit_hex->setText(hex_str);
+
+    if (endianness_gui == LITTLE_ENDIAN)
+        ui->lineEdit_bin->setText(QString::number(i32le, 2).rightJustified(32, '0'));
+    else
+        ui->lineEdit_bin->setText(QString::number(i32be, 2).rightJustified(32, '0'));
+
+    if (i32le || i32be)
+    {
+        if (from != 3)
+            ui->lineEdit_int32_LE->setText(QString::number(i32le, 10));
+        if (from != 4)
+            ui->lineEdit_int32_BE->setText(QString::number(i32be, 10));
+    }
+    else
+    {
+        if (from != 3)
+            ui->lineEdit_int32_LE->setText("");
+        if (from != 4)
+            ui->lineEdit_int32_BE->setText("");
+    }
+
+    // Update the codec box
+    findCodec();
+}
+
+void FourccHelper::findCodec()
+{
+    QString codec = "Unknown";
+    QString int32_field;
+
+    // Read fcc
+    if (endianness_gui == LITTLE_ENDIAN)
+        int32_field = ui->lineEdit_int32_LE->text();
+    else
+        int32_field = ui->lineEdit_int32_BE->text();
+    unsigned fcc = int32_field.toUInt(0, 10);
+
+    // Try to find a match
+    codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
+    if (codec != "Unknown")
+    {
+        ui->label_fourcc_string->setText(">> " + codec);
+        return;
+    }
+    else
+    {
+        // Switch endianness
+        fcc = endian_flip_32(fcc);
+
+        // Try again
+        codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
+        if (codec != "Unknown")
+        {
+            ui->label_fourcc_string->setText(">> " + codec + + "\n>> " + tr("but the endianness is all wrong!"));
+            return;
+        }
+    }
+
+    // We didn't find a match...
+    ui->label_fourcc_string->setText(tr(">> This FourCC is unknown..."));
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void FourccHelper::asciiCopy()
 {
     ui->lineEdit_ascii->selectAll();
     ui->lineEdit_ascii->copy();
     ui->lineEdit_ascii->deselect();
-}
-
-void FourccHelper::asciiEdited()
-{
-    QString ascii = ui->lineEdit_ascii->text();
-
-    // ASCI to hex
-    QString hex = QString::fromLatin1(ascii.toLatin1().toHex());
-
-    QString dec;
-    unsigned i32 = 0;
-    for (int i = 0; i < ascii.size(); i++)
-    {
-        // ASCII to decimal
-        dec += QString::number(ascii.at(i).toLatin1());
-
-        // ASCII to packet int32
-        i32 += ascii.at(i).toLatin1() << (i*8);
-    }
-
-    ui->lineEdit_hex->setText(hex);
-    ui->lineEdit_dec->setText(dec);
-    ui->lineEdit_int32->setText(QString::number(i32, 10));
-    ui->lineEdit_bin->setText(QString::number(i32, 2));
 }
 
 void FourccHelper::hexCopy()
@@ -106,77 +279,6 @@ void FourccHelper::hexCopy()
     ui->lineEdit_hex->deselect();
 }
 
-void FourccHelper::hexEdited()
-{
-    QString hexstr = ui->lineEdit_hex->text();
-    QByteArray hex = ui->lineEdit_hex->text().toLocal8Bit();
-
-    // Hex to ASCII (not always possible)
-    QString ascii = QByteArray::fromHex(hex).data();
-
-    // Hex to int32
-    unsigned i32 = hexstr.toUInt(0, 16);
-
-    // ASCII to decimal
-    QString dec;
-    for (int i = 0; i < ascii.size(); i++)
-    {
-        dec += QString::number(ascii.at(i).toLatin1());
-    }
-
-    ui->lineEdit_ascii->setText(ascii);
-    ui->lineEdit_dec->setText(dec);
-    ui->lineEdit_int32->setText(QString::number(i32, 10));
-    ui->lineEdit_bin->setText(QString::number(i32, 2));
-}
-
-void FourccHelper::decCopy()
-{
-    ui->lineEdit_dec->selectAll();
-    ui->lineEdit_dec->copy();
-    ui->lineEdit_dec->deselect();
-}
-
-void FourccHelper::decEdited()
-{
-    // TODO
-}
-
-void FourccHelper::int32Copy()
-{
-    ui->lineEdit_int32->selectAll();
-    ui->lineEdit_int32->copy();
-    ui->lineEdit_int32->deselect();
-}
-
-void FourccHelper::int32Edited()
-{
-    QString int32 = ui->lineEdit_int32->text();
-    unsigned i32 = int32.toUInt(0, 10);
-
-    // int32 to ASCII
-    char fcc_str[4];
-    {
-        fcc_str[0] = (i32 >>  0) & 0xFF;
-        fcc_str[1] = (i32 >>  8) & 0xFF;
-        fcc_str[2] = (i32 >> 16) & 0xFF;
-        fcc_str[3] = (i32 >> 24) & 0xFF;
-    }
-    QString ascii = QString::fromLatin1(fcc_str);
-
-    // ASCII to decimal
-    QString dec;
-    for (int i = 0; i < ascii.size(); i++)
-    {
-        dec += QString::number(ascii.at(i).toLatin1());
-    }
-
-    ui->lineEdit_ascii->setText(ascii);
-    ui->lineEdit_hex->setText(QString::number(i32, 16));
-    ui->lineEdit_dec->setText(dec);
-    ui->lineEdit_bin->setText(QString::number(i32, 2));
-}
-
 void FourccHelper::binCopy()
 {
     ui->lineEdit_bin->selectAll();
@@ -184,7 +286,16 @@ void FourccHelper::binCopy()
     ui->lineEdit_bin->deselect();
 }
 
-void FourccHelper::binEdited()
+void FourccHelper::int32LECopy()
 {
-    // TODO
+    ui->lineEdit_int32_LE->selectAll();
+    ui->lineEdit_int32_LE->copy();
+    ui->lineEdit_int32_LE->deselect();
+}
+
+void FourccHelper::int32BECopy()
+{
+    ui->lineEdit_int32_BE->selectAll();
+    ui->lineEdit_int32_BE->copy();
+    ui->lineEdit_int32_BE->deselect();
 }
