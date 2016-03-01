@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>485</height>
+    <width>600</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Hex Editor</string>
+   <string>HexEditor</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/hexeditor.svg</normaloff>:/icons/icons/hexeditor.svg</iconset>
+    <normaloff>:/icons/icons/custom-hexeditor.svg</normaloff>:/icons/icons/custom-hexeditor.svg</iconset>
   </property>
  </widget>
  <resources>

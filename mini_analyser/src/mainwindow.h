@@ -43,32 +43,40 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public slots:
-    void loadFileDialog();
-    void About();
-    void AboutQt();
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    int setAppPath(const QString &path);
+    int loadFile(const QString &file);
+
+public slots:
+    void loadFileDialog();
+
+private slots:
+    int printDatas();
+    void closeFile(const QString &file);
+    void closeFile();
+    void reloadFile(const QString &file);
+    void reloadFile();
+    void detachFile();
+    void hideStatus();
+    void openExporter();
+    void openHexEditor();
+    void openFourCC();
+    void About();
+    void AboutQt();
 
 protected:
     void dropEvent(QDropEvent *ev);
     void dragEnterEvent(QDragEnterEvent *ev);
-
-private slots:
-    int printDatas();
-    int loadFile(const QString &file);
-    void closeFile();
-    void hideStatus();
-    void openFourCC();
-    void openHexEditor();
 
 private:
     Ui::MainWindow *ui;
     FourccHelper *fcc;
     HexEditor *hexeditor;
     QTimer *statusTimer;
+
+    QString applicationPath;
 
     bool emptyFileList;
     std::vector <MediaFile_t *> mediaList;

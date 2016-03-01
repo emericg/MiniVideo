@@ -71,6 +71,22 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+    // Used to detach
+    if (argv[0])
+    {
+        w.setAppPath(QString::fromLocal8Bit(argv[0]));
+    }
+
+    // If a file has been passed as an argument, load it
+    if (argv[1])
+    {
+        QString fileAsArgument = QFile::decodeName(argv[1]);
+        if (QFile::exists(fileAsArgument))
+        {
+            w.loadFile(fileAsArgument);
+        }
+    }
+
     return app.exec();
 }
 

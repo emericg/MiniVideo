@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>815</height>
+    <width>640</width>
+    <height>801</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>700</width>
+    <width>640</width>
     <height>800</height>
    </size>
   </property>
@@ -109,7 +109,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -228,29 +228,6 @@ background: rgba(255, 170, 0, 128);</string>
         <string>Informations</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="label_filename">
-          <property name="font">
-           <font>
-            <pointsize>13</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QLabel { background-color : rgb(218, 218, 218); color : rgb(0, 0, 0); }</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="text">
-           <string>Unknown</string>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QGroupBox" name="groupBox_infos">
           <property name="enabled">
@@ -430,6 +407,29 @@ background: rgba(255, 170, 0, 128);</string>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QLabel" name="label_filename">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Unknown</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>File name</string>
              </property>
             </widget>
            </item>
@@ -1375,13 +1375,6 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_79">
-               <property name="text">
-                <string>Bit per sample</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QLabel" name="label_audio_channels_2">
                <property name="font">
@@ -1414,7 +1407,14 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="1" column="2">
+              <widget class="QLabel" name="label_79">
+               <property name="text">
+                <string>Bit per sample</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
               <widget class="QLabel" name="label_audio_bitpersample_2">
                <property name="font">
                 <font>
@@ -1432,10 +1432,24 @@ background: rgba(255, 170, 0, 128);</string>
              </item>
             </layout>
            </item>
+           <item row="5" column="0">
+            <widget class="Line" name="line_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
            <item row="7" column="0">
             <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="1" colspan="2">
-              <widget class="QLabel" name="label_audio_samplecount">
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>Audio sample per frame</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLabel" name="label_audio_frameduration">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1469,7 +1483,14 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
+             <item row="1" column="2">
+              <widget class="QLabel" name="label_40">
+               <property name="text">
+                <string>Frame duration</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" colspan="2">
               <widget class="QLabel" name="label_audio_sampleperframe">
                <property name="font">
                 <font>
@@ -1485,8 +1506,8 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1" colspan="2">
-              <widget class="QLabel" name="label_audio_framecount">
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_audio_samplecount">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1508,22 +1529,8 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0" colspan="2">
-              <widget class="QLabel" name="label_29">
-               <property name="text">
-                <string>Audio sample per frame</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_40">
-               <property name="text">
-                <string>Frame duration</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" colspan="2">
-              <widget class="QLabel" name="label_audio_frameduration">
+             <item row="1" column="1">
+              <widget class="QLabel" name="label_audio_framecount">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1539,13 +1546,6 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
             </layout>
-           </item>
-           <item row="5" column="0">
-            <widget class="Line" name="line_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -2284,8 +2284,8 @@ background: rgba(255, 170, 0, 128);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>678</width>
-             <height>634</height>
+             <width>618</width>
+             <height>620</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2548,11 +2548,12 @@ background: rgba(255, 170, 0, 128);</string>
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="separator"/>
-   <addaction name="actionFourCC"/>
+   <addaction name="actionExport"/>
    <addaction name="actionHexEditor"/>
    <addaction name="separator"/>
-   <addaction name="actionAbout"/>
+   <addaction name="actionFourCC"/>
    <addaction name="separator"/>
+   <addaction name="actionAbout"/>
    <addaction name="actionExit"/>
   </widget>
   <action name="actionOpen">
@@ -2576,7 +2577,7 @@ background: rgba(255, 170, 0, 128);</string>
     <string>About</string>
    </property>
    <property name="toolTip">
-    <string>About this application</string>
+    <string>About MiniAnalyser</string>
    </property>
   </action>
   <action name="actionClose">
@@ -2637,6 +2638,18 @@ background: rgba(255, 170, 0, 128);</string>
    </property>
    <property name="toolTip">
     <string>Open the hexadecimal editor</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Export file informations on a text file</string>
    </property>
   </action>
  </widget>

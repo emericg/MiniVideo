@@ -57,13 +57,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(loadFileDialog()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
-    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
-    connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourCC()));
+    connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(openExporter()));
     connect(ui->actionHexEditor, SIGNAL(triggered()), this, SLOT(openHexEditor()));
+    connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourCC()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
+    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
     connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas()));
+
+    connect(ui->pushButton_file_detach, SIGNAL(clicked(bool)), this, SLOT(detachFile()));
+    connect(ui->pushButton_file_reload, SIGNAL(clicked(bool)), this, SLOT(reloadFile()));
+    connect(ui->pushButton_file_exit, SIGNAL(clicked(bool)), this, SLOT(closeFile()));
 
     // Save tabs titles and icons
     tabDropZoneText = ui->tabWidget->tabText(0);
@@ -84,10 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Accept video files "drag & drop"
     setAcceptDrops(true);
-
-    // Auto-load a media file? (debug feature)
-    //const QString file = "";
-    //loadFile(file);
 }
 
 MainWindow::~MainWindow()
@@ -103,8 +104,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
     // Check if the object dropped has an url (and is a file)
     if (e->mimeData()->hasUrls())
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
         // TODO Filter by MimeType or file extension
         // Use QMimeDatabase // Qt 5.5
+#endif
 
         e->acceptProposedAction();
     }
@@ -115,7 +118,7 @@ void MainWindow::dropEvent(QDropEvent *e)
     foreach (const QUrl &url, e->mimeData()->urls())
     {
         const QString &fileName = url.toLocalFile();
-        //std::cout << "Dropped file: "<< fileName.toStdString() << std::endl;
+        qDebug() << "Dropped file: "<< fileName;
 
         loadFile(fileName);
     }
@@ -123,12 +126,23 @@ void MainWindow::dropEvent(QDropEvent *e)
 
 /* ************************************************************************** */
 
+int MainWindow::setAppPath(const QString &path)
+{
+    int status = 0;
+
+    if (path.isEmpty() == false)
+    {
+        applicationPath = path;
+        status = 1;
+    }
+
+    return status;
+}
+
 void MainWindow::loadFileDialog()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open a multimedia file"),
                                                     "", tr("Files (*.*)"));
-
-    std::cout << "Choosed file: "<< fileName.toStdString() << std::endl;
 
     loadFile(fileName);
 }
@@ -139,10 +153,21 @@ int MainWindow::loadFile(const QString &file)
 
     if (file.isEmpty() == false)
     {
+        // Check if this is a duplicate
+        for (unsigned i = 0; i < mediaList.size(); i++)
+        {
+            QString name = mediaList.at(i)->file_path;
+            if (file == name)
+            {
+                closeFile(file);
+                break;
+            }
+        }
+
+        // Load file
         setStatus("Working...", SUCCESS, 0);
 
         retcode = analyseFile(file);
-
         if (retcode == 1)
         {
             handleComboBox(file);
@@ -157,6 +182,136 @@ int MainWindow::loadFile(const QString &file)
     }
 
     return retcode;
+}
+
+void MainWindow::closeFile(const QString &file)
+{
+    if (mediaList.empty() == false)
+    {
+        // Find the index of the given file
+        for (unsigned i = 0; i < mediaList.size(); i++)
+        {
+            QString name = mediaList.at(i)->file_path;
+            if (file == name)
+            {
+                minivideo_close(&mediaList.at(i));
+
+                mediaList.erase(mediaList.begin() + i);
+
+                // Remove the entry from the comboBox
+                ui->file_comboBox->removeItem(i);
+                return;
+            }
+        }
+    }
+}
+
+void MainWindow::closeFile()
+{
+    // First clean the interface
+    cleanDatas();
+
+    // Then try to close the file's context
+    int fileIndex = ui->file_comboBox->currentIndex();
+    if (mediaList.empty() == false)
+    {
+        if ((int)(mediaList.size()) >= (fileIndex + 1))
+        {
+            minivideo_close(&mediaList.at(fileIndex));
+
+            mediaList.erase(mediaList.begin() + fileIndex);
+
+            // Remove the entry from the comboBox
+            ui->file_comboBox->removeItem(fileIndex);
+
+            // Update comboBox index
+            if (ui->file_comboBox->count() > 0)
+            {
+                ui->file_comboBox->activated(fileIndex-1);
+            }
+            else // No more file opened?
+            {
+                emptyFileList = true;
+                QString empty;
+
+                handleTabWidget();
+                handleComboBox(empty);
+            }
+        }
+    }
+}
+
+void MainWindow::reloadFile(const QString &file)
+{
+    if (file.isEmpty() == false && mediaList.empty() == false)
+    {
+        // Find the index of the given file
+        int fileIndex = -1;
+        for (unsigned i = 0; i < mediaList.size(); i++)
+        {
+            QString name = mediaList.at(i)->file_path;
+            if (file == name)
+            {
+                fileIndex = (int)i;
+
+                minivideo_close(&mediaList.at(fileIndex));
+
+                mediaList.erase(mediaList.begin() + fileIndex);
+
+                // Remove the entry from the comboBox
+                ui->file_comboBox->removeItem(fileIndex);
+
+                // Load file
+                setStatus("Working...", SUCCESS, 0);
+
+                int retcode = analyseFile(file);
+                if (retcode == 1)
+                {
+                    handleComboBox(file);
+                    cleanDatas();
+                    printDatas();
+                    hideStatus();
+                }
+                else
+                {
+                    setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
+                }
+                return;
+            }
+        }
+    }
+}
+
+void MainWindow::reloadFile()
+{
+    MediaFile_t *media = currentMediaFile();
+
+    if (media)
+    {
+        QString current = media->file_path;
+        closeFile();
+        loadFile(current);
+    }
+}
+
+void MainWindow::detachFile()
+{
+    if (applicationPath.isEmpty() == false)
+    {
+        MediaFile_t *media = currentMediaFile();
+        int fileCount = ui->file_comboBox->count();
+
+        if (media && fileCount > 1)
+        {
+            QString detachPath = media->file_path;
+            QStringList args;
+            args.push_back(detachPath);
+
+            QProcess::startDetached(applicationPath, args);
+
+            closeFile();
+        }
+    }
 }
 
 /* ************************************************************************** */
@@ -294,62 +449,6 @@ void MainWindow::setStatus(const QString &text, int status, int duration)
 void MainWindow::hideStatus()
 {
     ui->statusLabel->hide();
-}
-
-void MainWindow::closeFile()
-{
-    // First clean the interface
-    cleanDatas();
-
-    // Then try to close the file's context
-    int fileIndex = ui->file_comboBox->currentIndex();
-    if (mediaList.empty() == false)
-    {
-        if ((int)(mediaList.size()) >= (fileIndex + 1))
-        {
-            minivideo_close(&mediaList.at(fileIndex));
-
-            mediaList.erase(mediaList.begin() + fileIndex);
-
-            // Remove the entry from the comboBox
-            ui->file_comboBox->removeItem(fileIndex);
-
-            // Update comboBox index
-            if (ui->file_comboBox->count() > 0)
-            {
-                ui->file_comboBox->activated(fileIndex-1);
-            }
-            else // No more file opened?
-            {
-                emptyFileList = true;
-                QString empty;
-
-                handleTabWidget();
-                handleComboBox(empty);
-            }
-        }
-    }
-}
-
-/* ************************************************************************** */
-
-void MainWindow::About()
-{
-    QMessageBox about(QMessageBox::Information, tr("About mini_analyser"),
-                      tr("<big><b>mini_analyser</b></big> \
-                         <p align='justify'>mini_analyser is a software designed \
-                         to help you extract the maximum of informations and meta-datas from multimedia files.</p> \
-                         <p>This application is part of the MiniVideo framework.</p> \
-                         <p>Emeric Grange (emeric.grange@gmail.com)</p>"),
-                         QMessageBox::Ok);
-
-    about.setIconPixmap(QPixmap(":/icons/icons/icon.svg"));
-    about.exec();
-}
-
-void MainWindow::AboutQt()
-{
-    QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
 /* ************************************************************************** */
@@ -681,25 +780,19 @@ void MainWindow::cleanDatas()
     //
 }
 
-void MainWindow::openFourCC()
+/* ************************************************************************** */
+
+void MainWindow::openExporter()
 {
-    if (fcc)
-    {
-        fcc->show();
-    }
-    else
-    {
-        fcc = new FourccHelper();
-        fcc->show();
-    }
+
 }
 
 void MainWindow::openHexEditor()
 {
     QString file;
-    MediaFile_t *mediaFile = currentMediaFile();
+    MediaFile_t *media = currentMediaFile();
 
-    if (mediaFile)
+    if (media)
     {
         // Open current MediaFile in HexEditor
         file = QString(currentMediaFile()->file_path);
@@ -716,6 +809,38 @@ void MainWindow::openHexEditor()
             hexeditor->show();
         }
     }
+}
+
+void MainWindow::openFourCC()
+{
+    if (fcc)
+    {
+        fcc->show();
+    }
+    else
+    {
+        fcc = new FourccHelper();
+        fcc->show();
+    }
+}
+
+void MainWindow::About()
+{
+    QMessageBox about(QMessageBox::Information, tr("About mini_analyser"),
+                      tr("<big><b>mini_analyser</b></big> \
+                         <p align='justify'>mini_analyser is a software designed \
+                         to help you extract the maximum of informations and meta-datas from multimedia files.</p> \
+                         <p>This application is part of the MiniVideo framework.</p> \
+                         <p>Emeric Grange (emeric.grange@gmail.com)</p>"),
+                         QMessageBox::Ok);
+
+    about.setIconPixmap(QPixmap(":/icons/icons/icon.svg"));
+    about.exec();
+}
+
+void MainWindow::AboutQt()
+{
+    QMessageBox::aboutQt(this, tr("About Qt"));
 }
 
 /* ************************************************************************** */
