@@ -233,8 +233,10 @@ typedef enum Mp4HandlerType_e
 {
     HANDLER_AUDIO = 0x736F756E, //!< 'soun'
     HANDLER_VIDEO = 0x76696465, //!< 'vide'
-    HANDLER_HINT  = 0x68696E74, //!< 'hint'
-    HANDLER_META  = 0x6D657461  //!< 'meta'
+    HANDLER_TEXT  = 0x74657874, //!< 'text'
+    HANDLER_META  = 0x6D657461, //!< 'meta'
+    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd'
+    HANDLER_HINT  = 0x68696E74  //!< 'hint'
 
     // sdsm // SceneDescriptionStream
     // odsm // ObjectDescriptorStream

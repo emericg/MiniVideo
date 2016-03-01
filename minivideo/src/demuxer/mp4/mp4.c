@@ -1687,11 +1687,53 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
             unsigned int hSpacing = read_bits(bitstr, 32);
             unsigned int vSpacing = read_bits(bitstr, 32);
+
+            // ColourInformationBox colr; // optional
+            ////////////////////////////////////////////////////////////
+            unsigned int colour_type = read_bits(bitstr, 32);
+            if (colour_type == ‘nclx’) // on-screen colours
+            {
+                unsigned int colour_primaries = read_bits(bitstr, 16);
+                unsigned int transfer_characteristics = read_bits(bitstr, 16);
+                unsigned int matrix_coefficients = read_bits(bitstr, 16);
+                unsigned int full_range_flag = read_bits(bitstr, 1);
+                unsigned int reserved = read_bits(bitstr, 7);
+            }
+            if (colour_type == ‘nclc’) // ???
+            {
+                // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
+            }
+            else if (colour_type == ‘rICC’)
+            {
+                // ICC_profile; // restricted ICC profile
+            }
+            else if (colour_type == ‘prof’)
+            {
+                // ICC_profile; // unrestricted ICC profile
+            }
+
+            // ColourInformationBox gama; // optional
+            ////////////////////////////////////////////////////////////
+
+            // ColourInformationBox fiel; // optional
+            ////////////////////////////////////////////////////////////
 */
         break;
 
+        case HANDLER_TEXT:
+        break;
+
+        case HANDLER_META:
+        break;
+
+        case HANDLER_TMCD:
+        break;
+
+        case HANDLER_HINT:
+        break;
+
         default:
-            TRACE_1(MP4, "Not a video track, skipped...\n");
+            TRACE_1(MP4, "Unknown track type, skipped...\n");
         break;
     }
 
