@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     std::cout << GREEN "main() arguments" RESET << std::endl;
 
     // Print informations about libMiniVideo and system endianness
-    minivideo_infos();
+    minivideo_print_infos();
     minivideo_endianness();
 
     QApplication app(argc, argv);

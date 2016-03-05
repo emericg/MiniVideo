@@ -17,7 +17,7 @@ endif()
 ###############################################################################
 
 set(minivideo_VERSION_MAJOR 6)
-set(minivideo_VERSION_MINOR 1)
+set(minivideo_VERSION_MINOR 2)
 set(minivideo_VERSION_PATCH 0)
 
 set(ENABLE_COLORS 1) # "Toggle colored terminal output"
@@ -109,12 +109,12 @@ elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 
-# Save options into a "cmake_defines.h" file, using "cmake_defines.h.in" template
+# Generate "minivideo_settings.h" file from a template
 ###############################################################################
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/src/cmake_defines.h.in"
-    "${CMAKE_SOURCE_DIR}/src/cmake_defines.h"
+    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
+    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h"
 )
 
 
@@ -123,7 +123,7 @@ configure_file(
 
 set(minivideo_SRC
     src/minivideo.c
-        src/cmake_defines.h
+        src/minivideo_settings.h
         src/typedef.h
         src/utils.c
         src/avcodecs.c src/avutils.h

@@ -27,7 +27,7 @@
 /* ************************************************************************** */
 
 // Import setting macros from minivideo
-#include "cmake_defines.h"
+#include "minivideo_settings.h"
 
 // =============================================================================
 // GENERAL SETTINGS

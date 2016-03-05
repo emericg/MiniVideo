@@ -2,17 +2,17 @@ project(mini_extractor)
 cmake_minimum_required(VERSION 2.6)
 
 
-# Search for the custom "LibMiniVideo" module
+# Search for the custom "MiniVideo" module
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-# FindLibMiniVideo.cmake
-FIND_PACKAGE(LibMiniVideo REQUIRED)
+# FindMiniVideo.cmake
+FIND_PACKAGE(MiniVideo REQUIRED)
 
-IF(LIBMINIVIDEO_FOUND)
-    MESSAGE(STATUS "* LibMiniVideo found")
-ELSE(LIBMINIVIDEO_FOUND)
-    MESSAGE(ERROR " > LibMiniVideo not found!")
-ENDIF(LIBMINIVIDEO_FOUND)
+IF(MINIVIDEO_FOUND)
+    MESSAGE(STATUS "* MiniVideo found")
+ELSE(MINIVIDEO_FOUND)
+    MESSAGE(ERROR " > MiniVideo not found!")
+ENDIF(MINIVIDEO_FOUND)
 
 
 # FindDoxygen.cmake
@@ -38,21 +38,21 @@ SET(mini_extractor_SRC src/main.cpp src/main.h)
 
 # Build the extractor software
 ADD_EXECUTABLE(mini_extractor ${mini_extractor_SRC})
-INCLUDE_DIRECTORIES(${LIBMINIVIDEO_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${MINIVIDEO_INCLUDE_DIR})
 
 
 ## Link against STATIC library:
 ## Please set FIND_PACKAGE manually
 #FIND_PACKAGE(JPEG) # FindJPEG.cmake
 #FIND_PACKAGE(PNG) # FindPNG.cmake
-#ADD_LIBRARY(LibMiniVideo STATIC IMPORTED)
-#SET_PROPERTY(TARGET LibMiniVideo PROPERTY IMPORTED_LOCATION ../../lib/build/libminivideo.a)
-#TARGET_LINK_LIBRARIES(mini_extractor LibMiniVideo ${JPEG_LIBRARY} ${PNG_LIBRARY})
+#ADD_LIBRARY(MiniVideo STATIC IMPORTED)
+#SET_PROPERTY(TARGET MiniVideo PROPERTY IMPORTED_LOCATION ../../lib/build/libminivideo.a)
+#TARGET_LINK_LIBRARIES(mini_extractor MiniVideo ${JPEG_LIBRARY} ${PNG_LIBRARY})
 
 
 # Link against SHARED library:
-LINK_DIRECTORIES(${LIBMINIVIDEO_LIBRARY})
-TARGET_LINK_LIBRARIES(mini_extractor ${LIBMINIVIDEO_LIBRARY})
+LINK_DIRECTORIES(${MINIVIDEO_LIBRARY})
+TARGET_LINK_LIBRARIES(mini_extractor ${MINIVIDEO_LIBRARY})
 
 
 # Instal the extractor software into the system (optional step, requires root credentials)

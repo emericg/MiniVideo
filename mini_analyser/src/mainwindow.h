@@ -27,8 +27,9 @@
 #include <minivideo.h>
 
 // minianalyser
-#include "fourcchelper.h"
 #include "hexeditor.h"
+#include "fourcchelper.h"
+#include "about.h"
 
 #include <QMainWindow>
 #include <vector>
@@ -62,7 +63,8 @@ private slots:
     void hideStatus();
     void openExporter();
     void openHexEditor();
-    void openFourCC();
+    void openFourccHelper();
+    void openAboutWindows();
     void About();
     void AboutQt();
 
@@ -72,10 +74,12 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    FourccHelper *fcc;
-    HexEditor *hexeditor;
-    QTimer *statusTimer;
 
+    HexEditor *hexeditor;
+    FourccHelper *fcchelper;
+    AboutWindows *aboutwindows;
+
+    QTimer *statusTimer;
     QString applicationPath;
 
     bool emptyFileList;

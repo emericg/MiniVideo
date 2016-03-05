@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
     else
     {
         // Print informations about libMiniVideo and system endianness
-        minivideo_infos();
+        minivideo_print_infos();
         minivideo_endianness();
 
         // Let's get to work

@@ -53,9 +53,9 @@
 
 /* ************************************************************************** */
 
-void minivideo_infos(void)
+void minivideo_print_infos(void)
 {
-    printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
+    printf(BLD_GREEN "\minivideo_print_infos()\n" CLR_RESET);
     printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
@@ -127,9 +127,24 @@ void minivideo_infos(void)
 
 /* ************************************************************************** */
 
+void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
+                         const char **minivideo_builddate, const char **minivideo_buildtime)
+{
+    printf(BLD_GREEN "\nminivideo_get_infos()\n" CLR_RESET);
+
+    *minivideo_major = minivideo_VERSION_MAJOR;
+    *minivideo_minor = minivideo_VERSION_MINOR;
+    *minivideo_patch = minivideo_VERSION_PATCH;
+
+    *minivideo_builddate = __DATE__;
+    *minivideo_buildtime = __TIME__;
+}
+
+/* ************************************************************************** */
+
 int minivideo_endianness(void)
 {
-    int retcode = -1;
+    int endianness = -1;
     int i = 1;
     char *p = (char *)&i;
 
@@ -139,12 +154,12 @@ int minivideo_endianness(void)
     if (p[0] == 1)
     {
         printf("* ENDIANNESS is set to LITTLE_ENDIAN\n");
-        retcode = LITTLE_ENDIAN; // 1234
+        endianness = LITTLE_ENDIAN; // 1234
     }
     else
     {
         printf("* ENDIANNESS is set to BIG_ENDIAN\n");
-        retcode = BIG_ENDIAN; // 4321
+        endianness = BIG_ENDIAN; // 4321
     }
 #else
     if (p[0] == 1)
@@ -157,7 +172,7 @@ int minivideo_endianness(void)
     }
 #endif // ENABLE_DEBUG
 
-    return retcode;
+    return endianness;
 }
 
 /* ************************************************************************** */

@@ -17,6 +17,7 @@ DESTDIR      = build/
 SOURCES     += src/main.cpp \
                src/mainwindow.cpp \
                src/utils.cpp \
+               src/about.cpp \
                src/fourcchelper.cpp \
                src/hexeditor.cpp \
                src/thirdparty/qhexedit2/qhexedit.cpp \
@@ -26,6 +27,7 @@ SOURCES     += src/main.cpp \
 HEADERS     += src/main.h \
                src/mainwindow.h \
                src/utils.h \
+               src/about.h \
                src/fourcchelper.h \
                src/hexeditor.h \
                src/thirdparty/qhexedit2/qhexedit.h \
@@ -34,7 +36,8 @@ HEADERS     += src/main.h \
 
 FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \
-               ui/hexeditor.ui
+               ui/hexeditor.ui \
+               ui/about.ui
 
 RESOURCES   += resources/resources.qrc
 

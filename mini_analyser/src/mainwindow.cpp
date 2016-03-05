@@ -45,13 +45,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->statusLabel->hide();
 
-    fcc = NULL;
+    fcchelper = NULL;
     hexeditor = NULL;
+    aboutwindows = NULL;
 
     emptyFileList = true;
 
+    ui->statusLabel->hide();
     statusTimer = new QTimer;
     connect(statusTimer, SIGNAL(timeout()), this, SLOT(hideStatus()));
 
@@ -59,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
     connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(openExporter()));
     connect(ui->actionHexEditor, SIGNAL(triggered()), this, SLOT(openHexEditor()));
-    connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourCC()));
-    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(About()));
+    connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourccHelper()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindows()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -811,18 +812,39 @@ void MainWindow::openHexEditor()
     }
 }
 
-void MainWindow::openFourCC()
+void MainWindow::openFourccHelper()
 {
-    if (fcc)
+    if (fcchelper)
     {
-        fcc->show();
+        fcchelper->show();
     }
     else
     {
-        fcc = new FourccHelper();
-        fcc->show();
+        fcchelper = new FourccHelper();
+        fcchelper->show();
     }
 }
+
+void MainWindow::openAboutWindows()
+{
+    if (aboutwindows)
+    {
+        aboutwindows->show();
+    }
+    else
+    {
+        int minivideo_major, minivideo_minor, minivideo_patch;
+        const char *minivideo_builddate, *minivideo_buildtime;
+        minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
+                            &minivideo_builddate, &minivideo_buildtime);
+
+        aboutwindows = new AboutWindows();
+        aboutwindows->setMinivideoVersion(minivideo_major, minivideo_minor, minivideo_patch,
+                                          minivideo_builddate, minivideo_buildtime);
+        aboutwindows->show();
+    }
+}
+
 
 void MainWindow::About()
 {
