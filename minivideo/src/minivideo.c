@@ -130,14 +130,18 @@ void minivideo_print_infos(void)
 void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
                          const char **minivideo_builddate, const char **minivideo_buildtime)
 {
-    printf(BLD_GREEN "\nminivideo_get_infos()\n" CLR_RESET);
+    if (minivideo_major && minivideo_minor && minivideo_patch)
+    {
+        *minivideo_major = minivideo_VERSION_MAJOR;
+        *minivideo_minor = minivideo_VERSION_MINOR;
+        *minivideo_patch = minivideo_VERSION_PATCH;
+    }
 
-    *minivideo_major = minivideo_VERSION_MAJOR;
-    *minivideo_minor = minivideo_VERSION_MINOR;
-    *minivideo_patch = minivideo_VERSION_PATCH;
-
-    *minivideo_builddate = __DATE__;
-    *minivideo_buildtime = __TIME__;
+    if (minivideo_builddate && minivideo_buildtime)
+    {
+        *minivideo_builddate = __DATE__;
+        *minivideo_buildtime = __TIME__;
+    }
 }
 
 /* ************************************************************************** */
@@ -164,11 +168,11 @@ int minivideo_endianness(void)
 #else
     if (p[0] == 1)
     {
-        retcode = LITTLE_ENDIAN; // 1234
+        endianness = LITTLE_ENDIAN; // 1234
     }
     else
     {
-        retcode = BIG_ENDIAN; // 4321
+        endianness = BIG_ENDIAN; // 4321
     }
 #endif // ENABLE_DEBUG
 
