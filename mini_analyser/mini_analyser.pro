@@ -5,7 +5,7 @@
 
 TARGET       = mini_analyser
 TEMPLATE     = app
-QT          += core gui widgets svg
+QT          += core svg gui widgets
 
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
@@ -66,12 +66,14 @@ unix:macx {
     QMAKE_POST_LINK += && (cp ../minivideo/build/libminivideo.dylib $${FW_DIR})
     QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtCore.framework/ ]; then cp -R $${QT_DIR}/QtCore.framework $${FW_DIR}; fi)
     QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtGui.framework/ ]; then cp -R $${QT_DIR}/QtGui.framework $${FW_DIR}; fi)
+    QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtSvg.framework/ ]; then cp -R $${QT_DIR}/QtSvg.framework $${FW_DIR}; fi)
     QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtWidgets.framework/ ]; then cp -R $${QT_DIR}/QtWidgets.framework $${FW_DIR}; fi)
 
     # Use bundled libraries (rewrite rpaths)
     APP = build/$${TARGET}.app/Contents/MacOS/$${TARGET}
     QMAKE_POST_LINK += && (install_name_tool -change $${PWD}/build/libminivideo.dylib @executable_path/../Frameworks/libminivideo.dylib $${APP})
     QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtCore.framework/Versions/5/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore $${APP})
+    QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtSvg.framework/Versions/5/QtSvg @executable_path/../Frameworks/QtSvg.framework/Versions/5/QtSvg $${APP})
     QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtGui.framework/Versions/5/QtGui @executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui $${APP})
     QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtWidgets.framework/Versions/5/QtWidgets @executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets $${APP})
 }
