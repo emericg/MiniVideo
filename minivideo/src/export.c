@@ -644,14 +644,14 @@ int export_idr(DecodingContext_t *dc)
 #if ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
     if (dc->output_format < PICTURE_YUV420)
     {
-        TRACE_WARNING(DIO, "No export library available, forcing YCbCr 4:2:0\n");
+        TRACE_WARNING(IO, "No export library available, forcing YCbCr 4:2:0\n");
         dc->output_format = PICTURE_YUV420;
     }
 #else
     #if ENABLE_JPEG == 0
         if (dc->output_format == PICTURE_JPG)
         {
-            TRACE_WARNING(DIO, "No jpg export library available, trying png\n");
+            TRACE_WARNING(IO, "No jpg export library available, trying png\n");
             dc->output_format++; // to png
         }
     #endif // ENABLE_JPEG
@@ -659,7 +659,7 @@ int export_idr(DecodingContext_t *dc)
     #if ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_PNG)
         {
-            TRACE_WARNING(DIO, "No png export library available, forcing YCbCr 4:2:0\n");
+            TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0\n");
             dc->output_format = PICTURE_YUV420;
         }
     #endif // ENABLE_PNG
@@ -667,7 +667,7 @@ int export_idr(DecodingContext_t *dc)
     #if ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
         {
-            TRACE_WARNING(DIO, "No bmp / tga export library available, forcing YCbCr 4:2:0\n");
+            TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0\n");
             dc->output_format = PICTURE_YUV420;
         }
     #endif // ENABLE_STBIMWRITE
