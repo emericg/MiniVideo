@@ -38,6 +38,7 @@ class HexEditor : public QWidget
 public:
     explicit HexEditor(QWidget *parent = 0);
     ~HexEditor();
+
     void loadFile(const QString &fileName);
 
 private:

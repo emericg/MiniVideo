@@ -27,6 +27,7 @@
 #include <minivideo.h>
 
 // minianalyser
+#include "textexporter.h"
 #include "hexeditor.h"
 #include "fourcchelper.h"
 #include "about.h"
@@ -75,6 +76,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
+    TextExporter *textexporter;
     HexEditor *hexeditor;
     FourccHelper *fcchelper;
     AboutWindows *aboutwindows;
@@ -83,7 +85,7 @@ private:
     QString applicationPath;
 
     bool emptyFileList;
-    std::vector <MediaFile_t *> mediaList;
+    std::vector <MediaFile_t *> mediaList; // This might need to be smart pointers at some point
 
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;

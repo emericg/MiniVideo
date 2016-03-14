@@ -46,8 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    fcchelper = NULL;
+    textexporter = NULL;
     hexeditor = NULL;
+    fcchelper = NULL;
     aboutwindows = NULL;
 
     emptyFileList = true;
@@ -785,7 +786,19 @@ void MainWindow::cleanDatas()
 
 void MainWindow::openExporter()
 {
+    MediaFile_t *media = currentMediaFile();
 
+    if (media)
+    {
+        if (!textexporter)
+        {
+            textexporter = new TextExporter();
+        }
+
+        textexporter->setMediaFile(media);
+        textexporter->generateDatas(media);
+        textexporter->show();
+    }
 }
 
 void MainWindow::openHexEditor()
@@ -796,7 +809,7 @@ void MainWindow::openHexEditor()
     if (media)
     {
         // Open current MediaFile in HexEditor
-        file = QString(currentMediaFile()->file_path);
+        file = QString(media->file_path);
 
         if (hexeditor)
         {
@@ -844,7 +857,6 @@ void MainWindow::openAboutWindows()
         aboutwindows->show();
     }
 }
-
 
 void MainWindow::About()
 {
