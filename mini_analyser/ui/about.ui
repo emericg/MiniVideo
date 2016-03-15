@@ -49,19 +49,6 @@
        <number>0</number>
       </property>
       <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>303</width>
-          <height>78</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QLabel" name="icon">
         <property name="minimumSize">
          <size>
@@ -105,7 +92,7 @@
       <item>
        <widget class="QLabel" name="label_version">
         <property name="text">
-         <string>version 1</string>
+         <string>version [git]</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
