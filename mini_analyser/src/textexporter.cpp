@@ -25,7 +25,10 @@
 #include "utils.h"
 
 #include <QDate>
+#include <QDebug>
 #include <QTime>
+#include <QFileDialog>
+#include <QMessageBox>
 
 TextExporter::TextExporter(QWidget *parent) :
     QDialog(parent),
@@ -35,7 +38,8 @@ TextExporter::TextExporter(QWidget *parent) :
 
     exportFormat = EXPORT_TEXT;
 
-    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(exportDatas()));
+    connect(ui->pushButton_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
+    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
     connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
@@ -52,44 +56,66 @@ void TextExporter::setMediaFile(MediaFile_t *media)
     }
 }
 
+void TextExporter::saveFileDialog()
+{
+    QString filePath = QFileDialog::getSaveFileName(this,
+                                                    tr("Save media informations in a text file"),
+                                                    ui->lineEdit_filename->text(),
+                                                    tr("Files (*.txt)"));
+
+    if (filePath.isEmpty() == false)
+        setOutputFile(filePath);
+}
+
+void TextExporter::setOutputFile(QString &filePath)
+{
+    if (exportFormat == EXPORT_XML)
+        filePath += ".xml";
+    else if (exportFormat == EXPORT_JSON)
+        filePath += ".json";
+    else // if (exportFormat == EXPORT_TEXT)
+        filePath += ".txt";
+
+    ui->lineEdit_filename->setText(filePath);
+}
+
 void TextExporter::generateDatas(MediaFile_t *media)
 {
     if (media)
     {
         // First generate output path
-        QString outputFile_path = media->file_path;
-        outputFile_path += ".txt";
+        QString outputFilePath = media->file_path;
+        setOutputFile(outputFilePath);
 
-        outputFile.setFileName(outputFile_path);
-
-        exportedDatas.clear();
+        // Clear datas
+        exportDatas.clear();
 
         // Fill datas
-        exportedDatas += "Full path   : ";
-        exportedDatas += media->file_path;
-        exportedDatas += "\n\n";
+        exportDatas += "Full path   : ";
+        exportDatas += media->file_path;
+        exportDatas += "\n\n";
 
-        exportedDatas += "Title       : ";
-        exportedDatas += media->file_name;
-        exportedDatas += "\n";
-        exportedDatas += "Size        : ";
-        exportedDatas += getSizeString(media->file_size);
-        exportedDatas += "\n";
-        exportedDatas += "Duration    : ";
-        exportedDatas += getDurationString(media->duration);
-        exportedDatas += "\n";
-        exportedDatas += "Container   : ";
-        exportedDatas += getContainerString(media->container, true);
-        exportedDatas += "\n";
+        exportDatas += "Title       : ";
+        exportDatas += media->file_name;
+        exportDatas += "\n";
+        exportDatas += "Size        : ";
+        exportDatas += getSizeString(media->file_size);
+        exportDatas += "\n";
+        exportDatas += "Duration    : ";
+        exportDatas += getDurationString(media->duration);
+        exportDatas += "\n";
+        exportDatas += "Container   : ";
+        exportDatas += getContainerString(media->container, true);
+        exportDatas += "\n";
         if (media->container == CONTAINER_MP4)
         {
             QDate date(1904, 1, 1);
             QTime time(0, 0, 0, 0);
             QDateTime datetime(date, time);
             datetime = datetime.addSecs(media->creation_time);
-            exportedDatas += "Date        : ";
-            exportedDatas += datetime.toString("dddd d MMMM yyyy, hh:mm:ss");
-            exportedDatas += "\n";
+            exportDatas += "Date        : ";
+            exportDatas += datetime.toString("dddd d MMMM yyyy, hh:mm:ss");
+            exportDatas += "\n";
         }
 
         // VIDEO TRACKS
@@ -102,20 +128,20 @@ void TextExporter::generateDatas(MediaFile_t *media)
             // Section title
             if (media->tracks_video_count == 1)
             {
-                exportedDatas += "\nVIDEO\n-----\n";
+                exportDatas += "\nVIDEO\n-----\n";
             }
             else
             {
-                exportedDatas += "\nVIDEO TRACK #";
-                exportedDatas += QString::number(i);
-                exportedDatas += "\n--------------\n";
+                exportDatas += "\nVIDEO TRACK #";
+                exportDatas += QString::number(i);
+                exportDatas += "\n--------------\n";
             }
 
             // Datas
-            exportedDatas += "Codec       : ";
-            exportedDatas += getCodecString(stream_VIDEO, t->stream_codec, true);
-            exportedDatas += "\n";
-            exportedDatas += "FourCC      : ";
+            exportDatas += "Codec       : ";
+            exportDatas += getCodecString(stream_VIDEO, t->stream_codec, true);
+            exportDatas += "\n";
+            exportDatas += "FourCC      : ";
             char fcc_str[4];
             {
                 fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
@@ -123,14 +149,14 @@ void TextExporter::generateDatas(MediaFile_t *media)
                 fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
                 fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
             }
-            exportedDatas += QString::fromLatin1(fcc_str, 4);
-            exportedDatas += "\n";
-            exportedDatas += "Size        : ";
-            exportedDatas += getSizeString(t->stream_size);
-            exportedDatas += "\n";
-            exportedDatas += "Duration    : ";
-            exportedDatas += getDurationString(t->duration_ms);
-            exportedDatas += "\n";
+            exportDatas += QString::fromLatin1(fcc_str, 4);
+            exportDatas += "\n";
+            exportDatas += "Size        : ";
+            exportDatas += getSizeString(t->stream_size);
+            exportDatas += "\n";
+            exportDatas += "Duration    : ";
+            exportDatas += getDurationString(t->duration_ms);
+            exportDatas += "\n";
         }
 
         // AUDIO TRACKS
@@ -141,15 +167,15 @@ void TextExporter::generateDatas(MediaFile_t *media)
                 break;
 
             // Section title
-            exportedDatas += "\nAUDIO TRACK #";
-            exportedDatas += QString::number(i);
-            exportedDatas += "\n--------------\n";
+            exportDatas += "\nAUDIO TRACK #";
+            exportDatas += QString::number(i);
+            exportDatas += "\n--------------\n";
 
             // Datas
-            exportedDatas += "Codec       : ";
-            exportedDatas += getCodecString(stream_AUDIO, t->stream_codec, true);
-            exportedDatas += "\n";
-            exportedDatas += "FourCC      : ";
+            exportDatas += "Codec       : ";
+            exportDatas += getCodecString(stream_AUDIO, t->stream_codec, true);
+            exportDatas += "\n";
+            exportDatas += "FourCC      : ";
             char fcc_str[4];
             {
                 fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
@@ -157,35 +183,50 @@ void TextExporter::generateDatas(MediaFile_t *media)
                 fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
                 fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
             }
-            exportedDatas += QString::fromLatin1(fcc_str, 4);
-            exportedDatas += "\n";
-            exportedDatas += "Size        : ";
-            exportedDatas += getSizeString(t->stream_size);
-            exportedDatas += "\n";
-            exportedDatas += "Duration    : ";
-            exportedDatas += getDurationString(t->duration_ms);
-            exportedDatas += "\n";
+            exportDatas += QString::fromLatin1(fcc_str, 4);
+            exportDatas += "\n";
+            exportDatas += "Size        : ";
+            exportDatas += getSizeString(t->stream_size);
+            exportDatas += "\n";
+            exportDatas += "Duration    : ";
+            exportDatas += getDurationString(t->duration_ms);
+            exportDatas += "\n";
         }
 
         // Print it
-        ui->textBrowser->setText(exportedDatas);
+        ui->textBrowser->setText(exportDatas);
     }
 }
 
-void TextExporter::exportDatas()
+void TextExporter::saveDatas()
 {
-    if (exportedDatas.isEmpty() == false)
+    if (exportDatas.isEmpty() == false)
     {
-        if (outputFile.open(QIODevice::WriteOnly) == true &&
-            outputFile.isWritable() == true)
+        exportFile.setFileName(ui->lineEdit_filename->text());
+
+        if (exportFile.open(QIODevice::WriteOnly) == true &&
+            exportFile.isWritable() == true)
         {
-            if (outputFile.exists() == true)
+            if (exportFile.exists() == true)
             {
-                // confirmation prompt
+                // Confirmation prompt
+                QMessageBox::StandardButton messageReply;
+                QString messageText = tr("This file already exist:\n");
+                messageText += ui->lineEdit_filename->text();
+                messageText += tr("\nAre you sure you want to overwrite it?");
+
+                messageReply = QMessageBox::warning(this, tr("Confirm file overwrite"),
+                                                    messageText,
+                                                    QMessageBox::Yes | QMessageBox::No);
+
+                if (messageReply == QMessageBox::No)
+                {
+                    return;
+                }
             }
 
-            outputFile.write(exportedDatas.toLocal8Bit());
-            outputFile.close();
+            exportFile.write(exportDatas.toLocal8Bit());
+            exportFile.close();
         }
     }
 }

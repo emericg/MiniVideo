@@ -57,14 +57,17 @@ public:
     void generateDatas(MediaFile_t *media);
 
 private slots:
-    void exportDatas();
+    void saveFileDialog();
+    void saveDatas();
 
 private:
     Ui::TextExporter *ui;
 
     int exportFormat;
-    QString exportedDatas;
-    QFile outputFile;
+    QString exportDatas;
+    QFile exportFile;
+
+    void setOutputFile(QString &filePath);
 };
 
 /* ************************************************************************** */

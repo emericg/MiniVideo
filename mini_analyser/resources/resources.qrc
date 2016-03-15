@@ -30,5 +30,6 @@
     </qresource>
     <qresource prefix="/img">
         <file>img/dropzone.png</file>
+        <file>app/icon.png</file>
     </qresource>
 </RCC>

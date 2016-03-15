@@ -27,6 +27,7 @@ HexEditor::HexEditor(QWidget *parent) :
     ui(new Ui::HexEditor)
 {
     ui->setupUi(this);
+
     hexEdit = new QHexEdit(this);
     hexEdit->setReadOnly(true);
 }
@@ -44,7 +45,14 @@ void HexEditor::resizeEvent(QResizeEvent *event)
 void HexEditor::loadFile(const QString &fileName)
 {
     file.setFileName(fileName);
-    if (!hexEdit->setData(file)) {
+
+    if (!hexEdit->setData(file))
+    {
         return;
     }
+}
+
+void HexEditor::closeFile()
+{
+    //
 }
