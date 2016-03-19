@@ -179,6 +179,11 @@ int MainWindow::loadFile(const QString &file)
         }
         else
         {
+            handleComboBox(file);
+            cleanDatas();
+            printDatas();
+            hideStatus();
+
             setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
         }
     }
@@ -471,12 +476,9 @@ int MainWindow::analyseFile(const QString &file)
         if (retcode == SUCCESS)
         {
             retcode = minivideo_parse(input_media, true, true, true);
+            mediaList.push_back(input_media);
 
-            if (retcode == SUCCESS)
-            {
-                mediaList.push_back(input_media);
-            }
-            else
+            if (retcode != SUCCESS)
             {
                 std::cerr << "minivideo_parse() failed with retcode: " << retcode << std::endl;
             }

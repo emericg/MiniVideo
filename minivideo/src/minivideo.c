@@ -197,6 +197,10 @@ int minivideo_parse(MediaFile_t *input_media,
     {
         TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!\n");
     }
+    else if (input_media->file_size == 0)
+    {
+        TRACE_ERROR(MAIN, "Unable to parse emtpy file!\n");
+    }
     else
     {
         // Start container parsing
