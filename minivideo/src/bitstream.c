@@ -169,7 +169,6 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
         {
             TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!\n");
             retcode = FAILURE;
-            exit(EXIT_FAILURE);
         }
         else
         {

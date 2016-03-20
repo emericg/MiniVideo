@@ -42,6 +42,7 @@ bool bitstream_force_alignment(Bitstream_t *bitstr);
 bool more_bitstream_data(Bitstream_t *bitstr);
 
 // H.264 specifics
+bool h264_rbsp_trailing_bits(Bitstream_t *bitstr);
 bool h264_more_rbsp_data(Bitstream_t *bitstr);
 bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr);
 
