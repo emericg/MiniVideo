@@ -55,7 +55,7 @@
 
 void minivideo_print_infos(void)
 {
-    printf(BLD_GREEN "\minivideo_print_infos()\n" CLR_RESET);
+    printf(BLD_GREEN "minivideo_print_infos()\n" CLR_RESET);
     printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
@@ -79,21 +79,28 @@ void minivideo_print_infos(void)
 #if ENABLE_COLORS
     printf("* COLORS are " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* COLORS are OFF\n" CLR_RESET);
+    printf("* COLORS are OFF\n");
 #endif
 
 #if ENABLE_STDINT
-    printf("* C99 integer support is " BLD_GREEN "ON\n" CLR_RESET);
+    printf("* C99 integer types support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* C99 integer support is " BLD_RED "OFF\n" CLR_RESET);
-    printf("* Integer support is emulated\n");
+    printf("* C99 integer types support is " BLD_RED "OFF\n" CLR_RESET);
+    printf("> Integer types support will be emulated\n");
 #endif
 
 #if ENABLE_STDBOOL
     printf("* C99 boolean support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 boolean support is " BLD_RED "OFF\n" CLR_RESET);
-    printf("* boolean support is emulated\n");
+    printf("> Boolean support will be emulated\n");
+#endif
+
+#if ENABLE_STDALIGN
+    printf("* C11 memory alignement support is " BLD_GREEN "ON\n" CLR_RESET);
+#else
+    printf("* C11 memory alignement support is " BLD_RED "OFF\n" CLR_RESET);
+    printf("> Memory alignement support will be emulated\n");
 #endif
 
 #if ENABLE_JPEG
@@ -115,7 +122,7 @@ void minivideo_print_infos(void)
 #endif
 
 #if ENABLE_DEBUG
-    printf("\n* MiniVideo library tracing test:\n");
+    printf("* MiniVideo library tracing test:\n");
     TRACE_ERROR(MAIN, "TEST error\n");
     TRACE_WARNING(MAIN, "TEST warning\n");
     TRACE_INFO(MAIN, "TEST info\n");
@@ -153,7 +160,7 @@ int minivideo_endianness(void)
     char *p = (char *)&i;
 
 #if ENABLE_DEBUG
-    printf(BLD_GREEN "\nminivideo_endianness()\n" CLR_RESET);
+    printf(BLD_GREEN "minivideo_endianness()\n" CLR_RESET);
 
     if (p[0] == 1)
     {
