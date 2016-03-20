@@ -310,9 +310,9 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
                 printf("[CABAC]  - coefficients:\n");
                 for (a = 0; a < numCoeff; a++)
                 {
-                    printf("[CABAC]   - [idx:%2i] coeff_abs_level_minus1\t= %i\n", a, coeff_abs_level_minus1[a]);
-                    printf("[CABAC]   -          coeff_sign_flag\t\t= %i\n", coeff_sign_flag[a]);
-                    printf("[CABAC]   -          coeff final\t\t= %i\n", coeffLevel[a]);
+                    printf("[CABAC]   - [idx:%2i] coeff_abs_level_minus1 = %i\n", a, coeff_abs_level_minus1[a]);
+                    printf("[CABAC]   -          coeff_sign_flag         = %i\n", coeff_sign_flag[a]);
+                    printf("[CABAC]   -          coeff final             = %i\n", coeffLevel[a]);
                 }
             }
             else
