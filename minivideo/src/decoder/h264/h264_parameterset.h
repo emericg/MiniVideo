@@ -39,6 +39,8 @@ void freePPS(pps_t **pps_ptr);
 int decodeSEI(DecodingContext_t *dc);
 void freeSEI(sei_t **sei_ptr);
 
+int decodeAUD(DecodingContext_t *dc);
+
 void printSPS(DecodingContext_t *dc);
 void printPPS(DecodingContext_t *dc);
 void printSEI(DecodingContext_t *dc);
