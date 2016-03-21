@@ -58,7 +58,7 @@ typedef struct Mp4Track_t
     unsigned int handlerType;
 
     char name[128];
-    char compressor[32];
+    char compressorname[32];
 
     uint32_t timescale;
     uint32_t mediatime;
@@ -79,6 +79,11 @@ typedef struct Mp4Track_t
         unsigned int width;
         unsigned int height;
         unsigned int color_depth;
+        unsigned int color_space;
+        unsigned int color_matrix;
+        unsigned int color_range;
+        unsigned int par_h;
+        unsigned int par_v;
 
         // AVC specific parameters
         unsigned int profile;
@@ -149,7 +154,7 @@ typedef enum Mp4BoxType_e
 
     BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
         BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations
-        BOX_IODS = 0x696F6473,                  //!<
+        BOX_IODS = 0x696F6473,                  //!< object descriptor box
         BOX_TRAK = 0x7472616B,                  //!< (*) container for individual track or stream
             BOX_TKHD = 0x746b6864,              //!< (*) track header, overall information about the track
             BOX_TREF = 0x74726566,              //!< track reference container
@@ -173,6 +178,8 @@ typedef enum Mp4BoxType_e
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box
+                            BOX_FIEL = 0x6669656C,      //!<
+                            BOX_GAMA = 0x67616D61,      //!<
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
                         BOX_STTS = 0x73747473,          //!< (*) (decoding) time to sample
                         BOX_CTTS = 0x63747473,          //!< (composition / presentation) time to sample
@@ -233,6 +240,7 @@ typedef enum Mp4HandlerType_e
 {
     HANDLER_AUDIO = 0x736F756E, //!< 'soun'
     HANDLER_VIDEO = 0x76696465, //!< 'vide'
+    HANDLER_SUBT  = 0x73756274, //!< 'subt'
     HANDLER_TEXT  = 0x74657874, //!< 'text'
     HANDLER_META  = 0x6D657461, //!< 'meta'
     HANDLER_TMCD  = 0x746D6364, //!< 'tmcd'

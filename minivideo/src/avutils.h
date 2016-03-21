@@ -171,9 +171,11 @@ typedef enum SubSampling_e
     SS_UNKNOWN = 0,     //!< Unknown subsampling
 
     SS_400     = 1,     //!< 4:0:0 greyscale subsampling
-    SS_420     = 2,     //!< 4:2:0 subsampling
-    SS_422     = 3,     //!< 4:2:2 subsampling
-    SS_444     = 4      //!< 4:4:4 subsampling
+    SS_411     = 2,     //!< 4:1:1 subsampling
+    SS_420     = 3,     //!< 4:2:0 subsampling
+    SS_422     = 4,     //!< 4:2:2 subsampling
+    SS_444     = 5,     //!< 4:4:4 subsampling
+    SS_4444    = 6      //!< 4:4:4:4 subsampling
 
 } SubSampling_e;
 

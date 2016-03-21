@@ -41,6 +41,7 @@
 
 static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 
+static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header);
 static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
 
@@ -55,6 +56,11 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
                     static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
                     static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+                    static int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+                    static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+                    static int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+                    static int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
+                    static int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
                 static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
                 static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
                 static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track);
@@ -64,7 +70,6 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
 /* ************************************************************************** */
 /* ************************************************************************** */
-
 
 /*!
  * \brief Jumpy protect your parsing - MP4 edition.
@@ -203,10 +208,10 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         map->stream_fcc = track->fcc;
         map->stream_codec = track->codec;
 
-        if (track->compressor)
+        if (track->compressorname)
         {
-            map->stream_encoder = malloc(sizeof(track->compressor));
-            strncpy(map->stream_encoder, track->compressor, sizeof(track->compressor));
+            map->stream_encoder = malloc(sizeof(track->compressorname));
+            strncpy(map->stream_encoder, track->compressorname, sizeof(track->compressorname));
         }
         if (track->name)
         {
@@ -236,6 +241,20 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             map->width = track->width;
             map->height = track->height;
             map->color_depth = track->color_depth;
+            map->color_matrix = track->color_matrix;
+            map->color_range = track->color_range;
+
+            if (track->par_h && track->par_v)
+            {
+                map->pixel_aspect_ratio_h = track->par_h;
+                map->pixel_aspect_ratio_v = track->par_v;
+            }
+            else
+            {
+                map->pixel_aspect_ratio_h = 1;
+                map->pixel_aspect_ratio_v = 1;
+            }
+
             map->frame_count_idr = track->stss_entry_count;
 
             // Framerate
@@ -317,7 +336,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                         TRACE_3(MP4, " * number of chunk: %i\n", track->stco_entry_count);
                     }
 
-                    TRACE_3(MP4, "[%i] chunk %u / spc %u \t (range %i)\n", e+1, chunk+1, track->stsc_samples_per_chunk[e], range);
+                    TRACE_3(MP4, "[%i] chunk %u / spc %u    (range %i)\n", e+1, chunk+1, track->stsc_samples_per_chunk[e], range);
 
                     // loop on chunks inside a chunk range
                     for (f = 0; f < range; f++)
@@ -327,7 +346,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                         {
                             if (tempSample == i)
                             {
-                                //TRACE_2(MP4, "sample %i \t (%u/%u) (chunk / posinchunk)\n", i, chunk, posinchunk);
+                                //TRACE_2(MP4, "sample %i    (%u/%u) (chunk / posinchunk)\n", i, chunk, posinchunk);
                                 goto chunk_found;
                             }
                             else
@@ -411,16 +430,16 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             TRACE_1(MP4, "Audio Stream\n");
         }
 
-        TRACE_1(MP4, "sample_count\t: %u\n", map->sample_count);
-        TRACE_1(MP4, "sample_count_idr\t: %u\n", map->frame_count_idr);
+        TRACE_1(MP4, "sample_count     : %u\n", map->sample_count);
+        TRACE_1(MP4, "sample_count_idr : %u\n", map->frame_count_idr);
 /*
         for (i = 0; i < map->sample_count; i++)
         {
-            TRACE_2(MP4, "[%u] sample type\t> %u\n", i, map->sample_type[i]);
-            TRACE_1(MP4, "[%u] sample size\t> %u\n", i, map->sample_size[i]);
-            TRACE_1(MP4, "[%u] sample offset\t> %lli\n", i, map->sample_offset[i]);
-            TRACE_2(MP4, "[%u] sample pts\t> %lli\n", i, map->sample_timecode_presentation[i]);
-            TRACE_2(MP4, "[%u] sample dts\t> %lli\n", i, map->sample_timecode_decoding[i]);
+            TRACE_2(MP4, "[%u] sample type   > %u\n", i, map->sample_type[i]);
+            TRACE_1(MP4, "[%u] sample size   > %u\n", i, map->sample_size[i]);
+            TRACE_1(MP4, "[%u] sample offset > %lli\n", i, map->sample_offset[i]);
+            TRACE_2(MP4, "[%u] sample pts    > %lli\n", i, map->sample_timecode_presentation[i]);
+            TRACE_2(MP4, "[%u] sample dts    > %lli\n", i, map->sample_timecode_decoding[i]);
         }
 */
 #endif // ENABLE_DEBUG
@@ -576,30 +595,30 @@ static int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 static void print_box_header(Mp4Box_t *box_header)
 {
 #if ENABLE_DEBUG
-    TRACE_2(MP4, "* start offset\t: %lli\n", box_header->offset_start);
-    TRACE_2(MP4, "* end offset\t: %lli\n", box_header->offset_end);
+    TRACE_2(MP4, "* start offset  : %lli\n", box_header->offset_start);
+    TRACE_2(MP4, "* end offset    : %lli\n", box_header->offset_end);
 
     // Print Box header
     if (box_header->size == 1)
     {
-        TRACE_2(MP4, "* box largesize\t: %lli\n", box_header->size);
+        TRACE_2(MP4, "* box largesize : %lli\n", box_header->size);
     }
     else
     {
-        TRACE_2(MP4, "* box size\t\t: %lli\n", box_header->size);
+        TRACE_2(MP4, "* box size      : %lli\n", box_header->size);
     }
 
-    TRACE_2(MP4, "* box type\t\t: 0x%X\n", box_header->boxtype);
+    TRACE_2(MP4, "* box type      : 0x%X\n", box_header->boxtype);
     if (box_header->boxtype == BOX_UUID)
     {
-        TRACE_2(MP4, "* box usertype\t: '%s'\n", box_header->usertype);
+        TRACE_2(MP4, "* box usertype  : '%s'\n", box_header->usertype);
     }
 
     // Print FullBox header
     if (box_header->version != 0 || box_header->flags != 0)
     {
-        TRACE_2(MP4, "* version\t\t: %u\n", box_header->version);
-        TRACE_2(MP4, "* flags\t\t: 0x%X\n", box_header->flags);
+        TRACE_2(MP4, "* version       : %u\n", box_header->version);
+        TRACE_2(MP4, "* flags         : 0x%X\n", box_header->flags);
     }
 #endif // ENABLE_DEBUG
 }
@@ -711,11 +730,11 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> major_brand\t: 0x%08X\n", major_brand);
-        TRACE_1(MP4, "> minor_version\t: %i\n", minor_version);
+        TRACE_1(MP4, "> major_brand   : 0x%08X\n", major_brand);
+        TRACE_1(MP4, "> minor_version : %i\n", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
         {
-            TRACE_1(MP4, "> compatible_brands[%i]\t: '%s' (0x%X)\n",
+            TRACE_1(MP4, "> compatible_brands[%i] : '%s' (0x%X)\n",
                     i, getFccString_le(compatible_brands[i], fcc), compatible_brands[i]);
         }
     }
@@ -743,16 +762,6 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // Read rate/initial_delay
     int tbr = box_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
-    int i = 0;
-    for (i = 0; i < tbr; i++)     // to end of box
-    {
-        unsigned int rate = read_bits(bitstr, 32);
-        unsigned int initial_delay = read_bits(bitstr, 32);
-
-        TRACE_1(MP4, "[i] > rate\t: %u\n", i, rate);
-        TRACE_1(MP4, "    > initial_delay\t: %u\n", initial_delay);
-    }
-
 #if ENABLE_DEBUG
     {
         // Print box header
@@ -760,15 +769,18 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
         // Print box content
         TRACE_1(MP4, "pdin contains %i pairs of values\n", tbr);
-/*
-        for (i = 0; i < tbr; i++)
-        {
-            TRACE_1(MP4, "[i] > rate\t: %u\n", i, rate[i]);
-            TRACE_1(MP4, "    > initial_delay\t: %u\n", initial_delay[i]);
-        }
-*/
     }
 #endif // ENABLE_DEBUG
+
+    int i = 0;
+    for (i = 0; i < tbr; i++)     // to end of box
+    {
+        unsigned int rate = read_bits(bitstr, 32);
+        unsigned int initial_delay = read_bits(bitstr, 32);
+
+        TRACE_1(MP4, "[i] > rate          : %u\n", i, rate);
+        TRACE_1(MP4, "    > initial_delay : %u\n", initial_delay);
+    }
 
     return retcode;
 }
@@ -807,7 +819,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     retcode = parse_mvhd(bitstr, &box_subheader, mp4);
                     break;
                 case BOX_IODS:
-                    retcode = parse_unknown_box(bitstr, &box_subheader);
+                    retcode = parse_iods(bitstr, &box_subheader);
                     break;
                 case BOX_TRAK:
                     retcode = parse_trak(bitstr, &box_subheader, mp4);
@@ -910,17 +922,17 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print tkhd box content
-        TRACE_1(MP4, "> creation_time\t: %llu\n", track->creation_time);
-        TRACE_1(MP4, "> modification_time\t: %llu\n", track->modification_time);
-        TRACE_1(MP4, "> track_ID\t\t: %u\n", track->id);
-        TRACE_1(MP4, "> duration\t\t: %llu\n", track->duration);
-        TRACE_1(MP4, "> layer\t\t: %i\n", layer);
-        TRACE_1(MP4, "> alternate_group\t: %i\n", alternate_group);
-        TRACE_1(MP4, "> volume\t\t: %i\n", volume);
-        TRACE_1(MP4, "> matrix\t: [%u, %u, %u, %u, %u, %u, %u, %u, %u]\n",
+        TRACE_1(MP4, "> creation_time     : %llu\n", track->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu\n", track->modification_time);
+        TRACE_1(MP4, "> track_ID          : %u\n", track->id);
+        TRACE_1(MP4, "> duration          : %llu\n", track->duration);
+        TRACE_1(MP4, "> layer             : %i\n", layer);
+        TRACE_1(MP4, "> alternate_group   : %i\n", alternate_group);
+        TRACE_1(MP4, "> volume            : %i\n", volume);
+        TRACE_1(MP4, "> matrix : [%u, %u, %u, %u, %u, %u, %u, %u, %u]\n",
                 matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7], matrix[8]);
-        TRACE_1(MP4, "> width\t: %u\n", width);
-        TRACE_1(MP4, "> height\t: %u\n", height);
+        TRACE_1(MP4, "> width  : %u\n", width);
+        TRACE_1(MP4, "> height : %u\n", height);
     }
 #endif // ENABLE_DEBUG
 
@@ -1075,17 +1087,17 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         print_box_header(box_header);
 
         // Print mvhd box content
-        TRACE_1(MP4, "> creation_time\t: %llu\n", mp4->creation_time);
-        TRACE_1(MP4, "> modification_time\t: %llu\n", mp4->modification_time);
-        TRACE_1(MP4, "> timescale\t\t: %u\n", mp4->timescale);
-        TRACE_1(MP4, "> duration\t\t: %llu\n", mp4->duration);
-        TRACE_1(MP4, "> rate\t\t: %u\n", rate);
-        TRACE_1(MP4, "> volume\t\t: %llu\n", volume);
+        TRACE_1(MP4, "> creation_time     : %llu\n", mp4->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu\n", mp4->modification_time);
+        TRACE_1(MP4, "> timescale  : %u\n", mp4->timescale);
+        TRACE_1(MP4, "> duration   : %llu\n", mp4->duration);
+        TRACE_1(MP4, "> rate       : %u\n", rate);
+        TRACE_1(MP4, "> volume     : %llu\n", volume);
         for (i = 0; i < 9; i++)
         {
-            TRACE_1(MP4, "> matrix[%i]\t: %i\n", i, matrix[i]);
+            TRACE_1(MP4, "> matrix[%i] : %i\n", i, matrix[i]);
         }
-        TRACE_1(MP4, "> next track ID\t: %u\n", next_track_ID);
+        TRACE_1(MP4, "> next track ID     : %u\n", next_track_ID);
 
     }
 #endif // ENABLE_DEBUG
@@ -1095,7 +1107,26 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
 /* ************************************************************************** */
 
-// mdio?
+/*!
+ * \brief Parse the object descriptor box.
+ *
+ * From 'ISO/IEC 14496-14' specification:
+ * 5.1 object descriptor Box.
+ */
+static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_iods()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Print trak box header
+    print_box_header(box_header);
+
+    return retcode;
+}
 
 /* ************************************************************************** */
 
@@ -1219,13 +1250,13 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print mdhd box content
-        TRACE_1(MP4, "> creation_time\t: %llu\n", track->creation_time);
-        TRACE_1(MP4, "> modification_time\t: %llu\n", track->modification_time);
-        TRACE_1(MP4, "> timescale\t\t: %u\n", track->timescale);
-        TRACE_1(MP4, "> duration\t\t: %llu\n", track->duration);
-        TRACE_1(MP4, "> language[0]\t: %u\n", track->language[0]);
-        TRACE_1(MP4, "> language[1]\t: %u\n", track->language[1]);
-        TRACE_1(MP4, "> language[2]\t: %u\n", track->language[2]);
+        TRACE_1(MP4, "> creation_time     : %llu\n", track->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu\n", track->modification_time);
+        TRACE_1(MP4, "> timescale   : %u\n", track->timescale);
+        TRACE_1(MP4, "> duration    : %llu\n", track->duration);
+        TRACE_1(MP4, "> language[0] : %u\n", track->language[0]);
+        TRACE_1(MP4, "> language[1] : %u\n", track->language[1]);
+        TRACE_1(MP4, "> language[2] : %u\n", track->language[2]);
     }
 #endif // ENABLE_DEBUG
 
@@ -1613,7 +1644,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
             for (i = 0; i < 31; i++)
             {
-                track->compressor[i] = (uint8_t)read_bits(bitstr, 8);
+                track->compressorname[i] = (uint8_t)read_bits(bitstr, 8);
             }
 
             track->color_depth = read_bits(bitstr, 16);
@@ -1628,13 +1659,13 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 print_box_header(&box_subheader);
 
                 // Print VisualSampleEntry box content
-                TRACE_1(MP4, "> width\t\t: %u\n", track->width);
-                TRACE_1(MP4, "> height\t\t: %u\n", track->height);
-                TRACE_1(MP4, "> horizresolution\t: 0x%X\n", horizresolution);
-                TRACE_1(MP4, "> vertresolution\t: 0x%X\n", vertresolution);
-                TRACE_1(MP4, "> frame_count\t: %u\n", frame_count);
-                TRACE_1(MP4, "> compressor\t: '%s'\n", track->compressor);
-                TRACE_1(MP4, "> color depth\t: %u\n", track->color_depth);
+                TRACE_1(MP4, "> width  : %u\n", track->width);
+                TRACE_1(MP4, "> height : %u\n", track->height);
+                TRACE_1(MP4, "> horizresolution : 0x%X\n", horizresolution);
+                TRACE_1(MP4, "> vertresolution  : 0x%X\n", vertresolution);
+                TRACE_1(MP4, "> frame_count     : %u\n", frame_count);
+                TRACE_1(MP4, "> compressor      : '%s'\n", track->compressorname);
+                TRACE_1(MP4, "> color depth     : %u\n", track->color_depth);
             }
 #endif // ENABLE_DEBUG
 
@@ -1657,67 +1688,30 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                         case BOX_BTRT:
                             retcode = parse_btrt(bitstr, &box_subsubheader, track);
                             break;
+                        case BOX_CLAP:
+                            retcode = parse_clap(bitstr, &box_subsubheader, track);
+                            break;
+                        case BOX_COLR:
+                            retcode = parse_colr(bitstr, &box_subsubheader, track);
+                            break;
+                        case BOX_FIEL:
+                            retcode = parse_fiel(bitstr, &box_subsubheader, track);
+                            break;
+                        case BOX_GAMA:
+                            retcode = parse_gama(bitstr, &box_subsubheader, track);
+                            break;
+                        case BOX_PASP:
+                            retcode = parse_pasp(bitstr, &box_subsubheader, track);
+                            break;
                         default:
                             retcode = parse_unknown_box(bitstr, &box_subsubheader);
                             break;
                     }
 
-                    jumpy_mp4(bitstr, box_header, &box_subheader);
+                    jumpy_mp4(bitstr, &box_subheader, &box_subsubheader);
                 }
             }
-/*
-            // CleanApertureBox clap; // optional
-            ////////////////////////////////////////////////////////////
-            unsigned int clap_size = read_bits(bitstr, 32);
-            unsigned int clap_type = read_bits(bitstr, 32);
 
-            unsigned int cleanApertureWidthN = read_bits(bitstr, 32);
-            unsigned int cleanApertureWidthD = read_bits(bitstr, 32);
-            unsigned int cleanApertureHeightN = read_bits(bitstr, 32);
-            unsigned int cleanApertureHeightD = read_bits(bitstr, 32);
-            unsigned int horizOffN = read_bits(bitstr, 32);
-            unsigned int horizOffD = read_bits(bitstr, 32);
-            unsigned int vertOffN = read_bits(bitstr, 32);
-            unsigned int vertOffD = read_bits(bitstr, 32);
-
-            // PixelAspectRatioBox pasp; // optional
-            ////////////////////////////////////////////////////////////
-            unsigned int pasp_size = read_bits(bitstr, 32);
-            unsigned int pasp_type = read_bits(bitstr, 32);
-
-            unsigned int hSpacing = read_bits(bitstr, 32);
-            unsigned int vSpacing = read_bits(bitstr, 32);
-
-            // ColourInformationBox colr; // optional
-            ////////////////////////////////////////////////////////////
-            unsigned int colour_type = read_bits(bitstr, 32);
-            if (colour_type == ‘nclx’) // on-screen colours
-            {
-                unsigned int colour_primaries = read_bits(bitstr, 16);
-                unsigned int transfer_characteristics = read_bits(bitstr, 16);
-                unsigned int matrix_coefficients = read_bits(bitstr, 16);
-                unsigned int full_range_flag = read_bits(bitstr, 1);
-                unsigned int reserved = read_bits(bitstr, 7);
-            }
-            if (colour_type == ‘nclc’) // ???
-            {
-                // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
-            }
-            else if (colour_type == ‘rICC’)
-            {
-                // ICC_profile; // restricted ICC profile
-            }
-            else if (colour_type == ‘prof’)
-            {
-                // ICC_profile; // unrestricted ICC profile
-            }
-
-            // ColourInformationBox gama; // optional
-            ////////////////////////////////////////////////////////////
-
-            // ColourInformationBox fiel; // optional
-            ////////////////////////////////////////////////////////////
-*/
         break;
 
         case HANDLER_TEXT:
@@ -1801,11 +1795,11 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> configurationVersion\t: %u\n", configurationVersion);
-        TRACE_1(MP4, "> AVCProfileIndication\t: %u\n", AVCProfileIndication);
-        TRACE_1(MP4, "> profile_compatibility\t: %u\n", profile_compatibility);
-        TRACE_1(MP4, "> AVCLevelIndication\t: %u\n", AVCLevelIndication);
-        TRACE_1(MP4, "> lengthSizeMinusOne\t: %u\n", lengthSizeMinusOne);
+        TRACE_1(MP4, "> configurationVersion  : %u\n", configurationVersion);
+        TRACE_1(MP4, "> AVCProfileIndication  : %u\n", AVCProfileIndication);
+        TRACE_1(MP4, "> profile_compatibility : %u\n", profile_compatibility);
+        TRACE_1(MP4, "> AVCLevelIndication    : %u\n", AVCLevelIndication);
+        TRACE_1(MP4, "> lengthSizeMinusOne    : %u\n", lengthSizeMinusOne);
 
         TRACE_1(MP4, "> numOfSequenceParameterSets    = %u\n", track->sps_count);
         for (i = 0; i < track->sps_count; i++)
@@ -1831,8 +1825,10 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /*!
  * \brief BitRateBox.
  *
- * From 'ISO/IEC 14496-15' specification:
- * 8.5.2 Sample Description Box.
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.5.2 Sample Description Box
+ * 8.5.2.2 Syntax
+ * 8.5.2.3 Semantics
  */
 static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
@@ -1850,9 +1846,224 @@ static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> bufferSizeDB\t: %u\n", bufferSizeDB);
-        TRACE_1(MP4, "> maxBitrate\t: %u\n", track->bitrate_max);
-        TRACE_1(MP4, "> avgBitrate\t: %u\n", track->bitrate_avg);
+        TRACE_1(MP4, "> bufferSizeDB : %u\n", bufferSizeDB);
+        TRACE_1(MP4, "> maxBitrate   : %u\n", track->bitrate_max);
+        TRACE_1(MP4, "> avgBitrate   : %u\n", track->bitrate_avg);
+    }
+#endif // ENABLE_DEBUG
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief CleanApertureBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.5.2 Sample Description Box
+ * 8.5.2.2 Syntax
+ * 8.5.2.3 Semantics
+ */
+static int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_clap()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+    //unsigned int clap_size = read_bits(bitstr, 32);
+    //unsigned int clap_type = read_bits(bitstr, 32);
+
+    unsigned int cleanApertureWidthN = read_bits(bitstr, 32);
+    unsigned int cleanApertureWidthD = read_bits(bitstr, 32);
+    unsigned int cleanApertureHeightN = read_bits(bitstr, 32);
+    unsigned int cleanApertureHeightD = read_bits(bitstr, 32);
+    unsigned int horizOffN = read_bits(bitstr, 32);
+    unsigned int horizOffD = read_bits(bitstr, 32);
+    unsigned int vertOffN = read_bits(bitstr, 32);
+    unsigned int vertOffD = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    {
+        // Print box header
+        print_box_header(box_header);
+
+        // Print box content
+        //TRACE_1(MP4, "> clap_size   : %u\n", clap_size);
+        //TRACE_1(MP4, "> clap_type   : %u\n", clap_type);
+
+        TRACE_1(MP4, "> cleanApertureWidthN   : %u\n", cleanApertureWidthN);
+        TRACE_1(MP4, "> cleanApertureWidthD   : %u\n", cleanApertureWidthD);
+        TRACE_1(MP4, "> cleanApertureHeightN  : %u\n", cleanApertureHeightN);
+        TRACE_1(MP4, "> cleanApertureHeightD  : %u\n", cleanApertureHeightD);
+
+        TRACE_1(MP4, "> horizOffN  : %u\n", horizOffN);
+        TRACE_1(MP4, "> horizOffD  : %u\n", horizOffD);
+        TRACE_1(MP4, "> vertOffN   : %u\n", vertOffN);
+        TRACE_1(MP4, "> vertOffD   : %u\n", vertOffD);
+    }
+#endif // ENABLE_DEBUG
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief ColourInformationBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.5.2 Sample Description Box
+ * 8.5.2.2 Syntax
+ * 8.5.2.3 Semantics
+ */
+static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_colr()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+    unsigned int colour_type = read_bits(bitstr, 32);
+    unsigned int colour_primaries;
+    unsigned int transfer_characteristics;
+    unsigned int matrix_coefficients;
+
+    if (colour_type == 'nclx') // on-screen colours
+    {
+        colour_primaries = read_bits(bitstr, 16);
+        transfer_characteristics = read_bits(bitstr, 16);
+        matrix_coefficients = read_bits(bitstr, 16);
+        track->color_range = read_bits(bitstr, 1);
+        /*unsigned int reserved =*/ read_bits(bitstr, 7);
+
+        if (matrix_coefficients == 1)
+        {
+            track->color_matrix = CM_bt709;
+        }
+        else if (matrix_coefficients == 6)
+        {
+            track->color_matrix = CM_bt601;
+        }
+        else if (matrix_coefficients == 7)
+        {
+            track->color_matrix = CM_SMPTE240M;
+        }
+    }
+    else if (colour_type == 'nclc') // ???
+    {
+        // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
+
+        colour_primaries = read_bits(bitstr, 16);
+        transfer_characteristics = read_bits(bitstr, 16);
+        matrix_coefficients = read_bits(bitstr, 16);
+        track->color_range = read_bits(bitstr, 1);
+        /*unsigned int reserved =*/ read_bits(bitstr, 7);
+
+        if (colour_primaries == 1 && transfer_characteristics == 1 && matrix_coefficients == 1)
+        {
+            track->color_matrix = CM_bt709;
+        }
+        else if (colour_primaries == 6 && transfer_characteristics == 1 && matrix_coefficients == 6)
+        {
+            track->color_matrix = CM_bt601;
+        }
+        else if (colour_primaries == 5 && transfer_characteristics == 1 && matrix_coefficients == 6)
+        {
+            track->color_matrix = CM_SMPTE240M;
+        }
+    }
+    else if (colour_type == 'rICC')
+    {
+        // ICC_profile; // restricted ICC profile
+    }
+    else if (colour_type == 'prof')
+    {
+        // ICC_profile; // unrestricted ICC profile
+    }
+
+#if ENABLE_DEBUG
+    {
+        // Print box header
+        print_box_header(box_header);
+
+        // Print box content
+        char fcc[5];
+        TRACE_1(MP4, "> colour_type             : %u\n", getFccString_le(colour_type, fcc));
+        if (colour_type == 'nclx')
+        {
+            TRACE_1(MP4, "> colour_primaries        : %u\n", colour_primaries);
+            TRACE_1(MP4, "> transfer_characteristics: %u\n", transfer_characteristics);
+            TRACE_1(MP4, "> matrix_coefficients     : %u\n", matrix_coefficients);
+            TRACE_1(MP4, "> full_range_flag         : %u\n", track->color_range);
+        }
+    }
+#endif // ENABLE_DEBUG
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief FIEL box.
+ */
+static int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_fiel()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // TODO
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief GAMA box.
+ */
+static int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_gama()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // TODO
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief PixelAspectRatioBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.5.2 Sample Description Box
+ * 8.5.2.2 Syntax
+ * 8.5.2.3 Semantics
+ */
+static int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_pasp()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+    //unsigned int pasp_size = read_bits(bitstr, 32);
+    //unsigned int pasp_type = read_bits(bitstr, 32);
+
+    track->par_h = read_bits(bitstr, 32);
+    track->par_v = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    {
+        // Print box header
+        print_box_header(box_header);
+
+        // Print box content
+        //TRACE_1(MP4, "> pasp_size : %u\n", pasp_size);
+        //TRACE_1(MP4, "> pasp_type : %u\n", pasp_type);
+        TRACE_1(MP4, "> hSpacing  : %u\n", track->par_h);
+        TRACE_1(MP4, "> vSpacing  : %u\n", track->par_v);
     }
 #endif // ENABLE_DEBUG
 
@@ -1970,9 +2181,9 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 
             // Print box content
-            TRACE_1(MP4, "> entry_count\t: %u\n", track->stss_entry_count);
+            TRACE_1(MP4, "> entry_count   : %u\n", track->stss_entry_count);
 /*
-            TRACE_1(MP4, "> sample_number\t: [");
+            TRACE_1(MP4, "> sample_number : [");
             for (i = 0; i < track->stss_entry_count; i++)
             {
                 printf("%u, ", track->stss_sample_number[i]);
@@ -2037,16 +2248,16 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 #if TRACE_1
             // Print box content
-            TRACE_1(MP4, "> entry_count\t: %u\n", track->stsc_entry_count);
+            TRACE_1(MP4, "> entry_count : %u\n", track->stsc_entry_count);
 
-            TRACE_1(MP4, "> first_chunk\t: [");
+            TRACE_1(MP4, "> first_chunk : [");
             for (i = 0; i < track->stsc_entry_count; i++)
             {
                 printf("%u, ", track->stsc_first_chunk[i]);
             }
             printf("]\n");
 
-            TRACE_1(MP4, "> samples_per_chunk\t: [");
+            TRACE_1(MP4, "> samples_per_chunk : [");
             for (i = 0; i < track->stsc_entry_count; i++)
             {
                 printf("%u, ", track->stsc_samples_per_chunk[i]);
@@ -2133,8 +2344,8 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> sample_count\t: %u\n", track->stsz_sample_count);
-        TRACE_1(MP4, "> sample_size\t: %u\n", track->stsz_sample_size);
+        TRACE_1(MP4, "> sample_count : %u\n", track->stsz_sample_count);
+        TRACE_1(MP4, "> sample_size  : %u\n", track->stsz_sample_size);
 /*
         if (track->stsz_sample_size == 0)
         {
@@ -2205,9 +2416,9 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 
             // Print box content
-            TRACE_1(MP4, "> entry_count\t: %u\n", track->stco_entry_count);
+            TRACE_1(MP4, "> entry_count  : %u\n", track->stco_entry_count);
 /*
-            TRACE_1(MP4, "> chunk_offset\t: [");
+            TRACE_1(MP4, "> chunk_offset : [");
             for (i = 0; i < track->stco_entry_count; i++)
             {
                 printf("%lli, ", track->stco_chunk_offset[i]);

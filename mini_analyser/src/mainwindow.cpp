@@ -719,6 +719,40 @@ int MainWindow::printDatas()
             ui->label_video_ar->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height));
             ui->label_video_ar_2->setText(getAspectRatioString(media->tracks_video[vtid]->width, media->tracks_video[vtid]->height, true));
 
+            ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
+            ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
+
+            if (media->tracks_video[vtid]->color_encoding == CLR_RGB)
+                ui->label_video_color_space->setText("RGB");
+            else if (media->tracks_video[vtid]->color_encoding == CLR_YCgCo)
+                ui->label_video_color_space->setText("YCgCo");
+            else // if (media->tracks_video[vtid]->color_encoding == CLR_YCbCr)
+                ui->label_video_color_space->setText("YCbCr");
+
+            if (media->tracks_video[vtid]->color_matrix == CM_bt470)
+                ui->label_video_color_matrix->setText("Rec. 470");
+            else if (media->tracks_video[vtid]->color_matrix == CM_bt601)
+                ui->label_video_color_matrix->setText("Rec. 601");
+            else if (media->tracks_video[vtid]->color_matrix == CM_bt709)
+                ui->label_video_color_matrix->setText("Rec. 709");
+            else if (media->tracks_video[vtid]->color_matrix == CM_bt2020)
+                ui->label_video_color_matrix->setText("Rec. 2020");
+
+            if (media->tracks_video[vtid]->color_subsampling == SS_4444)
+                ui->label_video_color_subsampling->setText("4:4:4:4");
+            else if (media->tracks_video[vtid]->color_subsampling == SS_444)
+                ui->label_video_color_subsampling->setText("4:4:4");
+            else if (media->tracks_video[vtid]->color_subsampling == SS_422)
+                ui->label_video_color_subsampling->setText("4:2:2");
+            else if (media->tracks_video[vtid]->color_subsampling == SS_420)
+                ui->label_video_color_subsampling->setText("4:2:0");
+            else if (media->tracks_video[vtid]->color_subsampling == SS_411)
+                ui->label_video_color_subsampling->setText("4:1:1");
+            else if (media->tracks_video[vtid]->color_subsampling == SS_400)
+                ui->label_video_color_subsampling->setText("4:0:0");
+            else
+                ui->label_video_color_subsampling->setText("4:2:0");
+
             double framerate = media->tracks_video[vtid]->frame_rate;
             if (framerate < 1.0)
             {
@@ -752,9 +786,6 @@ int MainWindow::printDatas()
 
             ui->label_video_framerate_2->setText(QString::number(framerate) + " fps");
             ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
-
-            ui->label_video_color_depth->setText(QString::number(media->tracks_video[vtid]->color_depth) + " bits");
-            //ui->label_video_color_subsampling->setText(QString::number(media->tracks_video[vtid]->color_subsampling));
 
             uint64_t rawsize = media->tracks_video[vtid]->width * media->tracks_video[vtid]->height * (media->tracks_video[vtid]->color_depth / 8);
             rawsize *= media->tracks_video[vtid]->sample_count;

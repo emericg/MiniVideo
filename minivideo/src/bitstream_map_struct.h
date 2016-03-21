@@ -76,7 +76,11 @@ typedef struct BitstreamMap_t
     unsigned int color_depth;       //!< Color resolution per channel
     unsigned int color_subsampling; //!< Chroma sub-sampling
     unsigned int color_encoding;    //!< Internal color encoding
-    double aspectratio;             //!< Aspect ratio (if set directly by the container)
+    unsigned int color_matrix;      //!< Internal color encoding
+    unsigned int color_range;       //!< Colors are in restricted or full range
+    double video_aspect_ratio;      //!< Video aspect ratio (if set directly by the container)
+    unsigned int pixel_aspect_ratio_h;     //!< Pixel aspect ratio (if set directly by the container)
+    unsigned int pixel_aspect_ratio_v;     //!< Pixel aspect ratio (if set directly by the container)
 
     double frame_rate;              //!< Frame rate (in frame/s)
     double frame_duration;          //!< Frame duration (in ms)

@@ -1018,15 +1018,15 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->aspectratio = (1.0 / 1.0);
+                    map->video_aspect_ratio = (1.0 / 1.0);
                     break;
                 case 8:
                 case 12:
-                    map->aspectratio = (4.0 / 3.0);
+                    map->video_aspect_ratio = (4.0 / 3.0);
                     break;
                 case 3:
                 case 6:
-                    map->aspectratio = (16.0 / 9.0);
+                    map->video_aspect_ratio = (16.0 / 9.0);
                     break;
                 default:
                     TRACE_WARNING(MPS, "Unsupported MPEG-1 aspect_ratio_index %u\n", aspect_ratio_index);
@@ -1041,16 +1041,16 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->aspectratio = (1.0 / 1.0);
+                    map->video_aspect_ratio = (1.0 / 1.0);
                     break;
                 case 2:
-                    map->aspectratio = (4.0 / 3.0);
+                    map->video_aspect_ratio = (4.0 / 3.0);
                     break;
                 case 3:
-                    map->aspectratio = (16.0 / 9.0);
+                    map->video_aspect_ratio = (16.0 / 9.0);
                     break;
                 case 4:
-                    map->aspectratio = (2.21 / 1.0);
+                    map->video_aspect_ratio = (2.21 / 1.0);
                     break;
                 default:
                     TRACE_WARNING(MPS, "Unsupported MPEG-2 aspect_ratio_index %u\n", aspect_ratio_index);
