@@ -51,7 +51,7 @@ QString getSizeString(const int64_t size);
  * \param detailed: More precise sizes.
  * \return Track size QString.
  */
-QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const bool detailed = false);
+QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size, const bool detailed = false);
 
 /*!
  * \brief Get an aspect ratio string from a video definition.

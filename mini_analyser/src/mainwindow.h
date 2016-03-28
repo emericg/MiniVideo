@@ -55,7 +55,12 @@ public slots:
     void loadFileDialog();
 
 private slots:
+    int exportDatas();
     int printDatas();
+    int printAudioDetails();
+    int printVideoDetails();
+    int printSubtitlesDetails();
+
     void closeFile(const QString &file);
     void closeFile();
     void reloadFile(const QString &file);
@@ -99,6 +104,8 @@ private:
     QIcon tabSubsIcon;
     QString tabOtherText;
     QIcon tabOtherIcon;
+    QString tabExportText;
+    QIcon tabExportIcon;
 
     MediaFile_t *currentMediaFile();
     int analyseFile(const QString &file);

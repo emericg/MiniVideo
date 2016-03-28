@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>801</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -34,32 +34,6 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton_file_detach">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="3">
      <widget class="QPushButton" name="pushButton_file_exit">
       <property name="maximumSize">
@@ -86,20 +60,55 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="4">
-     <widget class="QLabel" name="statusLabel">
-      <property name="minimumSize">
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pushButton_file_detach">
+      <property name="maximumSize">
        <size>
-        <width>0</width>
+        <width>32</width>
         <height>32</height>
        </size>
       </property>
-      <property name="styleSheet">
-       <string notr="true">border: 1px solid rgb(255, 53, 3);
-background: rgba(255, 170, 0, 128);</string>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_file_reload">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
       </property>
       <property name="text">
-       <string>TextLabel</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -109,7 +118,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -245,7 +254,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="6" column="1" colspan="3">
-            <widget class="QLabel" name="label_creationapp">
+            <widget class="QLabel" name="label_info_creationapp">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -268,7 +277,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="7" column="1" colspan="3">
-            <widget class="QLabel" name="label_creationdate">
+            <widget class="QLabel" name="label_info_creationdate">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -284,7 +293,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="4" column="1" colspan="3">
-            <widget class="QLabel" name="label_container">
+            <widget class="QLabel" name="label_info_container">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -307,7 +316,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="2" column="1" colspan="3">
-            <widget class="QLabel" name="label_filesize">
+            <widget class="QLabel" name="label_info_filesize">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -323,7 +332,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="1" column="1" colspan="3">
-            <widget class="QLabel" name="label_fullpath">
+            <widget class="QLabel" name="label_info_fullpath">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -379,7 +388,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="3" column="1" colspan="3">
-            <widget class="QLabel" name="label_duration">
+            <widget class="QLabel" name="label_info_duration">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -395,7 +404,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="5" column="1" colspan="3">
-            <widget class="QLabel" name="label_container_overhead">
+            <widget class="QLabel" name="label_info_container_overhead">
              <property name="font">
               <font>
                <weight>50</weight>
@@ -411,7 +420,7 @@ background: rgba(255, 170, 0, 128);</string>
             </widget>
            </item>
            <item row="0" column="1" colspan="3">
-            <widget class="QLabel" name="label_filename">
+            <widget class="QLabel" name="label_info_filename">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -445,7 +454,7 @@ background: rgba(255, 170, 0, 128);</string>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_15">
              <item row="2" column="1">
-              <widget class="QLabel" name="label_video_framerate">
+              <widget class="QLabel" name="label_info_video_framerate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -461,7 +470,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="3">
-              <widget class="QLabel" name="label_video_bitratemode">
+              <widget class="QLabel" name="label_info_video_bitratemode">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -510,7 +519,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLabel" name="label_video_definition">
+              <widget class="QLabel" name="label_info_video_definition">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -533,7 +542,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="3">
-              <widget class="QLabel" name="label_video_ar">
+              <widget class="QLabel" name="label_info_video_ar">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -576,7 +585,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QLabel" name="label_video_size">
+              <widget class="QLabel" name="label_info_video_size">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -592,7 +601,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLabel" name="label_video_bitrate">
+              <widget class="QLabel" name="label_info_video_bitrate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -608,7 +617,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="0" column="1" colspan="3">
-              <widget class="QLabel" name="label_video_codec">
+              <widget class="QLabel" name="label_info_video_codec">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -631,7 +640,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="3">
-              <widget class="QLabel" name="label_video_duration">
+              <widget class="QLabel" name="label_info_video_duration">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -660,7 +669,7 @@ background: rgba(255, 170, 0, 128);</string>
            <item row="0" column="0" colspan="3">
             <layout class="QGridLayout" name="gridLayout_4">
              <item row="2" column="1">
-              <widget class="QLabel" name="label_audio_bitrate">
+              <widget class="QLabel" name="label_info_audio_bitrate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -702,7 +711,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLabel" name="label_audio_codec">
+              <widget class="QLabel" name="label_info_audio_codec">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -725,7 +734,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="0" column="3">
-              <widget class="QLabel" name="label_audio_channels">
+              <widget class="QLabel" name="label_info_audio_channels">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -748,7 +757,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="3">
-              <widget class="QLabel" name="label_audio_bitpersample">
+              <widget class="QLabel" name="label_info_audio_bitpersample">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -778,7 +787,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLabel" name="label_audio_lng">
+              <widget class="QLabel" name="label_info_audio_lng">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -794,7 +803,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLabel" name="label_audio_samplingrate">
+              <widget class="QLabel" name="label_info_audio_samplingrate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -837,7 +846,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QLabel" name="label_audio_size">
+              <widget class="QLabel" name="label_info_audio_size">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -853,7 +862,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="3">
-              <widget class="QLabel" name="label_audio_duration">
+              <widget class="QLabel" name="label_info_audio_duration">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -869,7 +878,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="2" column="3">
-              <widget class="QLabel" name="label_audio_bitratemode">
+              <widget class="QLabel" name="label_info_audio_bitratemode">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -914,6 +923,15 @@ background: rgba(255, 170, 0, 128);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
+         <widget class="QComboBox" name="comboBox_audio_selector">
+          <item>
+           <property name="text">
+            <string>Track #1</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_tab_audio">
           <property name="title">
            <string>Audio track</string>
@@ -937,7 +955,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="1" column="0">
               <widget class="QLabel" name="label_25">
                <property name="text">
-                <string>Stream size</string>
+                <string>Size</string>
                </property>
               </widget>
              </item>
@@ -983,7 +1001,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="5" column="1">
-              <widget class="QLabel" name="label_audio_lng_3">
+              <widget class="QLabel" name="label_audio_default">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1013,12 +1031,12 @@ background: rgba(255, 170, 0, 128);</string>
                 </size>
                </property>
                <property name="text">
-                <string>Stream ID</string>
+                <string>Internal ID</string>
                </property>
               </widget>
              </item>
              <item row="5" column="3">
-              <widget class="QLabel" name="label_audio_lng_4">
+              <widget class="QLabel" name="label_audio_visible">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -1056,7 +1074,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1" colspan="3">
-              <widget class="QLabel" name="label_audio_size_2">
+              <widget class="QLabel" name="label_audio_size">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1072,7 +1090,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="2" column="1" colspan="3">
-              <widget class="QLabel" name="label_audio_duration_2">
+              <widget class="QLabel" name="label_audio_duration">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1104,7 +1122,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="1" colspan="3">
-              <widget class="QLabel" name="label_audio_lng_2">
+              <widget class="QLabel" name="label_audio_lng">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1223,7 +1241,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1" colspan="3">
-              <widget class="QLabel" name="label_audio_codec_2">
+              <widget class="QLabel" name="label_audio_codec">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1255,7 +1273,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="3">
-              <widget class="QLabel" name="label_audio_bitratemode_2">
+              <widget class="QLabel" name="label_audio_bitratemode">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1376,7 +1394,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLabel" name="label_audio_channels_2">
+              <widget class="QLabel" name="label_audio_channels">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1392,7 +1410,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLabel" name="label_audio_samplingrate_2">
+              <widget class="QLabel" name="label_audio_samplingrate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1415,7 +1433,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="3">
-              <widget class="QLabel" name="label_audio_bitpersample_2">
+              <widget class="QLabel" name="label_audio_bitpersample">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1562,6 +1580,15 @@ background: rgba(255, 170, 0, 128);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
+         <widget class="QComboBox" name="comboBox_video_selector">
+          <item>
+           <property name="text">
+            <string>Track #1</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_tab_video">
           <property name="title">
            <string>Video track</string>
@@ -1595,7 +1622,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="1" column="0">
               <widget class="QLabel" name="label_55">
                <property name="text">
-                <string>Stream size</string>
+                <string>Size</string>
                </property>
               </widget>
              </item>
@@ -1621,7 +1648,7 @@ background: rgba(255, 170, 0, 128);</string>
                 </size>
                </property>
                <property name="text">
-                <string>Stream ID</string>
+                <string>Internal ID</string>
                </property>
               </widget>
              </item>
@@ -1633,7 +1660,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLabel" name="label_video_size_2">
+              <widget class="QLabel" name="label_video_size">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1649,7 +1676,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QLabel" name="label_video_duration_2">
+              <widget class="QLabel" name="label_video_duration">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1805,7 +1832,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="1" column="1" colspan="3">
-              <widget class="QLabel" name="label_video_codec_2">
+              <widget class="QLabel" name="label_video_codec">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1821,7 +1848,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLabel" name="label_video_definition_2">
+              <widget class="QLabel" name="label_video_definition">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1880,7 +1907,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="4" column="1" colspan="3">
-              <widget class="QLabel" name="label_video_ar_2">
+              <widget class="QLabel" name="label_video_ar">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1909,7 +1936,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="5" column="1">
-              <widget class="QLabel" name="label_video_framerate_2">
+              <widget class="QLabel" name="label_video_framerate">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1948,7 +1975,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="6" column="3">
-              <widget class="QLabel" name="label_video_bitratemode_2">
+              <widget class="QLabel" name="label_video_bitratemode">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1964,7 +1991,7 @@ background: rgba(255, 170, 0, 128);</string>
               </widget>
              </item>
              <item row="3" column="3">
-              <widget class="QLabel" name="label_video8definition8visible">
+              <widget class="QLabel" name="label_video_definition_visible">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -2285,18 +2312,27 @@ background: rgba(255, 170, 0, 128);</string>
              <x>0</x>
              <y>0</y>
              <width>618</width>
-             <height>620</height>
+             <height>619</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QComboBox" name="comboBox_sub_selector">
+              <item>
+               <property name="text">
+                <string>Track #1</string>
+               </property>
+              </item>
+             </widget>
+            </item>
             <item>
              <widget class="QGroupBox" name="groupBox_tag_subtitles">
               <property name="title">
                <string>Subtitles track</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <item>
-                <layout class="QFormLayout" name="formLayout_2">
+              <layout class="QGridLayout" name="gridLayout_20">
+               <item row="0" column="0">
+                <layout class="QGridLayout" name="gridLayout_19">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_68">
                    <property name="maximumSize">
@@ -2443,21 +2479,11 @@ background: rgba(255, 170, 0, 128);</string>
                  </item>
                 </layout>
                </item>
+               <item row="1" column="0">
+                <widget class="QTextBrowser" name="textBrowser_sub"/>
+               </item>
               </layout>
              </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>381</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -2466,9 +2492,125 @@ background: rgba(255, 170, 0, 128);</string>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_others">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/emblem-system.svg</normaloff>:/icons/icons/emblem-system.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>Other track(s)</string>
        </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_exporter">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Export</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="autoFillBackground">
+           <bool>true</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_18">
+           <item row="1" column="2">
+            <widget class="QPushButton" name="pushButton_export">
+             <property name="text">
+              <string>Export</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources/resources.qrc">
+               <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QComboBox" name="comboBox_export_details">
+             <item>
+              <property name="text">
+               <string>Regular output</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Detailed output</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboBox_export_formats">
+             <item>
+              <property name="text">
+               <string>Text fromat</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>XML</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>JSON</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_export_filename"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_export_filechooser">
+               <property name="maximumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources/resources.qrc">
+                 <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="textBrowser_export">
+          <property name="font">
+           <font>
+            <family>Bitstream Vera Sans Mono</family>
+           </font>
+          </property>
+          <property name="lineWrapMode">
+           <enum>QTextEdit::NoWrap</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -2499,29 +2641,20 @@ background: rgba(255, 170, 0, 128);</string>
       </item>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_file_reload">
-      <property name="maximumSize">
+    <item row="1" column="0" colspan="4">
+     <widget class="QLabel" name="statusLabel">
+      <property name="minimumSize">
        <size>
-        <width>32</width>
+        <width>0</width>
         <height>32</height>
        </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid rgb(255, 53, 3);
+background: rgba(255, 170, 0, 128);</string>
       </property>
       <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
+       <string>TextLabel</string>
       </property>
      </widget>
     </item>
@@ -2550,7 +2683,6 @@ background: rgba(255, 170, 0, 128);</string>
    <addaction name="separator"/>
    <addaction name="actionExport"/>
    <addaction name="actionHexEditor"/>
-   <addaction name="separator"/>
    <addaction name="actionFourCC"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>

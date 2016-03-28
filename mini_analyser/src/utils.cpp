@@ -99,7 +99,7 @@ QString getSizeString(const int64_t size)
     return size_qstr;
 }
 
-QString getTrackSizeString(BitstreamMap_t *track, const int64_t file_size, const bool detailed)
+QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size, const bool detailed)
 {
     QString size_qstr;
 
