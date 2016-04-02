@@ -36,7 +36,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QComboBox" name="comboBox_details">
+       <widget class="QComboBox" name="comboBox_export_details">
         <item>
          <property name="text">
           <string>Regular output</string>
@@ -50,10 +50,15 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="comboBox_formats">
+       <widget class="QComboBox" name="comboBox_export_formats">
         <item>
          <property name="text">
           <string>Text fromat</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>JSON</string>
          </property>
         </item>
         <item>
@@ -63,7 +68,7 @@
         </item>
         <item>
          <property name="text">
-          <string>JSON</string>
+          <string>YAML</string>
          </property>
         </item>
        </widget>
@@ -71,10 +76,10 @@
       <item row="0" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLineEdit" name="lineEdit_filename"/>
+         <widget class="QLineEdit" name="lineEdit_export_filename"/>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_filechooser">
+         <widget class="QPushButton" name="pushButton_export_filechooser">
           <property name="maximumSize">
            <size>
             <width>32</width>
@@ -86,7 +91,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources/resources.qrc">
-            <normaloff>:/icons/icons/emblem-ubuntuone-unsynchronized.svg</normaloff>:/icons/icons/emblem-ubuntuone-unsynchronized.svg</iconset>
+            <normaloff>:/icons/icons/folder-download.svg</normaloff>:/icons/icons/folder-download.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -108,7 +113,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QTextBrowser" name="textBrowser">
+    <widget class="QTextBrowser" name="textBrowser_export">
      <property name="font">
       <font>
        <family>Bitstream Vera Sans Mono</family>
@@ -120,7 +125,7 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_close">
+    <widget class="QPushButton" name="pushButton_export_close">
      <property name="text">
       <string>Close</string>
      </property>

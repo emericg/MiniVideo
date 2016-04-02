@@ -27,7 +27,6 @@
 #include <minivideo.h>
 
 // minianalyser
-#include "textexporter.h"
 #include "hexeditor.h"
 #include "fourcchelper.h"
 #include "about.h"
@@ -48,26 +47,33 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
     int setAppPath(const QString &path);
     int loadFile(const QString &file);
 
-public slots:
-    void loadFileDialog();
-
 private slots:
-    int exportDatas();
-    int printDatas();
-    int printAudioDetails();
-    int printVideoDetails();
-    int printSubtitlesDetails();
+    void loadFileDialog();
+    void saveFileDialog();
+    void saveDatas();
 
-    void closeFile(const QString &file);
-    void closeFile();
+    int printDatas();
+        int printAudioDetails();
+        int printVideoDetails();
+        int printSubtitlesDetails();
+
+    int generateExportDatas();
+        int generateExportDatas_text(MediaFile_t *media);
+        int generateExportDatas_json(MediaFile_t *media);
+        int generateExportDatas_xml(MediaFile_t *media);
+        int generateExportDatas_yaml(MediaFile_t *media);
+
+    void hideStatus();
+    void detachFile();
     void reloadFile(const QString &file);
     void reloadFile();
-    void detachFile();
-    void hideStatus();
-    void openExporter();
+    void closeFile(const QString &file);
+    void closeFile();
+
     void openHexEditor();
     void openFourccHelper();
     void openAboutWindows();
@@ -81,7 +87,6 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    TextExporter *textexporter;
     HexEditor *hexeditor;
     FourccHelper *fcchelper;
     AboutWindows *aboutwindows;
@@ -92,6 +97,13 @@ private:
     bool emptyFileList;
     std::vector <MediaFile_t *> mediaList; // This might need to be smart pointers at some point
 
+    // Text export feature
+    int exportFormat;
+    QString exportDatas;
+    QFile exportFile;
+    void setOutputFile(QString &filePath);
+
+    // Save tabs
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;
     QString tabInfosText;
@@ -110,10 +122,19 @@ private:
     MediaFile_t *currentMediaFile();
     int analyseFile(const QString &file);
 
+    void setStatus(const QString &text, int type, int duration = 0);
     void handleComboBox(const QString &file);
     void handleTabWidget();
-    void setStatus(const QString &text, int type, int duration = 0);
     void cleanDatas();
+
+    typedef enum TextExportFormat_e
+    {
+        EXPORT_TEXT  = 0,
+        EXPORT_JSON  = 1,
+        EXPORT_XML   = 2,
+        EXPORT_YAML  = 3
+
+    } TextExportFormat_e;
 };
 
 /* ************************************************************************** */

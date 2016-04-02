@@ -14,83 +14,132 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      textexporter.cpp
+ * \file      mainwindow_export.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#include "textexporter.h"
-#include "ui_textexporter.h"
-
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "utils.h"
 
-#include <QDate>
-#include <QDebug>
-#include <QTime>
-#include <QFileDialog>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QDateTime>
 
-TextExporter::TextExporter(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::TextExporter)
+#include <QFile>
+
+/* ************************************************************************** */
+
+void MainWindow::setOutputFile(QString &filePath)
 {
-    ui->setupUi(this);
+    if (exportFormat == EXPORT_JSON)
+        filePath += ".json";
+    else if (exportFormat == EXPORT_XML)
+        filePath += ".xml";
+    else if (exportFormat == EXPORT_YAML)
+        filePath += ".yml";
+    else // if (exportFormat == EXPORT_TEXT)
+        filePath += ".txt";
 
-    exportFormat = EXPORT_TEXT;
-
-    connect(ui->pushButton_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
-    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
-    connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
+    ui->lineEdit_export_filename->setText(filePath);
 }
 
-TextExporter::~TextExporter()
-{
-    delete ui;
-}
-
-void TextExporter::setMediaFile(MediaFile_t *media)
-{
-    if (media)
-    {
-        //
-    }
-}
-
-void TextExporter::saveFileDialog()
+void MainWindow::saveFileDialog()
 {
     QString filePath = QFileDialog::getSaveFileName(this,
                                                     tr("Save media informations in a text file"),
-                                                    ui->lineEdit_filename->text(),
+                                                    ui->lineEdit_export_filename->text(),
                                                     tr("Files (*.txt)"));
 
     if (filePath.isEmpty() == false)
         setOutputFile(filePath);
 }
 
-void TextExporter::setOutputFile(QString &filePath)
+void MainWindow::saveDatas()
 {
-    if (exportFormat == EXPORT_XML)
-        filePath += ".xml";
-    else if (exportFormat == EXPORT_JSON)
-        filePath += ".json";
-    else // if (exportFormat == EXPORT_TEXT)
-        filePath += ".txt";
+    if (exportDatas.isEmpty() == false)
+    {
+        exportFile.setFileName(ui->lineEdit_export_filename->text());
 
-    ui->lineEdit_filename->setText(filePath);
+        if (exportFile.exists() == true)
+        {
+            // Confirmation prompt
+            QMessageBox::StandardButton messageReply;
+            QString messageText = tr("This file already exist:\n");
+            messageText += ui->lineEdit_export_filename->text();
+            messageText += tr("\nAre you sure you want to overwrite it?");
+
+            messageReply = QMessageBox::warning(this, tr("Confirm file overwrite"),
+                                                messageText,
+                                                QMessageBox::Yes | QMessageBox::No);
+
+            if (messageReply == QMessageBox::No)
+            {
+                return;
+            }
+        }
+
+        if (exportFile.open(QIODevice::WriteOnly) == true &&
+            exportFile.isWritable() == true)
+        {
+            exportFile.write(exportDatas.toLocal8Bit());
+            exportFile.close();
+        }
+    }
 }
 
-void TextExporter::generateDatas(MediaFile_t *media)
+/* ************************************************************************** */
+
+int MainWindow::generateExportDatas()
 {
+    int retcode = 0;
+
+    MediaFile_t *media = currentMediaFile();
+
     if (media)
     {
-        // First generate output path
-        QString outputFilePath = media->file_path;
-        setOutputFile(outputFilePath);
-
         // Clear datas
         exportDatas.clear();
 
-        // Fill datas
+        // First generate output path
+        QString outputFilePath = media->file_path;
+
+        if (exportFormat == EXPORT_JSON)
+        {
+            outputFilePath += ".json";
+            retcode = generateExportDatas_json(media);
+        }
+        else if (exportFormat == EXPORT_XML)
+        {
+            outputFilePath += ".xml";
+            retcode = generateExportDatas_xml(media);
+        }
+        else if (exportFormat == EXPORT_YAML)
+        {
+            outputFilePath += ".yml";
+            retcode = generateExportDatas_yaml(media);
+        }
+        else // if (exportFormat == EXPORT_TEXT)
+        {
+            outputFilePath += ".txt";
+            retcode = generateExportDatas_text(media);
+        }
+
+        // Print it
+        ui->lineEdit_export_filename->setText(outputFilePath);
+        ui->textBrowser_export->setText(exportDatas);
+    }
+
+    return retcode;
+}
+
+int MainWindow::generateExportDatas_text(MediaFile_t *media)
+{
+    int retcode = 0;
+
+    if (media)
+    {
         exportDatas += "Full path   : ";
         exportDatas += media->file_path;
         exportDatas += "\n\n";
@@ -98,11 +147,11 @@ void TextExporter::generateDatas(MediaFile_t *media)
         exportDatas += "Title       : ";
         exportDatas += media->file_name;
         exportDatas += "\n";
-        exportDatas += "Size        : ";
-        exportDatas += getSizeString(media->file_size);
-        exportDatas += "\n";
         exportDatas += "Duration    : ";
         exportDatas += getDurationString(media->duration);
+        exportDatas += "\n";
+        exportDatas += "Size        : ";
+        exportDatas += getSizeString(media->file_size);
         exportDatas += "\n";
         exportDatas += "Container   : ";
         exportDatas += getContainerString(media->container, true);
@@ -119,7 +168,9 @@ void TextExporter::generateDatas(MediaFile_t *media)
         }
 
         // VIDEO TRACKS
-        for (int i = 0; i < media->tracks_video_count; i++)
+        ////////////////////////////////////////////////////////////////////////
+
+        for (unsigned i = 0; i < media->tracks_video_count; i++)
         {
             BitstreamMap_t *t = media->tracks_video[i];
             if (t == NULL)
@@ -160,7 +211,9 @@ void TextExporter::generateDatas(MediaFile_t *media)
         }
 
         // AUDIO TRACKS
-        for (int i = 0; i < media->tracks_audio_count; i++)
+        ////////////////////////////////////////////////////////////////////////
+
+        for (unsigned i = 0; i < media->tracks_audio_count; i++)
         {
             BitstreamMap_t *t = media->tracks_audio[i];
             if (t == NULL)
@@ -193,40 +246,61 @@ void TextExporter::generateDatas(MediaFile_t *media)
             exportDatas += "\n";
         }
 
-        // Print it
-        ui->textBrowser->setText(exportDatas);
+        // VIDEO TRACKS
+        ////////////////////////////////////////////////////////////////////////
+
+        for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
+        {
+            BitstreamMap_t *t = media->tracks_subt[i];
+            if (t == NULL)
+                break;
+
+            // Section title
+            exportDatas += "\nSUBTITLES TRACK #";
+            exportDatas += QString::number(i);
+            exportDatas += "\n--------------\n";
+
+            // Datas
+            exportDatas += "Format      : sub\n";
+        }
+
+        retcode = 1;
     }
+
+    return retcode;
 }
 
-void TextExporter::saveDatas()
+int MainWindow::generateExportDatas_json(MediaFile_t *media)
 {
-    if (exportDatas.isEmpty() == false)
+    int retcode = 0;
+
+    if (media)
     {
-        exportFile.setFileName(ui->lineEdit_filename->text());
-
-        if (exportFile.open(QIODevice::WriteOnly) == true &&
-            exportFile.isWritable() == true)
-        {
-            if (exportFile.exists() == true)
-            {
-                // Confirmation prompt
-                QMessageBox::StandardButton messageReply;
-                QString messageText = tr("This file already exist:\n");
-                messageText += ui->lineEdit_filename->text();
-                messageText += tr("\nAre you sure you want to overwrite it?");
-
-                messageReply = QMessageBox::warning(this, tr("Confirm file overwrite"),
-                                                    messageText,
-                                                    QMessageBox::Yes | QMessageBox::No);
-
-                if (messageReply == QMessageBox::No)
-                {
-                    return;
-                }
-            }
-
-            exportFile.write(exportDatas.toLocal8Bit());
-            exportFile.close();
-        }
+        //retcode = 1;
     }
+
+    return retcode;
+}
+
+int MainWindow::generateExportDatas_xml(MediaFile_t *media)
+{
+    int retcode = 0;
+
+    if (media)
+    {
+        //retcode = 1;
+    }
+
+    return retcode;
+}
+int MainWindow::generateExportDatas_yaml(MediaFile_t *media)
+{
+    int retcode = 0;
+
+    if (media)
+    {
+        //retcode = 1;
+    }
+
+    return retcode;
 }

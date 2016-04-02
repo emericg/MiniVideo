@@ -83,9 +83,10 @@ typedef struct BitstreamMap_t
     unsigned int pixel_aspect_ratio_v;     //!< Pixel aspect ratio (if set directly by the container)
 
     double frame_rate;              //!< Frame rate (in frame/s)
+    unsigned int framerate_mode;    //!< Framerate mode
+    unsigned int framerate_num;     //!< Framerate numerator
+    unsigned int framerate_base;    //!< Framerate denominator
     double frame_duration;          //!< Frame duration (in ms)
-    unsigned int framerate_num;     //!< Frame rate numerator
-    unsigned int framerate_base;    //!< Frame rate denominator
 
     // Audio metadatas
     unsigned int channel_count;     //!< Number of audio channels

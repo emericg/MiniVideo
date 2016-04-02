@@ -503,8 +503,8 @@
        <height>64</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(216, 216, 216);</string>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="leftMargin">
