@@ -169,13 +169,13 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
            <property name="leftMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <property name="rightMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <property name="horizontalSpacing">
-            <number>16</number>
+            <number>12</number>
            </property>
            <item row="2" column="0">
             <widget class="QLabel" name="label_2">
@@ -377,12 +377,6 @@
            </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="maximumSize">
               <size>
                <width>100</width>
@@ -407,10 +401,10 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_16">
            <property name="leftMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <property name="rightMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_15">
@@ -419,15 +413,9 @@
              </property>
              <item row="1" column="2">
               <widget class="QLabel" name="label_36">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>120</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -649,6 +637,32 @@
                </property>
               </widget>
              </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Framerate mode</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QLabel" name="label_info_video_framerate_mode">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
@@ -661,23 +675,39 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_17">
            <property name="leftMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <property name="rightMargin">
-            <number>6</number>
+            <number>3</number>
            </property>
            <item row="0" column="0" colspan="3">
             <layout class="QGridLayout" name="gridLayout_4">
              <property name="horizontalSpacing">
               <number>12</number>
              </property>
-             <item row="4" column="2">
-              <widget class="QLabel" name="label_78">
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_24">
                <property name="text">
-                <string>Bit per sample</string>
+                <string>Language</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLabel" name="label_info_audio_bitrate">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -694,6 +724,148 @@
                </property>
                <property name="textInteractionFlags">
                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="label_22">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Stream size</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="label_info_audio_duration">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="3">
+              <widget class="QLabel" name="label_info_audio_bitratemode">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLabel" name="label_info_audio_samplingrate">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" colspan="3">
+              <widget class="QLabel" name="label_info_audio_channels">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>Duration</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Bitrate mode</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLabel" name="label_info_audio_size">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" colspan="3">
+              <widget class="QLabel" name="label_info_audio_codec">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_45">
+               <property name="text">
+                <string>Channel(s)</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -729,6 +901,16 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="label_78">
+               <property name="text">
+                <string>Bit per sample</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_43">
                <property name="text">
@@ -739,182 +921,8 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="2">
-              <widget class="QLabel" name="label_20">
-               <property name="text">
-                <string>Bitrate mode</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="label_22">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Stream size</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLabel" name="label_info_audio_bitrate">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_24">
-               <property name="text">
-                <string>Language</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLabel" name="label_info_audio_duration">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLabel" name="label_info_audio_samplingrate">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="3">
-              <widget class="QLabel" name="label_info_audio_bitratemode">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="3">
-              <widget class="QLabel" name="label_info_audio_size">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_45">
-               <property name="text">
-                <string>Channel(s)</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_17">
-               <property name="text">
-                <string>Duration</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" colspan="3">
-              <widget class="QLabel" name="label_info_audio_codec">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" colspan="2">
+             <item row="2" column="1" colspan="3">
               <widget class="QLabel" name="label_info_audio_lng">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" colspan="2">
-              <widget class="QLabel" name="label_info_audio_channels">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -973,6 +981,12 @@
            <string>Audio track</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
            <item row="9" column="0">
             <spacer name="verticalSpacer_6">
              <property name="orientation">
@@ -988,10 +1002,16 @@
            </item>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_7">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_25">
                <property name="text">
                 <string>Size</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1000,6 +1020,9 @@
                <property name="text">
                 <string>Language</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="5" column="0">
@@ -1007,18 +1030,30 @@
                <property name="text">
                 <string>Default track</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="5" column="2">
               <widget class="QLabel" name="label_32">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Forced</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1027,12 +1062,18 @@
                <property name="text">
                 <string>Duration</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="label_64">
                <property name="text">
                 <string>Title</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1054,31 +1095,22 @@
              </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_27">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Internal ID</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="5" column="3">
               <widget class="QLabel" name="label_audio_visible">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1191,6 +1223,9 @@
            </item>
            <item row="2" column="0">
             <layout class="QGridLayout" name="gridLayout_10">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_12">
                <property name="sizePolicy">
@@ -1201,12 +1236,15 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>FourCC</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1215,12 +1253,18 @@
                <property name="text">
                 <string>Encoder</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="4" column="2">
               <widget class="QLabel" name="label_74">
                <property name="text">
                 <string>(highest)</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1245,6 +1289,9 @@
                <property name="text">
                 <string>Bitrate (lowest)</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -1252,16 +1299,13 @@
                <property name="text">
                 <string>Codec</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="4" column="3">
               <widget class="QLabel" name="label_audio_bitrate_high">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1326,14 +1370,23 @@
              </item>
              <item row="3" column="2">
               <widget class="QLabel" name="label_75">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Bitrate mode</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1358,12 +1411,18 @@
                <property name="text">
                 <string>Bitrate (mean)</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="5" column="0">
               <widget class="QLabel" name="label_16">
                <property name="text">
                 <string>Compression ratio</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1403,10 +1462,16 @@
            </item>
            <item row="4" column="0">
             <layout class="QGridLayout" name="gridLayout_11">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_44">
                <property name="text">
                 <string>Sampling rate</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1420,12 +1485,15 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Channel count</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1463,8 +1531,23 @@
              </item>
              <item row="1" column="2">
               <widget class="QLabel" name="label_79">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>128</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Bit per sample</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1495,6 +1578,9 @@
            </item>
            <item row="7" column="0">
             <layout class="QGridLayout" name="gridLayout_3">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="2" column="0" colspan="2">
               <widget class="QLabel" name="label_29">
                <property name="text">
@@ -1528,19 +1614,31 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Sample count</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="1" column="2">
               <widget class="QLabel" name="label_40">
+               <property name="maximumSize">
+                <size>
+                 <width>128</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Frame duration</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1580,6 +1678,9 @@
               <widget class="QLabel" name="label_30">
                <property name="text">
                 <string>Frame count</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1630,12 +1731,24 @@
            <string>Video track</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
            <item>
             <layout class="QGridLayout" name="gridLayout_12">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="3" column="0">
               <widget class="QLabel" name="label_63">
                <property name="text">
                 <string>Title</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1660,12 +1773,18 @@
                <property name="text">
                 <string>Size</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_52">
                <property name="text">
                 <string>Duration</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1679,12 +1798,15 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Internal ID</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1692,6 +1814,9 @@
               <widget class="QLabel" name="label_33">
                <property name="text">
                 <string>Language</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1770,24 +1895,36 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_6">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="2" column="0">
               <widget class="QLabel" name="label_62">
                <property name="text">
                 <string>Encoder</string>
                </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string>Bitrate (mean)</string>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
              <item row="7" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Bitrate (mean)</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
               <widget class="QLabel" name="label_56">
                <property name="text">
                 <string>Bitrate (lowest)</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1796,6 +1933,9 @@
                <property name="text">
                 <string>Codec</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="3" column="0">
@@ -1803,9 +1943,12 @@
                <property name="text">
                 <string>Definition</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
-             <item row="7" column="1">
+             <item row="8" column="1">
               <widget class="QLabel" name="label_video_bitrate_lowest">
                <property name="font">
                 <font>
@@ -1821,14 +1964,17 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="2">
+             <item row="8" column="2">
               <widget class="QLabel" name="label_72">
                <property name="text">
                 <string>(highest)</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
-             <item row="7" column="3">
+             <item row="8" column="3">
               <widget class="QLabel" name="label_video_bitrate_highest">
                <property name="font">
                 <font>
@@ -1864,6 +2010,9 @@
               <widget class="QLabel" name="label_51">
                <property name="text">
                 <string>Frame rate</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1902,24 +2051,24 @@
              <item row="5" column="2">
               <widget class="QLabel" name="label_77">
                <property name="text">
-                <string>Frame duration</string>
+                <string>Framerate mode</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_57">
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
                <property name="text">
                 <string>Aspect Ratio</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
-             <item row="6" column="1">
+             <item row="7" column="1">
               <widget class="QLabel" name="label_video_bitrate_gross">
                <property name="font">
                 <font>
@@ -1935,10 +2084,13 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
+             <item row="7" column="2">
               <widget class="QLabel" name="label_53">
                <property name="text">
                 <string>Bitrate mode</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1960,14 +2112,23 @@
              </item>
              <item row="3" column="2">
               <widget class="QLabel" name="label_10">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
-                 <width>150</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Visible</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1987,30 +2148,17 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="3">
-              <widget class="QLabel" name="label_video_frameduration">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Unknown</string>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="0">
+             <item row="9" column="0">
               <widget class="QLabel" name="label_21">
                <property name="text">
                 <string>Compression ratio</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
-             <item row="6" column="3">
+             <item row="7" column="3">
               <widget class="QLabel" name="label_video_bitratemode">
                <property name="font">
                 <font>
@@ -2042,7 +2190,7 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="1" colspan="3">
+             <item row="9" column="1" colspan="3">
               <widget class="QLabel" name="label_video_compression_ratio">
                <property name="font">
                 <font>
@@ -2084,12 +2232,57 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>FourCC</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_video_frameduration">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_34">
+               <property name="text">
+                <string>Frame duration</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="3">
+              <widget class="QLabel" name="label_video_framerate_mode">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -2104,6 +2297,9 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_5">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="0" column="1">
               <widget class="QLabel" name="label_video_color_space">
                <property name="font">
@@ -2130,7 +2326,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -2159,12 +2355,15 @@
               <widget class="QLabel" name="label_50">
                <property name="maximumSize">
                 <size>
-                 <width>150</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Color subsampling</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -2179,6 +2378,9 @@
               <widget class="QLabel" name="label_65">
                <property name="text">
                 <string>Color matrix</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -2225,10 +2427,16 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_13">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_76">
                <property name="text">
                 <string>Frame count</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -2258,12 +2466,15 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>140</width>
+                 <width>128</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
                 <string>Sample count</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -2367,18 +2578,30 @@
                <string>Subtitles track</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_20">
+               <property name="leftMargin">
+                <number>3</number>
+               </property>
+               <property name="rightMargin">
+                <number>3</number>
+               </property>
                <item row="0" column="0">
                 <layout class="QGridLayout" name="gridLayout_19">
+                 <property name="horizontalSpacing">
+                  <number>12</number>
+                 </property>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_68">
                    <property name="maximumSize">
                     <size>
-                     <width>140</width>
+                     <width>128</width>
                      <height>16777215</height>
                     </size>
                    </property>
                    <property name="text">
-                    <string>Stream ID</string>
+                    <string>Internal ID</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2401,7 +2624,10 @@
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_69">
                    <property name="text">
-                    <string>Stream size</string>
+                    <string>Size</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2426,6 +2652,9 @@
                    <property name="text">
                     <string>Codec</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
@@ -2448,6 +2677,9 @@
                   <widget class="QLabel" name="label_67">
                    <property name="text">
                     <string>Title</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2472,6 +2704,9 @@
                    <property name="text">
                     <string>Language</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="4" column="1">
@@ -2494,6 +2729,9 @@
                   <widget class="QLabel" name="label_80">
                    <property name="text">
                     <string>Encoding</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2565,7 +2803,7 @@
            <item row="1" column="0">
             <widget class="QComboBox" name="comboBox_export_details">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <item>
               <property name="text">

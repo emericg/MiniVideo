@@ -26,13 +26,12 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QTimer>
 
 #include <QDropEvent>
 #include <QFile>
 #include <QUrl>
 #include <QMimeData>
-
-#include <QTimer>
 
 #include <iostream>
 #include <cmath>
@@ -69,6 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->comboBox_video_selector, SIGNAL(activated(int)), this, SLOT(printVideoDetails()));
     connect(ui->comboBox_audio_selector, SIGNAL(activated(int)), this, SLOT(printAudioDetails()));
     connect(ui->comboBox_sub_selector, SIGNAL(activated(int)), this, SLOT(printSubtitlesDetails()));
+
+    connect(ui->comboBox_export_details, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
+    connect(ui->comboBox_export_details, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
 
     connect(ui->pushButton_file_detach, SIGNAL(clicked(bool)), this, SLOT(detachFile()));
     connect(ui->pushButton_file_reload, SIGNAL(clicked(bool)), this, SLOT(reloadFile()));
@@ -495,7 +497,7 @@ void MainWindow::setStatus(const QString &text, int status, int duration)
 
     if (duration > 0)
     {
-        statusTimer->setInterval(7500);
+        statusTimer->setInterval(15000);
         statusTimer->start();
     }
 

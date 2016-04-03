@@ -31,29 +31,37 @@
 
 /* ************************************************************************** */
 
-void MainWindow::setOutputFile(QString &filePath)
-{
-    if (exportFormat == EXPORT_JSON)
-        filePath += ".json";
-    else if (exportFormat == EXPORT_XML)
-        filePath += ".xml";
-    else if (exportFormat == EXPORT_YAML)
-        filePath += ".yml";
-    else // if (exportFormat == EXPORT_TEXT)
-        filePath += ".txt";
-
-    ui->lineEdit_export_filename->setText(filePath);
-}
-
 void MainWindow::saveFileDialog()
 {
-    QString filePath = QFileDialog::getSaveFileName(this,
-                                                    tr("Save media informations in a text file"),
-                                                    ui->lineEdit_export_filename->text(),
-                                                    tr("Files (*.txt)"));
+    QString fileExtension = ".txt";
+    QString fileType = tr("Files (*.txt)");
+    QString filePath = ui->lineEdit_export_filename->text();
+    int exportFormat = ui->comboBox_export_formats->currentIndex();
+
+    if (exportFormat == EXPORT_JSON)
+    {
+        fileExtension = ".json";
+        fileType = tr("Files (*.json)");
+    }
+    else if (exportFormat == EXPORT_XML)
+    {
+        fileExtension = ".xml";
+        fileType = tr("Files (*.xml)");
+    }
+    else if (exportFormat == EXPORT_YAML)
+    {
+        fileExtension = ".yml";
+        fileType = tr("Files (*.yml)");
+    }
+
+    filePath = QFileDialog::getSaveFileName(this, tr("Save media informations in a text file"),
+                                            filePath, fileExtension);
 
     if (filePath.isEmpty() == false)
-        setOutputFile(filePath);
+    {
+        filePath += fileExtension;
+        ui->lineEdit_export_filename->setText(filePath);
+    }
 }
 
 void MainWindow::saveDatas()
@@ -102,28 +110,32 @@ int MainWindow::generateExportDatas()
         // Clear datas
         exportDatas.clear();
 
-        // First generate output path
+        // Output path is file path + another extension
         QString outputFilePath = media->file_path;
+
+        // Read file extension and details
+        bool exportDetails = ui->comboBox_export_details->currentIndex();
+        int exportFormat = ui->comboBox_export_formats->currentIndex();
 
         if (exportFormat == EXPORT_JSON)
         {
             outputFilePath += ".json";
-            retcode = generateExportDatas_json(media);
+            retcode = generateExportDatas_json(media, exportDetails);
         }
         else if (exportFormat == EXPORT_XML)
         {
             outputFilePath += ".xml";
-            retcode = generateExportDatas_xml(media);
+            retcode = generateExportDatas_xml(media, exportDetails);
         }
         else if (exportFormat == EXPORT_YAML)
         {
             outputFilePath += ".yml";
-            retcode = generateExportDatas_yaml(media);
+            retcode = generateExportDatas_yaml(media, exportDetails);
         }
         else // if (exportFormat == EXPORT_TEXT)
         {
             outputFilePath += ".txt";
-            retcode = generateExportDatas_text(media);
+            retcode = generateExportDatas_text(media, exportDetails);
         }
 
         // Print it
@@ -134,37 +146,36 @@ int MainWindow::generateExportDatas()
     return retcode;
 }
 
-int MainWindow::generateExportDatas_text(MediaFile_t *media)
+int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
     if (media)
     {
-        exportDatas += "Full path   : ";
+        exportDatas += "Full path     : ";
         exportDatas += media->file_path;
-        exportDatas += "\n\n";
 
-        exportDatas += "Title       : ";
+        exportDatas += "\n\nTitle         : ";
         exportDatas += media->file_name;
-        exportDatas += "\n";
-        exportDatas += "Duration    : ";
+        exportDatas += "\nDuration      : ";
         exportDatas += getDurationString(media->duration);
-        exportDatas += "\n";
-        exportDatas += "Size        : ";
+        exportDatas += "\nSize          : ";
         exportDatas += getSizeString(media->file_size);
-        exportDatas += "\n";
-        exportDatas += "Container   : ";
+        exportDatas += "\nContainer     : ";
         exportDatas += getContainerString(media->container, true);
-        exportDatas += "\n";
-        if (media->container == CONTAINER_MP4)
+        if (media->creation_app)
+        {
+            exportDatas += "\nCreation app  : ";
+            exportDatas += media->creation_app;
+        }
+        if (media->creation_time)
         {
             QDate date(1904, 1, 1);
             QTime time(0, 0, 0, 0);
             QDateTime datetime(date, time);
             datetime = datetime.addSecs(media->creation_time);
-            exportDatas += "Date        : ";
+            exportDatas += "\nCreation time : ";
             exportDatas += datetime.toString("dddd d MMMM yyyy, hh:mm:ss");
-            exportDatas += "\n";
         }
 
         // VIDEO TRACKS
@@ -179,35 +190,90 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media)
             // Section title
             if (media->tracks_video_count == 1)
             {
-                exportDatas += "\nVIDEO\n-----\n";
+                exportDatas += "\n\nVIDEO\n-----";
             }
             else
             {
                 exportDatas += "\nVIDEO TRACK #";
                 exportDatas += QString::number(i);
-                exportDatas += "\n--------------\n";
+                exportDatas += "\n--------------";
             }
 
             // Datas
-            exportDatas += "Codec       : ";
-            exportDatas += getCodecString(stream_VIDEO, t->stream_codec, true);
-            exportDatas += "\n";
-            exportDatas += "FourCC      : ";
-            char fcc_str[4];
+            if (detailed == true)
             {
-                fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                char fcc_str[4];
+                {
+                    fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
+                    fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
+                    fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
+                    fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                }
+                exportDatas += "\nFourCC        : ";
+                exportDatas += QString::fromLatin1(fcc_str, 4);
             }
-            exportDatas += QString::fromLatin1(fcc_str, 4);
-            exportDatas += "\n";
-            exportDatas += "Size        : ";
-            exportDatas += getSizeString(t->stream_size);
-            exportDatas += "\n";
-            exportDatas += "Duration    : ";
+            exportDatas += "\nCodec         : ";
+            exportDatas += getCodecString(stream_VIDEO, t->stream_codec, true);
+            exportDatas += "\nSize          : ";
+            exportDatas += getTrackSizeString(t, media->file_size, detailed);
+            exportDatas += "\nDuration      : ";
             exportDatas += getDurationString(t->duration_ms);
-            exportDatas += "\n";
+            exportDatas += "\nWidth         : ";
+            exportDatas += QString::number(t->width);
+            exportDatas += "\nHeight        : ";
+            exportDatas += QString::number(t->height);
+
+            if (detailed == true)
+            {
+                if (t->pixel_aspect_ratio_h || t->pixel_aspect_ratio_v)
+                {
+                    exportDatas += "\nPixel Aspect ratio   : ";
+                    exportDatas += QString::number(t->pixel_aspect_ratio_h) + ":" + QString::number(t->pixel_aspect_ratio_v);
+                }
+                if (t->video_aspect_ratio > 0.0)
+                {
+                    exportDatas += "\nVideo Aspect ratio   : ";
+                    exportDatas += QString::number(t->video_aspect_ratio);
+                }
+                exportDatas += "\nDisplay Aspect ratio : ";
+                exportDatas += getAspectRatioString(t->width, t->height, detailed);
+            }
+            else
+            {
+                exportDatas += "\nAspect ratio  : ";
+                exportDatas += getAspectRatioString(t->width, t->height, detailed);
+            }
+
+            if (detailed == true)
+            {
+                exportDatas += "\nFramerate     : ";
+                exportDatas += QString::number(t->frame_rate) + " fps";
+                exportDatas += "\nFramerate mode: ";
+                exportDatas += getFramerateModeString(t->framerate_mode);
+
+                exportDatas += "\nBitrate       : ";
+                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += "\nBitrate mode  : ";
+                exportDatas += getBitrateModeString(t->bitrate_mode);
+            }
+            else
+            {
+                exportDatas += "\nFramerate     : ";
+                exportDatas += QString::number(t->frame_rate) + " fps (";
+                exportDatas += getFramerateModeString(t->framerate_mode) + ")";
+
+                exportDatas += "\nBitrate       : ";
+                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += " (" + getBitrateModeString(t->bitrate_mode) + ")";
+            }
+
+            exportDatas += "\nColor depth   : ";
+            exportDatas += QString::number(t->color_depth) + " bits";
+            exportDatas += "\nColor matrix  : ";
+            if (t->color_range == 0)
+                exportDatas += "\nColor range   : Limited";
+            else
+                exportDatas += "\nColor range   : Full";
         }
 
         // AUDIO TRACKS
@@ -220,33 +286,55 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media)
                 break;
 
             // Section title
-            exportDatas += "\nAUDIO TRACK #";
+            exportDatas += "\n\nAUDIO TRACK #";
             exportDatas += QString::number(i);
-            exportDatas += "\n--------------\n";
+            exportDatas += "\n--------------";
 
             // Datas
-            exportDatas += "Codec       : ";
-            exportDatas += getCodecString(stream_AUDIO, t->stream_codec, true);
-            exportDatas += "\n";
-            exportDatas += "FourCC      : ";
-            char fcc_str[4];
+            if (detailed == true)
             {
-                fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                char fcc_str[4];
+                {
+                    fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
+                    fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
+                    fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
+                    fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                }
+                exportDatas += "\nFourCC        : ";
+                exportDatas += QString::fromLatin1(fcc_str, 4);
             }
-            exportDatas += QString::fromLatin1(fcc_str, 4);
-            exportDatas += "\n";
-            exportDatas += "Size        : ";
-            exportDatas += getSizeString(t->stream_size);
-            exportDatas += "\n";
-            exportDatas += "Duration    : ";
+            exportDatas += "\nCodec         : ";
+            exportDatas += getCodecString(stream_AUDIO, t->stream_codec, true);
+            exportDatas += "\nSize          : ";
+            exportDatas += getTrackSizeString(t, media->file_size, detailed);
+            exportDatas += "\nDuration      : ";
             exportDatas += getDurationString(t->duration_ms);
-            exportDatas += "\n";
+            exportDatas += "\nTitle         : ";
+            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += "\nLanguage      : ";
+            exportDatas += QString::fromLocal8Bit(t->track_language);
+            exportDatas += "\nChannels      : ";
+            exportDatas += QString::number(t->channel_count);
+            exportDatas += "\nBit per sample: ";
+            exportDatas += QString::number(t->bit_per_sample);
+            exportDatas += "\nSamplerate    : ";
+            exportDatas += QString::number(t->sampling_rate) + " Hz";
+            if (detailed == true)
+            {
+                exportDatas += "\nBitrate       : ";
+                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += "\nBitrate mode  : ";
+                exportDatas += getBitrateModeString(t->bitrate_mode);
+            }
+            else
+            {
+                exportDatas += "\nBitrate       : ";
+                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += " (" + getBitrateModeString(t->bitrate_mode) + ")";
+            }
         }
 
-        // VIDEO TRACKS
+        // SUBTITLES TRACKS
         ////////////////////////////////////////////////////////////////////////
 
         for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
@@ -256,12 +344,18 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media)
                 break;
 
             // Section title
-            exportDatas += "\nSUBTITLES TRACK #";
+            exportDatas += "\n\nSUBTITLES TRACK #";
             exportDatas += QString::number(i);
-            exportDatas += "\n--------------\n";
+            exportDatas += "\n--------------";
 
             // Datas
-            exportDatas += "Format      : sub\n";
+            exportDatas += "\nFormat        : sub";
+            exportDatas += "\nSize          : ";
+            exportDatas += getTrackSizeString(t, media->file_size, detailed);
+            exportDatas += "\nTitle         : ";
+            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += "\nLanguage      : ";
+            exportDatas += QString::fromLocal8Bit(t->track_language);
         }
 
         retcode = 1;
@@ -270,7 +364,7 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media)
     return retcode;
 }
 
-int MainWindow::generateExportDatas_json(MediaFile_t *media)
+int MainWindow::generateExportDatas_json(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
@@ -282,7 +376,7 @@ int MainWindow::generateExportDatas_json(MediaFile_t *media)
     return retcode;
 }
 
-int MainWindow::generateExportDatas_xml(MediaFile_t *media)
+int MainWindow::generateExportDatas_xml(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
@@ -293,7 +387,7 @@ int MainWindow::generateExportDatas_xml(MediaFile_t *media)
 
     return retcode;
 }
-int MainWindow::generateExportDatas_yaml(MediaFile_t *media)
+int MainWindow::generateExportDatas_yaml(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 

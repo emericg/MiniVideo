@@ -32,6 +32,9 @@
 
 void MainWindow::cleanDatas()
 {
+    QString unknown = tr("Unknown");
+    QString unknown_bold = tr("<b>Unknown</b>");
+
     // Infos tab
     ui->label_info_filename->clear();
     ui->label_info_fullpath->clear();
@@ -57,6 +60,7 @@ void MainWindow::cleanDatas()
     ui->label_info_video_definition->clear();
     ui->label_info_video_duration->clear();
     ui->label_info_video_framerate->clear();
+    ui->label_info_video_framerate_mode->clear();
     ui->label_info_video_size->clear();
 
     // Audio tab
@@ -108,6 +112,7 @@ void MainWindow::cleanDatas()
     ui->label_video_encoder->clear();
     ui->label_video_fcc->clear();
     ui->label_video_framerate->clear();
+    ui->label_video_framerate_mode->clear();
     ui->label_video_frameduration->clear();
 
     ui->label_video_color_depth->clear();
@@ -133,6 +138,7 @@ void MainWindow::cleanDatas()
 
     // Export tab
     exportDatas.clear();
+    exportFormat = EXPORT_TEXT;
     ui->comboBox_export_details->setCurrentIndex(0);
     ui->comboBox_export_formats->setCurrentIndex(0);
     ui->lineEdit_export_filename->clear();
@@ -159,16 +165,34 @@ int MainWindow::printDatas()
 
         if (media->creation_app)
         {
+            ui->label_6->setVisible(false);
+            ui->label_info_creationapp->setVisible(true);
             ui->label_info_creationapp->setText(QString::fromLocal8Bit(media->creation_app));
         }
-
-        if (media->container == CONTAINER_MP4)
+        else
         {
-            QDate date(1904, 1, 1);
-            QTime time(0, 0, 0, 0);
-            QDateTime datetime(date, time);
-            datetime = datetime.addSecs(media->creation_time);
-            ui->label_info_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
+            ui->label_6->setVisible(false);
+            ui->label_info_creationapp->setVisible(false);
+        }
+
+        if (media->creation_time)
+        {
+            ui->label_5->setVisible(true);
+            ui->label_info_creationdate->setVisible(true);
+
+            if (media->container == CONTAINER_MP4)
+            {
+                QDate date(1904, 1, 1);
+                QTime time(0, 0, 0, 0);
+                QDateTime datetime(date, time);
+                datetime = datetime.addSecs(media->creation_time);
+                ui->label_info_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
+            }
+        }
+        else
+        {
+            ui->label_5->setVisible(false);
+            ui->label_info_creationdate->setVisible(false);
         }
 
         // Container efficiency
@@ -224,15 +248,7 @@ int MainWindow::printDatas()
             {
                 ui->label_info_audio_bitpersample->setText(QString::number(t->bit_per_sample) + " bits");
             }
-
-            if (t->bitrate_mode == BITRATE_CBR)
-                ui->label_info_audio_bitratemode->setText("CBR");
-            else if (t->bitrate_mode == BITRATE_VBR)
-                ui->label_info_audio_bitratemode->setText("VBR");
-            else if (t->bitrate_mode == BITRATE_ABR)
-                ui->label_info_audio_bitratemode->setText("ABR");
-            else if (t->bitrate_mode == BITRATE_CVBR)
-                ui->label_info_audio_bitratemode->setText("CVBR");
+            ui->label_info_audio_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             if (media->tracks_audio_count > 1)
             {
@@ -275,24 +291,9 @@ int MainWindow::printDatas()
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
             ui->label_info_video_ar->setText(getAspectRatioString(t->width, t->height));
             ui->label_info_video_framerate->setText(QString::number(t->frame_rate) + " fps");
+            ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
-
-            if (t->bitrate_mode == BITRATE_CBR)
-            {
-                ui->label_info_video_bitratemode->setText("CBR");
-            }
-            else if (t->bitrate_mode == BITRATE_VBR)
-            {
-                ui->label_info_video_bitratemode->setText("VBR");
-            }
-            else if (t->bitrate_mode == BITRATE_ABR)
-            {
-                ui->label_info_video_bitratemode->setText("ABR");
-            }
-            else if (t->bitrate_mode == BITRATE_CVBR)
-            {
-                ui->label_info_video_bitratemode->setText("CVBR");
-            }
+            ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             if (media->tracks_video_count > 1)
             {
@@ -397,17 +398,7 @@ int MainWindow::printAudioDetails()
             ui->label_audio_duration->setText(getDurationString(t->duration_ms));
 
             ui->label_audio_bitrate_gross->setText(getBitrateString(t->bitrate));
-
-            if (t->bitrate_mode == BITRATE_CBR)
-                ui->label_audio_bitratemode->setText("CBR");
-            else if (t->bitrate_mode == BITRATE_VBR)
-                ui->label_audio_bitratemode->setText("VBR");
-            else if (t->bitrate_mode == BITRATE_ABR)
-                ui->label_audio_bitratemode->setText("ABR");
-            else if (t->bitrate_mode == BITRATE_CVBR)
-                ui->label_audio_bitratemode->setText("CVBR");
-
-            //ui->label_audio_samplecount->setText(QString::number(t->sample_count));
+            ui->label_audio_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_audio_channels->setText(QString::number(t->channel_count));
@@ -476,15 +467,7 @@ int MainWindow::printVideoDetails()
             ui->label_video_duration->setText(getDurationString(t->duration_ms));
 
             ui->label_video_bitrate_gross->setText(getBitrateString(t->bitrate));
-
-            if (t->bitrate_mode == BITRATE_CBR)
-                ui->label_video_bitratemode->setText("CBR");
-            else if (t->bitrate_mode == BITRATE_VBR)
-                ui->label_video_bitratemode->setText("VBR");
-            else if (t->bitrate_mode == BITRATE_ABR)
-                ui->label_video_bitratemode->setText("ABR");
-            else if (t->bitrate_mode == BITRATE_CVBR)
-                ui->label_video_bitratemode->setText("CVBR");
+            ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
             ui->label_video_ar->setText(getAspectRatioString(t->width, t->height, true));
@@ -546,7 +529,7 @@ int MainWindow::printVideoDetails()
 
                 double idr_ratio = static_cast<double>(t->frame_count_idr) / static_cast<double>(t->sample_count) * 100.0;
                 samplerepartition = tr("IDR frames makes <b>") + QString::number(idr_ratio, 'g', 2) + "%</b> " + tr("of the samples");
-                samplerepartition += "<br> one every <b>X</b> ms (statistically)";
+                samplerepartition += "<br>Statistically, one every <b>X</b> ms";
 
                 ui->label_video_samplerepart->setText(samplerepartition);
             }
@@ -555,6 +538,7 @@ int MainWindow::printVideoDetails()
             ui->label_video_framecount->setText(framecount);
 
             ui->label_video_framerate->setText(QString::number(framerate) + " fps");
+            ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
             ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
 
             uint64_t rawsize = t->width * t->height * (t->color_depth / 8);

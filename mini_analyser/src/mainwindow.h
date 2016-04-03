@@ -62,10 +62,10 @@ private slots:
         int printSubtitlesDetails();
 
     int generateExportDatas();
-        int generateExportDatas_text(MediaFile_t *media);
-        int generateExportDatas_json(MediaFile_t *media);
-        int generateExportDatas_xml(MediaFile_t *media);
-        int generateExportDatas_yaml(MediaFile_t *media);
+        int generateExportDatas_text(MediaFile_t *media, bool detailed);
+        int generateExportDatas_json(MediaFile_t *media, bool detailed);
+        int generateExportDatas_xml(MediaFile_t *media, bool detailed);
+        int generateExportDatas_yaml(MediaFile_t *media, bool detailed);
 
     void hideStatus();
     void detachFile();
@@ -101,7 +101,6 @@ private:
     int exportFormat;
     QString exportDatas;
     QFile exportFile;
-    void setOutputFile(QString &filePath);
 
     // Save tabs
     QString tabDropZoneText;
