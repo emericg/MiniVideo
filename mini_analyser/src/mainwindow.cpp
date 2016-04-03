@@ -415,7 +415,7 @@ void MainWindow::handleTabWidget()
     ui->tabWidget->setEnabled(true);
 
     // Save the current tab index if we want to restore it later
-    int tab_saved = ui->tabWidget->currentIndex();
+    QWidget *tab_widget_saved = ui->tabWidget->currentWidget();
 
     // Remove all tabs
     while (ui->tabWidget->count() > 0)
@@ -468,10 +468,14 @@ void MainWindow::handleTabWidget()
             ui->tabWidget->addTab(ui->tab_exporter, tabExportIcon, tabExportText);
         }
 
-        // Restore the focus (if the same tab is possible)
-        if (tab_saved > 0 && tab_saved <= ui->tabWidget->count())
+        // Restore the focus (if the same tab is available)
+        for (int i = 0; i < ui->tabWidget->count(); i++)
         {
-            ui->tabWidget->setCurrentIndex(tab_saved);
+            if (ui->tabWidget->widget(i) == tab_widget_saved)
+            {
+                ui->tabWidget->setCurrentIndex(i);
+                break;
+            }
         }
     }
 }
