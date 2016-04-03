@@ -64,12 +64,22 @@ typedef enum BitrateMode_e
 {
     BITRATE_UNKNOWN = 0,
 
-    BITRATE_CBR     = 1, //!< Constant Bitrate
-    BITRATE_VBR     = 2, //!< Variable Bitrate
-    BITRATE_ABR     = 3, //!< Average Bitrate
-    BITRATE_CVBR    = 4  //!< Constrained Variable Bitrate
+    BITRATE_CBR     = 1, //!< Constant BitRate
+    BITRATE_VBR     = 2, //!< Variable BitRate
+    BITRATE_ABR     = 3, //!< Average BitRate
+    BITRATE_CVBR    = 4  //!< Constrained Variable BitRate
 
 } BitrateMode_e;
+
+//! Framerate mode
+typedef enum FramerateMode_e
+{
+    FRAMERATE_UNKNOWN = 0,
+
+    FRAMERATE_CFR     = 1, //!< Constant FrameRate
+    FRAMERATE_VFR     = 2, //!< Variable FrameRate
+
+} FramerateMode_e;
 
 /* ************************************************************************** */
 

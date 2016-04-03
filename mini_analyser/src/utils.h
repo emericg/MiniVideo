@@ -76,5 +76,9 @@ QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed =
  */
 QString getBitrateString(const unsigned bitrate);
 
+QString getBitrateModeString(const unsigned bitrate_mode);
+
+QString getFramerateModeString(const unsigned framerate_mode);
+
 /* ************************************************************************** */
 #endif // UTILS_H

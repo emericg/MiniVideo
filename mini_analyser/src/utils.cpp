@@ -72,20 +72,20 @@ QString getSizeString(const int64_t size)
         }
         else if (size < 1048576) // < 1 MiB
         {
-            size_qstr = QString::number(size / 1024.0, 'f', 2) + " KiB   /   "
-                      + QString::number(size / 1000.0, 'f', 2) + " KB   /   "
+            size_qstr = QString::number(size / 1024.0, 'f', 2) + " KiB  /  "
+                      + QString::number(size / 1000.0, 'f', 2) + " KB  /  "
                       + QString::number(size) + " bytes";
         }
         else if (size < 1073741824) // < 1 GiB
         {
-            size_qstr = QString::number(size / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
-                      + QString::number(size / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
+            size_qstr = QString::number(size / 1024.0 / 1024.0, 'f', 2) + " MiB  /  "
+                      + QString::number(size / 1000.0 / 1000.0, 'f', 2) + " MB  /  "
                       + QString::number(size) + " bytes";
         }
         else // < 1 GiB
         {
-            size_qstr = QString::number(size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
-                      + QString::number(size / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
+            size_qstr = QString::number(size / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB  /  "
+                      + QString::number(size / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB  /  "
                       + QString::number(size) + " bytes";
         }
     }
@@ -105,16 +105,6 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
 
     if (track != NULL)
     {
-/*
-        // Compute stream if needed
-        if (track->stream_size == 0)
-        {
-            for (unsigned i = 0; i < track->sample_count; i++)
-            {
-                track->stream_size += track->sample_size[i];
-            }
-        }
-*/
         qint64 size_int = track->stream_size;
 
         if (track->stream_size > 0)
@@ -127,8 +117,8 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             {
                 if (detailed)
                 {
-                    size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB   /   "
-                              + QString::number(size_int / 1000.0, 'f', 2) + " KB   /   "
+                    size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB  /  "
+                              + QString::number(size_int / 1000.0, 'f', 2) + " KB  /  "
                               + QString::number(size_int) + " bytes  ";
                 }
                 else
@@ -138,8 +128,8 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             {
                 if (detailed)
                 {
-                    size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB   /   "
-                              + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB   /   "
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB  /  "
+                              + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB  /  "
                               + QString::number(size_int) + " bytes  ";
                 }
                 else
@@ -149,8 +139,8 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             {
                 if (detailed)
                 {
-                    size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB   /   "
-                              + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB   /   "
+                    size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB  /  "
+                              + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB  /  "
                               + QString::number(size_int) + " bytes  ";
                 }
                 else
@@ -314,4 +304,36 @@ QString getBitrateString(const unsigned bitrate)
     //qDebug() << "getBitrateString(" << bitrate << ") >" << bitrate_qstr;
 
     return bitrate_qstr;
+}
+
+QString getBitrateModeString(const unsigned bitrate_mode)
+{
+    QString bitrate_mode_qstr;
+
+    if (bitrate_mode == BITRATE_CBR)
+        bitrate_mode_qstr = "CBR";
+    else if (bitrate_mode == BITRATE_VBR)
+        bitrate_mode_qstr = "VBR";
+    else if (bitrate_mode == BITRATE_ABR)
+        bitrate_mode_qstr = "ABR";
+    else if (bitrate_mode == BITRATE_CVBR)
+        bitrate_mode_qstr = "CVBR";
+    else
+        bitrate_mode_qstr = "Unknown";
+
+    return bitrate_mode_qstr;
+}
+
+QString getFramerateModeString(const unsigned framerate_mode)
+{
+    QString framerate_mode_qstr;
+
+    if (framerate_mode == FRAMERATE_CFR)
+        framerate_mode_qstr = "CFR";
+    else if (framerate_mode == FRAMERATE_VFR)
+        framerate_mode_qstr = "VFR";
+    else
+        framerate_mode_qstr = "Unknown";
+
+    return framerate_mode_qstr;
 }
