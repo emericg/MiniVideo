@@ -1006,6 +1006,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             uint32_t aspect_ratio_index = (sizes & 0x000000F0) >> 4;
             uint32_t framerate_index    = (sizes & 0x0000000F);
 
+            map->color_matrix = CM_bt601;
             map->width  = (sizes & 0xFFF00000) >> 20;
             map->height = (sizes & 0x000FFF00) >> 8;
 
