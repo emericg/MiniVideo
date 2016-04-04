@@ -34,6 +34,9 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="verticalSpacing">
+     <number>12</number>
+    </property>
     <item row="2" column="0" colspan="6">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
@@ -2559,7 +2562,7 @@
              <x>0</x>
              <y>0</y>
              <width>618</width>
-             <height>619</height>
+             <height>607</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
