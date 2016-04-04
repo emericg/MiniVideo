@@ -69,29 +69,44 @@ typedef enum AVCodec_e
     CODEC_LogPCM      =  2, //!< Logarithmic pulse-code modulation
     CODEC_DPCM        =  3, //!< Differential pulse-code modulation
     CODEC_ADPCM       =  4, //!< Adaptative differential pulse-code modulation
+    CODEC_PDM         =  5, //!< Pulse-density modulation
 
-    // Audio codecs
+    // Lossless audio codecs
     CODEC_APE         =  8, //!< Monkey's Audio
     CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
     CODEC_ALAC        = 10, //!< Apple Lossless Audio Codec
 
+    // Audio codecs
     CODEC_MPEG_L1     = 16, //!< MP1, or MPEG 1/2 Audio Layer I
     CODEC_MPEG_L2     = 17, //!< MP2, or MPEG 1/2 Audio Layer II
     CODEC_MPEG_L3     = 18, //!< MP3, or MPEG 1/2 Audio Layer III
-    CODEC_AAC         = 19, //!< Advanced Audio Coding
-    CODEC_AAC_HE      = 20, //!< High Efficiency Advanced Audio Coding
+    CODEC_AAC         = 19, //!< Advanced Audio Coding, MPEG-2 Part 7 and MPEG-4 Part 3
+    CODEC_AAC_HE      = 20, //!< "High Efficiency" AAC
+    CODEC_AAC_LD      = 21, //!< "Low Delay" AAC
+    CODEC_MPEG4_ALS   = 22, //!<
+    CODEC_MPEG4_CELP  = 23, //!<
+    CODEC_MPEG4_DST   = 24, //!<
+    CODEC_MPEG4_HVXC  = 25, //!<
+    CODEC_MPEG4_SLS   = 26, //!<
+    CODEC_MPEGH_3D_AUDIO = 27, //!<
 
-    CODEC_AC3         = 21, //!< AC3, or Dobly Digital, or A/52A
-    CODEC_EAC3        = 22, //!< Enhanced AC3, or Dobly Digital Plus, or A/52B
+    CODEC_SPEEX       = 32, //!< Xiph Speex
+    CODEC_VORBIS      = 33, //!< Xiph Ogg Vorbis
+    CODEC_OPUS        = 34, //!< Xiph Opus
 
-    CODEC_DTS         = 23,
-    CODEC_DTS_HD      = 24,
+    CODEC_AC3         = 35, //!< Dolby Digital, or AC-3, or A/52A
+    //Dolby Digital EX
+    //Dolby Digital Live
+    CODEC_EAC3        = 38, //!< Dolby Digital Plus, or Enhanced AC-3, or A/52B
+    //Dolby TrueHD
+    CODEC_AC4         = 40, //!< Dolby AC-4
 
-    CODEC_WMA         = 25, //!< Windows Media Audio
-    CODEC_MPC         = 26, //!< Musepack
-    CODEC_SPEEX       = 27, //!< Xiph Speex
-    CODEC_VORBIS      = 28, //!< Xiph Ogg Vorbis
-    CODEC_OPUS        = 29, //!< Xiph Opus
+    CODEC_DTS         = 42, //!< "Dedicated To Sound"
+    CODEC_DTS_HD      = 43,
+    CODEC_DTS_X       = 44,
+
+    CODEC_WMA         = 49, //!< Windows Media Audio
+    CODEC_MPC         = 50, //!< Musepack
 
     // Video codecs
     CODEC_MPEG1       = 64, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
@@ -103,11 +118,11 @@ typedef enum AVCodec_e
     CODEC_H264        = 70, //!< H.264 or MPEG-4 Part 10 "AVC"
     CODEC_H265        = 71, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
 
-    CODEC_WMV1        = 72, //!< Windows Media Video 7
-    CODEC_WMV2        = 73, //!< Windows Media Video 8
-    CODEC_WMV3        = 74, //!< WMV3 implements the VC-1 or WMV9 Simple and Main Profiles
-    CODEC_WMVA        = 75, //!< WMVA is the original implementation of the VC-1 or WMV9 Advanced Profile (considered deprecated)
-    CODEC_WVC1        = 76, //!< WVC1 implements a more recent and fully compliant version of the VC-1 or WMV9 Advanced Profile
+    CODEC_WMV7        = 72, //!< Windows Media Video 7
+    CODEC_WMV8        = 73, //!< Windows Media Video 8
+    CODEC_WMV9        = 74, //!< Windows Media Video 9
+    CODEC_WMSCR       = 75, //!< Windows Media Screen (7-9)
+    CODEC_WMP         = 76, //!< Windows Media Picture
 
     CODEC_VP3         = 77, //!< On2 VP3 Video
     CODEC_VP4         = 78, //!< On2 VP4 Video / Xiph Ogg Theora

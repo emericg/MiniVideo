@@ -128,11 +128,25 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_MP42:
     case fcc_MP43:
     case fcc_DIV3:
-    case fcc_WMV7:
-    case fcc_WMV8:
     case fcc_AP41:
     case fcc_COL1:
         codec = CODEC_MSMPEG4;
+        break;
+    case fcc_MSS1:
+    case fcc_MSS2:
+    case fcc_MSA1:
+        codec = CODEC_WMSCR;
+        break;
+    case fcc_WMV1:
+    case fcc_WMV7:
+        codec = CODEC_WMV7;
+        break;
+    case fcc_WMV2:
+    case fcc_WMV8:
+        codec = CODEC_WMV8;
+        break;
+    case fcc_WMVA:
+        codec = CODEC_WMV9;
         break;
 
     case fcc_D263:
@@ -144,6 +158,11 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_U263:
     case fcc_X263:
         codec = CODEC_H263;
+        break;
+
+    case fcc_WMV3:
+    case fcc_WVC1:
+        codec = CODEC_VC1;
         break;
 
     case fcc_BBCD:

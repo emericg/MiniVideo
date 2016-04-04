@@ -189,6 +189,12 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 else
                     return "ADPCM";
                 break;
+            case CODEC_PDM:
+                if (long_description)
+                    return "PDM (Pulse Density Modulation)";
+                else
+                    return "PDM";
+                break;
 
             case CODEC_APE:
                 if (long_description)
@@ -239,23 +245,56 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 else
                     return "HE-AAC";
                 break;
+            case CODEC_AAC_LD:
+                if (long_description)
+                    return "LD-AAC (Low Delay Advance Audio Coding)";
+                else
+                    return "LD-AAC";
+                break;
+            case CODEC_MPEG4_ALS:
+                return "MPEG-4 ALS";
+                break;
+            case CODEC_MPEG4_CELP:
+                return "MPEG-4 CELP";
+                break;
+            case CODEC_MPEG4_DST:
+                return "MPEG-4 DST";
+                break;
+            case CODEC_MPEG4_HVXC:
+                return "MPEG-4 HVXC";
+                break;
+            case CODEC_MPEG4_SLS:
+                return "MPEG-4 SLS";
+                break;
+            case CODEC_MPEGH_3D_AUDIO:
+                return "MPEG-H 3D AUDIO";
+                break;
             case CODEC_AC3:
                 if (long_description)
-                    return "AC3 (DolbyDigital)";
+                    return "AC-3 (DolbyDigital)";
                 else
-                    return "AC3";
+                    return "AC-3";
                 break;
             case CODEC_EAC3:
                 if (long_description)
-                    return "EAC3 (DolbyDigital+)";
+                    return "EAC-3 (DolbyDigital+)";
                 else
-                    return "EAC3";
+                    return "EAC-3";
+                break;
+            case CODEC_AC4:
+                if (long_description)
+                    return "AC-4 (Dolby AC-4)";
+                else
+                    return "AC-4";
                 break;
             case CODEC_DTS:
                 return "DTS";
                 break;
             case CODEC_DTS_HD:
                 return "DTS-HD";
+                break;
+            case CODEC_DTS_X:
+                return "DTS-X";
                 break;
             case CODEC_WMA:
                 if (long_description)
@@ -313,27 +352,39 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "H.265";
                 break;
 
-            case CODEC_WMV1:
-                return "WMV1";
+            case CODEC_WMV7:
+                if (long_description)
+                    return "Windows Media Video 7";
+                else
+                    return "WMV7";
                 break;
-            case CODEC_WMV2:
-                return "WMV2";
+            case CODEC_WMV8:
+                if (long_description)
+                    return "Windows Media Video 8";
+                else
+                    return "WMV8";
                 break;
-            case CODEC_WMV3:
-                return "WMV3";
+            case CODEC_WMV9:
+                if (long_description)
+                    return "Windows Media Video 9";
+                else
+                    return "WMV9";
                 break;
-            case CODEC_WMVA:
-                return "WMVA";
-                break;
-            case CODEC_WVC1:
-                return "WVC1";
+            case CODEC_WMSCR:
+                if (long_description)
+                    return "Windows Media Screen 7-9";
+                else
+                    return "WMS 7-9";
                 break;
 
             case CODEC_VP3:
                 return "VP3";
                 break;
             case CODEC_VP4:
-                return "VP4 (Ogg Theora)";
+                if (long_description)
+                    return "VP4 (Ogg Theora)";
+                else
+                    return "VP4";
                 break;
             case CODEC_VP5:
                 return "VP5";
@@ -360,9 +411,9 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
             case CODEC_VC1:
                 if (long_description)
-                    return "VC-1";
-                else
                     return "VC-1 (Windows Media Video)";
+                else
+                    return "VC-1";
                 break;
             case CODEC_VC2:
                 return "VC-2 (Dirac)";

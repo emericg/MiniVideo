@@ -54,6 +54,7 @@ typedef enum fourcc_list_e
     fcc_DIV2 = 0x44495632,
     fcc_DIV4 = 0x44495634,
     fcc_DIV5 = 0x44495635,
+
     fcc_divx = 0x64697678, //!< DivX 4 -> 6
     fcc_DIVX = 0x44495658,
     fcc_DX50 = 0x44583530, //!< DivX 5
@@ -64,10 +65,20 @@ typedef enum fourcc_list_e
     fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
     fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
     fcc_DIV3 = 0x44495633,
+    fcc_WMV1 = 0x574D5631, //!< Windows Media Video 7
     fcc_WMV7 = 0x574D5637,
+    fcc_WMV2 = 0x574D5632, //!< Windows Media Video 8
     fcc_WMV8 = 0x574D5638,
     fcc_AP41 = 0x41503431,
     fcc_COL1 = 0x434F4C31,
+    fcc_MP4S = 0x4D503453, //!< Microsoft ISO MPEG-4 version 1 (MPEG-4 Simple Profile compliant)
+    fcc_M4S2 = 0x4D345332, //!< Microsoft ISO MPEG-4 version 1.1 (MPEG-4 Advance Simple Profile compliant)
+    fcc_MSS1 = 0x4D535331, //!< Windows Media Screen 7
+    fcc_MSS2 = 0x4D535332, //!< Windows Media Screen 9
+    fcc_MSA1 = 0x4D534131, //!< Windows Media Screen
+    fcc_WMV3 = 0x574D5633, //!< Windows Media Video 9 (VC-1 compliant)
+    fcc_WMVA = 0x574D5641, //!< Windows Media Video 9 Advanced Profile
+    fcc_WVC1 = 0x57564331, //!< Windows Media Video 9 Advanced Profile (VC-1 compliant)
 
     fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP"
     fcc_XVID = 0x58564944,
@@ -125,11 +136,6 @@ typedef enum fourcc_list_e
     fcc_apcn = 0x6170636e, //!< Apple ProRes 422
     fcc_apco = 0x6170636f, //!< Apple ProRes 422 (Proxy)
     fcc_apcs = 0x61706373, //!< Apple ProRes 422 (LT)
-
-    fcc_WMV1 = 0x574D5631, //!< Windows Media Video codecs
-    fcc_WMV2 = 0x574D5632,
-    fcc_WMV3 = 0x574D5633,
-    fcc_WVC1 = 0x57564331,
 
     fcc_dvsd = 0x64767364, //!< DV
     fcc_DVSD = 0x44565344,
