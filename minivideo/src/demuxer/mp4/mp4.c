@@ -288,11 +288,11 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 // Set PPS
                 for (i = 0; i < track->pps_count; i++)
                 {
-                    map->sample_type[i] = sample_VIDEO_PARAM;
+                    map->sample_type[i + track->sps_count] = sample_VIDEO_PARAM;
                     map->sample_offset[i + track->sps_count] = track->pps_sample_offset[i];
                     map->sample_size[i + track->sps_count] = track->pps_sample_size[i];
-                    map->sample_pts[i] = -1;
-                    map->sample_dts[i] = -1;
+                    map->sample_pts[i + track->sps_count] = -1;
+                    map->sample_dts[i + track->sps_count] = -1;
                 }
             }
         }
