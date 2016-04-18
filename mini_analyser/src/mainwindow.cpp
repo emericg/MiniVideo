@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QFontDatabase>
 #include <QTimer>
 
 #include <QDropEvent>
@@ -94,6 +95,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tabOtherIcon = ui->tabWidget->tabIcon(5);
     tabExportText = ui->tabWidget->tabText(6);
     tabExportIcon = ui->tabWidget->tabIcon(6);
+
+    // Monospace font for the export tab
+    int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
 
     // "Drop zone" is the default tab when starting up
     handleTabWidget();

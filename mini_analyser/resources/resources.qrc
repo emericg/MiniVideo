@@ -33,4 +33,7 @@
         <file>img/dropzone.png</file>
         <file>app/icon.png</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>fonts/DejaVuSansMono.ttf</file>
+    </qresource>
 </RCC>
