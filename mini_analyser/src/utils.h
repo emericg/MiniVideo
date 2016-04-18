@@ -63,6 +63,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
  * More infos: http://en.wikipedia.org/wiki/Aspect_ratio_(image)
  */
 QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed = false);
+QString getAspectRatioString(const double ar, bool detailed = false);
 
 /*!
  * \brief Get a bitrate string from a bitrate in bytes.

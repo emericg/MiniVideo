@@ -1233,7 +1233,7 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
             mytrack->height = track->strf.biHeight;
             mytrack->color_depth = track->strf.biBitCount;
 
-            mytrack->frame_rate = (double)(track->strh.dwRate) / (double)(track->strh.dwScale);
+            mytrack->framerate = (double)(track->strh.dwRate) / (double)(track->strh.dwScale);
             //mytrack->frame_rate = avi->avih.dwMicroSecPerFrame; // But do not trust dwMicroSecPerFrame
         }
     }

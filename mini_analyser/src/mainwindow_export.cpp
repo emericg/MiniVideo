@@ -233,21 +233,21 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
                 if (t->video_aspect_ratio > 0.0)
                 {
                     exportDatas += "\nVideo Aspect ratio   : ";
-                    exportDatas += QString::number(t->video_aspect_ratio);
+                    exportDatas += getAspectRatioString(t->video_aspect_ratio, false);
                 }
                 exportDatas += "\nDisplay Aspect ratio : ";
-                exportDatas += getAspectRatioString(t->width, t->height, detailed);
+                exportDatas += getAspectRatioString(t->display_aspect_ratio, true);
             }
             else
             {
                 exportDatas += "\nAspect ratio  : ";
-                exportDatas += getAspectRatioString(t->width, t->height, detailed);
+                exportDatas += getAspectRatioString(t->display_aspect_ratio, detailed);
             }
 
             if (detailed == true)
             {
                 exportDatas += "\nFramerate     : ";
-                exportDatas += QString::number(t->frame_rate) + " fps";
+                exportDatas += QString::number(t->framerate) + " fps";
                 exportDatas += "\nFramerate mode: ";
                 exportDatas += getFramerateModeString(t->framerate_mode);
 
@@ -259,7 +259,7 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             else
             {
                 exportDatas += "\nFramerate     : ";
-                exportDatas += QString::number(t->frame_rate) + " fps (";
+                exportDatas += QString::number(t->framerate) + " fps (";
                 exportDatas += getFramerateModeString(t->framerate_mode) + ")";
 
                 exportDatas += "\nBitrate       : ";
@@ -269,11 +269,13 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
 
             exportDatas += "\nColor depth   : ";
             exportDatas += QString::number(t->color_depth) + " bits";
+/*
             exportDatas += "\nColor matrix  : ";
             if (t->color_range == 0)
                 exportDatas += "\nColor range   : Limited";
             else
                 exportDatas += "\nColor range   : Full";
+*/
         }
 
         // AUDIO TRACKS
@@ -309,10 +311,16 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             exportDatas += getTrackSizeString(t, media->file_size, detailed);
             exportDatas += "\nDuration      : ";
             exportDatas += getDurationString(t->duration_ms);
-            exportDatas += "\nTitle         : ";
-            exportDatas += QString::fromLocal8Bit(t->track_title);
-            exportDatas += "\nLanguage      : ";
-            exportDatas += QString::fromLocal8Bit(t->track_language);
+            if (t->track_title)
+            {
+                exportDatas += "\nTitle         : ";
+                exportDatas += QString::fromLocal8Bit(t->track_title);
+            }
+            if (t->track_languagecode)
+            {
+                exportDatas += "\nLanguage      : ";
+                exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+            }
             exportDatas += "\nChannels      : ";
             exportDatas += QString::number(t->channel_count);
             exportDatas += "\nBit per sample: ";
@@ -355,7 +363,7 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             exportDatas += "\nTitle         : ";
             exportDatas += QString::fromLocal8Bit(t->track_title);
             exportDatas += "\nLanguage      : ";
-            exportDatas += QString::fromLocal8Bit(t->track_language);
+            exportDatas += QString::fromLocal8Bit(t->track_languagecode);
         }
 
         retcode = 1;

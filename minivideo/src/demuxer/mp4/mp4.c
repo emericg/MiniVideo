@@ -219,9 +219,9 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             strncpy(map->track_title, track->name, sizeof(track->name));
         }
 
-        map->duration_ms = (double)track->duration / (double)track->timescale * 1000.0;
-        map->creation_time = (double)track->creation_time / (double)track->timescale * 1000.0;
-        map->modification_time = (double)track->modification_time / (double)track->timescale * 1000.0;
+        map->duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
+        map->creation_time = ((double)track->creation_time / (double)track->timescale * 1000.0);
+        map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
 
         map->sample_alignment = true; // TODO not very true
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
@@ -262,14 +262,15 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 uint32_t scalefactor = 1;
                 map->framerate_num = track->timescale * scalefactor;
 
-                if(track->stsz_sample_count == 0)
+                if (track->stsz_sample_count == 0)
                     map->framerate_base = track->mediatime * scalefactor; // used for "progressive download" files
                 else
-                    map->framerate_base = (uint32_t)((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
+                    map->framerate_base = ((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
 
-                map->frame_rate = (double)map->framerate_num / (double)map->framerate_base;
+                if (map->framerate_base)
+                    map->framerate = map->framerate_num / map->framerate_base;
 
-                TRACE_1(MP4, "framerate_num: %u  / framerate_base: %u\n",
+                TRACE_1(MP4, "framerate_num: %f  / framerate_base: %f\n",
                         map->framerate_num, map->framerate_base);
             }
 
@@ -1928,13 +1929,16 @@ static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     unsigned int transfer_characteristics;
     unsigned int matrix_coefficients;
 
-    if (colour_type == 'nclx') // on-screen colours
+    if (colour_type == 'nclc' ||
+        colour_type == 'nclx') // "on-screen colours"
     {
+        // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
+
         colour_primaries = read_bits(bitstr, 16);
         transfer_characteristics = read_bits(bitstr, 16);
         matrix_coefficients = read_bits(bitstr, 16);
-        track->color_range = read_bits(bitstr, 1);
-        /*unsigned int reserved =*/ read_bits(bitstr, 7);
+        /*unsigned int reserved =*/ //read_bits(bitstr, 7);
+        track->color_range = read_bits(bitstr, 16);
 
         if (matrix_coefficients == 1)
         {
@@ -1945,29 +1949,6 @@ static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             track->color_matrix = CM_bt601;
         }
         else if (matrix_coefficients == 7)
-        {
-            track->color_matrix = CM_SMPTE240M;
-        }
-    }
-    else if (colour_type == 'nclc') // ???
-    {
-        // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
-
-        colour_primaries = read_bits(bitstr, 16);
-        transfer_characteristics = read_bits(bitstr, 16);
-        matrix_coefficients = read_bits(bitstr, 16);
-        track->color_range = read_bits(bitstr, 1);
-        /*unsigned int reserved =*/ read_bits(bitstr, 7);
-
-        if (colour_primaries == 1 && transfer_characteristics == 1 && matrix_coefficients == 1)
-        {
-            track->color_matrix = CM_bt709;
-        }
-        else if (colour_primaries == 6 && transfer_characteristics == 1 && matrix_coefficients == 6)
-        {
-            track->color_matrix = CM_bt601;
-        }
-        else if (colour_primaries == 5 && transfer_characteristics == 1 && matrix_coefficients == 6)
         {
             track->color_matrix = CM_SMPTE240M;
         }
@@ -1989,7 +1970,7 @@ static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         // Print box content
         char fcc[5];
         TRACE_1(MP4, "> colour_type             : %u\n", getFccString_le(colour_type, fcc));
-        if (colour_type == 'nclx')
+        if (colour_type == 'nclc' || colour_type == 'nclx')
         {
             TRACE_1(MP4, "> colour_primaries        : %u\n", colour_primaries);
             TRACE_1(MP4, "> transfer_characteristics: %u\n", transfer_characteristics);

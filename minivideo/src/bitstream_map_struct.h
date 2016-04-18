@@ -57,6 +57,7 @@ typedef struct BitstreamMap_t
     // Track metadatas (if the container support them)
     unsigned int track_id;          //!< Id of the track (as set by the container)
     char *track_title;              //!< Title
+    char *track_languagecode;       //!< Language code (ISO 639-1 or ISO 639-2 format)
     char track_language[3];         //!< Language code (ISO 639-1 or ISO 639-2 format)
     bool track_default;             //!<
     bool track_forced;              //!<
@@ -78,15 +79,21 @@ typedef struct BitstreamMap_t
     unsigned int color_encoding;    //!< Internal color encoding
     unsigned int color_matrix;      //!< Internal color encoding
     unsigned int color_range;       //!< Colors are in restricted or full range
-    double video_aspect_ratio;      //!< Video aspect ratio (if set directly by the container)
-    unsigned int pixel_aspect_ratio_h;     //!< Pixel aspect ratio (if set directly by the container)
-    unsigned int pixel_aspect_ratio_v;     //!< Pixel aspect ratio (if set directly by the container)
+    double display_aspect_ratio;    //!< Display aspect ratio (if set directly by the container, otherwise computed)
+        unsigned int display_aspect_ratio_h;
+        unsigned int display_aspect_ratio_v;
+    double video_aspect_ratio;      //!< Video aspect ratio (from video size)
+        unsigned int video_aspect_ratio_h;
+        unsigned int video_aspect_ratio_v;
+    double pixel_aspect_ratio;      //!< Pixel aspect ratio (if set directly by the container)
+        unsigned int pixel_aspect_ratio_h;
+        unsigned int pixel_aspect_ratio_v;
 
-    double frame_rate;              //!< Frame rate (in frame/s)
-    unsigned int framerate_mode;    //!< Framerate mode
-    unsigned int framerate_num;     //!< Framerate numerator
-    unsigned int framerate_base;    //!< Framerate denominator
+    double framerate;               //!< Framerate (in frame/s)
+        double framerate_num;       //!< Framerate numerator
+        double framerate_base;      //!< Framerate denominator
     double frame_duration;          //!< Frame duration (in ms)
+    unsigned int framerate_mode;    //!< Framerate mode
 
     // Audio metadatas
     unsigned int channel_count;     //!< Number of audio channels

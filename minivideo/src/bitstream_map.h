@@ -36,9 +36,11 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map);
 
 void print_bitstream_map(BitstreamMap_t *bitstream_map);
 
-bool computeBitRates(MediaFile_t *media);
-
 bool computeCodecs(MediaFile_t *media);
+
+bool computeAspectRatios(MediaFile_t *media);
+
+bool computeSamplesDatas(MediaFile_t *media);
 
 /* ************************************************************************** */
 #endif // BITSTREAM_MAP_H

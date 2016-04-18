@@ -241,8 +241,9 @@ int minivideo_parse(MediaFile_t *input_media,
         }
 
         // Compute some additional metadatas
-        computeBitRates(input_media);
         computeCodecs(input_media);
+        computeAspectRatios(input_media);
+        computeSamplesDatas(input_media);
     }
 
     return retcode;

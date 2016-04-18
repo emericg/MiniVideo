@@ -221,12 +221,14 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static void computeBitRateTrack(BitstreamMap_t *t)
+static void computeSamplesDatasTrack(BitstreamMap_t *t)
 {
     if (t)
     {
-        uint64_t bytes = 0;
+        uint64_t totalbytes = 0;
         bool cbr = true;
+        int64_t frameinterval = 0;
+        bool cfr = true;
         unsigned j = 0;
 
         if (t->sample_alignment)
@@ -238,9 +240,26 @@ static void computeBitRateTrack(BitstreamMap_t *t)
             t->frame_count_idr = t->frame_count;
         }
 
+        // Video frame duration
+        if (t->stream_type == stream_VIDEO && t->frame_duration == 0 && t->framerate != 0)
+            t->frame_duration = 1000.0 / t->framerate;
+/*
+        // Video frame interval
+        if (t->sample_pts[0] && t->sample_pts[1])
+        {
+            frameinterval = t->sample_pts[1] - t->sample_pts[0];
+        }
+        TRACE_ERROR(DEMUX, "pts1: %lli \n", t->sample_pts[0]);
+        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[1]);
+        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[2]);
+        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[3]);
+        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[55]);
+        TRACE_ERROR(DEMUX, "frameinterval: %lli \n", frameinterval);
+*/
+        // Iterate on each sample
         for (j = 0; j < t->sample_count; j++)
         {
-            bytes += t->sample_size[j];
+            totalbytes += t->sample_size[j];
 
             if (t->sample_size[0] != t->sample_size[j])
                 cbr = false;
@@ -259,19 +278,25 @@ static void computeBitRateTrack(BitstreamMap_t *t)
         }
         else
         {
-            // check if we have AVBR / CVBR ?
+            // TODO check if we have AVBR / CVBR ?
             t->bitrate_mode = BITRATE_VBR;
         }
-
+/*
+        // Set framerate mode
+        if (cfr == true)
+        {
+            t->framerate_mode = FRAMERATE_CFR;
+        }
+        else
+        {
+            t->bitrate_mode = FRAMERATE_VFR;
+        }
+*/
         // Set stream size
         if (t->stream_size == 0)
         {
-            t->stream_size = bytes;
+            t->stream_size = totalbytes;
         }
-
-        // Video frame duration
-        if (t->stream_type == stream_VIDEO && t->frame_duration == 0 && t->frame_rate != 0)
-            t->frame_duration = 1000.0 / t->frame_rate;
 
         // Set stream duration
         if (t->duration_ms == 0)
@@ -282,7 +307,7 @@ static void computeBitRateTrack(BitstreamMap_t *t)
         // Set gross bitrate value (in bps)
         if (t->bitrate == 0 && t->duration_ms != 0)
         {
-            t->bitrate = round(((double)t->stream_size / (double)(t->duration_ms)));
+            t->bitrate = (unsigned int)round(((double)t->stream_size / (double)(t->duration_ms)));
             t->bitrate *= 1000; // ms to s
             t->bitrate *= 8; // B to b
         }
@@ -290,33 +315,6 @@ static void computeBitRateTrack(BitstreamMap_t *t)
 }
 
 /* ************************************************************************** */
-
-bool computeBitRates(MediaFile_t *media)
-{
-    TRACE_INFO(DEMUX, BLD_GREEN "computeBitRates()\n" CLR_RESET);
-
-    bool retcode = SUCCESS;
-    unsigned i = 0;
-
-    for (i = 0; i < media->tracks_video_count; i++)
-    {
-        if (media->tracks_video[i])
-        {
-            computeBitRateTrack(media->tracks_video[i]);
-        }
-    }
-
-    for (i = 0; i < media->tracks_audio_count; i++)
-    {
-        if (media->tracks_audio[i])
-        {
-            computeBitRateTrack(media->tracks_audio[i]);
-        }
-    }
-
-    return retcode;
-}
-
 /* ************************************************************************** */
 
 bool computeCodecs(MediaFile_t *media)
@@ -339,6 +337,107 @@ bool computeCodecs(MediaFile_t *media)
         if (media->tracks_audio[i] && media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
         {
             media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+bool computeAspectRatios(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeAspectRatios()\n" CLR_RESET);
+
+    bool retcode = SUCCESS;
+    unsigned i = 0;
+
+    for (i = 0; i < media->tracks_video_count; i++)
+    {
+        BitstreamMap_t *t = media->tracks_video[i];
+        if (t)
+        {
+            // First pass on PAR (if set by the container)
+             if (t->pixel_aspect_ratio_h && t->pixel_aspect_ratio_v)
+             {
+                 t->pixel_aspect_ratio = (double)t->pixel_aspect_ratio_h / (double)t->pixel_aspect_ratio_v;
+             }
+             else
+             {
+                 t->pixel_aspect_ratio = 1.0;
+                 t->pixel_aspect_ratio_h = 1;
+                 t->pixel_aspect_ratio_v = 1;
+             }
+
+             if (t->video_aspect_ratio_h && t->video_aspect_ratio_v)
+             {
+                 // First pass on PAR (if set by the container)
+                 t->video_aspect_ratio = (double)t->video_aspect_ratio_h / (double)t->video_aspect_ratio_v;
+             }
+             else if (t->width && t->height)
+             {
+                 // First pass on PAR (if computer from video resolution)
+                 t->video_aspect_ratio = (double)t->width / (double)t->height,
+                 t->video_aspect_ratio_h = t->width;
+                 t->video_aspect_ratio_v = t->height;
+             }
+
+             // Compute display aspect ratio
+             if (t->display_aspect_ratio_h && t->display_aspect_ratio_v)
+             {
+                 t->display_aspect_ratio = (double)t->display_aspect_ratio_h / (double)t->display_aspect_ratio_v;
+             }
+             else
+             {
+                 if (t->pixel_aspect_ratio != 1.0)
+                 {
+                     t->display_aspect_ratio = t->video_aspect_ratio * t->pixel_aspect_ratio;
+                 }
+                 else
+                 {
+                     t->display_aspect_ratio = t->video_aspect_ratio;
+                 }
+             }
+
+             // Second pass on PAR
+             if (t->pixel_aspect_ratio == 1.0 &&
+                 (t->video_aspect_ratio != t->display_aspect_ratio))
+             {
+                 //
+             }
+        }
+    }
+
+    for (i = 0; i < media->tracks_audio_count; i++)
+    {
+        //
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+bool computeSamplesDatas(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeSamplesDatas()\n" CLR_RESET);
+
+    bool retcode = SUCCESS;
+    unsigned i = 0;
+
+    for (i = 0; i < media->tracks_video_count; i++)
+    {
+        if (media->tracks_video[i])
+        {
+            computeSamplesDatasTrack(media->tracks_video[i]);
+        }
+    }
+
+    for (i = 0; i < media->tracks_audio_count; i++)
+    {
+        if (media->tracks_audio[i])
+        {
+            computeSamplesDatasTrack(media->tracks_audio[i]);
         }
     }
 

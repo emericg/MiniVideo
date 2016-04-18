@@ -53,15 +53,15 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     uint64_t pts_tick = 3750;
     uint64_t pts = 1;
 
-    if (bitstream_map->frame_rate > 0)
+    if (bitstream_map->framerate > 0)
     {
-        pts_tick = (uint64_t)((1000.0 / bitstream_map->frame_rate) * 90);
-        TRACE_1(MUXER, "frame rate : %f\n", bitstream_map->frame_rate);
+        pts_tick = (uint64_t)((1000.0 / bitstream_map->framerate) * 90);
+        TRACE_1(MUXER, "frame rate : %f\n", bitstream_map->framerate);
         TRACE_1(MUXER, "pts_tick   : %llu\n", pts_tick);
     }
     else
     {
-        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->frame_rate);
+        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->framerate);
     }
 
     unsigned int i = 0;

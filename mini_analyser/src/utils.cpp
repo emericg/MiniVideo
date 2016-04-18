@@ -119,7 +119,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
                 {
                     size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB  /  "
                               + QString::number(size_int / 1000.0, 'f', 2) + " KB  /  "
-                              + QString::number(size_int) + " bytes  ";
+                              + QString::number(size_int) + " bytes";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB";
@@ -130,18 +130,18 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
                 {
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB  /  "
                               + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB  /  "
-                              + QString::number(size_int) + " bytes  ";
+                              + QString::number(size_int) + " bytes";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB";
             }
-            else // < 1 GiB
+            else // > 1 GiB
             {
                 if (detailed)
                 {
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB  /  "
                               + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB  /  "
-                              + QString::number(size_int) + " bytes  ";
+                              + QString::number(size_int) + " bytes";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
@@ -150,8 +150,8 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             // Percentage
             double sizepercent = ((double)size_int / (double)file_size) * 100.0;
 
-            if (sizepercent < 0.1)
-                size_qstr += " (~0.1%)";
+            if (sizepercent < 0.01)
+                size_qstr += " (~0.01%)";
             else
                 size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
@@ -168,10 +168,13 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
 
 QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
 {
-    QString aspectratio_qstr;
-
     double ar_d = static_cast<double>(x) / static_cast<double>(y);
+    return getAspectRatioString(ar_d, detailed);
+}
 
+QString getAspectRatioString(double ar_d, bool detailed)
+{
+    QString aspectratio_qstr;
 
     if (ar_d > 1.24 && ar_d < 1.26)
     {

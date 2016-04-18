@@ -53,7 +53,7 @@ void MainWindow::cleanDatas()
     ui->label_info_audio_lng->clear();
     ui->label_info_audio_samplingrate->clear();
     ui->label_info_audio_size->clear();
-    ui->label_info_video_ar->clear();
+    ui->label_info_video_dar->clear();
     ui->label_info_video_bitrate->clear();
     ui->label_info_video_bitratemode->clear();
     ui->label_info_video_codec->clear();
@@ -99,7 +99,9 @@ void MainWindow::cleanDatas()
     ui->label_video_size->clear();
     ui->label_video_title->clear();
 
-    ui->label_video_ar->clear();
+    ui->label_video_dar->clear();
+    ui->label_video_var->clear();
+    ui->label_video_par->clear();
     ui->label_video_bitrate_gross->clear();
     ui->label_video_bitrate_lowest->clear();
     ui->label_video_bitrate_highest->clear();
@@ -214,7 +216,7 @@ int MainWindow::printDatas()
             double overheadpercent = (static_cast<double>(overhead) / static_cast<double>(media->file_size)) * 100.0;
 
             if (overheadpercent < 0.01)
-                ui->label_info_container_overhead->setText("<b>~0.1%</b>   >   " + getSizeString(overhead));
+                ui->label_info_container_overhead->setText("<b>~0.01%</b>   >   " + getSizeString(overhead));
             else if (overheadpercent <= 100)
                 ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
         }
@@ -252,12 +254,14 @@ int MainWindow::printDatas()
 
             if (media->tracks_audio_count > 1)
             {
+                ui->comboBox_audio_selector->clear();
                 ui->comboBox_audio_selector->show();
+
                 for (unsigned i = 0; i < media->tracks_audio_count; i++)
                 {
                     if (media->tracks_audio[i])
                     {
-                        QString text = "Audio track #" + QString::number(i);
+                        QString text = "Audio track #" + QString::number(i + 1);
                         if (i != media->tracks_audio[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_audio[i]->track_id) + ")";
                         ui->comboBox_audio_selector->addItem(text);
@@ -289,8 +293,8 @@ int MainWindow::printDatas()
             ui->label_info_video_duration->setText(getDurationString(t->duration_ms));
             ui->label_info_video_bitrate->setText(getBitrateString(t->bitrate));
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_info_video_ar->setText(getAspectRatioString(t->width, t->height));
-            ui->label_info_video_framerate->setText(QString::number(t->frame_rate) + " fps");
+            ui->label_info_video_dar->setText(getAspectRatioString(t->display_aspect_ratio));
+            ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
             ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
@@ -470,7 +474,23 @@ int MainWindow::printVideoDetails()
             ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_video_ar->setText(getAspectRatioString(t->width, t->height, true));
+            ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, true));
+            if (t->video_aspect_ratio != t->display_aspect_ratio)
+            {
+                ui->label_38->setVisible(true);
+                ui->label_81->setVisible(true);
+                ui->label_video_var->setVisible(true);
+                ui->label_video_par->setVisible(true);
+                ui->label_video_var->setText(getAspectRatioString(t->video_aspect_ratio, false));
+                ui->label_video_par->setText(getAspectRatioString(t->pixel_aspect_ratio, false));
+            }
+            else
+            {
+                ui->label_38->setVisible(false);
+                ui->label_81->setVisible(false);
+                ui->label_video_var->setVisible(false);
+                ui->label_video_par->setVisible(false);
+            }
 
             ui->label_video_color_depth->setText(QString::number(t->color_depth) + " bits");
             ui->label_video_color_subsampling->setText(QString::number(t->color_subsampling));
@@ -508,7 +528,7 @@ int MainWindow::printVideoDetails()
             else
                 ui->label_video_color_subsampling->setText("4:2:0 (best guess)");
 
-            double framerate = t->frame_rate;
+            double framerate = t->framerate;
             if (framerate < 1.0)
             {
                 if (t->duration_ms && t->sample_count)
