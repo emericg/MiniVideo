@@ -37,7 +37,7 @@
 #include "demuxer/wave/wave.h"
 #include "demuxer/mpeg/ps/ps.h"
 
-#include "demuxer/bruteforce/bruteforce.h"
+#include "demuxer/esparser/esparser.h"
 #include "demuxer/filter.h"
 
 // Decoder
@@ -229,7 +229,7 @@ int minivideo_parse(MediaFile_t *input_media,
                 retcode = ps_fileParse(input_media);
                 break;
             case CONTAINER_ES:
-                retcode = bruteforce_fileParse(input_media, CODEC_H264);
+                retcode = es_fileParse(input_media, CODEC_H264);
                 break;
             case CONTAINER_ES_MP3:
                 retcode = mp3_fileParse(input_media);

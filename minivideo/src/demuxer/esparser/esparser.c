@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      bruteforce.c
+ * \file      esparser.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2011
  */
 
 // minivideo headers
-#include "bruteforce.h"
+#include "esparser.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"
@@ -37,9 +37,9 @@
 
 /* ************************************************************************** */
 
-int bruteforce_fileParse(MediaFile_t *media, AVCodec_e video_codec)
+int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
 {
-    TRACE_INFO(DEMUX, BLD_GREEN "bruteforce_fileParse()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "es_fileParse()\n" CLR_RESET);
 
     // Search parameters
     int64_t search_offset = 0;

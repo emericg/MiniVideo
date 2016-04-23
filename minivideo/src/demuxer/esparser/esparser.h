@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      bruteforce.h
+ * \file      esparser.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2011
  */
 
-#ifndef PARSER_BRUTEFORCE_H
-#define PARSER_BRUTEFORCE_H
+#ifndef PARSER_ES_H
+#define PARSER_ES_H
 
 // minivideo headers
 #include "../../import.h"
 
 /* ************************************************************************** */
 
-//! Start codes used by elementary stream of different codec families.
+//! Start codes used by elementary streams of different codec families.
 typedef enum StartCodes_e
 {
     STARTCODE_MPEG = 0x000001,
@@ -54,7 +54,7 @@ typedef enum StartCodes_e
  * It will only successfuly parse "ES" files containing only one audio or video
  * track.
  */
-int bruteforce_fileParse(MediaFile_t *media, AVCodec_e video_codec);
+int es_fileParse(MediaFile_t *media, AVCodec_e video_codec);
 
 /* ************************************************************************** */
-#endif // PARSER_BRUTEFORCE_H
+#endif // PARSER_ES_H
