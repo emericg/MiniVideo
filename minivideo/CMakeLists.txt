@@ -99,13 +99,13 @@ endif()
 # Add per-compiler custom rules
 if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
     message(STATUS "* Building with Clang compiler")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    message(STATUS "* Building with GCC compiler")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-but-set-variable ")
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
     message(STATUS "* Building with Intel C compiler")
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     message(STATUS "* Building with Visual Studio C compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    message(STATUS "* Building with GCC compiler")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-but-set-variable ")
 endif()
 
 
