@@ -60,12 +60,12 @@ void minivideo_print_infos(void)
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
 
-#if defined(__GNUC__) || defined(__GNUG__)
-    printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
-#elif defined(__clang__)
-    printf("* Library built with CLANG '%d.%d.%d'\n", __clang_major__, __clang_minor__, __clang_patch__);
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
+#if defined(__ICC) || defined(__INTEL_COMPILER)
     printf("* Library built with ICC '%d / %s'\n", __INTEL_COMPILER, __INTEL_COMPILER_BUILD_DATE);
+#elif defined(__clang__)
+    printf("* Library built with CLANG '%d.%d'\n", __clang_major__, __clang_minor__);
+#elif defined(__GNUC__) || defined(__GNUG__)
+    printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #endif
 
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
