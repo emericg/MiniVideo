@@ -157,6 +157,15 @@ int MainWindow::printDatas()
 
     if (media)
     {
+        // Combobox icon
+        if (media->tracks_video_count > 0)
+            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(), QIcon(":/icons/icons/video-x-generic.svg"));
+         else if (media->tracks_audio_count > 0)
+            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(), QIcon(":/icons/icons/audio-x-wav.svg"));
+         else
+            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(), QIcon(":/icons/icons/dialog-error.svg"));
+
+        // General infos
         ui->label_info_filename->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
         ui->label_info_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
         ui->label_info_fullpath->setText(QString::fromLocal8Bit(media->file_path));
