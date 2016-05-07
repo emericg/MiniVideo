@@ -35,8 +35,14 @@ class AboutWindows : public QDialog
 public:
     explicit AboutWindows(QWidget *parent = 0);
     ~AboutWindows();
+
     void setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,
                              const char *minivideo_builddate, const char*minivideo_buildtime);
+
+private slots:
+    void tabAbout();
+    void tabAuthors();
+    void tabLicense();
 
 protected:
     void resizeEvent(QResizeEvent *);

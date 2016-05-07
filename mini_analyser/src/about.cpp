@@ -28,7 +28,12 @@ AboutWindows::AboutWindows(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
+    tabAbout();
+
+    connect(ui->pushButton_about, SIGNAL(clicked(bool)), this, SLOT(tabAbout()));
+    connect(ui->pushButton_license, SIGNAL(clicked(bool)), this, SLOT(tabLicense()));
+    connect(ui->pushButton_authors, SIGNAL(clicked(bool)), this, SLOT(tabAuthors()));
+    //connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
 AboutWindows::~AboutWindows()
@@ -47,5 +52,29 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
 
 void AboutWindows::resizeEvent(QResizeEvent *event)
 {
-    //
+    // we may want to resize the icon
+}
+
+void AboutWindows::tabAbout()
+{
+    ui->textBrowser_desc->show();
+    ui->textBrowser_version->show();
+    ui->textBrowser_license->hide();
+    ui->textBrowser_copyright->hide();
+}
+
+void AboutWindows::tabAuthors()
+{
+    ui->textBrowser_desc->hide();
+    ui->textBrowser_version->hide();
+    ui->textBrowser_license->hide();
+    ui->textBrowser_copyright->show();
+}
+
+void AboutWindows::tabLicense()
+{
+    ui->textBrowser_desc->hide();
+    ui->textBrowser_version->hide();
+    ui->textBrowser_license->show();
+    ui->textBrowser_copyright->hide();
 }
