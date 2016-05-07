@@ -219,9 +219,12 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             strncpy(map->track_title, track->name, sizeof(track->name));
         }
 
-        map->duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
-        map->creation_time = ((double)track->creation_time / (double)track->timescale * 1000.0);
-        map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
+        if (track->timescale)
+        {
+            map->duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
+            map->creation_time = ((double)track->creation_time / (double)track->timescale * 1000.0);
+            map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
+        }
 
         map->sample_alignment = true; // TODO not very true
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
