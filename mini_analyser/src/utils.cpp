@@ -20,6 +20,8 @@
  */
 
 #include "utils.h"
+
+#include <cmath>
 #include <QDebug>
 
 QString getDurationString(const unsigned duration)
@@ -339,4 +341,60 @@ QString getFramerateModeString(const unsigned framerate_mode)
         framerate_mode_qstr = "Unknown";
 
     return framerate_mode_qstr;
+}
+
+bitrateMinMax::bitrateMinMax(double fps)
+{
+    if (fps > 0 && fps < 480)
+    {
+        this->fps = static_cast<uint32_t>(std::round(fps));
+    }
+}
+
+bitrateMinMax::bitrateMinMax(uint32_t fps)
+{
+    if (fps > 0 && fps < 480)
+    {
+        this->fps = fps;
+    }
+}
+
+bitrateMinMax::~bitrateMinMax()
+{
+    //
+}
+
+uint32_t bitrateMinMax::pushSampleSize(uint32_t sampleSize)
+{
+    uint32_t bitrate = 0;
+
+    if (sampleCounter >= fps)
+    {
+        samplesData.pop_front();
+        sampleCounter--;
+    }
+
+    samplesData.push_back(sampleSize*8);
+    sampleCounter++;
+
+    if (sampleCounter >= fps)
+    {
+        for (int i = 0; i < samplesData.size(); i++)
+        {
+            bitrate += samplesData.at(i);
+        }
+
+        if (bitrate > bitrateMax)
+            bitrateMax = bitrate;
+        else if (bitrate < bitrateMin)
+            bitrateMin = bitrate;
+    }
+
+    return bitrate;
+}
+
+void bitrateMinMax::getMinMax(uint32_t &min, uint32_t &max)
+{
+    min = bitrateMin;
+    max = bitrateMax;
 }

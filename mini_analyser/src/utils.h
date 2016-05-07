@@ -25,6 +25,7 @@
 
 #include "bitstream_map_struct.h"
 #include <QString>
+#include <QVector>
 
 /* ************************************************************************** */
 
@@ -80,6 +81,26 @@ QString getBitrateString(const unsigned bitrate);
 QString getBitrateModeString(const unsigned bitrate_mode);
 
 QString getFramerateModeString(const unsigned framerate_mode);
+
+/* ************************************************************************** */
+
+class bitrateMinMax
+{
+    uint32_t fps = 0;
+    uint32_t sampleCounter = 0;
+    QVector<uint32_t> samplesData;
+
+    uint32_t bitrateMin = UINT32_MAX;
+    uint32_t bitrateMax = 0;
+
+public:
+    bitrateMinMax(double fps);
+    bitrateMinMax(uint32_t fps);
+    virtual ~bitrateMinMax();
+
+    uint32_t pushSampleSize(uint32_t sampleSize);
+    void getMinMax(uint32_t &min, uint32_t &max);
+};
 
 /* ************************************************************************** */
 #endif // UTILS_H
