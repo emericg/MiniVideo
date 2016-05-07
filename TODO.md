@@ -6,7 +6,6 @@ TODO build system
 
 - doxygen hook?
 - cppcheck hook?
-- expose minivideo library version (see FindPNG.cmake)
 
 TODO test softwares
 -------------------
@@ -76,6 +75,6 @@ PERFORMANCE IMPROVEMENTS
 // TRANSFORMS
 - Change some int u[][] to uint8 u[][]
 - Homogenize the idct code for luma/chroma DC
-- Use less different arrays within the idct code
+- Reuse arrays within the idct code
   - idct4x4() use e[4][4] instead of g[4][4]
   - idct8x8() use e[8][8] instead of h[8][8] m[8][8] k[8][8]
