@@ -5,7 +5,7 @@
 
 TARGET       = mini_analyser
 TEMPLATE     = app
-QT          += core svg gui widgets
+QT          += core svg gui widgets printsupport
 
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
@@ -24,7 +24,8 @@ SOURCES     += src/main.cpp \
                src/hexeditor.cpp \
                src/thirdparty/qhexedit2/qhexedit.cpp \
                src/thirdparty/qhexedit2/chunks.cpp \
-               src/thirdparty/qhexedit2/commands.cpp
+               src/thirdparty/qhexedit2/commands.cpp \
+               src/thirdparty/qcustomplot/qcustomplot.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
@@ -34,7 +35,8 @@ HEADERS     += src/main.h \
                src/hexeditor.h \
                src/thirdparty/qhexedit2/qhexedit.h \
                src/thirdparty/qhexedit2/chunks.h \
-               src/thirdparty/qhexedit2/commands.h
+               src/thirdparty/qhexedit2/commands.h \
+               src/thirdparty/qcustomplot/qcustomplot.h
 
 FORMS       += ui/mainwindow.ui \
                ui/textexporter.ui \
