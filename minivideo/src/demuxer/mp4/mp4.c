@@ -1352,10 +1352,15 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int bytes_left = box_header->size - 32;
     if (bytes_left > 0)
     {
-        // we only store 128 characters
-        if (bytes_left > 128) bytes_left = 128;
-        // check if the bytes_left is also coded in the first byte
+        // check if the bytes_left is also coded in the first byte (MOV style)
+        // and make sure we store no more than 128 characters
         int namesize = next_bits(bitstr, 8);
+        if (bytes_left == namesize + 1)
+        {
+            skip_bits(bitstr, 8);
+            bytes_left == namesize;
+        }
+        if (bytes_left > 128) bytes_left = 128;
 
         int i = 0;
         for (i = 0; i < bytes_left; i++)
@@ -1648,8 +1653,9 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
             for (i = 0; i < 31; i++)
             {
-                track->compressorname[i] = (uint8_t)read_bits(bitstr, 8);
+                track->compressorname[i] = (char)read_bits(bitstr, 8);
             }
+            track->compressorname[compressorsize] = '\0';
 
             track->color_depth = read_bits(bitstr, 16);
             /*int pre_defined = */ read_bits(bitstr, 16);
