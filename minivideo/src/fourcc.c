@@ -33,7 +33,7 @@
 
 /* ************************************************************************** */
 
-char *getFccString_le(const int fcc_in, char *fcc_out)
+char *getFccString_le(const uint32_t fcc_in, char *fcc_out)
 {
     if (fcc_out)
     {
@@ -49,7 +49,7 @@ char *getFccString_le(const int fcc_in, char *fcc_out)
     return "0000";
 }
 
-char *getFccString_be(const int fcc_in, char *fcc_out)
+char *getFccString_be(const uint32_t fcc_in, char *fcc_out)
 {
     if (fcc_out)
     {
@@ -195,6 +195,21 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         break;
     case fcc_apcs:
         codec = CODEC_PRORES_442_LT;
+        break;
+
+    case fcc_sowt:
+    case fcc_tows:
+    case fcc_raw:
+    case fcc_in24:
+    case fcc_in32:
+    case fcc_fl32:
+    case fcc_fl64:
+        codec = CODEC_LPCM;
+        break;
+
+    case fcc_alaw:
+    case fcc_ulaw:
+        codec = CODEC_LogPCM;
         break;
 
     default:

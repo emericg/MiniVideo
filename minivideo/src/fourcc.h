@@ -155,9 +155,18 @@ typedef enum fourcc_list_e
     fcc_mp4A = 0x6D703461,
 
     fcc_AC3  = 0x41432D33, //!< Ac-3
-    fcc_ac3  = 0x61632D33  //!< ac-3
+    fcc_ac3  = 0x61632D33, //!< ac-3
 
     // Uncompressed audio
+    fcc_sowt = 0x736F7774, //!< 16-bit signed linear PCM (little endian)
+    fcc_tows = 0x74647773, //!< 16-bit signed linear PCM (big endian)
+    fcc_raw  = 0x72617720, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_in24 = 0x696E3234, //!< 24-bit signed linear PCM (big endian)
+    fcc_in32 = 0x696E3332, //!< 32-bit signed linear PCM (big endian)
+    fcc_fl32 = 0x666C3332, //!< 32-bit floating point linear PCM (? endian)
+    fcc_fl64 = 0x666C3634, //!< 64-bit floating point linear PCM (? endian)
+    fcc_alaw = 0x616C6177, //!< A-law logarithmic PCM
+    fcc_ulaw = 0x756C6177  //!< mu-law logarithmic PCM
 
 } fourcc_list_e;
 
@@ -165,9 +174,9 @@ typedef enum fourcc_list_e
 
 AVCodec_e getCodecFromFourCC(const uint32_t fcc);
 
-char *getFccString_le(const int fcc_in, char *fcc_out);
+char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
 
-char *getFccString_be(const int fcc_in, char *fcc_out);
+char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
 
 
 /* ************************************************************************** */

@@ -294,6 +294,14 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             track->pcm_sample_size = 0;
             track->pcm_sample_endianness = 0;
         }
+        else if (wave->fmt.wFormatTag == WAVE_FORMAT_ALAW)
+        {
+            track->stream_codec = CODEC_LogPCM;
+        }
+        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MULAW)
+        {
+            track->stream_codec = CODEC_LogPCM;
+        }
         else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1)
         {
             track->stream_codec = CODEC_MPEG_L1;
