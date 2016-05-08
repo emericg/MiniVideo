@@ -88,6 +88,7 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_XVID:
     case fcc_FMP4:
     case fcc_MP4V:
+    case fcc_mp4v:
     case fcc_divx:
     case fcc_DIVX:
     case fcc_DX50:
@@ -195,6 +196,16 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         break;
     case fcc_apcs:
         codec = CODEC_PRORES_442_LT;
+        break;
+
+    case fcc_MP4A:
+    case fcc_mp4a:
+        codec = CODEC_AAC;
+        break;
+
+    case fcc_AC3:
+    case fcc_ac3:
+        codec = CODEC_AC3;
         break;
 
     case fcc_sowt:

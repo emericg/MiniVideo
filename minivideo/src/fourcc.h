@@ -83,7 +83,8 @@ typedef enum fourcc_list_e
     fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP"
     fcc_XVID = 0x58564944,
     fcc_FMP4 = 0x464D5034,
-    fcc_MP4V = 0x6D703476,
+    fcc_MP4V = 0x4D503456,
+    fcc_mp4v = 0x6D703474,
 
     fcc_D263 = 0x44323633, //!< H.263
     fcc_H263 = 0x48323633,
@@ -152,10 +153,12 @@ typedef enum fourcc_list_e
 
     // Audio
     fcc_MP4A = 0x4D503441, //!< AAC
-    fcc_mp4A = 0x6D703461,
+    fcc_mp4a = 0x6D703461,
 
     fcc_AC3  = 0x41432D33, //!< Ac-3
     fcc_ac3  = 0x61632D33, //!< ac-3
+    fcc_AC4  = 0x41432D34, //!< Ac-4
+    fcc_ac4  = 0x61632D34, //!< ac-4
 
     // Uncompressed audio
     fcc_sowt = 0x736F7774, //!< 16-bit signed linear PCM (little endian)

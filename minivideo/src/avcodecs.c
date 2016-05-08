@@ -169,13 +169,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 if (long_description)
                     return "Linear PCM (Linear Pulse Code Modulation)";
                 else
-                    return "LPCM";
+                    return "PCM";
                 break;
             case CODEC_LogPCM:
                 if (long_description)
                     return "Logarithmic PCM (Logarithmic Pulse Code Modulation)";
                 else
-                    return "LPCM";
+                    return "Log PCM";
                 break;
             case CODEC_DPCM:
                 if (long_description)

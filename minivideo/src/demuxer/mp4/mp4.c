@@ -1559,20 +1559,20 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             // AudioSampleEntry
             // Box Types: ‘mp4a’
 
-            if (box_subheader.boxtype == SAMPLE_MP4A)
+            if (box_subheader.boxtype == fcc_mp4a)
             {
                 track->codec = CODEC_AAC;
                 TRACE_1(MP4, "> Audio track is using AAC codec\n");
             }
-            else if (box_subheader.boxtype == SAMPLE_AC3)
+            else if (box_subheader.boxtype == fcc_AC3)
             {
                 track->codec = CODEC_AC3;
                 TRACE_1(MP4, "> Audio track is using AC3 codec\n");
             }
-            else if (box_subheader.boxtype == SAMPLE_SWOT)
+            else if (box_subheader.boxtype == fcc_sowt)
             {
-                track->codec = CODEC_AC3;
-                TRACE_1(MP4, "> Audio track is using AC3 codec\n");
+                track->codec = CODEC_LPCM;
+                TRACE_1(MP4, "> Audio track is using PCM audio\n");
             }
             else
             {
@@ -1599,22 +1599,22 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             // VisualSampleEntry
             // Box Types: 'avc1', 'm4ds', 'hev1', 'CFHD'
 
-            if (box_subheader.boxtype == SAMPLE_AVC1)
+            if (box_subheader.boxtype == fcc_avc1)
             {
                 track->codec = CODEC_H264;
                 TRACE_1(MP4, "> Video track is using H.264 codec\n");
             }
-            else if (box_subheader.boxtype == SAMPLE_HVC1)
+            else if (box_subheader.boxtype == fcc_hvc1)
             {
                 track->codec = CODEC_H265;
                 TRACE_1(MP4, "> Video track is using H.265 codec\n");
             }
-            else if (box_subheader.boxtype == SAMPLE_MP4V)
+            else if (box_subheader.boxtype == fcc_mp4v)
             {
                 track->codec = CODEC_MPEG4_ASP;
                 TRACE_1(MP4, "> Video track is using XVID codec\n");
             }
-            else if (box_subheader.boxtype == SAMPLE_CFHD)
+            else if (box_subheader.boxtype == fcc_CFHD)
             {
                 track->codec = CODEC_VC5;
                 TRACE_1(MP4, "> Video track is using CineForm codec\n");
