@@ -43,7 +43,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -2965,7 +2965,7 @@
          <widget class="QTextBrowser" name="textBrowser_export">
           <property name="font">
            <font>
-            <family>DejaVu Sans Mono</family>
+            <family>Andale Mono</family>
            </font>
           </property>
           <property name="lineWrapMode">
