@@ -118,37 +118,43 @@ typedef struct TraceModule_t
 
 #if ENABLE_COLORS == 1
 
-#define CLR_RESET  "\e[0m" //!< Reset colored output to default color of the terminal
+#ifdef _WIN32
+#define ESCAPE_CHAR "\u001B"
+#else
+define ESCAPE_CHAR "\e"
+#endif
+
+#define CLR_RESET  ESCAPE_CHAR ## "[0m" //!< Reset colored output to default color of the terminal
 
 // Regular colored text
-#define CLR_BLACK  "\e[0;30m"
-#define CLR_RED    "\e[0;31m"
-#define CLR_GREEN  "\e[0;32m"
-#define CLR_YELLOW "\e[0;33m"
-#define CLR_BLUE   "\e[0;34m"
-#define CLR_PURPLE "\e[0;35m"
-#define CLR_CYAN   "\e[0;36m"
-#define CLR_WHITE  "\e[0;37m"
+#define CLR_BLACK  ESCAPE_CHAR ## "[0;30m"
+#define CLR_RED    ESCAPE_CHAR ## "[0;31m"
+#define CLR_GREEN  ESCAPE_CHAR ## "[0;32m"
+#define CLR_YELLOW ESCAPE_CHAR ## "[0;33m"
+#define CLR_BLUE   ESCAPE_CHAR ## "[0;34m"
+#define CLR_PURPLE ESCAPE_CHAR ## "[0;35m"
+#define CLR_CYAN   ESCAPE_CHAR ## "[0;36m"
+#define CLR_WHITE  ESCAPE_CHAR ## "[0;37m"
 
 // Bold colored text
-#define BLD_BLACK  "\e[1;30m"
-#define BLD_RED    "\e[1;31m"
-#define BLD_GREEN  "\e[1;32m"
-#define BLD_YELLOW "\e[1;33m"
-#define BLD_BLUE   "\e[1;34m"
-#define BLD_PURPLE "\e[1;35m"
-#define BLD_CYAN   "\e[1;36m"
-#define BLD_WHITE  "\e[1;37m"
+#define BLD_BLACK  ESCAPE_CHAR ## "[1;30m"
+#define BLD_RED    ESCAPE_CHAR ## "[1;31m"
+#define BLD_GREEN ESCAPE_CHAR ## "[1;32m"
+#define BLD_YELLOW  ESCAPE_CHAR ## "[1;33m"
+#define BLD_BLUE   ESCAPE_CHAR ## "[1;34m"
+#define BLD_PURPLE ESCAPE_CHAR ## "[1;35m"
+#define BLD_CYAN   ESCAPE_CHAR ## "[1;36m"
+#define BLD_WHITE  ESCAPE_CHAR ## "[1;37m"
 
 // Bold white text, colored outline
-#define OUT_BLACK  "\e[1;37;40m"
-#define OUT_RED    "\e[1;37;41m"
-#define OUT_GREEN  "\e[1;37;42m"
-#define OUT_YELLOW "\e[1;37;43m"
-#define OUT_BLUE   "\e[1;37;44m"
-#define OUT_PURPLE "\e[1;37;45m"
-#define OUT_CYAN   "\e[1;37;46m"
-#define OUT_WHITE  "\e[1;30;47m"
+#define OUT_BLACK  ESCAPE_CHAR ## "[1;37;40m"
+#define OUT_RED    ESCAPE_CHAR ## "[1;37;41m"
+#define OUT_GREEN  ESCAPE_CHAR ## "[1;37;42m"
+#define OUT_YELLOW ESCAPE_CHAR ## "[1;37;43m"
+#define OUT_BLUE   ESCAPE_CHAR ## "[1;37;44m"
+#define OUT_PURPLE ESCAPE_CHAR ## "[1;37;45m"
+#define OUT_CYAN   ESCAPE_CHAR ## "[1;37;46m"
+#define OUT_WHITE  ESCAPE_CHAR ## "[1;30;47m"
 
 #else // ENABLE_COLORS == 0
 
