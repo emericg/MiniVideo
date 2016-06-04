@@ -2382,6 +2382,9 @@
                <property name="text">
                 <string>Color space</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
              <item row="1" column="1">
@@ -2402,6 +2405,12 @@
              </item>
              <item row="0" column="2">
               <widget class="QLabel" name="label_50">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>128</width>
@@ -2420,6 +2429,9 @@
               <widget class="QLabel" name="label_58">
                <property name="text">
                 <string>Color depth</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
