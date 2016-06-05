@@ -102,6 +102,10 @@ private:
     QString exportDatas;
     QFile exportFile;
 
+    // Bitrate graph
+    double xRangeMax;
+    double yRangeMax;
+
     // Save tabs
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;

@@ -79,7 +79,7 @@ void MainWindow::cleanDatas()
     ui->label_audio_bitratemode->clear();
     ui->label_audio_bitrate_gross->clear();
     ui->label_audio_bitrate_lowest->clear();
-    ui->label_audio_bitrate_high->clear();
+    ui->label_audio_bitrate_highest->clear();
     ui->label_audio_codec->clear();
     ui->label_audio_compression_ratio->clear();
     ui->label_audio_encoder->clear();
@@ -445,12 +445,10 @@ int MainWindow::printAudioDetails()
             }
             else
             {
-                ui->audioBitrateGraph->show();
-
-                //bitrateMinMax btc(t->framerate);
+                bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->duration_ms/1000.0)));
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // generate datas
+                // Generate datas (bitrate)
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
@@ -461,19 +459,31 @@ int MainWindow::printAudioDetails()
                     if (t->sample_size[i] > bitratemax_instant)
                         bitratemax_instant = t->sample_size[i];
 
-                    //btc.pushSampleSize(t->sample_size[i]);
+                    btc.pushSampleSize(t->sample_size[i]);
                 }
 
-                // MinMax
-                //btc.getMinMax(bitratemin, bitratemax);
-                //ui->label_audio_bitrate_lowest->setText(getBitrateString(bitratemin));
-                //ui->label_audio_bitrate_highest->setText(getBitrateString(bitratemax));
+                // Generate datas (average bitrate)
+                QVector<double> xx(2), yy(2);
+                xx[0] = 0;
+                xx[1] = entries;
+                yy[0] = yy[1] = static_cast<double>(t->bitrate) / 8.0 / (static_cast<double>(entries) / (t->duration_ms/1000.0));
 
-                // create graph and assign data to it:
+                // MinMax
+                btc.getMinMax(bitratemin, bitratemax);
+                t->bitrate_min = bitratemin;
+                t->bitrate_max = bitratemax;
+                ui->label_audio_bitrate_lowest->setText(getBitrateString(bitratemin));
+                ui->label_audio_bitrate_highest->setText(getBitrateString(bitratemax));
+
+                // Create graphs and assign datas
                 ui->audioBitrateGraph->addGraph();
                 ui->audioBitrateGraph->graph(0)->setData(x, y);
+                ui->audioBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
+                ui->audioBitrateGraph->addGraph();
+                ui->audioBitrateGraph->graph(1)->setData(xx, yy);
+                ui->audioBitrateGraph->graph(1)->setPen(QPen(Qt::red));
 
-                // set axes ranges and disable legends
+                // Set axes ranges and disable legends
                 ui->audioBitrateGraph->xAxis->setRange(0, entries);
                 ui->audioBitrateGraph->xAxis->setTickLabels(false);
                 ui->audioBitrateGraph->yAxis->setRange(0, bitratemax_instant);
@@ -482,8 +492,16 @@ int MainWindow::printAudioDetails()
                 //ui->audioBitrateGraph->setContentsMargins(0,0,0,0);
                 //ui->audioBitrateGraph->yAxis->setPadding(0);
                 //ui->audioBitrateGraph->xAxis->setPadding(0);
+                //ui->audioBitrateGraph->setBackground(QColor(0, 0, 0, 0));
+
+                // Allow interactions
+                //ui->audioBitrateGraph->setInteraction(QCP::iRangeDrag, true);
+                //ui->audioBitrateGraph->setInteraction(QCP::iRangeZoom, true);
+                //connect(ui->audioBitrateGraph->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisRangeChanged(QCPRange)));
+                //connect(ui->audioBitrateGraph->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisRangeChanged(QCPRange)));
 
                 ui->audioBitrateGraph->replot();
+                ui->audioBitrateGraph->show();
             }
         }
     }
@@ -502,7 +520,7 @@ int MainWindow::printVideoDetails()
         int vtid = ui->comboBox_video_selector->currentIndex();
         if (vtid < 0) vtid = 0;
 
-        const BitstreamMap_t *t = media->tracks_video[vtid];
+        BitstreamMap_t *t = media->tracks_video[vtid];
 
         if (t != NULL)
         {
@@ -638,12 +656,10 @@ int MainWindow::printVideoDetails()
             }
             else
             {
-                ui->videoBitrateGraph->show();
-
                 bitrateMinMax btc(t->framerate);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // generate datas
+                // Generate datas (bitrate)
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
@@ -657,27 +673,50 @@ int MainWindow::printVideoDetails()
                     btc.pushSampleSize(t->sample_size[i]);
                 }
 
+                // Generate datas (average bitrate)
+                QVector<double> xx(2), yy(2);
+                xx[0] = 0;
+                xx[1] = entries;
+                yy[0] = yy[1] = static_cast<double>(t->bitrate) / 8.0 / framerate;
+
                 // MinMax
                 btc.getMinMax(bitratemin, bitratemax);
+                t->bitrate_min = bitratemin;
+                t->bitrate_max = bitratemax;
+
                 ui->label_video_bitrate_lowest->setText(getBitrateString(bitratemin));
                 ui->label_video_bitrate_highest->setText(getBitrateString(bitratemax));
+                xRangeMax = static_cast<double>(entries);
+                yRangeMax = static_cast<double>(bitratemax_instant);
 
-                // create graph and assign data to it:
+                // Create graphs and assign datas
                 ui->videoBitrateGraph->addGraph();
-                ui->videoBitrateGraph->graph(0)->setData(x, y);
+                ui->videoBitrateGraph->graph(0)->setData(xx, yy);
+                ui->videoBitrateGraph->graph(0)->setPen(QPen(Qt::red));
+                ui->videoBitrateGraph->addGraph();
+                ui->videoBitrateGraph->graph(1)->setData(x, y);
+                ui->videoBitrateGraph->graph(1)->setBrush(QBrush(QColor(10, 10, 200, 20)));
 
-                // set axes ranges and disable legends
-                // Y axis max is set to half of the max instant bitrate (should reduce the video IDR spikes)
-                ui->videoBitrateGraph->xAxis->setRange(0, entries);
+                // Set axes ranges and disable legends
+                // Y axis max is set to 75% of the max instant bitrate (should reduce the video IDR spikes)
+                ui->videoBitrateGraph->xAxis->setRange(0, xRangeMax);
                 ui->videoBitrateGraph->xAxis->setTickLabels(false);
-                ui->videoBitrateGraph->yAxis->setRange(0, bitratemax_instant/2);
+                ui->videoBitrateGraph->yAxis->setRange(0, yRangeMax/1.5);
                 ui->videoBitrateGraph->yAxis->setTickLabels(false);
 
                 //ui->videoBitrateGraph->setContentsMargins(0,0,0,0);
                 //ui->videoBitrateGraph->yAxis->setPadding(0);
                 //ui->videoBitrateGraph->xAxis->setPadding(0);
+                //ui->videoBitrateGraph->setBackground(QColor(0, 0, 0, 0));
+
+                // Allow interactions
+                //ui->videoBitrateGraph->setInteraction(QCP::iRangeDrag, true);
+                //ui->videoBitrateGraph->setInteraction(QCP::iRangeZoom, true);
+                //connect(ui->videoBitrateGraph->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisRangeChanged(QCPRange)));
+                //connect(ui->videoBitrateGraph->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisRangeChanged(QCPRange)));
 
                 ui->videoBitrateGraph->replot();
+                ui->videoBitrateGraph->show();
             }
         }
     }
