@@ -202,6 +202,9 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             // Datas
             if (detailed == true)
             {
+                exportDatas += "\nTrack ID      : ";
+                exportDatas += QString::number(t->track_id);
+
                 char fcc_str[4];
                 {
                     fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
@@ -255,6 +258,13 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
                 exportDatas += getBitrateString(t->bitrate);
                 exportDatas += "\nBitrate mode  : ";
                 exportDatas += getBitrateModeString(t->bitrate_mode);
+                if (t->bitrate_mode != BITRATE_CBR)
+                {
+                    exportDatas += "\nBitrate (min) : ";
+                    exportDatas += getBitrateString(t->bitrate_min);
+                    exportDatas += "\nBitrate (max) : ";
+                    exportDatas += getBitrateString(t->bitrate_max);
+                }
             }
             else
             {
@@ -295,6 +305,9 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             // Datas
             if (detailed == true)
             {
+                exportDatas += "\nTrack ID      : ";
+                exportDatas += QString::number(t->track_id);
+
                 char fcc_str[4];
                 {
                     fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
@@ -333,6 +346,13 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
                 exportDatas += getBitrateString(t->bitrate);
                 exportDatas += "\nBitrate mode  : ";
                 exportDatas += getBitrateModeString(t->bitrate_mode);
+                if (t->bitrate_mode != BITRATE_CBR)
+                {
+                    exportDatas += "\nBitrate (min) : ";
+                    exportDatas += getBitrateString(t->bitrate_min);
+                    exportDatas += "\nBitrate (max) : ";
+                    exportDatas += getBitrateString(t->bitrate_max);
+                }
             }
             else
             {
