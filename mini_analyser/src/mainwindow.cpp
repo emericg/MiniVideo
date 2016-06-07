@@ -96,9 +96,11 @@ MainWindow::MainWindow(QWidget *parent) :
     tabExportText = ui->tabWidget->tabText(6);
     tabExportIcon = ui->tabWidget->tabIcon(6);
 
+#ifndef Q_OS_OSX
     // Monospace font for the export tab
     int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
     ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
+#endif
 
     // "Drop zone" is the default tab when starting up
     handleTabWidget();

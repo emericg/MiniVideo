@@ -492,7 +492,10 @@ int MainWindow::printAudioDetails()
                 //ui->audioBitrateGraph->setContentsMargins(0,0,0,0);
                 //ui->audioBitrateGraph->yAxis->setPadding(0);
                 //ui->audioBitrateGraph->xAxis->setPadding(0);
-                //ui->audioBitrateGraph->setBackground(QColor(0, 0, 0, 0));
+                //ui->audioBitrateGraph->setBackground(QColor(0,0,0,0));
+#ifdef Q_OS_OSX
+                ui->audioBitrateGraph->setBackground(QColor(218, 218, 218));
+#endif
 
                 // Allow interactions
                 //ui->audioBitrateGraph->setInteraction(QCP::iRangeDrag, true);
@@ -707,7 +710,10 @@ int MainWindow::printVideoDetails()
                 //ui->videoBitrateGraph->setContentsMargins(0,0,0,0);
                 //ui->videoBitrateGraph->yAxis->setPadding(0);
                 //ui->videoBitrateGraph->xAxis->setPadding(0);
-                //ui->videoBitrateGraph->setBackground(QColor(0, 0, 0, 0));
+                //ui->videoBitrateGraph->setBackground(QColor(0,0,0,0));
+#ifdef Q_OS_OSX
+                ui->videoBitrateGraph->setBackground(QColor(218, 218, 218));
+#endif
 
                 // Allow interactions
                 //ui->videoBitrateGraph->setInteraction(QCP::iRangeDrag, true);
