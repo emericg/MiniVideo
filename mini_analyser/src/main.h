@@ -22,9 +22,25 @@
 #ifndef MINI_ANALYSER_H
 #define MINI_ANALYSER_H
 
+#include <QApplication>
+#include <QMainWindow>
+
+#include "mainwindow.h"
+
 /* ************************************************************************** */
 
 int main(int argc, char *argv[]);
+
+class MiniAnalyser : public QApplication
+{
+public:
+    MainWindow w;
+
+    MiniAnalyser(int &argc, char **argv);
+    ~MiniAnalyser();
+
+    bool event(QEvent *e);
+};
 
 /* ************************************************************************** */
 
