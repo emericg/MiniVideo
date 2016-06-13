@@ -2506,6 +2506,9 @@ int mp4_fileParse(MediaFile_t *media)
             for (i = 0; i < mp4.tracks_count; i++)
             {
                 convertTrack(media, &mp4, mp4.tracks[i]);
+
+                // Free track structure
+                freeTrack(&(mp4.tracks[i]));
             }
 
             if (media->tracks_video_count == 0 &&  media->tracks_audio_count == 0)

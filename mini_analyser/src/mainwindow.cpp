@@ -111,6 +111,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    closeFile();
+
     delete statusTimer;
     delete ui;
 }
