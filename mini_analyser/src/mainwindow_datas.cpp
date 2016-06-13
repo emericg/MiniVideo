@@ -481,7 +481,7 @@ int MainWindow::printAudioDetails()
                 ui->audioBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
                 ui->audioBitrateGraph->addGraph();
                 ui->audioBitrateGraph->graph(1)->setData(xx, yy);
-                ui->audioBitrateGraph->graph(1)->setPen(QPen(Qt::red));
+                ui->audioBitrateGraph->graph(1)->setPen(QPen(QColor(220, 60, 0, 240)));
 
                 // Set axes ranges and disable legends
                 ui->audioBitrateGraph->xAxis->setRange(0, entries);
@@ -694,17 +694,23 @@ int MainWindow::printVideoDetails()
 
                 // Create graphs and assign datas
                 ui->videoBitrateGraph->addGraph();
-                ui->videoBitrateGraph->graph(0)->setData(xx, yy);
-                ui->videoBitrateGraph->graph(0)->setPen(QPen(Qt::red));
+                ui->videoBitrateGraph->graph(0)->setData(x, y);
+                ui->videoBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
                 ui->videoBitrateGraph->addGraph();
-                ui->videoBitrateGraph->graph(1)->setData(x, y);
-                ui->videoBitrateGraph->graph(1)->setBrush(QBrush(QColor(10, 10, 200, 20)));
+                ui->videoBitrateGraph->graph(1)->setData(xx, yy);
+                ui->videoBitrateGraph->graph(1)->setPen(QPen(QColor(220, 60, 0, 240)));
+
+                // Y axis max is set between 50% and 100% of the max instant bitrate (helps reduce the video IDR spikes)
+                double yScale = 1.0;
+                if (yy[0] < yRangeMax / 10)
+                    yScale = 0.5;
+                else if (yy[0] < yRangeMax / 2)
+                    yScale = 0.75;
 
                 // Set axes ranges and disable legends
-                // Y axis max is set to 75% of the max instant bitrate (should reduce the video IDR spikes)
                 ui->videoBitrateGraph->xAxis->setRange(0, xRangeMax);
                 ui->videoBitrateGraph->xAxis->setTickLabels(false);
-                ui->videoBitrateGraph->yAxis->setRange(0, yRangeMax/1.5);
+                ui->videoBitrateGraph->yAxis->setRange(0, yRangeMax * yScale);
                 ui->videoBitrateGraph->yAxis->setTickLabels(false);
 
                 //ui->videoBitrateGraph->setContentsMargins(0,0,0,0);
