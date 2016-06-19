@@ -57,8 +57,7 @@ typedef struct BitstreamMap_t
     // Track metadatas (if the container support them)
     unsigned int track_id;          //!< Id of the track (as set by the container)
     char *track_title;              //!< Title
-    char *track_languagecode;       //!< Language code (ISO 639-1 or ISO 639-2 format)
-    char track_language[3];         //!< Language code (ISO 639-1 or ISO 639-2 format)
+    char *track_languagecode;       //!< Language code (ISO 639-1 or ISO 639-2 format, ASCII, NULL terminated)
     bool track_default;             //!<
     bool track_forced;              //!<
 

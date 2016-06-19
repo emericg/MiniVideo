@@ -219,6 +219,10 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             strncpy(map->track_title, track->name, sizeof(track->name));
         }
 
+        map->track_languagecode = malloc(4);
+        strncpy(map->track_languagecode, track->language, 3);
+        map->track_languagecode[3] = '\0';
+
         if (track->timescale)
         {
             map->duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
@@ -1264,9 +1268,10 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     /*unsigned int pad =*/ read_bit(bitstr);
 
     // ISO-639-2/T language code
-    track->language[0] = read_bits(bitstr, 5);
-    track->language[1] = read_bits(bitstr, 5);
-    track->language[2] = read_bits(bitstr, 5);
+    // Each character is packed as the difference between its ASCII value and 0x60
+    track->language[0] = (uint8_t)read_bits(bitstr, 5) + 96;
+    track->language[1] = (uint8_t)read_bits(bitstr, 5) + 96;
+    track->language[2] = (uint8_t)read_bits(bitstr, 5) + 96;
 
     /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
 
@@ -1280,9 +1285,8 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         TRACE_1(MP4, "> modification_time : %llu\n", track->modification_time);
         TRACE_1(MP4, "> timescale   : %u\n", track->timescale);
         TRACE_1(MP4, "> duration    : %llu\n", track->duration);
-        TRACE_1(MP4, "> language[0] : %u\n", track->language[0]);
-        TRACE_1(MP4, "> language[1] : %u\n", track->language[1]);
-        TRACE_1(MP4, "> language[2] : %u\n", track->language[2]);
+        TRACE_1(MP4, "> language[3] : '%c%c%c'\n",
+                track->language[0], track->language[1], track->language[2]);
     }
 #endif // ENABLE_DEBUG
 

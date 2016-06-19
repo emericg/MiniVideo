@@ -119,40 +119,31 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
         TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()\n" CLR_RESET);
 
         // Textual metadatas
-        if ((*bitstream_map)->stream_encoder != NULL)
-        {
-            free((*bitstream_map)->stream_encoder);
-        }
-        if ((*bitstream_map)->track_title != NULL)
-        {
-            free((*bitstream_map)->track_title);
-        }
-        if ((*bitstream_map)->subtitles_name != NULL)
-        {
-            free((*bitstream_map)->subtitles_name);
-        }
+        free((*bitstream_map)->stream_encoder);
+        (*bitstream_map)->stream_encoder = NULL;
+        free((*bitstream_map)->track_title);
+        (*bitstream_map)->track_title = NULL;
+        free((*bitstream_map)->track_languagecode);
+        (*bitstream_map)->track_languagecode = NULL;
+        free((*bitstream_map)->subtitles_name);
+        (*bitstream_map)->subtitles_name = NULL;
 
         // Sample tables
-        if ((*bitstream_map)->sample_type != NULL)
-        {
-            free((*bitstream_map)->sample_type);
-        }
-        if ((*bitstream_map)->sample_size != NULL)
-        {
-            free((*bitstream_map)->sample_size);
-        }
-        if ((*bitstream_map)->sample_offset != NULL)
-        {
-            free((*bitstream_map)->sample_offset);
-        }
-        if ((*bitstream_map)->sample_pts != NULL)
-        {
-            free((*bitstream_map)->sample_pts);
-        }
-        if ((*bitstream_map)->sample_dts != NULL)
-        {
-            free((*bitstream_map)->sample_dts);
-        }
+        free((*bitstream_map)->sample_type);
+        (*bitstream_map)->sample_type = NULL;
+
+        free((*bitstream_map)->sample_size);
+        (*bitstream_map)->sample_size = NULL;
+
+        free((*bitstream_map)->sample_offset);
+        (*bitstream_map)->sample_offset = NULL;
+
+        free((*bitstream_map)->sample_pts);
+        (*bitstream_map)->sample_pts = NULL;
+
+        free((*bitstream_map)->sample_dts);
+        (*bitstream_map)->sample_dts = NULL;
+
 
         free(*bitstream_map);
         *bitstream_map = NULL;
@@ -289,7 +280,7 @@ static void computeSamplesDatasTrack(BitstreamMap_t *t)
         }
         else
         {
-            t->bitrate_mode = FRAMERATE_VFR;
+            t->framerate_mode = FRAMERATE_VFR;
         }
 */
         // Set stream size
