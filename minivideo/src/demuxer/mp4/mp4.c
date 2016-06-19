@@ -270,7 +270,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 else
                     map->framerate_base = ((double)track->duration / (double)track->stsz_sample_count * (double)scalefactor);
 
-                if (map->framerate_base)
+                if (map->framerate_base > 0.0)
                     map->framerate = map->framerate_num / map->framerate_base;
 
                 TRACE_1(MP4, "framerate_num: %f  / framerate_base: %f\n",
@@ -442,8 +442,8 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             TRACE_2(MP4, "[%u] sample type   > %u\n", i, map->sample_type[i]);
             TRACE_1(MP4, "[%u] sample size   > %u\n", i, map->sample_size[i]);
             TRACE_1(MP4, "[%u] sample offset > %lli\n", i, map->sample_offset[i]);
-            TRACE_2(MP4, "[%u] sample pts    > %lli\n", i, map->sample_timecode_presentation[i]);
-            TRACE_2(MP4, "[%u] sample dts    > %lli\n", i, map->sample_timecode_decoding[i]);
+            TRACE_2(MP4, "[%u] sample pts    > %lli\n", i, map->sample_pts[i]);
+            TRACE_2(MP4, "[%u] sample dts    > %lli\n", i, map->sample_dts[i]);
         }
 */
 #endif // ENABLE_DEBUG
@@ -462,7 +462,7 @@ static void freeTrack(Mp4Track_t **track_ptr)
 {
     if (*track_ptr != NULL)
     {
-        // sps
+        // SPS
         if ((*track_ptr)->sps_sample_offset != NULL)
         {
             free((*track_ptr)->sps_sample_offset);
@@ -473,7 +473,7 @@ static void freeTrack(Mp4Track_t **track_ptr)
             free((*track_ptr)->sps_sample_size);
         }
 
-        // pps
+        // PPS
         if ((*track_ptr)->pps_sample_offset != NULL)
         {
             free((*track_ptr)->pps_sample_offset);
@@ -2172,14 +2172,14 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
             // Print box content
             TRACE_1(MP4, "> entry_count   : %u\n", track->stss_entry_count);
-/*
+#if TRACE_1
             TRACE_1(MP4, "> sample_number : [");
             for (i = 0; i < track->stss_entry_count; i++)
             {
                 printf("%u, ", track->stss_sample_number[i]);
             }
             printf("]\n");
-*/
+#endif // TRACE_1
         }
 #endif // ENABLE_DEBUG
     }
