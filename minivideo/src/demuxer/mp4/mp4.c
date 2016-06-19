@@ -463,60 +463,35 @@ static void freeTrack(Mp4Track_t **track_ptr)
     if (*track_ptr != NULL)
     {
         // SPS
-        if ((*track_ptr)->sps_sample_offset != NULL)
-        {
-            free((*track_ptr)->sps_sample_offset);
-        }
-
-        if ((*track_ptr)->sps_sample_offset != NULL)
-        {
-            free((*track_ptr)->sps_sample_size);
-        }
+        free((*track_ptr)->sps_sample_offset);
+        free((*track_ptr)->sps_sample_size);
 
         // PPS
-        if ((*track_ptr)->pps_sample_offset != NULL)
-        {
-            free((*track_ptr)->pps_sample_offset);
-        }
-
-        if ((*track_ptr)->pps_sample_offset != NULL)
-        {
-            free((*track_ptr)->pps_sample_size);
-        }
+        free((*track_ptr)->pps_sample_offset);
+        free((*track_ptr)->pps_sample_size);
 
         // stss
-        if ((*track_ptr)->stss_sample_number != NULL)
-        {
-            free((*track_ptr)->stss_sample_number);
-        }
+        free((*track_ptr)->stss_sample_number);
+
+        // stss
+        free((*track_ptr)->stts_sample_count);
+        free((*track_ptr)->stts_sample_delta);
+
+        // ctts
+        free((*track_ptr)->ctts_sample_count);
+        free((*track_ptr)->ctts_sample_offset_u);
+        free((*track_ptr)->ctts_sample_offset_i);
 
         // stsc
-        if ((*track_ptr)->stsc_first_chunk != NULL)
-        {
-            free((*track_ptr)->stsc_first_chunk);
-        }
-
-        if ((*track_ptr)->stsc_samples_per_chunk != NULL)
-        {
-            free((*track_ptr)->stsc_samples_per_chunk);
-        }
-
-        if ((*track_ptr)->stsc_sample_description_index != NULL)
-        {
-            free((*track_ptr)->stsc_sample_description_index);
-        }
+        free((*track_ptr)->stsc_first_chunk);
+        free((*track_ptr)->stsc_samples_per_chunk);
+        free((*track_ptr)->stsc_sample_description_index);
 
         // stsz / stz2
-        if ((*track_ptr)->stsz_entry_size != NULL)
-        {
-            free((*track_ptr)->stsz_entry_size);
-        }
+        free((*track_ptr)->stsz_entry_size);
 
         // stco / co64
-        if ((*track_ptr)->stco_chunk_offset != NULL)
-        {
-            free((*track_ptr)->stco_chunk_offset);
-        }
+        free((*track_ptr)->stco_chunk_offset);
 
         // track
         free(*track_ptr);
@@ -2081,7 +2056,25 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    int i = 0;
+    track->stts_entry_count = read_bits(bitstr, 32);
+    track->stts_sample_count = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
+    track->stts_sample_delta = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
+
+    uint32_t i = 0;
+
+    if (track->stts_sample_count == NULL || track->stts_sample_delta == NULL)
+    {
+        TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
+        retcode = FAILURE;
+    }
+    else
+    {
+        for (i = 0; i < track->stts_entry_count; i++)
+        {
+            track->stts_sample_count[i] = read_bits(bitstr, 32);
+            track->stts_sample_delta[i] = read_bits(bitstr, 32);
+        }
+    }
 
 #if ENABLE_DEBUG
     {
@@ -2089,6 +2082,15 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
+        TRACE_1(MP4, "> entry_count   : %u\n", track->stts_entry_count);
+#if TRACE_1
+        TRACE_1(MP4, "> sample_number : [");
+        for (i = 0; i < track->stts_entry_count; i++)
+        {
+            printf("(%u / %u),", track->stts_sample_count[i], track->stts_sample_delta[i]);
+        }
+        printf("]\n");
+#endif // TRACE_1
     }
 #endif // ENABLE_DEBUG
 
@@ -2115,7 +2117,33 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    int i = 0;
+    track->ctts_entry_count = read_bits(bitstr, 32);
+    track->ctts_sample_count = (unsigned int*)calloc(track->ctts_entry_count, sizeof(unsigned int));
+    if (box_header->version == 0)
+        track->ctts_sample_offset_u = (unsigned int*)calloc(track->ctts_entry_count, sizeof(unsigned int));
+    else if (box_header->version == 1)
+        track->ctts_sample_offset_i = (int*)calloc(track->ctts_entry_count, sizeof(int));
+
+    uint32_t i = 0;
+
+    if (track->ctts_sample_count == NULL ||
+        (track->ctts_sample_offset_u == NULL && track->ctts_sample_offset_i == NULL))
+    {
+        TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
+        retcode = FAILURE;
+    }
+    else
+    {
+        for (i = 0; i < track->ctts_entry_count; i++)
+        {
+            track->ctts_sample_count[i] = read_bits(bitstr, 32);
+
+            if (box_header->version == 0)
+                track->ctts_sample_offset_u[i] = read_bits(bitstr, 32);
+            else if (box_header->version == 1)
+                track->ctts_sample_offset_i[i] = (int)read_bits(bitstr, 32);
+        }
+    }
 
 #if ENABLE_DEBUG
     {
@@ -2123,6 +2151,18 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
+        TRACE_1(MP4, "> entry_count   : %u\n", track->ctts_entry_count);
+#if TRACE_1
+        TRACE_1(MP4, "> sample_number : [");
+        for (i = 0; i < track->ctts_entry_count; i++)
+        {
+            if (box_header->version == 0)
+                printf("(%u / %u),", track->ctts_sample_count[i], track->ctts_sample_offset_u[i]);
+            else
+                printf("(%u / %i),", track->ctts_sample_count[i], track->ctts_sample_offset_i[i]);
+        }
+        printf("]\n");
+#endif // TRACE_1
     }
 #endif // ENABLE_DEBUG
 

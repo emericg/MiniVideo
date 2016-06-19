@@ -100,6 +100,17 @@ typedef struct Mp4Track_t
     unsigned int stss_entry_count;                //!< IDR frame count
     unsigned int *stss_sample_number;
 
+    // stts
+    unsigned int stts_entry_count;
+    unsigned int *stts_sample_count;
+    unsigned int *stts_sample_delta;
+
+    // ctts
+    unsigned int ctts_entry_count;
+    unsigned int *ctts_sample_count;
+    unsigned int *ctts_sample_offset_u;
+    int *ctts_sample_offset_i;
+
     // stsc
     unsigned int stsc_entry_count;
     unsigned int *stsc_first_chunk;
