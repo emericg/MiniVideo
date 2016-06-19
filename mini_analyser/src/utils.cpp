@@ -37,24 +37,29 @@ QString getDurationString(const unsigned duration)
 
         if (hours > 0)
         {
-            duration_qstr += QString::number(hours) + " hour ";
+            duration_qstr += QString::number(hours);
+
+            if (hours > 1)
+                duration_qstr += QObject::tr(" hours ");
+            else
+                duration_qstr += QObject::tr(" hour ");
         }
         if (minutes > 0)
         {
-            duration_qstr += QString::number(minutes) + " min ";
+            duration_qstr += QString::number(minutes) + QObject::tr(" min ");
         }
         if (seconds > 0)
         {
-            duration_qstr += QString::number(seconds) + " sec ";
+            duration_qstr += QString::number(seconds) + QObject::tr(" sec ");
         }
         if (ms > 0)
         {
-            duration_qstr += QString::number(ms) + " ms";
+            duration_qstr += QString::number(ms) + QObject::tr(" ms");
         }
     }
     else
     {
-        duration_qstr = "NULL duration";
+        duration_qstr = QObject::tr("NULL duration");
     }
 
     //qDebug() << "getDurationString(" << duration << ") >" << duration_qstr;
@@ -93,7 +98,7 @@ QString getSizeString(const int64_t size)
     }
     else
     {
-        size_qstr = "NULL size";
+        size_qstr = QObject::tr("NULL size");
     }
 
     //qDebug() << "getDurationString(" << size << ") >" << size_qstr;
@@ -162,7 +167,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
     }
     else
     {
-        size_qstr = "NULL track size";
+        size_qstr = QObject::tr("NULL track size");
     }
 
     return size_qstr;
@@ -303,7 +308,7 @@ QString getBitrateString(const unsigned bitrate)
     }
     else
     {
-        bitrate_qstr = "NULL bitrate";
+        bitrate_qstr = QObject::tr("NULL bitrate");
     }
 
     //qDebug() << "getBitrateString(" << bitrate << ") >" << bitrate_qstr;
@@ -324,7 +329,7 @@ QString getBitrateModeString(const unsigned bitrate_mode)
     else if (bitrate_mode == BITRATE_CVBR)
         bitrate_mode_qstr = "CVBR";
     else
-        bitrate_mode_qstr = "Unknown";
+        bitrate_mode_qstr = QObject::tr("Unknown");
 
     return bitrate_mode_qstr;
 }
@@ -338,9 +343,31 @@ QString getFramerateModeString(const unsigned framerate_mode)
     else if (framerate_mode == FRAMERATE_VFR)
         framerate_mode_qstr = "VFR";
     else
-        framerate_mode_qstr = "Unknown";
+        framerate_mode_qstr = QObject::tr("Unknown");
 
     return framerate_mode_qstr;
+}
+
+QString getLanguageString(const char *language_code)
+{
+    QString langage_qstr = "";
+
+    if (language_code)
+    {
+        size_t lng_size = strlen(language_code);
+        if (lng_size > 3) { lng_size = 3; }
+
+        if (strncmp(language_code, "und", lng_size) == 0)
+            langage_qstr = "";
+        else if (strncmp(language_code, "eng", lng_size) == 0)
+            langage_qstr = QObject::tr("English");
+        else if (strncmp(language_code, "fre", lng_size) == 0)
+            langage_qstr = QObject::tr("French");
+        else
+            langage_qstr = QString::fromLatin1(language_code, lng_size);
+    }
+
+    return langage_qstr;
 }
 
 bitrateMinMax::bitrateMinMax(double fps)

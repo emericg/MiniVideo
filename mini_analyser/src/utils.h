@@ -82,6 +82,8 @@ QString getBitrateModeString(const unsigned bitrate_mode);
 
 QString getFramerateModeString(const unsigned framerate_mode);
 
+QString getLanguageString(const char *language_code);
+
 /* ************************************************************************** */
 
 class bitrateMinMax
