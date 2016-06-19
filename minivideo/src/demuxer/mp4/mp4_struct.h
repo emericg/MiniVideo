@@ -108,8 +108,7 @@ typedef struct Mp4Track_t
     // ctts
     unsigned int ctts_entry_count;
     unsigned int *ctts_sample_count;
-    unsigned int *ctts_sample_offset_u;
-    int *ctts_sample_offset_i;
+    int64_t *ctts_sample_offset;
 
     // stsc
     unsigned int stsc_entry_count;

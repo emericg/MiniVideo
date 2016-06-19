@@ -301,80 +301,18 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             }
         }
 
-        unsigned int chunk = 0;
-        unsigned int posinchunk = 0;
-
-        // Set samples into the bitstream map
+        // Set samples details into the bitstream map
         ////////////////////////////////////////////////////////////////
+
         for (i = 0; i < track->stsz_sample_count; i++)
         {
-            int sid = i + track->sps_count + track->pps_count; // Sample id
-
-            unsigned int tempSample = 0;
-            int range = 0, rangestart = 0, rangestop = 0, spc = 0;
-            unsigned int e = 0; // current entry on the Sample to Chunk Box (stsc) // range e-1 e
-            int f = 0; // chunk on a chunk range
-
-            // Find the appropriate chunk for a sample i
-            if (track->stsc_entry_count > 1)
-            {
-                chunk = 0;
-                posinchunk = 0;
-
-                // Loop on each "chunk ranges"
-                for (e = 0; e < track->stsc_entry_count; e++)
-                {
-                    { // WIP
-                        rangestart = track->stsc_first_chunk[e] - 1;
-
-                        if (e == (track->stsc_entry_count - 1))
-                            rangestop = track->stco_entry_count;//track->stsc_first_chunk[track->stsc_entry_count-1] - 1;
-                        else
-                            rangestop = track->stsc_first_chunk[e+1] - 1;
-
-                        range = rangestop - rangestart;
-                        spc = track->stsc_samples_per_chunk[e];
-
-                        TRACE_3(MP4, " * Using range [%i-%i]  (%i chunk in this range)\n", rangestart, rangestop, range);
-                        TRACE_3(MP4, " * Sample per chunk: %i\n", spc);
-                        TRACE_3(MP4, " * number of chunk: %i\n", track->stco_entry_count);
-                    }
-
-                    TRACE_3(MP4, "[%i] chunk %u / spc %u    (range %i)\n", e+1, chunk+1, track->stsc_samples_per_chunk[e], range);
-
-                    // loop on chunks inside a chunk range
-                    for (f = 0; f < range; f++)
-                    {
-                        // loop on samples inside a chunk
-                        for (posinchunk = 0; posinchunk < track->stsc_samples_per_chunk[e]; posinchunk++)
-                        {
-                            if (tempSample == i)
-                            {
-                                //TRACE_2(MP4, "sample %i    (%u/%u) (chunk / posinchunk)\n", i, chunk, posinchunk);
-                                goto chunk_found;
-                            }
-                            else
-                            {
-                                tempSample++;
-                            }
-                        }
-
-                        chunk++;
-                    }
-                }
-            }
-            else
-            {
-                chunk = (unsigned int)(i / track->stsc_samples_per_chunk[0]);
-                posinchunk = (unsigned int)(i % track->stsc_samples_per_chunk[0]);
-            }
-
-            chunk_found:
+            unsigned sid = i + track->sps_count + track->pps_count; // Sample id
 
             // Set sample type
             if (track->handlerType == HANDLER_VIDEO)
             {
                 map->sample_type[sid] = sample_VIDEO;
+
                 for (j = 0; j < track->stss_entry_count; j++)
                 {
                     if (i == (track->stss_sample_number[j] - 1))
@@ -397,30 +335,140 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 map->bitrate_mode = BITRATE_CBR;
                 map->sample_size[sid] = track->stsz_sample_size;
             }
+        }
 
-            // track->bitrate_max
+        // Set sample decoding and presentation timecodes
+        uint32_t k = 0;
+        j = 0;
+        int32_t _samples_pts_to_dts_shift = 0; // FIXME // from cslg
 
-            // Set sample offset
-            map->sample_offset[sid] = track->stco_chunk_offset[chunk] + 4;
-
-            for (j = 1; j <= posinchunk; j++)
+        if (track->ctts_sample_count) //if (_samples_pts_array)
+        {
+            // Compute DTS
+            for (i = 0, k = track->sps_count + track->pps_count; i < track->stts_entry_count; i++)
             {
-                if (track->stsz_entry_size)
+                j = 0;
+
+                if (k == track->sps_count + track->pps_count)
                 {
-                    map->sample_offset[sid] += track->stsz_entry_size[i - j];
+                    // Decoding time = 0 for the first DTS sample
+                    map->sample_dts[k] = 0;
+
+                    k++;
+                    j = 1;
                 }
-                else
+
+                for (; j < track->stts_sample_count[i]; j++, k++)
                 {
-                    // Assume constant sample size
-                    map->sample_offset[sid] += track->stsz_sample_size;
+                    int64_t dts = map->sample_dts[k - 1];
+                    dts = dts + track->stts_sample_delta[i];
+
+                    map->sample_dts[k] = dts;
                 }
             }
 
-            // Set sample presentation timecode
-            map->sample_pts[sid] = -1;
+            // Then compute PTS
+            for (i = 0, k = track->sps_count + track->pps_count; i < track->ctts_entry_count; i++)
+            {
+                for (j = 0; j < track->ctts_sample_count[i]; j++, k++)
+                {
+                    int64_t dts = map->sample_dts[k];
+                    int64_t pts = dts + track->ctts_sample_offset[i] + _samples_pts_to_dts_shift;
 
-            // Set sample decoding timecode
-            map->sample_dts[sid] = -1;
+                    // Assign pts
+                    map->sample_pts[k] = pts;
+                }
+            }
+        }
+        else
+        {
+            // Compute DTS, then copy results into PTS
+            for (i = 0, k = track->sps_count + track->pps_count; i < track->stts_entry_count; i++)
+            {
+                j = 0;
+
+                if (k == track->sps_count + track->pps_count)
+                {
+                    // Decoding time = 0 for the first DTS sample
+                    map->sample_dts[k] = map->sample_pts[k] = 0;
+
+                    k++;
+                    j = 1;
+                }
+
+                for (; j < track->stts_sample_count[i]; j++, k++)
+                {
+                    int64_t dts = map->sample_dts[k - 1];
+                    int64_t pts = dts + track->stts_sample_delta[i];
+
+                    map->sample_dts[k] = map->sample_pts[k] = pts;
+                }
+            }
+        }
+
+        // Set sample offset
+        uint32_t index = track->sps_count + track->pps_count;
+        uint32_t chunkOffset = 0;
+
+        for (i = 0; (i < track->stsc_entry_count) && (chunkOffset < track->stco_entry_count); i++)
+        {
+            uint32_t n = 0, k = 0, l = 0;
+
+            if ((i + 1) == track->stsc_entry_count)
+            {
+                if ((track->stsc_entry_count > 1) && (chunkOffset == 0))
+                {
+                    n = 1;
+                }
+                else
+                {
+                    n = track->stco_entry_count - chunkOffset;
+                }
+            }
+            else
+            {
+                n = track->stsc_first_chunk[i + 1] - track->stsc_first_chunk[i];
+            }
+
+            for (k = 0; k < n; k++)
+            {
+                for (l = 0; l < track->stsc_samples_per_chunk[i]; l++)
+                {
+                    // Adjust DTS and PTS unit: from timescale to ns
+                    {
+                        if (map->sample_dts[index])
+                        {
+                            map->sample_dts[index] *= 1000000LL;
+                            map->sample_dts[index] /= track->timescale;
+                        }
+
+                        //if (map->sample_pts[index])
+                        {
+                            //if (map->sample_pts[index] > av_pts_adjustment)
+                            //    map->sample_pts[index] -= av_pts_adjustment; // FIXME // from edit list;
+
+                            map->sample_pts[index] *= 1000000LL;
+                            map->sample_pts[index] /= track->timescale;
+                        }
+
+                        //TRACE_2(MP4, "#%u > DTS: %lli  /  PTS: %lli\n", index, map->sample_dts[index], map->sample_pts[index]);
+                    }
+
+                    // FIXME // sample description index is not taken into account
+                    if (l == 0)
+                    {
+                        map->sample_offset[index++] = track->stco_chunk_offset[chunkOffset] + 4; // +4 cause we depacketize
+                    }
+                    else
+                    {
+                        map->sample_offset[index] = map->sample_offset[index - 1] + (int64_t)(map->sample_size[index - 1]);
+                        index++;
+                    }
+                }
+
+                // Increase chunk offset
+                chunkOffset++;
+            }
         }
 
 #if ENABLE_DEBUG
@@ -479,8 +527,7 @@ static void freeTrack(Mp4Track_t **track_ptr)
 
         // ctts
         free((*track_ptr)->ctts_sample_count);
-        free((*track_ptr)->ctts_sample_offset_u);
-        free((*track_ptr)->ctts_sample_offset_i);
+        free((*track_ptr)->ctts_sample_offset);
 
         // stsc
         free((*track_ptr)->stsc_first_chunk);
@@ -2118,16 +2165,12 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     // Parse box content
     track->ctts_entry_count = read_bits(bitstr, 32);
-    track->ctts_sample_count = (unsigned int*)calloc(track->ctts_entry_count, sizeof(unsigned int));
-    if (box_header->version == 0)
-        track->ctts_sample_offset_u = (unsigned int*)calloc(track->ctts_entry_count, sizeof(unsigned int));
-    else if (box_header->version == 1)
-        track->ctts_sample_offset_i = (int*)calloc(track->ctts_entry_count, sizeof(int));
+    track->ctts_sample_count = (uint32_t*)calloc(track->ctts_entry_count, sizeof(uint32_t));
+    track->ctts_sample_offset = (int64_t*)calloc(track->ctts_entry_count, sizeof(int64_t));
 
     uint32_t i = 0;
 
-    if (track->ctts_sample_count == NULL ||
-        (track->ctts_sample_offset_u == NULL && track->ctts_sample_offset_i == NULL))
+    if (track->ctts_sample_count == NULL || track->ctts_sample_offset == NULL)
     {
         TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
         retcode = FAILURE;
@@ -2139,9 +2182,9 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             track->ctts_sample_count[i] = read_bits(bitstr, 32);
 
             if (box_header->version == 0)
-                track->ctts_sample_offset_u[i] = read_bits(bitstr, 32);
+                track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read uint
             else if (box_header->version == 1)
-                track->ctts_sample_offset_i[i] = (int)read_bits(bitstr, 32);
+                track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read int
         }
     }
 
@@ -2501,6 +2544,9 @@ int mp4_fileParse(MediaFile_t *media)
                     case BOX_PDIN:
                         retcode = parse_pdin(bitstr, &box_header, &mp4);
                         break;
+                    case BOX_UDTA:
+                        retcode = parse_unknown_box(bitstr, &box_header);
+                        break;
                     case BOX_SIDX:
                         retcode = parse_unknown_box(bitstr, &box_header);
                         break;
@@ -2529,7 +2575,7 @@ int mp4_fileParse(MediaFile_t *media)
         }
 
         // File metadatas
-        media->duration = (double)mp4.duration / mp4.timescale * 1000.0;
+        media->duration = (double)mp4.duration / (double)mp4.timescale * 1000.0;
         media->creation_time = (double)mp4.creation_time ;
         media->modification_time = (double)mp4.modification_time ;
 
