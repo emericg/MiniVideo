@@ -74,7 +74,7 @@ void MainWindow::cleanDatas()
     ui->label_audio_lng->clear();
     ui->label_audio_size->clear();
     ui->label_audio_title->clear();
-    ui->label_audio_visible->clear();
+    ui->label_audio_forced->clear();
 
     ui->label_audio_bitratemode->clear();
     ui->label_audio_bitrate_gross->clear();
@@ -254,6 +254,20 @@ int MainWindow::printDatas()
             ui->label_info_audio_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_audio_codec->setText(getCodecString(stream_AUDIO, t->stream_codec, true));
             ui->label_info_audio_duration->setText(getDurationString(t->duration_ms));
+
+            QString lng = getLanguageString(t->track_languagecode);
+            if (lng.isEmpty())
+            {
+                ui->label_24->hide();
+                ui->label_info_audio_lng->hide();
+            }
+            else
+            {
+                ui->label_24->show();
+                ui->label_info_audio_lng->show();
+                ui->label_info_audio_lng->setText(lng);
+            }
+
             ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate));
             ui->label_info_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_info_audio_channels->setText(QString::number(t->channel_count));
@@ -392,11 +406,67 @@ int MainWindow::printAudioDetails()
 
             if (t->track_title)
             {
-                ui->label_audio_title->setText(QString::fromLocal8Bit(t->track_title));
+                QString track_title = QString::fromLocal8Bit(t->track_title);
+                if (track_title.isEmpty())
+                {
+                    ui->label_64->hide();
+                    ui->label_audio_title->hide();
+                }
+                else
+                {
+                    ui->label_64->show();
+                    ui->label_audio_title->show();
+                    ui->label_audio_title->setText(track_title);
+                }
             }
+
             if (t->stream_encoder)
             {
-                ui->label_audio_encoder->setText(QString::fromLocal8Bit(t->stream_encoder));
+                QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+                if (stream_encoder.isEmpty())
+                {
+                    ui->label_61->hide();
+                    ui->label_audio_encoder->hide();
+                }
+                else
+                {
+                    ui->label_61->show();
+                    ui->label_audio_encoder->show();
+                    ui->label_audio_encoder->setText(stream_encoder);
+                }
+            }
+
+            QString track_language = getLanguageString(t->track_languagecode);
+            if (track_language.isEmpty())
+            {
+                ui->label_26->hide();
+                ui->label_audio_lng->hide();
+            }
+            else
+            {
+                ui->label_26->show();
+                ui->label_audio_lng->show();
+                ui->label_audio_lng->setText(track_language);
+            }
+
+            if (t->track_default || t->track_forced)
+            {
+                ui->label_31->show();
+                ui->label_audio_default->show();
+                ui->label_32->show();
+                ui->label_audio_forced->show();
+
+                if (t->track_default)
+                    ui->label_audio_default->setText("✔");
+                if (t->track_forced)
+                    ui->label_audio_forced->setText("✔");
+            }
+            else
+            {
+                ui->label_31->hide();
+                ui->label_audio_default->hide();
+                ui->label_32->hide();
+                ui->label_audio_forced->hide();
             }
 
             ui->label_audio_size->setText(getTrackSizeString(t, media->file_size, true));
@@ -435,16 +505,25 @@ int MainWindow::printAudioDetails()
             //ui->label_audio_framecount->setText(QString::number(t->frame_count));
             //ui->label_audio_frameduration->setText(QString::number(t->frame_duration));
 
-
             // Audio bitrate grah
             ////////////////////////////////////////////////////////////////////
 
             if (t->bitrate_mode == BITRATE_CBR)
             {
                 ui->audioBitrateGraph->hide();
+                ui->label_73->hide();
+                ui->label_audio_bitrate_highest->hide();
+                ui->label_74->hide();
+                ui->label_audio_bitrate_lowest->hide();
             }
             else
             {
+                ui->audioBitrateGraph->show();
+                ui->label_73->show();
+                ui->label_audio_bitrate_highest->show();
+                ui->label_74->show();
+                ui->label_audio_bitrate_lowest->show();
+
                 bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->duration_ms/1000.0)));
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
@@ -504,7 +583,6 @@ int MainWindow::printAudioDetails()
                 //connect(ui->audioBitrateGraph->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisRangeChanged(QCPRange)));
 
                 ui->audioBitrateGraph->replot();
-                ui->audioBitrateGraph->show();
             }
         }
     }
@@ -533,11 +611,47 @@ int MainWindow::printVideoDetails()
 
             if (t->track_title)
             {
-                ui->label_video_title->setText(QString::fromLocal8Bit(t->track_title));
+                QString track_title = QString::fromLocal8Bit(t->track_title);
+                if (track_title.isEmpty())
+                {
+                    ui->label_63->hide();
+                    ui->label_video_title->hide();
+                }
+                else
+                {
+                    ui->label_63->show();
+                    ui->label_video_title->show();
+                    ui->label_video_title->setText(track_title);
+                }
             }
+
             if (t->stream_encoder)
             {
-                ui->label_video_encoder->setText(QString::fromLocal8Bit(t->stream_encoder));
+                QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+                if (stream_encoder.isEmpty())
+                {
+                    ui->label_62->hide();
+                    ui->label_video_encoder->hide();
+                }
+                else
+                {
+                    ui->label_62->show();
+                    ui->label_video_encoder->show();
+                    ui->label_video_encoder->setText(stream_encoder);
+                }
+            }
+
+            QString track_language = getLanguageString(t->track_languagecode);
+            if (track_language.isEmpty())
+            {
+                ui->label_33->hide();
+                ui->label_video_lng->hide();
+            }
+            else
+            {
+                ui->label_33->show();
+                ui->label_video_lng->show();
+                ui->label_video_lng->setText(track_language);
             }
 
             ui->label_video_size->setText(getTrackSizeString(t, media->file_size, true));
@@ -656,9 +770,19 @@ int MainWindow::printVideoDetails()
             if (t->bitrate_mode == BITRATE_CBR)
             {
                 ui->videoBitrateGraph->hide();
+                ui->label_56->hide();
+                ui->label_video_bitrate_highest->hide();
+                ui->label_72->hide();
+                ui->label_video_bitrate_lowest->hide();
             }
             else
             {
+                ui->videoBitrateGraph->show();
+                ui->label_56->show();
+                ui->label_video_bitrate_highest->show();
+                ui->label_72->show();
+                ui->label_video_bitrate_lowest->show();
+
                 bitrateMinMax btc(t->framerate);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
@@ -728,7 +852,6 @@ int MainWindow::printVideoDetails()
                 //connect(ui->videoBitrateGraph->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisRangeChanged(QCPRange)));
 
                 ui->videoBitrateGraph->replot();
-                ui->videoBitrateGraph->show();
             }
         }
     }

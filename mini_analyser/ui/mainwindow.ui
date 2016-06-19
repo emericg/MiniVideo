@@ -162,6 +162,18 @@
         <string>Informations</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QGroupBox" name="groupBox_infos">
           <property name="enabled">
@@ -174,7 +186,13 @@
            <property name="leftMargin">
             <number>3</number>
            </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
            <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <property name="horizontalSpacing">
@@ -406,7 +424,13 @@
            <property name="leftMargin">
             <number>3</number>
            </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
            <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <item row="0" column="0">
@@ -680,7 +704,13 @@
            <property name="leftMargin">
             <number>3</number>
            </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
            <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <item row="0" column="0" colspan="3">
@@ -969,6 +999,18 @@
         <string>Audio track(s)</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QComboBox" name="comboBox_audio_selector">
           <item>
@@ -987,13 +1029,22 @@
            <property name="leftMargin">
             <number>3</number>
            </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
            <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_7">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_25">
@@ -1100,7 +1151,7 @@
               </widget>
              </item>
              <item row="5" column="3">
-              <widget class="QLabel" name="label_audio_visible">
+              <widget class="QLabel" name="label_audio_forced">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -1215,6 +1266,9 @@
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_12">
@@ -1475,6 +1529,9 @@
              <property name="horizontalSpacing">
               <number>12</number>
              </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_44">
                <property name="text">
@@ -1583,6 +1640,9 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="2" column="0" colspan="2">
               <widget class="QLabel" name="label_29">
@@ -1729,6 +1789,18 @@
         <string>Video track(s)</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QComboBox" name="comboBox_video_selector">
           <item>
@@ -1747,13 +1819,22 @@
            <property name="leftMargin">
             <number>3</number>
            </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
            <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
             <number>3</number>
            </property>
            <item>
             <layout class="QGridLayout" name="gridLayout_12">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="3" column="0">
               <widget class="QLabel" name="label_63">
@@ -1910,6 +1991,9 @@
             <layout class="QGridLayout" name="gridLayout_6">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="3" column="0">
               <widget class="QLabel" name="label_59">
@@ -2349,6 +2433,9 @@
              <property name="horizontalSpacing">
               <number>12</number>
              </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
              <item row="0" column="1">
               <widget class="QLabel" name="label_video_color_space">
                <property name="font">
@@ -2490,6 +2577,9 @@
             <layout class="QGridLayout" name="gridLayout_13">
              <property name="horizontalSpacing">
               <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
              </property>
              <item row="2" column="1" colspan="4">
               <widget class="QLabel" name="label_video_samplerepart">
@@ -2870,6 +2960,18 @@
         <string>Export</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_8">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QFrame" name="frame">
           <property name="autoFillBackground">
@@ -3114,6 +3216,9 @@ background: rgba(255, 170, 0, 128);</string>
    </layout>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
