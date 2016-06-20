@@ -349,9 +349,22 @@ void MainWindow::reloadFile()
 
     if (media)
     {
+        // Save the current tab index if we want to restore it later
+        QWidget *tab_widget_saved = ui->tabWidget->currentWidget();
+
         QString current = media->file_path;
         closeFile();
         loadFile(current);
+
+        // Restore the focus (if the same tab is available)
+        for (int i = 0; i < ui->tabWidget->count(); i++)
+        {
+            if (ui->tabWidget->widget(i) == tab_widget_saved)
+            {
+                ui->tabWidget->setCurrentIndex(i);
+                break;
+            }
+        }
     }
 }
 
