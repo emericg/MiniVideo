@@ -24,7 +24,7 @@
 #include <cmath>
 #include <QDebug>
 
-QString getDurationString(const unsigned duration)
+QString getDurationString(const uint32_t duration)
 {
     QString duration_qstr;
 
@@ -65,6 +65,42 @@ QString getDurationString(const unsigned duration)
     //qDebug() << "getDurationString(" << duration << ") >" << duration_qstr;
 
     return duration_qstr;
+}
+
+QString getTimestampString(const uint64_t timestamp)
+{
+    QString timestamp_qstr;
+
+    if (timestamp > 0)
+    {
+        uint64_t hours = timestamp / 3600000000;
+        uint64_t minutes = (timestamp - (hours * 3600000000)) / 60000000;
+        uint64_t seconds = (timestamp - (hours * 3600000000) - (minutes * 60000000)) / 1000000;
+        uint64_t ms = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000)) / 1000;
+        uint64_t ns = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000) - (ms * 1000));
+
+        if (hours > 0)
+        {
+            timestamp_qstr += QString::number(hours) + ":";
+        }
+        if (minutes > 0)
+        {
+            timestamp_qstr += QString::number(minutes) + ":";
+        }
+        if (seconds > 0)
+        {
+            timestamp_qstr += QString::number(seconds) + ":";
+        }
+        if (ms > 0)
+        {
+            timestamp_qstr += QString::number(ms) + ":";
+        }
+        timestamp_qstr += QString::number(ns) + QObject::tr(" ns");
+    }
+
+    //qDebug() << "getTimestampString(" << timestamp << ") >" << timestamp_qstr;
+
+    return timestamp_qstr;
 }
 
 QString getSizeString(const int64_t size)
@@ -173,13 +209,13 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
     return size_qstr;
 }
 
-QString getAspectRatioString(const unsigned x, const unsigned y, bool detailed)
+QString getAspectRatioString(const unsigned x, const unsigned y, const bool detailed)
 {
     double ar_d = static_cast<double>(x) / static_cast<double>(y);
     return getAspectRatioString(ar_d, detailed);
 }
 
-QString getAspectRatioString(double ar_d, bool detailed)
+QString getAspectRatioString(double ar_d, const bool detailed)
 {
     QString aspectratio_qstr;
 
@@ -316,17 +352,17 @@ QString getBitrateString(const unsigned bitrate)
     return bitrate_qstr;
 }
 
-QString getBitrateModeString(const unsigned bitrate_mode)
+QString getBitrateModeString(const unsigned bitrateMode)
 {
     QString bitrate_mode_qstr;
 
-    if (bitrate_mode == BITRATE_CBR)
+    if (bitrateMode == BITRATE_CBR)
         bitrate_mode_qstr = "CBR";
-    else if (bitrate_mode == BITRATE_VBR)
+    else if (bitrateMode == BITRATE_VBR)
         bitrate_mode_qstr = "VBR";
-    else if (bitrate_mode == BITRATE_ABR)
+    else if (bitrateMode == BITRATE_ABR)
         bitrate_mode_qstr = "ABR";
-    else if (bitrate_mode == BITRATE_CVBR)
+    else if (bitrateMode == BITRATE_CVBR)
         bitrate_mode_qstr = "CVBR";
     else
         bitrate_mode_qstr = QObject::tr("Unknown");
@@ -334,13 +370,13 @@ QString getBitrateModeString(const unsigned bitrate_mode)
     return bitrate_mode_qstr;
 }
 
-QString getFramerateModeString(const unsigned framerate_mode)
+QString getFramerateModeString(const unsigned framerateMode)
 {
     QString framerate_mode_qstr;
 
-    if (framerate_mode == FRAMERATE_CFR)
+    if (framerateMode == FRAMERATE_CFR)
         framerate_mode_qstr = "CFR";
-    else if (framerate_mode == FRAMERATE_VFR)
+    else if (framerateMode == FRAMERATE_VFR)
         framerate_mode_qstr = "VFR";
     else
         framerate_mode_qstr = QObject::tr("Unknown");
@@ -348,29 +384,49 @@ QString getFramerateModeString(const unsigned framerate_mode)
     return framerate_mode_qstr;
 }
 
-QString getLanguageString(const char *language_code)
+QString getLanguageString(const char *languageCode)
 {
-    QString langage_qstr = "";
+    QString langage_qstr;
 
-    if (language_code)
+    if (languageCode)
     {
-        size_t lng_size = strlen(language_code);
+        size_t lng_size = strlen(languageCode);
         if (lng_size > 3) { lng_size = 3; }
 
-        if (strncmp(language_code, "und", lng_size) == 0)
+        if (strncmp(languageCode, "und", lng_size) == 0)
             langage_qstr = "";
-        else if (strncmp(language_code, "eng", lng_size) == 0)
+        else if (strncmp(languageCode, "eng", lng_size) == 0)
             langage_qstr = QObject::tr("English");
-        else if (strncmp(language_code, "fre", lng_size) == 0)
+        else if (strncmp(languageCode, "fre", lng_size) == 0)
             langage_qstr = QObject::tr("French");
         else
-            langage_qstr = QString::fromLatin1(language_code, lng_size);
+            langage_qstr = QString::fromLatin1(languageCode, lng_size);
     }
 
     return langage_qstr;
 }
 
-bitrateMinMax::bitrateMinMax(double fps)
+QString getSampleTypeString(const unsigned sampleType)
+{
+    QString sample_type_qstr;
+
+    if (sampleType == sample_AUDIO)
+        sample_type_qstr = QObject::tr("Audio sample");
+    else if (sampleType == sample_VIDEO)
+        sample_type_qstr = QObject::tr("Video sample");
+    else if (sampleType == sample_VIDEO_IDR)
+        sample_type_qstr = QObject::tr("Video Sync sample");
+    else if (sampleType == sample_VIDEO_PARAM)
+        sample_type_qstr = QObject::tr("Video parameter sample");
+    else if (sampleType == sample_OTHER)
+        sample_type_qstr = QObject::tr("Other sample");
+    else
+        sample_type_qstr = QObject::tr("Unknown sample type");
+
+    return sample_type_qstr;
+}
+
+bitrateMinMax::bitrateMinMax(const double fps)
 {
     if (fps > 0 && fps < 480)
     {
@@ -378,7 +434,7 @@ bitrateMinMax::bitrateMinMax(double fps)
     }
 }
 
-bitrateMinMax::bitrateMinMax(uint32_t fps)
+bitrateMinMax::bitrateMinMax(const uint32_t fps)
 {
     if (fps > 0 && fps < 480)
     {
@@ -391,7 +447,7 @@ bitrateMinMax::~bitrateMinMax()
     //
 }
 
-uint32_t bitrateMinMax::pushSampleSize(uint32_t sampleSize)
+uint32_t bitrateMinMax::pushSampleSize(const uint32_t sampleSize)
 {
     uint32_t bitrate = 0;
 
