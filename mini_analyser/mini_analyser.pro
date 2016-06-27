@@ -6,6 +6,7 @@
 TARGET       = mini_analyser
 TEMPLATE     = app
 QT          += core svg gui widgets printsupport
+CONFIG      += c++11
 
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
@@ -39,7 +40,6 @@ HEADERS     += src/main.h \
                src/thirdparty/qcustomplot/qcustomplot.h
 
 FORMS       += ui/mainwindow.ui \
-               ui/textexporter.ui \
                ui/hexeditor.ui \
                ui/fourcchelper.ui \
                ui/about.ui
@@ -56,14 +56,15 @@ QMAKE_LIBDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo
 
 # Mac OS X target
-unix:macx {
-    # Force RPATH to look into the 'Frameworks' dir? Doesn't really seems to work anyway...
-    #QMAKE_RPATHDIR += @executable_path/../Frameworks
+macx {
 
     # Force Qt to use a particular SDK version (with automatic detection)
     XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
     QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
     #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
+
+    # Force RPATH to look into the 'Frameworks' dir? Doesn't really seems to work anyway...
+    #QMAKE_RPATHDIR += @executable_path/../Frameworks
 
     # bundle packaging (method 1) (uncomment to enable)
     #system(macdeployqt build/$${TARGET}.app)

@@ -28,7 +28,6 @@
 
 #include <QDateTime>
 
-#include <iostream>
 #include <cmath>
 
 /* ************************************************************************** */
@@ -498,14 +497,14 @@ int MainWindow::printAudioDetails()
             rawsize *= t->duration_ms;
             rawsize /= 1024.0;
 
-            uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
+            uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
             ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
 
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
             //ui->label_audio_framecount->setText(QString::number(t->frame_count));
             //ui->label_audio_frameduration->setText(QString::number(t->frame_duration));
 
-            // Audio bitrate grah
+            // Audio bitrate graph
             ////////////////////////////////////////////////////////////////////
 
             if (t->bitrate_mode == BITRATE_CBR)
@@ -764,7 +763,7 @@ int MainWindow::printVideoDetails()
             uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
             ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
 
-            // Video bitrate grah
+            // Video bitrate graph
             ////////////////////////////////////////////////////////////////////
 
             if (t->bitrate_mode == BITRATE_CBR)
