@@ -30,7 +30,8 @@ HEADERS     += src/main.h \
                src/hexeditor.h \
                src/thirdparty/qhexedit2/qhexedit.h \
                src/thirdparty/qhexedit2/chunks.h \
-               src/thirdparty/qhexedit2/commands.h
+               src/thirdparty/qhexedit2/commands.h \
+    src/portable_endian.h
 
 FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \

@@ -32,6 +32,7 @@ extern "C" {
 #include "avcodecs.h"
 #include "fourcc.h"
 #include "mediafile_struct.h"
+#include "../build/minivideo_Export.h"
 
 /* ************************************************************************** */
 
@@ -65,7 +66,7 @@ void minivideo_infos(void);
  * and then check its first byte to see if it is 0 (meaning big endianness)
  * or 1 (meaning little endianness).
  */
-int minivideo_endianness(void);
+minivideo_EXPORT int minivideo_endianness(void);
 
 /*!
  * \brief Open a file and return a MediaFile_t context.
@@ -77,7 +78,7 @@ int minivideo_endianness(void);
  * If the file is successfully opened, the program start gathering informations about
  * the file, print them if in debug mode.
  */
-int minivideo_open(const char *input_filepath, MediaFile_t **input_media);
+minivideo_EXPORT int minivideo_open(const char *input_filepath, MediaFile_t **input_media);
 
 /*!
  * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
@@ -91,7 +92,7 @@ int minivideo_open(const char *input_filepath, MediaFile_t **input_media);
  * (if appropriate parser is available) and fill the MediaFile_t structure with
  * the tracks samples informations.
  */
-int minivideo_parse(MediaFile_t *input_media,
+minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
                     const bool extract_audio, const bool extract_video, const bool extract_subtitles);
 
 /*!
@@ -109,7 +110,7 @@ int minivideo_parse(MediaFile_t *input_media,
  *
  * \todo Split this function into filtering /decoding / extraction stages.
  */
-int minivideo_decode(MediaFile_t *input_media,
+minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media,
                      const char *output_directory,
                      const int picture_format,
                      const int picture_quality,
@@ -126,7 +127,7 @@ int minivideo_decode(MediaFile_t *input_media,
  * \param output_format: Can be '1' for PES format or '2' for ES format.
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  */
-int minivideo_extract(MediaFile_t *input_media,
+minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
                       const char *output_directory,
                       const bool extract_audio,
                       const bool extract_video,
@@ -137,7 +138,7 @@ int minivideo_extract(MediaFile_t *input_media,
  * \brief Close a video file.
  * \param input_media: The MediaFile_t context to destroy.
  */
-int minivideo_close(MediaFile_t **input_media);
+minivideo_EXPORT int minivideo_close(MediaFile_t **input_media);
 
 /* ************************************************************************** */
 #ifdef __cplusplus
