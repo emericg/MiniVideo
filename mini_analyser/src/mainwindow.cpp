@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    explorer = NULL;
     hexeditor = NULL;
     fcchelper = NULL;
     aboutwindows = NULL;
@@ -58,9 +59,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(loadFileDialog()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
+    connect(ui->actionExplorer, SIGNAL(triggered()), this, SLOT(openExplorer()));
     connect(ui->actionHexEditor, SIGNAL(triggered()), this, SLOT(openHexEditor()));
     connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourccHelper()));
-    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindows()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAbout()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -95,6 +97,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tabOtherIcon = ui->tabWidget->tabIcon(5);
     tabExportText = ui->tabWidget->tabText(6);
     tabExportIcon = ui->tabWidget->tabIcon(6);
+    tabDevText = ui->tabWidget->tabText(7);
+    tabDevIcon = ui->tabWidget->tabIcon(7);
 
 #ifndef Q_OS_OSX
     // Monospace font for the export tab
@@ -337,6 +341,7 @@ void MainWindow::reloadFile(const QString &file)
                 {
                     setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
                 }
+
                 return;
             }
         }
@@ -483,14 +488,21 @@ void MainWindow::handleTabWidget()
         if (media->tracks_others_count)
         {
             // Add the "others" tab
-            ui->tabWidget->addTab(ui->tab_others, tabOtherIcon, tabOtherText);
+            ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
         }
 
         if (media->tracks_video_count || media->tracks_audio_count)
         {
             // Add the export tab
-            ui->tabWidget->addTab(ui->tab_exporter, tabExportIcon, tabExportText);
+            ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
         }
+
+#if 0 // ENABLE_DEBUG
+        {
+            // Add the developer tab
+            ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
+        }
+#endif
 
         // Restore the focus (if the same tab is available)
         for (int i = 0; i < ui->tabWidget->count(); i++)
@@ -537,6 +549,28 @@ void MainWindow::hideStatus()
 
 /* ************************************************************************** */
 
+void MainWindow::openExplorer()
+{
+    const MediaFile_t *media = currentMediaFile();
+
+    if (media)
+    {
+        // Load current MediaFile in ContainerExplorer
+
+        if (explorer)
+        {
+            explorer->loadMedia(media);
+            explorer->show();
+        }
+        else
+        {
+            explorer = new ContainerExplorer();
+            explorer->loadMedia(media);
+            explorer->show();
+        }
+    }
+}
+
 void MainWindow::openHexEditor()
 {
     QString file;
@@ -574,7 +608,7 @@ void MainWindow::openFourccHelper()
     }
 }
 
-void MainWindow::openAboutWindows()
+void MainWindow::openAbout()
 {
     if (aboutwindows)
     {

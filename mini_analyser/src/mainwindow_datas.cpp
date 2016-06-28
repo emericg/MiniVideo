@@ -349,32 +349,96 @@ int MainWindow::printDatas()
         // SUBS
         ////////////////////////////////////////////////////////////////////////
 
-        int stid = 0;
-        if (media->tracks_subt[stid] != NULL)
+        if (media->tracks_subtitles_count > 0)
         {
-            // TODO
+            if (media->tracks_subtitles_count > 1)
+            {
+                ui->comboBox_sub_selector->show();
+                for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
+                {
+                    if (media->tracks_subt[i])
+                    {
+                        QString text = "Subtitles track #" + QString::number(i);
+                        if (i != media->tracks_subt[i]->track_id)
+                            text += " (internal id #" + QString::number(media->tracks_subt[i]->track_id) + ")";
+                        ui->comboBox_sub_selector->addItem(text);
+                    }
+                }
+            }
+            else
+            {
+                ui->comboBox_sub_selector->hide();
+            }
+
+            printSubtitlesDetails();
         }
 
-        if (media->tracks_subtitles_count > 1)
+        // Other track(s)
+        ////////////////////////////////////////////////////////////////////////
+
+        if (media->tracks_audio_count <= 1 &&
+            media->tracks_video_count <= 1 &&
+            media->tracks_others_count <= 0)
         {
-            ui->comboBox_sub_selector->show();
+            ui->groupBox_other->hide();
+        }
+        else
+        {
+            ui->groupBox_other->show();
+
+            // Clean it up
+            if (ui->verticalLayout_other->layout() != NULL)
+            {
+                QLayoutItem *item;
+                while ((item = ui->verticalLayout_other->layout()->takeAt(0)) != NULL )
+                {
+                    delete item->widget();
+                    delete item;
+                }
+            }
+
+            // Add new tracks
+            for (unsigned i = 1; i < media->tracks_video_count; i++)
+            {
+                if (media->tracks_video[i])
+                {
+                    QString text = tr("Video track #") + QString::number(i) + "  /  ";
+                    text += getCodecString(stream_VIDEO, media->tracks_video[i]->stream_codec, false);
+
+                    QLabel *track = new QLabel(text);
+                    ui->verticalLayout_other->addWidget(track);
+                }
+            }
+            for (unsigned i = 1; i < media->tracks_audio_count; i++)
+            {
+                if (media->tracks_audio[i])
+                {
+                    QString text = tr("Audio track #") + QString::number(i) + "  /  ";
+                    text += getCodecString(stream_AUDIO, media->tracks_audio[i]->stream_codec, false);
+
+                    QLabel *track = new QLabel(text);
+                    ui->verticalLayout_other->addWidget(track);
+                }
+            }
             for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
             {
                 if (media->tracks_subt[i])
                 {
-                    QString text = "Subtitles track #" + QString::number(i);
-                    if (i != media->tracks_subt[i]->track_id)
-                        text += " (internal id #" + QString::number(media->tracks_subt[i]->track_id) + ")";
-                    ui->comboBox_sub_selector->addItem(text);
+                    QLabel *track = new QLabel("Subtitles track #" + QString::number(i));
+                    ui->verticalLayout_other->addWidget(track);
                 }
             }
-        }
-        else
-        {
-            ui->comboBox_sub_selector->hide();
-        }
+            for (unsigned i = 0; i < media->tracks_others_count; i++)
+            {
+                if (media->tracks_others[i])
+                {
+                    QLabel *track = new QLabel("Unknown track type (internal id #" + QString::number(media->tracks_others[i]->track_id) + ")");
+                    ui->verticalLayout_other->addWidget(track);
+                }
+            }
 
-        printSubtitlesDetails();
+            printOtherDetails();
+        }
     }
     else
     {
@@ -866,15 +930,78 @@ int MainWindow::printSubtitlesDetails()
 
     if (media)
     {
-/*
-        ui->label_sub_id->setText();
-        ui->label_sub_codec->setText();
-        ui->label_sub_encoding->setText();
-        ui->label_sub_lng->setText();
-        ui->label_sub_size->setText();
-        ui->label_sub_title->setText();
-*/
+        int subid = ui->comboBox_sub_selector->currentIndex();
+        if (subid < 0) subid = 0;
+
+        BitstreamMap_t *t = media->tracks_subt[subid];
+
+        if (t != NULL)
+        {
+            ui->groupBox_tab_subtitles->setTitle(tr("Subtitles track") + " #" + QString::number(subid + 1));
+
+            ui->label_sub_id->setText(QString::number(t->track_id));
+
+            if (t->track_title)
+            {
+                QString track_title = QString::fromLocal8Bit(t->track_title);
+                if (track_title.isEmpty())
+                {
+                    ui->label_67->hide();
+                    ui->label_video_title->hide();
+                }
+                else
+                {
+                    ui->label_67->show();
+                    ui->label_sub_title->show();
+                    ui->label_sub_title->setText(track_title);
+                }
+            }
+
+            QString track_language = getLanguageString(t->track_languagecode);
+            if (track_language.isEmpty())
+            {
+                ui->label_66->hide();
+                ui->label_sub_lng->hide();
+            }
+            else
+            {
+                ui->label_66->show();
+                ui->label_sub_lng->show();
+                ui->label_sub_lng->setText(track_language);
+            }
+
+            ui->label_sub_size->setText(getTrackSizeString(t, media->file_size, true));
+            ui->label_sub_codec->setText(getCodecString(stream_TEXT, t->stream_codec, true));
+
+            // TODO // set subtitles text!
+            //ui->label_sub_encoding->setText();
+            //ui->label_sub_size->setText();
+        }
     }
 
     return retcode;
+}
+
+int MainWindow::printOtherDetails()
+{
+    int retcode = 0;
+
+    MediaFile_t *media = currentMediaFile();
+
+    if (media)
+    {
+        //
+    }
+
+    return retcode;
+}
+
+void MainWindow::xAxisRangeChanged(const QCPRange &newRange)
+{
+
+}
+
+void MainWindow::yAxisRangeChanged(const QCPRange &newRange)
+{
+
 }

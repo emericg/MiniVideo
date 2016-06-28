@@ -28,6 +28,7 @@
 
 // minianalyser
 #include "hexeditor.h"
+#include "containerexplorer.h"
 #include "fourcchelper.h"
 #include "about.h"
 
@@ -39,6 +40,8 @@
 namespace Ui {
 class MainWindow;
 }
+
+class QCPRange;
 
 class MainWindow : public QMainWindow
 {
@@ -60,12 +63,16 @@ private slots:
         int printAudioDetails();
         int printVideoDetails();
         int printSubtitlesDetails();
+        int printOtherDetails();
 
     int generateExportDatas();
         int generateExportDatas_text(MediaFile_t *media, bool detailed);
         int generateExportDatas_json(MediaFile_t *media, bool detailed);
         int generateExportDatas_xml(MediaFile_t *media, bool detailed);
         int generateExportDatas_yaml(MediaFile_t *media, bool detailed);
+
+    void xAxisRangeChanged(const QCPRange &newRange);
+    void yAxisRangeChanged(const QCPRange &newRange);
 
     void hideStatus();
     void detachFile();
@@ -74,9 +81,10 @@ private slots:
     void closeFile(const QString &file);
     void closeFile();
 
+    void openExplorer();
     void openHexEditor();
     void openFourccHelper();
-    void openAboutWindows();
+    void openAbout();
     void About();
     void AboutQt();
 
@@ -87,6 +95,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
+    ContainerExplorer *explorer;
     HexEditor *hexeditor;
     FourccHelper *fcchelper;
     AboutWindows *aboutwindows;
@@ -121,6 +130,8 @@ private:
     QIcon tabOtherIcon;
     QString tabExportText;
     QIcon tabExportIcon;
+    QString tabDevText;
+    QIcon tabDevIcon;
 
     MediaFile_t *currentMediaFile();
     int analyseFile(const QString &file);

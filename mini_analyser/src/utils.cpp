@@ -148,7 +148,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
 
     if (track != NULL)
     {
-        qint64 size_int = track->stream_size;
+        quint64 size_int = track->stream_size;
 
         if (track->stream_size > 0)
         {
@@ -191,7 +191,7 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             }
 
             // Percentage
-            double sizepercent = ((double)size_int / (double)file_size) * 100.0;
+            double sizepercent = (static_cast<double>(size_int) / static_cast<double>(file_size)) * 100.0;
 
             if (sizepercent < 0.01)
                 size_qstr += " (~0.01%)";
@@ -400,7 +400,7 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "fre", lng_size) == 0)
             langage_qstr = QObject::tr("French");
         else
-            langage_qstr = QString::fromLatin1(languageCode, lng_size);
+            langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));
     }
 
     return langage_qstr;
