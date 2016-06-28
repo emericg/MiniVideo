@@ -36,9 +36,11 @@ typedef enum StreamType_e
     stream_AUDIO   = 1,
     stream_VIDEO   = 2,
     stream_TEXT    = 3,
+    stream_OTHER   = 4,
 
-    stream_MENU    = 4,
-    stream_TMCD    = 5
+    stream_MENU    = 5,
+    stream_TMCD    = 6,
+    stream_META    = 7
 
 } StreamType_e;
 
@@ -48,11 +50,13 @@ typedef enum SampleType_e
     sample_UNKNOWN = 0,
 
     sample_AUDIO,
+    sample_AUDIO_TAG,
 
     sample_VIDEO,
-    sample_VIDEO_IDR,
+    sample_VIDEO_SYNC,
     sample_VIDEO_PARAM,
 
+    sample_TEXT,
     sample_TEXT_FILE,
 
     sample_OTHER

@@ -412,12 +412,18 @@ QString getSampleTypeString(const unsigned sampleType)
 
     if (sampleType == sample_AUDIO)
         sample_type_qstr = QObject::tr("Audio sample");
+    if (sampleType == sample_AUDIO_TAG)
+        sample_type_qstr = QObject::tr("Audio tag");
     else if (sampleType == sample_VIDEO)
         sample_type_qstr = QObject::tr("Video sample");
-    else if (sampleType == sample_VIDEO_IDR)
-        sample_type_qstr = QObject::tr("Video Sync sample");
+    else if (sampleType == sample_VIDEO_SYNC)
+        sample_type_qstr = QObject::tr("Video sync sample");
     else if (sampleType == sample_VIDEO_PARAM)
-        sample_type_qstr = QObject::tr("Video parameter sample");
+        sample_type_qstr = QObject::tr("Video parameter");
+    else if (sampleType == sample_TEXT)
+        sample_type_qstr = QObject::tr("Text sample");
+    else if (sampleType == sample_TEXT_FILE)
+        sample_type_qstr = QObject::tr("Text file");
     else if (sampleType == sample_OTHER)
         sample_type_qstr = QObject::tr("Other sample");
     else

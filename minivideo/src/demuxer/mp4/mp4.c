@@ -320,7 +320,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 for (j = 0; j < track->stss_entry_count; j++)
                 {
                     if (i == (track->stss_sample_number[j] - 1))
-                        map->sample_type[sid] = sample_VIDEO_IDR;
+                        map->sample_type[sid] = sample_VIDEO_SYNC;
                 }
             }
             else if (track->handlerType == HANDLER_AUDIO)

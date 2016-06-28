@@ -92,7 +92,7 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
 
                             if (next_byte == 0x65)
                             {
-                                media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_IDR;
+                                media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_SYNC;
 
                                 media->tracks_video[0]->sample_count++;
                                 media->tracks_video[0]->frame_count_idr++;
