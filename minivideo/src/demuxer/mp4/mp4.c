@@ -192,9 +192,25 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 media->tracks_video_count++;
             }
         }
+        else if (track->handlerType == HANDLER_TEXT)
+        {
+            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], track->stsz_sample_count);
+            if (retcode == SUCCESS)
+            {
+                map = media->tracks_subt[media->tracks_subtitles_count];
+                media->tracks_subtitles_count++;
+            }
+        }
         else
         {
-            TRACE_WARNING(MP4, "We can only build bitstream map for audio and video tracks! (track #%u handlerType: %u)\n", track->id, track->handlerType);
+            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %u)\n", track->id, track->handlerType);
+
+            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], track->stsz_sample_count);
+            if (retcode == SUCCESS)
+            {
+                map = media->tracks_others[media->tracks_others_count];
+                media->tracks_others_count++;
+            }
         }
     }
 
@@ -303,6 +319,14 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                     map->sample_dts[i + track->sps_count] = -1;
                 }
             }
+        }
+        else if (track->handlerType == HANDLER_SUBT)
+        {
+            map->stream_type = stream_TEXT;
+        }
+        else //if (track->handlerType == HANDLER_)
+        {
+            map->stream_type = stream_UNKNOWN;
         }
 
         // Set samples details into the bitstream map
@@ -1586,7 +1610,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     switch (track->handlerType)
     {
         case HANDLER_AUDIO:
-
+        {
             // AudioSampleEntry
             // Box Types: ‘mp4a’
 
@@ -1595,10 +1619,15 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 track->codec = CODEC_AAC;
                 TRACE_1(MP4, "> Audio track is using AAC codec\n");
             }
-            else if (box_subheader.boxtype == fcc_AC3)
+            else if (box_subheader.boxtype == fcc_AC3 || box_subheader.boxtype == fcc_ac3)
             {
                 track->codec = CODEC_AC3;
                 TRACE_1(MP4, "> Audio track is using AC3 codec\n");
+            }
+            else if (box_subheader.boxtype == fcc_AC4 || box_subheader.boxtype == fcc_ac4)
+            {
+                track->codec = CODEC_AC4;
+                TRACE_1(MP4, "> Audio track is using AC4 codec\n");
             }
             else if (box_subheader.boxtype == fcc_sowt)
             {
@@ -1622,11 +1651,10 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
 
             track->sample_rate = read_bits(bitstr, 16);
-
-        break;
+        } break;
 
         case HANDLER_VIDEO:
-
+        {
             // VisualSampleEntry
             // Box Types: 'avc1', 'm4ds', 'hev1', 'CFHD'
 
@@ -1747,8 +1775,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     jumpy_mp4(bitstr, &box_subheader, &box_subsubheader);
                 }
             }
-
-        break;
+        } break;
 
         case HANDLER_TEXT:
         break;

@@ -67,7 +67,8 @@ typedef struct MediaFile_t
     unsigned int tracks_subtitles_count;
     BitstreamMap_t *tracks_subt[16];    //!< A list of parsed subtitles tracks
 
-    unsigned int tracks_others_count;   //!< Other tracks found in the container but left unparsed (metadatas, timecodes, ...)
+    unsigned int tracks_others_count;
+    BitstreamMap_t *tracks_others[16];  //!< Other "unknown" tracks found in the container (metadatas, timecodes, ...)
 
 } MediaFile_t;
 
