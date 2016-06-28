@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/icon.svg</normaloff>:/icons/icons/icon.svg</iconset>
+    <normaloff>:/img/app/icon.png</normaloff>:/img/app/icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(245, 245, 245);</string>
