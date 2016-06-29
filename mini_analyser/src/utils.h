@@ -57,6 +57,13 @@ QString getTimestampString(const uint64_t timestamp);
 QString getSizeString(const int64_t size);
 
 /*!
+ * \brief Get a track type string from a track structure.
+ * \param track: Track structure (from StreamType_e).
+ * \return Track type QString.
+ */
+QString getTrackTypeString(const BitstreamMap_t *track);
+
+/*!
  * \brief Compute a track size string from a track structure.
  * \param track: Track structure.
  * \param file_size: File size in bytes.
@@ -104,6 +111,11 @@ QString getFramerateModeString(const unsigned framerateMode);
 
 QString getLanguageString(const char *languageCode);
 
+/*!
+ * \brief Get a sample type string.
+ * \param sampleType: The sample type (from SampleType_e).
+ * \return Sample type QString.
+ */
 QString getSampleTypeString(const unsigned sampleType);
 
 /* ************************************************************************** */

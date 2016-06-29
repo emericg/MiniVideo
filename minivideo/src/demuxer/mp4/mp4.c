@@ -320,11 +320,24 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 }
             }
         }
-        else if (track->handlerType == HANDLER_SUBT)
+        else if (track->handlerType == HANDLER_SUBT ||
+                 track->handlerType == HANDLER_TEXT)
         {
             map->stream_type = stream_TEXT;
         }
-        else //if (track->handlerType == HANDLER_)
+        else if (track->handlerType == HANDLER_TMCD)
+        {
+            map->stream_type = stream_TMCD;
+        }
+        else if (track->handlerType == HANDLER_META)
+        {
+            map->stream_type = stream_META;
+        }
+        else if (track->handlerType == HANDLER_HINT)
+        {
+            map->stream_type = stream_HINT;
+        }
+        else
         {
             map->stream_type = stream_UNKNOWN;
         }

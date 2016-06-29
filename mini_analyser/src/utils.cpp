@@ -142,6 +142,50 @@ QString getSizeString(const int64_t size)
     return size_qstr;
 }
 
+QString getTrackTypeString(const BitstreamMap_t *track)
+{
+    QString type_qstr;
+
+    if (track != NULL)
+    {
+        switch (track->stream_type)
+        {
+        case stream_UNKNOWN:
+            type_qstr = QObject::tr("Unknown");
+            break;
+
+        case stream_AUDIO:
+            type_qstr = QObject::tr("Audio");
+            break;
+        case stream_VIDEO:
+            type_qstr = QObject::tr("Video");
+            break;
+        case stream_TEXT:
+            type_qstr = QObject::tr("Text");
+            break;
+
+        case stream_MENU:
+            type_qstr = QObject::tr("Menu");
+            break;
+        case stream_TMCD:
+            type_qstr = QObject::tr("Timecode");
+            break;
+        case stream_META:
+            type_qstr = QObject::tr("Metadatas");
+            break;
+        case stream_HINT:
+            type_qstr = QObject::tr("Hint");
+            break;
+        }
+    }
+    else
+    {
+        type_qstr = QObject::tr("NULL track");
+    }
+
+    return type_qstr;
+}
+
 QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size, const bool detailed)
 {
     QString size_qstr;
