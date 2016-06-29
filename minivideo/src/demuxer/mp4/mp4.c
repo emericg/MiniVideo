@@ -364,6 +364,15 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             {
                 map->sample_type[sid] = sample_AUDIO;
             }
+            else if (track->handlerType == HANDLER_SUBT ||
+                     track->handlerType == HANDLER_TEXT)
+            {
+                map->sample_type[sid] = sample_TEXT;
+            }
+            else
+            {
+                map->sample_type[sid] = sample_OTHER;
+            }
 
             // Set sample size
             if (track->stsz_entry_size)
@@ -376,6 +385,9 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 map->bitrate_mode = BITRATE_CBR;
                 map->sample_size[sid] = track->stsz_sample_size;
             }
+
+            // Contribute to stream size
+            map->stream_size += map->sample_size[sid];
         }
 
         // Set sample decoding and presentation timecodes

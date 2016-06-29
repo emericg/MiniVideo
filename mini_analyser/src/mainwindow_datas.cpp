@@ -402,7 +402,7 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_video[i])
                 {
-                    QString text = tr("Video track #") + QString::number(i) + "  /  ";
+                    QString text = "▸ " + tr("Video track #") + QString::number(i+1) + "  /  ";
                     text += getCodecString(stream_VIDEO, media->tracks_video[i]->stream_codec, false);
 
                     QLabel *track = new QLabel(text);
@@ -413,8 +413,14 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_audio[i])
                 {
-                    QString text = tr("Audio track #") + QString::number(i) + "  /  ";
+                    QString text = "▸ " + tr("Audio track #") + QString::number(i+1) + "  /  ";
                     text += getCodecString(stream_AUDIO, media->tracks_audio[i]->stream_codec, false);
+                    QString lng = getLanguageString(media->tracks_audio[i]->track_languagecode);
+                    if (lng.isEmpty() == false)
+                    {
+                        text += "  /  ";
+                        text += lng;
+                    }
 
                     QLabel *track = new QLabel(text);
                     ui->verticalLayout_other->addWidget(track);
@@ -424,7 +430,7 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_subt[i])
                 {
-                    QLabel *track = new QLabel("Subtitles track #" + QString::number(i));
+                    QLabel *track = new QLabel("▸ " + tr("Subtitles track #") + QString::number(i+1));
                     ui->verticalLayout_other->addWidget(track);
                 }
             }
@@ -432,7 +438,9 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_others[i])
                 {
-                    QLabel *track = new QLabel("Unknown track type (internal id #" + QString::number(media->tracks_others[i]->track_id) + ")");
+                    QString text = "▸ " + getTrackTypeString(media->tracks_others[i]) + tr(" track (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+
+                    QLabel *track = new QLabel(text);
                     ui->verticalLayout_other->addWidget(track);
                 }
             }
@@ -824,7 +832,7 @@ int MainWindow::printVideoDetails()
 
             uint64_t rawsize = t->width * t->height * (t->color_depth / 8);
             rawsize *= t->sample_count;
-            uint64_t ratio = round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
+            uint64_t ratio = static_cast<uint64_t>(std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size)));
             ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
 
             // Video bitrate graph
@@ -990,7 +998,41 @@ int MainWindow::printOtherDetails()
 
     if (media)
     {
-        //
+        // Clean it up
+        if (ui->verticalLayout_other2_track->layout() != NULL)
+        {
+            QLayoutItem *item;
+            while ((item = ui->verticalLayout_other2_track->layout()->takeAt(0)) != NULL )
+            {
+                delete item->widget();
+                delete item;
+            }
+        }
+        if (ui->verticalLayout_other2_tags->layout() != NULL)
+        {
+            QLayoutItem *item;
+            while ((item = ui->verticalLayout_other2_tags->layout()->takeAt(0)) != NULL )
+            {
+                delete item->widget();
+                delete item;
+            }
+        }
+
+        // Add new tracks
+        for (unsigned i = 0; i < media->tracks_others_count; i++)
+        {
+            if (media->tracks_others[i])
+            {
+                QString text = "▸ " + getTrackTypeString(media->tracks_others[i]) + tr(" track (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+
+                QLabel *track = new QLabel(text);
+                ui->verticalLayout_other2_track->addWidget(track);
+            }
+        }
+
+        // Add new tags
+        QLabel *tag = new QLabel(tr("No tags found"));
+        ui->verticalLayout_other2_tags->addWidget(tag);
     }
 
     return retcode;

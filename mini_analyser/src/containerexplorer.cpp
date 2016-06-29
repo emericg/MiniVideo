@@ -144,7 +144,7 @@ void ContainerExplorer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, tr("Other #") + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_others[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_others[i];
             }
         }

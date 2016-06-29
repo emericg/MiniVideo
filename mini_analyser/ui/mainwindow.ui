@@ -47,34 +47,8 @@
      <number>6</number>
     </property>
     <property name="verticalSpacing">
-     <number>6</number>
+     <number>9</number>
     </property>
-    <item row="0" column="3">
-     <widget class="QPushButton" name="pushButton_file_exit">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0" colspan="6">
      <widget class="QLabel" name="statusLabel">
       <property name="minimumSize">
@@ -92,8 +66,8 @@ background: rgba(255, 170, 0, 128);</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_file_reload">
+    <item row="0" column="3">
+     <widget class="QPushButton" name="pushButton_file_exit">
       <property name="maximumSize">
        <size>
         <width>32</width>
@@ -105,7 +79,7 @@ background: rgba(255, 170, 0, 128);</string>
       </property>
       <property name="icon">
        <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
+        <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -142,6 +116,59 @@ background: rgba(255, 170, 0, 128);</string>
       <property name="flat">
        <bool>true</bool>
       </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QPushButton" name="pushButton_file_reload">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3">
+     <widget class="QComboBox" name="file_comboBox">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>Drag and drop files to get them analysed!</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="2" column="0" colspan="6">
@@ -3097,7 +3124,7 @@ background: rgba(255, 170, 0, 128);</string>
         <string>Other track(s)</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_9">
-        <property name="topMargin">
+        <property name="leftMargin">
          <number>6</number>
         </property>
         <property name="rightMargin">
@@ -3111,6 +3138,23 @@ background: rgba(255, 170, 0, 128);</string>
           <property name="title">
            <string>Other tracks</string>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_other2_track"/>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -3118,6 +3162,23 @@ background: rgba(255, 170, 0, 128);</string>
           <property name="title">
            <string>Other tags</string>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_other2_tags"/>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -3342,33 +3403,6 @@ background: rgba(255, 170, 0, 128);</string>
         </item>
        </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="3">
-     <widget class="QComboBox" name="file_comboBox">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>Drag and drop files to get them analysed!</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
-       </property>
-      </item>
      </widget>
     </item>
    </layout>
