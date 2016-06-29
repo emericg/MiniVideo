@@ -35,8 +35,8 @@
  * http://www.fourcc.org/codecs.php
  * http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
  *
- * Upper and lower cases are present, because we never know what will hit us
- * with those AVI containers...
+ * Both upper and lower cases FourCC are present sometimes, because we encountered
+ * in the wild...
  * These FourCC are set in big endian in this enum, so you may want to flip them
  * if you are reading them from Windows specific stuff (ex: WVF structures).
  */
@@ -161,13 +161,30 @@ typedef enum fourcc_list_e
     fcc_ac4  = 0x61632D34, //!< ac-4
 
     // Uncompressed audio
+    fcc_araw = 0x61726177, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_aflt = 0x61666C74, //!<
     fcc_sowt = 0x736F7774, //!< 16-bit signed linear PCM (little endian)
     fcc_tows = 0x74647773, //!< 16-bit signed linear PCM (big endian)
-    fcc_raw  = 0x72617720, //!< 16-bit unsigned linear PCM (little endian)
     fcc_in24 = 0x696E3234, //!< 24-bit signed linear PCM (big endian)
     fcc_in32 = 0x696E3332, //!< 32-bit signed linear PCM (big endian)
-    fcc_fl32 = 0x666C3332, //!< 32-bit floating point linear PCM (? endian)
-    fcc_fl64 = 0x666C3634, //!< 64-bit floating point linear PCM (? endian)
+    fcc_s8   = 0x73382020, //!< 8-bit signed linear PCM
+    fcc_u8   = 0x75382020, //!< 8-bit unsigned linear PCM
+    fcc_s16l = 0x7331366C, //!< 16-bit signed linear PCM (little endian)
+    fcc_s16b = 0x73313662, //!< 16-bit signed linear PCM (big endian)
+    fcc_s24l = 0x7332346C, //!< 24-bit signed linear PCM (little endian)
+    fcc_s24b = 0x73323462, //!< 24-bit signed linear PCM (big endian)
+    fcc_s32l = 0x7333326C, //!< 32-bit signed linear PCM (little endian)
+    fcc_s32b = 0x73333262, //!< 32-bit signed linear PCM (big endian)
+    fcc_u16l = 0x7531366C, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_u16b = 0x75313662, //!< 16-bit unsigned linear PCM (big endian)
+    fcc_u24l = 0x7532346C, //!< 24-bit unsigned linear PCM (little endian)
+    fcc_u24b = 0x75323462, //!< 24-bit unsigned linear PCM (big endian)
+    fcc_u32l = 0x7533326C, //!< 32-bit unsigned linear PCM (little endian)
+    fcc_u32b = 0x75333262, //!< 32-bit unsigned linear PCM (big endian)
+    fcc_fl32 = 0x666C3332, //!< 32-bit floating point linear PCM (little endian)
+    fcc_f32l = 0x6633326C, //!< 32-bit floating point linear PCM (little endian)
+    fcc_fl64 = 0x666C3634, //!< 64-bit floating point linear PCM (little endian)
+    fcc_f64l = 0x6636346C, //!< 64-bit floating point linear PCM (little endian)
     fcc_alaw = 0x616C6177, //!< A-law logarithmic PCM
     fcc_ulaw = 0x756C6177  //!< mu-law logarithmic PCM
 

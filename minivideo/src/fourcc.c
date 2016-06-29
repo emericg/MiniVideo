@@ -37,26 +37,26 @@ char *getFccString_le(const uint32_t fcc_in, char *fcc_out)
 {
     if (fcc_out)
     {
-        fcc_out[0] = (fcc_in >> 24) & 0xFF;
-        fcc_out[1] = (fcc_in >> 16) & 0xFF;
-        fcc_out[2] = (fcc_in >>  8) & 0xFF;
-        fcc_out[3] = (fcc_in >>  0) & 0xFF;
+        fcc_out[0] = (char)((fcc_in >> 24) & 0xFF);
+        fcc_out[1] = (char)((fcc_in >> 16) & 0xFF);
+        fcc_out[2] = (char)((fcc_in >>  8) & 0xFF);
+        fcc_out[3] = (char)((fcc_in >>  0) & 0xFF);
         fcc_out[4] = '\0';
 
         return fcc_out;
     }
 
-    return "0000";
+    return NULL;
 }
 
 char *getFccString_be(const uint32_t fcc_in, char *fcc_out)
 {
     if (fcc_out)
     {
-        fcc_out[0] = (fcc_in >>  0) & 0xFF;
-        fcc_out[1] = (fcc_in >>  8) & 0xFF;
-        fcc_out[2] = (fcc_in >> 16) & 0xFF;
-        fcc_out[3] = (fcc_in >> 24) & 0xFF;
+        fcc_out[0] = (char)((fcc_in >>  0) & 0xFF);
+        fcc_out[1] = (char)((fcc_in >>  8) & 0xFF);
+        fcc_out[2] = (char)((fcc_in >> 16) & 0xFF);
+        fcc_out[3] = (char)((fcc_in >> 24) & 0xFF);
         fcc_out[4] = '\0';
 
         return fcc_out;
@@ -208,11 +208,32 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_AC3;
         break;
 
+    case fcc_AC4:
+    case fcc_ac4:
+        codec = CODEC_AC4;
+        break;
+
+    case fcc_araw:
     case fcc_sowt:
     case fcc_tows:
-    case fcc_raw:
     case fcc_in24:
     case fcc_in32:
+    case fcc_s8:
+    case fcc_u8:
+    case fcc_s16l:
+    case fcc_s16b:
+    case fcc_s24l:
+    case fcc_s24b:
+    case fcc_s32l:
+    case fcc_s32b:
+    case fcc_u16l:
+    case fcc_u16b:
+    case fcc_u24l:
+    case fcc_u24b:
+    case fcc_u32l:
+    case fcc_u32b:
+    case fcc_f32l:
+    case fcc_f64l:
     case fcc_fl32:
     case fcc_fl64:
         codec = CODEC_LPCM;
