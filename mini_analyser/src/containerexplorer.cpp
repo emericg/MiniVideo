@@ -37,6 +37,7 @@ ContainerExplorer::ContainerExplorer(QWidget *parent) :
 
     ui->widget_hex->setReadOnly(true);
 
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSwitch(int)));
     connect(ui->tabWidget_tracks, SIGNAL(currentChanged(int)), this, SLOT(loadSamples(int)));
 
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
@@ -50,7 +51,7 @@ ContainerExplorer::~ContainerExplorer()
 
 void ContainerExplorer::resizeEvent(QResizeEvent *event)
 {
-    //ui->widget_hex->resize(event->size());
+    //
 }
 
 void ContainerExplorer::loadMedia(const MediaFile_t *media)
@@ -60,8 +61,6 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
         this->media = (MediaFile_t *)media;
         file.setFileName(QString::fromLocal8Bit(media->file_path));
 
-        qDebug() << "LOADING MEDIA:" << QString::fromLocal8Bit(media->file_path);
-
         if (!ui->widget_hex->setData(file))
         {
             return;
@@ -69,6 +68,7 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
 
         loadTracks();
         loadSamples(0);
+        containerSelection();
     }
 }
 
@@ -98,11 +98,21 @@ void ContainerExplorer::closeMedia()
     media = NULL;
 }
 
+void ContainerExplorer::tabSwitch(int index)
+{
+    if (index == 1)
+    {
+        sampleSelection();
+    }
+    else
+    {
+        containerSelection();
+    }
+}
+
 void ContainerExplorer::loadTracks()
 {
     ui->tabWidget_tracks->clear();
-
-    qDebug() << "LOADING TRACKS";
 
     if (media)
     {
@@ -153,9 +163,9 @@ void ContainerExplorer::loadTracks()
 
 void ContainerExplorer::loadSamples(int tid)
 {
-    ui->listWidget->clear();
+    //qDebug() << "loadSamples(track #" << tid << ")";
 
-    qDebug() << "loadSamples(track #" << tid << ")";
+    ui->listWidget->clear();
 
     if (media && tracks[tid])
     {
@@ -171,7 +181,15 @@ void ContainerExplorer::loadSamples(int tid)
         track = NULL;
     }
 
-    ui->listWidget->setCurrentRow(0);
+    if (ui->tabWidget->currentIndex() == 1)
+    {
+        ui->listWidget->setCurrentRow(0);
+    }
+}
+
+void ContainerExplorer::sampleSelection()
+{
+    sampleSelection(ui->listWidget->currentRow());
 }
 
 void ContainerExplorer::sampleSelection(int sid)
@@ -180,7 +198,7 @@ void ContainerExplorer::sampleSelection(int sid)
 
     clearContent();
 
-    if (track && static_cast<uint32_t>(sid) < track->sample_count)
+    if (media && track && static_cast<uint32_t>(sid) < track->sample_count)
     {
         int64_t offset = track->sample_offset[sid];
         int64_t size = track->sample_size[sid];
@@ -190,7 +208,7 @@ void ContainerExplorer::sampleSelection(int sid)
         dts += "   (" + getTimestampString(track->sample_dts[sid]) + ")";
 
         // Infos
-        ui->labelTitle->setText(tr("Sample #") + QString::number(sid));
+        ui->labelTitle->setText(getSampleTypeString(track->sample_type[sid]) + " #" + QString::number(sid));
         QLabel *lt = new QLabel(tr("> Type"));
         QLabel *lo = new QLabel(tr("> Offset"));
         QLabel *ls = new QLabel(tr("> Size"));
@@ -234,8 +252,6 @@ void ContainerExplorer::sampleSelection(int sid)
 
 void ContainerExplorer::containerSelection()
 {
-    qDebug() << "Container selection";
-
     clearContent();
 
     // Infos
@@ -250,8 +266,6 @@ void ContainerExplorer::containerSelection()
 
 void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
 {
-    qDebug() << "Container selection";
-
     clearContent();
 
     // Infos

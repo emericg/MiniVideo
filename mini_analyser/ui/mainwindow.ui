@@ -1167,7 +1167,11 @@ background: rgba(255, 170, 0, 128);</string>
                 <number>3</number>
                </property>
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_other"/>
+                <layout class="QVBoxLayout" name="verticalLayout_other">
+                 <property name="spacing">
+                  <number>4</number>
+                 </property>
+                </layout>
                </item>
               </layout>
              </widget>
@@ -2943,6 +2947,9 @@ background: rgba(255, 170, 0, 128);</string>
              <property name="horizontalSpacing">
               <number>12</number>
              </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_68">
                <property name="maximumSize">
@@ -3152,7 +3159,11 @@ background: rgba(255, 170, 0, 128);</string>
             <number>3</number>
            </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_other2_track"/>
+            <layout class="QVBoxLayout" name="verticalLayout_other2_track">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -3176,7 +3187,11 @@ background: rgba(255, 170, 0, 128);</string>
             <number>3</number>
            </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_other2_tags"/>
+            <layout class="QVBoxLayout" name="verticalLayout_other2_tags">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -3356,6 +3371,12 @@ background: rgba(255, 170, 0, 128);</string>
           <layout class="QGridLayout" name="gridLayout_22">
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_21">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_71">
                <property name="text">
@@ -3376,6 +3397,12 @@ background: rgba(255, 170, 0, 128);</string>
           <layout class="QGridLayout" name="gridLayout_24">
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_23">
+             <property name="horizontalSpacing">
+              <number>12</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label_82">
                <property name="text">

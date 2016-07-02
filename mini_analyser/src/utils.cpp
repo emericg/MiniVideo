@@ -456,7 +456,7 @@ QString getSampleTypeString(const unsigned sampleType)
 
     if (sampleType == sample_AUDIO)
         sample_type_qstr = QObject::tr("Audio sample");
-    if (sampleType == sample_AUDIO_TAG)
+    else if (sampleType == sample_AUDIO_TAG)
         sample_type_qstr = QObject::tr("Audio tag");
     else if (sampleType == sample_VIDEO)
         sample_type_qstr = QObject::tr("Video sample");

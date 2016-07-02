@@ -378,6 +378,7 @@ int MainWindow::printDatas()
 
         if (media->tracks_audio_count <= 1 &&
             media->tracks_video_count <= 1 &&
+            media->tracks_subtitles_count <= 0 &&
             media->tracks_others_count <= 0)
         {
             ui->groupBox_other->hide();

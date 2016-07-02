@@ -64,7 +64,9 @@ public:
     void loadTracks();
 
 public slots:
+    void tabSwitch(int intex);
     void loadSamples(int track_id);
+    void sampleSelection();
     void sampleSelection(int sample_id);
     void containerSelection();
     void containerSelection(QTreeWidgetItem *item, int column);
