@@ -153,7 +153,8 @@ typedef struct Mp4_t
  * of identification, and is shown so in the boxes below. User extensions use
  * an extended type; in this case, the type field is set to 'uuid'.
  *
- * The boxes marked with an * are mandatory.
+ * The boxes marked with an (*) are mandatory.
+ * The boxes marked with an (v) are vendor specific.
  */
 typedef enum Mp4BoxType_e
 {
@@ -161,6 +162,7 @@ typedef enum Mp4BoxType_e
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
     BOX_UDTA = 0x75647461,                      //!< user data box
+        BOX_HMMT = 0x686D6D74,                  //!< (v) GoPro HiLight tags
 
     BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
         BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations
@@ -244,17 +246,20 @@ typedef enum Mp4BoxType_e
  * \enum Mp4HandlerType_e
  * \brief Identifies the content of a track.
  *
- * There are four handler type: audio, video, hint and meta.
+ * There are four major handler type: audio, video, hint and meta.
+ * For others, see: http://www.mp4ra.org/index.html
  */
 typedef enum Mp4HandlerType_e
 {
     HANDLER_AUDIO = 0x736F756E, //!< 'soun'
     HANDLER_VIDEO = 0x76696465, //!< 'vide'
+    HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
+    HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
+    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
+
     HANDLER_SUBT  = 0x73756274, //!< 'subt'
-    HANDLER_TEXT  = 0x74657874, //!< 'text'
-    HANDLER_META  = 0x6D657461, //!< 'meta'
-    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd'
-    HANDLER_HINT  = 0x68696E74  //!< 'hint'
+    HANDLER_SBTL  = 0x7362746c, //!< 'sbtl' // QuickTime Subtitle track
+    HANDLER_TEXT  = 0x74657874  //!< 'text'
 
     // sdsm // SceneDescriptionStream
     // odsm // ObjectDescriptorStream
