@@ -72,8 +72,8 @@ typedef struct Mp4Track_t
 
         // Audio specific parameters
         unsigned int channel_count;
-        unsigned int sample_size;
-        unsigned int sample_rate;
+        unsigned int sample_size_bits;
+        unsigned int sample_rate_hz;
 
         // Video specific parameters
         unsigned int width;

@@ -256,9 +256,9 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         if (track->handlerType == HANDLER_AUDIO)
         {
             map->stream_type = stream_AUDIO;
-            map->sampling_rate = track->sample_rate;
+            map->sampling_rate = track->sample_rate_hz;
             map->channel_count = track->channel_count;
-            map->bit_per_sample = track->sample_size;
+            map->bit_per_sample = track->sample_size_bits;
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
@@ -348,6 +348,24 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         // Set samples details into the bitstream map
         ////////////////////////////////////////////////////////////////
 
+        // Bitrate mode
+        uint32_t sample_size_cbr = 0;
+        if (!track->stsz_entry_size)
+        {
+            // Assume constant sample size
+            map->bitrate_mode = BITRATE_CBR;
+            sample_size_cbr = track->stsz_sample_size;
+
+            // PCM hack
+            if (track->stsz_sample_size == 1 &&
+                (track->codec == CODEC_LPCM || track->codec == CODEC_LogPCM ||
+                 track->codec == CODEC_DPCM || track->codec == CODEC_ADPCM))
+            {
+                sample_size_cbr = track->channel_count * (track->sample_size_bits/8);
+            }
+        }
+
+        // Set sample type & size
         for (i = 0; i < track->stsz_sample_count; i++)
         {
             unsigned sid = i + track->sps_count + track->pps_count; // Sample id
@@ -383,11 +401,9 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             {
                 map->sample_size[sid] = track->stsz_entry_size[i];
             }
-            else
+            else // Assume constant sample size
             {
-                // Assume constant sample size
-                map->bitrate_mode = BITRATE_CBR;
-                map->sample_size[sid] = track->stsz_sample_size;
+                map->sample_size[sid] = sample_size_cbr;
             }
 
             // Contribute to stream size
@@ -1674,12 +1690,12 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             /*const unsigned int reserved[1] =*/ read_bits(bitstr, 32);
 
             track->channel_count = read_bits(bitstr, 16);
-            track->sample_size = read_bits(bitstr, 16);
+            track->sample_size_bits = read_bits(bitstr, 16);
 
             /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
             /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
 
-            track->sample_rate = read_bits(bitstr, 16);
+            track->sample_rate_hz = read_bits(bitstr, 16);
         } break;
 
         case HANDLER_VIDEO:
