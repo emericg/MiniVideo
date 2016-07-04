@@ -530,7 +530,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                     // FIXME // sample description index is not taken into account
                     if (l == 0)
                     {
-                        map->sample_offset[index++] = track->stco_chunk_offset[chunkOffset] + 4; // +4 cause we depacketize
+                        map->sample_offset[index++] = track->stco_chunk_offset[chunkOffset];
                     }
                     else
                     {
