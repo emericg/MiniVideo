@@ -177,7 +177,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -334,7 +334,7 @@ background: rgba(255, 170, 0, 128);</string>
              <x>0</x>
              <y>0</y>
              <width>613</width>
-             <height>640</height>
+             <height>637</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -360,7 +360,7 @@ background: rgba(255, 170, 0, 128);</string>
                 <number>3</number>
                </property>
                <property name="topMargin">
-                <number>6</number>
+                <number>3</number>
                </property>
                <property name="rightMargin">
                 <number>3</number>
@@ -1994,9 +1994,6 @@ background: rgba(255, 170, 0, 128);</string>
         <property name="leftMargin">
          <number>6</number>
         </property>
-        <property name="topMargin">
-         <number>9</number>
-        </property>
         <property name="rightMargin">
          <number>6</number>
         </property>
@@ -3221,9 +3218,6 @@ background: rgba(255, 170, 0, 128);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <property name="leftMargin">
-         <number>6</number>
-        </property>
-        <property name="topMargin">
          <number>6</number>
         </property>
         <property name="rightMargin">
