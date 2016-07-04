@@ -34,7 +34,8 @@ typedef enum ContainerFormat_e
 {
     CONTAINER_UNKNOWN = 0,
 
-    // General purpose containers
+    // General purpose containers //////////////////////////////////////////////
+
     CONTAINER_AVI     =  1, //!< AVI "Audio Video Interleave" (.avi, ...)
     CONTAINER_ASF     =  2, //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
     CONTAINER_MKV     =  3, //!< Matroska (.mkv, .mka, .webm)
@@ -47,11 +48,13 @@ typedef enum ContainerFormat_e
     CONTAINER_OGG     = 10, //!< OGG (.ogg, .ogv, .oga, ...)
     CONTAINER_RM      = 11, //!< RealMedia (.rm, .rmvb)
 
-    // Audio containers
+    // Audio containers ////////////////////////////////////////////////////////
+
     CONTAINER_FLAC    = 12, //!< FLAC "Free Lossless Audio Codec" (.flac)
     CONTAINER_WAVE    = 13, //!< WAVE "Waveform Audio File Format" (.wav)
 
-    // ES formats (not containers!)
+    // ES formats (not containers!) ////////////////////////////////////////////
+
     CONTAINER_ES      = 16, //!< Undefined "Elementary Stream"
     CONTAINER_ES_AAC  = 17, //!< AAC "Elementary Stream"
     CONTAINER_ES_AC3  = 18, //!< AC3 "Elementary Stream"
@@ -64,31 +67,20 @@ typedef enum AVCodec_e
 {
     CODEC_UNKNOWN     = 0,
 
-    // Raw audio
-    CODEC_LPCM        =  1, //!< Linear pulse-code modulation
-    CODEC_LogPCM      =  2, //!< Logarithmic pulse-code modulation
-    CODEC_DPCM        =  3, //!< Differential pulse-code modulation
-    CODEC_ADPCM       =  4, //!< Adaptative differential pulse-code modulation
-    CODEC_PDM         =  5, //!< Pulse-density modulation
+    // Audio codecs ////////////////////////////////////////////////////////////
 
-    // Lossless audio codecs
-    CODEC_APE         =  8, //!< Monkey's Audio
-    CODEC_FLAC        =  9, //!< Free Lossless Audio Codec
-    CODEC_ALAC        = 10, //!< Apple Lossless Audio Codec
-
-    // Audio codecs
-    CODEC_MPEG_L1     = 16, //!< MP1, or MPEG 1/2 Audio Layer I
-    CODEC_MPEG_L2     = 17, //!< MP2, or MPEG 1/2 Audio Layer II
-    CODEC_MPEG_L3     = 18, //!< MP3, or MPEG 1/2 Audio Layer III
-    CODEC_AAC         = 19, //!< Advanced Audio Coding, MPEG-2 Part 7 and MPEG-4 Part 3
-    CODEC_AAC_HE      = 20, //!< "High Efficiency" AAC
-    CODEC_AAC_LD      = 21, //!< "Low Delay" AAC
-    CODEC_MPEG4_ALS   = 22, //!<
-    CODEC_MPEG4_CELP  = 23, //!<
-    CODEC_MPEG4_DST   = 24, //!<
-    CODEC_MPEG4_HVXC  = 25, //!<
-    CODEC_MPEG4_SLS   = 26, //!<
-    CODEC_MPEGH_3D_AUDIO = 27, //!<
+    CODEC_MPEG_L1     =  1, //!< MP1, or MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L2     =  2, //!< MP2, or MPEG 1/2 Audio Layer II
+    CODEC_MPEG_L3     =  3, //!< MP3, or MPEG 1/2 Audio Layer III
+    CODEC_AAC         =  4, //!< Advanced Audio Coding, MPEG-2 Part 7 and MPEG-4 Part 3
+    CODEC_AAC_HE      =  5, //!< "High Efficiency" AAC
+    CODEC_AAC_LD      =  6, //!< "Low Delay" AAC
+    CODEC_MPEG4_ALS   =  7, //!<
+    CODEC_MPEG4_CELP  =  8, //!<
+    CODEC_MPEG4_DST   =  9, //!<
+    CODEC_MPEG4_HVXC  = 10, //!<
+    CODEC_MPEG4_SLS   = 11, //!<
+    CODEC_MPEGH_3D_AUDIO    = 12, //!<
 
     CODEC_SPEEX       = 32, //!< Xiph Speex
     CODEC_VORBIS      = 33, //!< Xiph Ogg Vorbis
@@ -108,59 +100,79 @@ typedef enum AVCodec_e
     CODEC_WMA         = 49, //!< Windows Media Audio
     CODEC_MPC         = 50, //!< Musepack
 
-    // Video codecs
-    CODEC_MPEG1       = 64, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
-    CODEC_H261        = 65, //!< H.261
-    CODEC_MPEG2       = 66, //!< H.262 or MPEG-2 Part 2 (ISO/IEC 13818-2)
-    CODEC_MPEG4_ASP   = 67, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
-    CODEC_MSMPEG4     = 68, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
-    CODEC_H263        = 69, //!< H.263 (and its numerous variants)
-    CODEC_H264        = 70, //!< H.264 or MPEG-4 Part 10 "AVC"
-    CODEC_H265        = 71, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
+    // Uncommon audio codecs ///////////////////////////////////////////////////
 
-    CODEC_WMV7        = 72, //!< Windows Media Video 7
-    CODEC_WMV8        = 73, //!< Windows Media Video 8
-    CODEC_WMV9        = 74, //!< Windows Media Video 9
-    CODEC_WMSCR       = 75, //!< Windows Media Screen (7-9)
-    CODEC_WMP         = 76, //!< Windows Media Picture
+    // Lossless audio codecs ///////////////////////////////////////////////////
 
-    CODEC_VP3         = 77, //!< On2 VP3 Video
-    CODEC_VP4         = 78, //!< On2 VP4 Video / Xiph Ogg Theora
-    CODEC_VP5         = 79, //!< On2 VP5 Video
-    CODEC_VP6         = 80, //!< On2 VP6 Video
-    CODEC_VP7         = 81, //!< On2 VP7 Video
-    CODEC_VP8         = 82, //!< Google VP8
-    CODEC_VP9         = 83, //!< Google VP9
-    CODEC_VP10        = 84, //!< Google VP10
+    CODEC_APE         = 64, //!< Monkey's Audio
+    CODEC_FLAC        = 65, //!< Free Lossless Audio Codec
+    CODEC_ALAC        = 66, //!< Apple Lossless Audio Codec
 
-    CODEC_DAALA       = 85, //!< Xiph Daala
+    // Uncompressed audio //////////////////////////////////////////////////////
 
-    CODEC_VC1         = 86, //!< VC-1 or Windows Media Video 9
-    CODEC_VC2         = 87, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
-    CODEC_VC3         = 88, //!< VC-3, Avid DNxHD is a popular implementation
-    CODEC_VC5         = 89, //!< VC-5 or CineForm
+    CODEC_LPCM        = 128, //!< Linear pulse-code modulation
+    CODEC_LogPCM      = 129, //!< Logarithmic pulse-code modulation
+    CODEC_DPCM        = 130, //!< Differential pulse-code modulation
+    CODEC_ADPCM       = 131, //!< Adaptative differential pulse-code modulation
+    CODEC_PDM         = 132, //!< Pulse-density modulation
 
-    CODEC_PRORES_4444       = 90, //!< Apple ProRes 4444
-    CODEC_PRORES_4444_XQ    = 91, //!< Apple ProRes 4444 (XQ)
-    CODEC_PRORES_422_HQ     = 92, //!< Apple ProRes 422 (HQ)
-    CODEC_PRORES_442        = 93, //!< Apple ProRes 422
-    CODEC_PRORES_442_PROXY  = 94, //!< Apple ProRes 422 (Proxy)
-    CODEC_PRORES_442_LT     = 95, //!< Apple ProRes 422 (LT)
+    // Video codecs ////////////////////////////////////////////////////////////
 
-    // "Deprecated" video codecs
-    CODEC_CINEPAK     = 190, //!< Cinepak
-    CODEC_SVQ1        = 191, //!< Sorenson Video
-    CODEC_SVQ3        = 192, //!< Sorenson Video 3
-    CODEC_IV31        = 193, //!< Intel Indeo Video 3
-    CODEC_IV41        = 194, //!< Intel Indeo Video 4
-    CODEC_IV50        = 195, //!< Intel Indeo Video 5
+    CODEC_MPEG1       = 256, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
+    CODEC_H261        = 257, //!< H.261
+    CODEC_MPEG2       = 258, //!< H.262 or MPEG-2 Part 2 (ISO/IEC 13818-2)
+    CODEC_MPEG4_ASP   = 259, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
+    CODEC_MSMPEG4     = 260, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_H263        = 261, //!< H.263 (and its numerous variants)
+    CODEC_H264        = 262, //!< H.264 or MPEG-4 Part 10 "AVC"
+    CODEC_H265        = 263, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
 
-    // Raw video
+    CODEC_WMV7        = 264, //!< Windows Media Video 7
+    CODEC_WMV8        = 265, //!< Windows Media Video 8
+    CODEC_WMV9        = 266, //!< Windows Media Video 9
+    CODEC_WMSCR       = 267, //!< Windows Media Screen (7-9)
+    CODEC_WMP         = 268, //!< Windows Media Picture
 
-    // Subtitles codecs
-    CODEC_SRT         = 200, //!< SubRip (.srt)
-    CODEC_SSA         = 201, //!< "SubStation Alpha" (.ssa)
-    CODEC_ASS         = 202, //!< "Advanced SubStation Alpha" (.ass)
+    CODEC_VP3         = 269, //!< On2 VP3 Video
+    CODEC_VP4         = 270, //!< On2 VP4 Video / Xiph Ogg Theora
+    CODEC_VP5         = 271, //!< On2 VP5 Video
+    CODEC_VP6         = 272, //!< On2 VP6 Video
+    CODEC_VP7         = 273, //!< On2 VP7 Video
+    CODEC_VP8         = 274, //!< Google VP8
+    CODEC_VP9         = 275, //!< Google VP9
+    CODEC_VP10        = 276, //!< Google VP10
+
+    CODEC_DAALA       = 277, //!< Xiph Daala
+
+    CODEC_VC1         = 278, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2         = 279, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_VC3         = 280, //!< VC-3, Avid DNxHD is a popular implementation
+    CODEC_VC5         = 281, //!< VC-5 or CineForm
+
+    CODEC_PRORES_4444_XQ    = 283, //!< Apple ProRes 4444 (XQ)
+    CODEC_PRORES_4444       = 282, //!< Apple ProRes 4444
+    CODEC_PRORES_422_HQ     = 284, //!< Apple ProRes 422 (HQ)
+    CODEC_PRORES_422        = 285, //!< Apple ProRes 422
+    CODEC_PRORES_422_PROXY  = 286, //!< Apple ProRes 422 (Proxy)
+    CODEC_PRORES_422_LT     = 287, //!< Apple ProRes 422 (LT)
+
+    // "Uncommon" video codecs
+    CODEC_CINEPAK     = 288, //!< Cinepak
+    CODEC_SVQ1        = 289, //!< Sorenson Video 1
+    CODEC_SVQ3        = 290, //!< Sorenson Video 3
+    CODEC_IV31        = 291, //!< Intel Indeo Video 3
+    CODEC_IV41        = 292, //!< Intel Indeo Video 4
+    CODEC_IV50        = 293, //!< Intel Indeo Video 5
+    CODEC_icod        = 294, //!< Apple Intermediate Codec
+    CODEC_rpza        = 295, //!< Apple Video / "road pizza"
+
+    // Uncompressed video //////////////////////////////////////////////////////
+
+    // Subtitles codecs ////////////////////////////////////////////////////////
+
+    CODEC_SRT         = 512, //!< SubRip (.srt)
+    CODEC_SSA         = 513, //!< SubStation Alpha (.ssa)
+    CODEC_ASS         = 514, //!< Advanced SubStation Alpha (.ass)
 
 } AVCodec_e;
 

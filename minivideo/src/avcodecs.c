@@ -43,6 +43,15 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
         case CONTAINER_MP4:
             return "'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
             break;
+        case CONTAINER_MPEG_PS:
+            return "MPEG 'Program Stream' (.mpg, .vob, ...)";
+            break;
+        case CONTAINER_MPEG_TS:
+            return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
+            break;
+        case CONTAINER_MPEG_MT:
+            return "MPEG 'Media Transport'";
+            break;
         case CONTAINER_MXF:
             return "MXF 'Material eXchange Format' (.mxf)";
             break;
@@ -54,15 +63,6 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
             break;
         case CONTAINER_RM:
             return "RealMedia (.rm, .rmvb)";
-            break;
-        case CONTAINER_MPEG_PS:
-            return "MPEG 'Program Stream' (.mpg, .vob, ...)";
-            break;
-        case CONTAINER_MPEG_TS:
-            return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
-            break;
-        case CONTAINER_MPEG_MT:
-            return "MPEG 'Media Transport'";
             break;
 
         case CONTAINER_FLAC:
@@ -101,11 +101,20 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
             case CONTAINER_ASF:
                 return "ASF";
                 break;
+            case CONTAINER_MKV:
+                return "MKV";
+                break;
             case CONTAINER_MP4:
                 return "MP4";
                 break;
-            case CONTAINER_MKV:
-                return "MKV";
+            case CONTAINER_MPEG_PS:
+                return "MPEG-PS";
+                break;
+            case CONTAINER_MPEG_TS:
+                return "MPEG-TS";
+                break;
+            case CONTAINER_MPEG_MT:
+                return "MPEG-MT";
                 break;
             case CONTAINER_MXF:
                 return "MXF";
@@ -118,15 +127,6 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
                 break;
             case CONTAINER_RM:
                 return "RM";
-                break;
-            case CONTAINER_MPEG_PS:
-                return "MPEG-PS";
-                break;
-            case CONTAINER_MPEG_TS:
-                return "MPEG-TS";
-                break;
-            case CONTAINER_MPEG_MT:
-                return "MPEG-MT";
                 break;
 
             case CONTAINER_FLAC:
@@ -196,25 +196,6 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "PDM";
                 break;
 
-            case CODEC_APE:
-                if (long_description)
-                    return "APE (Monkey's Audio)";
-                else
-                    return "APE";
-                break;
-            case CODEC_FLAC:
-                if (long_description)
-                    return "FLAC (Free Lossless Audio Codec)";
-                else
-                    return "FLAC";
-                break;
-            case CODEC_ALAC:
-                if (long_description)
-                    return "ALAC (Apple Lossless Audio Codec)";
-                else
-                    return "ALAC";
-                break;
-
             case CODEC_MPEG_L1:
                 if (long_description)
                     return "MP1 (MPEG-1/2 Layer 1)";
@@ -241,13 +222,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 break;
             case CODEC_AAC_HE:
                 if (long_description)
-                    return "HE-AAC (High Efficiency Advance Audio Coding)";
+                    return "HE-AAC ('High Efficiency' Advance Audio Coding)";
                 else
                     return "HE-AAC";
                 break;
             case CODEC_AAC_LD:
                 if (long_description)
-                    return "LD-AAC (Low Delay Advance Audio Coding)";
+                    return "LD-AAC ('Low Delay' Advance Audio Coding)";
                 else
                     return "LD-AAC";
                 break;
@@ -269,15 +250,26 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_MPEGH_3D_AUDIO:
                 return "MPEG-H 3D AUDIO";
                 break;
+
+            case CODEC_SPEEX:
+                return "Speex";
+                break;
+            case CODEC_VORBIS:
+                return "Ogg Vorbis";
+                break;
+            case CODEC_OPUS:
+                return "OPUS";
+                break;
+
             case CODEC_AC3:
                 if (long_description)
-                    return "AC-3 (DolbyDigital)";
+                    return "AC-3 (Dolby Digital)";
                 else
                     return "AC-3";
                 break;
             case CODEC_EAC3:
                 if (long_description)
-                    return "EAC-3 (DolbyDigital+)";
+                    return "EAC-3 (Dolby Digital+)";
                 else
                     return "EAC-3";
                 break;
@@ -296,6 +288,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_DTS_X:
                 return "DTS-X";
                 break;
+
             case CODEC_WMA:
                 if (long_description)
                     return "WMA (Windows Media Audio)";
@@ -305,14 +298,24 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_MPC:
                 return "MPC (Musepack)";
                 break;
-            case CODEC_SPEEX:
-                return "Speex";
+
+            case CODEC_APE:
+                if (long_description)
+                    return "APE (Monkey's Audio)";
+                else
+                    return "APE";
                 break;
-            case CODEC_VORBIS:
-                return "Ogg Vorbis";
+            case CODEC_FLAC:
+                if (long_description)
+                    return "FLAC (Free Lossless Audio Codec)";
+                else
+                    return "FLAC";
                 break;
-            case CODEC_OPUS:
-                return "OPUS";
+            case CODEC_ALAC:
+                if (long_description)
+                    return "ALAC (Apple Lossless Audio Codec)";
+                else
+                    return "ALAC";
                 break;
         }
     }
@@ -334,7 +337,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 return "MPEG-4 part 2 'ASP'";
                 break;
             case CODEC_MSMPEG4:
-                return "MS MPEG-4";
+                return "Microsoft MPEG-4";
                 break;
             case CODEC_H263:
                 return "H.263";
@@ -376,15 +379,21 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 else
                     return "WMS 7-9";
                 break;
+            case CODEC_WMP:
+                if (long_description)
+                    return "Windows Media Picture";
+                else
+                    return "WMP";
+                break;
 
             case CODEC_VP3:
-                return "VP3";
+                if (long_description)
+                    return "VP3 (Ogg Theora)";
+                else
+                    return "VP3";
                 break;
             case CODEC_VP4:
-                if (long_description)
-                    return "VP4 (Ogg Theora)";
-                else
-                    return "VP4";
+                return "VP4";
                 break;
             case CODEC_VP5:
                 return "VP5";
@@ -416,32 +425,66 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "VC-1";
                 break;
             case CODEC_VC2:
-                return "VC-2 (Dirac)";
+                if (long_description)
+                    return "VC-2 (Dirac)";
+                else
+                    return "VC-2";
                 break;
             case CODEC_VC3:
-                return "VC-3 (DNxHD)";
+                if (long_description)
+                    return "VC-3 (DNxHD)";
+                else
+                    return "VC-3";
                 break;
             case CODEC_VC5:
-                return "VC-5 (CineForm)";
+                if (long_description)
+                    return "VC-5 (CineForm)";
+                else
+                    return "VC-5";
                 break;
 
-            case CODEC_PRORES_4444:
-                return "Apple ProRes 4444";
-                break;
             case CODEC_PRORES_4444_XQ:
                 return "Apple ProRes 4444 (XQ)";
+                break;
+            case CODEC_PRORES_4444:
+                return "Apple ProRes 4444";
                 break;
             case CODEC_PRORES_422_HQ:
                 return "Apple ProRes 422 (HQ)";
                 break;
-            case CODEC_PRORES_442:
+            case CODEC_PRORES_422:
                 return "Apple ProRes 422";
                 break;
-            case CODEC_PRORES_442_PROXY:
+            case CODEC_PRORES_422_PROXY:
                 return "Apple ProRes 422 (Proxy)";
                 break;
-            case CODEC_PRORES_442_LT:
+            case CODEC_PRORES_422_LT:
                 return "Apple ProRes 422 (LT)";
+                break;
+
+            case CODEC_CINEPAK:
+                return "Cinepak";
+                break;
+            case CODEC_SVQ1:
+                return "Sorenson Video 1";
+                break;
+            case CODEC_SVQ3:
+                return "Sorenson Video 3";
+                break;
+            case CODEC_IV31:
+                return "Intel Indeo Video 3";
+                break;
+            case CODEC_IV41:
+                return "Intel Indeo Video 4";
+                break;
+            case CODEC_IV50:
+                return "Intel Indeo Video 5";
+                break;
+            case CODEC_icod:
+                return "Apple Intermediate Codec";
+                break;
+            case CODEC_rpza:
+                return "Apple Video";
                 break;
         }
     }
