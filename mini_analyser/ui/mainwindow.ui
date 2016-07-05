@@ -177,7 +177,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -222,8 +222,8 @@ background: rgba(255, 170, 0, 128);</string>
            <widget class="QLabel" name="label_drop_icon">
             <property name="maximumSize">
              <size>
-              <width>256</width>
-              <height>256</height>
+              <width>300</width>
+              <height>300</height>
              </size>
             </property>
             <property name="text">
@@ -241,7 +241,7 @@ background: rgba(255, 170, 0, 128);</string>
            <widget class="QLabel" name="label_drop_text">
             <property name="font">
              <font>
-              <pointsize>16</pointsize>
+              <pointsize>18</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -3166,9 +3166,33 @@ background: rgba(255, 170, 0, 128);</string>
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox_other_chapters">
+          <property name="title">
+           <string>Chapters</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_other2_chapters"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_other_tags">
           <property name="title">
-           <string>Other tags</string>
+           <string>Tags</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <property name="leftMargin">
@@ -3219,6 +3243,9 @@ background: rgba(255, 170, 0, 128);</string>
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <property name="leftMargin">
          <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>3</number>
         </property>
         <property name="rightMargin">
          <number>6</number>

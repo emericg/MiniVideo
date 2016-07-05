@@ -61,6 +61,8 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
         this->media = (MediaFile_t *)media;
         file.setFileName(QString::fromLocal8Bit(media->file_path));
 
+        setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+
         if (!ui->widget_hex->setData(file))
         {
             return;
@@ -173,7 +175,10 @@ void ContainerExplorer::loadSamples(int tid)
 
         for (uint32_t i = 0; i < tracks[tid]->sample_count; i++)
         {
-            ui->listWidget->addItem("Sample #" + QString::number(i));
+            if (track->sample_type[i] != sample_OTHER)
+                ui->listWidget->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
+            else
+                ui->listWidget->addItem(tr("Sample #") + QString::number(i));
         }
     }
     else
@@ -209,22 +214,16 @@ void ContainerExplorer::sampleSelection(int sid)
 
         // Infos
         ui->labelTitle->setText(getSampleTypeString(track->sample_type[sid]) + " #" + QString::number(sid));
-        QLabel *lt = new QLabel(tr("> Type"));
         QLabel *lo = new QLabel(tr("> Offset"));
         QLabel *ls = new QLabel(tr("> Size"));
 
-        QLineEdit *dt = new QLineEdit(getSampleTypeString(track->sample_type[sid]));
-        dt->setEnabled(false);
-        dt->setReadOnly(true);
         QLineEdit *doo = new QLineEdit(QString::number(offset));
         doo->setReadOnly(true);
         QLineEdit *ds = new QLineEdit(QString::number(size) + tr(" bytes"));
         ds->setReadOnly(true);
 
-        ui->gridLayout_content->addWidget(lt, 0, 0);
         ui->gridLayout_content->addWidget(ls, 1, 0);
         ui->gridLayout_content->addWidget(lo, 2, 0);
-        ui->gridLayout_content->addWidget(dt, 0, 1);
         ui->gridLayout_content->addWidget(ds, 1, 1);
         ui->gridLayout_content->addWidget(doo, 2, 1);
 
