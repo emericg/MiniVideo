@@ -34,6 +34,7 @@
  * Good ressources about FourCCs:
  * http://www.fourcc.org/codecs.php
  * http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
+ * https://support.microsoft.com/en-us/kb/281188
  *
  * Both upper and lower cases FourCC are present sometimes, because we encountered
  * in the wild...
@@ -134,35 +135,57 @@ typedef enum fourcc_list_e
     fcc_VP90 = 0x56503930,
     fcc_VP10 = 0x56503130,
 
-    fcc_BBCD = 0x42424344, //!< DNxHD / VC-2
+    fcc_BBCD = 0x42424344, //!< Dirac / VC-2
 
     fcc_AVdn = 0x4156646E, //!< DNxHD / VC-3
 
     fcc_CFHD = 0x43464844, //!< CineForm / VC-5
     fcc_cfhd = 0x63666864,
 
-    fcc_ap4h = 0x61703468, //!< Apple ProRes 4444
-    fcc_ap4x = 0x61703478, //!< Apple ProRes 4444 (XQ)
-    fcc_apch = 0x61706368, //!< Apple ProRes 422 (HQ)
-    fcc_apcn = 0x6170636e, //!< Apple ProRes 422
     fcc_apco = 0x6170636f, //!< Apple ProRes 422 (Proxy)
     fcc_apcs = 0x61706373, //!< Apple ProRes 422 (LT)
+    fcc_apcn = 0x6170636e, //!< Apple ProRes 422
+    fcc_apch = 0x61706368, //!< Apple ProRes 422 (HQ)
+    fcc_ap4h = 0x61703468, //!< Apple ProRes 4444
+    fcc_ap4x = 0x61703478, //!< Apple ProRes 4444 (XQ)
 
+    fcc_REDC = 0x52454443, //!< REDCode
 
     // Uncommon video codecs ///////////////////////////////////////////////////
 
-    fcc_svq1 = 0x73767131, //!<
+    fcc_cvid = 0x63766964, //!< Cinepak
+    fcc_CVID = 0x43564944,
+    fcc_SNOW = 0x534E4F57, //!< Snow
+    fcc_svq1 = 0x73767131, //!< Sorenson Video
     fcc_SVQ1 = 0x53565131,
     fcc_svqi = 0x73767169,
     fcc_SVQ3 = 0x53565133,
-    fcc_cvid = 0x63766964, //!< Cinepak
-    fcc_CVID = 0x43564944,
+    fcc_RT21 = 0x52543231, //!< Intel Indeo Video 2 or Real-Time Video 2
+    fcc_IV31 = 0x49563331, //!< Intel Indeo Video 3
+    fcc_IV32 = 0x49563332,
+    fcc_iV31 = 0x69563331,
+    fcc_iV32 = 0x69563332,
+    fcc_IV41 = 0x49563431,
+    fcc_iV41 = 0x69563431,
+    fcc_IV42 = 0x49563432,
+    fcc_iV42 = 0x69563432,
+    fcc_IV50 = 0x49563530,
+    fcc_iV50 = 0x69563530,
+    fcc_CHQX = 0x43485158, //!< Canopus HQ
     fcc_icod = 0x69636F64, //!< Apple Intermediate Codec
     fcc_rpza = 0x72707A61, //!< Apple Video
     fcc_azpr = 0x617A7072,
 
     fcc_dvsd = 0x64767364, //!< DV
     fcc_DVSD = 0x44565344,
+    fcc_CDVC = 0x43564443, //!< Canopus DV
+    fcc_CDVH = 0x43555648,
+    fcc_CUV5 = 0x43555635,
+    fcc_dv5n = 0x6476356E, //!< Apple DVCPRO50 - NTSC
+    fcc_dv5p = 0x64763570, //!< Apple DVCPRO50 - PAL
+    fcc_dvc  = 0x64766320, //!< Apple DV/DVCPRO - NTSC
+    fcc_dvcp = 0x64766370, //!< Apple DV - PAL
+    fcc_dvpp = 0x64767070, //!< Apple DVCPRO - PAL
 
     fcc_AI55 = 0x41493535, //!< AVC Intra  50 / 1080 interlaced
     fcc_AI5q = 0x41493571, //!< AVC Intra  50 /  720
@@ -170,15 +193,11 @@ typedef enum fourcc_list_e
     fcc_AI1q = 0x41493171, //!< AVC Intra 100 /  720
     fcc_AI12 = 0x41493132, //!< AVC Intra 100 / 1080
 
-/*
-    fcc_ = 0x, //!<
-    fcc_ = 0x,
-    fcc_ = 0x,
-    fcc_ = 0x,
-    fcc_ = 0x,
-    fcc_ = 0x,
-*/
     // Lossless video codecs ///////////////////////////////////////////////////
+
+    fcc_FFV1 = 0x46465631, //!< FFV1
+    fcc_PNG1 = 0x504E4731, //!< CorePNG
+    fcc_CLLC = 0x434C4C43, //!< Canopus LossLess
 
     // Uncompressed video //////////////////////////////////////////////////////
 
@@ -195,11 +214,13 @@ typedef enum fourcc_list_e
     fcc_AC4  = 0x41432D34, //!< Ac-4
     fcc_ac4  = 0x61632D34, //!< ac-4
 
-    fcc_alac = 0x616C6163, //!< Apple Lossless Audio Coding
+    fcc_agsm = 0x6167736D, //!< GSM
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
     // Lossless audio codecs ///////////////////////////////////////////////////
+
+    fcc_alac = 0x616C6163, //!< Apple Lossless Audio Coding
 
     // Uncompressed audio //////////////////////////////////////////////////////
 
@@ -231,6 +252,8 @@ typedef enum fourcc_list_e
     fcc_u24b = 0x75323462, //!< 24-bit unsigned linear PCM (big endian)
     fcc_u32l = 0x7533326C, //!< 32-bit unsigned linear PCM (little endian)
     fcc_u32b = 0x75333262, //!< 32-bit unsigned linear PCM (big endian)
+
+    fcc_ima4 = 0x696D6134, //!< Apple IMA ADPCM
 
 } fourcc_list_e;
 

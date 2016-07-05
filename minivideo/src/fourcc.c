@@ -210,23 +210,36 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_VC5;
         break;
 
-    case fcc_ap4x:
-        codec = CODEC_PRORES_4444_XQ;
-        break;
-    case fcc_ap4h:
-        codec = CODEC_PRORES_4444;
-        break;
-    case fcc_apch:
-        codec = CODEC_PRORES_422_HQ;
-        break;
-    case fcc_apcn:
-        codec = CODEC_PRORES_422;
-        break;
     case fcc_apco:
         codec = CODEC_PRORES_422_PROXY;
         break;
     case fcc_apcs:
         codec = CODEC_PRORES_422_LT;
+        break;
+    case fcc_apcn:
+        codec = CODEC_PRORES_422;
+        break;
+    case fcc_apch:
+        codec = CODEC_PRORES_422_HQ;
+        break;
+    case fcc_ap4h:
+        codec = CODEC_PRORES_4444;
+        break;
+    case fcc_ap4x:
+        codec = CODEC_PRORES_4444_XQ;
+        break;
+
+    case fcc_REDC:
+        codec = CODEC_REDCode;
+        break;
+
+    case fcc_cvid:
+    case fcc_CVID:
+        codec = CODEC_CINEPAK;
+        break;
+
+    case fcc_SNOW:
+        codec = CODEC_SNOW;
         break;
 
     case fcc_svq1:
@@ -238,9 +251,28 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_SVQ3;
         break;
 
-    case fcc_cvid:
-    case fcc_CVID:
-        codec = CODEC_CINEPAK;
+    case fcc_RT21:
+        codec = CODEC_INDEO2;
+        break;
+    case fcc_IV31:
+    case fcc_IV32:
+    case fcc_iV31:
+    case fcc_iV32:
+        codec = CODEC_INDEO3;
+        break;
+    case fcc_IV41:
+    case fcc_iV41:
+    case fcc_IV42:
+    case fcc_iV42:
+        codec = CODEC_INDEO4;
+        break;
+    case fcc_IV50:
+    case fcc_iV50:
+        codec = CODEC_INDEO5;
+        break;
+
+    case fcc_CHQX:
+        codec = CODEC_CanopusHQ;
         break;
 
     case fcc_icod:
@@ -250,6 +282,18 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_azpr:
         codec = CODEC_rpza;
         break;
+
+    case fcc_FFV1:
+        codec = CODEC_FFV1;
+        break;
+    case fcc_PNG1:
+        codec = CODEC_CorePNG;
+        break;
+    case fcc_CLLC:
+        codec = CODEC_CanopusLL;
+        break;
+
+////////////////////////////////////////////////////////////////////////////////
 
     case fcc_MP4A:
     case fcc_mp4a:
@@ -264,6 +308,10 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_AC4:
     case fcc_ac4:
         codec = CODEC_AC4;
+        break;
+
+    case fcc_agsm:
+        codec = CODEC_GSM;
         break;
 
     case fcc_alac:
@@ -299,6 +347,10 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_alaw:
     case fcc_ulaw:
         codec = CODEC_LogPCM;
+        break;
+
+    case fcc_ima4:
+        codec = CODEC_ADPCM;
         break;
 
     default:

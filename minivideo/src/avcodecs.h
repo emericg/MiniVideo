@@ -69,102 +69,118 @@ typedef enum AVCodec_e
 
     // Audio codecs ////////////////////////////////////////////////////////////
 
-    CODEC_MPEG_L1     =  1, //!< MP1, or MPEG 1/2 Audio Layer I
-    CODEC_MPEG_L2     =  2, //!< MP2, or MPEG 1/2 Audio Layer II
-    CODEC_MPEG_L3     =  3, //!< MP3, or MPEG 1/2 Audio Layer III
-    CODEC_AAC         =  4, //!< Advanced Audio Coding, MPEG-2 Part 7 and MPEG-4 Part 3
-    CODEC_AAC_HE      =  5, //!< "High Efficiency" AAC
-    CODEC_AAC_LD      =  6, //!< "Low Delay" AAC
-    CODEC_MPEG4_ALS   =  7, //!<
-    CODEC_MPEG4_CELP  =  8, //!<
-    CODEC_MPEG4_DST   =  9, //!<
-    CODEC_MPEG4_HVXC  = 10, //!<
-    CODEC_MPEG4_SLS   = 11, //!<
-    CODEC_MPEGH_3D_AUDIO    = 12, //!<
+    CODEC_MPEG_L1       =  1, //!< MP1, or MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L2       =  2, //!< MP2, or MPEG 1/2 Audio Layer II
+    CODEC_MPEG_L3       =  3, //!< MP3, or MPEG 1/2 Audio Layer III
+    CODEC_AAC           =  4, //!< Advanced Audio Coding, MPEG-2 Part 7 and MPEG-4 Part 3
+    CODEC_AAC_HE        =  5, //!< "High Efficiency" AAC
+    CODEC_AAC_LD        =  6, //!< "Low Delay" AAC
+    CODEC_MPEG4_ALS     =  7, //!<
+    CODEC_MPEG4_CELP    =  8, //!<
+    CODEC_MPEG4_DST     =  9, //!<
+    CODEC_MPEG4_HVXC    = 10, //!<
+    CODEC_MPEG4_SLS     = 11, //!<
+    CODEC_MPEGH_3D_AUDIO= 12, //!<
 
-    CODEC_SPEEX       = 32, //!< Xiph Speex
-    CODEC_VORBIS      = 33, //!< Xiph Ogg Vorbis
-    CODEC_OPUS        = 34, //!< Xiph Opus
+    CODEC_SPEEX         = 32, //!< Xiph Speex
+    CODEC_VORBIS        = 33, //!< Xiph Ogg Vorbis
+    CODEC_OPUS          = 34, //!< Xiph Opus
 
-    CODEC_AC3         = 35, //!< Dolby Digital, or AC-3, or A/52A
+    CODEC_AC3           = 35, //!< Dolby Digital, or AC-3, or A/52A
     //Dolby Digital EX
     //Dolby Digital Live
-    CODEC_EAC3        = 38, //!< Dolby Digital Plus, or Enhanced AC-3, or A/52B
+    CODEC_EAC3          = 38, //!< Dolby Digital Plus, or Enhanced AC-3, or A/52B
     //Dolby TrueHD
-    CODEC_AC4         = 40, //!< Dolby AC-4
+    CODEC_AC4           = 40, //!< Dolby AC-4
 
-    CODEC_DTS         = 42, //!< "Dedicated To Sound"
-    CODEC_DTS_HD      = 43,
-    CODEC_DTS_X       = 44,
+    CODEC_DTS           = 42, //!< "Dedicated To Sound"
+    CODEC_DTS_HD        = 43,
+    CODEC_DTS_X         = 44,
 
-    CODEC_WMA         = 49, //!< Windows Media Audio
-    CODEC_MPC         = 50, //!< Musepack
+    CODEC_WMA           = 49, //!< Windows Media Audio
+    CODEC_MPC           = 50, //!< Musepack
+    CODEC_GSM           = 51, //!< GSM
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 
-    CODEC_APE         = 64, //!< Monkey's Audio
-    CODEC_FLAC        = 65, //!< Free Lossless Audio Codec
-    CODEC_ALAC        = 66, //!< Apple Lossless Audio Codec
+    CODEC_APE           = 64, //!< Monkey's Audio
+    CODEC_FLAC          = 65, //!< Free Lossless Audio Codec
+    CODEC_ALAC          = 66, //!< Apple Lossless Audio Codec
 
     // Uncompressed audio //////////////////////////////////////////////////////
 
-    CODEC_LPCM        = 128, //!< Linear pulse-code modulation
-    CODEC_LogPCM      = 129, //!< Logarithmic pulse-code modulation
-    CODEC_DPCM        = 130, //!< Differential pulse-code modulation
-    CODEC_ADPCM       = 131, //!< Adaptative differential pulse-code modulation
-    CODEC_PDM         = 132, //!< Pulse-density modulation
+    CODEC_LPCM          = 128, //!< Linear pulse-code modulation
+    CODEC_LogPCM        = 129, //!< Logarithmic pulse-code modulation
+    CODEC_DPCM          = 130, //!< Differential pulse-code modulation
+    CODEC_ADPCM         = 131, //!< Adaptative differential pulse-code modulation
+    CODEC_PDM           = 132, //!< Pulse-density modulation
 
     // Video codecs ////////////////////////////////////////////////////////////
 
-    CODEC_MPEG1       = 256, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
-    CODEC_H261        = 257, //!< H.261
-    CODEC_MPEG2       = 258, //!< H.262 or MPEG-2 Part 2 (ISO/IEC 13818-2)
-    CODEC_MPEG4_ASP   = 259, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
-    CODEC_MSMPEG4     = 260, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
-    CODEC_H263        = 261, //!< H.263 (and its numerous variants)
-    CODEC_H264        = 262, //!< H.264 or MPEG-4 Part 10 "AVC"
-    CODEC_H265        = 263, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
+    CODEC_MPEG1         = 256, //!< MPEG-1 Part 2 (ISO/IEC 11172-2)
+    CODEC_H261          = 257, //!< H.261
+    CODEC_MPEG2         = 258, //!< H.262 or MPEG-2 Part 2 (ISO/IEC 13818-2)
+    CODEC_MPEG4_ASP     = 259, //!< MPEG-4 Part 2 "ASP", XVID is a popular implementation
+    CODEC_MSMPEG4       = 260, //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 different versions exist), NOT compatible with regular MPEG-4 ASP. Used in divx <= 3.
+    CODEC_H263          = 261, //!< H.263 (and its numerous variants)
+    CODEC_H264          = 262, //!< H.264 or MPEG-4 Part 10 "AVC"
+    CODEC_H265          = 263, //!< H.265 or MPEG-H Part 2 "HEVC" or (ISO/IEC 23008-2)
 
-    CODEC_WMV7        = 264, //!< Windows Media Video 7
-    CODEC_WMV8        = 265, //!< Windows Media Video 8
-    CODEC_WMV9        = 266, //!< Windows Media Video 9
-    CODEC_WMSCR       = 267, //!< Windows Media Screen (7-9)
-    CODEC_WMP         = 268, //!< Windows Media Picture
+    CODEC_WMV7          = 264, //!< Windows Media Video 7
+    CODEC_WMV8          = 265, //!< Windows Media Video 8
+    CODEC_WMV9          = 266, //!< Windows Media Video 9
+    CODEC_WMSCR         = 267, //!< Windows Media Screen (7-9)
+    CODEC_WMP           = 268, //!< Windows Media Picture
 
-    CODEC_VP3         = 269, //!< On2 VP3 Video
-    CODEC_VP4         = 270, //!< On2 VP4 Video / Xiph Ogg Theora
-    CODEC_VP5         = 271, //!< On2 VP5 Video
-    CODEC_VP6         = 272, //!< On2 VP6 Video
-    CODEC_VP7         = 273, //!< On2 VP7 Video
-    CODEC_VP8         = 274, //!< Google VP8
-    CODEC_VP9         = 275, //!< Google VP9
-    CODEC_VP10        = 276, //!< Google VP10
+    CODEC_VP3           = 269, //!< On2 VP3 Video
+    CODEC_VP4           = 270, //!< On2 VP4 Video / Xiph Ogg Theora
+    CODEC_VP5           = 271, //!< On2 VP5 Video
+    CODEC_VP6           = 272, //!< On2 VP6 Video
+    CODEC_VP7           = 273, //!< On2 VP7 Video
+    CODEC_VP8           = 274, //!< Google VP8
+    CODEC_VP9           = 275, //!< Google VP9
+    CODEC_VP10          = 276, //!< Google VP10
 
-    CODEC_DAALA       = 277, //!< Xiph Daala
+    CODEC_DAALA         = 277, //!< Xiph Daala
 
-    CODEC_VC1         = 278, //!< VC-1 or Windows Media Video 9
-    CODEC_VC2         = 279, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
-    CODEC_VC3         = 280, //!< VC-3, Avid DNxHD is a popular implementation
-    CODEC_VC5         = 281, //!< VC-5 or CineForm
+    CODEC_VC1           = 278, //!< VC-1 or Windows Media Video 9
+    CODEC_VC2           = 279, //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
+    CODEC_VC3           = 280, //!< VC-3, Avid DNxHD is a popular implementation
+    CODEC_VC5           = 281, //!< VC-5 or CineForm
 
-    CODEC_PRORES_4444_XQ    = 283, //!< Apple ProRes 4444 (XQ)
-    CODEC_PRORES_4444       = 282, //!< Apple ProRes 4444
-    CODEC_PRORES_422_HQ     = 284, //!< Apple ProRes 422 (HQ)
-    CODEC_PRORES_422        = 285, //!< Apple ProRes 422
-    CODEC_PRORES_422_PROXY  = 286, //!< Apple ProRes 422 (Proxy)
-    CODEC_PRORES_422_LT     = 287, //!< Apple ProRes 422 (LT)
+    CODEC_PRORES_422_PROXY  = 282, //!< Apple ProRes 422 (Proxy)
+    CODEC_PRORES_422_LT     = 283, //!< Apple ProRes 422 (LT)
+    CODEC_PRORES_422        = 284, //!< Apple ProRes 422
+    CODEC_PRORES_422_HQ     = 285, //!< Apple ProRes 422 (HQ)
+    CODEC_PRORES_4444       = 286, //!< Apple ProRes 4444
+    CODEC_PRORES_4444_XQ    = 287, //!< Apple ProRes 4444 (XQ)
 
-    // "Uncommon" video codecs
-    CODEC_CINEPAK     = 288, //!< Cinepak
-    CODEC_SVQ1        = 289, //!< Sorenson Video 1
-    CODEC_SVQ3        = 290, //!< Sorenson Video 3
-    CODEC_IV31        = 291, //!< Intel Indeo Video 3
-    CODEC_IV41        = 292, //!< Intel Indeo Video 4
-    CODEC_IV50        = 293, //!< Intel Indeo Video 5
-    CODEC_icod        = 294, //!< Apple Intermediate Codec
-    CODEC_rpza        = 295, //!< Apple Video / "road pizza"
+    CODEC_REDCode       = 288, //!< REDCode
+
+    // Uncommon video codecs ///////////////////////////////////////////////////
+
+    CODEC_CINEPAK       = 300, //!< Cinepak
+    CODEC_SNOW          = 301, //!< Snow
+    CODEC_SPARK         = 302, //!< Sorenson Spark
+    CODEC_SVQ1          = 303, //!< Sorenson Video 1
+    CODEC_SVQ3          = 304, //!< Sorenson Video 3
+    CODEC_INDEO2        = 305, //!< Intel Indeo Video 2
+    CODEC_INDEO3        = 306, //!< Intel Indeo Video 3
+    CODEC_INDEO4        = 307, //!< Intel Indeo Video 4
+    CODEC_INDEO5        = 308, //!< Intel Indeo Video 5
+    CODEC_CanopusHQ     = 309, //!< Canopus HQ
+    CODEC_CanopusHQA    = 310, //!< Canopus HQ Alpha
+    CODEC_CanopusHQX    = 311, //!< Canopus HQX
+    CODEC_icod          = 312, //!< Apple Intermediate Codec
+    CODEC_rpza          = 313, //!< Apple Video / "road pizza"
+
+    // Lossless video codecs /////////////////////////////////////////////////
+
+    CODEC_FFV1          = 330, //!< FFV1
+    CODEC_CorePNG       = 331, //!< CorePNG
+    CODEC_CanopusLL     = 332, //!< Canopus Lossless
 
     // Uncompressed video //////////////////////////////////////////////////////
 

@@ -32,44 +32,44 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
         switch (container)
         {
         case CONTAINER_AVI:
-            return "AVI 'Audio Video Interleave' (.avi, ...)";
+            return "AVI (Audio Video Interleave) [.avi, ...]";
             break;
         case CONTAINER_ASF:
-            return "ASF 'Advanced Systems Format' (.asf, .wma, .wmv, ...)";
+            return "ASF (Advanced Systems Format) [.asf, .wma, .wmv, ...]";
             break;
         case CONTAINER_MKV:
-            return "MKV 'Matroska' (.mkv, .mka, .webm)";
+            return "MKV (Matroska) [.mkv, .mka, .webm]";
             break;
         case CONTAINER_MP4:
-            return "'ISO Base Media' format (.mov, .mp4, .3gp, .f4v, ...)";
+            return "MP4 (ISO Base Media format) [.mov, .mp4, .3gp, .f4v, ...]";
             break;
         case CONTAINER_MPEG_PS:
-            return "MPEG 'Program Stream' (.mpg, .vob, ...)";
+            return "MPEG 'Program Stream' [.mpg, .vob, ...]";
             break;
         case CONTAINER_MPEG_TS:
-            return "MPEG 'Transport Stream' (.ts, .mts, .m2ts, ...)";
+            return "MPEG 'Transport Stream' [.ts, .mts, .m2ts, ...]";
             break;
         case CONTAINER_MPEG_MT:
             return "MPEG 'Media Transport'";
             break;
         case CONTAINER_MXF:
-            return "MXF 'Material eXchange Format' (.mxf)";
+            return "MXF Material eXchange Format [.mxf]";
             break;
         case CONTAINER_FLV:
-            return "SWF 'Small Web Format' (.flv)";
+            return "SWF Small Web Format [.flv]";
             break;
         case CONTAINER_OGG:
-            return "OGG (.ogg, .ogv, ...)";
+            return "OGG [.ogg, .ogv, ...]";
             break;
         case CONTAINER_RM:
-            return "RealMedia (.rm, .rmvb)";
+            return "RealMedia [.rm, .rmvb]";
             break;
 
         case CONTAINER_FLAC:
-            return "FLAC 'Free Lossless Audio Codec' (.flac)";
+            return "FLAC (Free Lossless Audio Codec) [.flac]";
             break;
         case CONTAINER_WAVE:
-            return "WAVE 'Waveform Audio File Format' (.wav)";
+            return "WAVE (Waveform Audio File Format) [.wav]";
             break;
 
         case CONTAINER_ES:
@@ -296,7 +296,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "WMA";
                 break;
             case CODEC_MPC:
-                return "MPC (Musepack)";
+                if (long_description)
+                    return "MPC (Musepack)";
+                else
+                    return "MPC";
+                break;
+            case CODEC_GSM:
+                return "GSM";
                 break;
 
             case CODEC_APE:
@@ -443,48 +449,98 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "VC-5";
                 break;
 
-            case CODEC_PRORES_4444_XQ:
-                return "Apple ProRes 4444 (XQ)";
-                break;
-            case CODEC_PRORES_4444:
-                return "Apple ProRes 4444";
-                break;
-            case CODEC_PRORES_422_HQ:
-                return "Apple ProRes 422 (HQ)";
-                break;
-            case CODEC_PRORES_422:
-                return "Apple ProRes 422";
-                break;
             case CODEC_PRORES_422_PROXY:
                 return "Apple ProRes 422 (Proxy)";
                 break;
             case CODEC_PRORES_422_LT:
                 return "Apple ProRes 422 (LT)";
                 break;
+            case CODEC_PRORES_422:
+                return "Apple ProRes 422";
+                break;
+            case CODEC_PRORES_422_HQ:
+                return "Apple ProRes 422 (HQ)";
+                break;
+            case CODEC_PRORES_4444:
+                return "Apple ProRes 4444";
+                break;
+            case CODEC_PRORES_4444_XQ:
+                return "Apple ProRes 4444 (XQ)";
+                break;
+
+            case CODEC_REDCode:
+                return "REDCode";
+                break;
 
             case CODEC_CINEPAK:
                 return "Cinepak";
                 break;
+            case CODEC_SNOW:
+                return "SNOW";
+                break;
+            case CODEC_SPARK:
+                return "Sorenson Spark";
+                break;
             case CODEC_SVQ1:
-                return "Sorenson Video 1";
+                if (long_description)
+                    return "SVQ1 (Sorenson Video 1)";
+                else
+                    return "SVQ1";
                 break;
             case CODEC_SVQ3:
-                return "Sorenson Video 3";
+                if (long_description)
+                    return "SVQ3 (Sorenson Video 3)";
+                else
+                    return "SVQ3";
                 break;
-            case CODEC_IV31:
-                return "Intel Indeo Video 3";
+            case CODEC_INDEO2:
+                if (long_description)
+                    return "Indeo 2 (Intel Indeo Video 2)";
+                else
+                    return "Indeo 2";
                 break;
-            case CODEC_IV41:
-                return "Intel Indeo Video 4";
+            case CODEC_INDEO3:
+                if (long_description)
+                    return "Indeo 3 (Intel Indeo Video 3)";
+                else
+                    return "Indeo 3";
                 break;
-            case CODEC_IV50:
-                return "Intel Indeo Video 5";
+            case CODEC_INDEO4:
+                if (long_description)
+                    return "Indeo 4 (Intel Indeo Video 4)";
+                else
+                    return "Indeo 4";
+                break;
+            case CODEC_INDEO5:
+                if (long_description)
+                    return "Indeo 5 (Intel Indeo Video 5)";
+                else
+                    return "Indeo 5";
+                    break;
+            case CODEC_CanopusHQ:
+                return "Canopus HQ";
+                break;
+            case CODEC_CanopusHQA:
+                return "Canopus HQ Alpha";
+                break;
+            case CODEC_CanopusHQX:
+                return "Canopus HQX";
                 break;
             case CODEC_icod:
                 return "Apple Intermediate Codec";
                 break;
             case CODEC_rpza:
                 return "Apple Video";
+                break;
+
+            case CODEC_FFV1:
+                return "FFV1";
+                break;
+            case CODEC_CorePNG:
+                return "CorePNG";
+                break;
+            case CODEC_CanopusLL:
+                return "Canopus Lossless";
                 break;
         }
     }
