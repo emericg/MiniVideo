@@ -161,6 +161,7 @@ int minivideo_endianness(void)
     int endianness = -1;
     int i = 1;
     char *p = (char *)&i;
+    int retcode;
 
 	if (p[0] == 1)
     {
