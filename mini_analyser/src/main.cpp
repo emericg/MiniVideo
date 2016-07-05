@@ -21,7 +21,6 @@
 
 // mini_analyser
 #include "main.h"
-#include "mainwindow.h"
 
 // minivideo library
 #include <minivideo.h>
@@ -32,8 +31,8 @@
 #include <cstring>
 
 // Qt
-#include <QApplication>
-#include <QtCore/qglobal.h>
+#include <QtGlobal>
+#include <QFileOpenEvent>
 
 /* ************************************************************************** */
 
@@ -50,14 +49,18 @@ int main(int argc, char *argv[])
     std::cout << GREEN "main()" RESET << std::endl;
     std::cout << "* This is DEBUG from mini_analyser()" << std::endl;
     std::cout << "* mini_analyser version " << VERSION_MAJOR << "." << VERSION_MINOR << std::endl;
-    std::cout << std::endl;
     std::cout << GREEN "main() arguments" RESET << std::endl;
+    for (int i = 0; i < argc; i++)
+    {
+        std::cout << "> " << argv[i] << std::endl;
+    }
 
     // Print informations about libMiniVideo and system endianness
-    minivideo_infos();
+    minivideo_print_infos();
     minivideo_endianness();
 
-    QApplication app(argc, argv);
+    // MiniAnalyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
+    MiniAnalyser app(argc, argv);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     // High DPI monitor?
@@ -67,27 +70,55 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    // Initialize program window
-    MainWindow w;
-    w.show();
+    // Launch program window
+    app.w.show();
 
-    // Used to detach
+    // Used to launch new detached instances
     if (argv[0])
     {
-        w.setAppPath(QString::fromLocal8Bit(argv[0]));
+        app.w.setAppPath(QString::fromLocal8Bit(argv[0]));
     }
 
-    // If a file has been passed as an argument, load it
-    if (argv[1])
+    // If files have been passed as arguments, load them
+    for (int i = 1; i < argc; i++)
     {
-        QString fileAsArgument = QFile::decodeName(argv[1]);
-        if (QFile::exists(fileAsArgument))
+        if (argv[i])
         {
-            w.loadFile(fileAsArgument);
+            QString fileAsArgument = QFile::decodeName(argv[i]);
+            if (QFile::exists(fileAsArgument))
+            {
+                app.w.loadFile(fileAsArgument);
+            }
         }
     }
 
     return app.exec();
+}
+
+/* ************************************************************************** */
+
+MiniAnalyser::MiniAnalyser(int &argc, char **argv) : QApplication(argc, argv)
+{
+    //
+}
+
+MiniAnalyser::~MiniAnalyser()
+{
+    //
+}
+
+bool MiniAnalyser::event(QEvent *e)
+{
+    if (e->type() == QEvent::FileOpen)
+    {
+        QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(e);
+        if (QFile::exists(openEvent->file()))
+        {
+            w.loadFile(openEvent->file());
+        }
+    }
+
+    return QApplication::event(e);
 }
 
 /* ************************************************************************** */

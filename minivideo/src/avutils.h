@@ -38,7 +38,9 @@ typedef enum StreamType_e
     stream_TEXT    = 3,
 
     stream_MENU    = 4,
-    stream_TMCD    = 5
+    stream_TMCD    = 5,
+    stream_META    = 6,
+    stream_HINT    = 7
 
 } StreamType_e;
 
@@ -48,11 +50,13 @@ typedef enum SampleType_e
     sample_UNKNOWN = 0,
 
     sample_AUDIO,
+    sample_AUDIO_TAG,
 
     sample_VIDEO,
-    sample_VIDEO_IDR,
+    sample_VIDEO_SYNC,
     sample_VIDEO_PARAM,
 
+    sample_TEXT,
     sample_TEXT_FILE,
 
     sample_OTHER
@@ -64,12 +68,22 @@ typedef enum BitrateMode_e
 {
     BITRATE_UNKNOWN = 0,
 
-    BITRATE_CBR     = 1, //!< Constant Bitrate
-    BITRATE_VBR     = 2, //!< Variable Bitrate
-    BITRATE_ABR     = 3, //!< Average Bitrate
-    BITRATE_CVBR    = 4  //!< Constrained Variable Bitrate
+    BITRATE_CBR     = 1, //!< Constant BitRate
+    BITRATE_VBR     = 2, //!< Variable BitRate
+    BITRATE_ABR     = 3, //!< Average BitRate
+    BITRATE_CVBR    = 4  //!< Constrained Variable BitRate
 
 } BitrateMode_e;
+
+//! Framerate mode
+typedef enum FramerateMode_e
+{
+    FRAMERATE_UNKNOWN = 0,
+
+    FRAMERATE_CFR     = 1, //!< Constant FrameRate
+    FRAMERATE_VFR     = 2, //!< Variable FrameRate
+
+} FramerateMode_e;
 
 /* ************************************************************************** */
 
@@ -171,9 +185,11 @@ typedef enum SubSampling_e
     SS_UNKNOWN = 0,     //!< Unknown subsampling
 
     SS_400     = 1,     //!< 4:0:0 greyscale subsampling
-    SS_420     = 2,     //!< 4:2:0 subsampling
-    SS_422     = 3,     //!< 4:2:2 subsampling
-    SS_444     = 4      //!< 4:4:4 subsampling
+    SS_411     = 2,     //!< 4:1:1 subsampling
+    SS_420     = 3,     //!< 4:2:0 subsampling
+    SS_422     = 4,     //!< 4:2:2 subsampling
+    SS_444     = 5,     //!< 4:4:4 subsampling
+    SS_4444    = 6      //!< 4:4:4:4 subsampling
 
 } SubSampling_e;
 

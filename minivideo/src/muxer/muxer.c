@@ -47,10 +47,10 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id\t: %i\n", i);
-        TRACE_2(MUXER, " | sample type\t: %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size\t: %i\n", size);
-        TRACE_2(MUXER, " | sample offset\t: %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i\n", i);
+        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i\n", size);
+        TRACE_2(MUXER, " | sample offset : %i\n", offset);
 
         if (fseek(f_src, offset, SEEK_SET) != 0)
         {
@@ -108,10 +108,10 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id\t: %i\n", i);
-        TRACE_2(MUXER, " | sample type\t: %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size\t: %i\n", size);
-        TRACE_2(MUXER, " | sample offset\t: %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i\n", i);
+        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i\n", size);
+        TRACE_2(MUXER, " | sample offset : %i\n", offset);
 
         if (fseek(f_src, offset, SEEK_SET) != 0)
         {
@@ -180,15 +180,15 @@ static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
     {
         if (bitstream_map->stream_type == stream_AUDIO)
         {
-            TRACE_1(MUXER, " > stream type\t: AUDIO\n");
+            TRACE_1(MUXER, " > stream type : AUDIO\n");
         }
         else if (bitstream_map->stream_type == stream_VIDEO)
         {
-            TRACE_1(MUXER, " > stream type\t: VIDEO\n");
+            TRACE_1(MUXER, " > stream type : VIDEO\n");
         }
         else if (bitstream_map->stream_type == stream_TEXT)
         {
-            TRACE_1(MUXER, " > stream type\t: VIDEO\n");
+            TRACE_1(MUXER, " > stream type : VIDEO\n");
         }
         else
         {
@@ -284,7 +284,7 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
     }
 
     // Print generated file name
-    TRACE_INFO(MUXER, " > File name\t: '%s'\n", output_filename);
+    TRACE_INFO(MUXER, " > File name : '%s'\n", output_filename);
 
     return retcode;
 }

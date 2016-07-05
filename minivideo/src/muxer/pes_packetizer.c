@@ -53,15 +53,15 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     uint64_t pts_tick = 3750;
     uint64_t pts = 1;
 
-    if (bitstream_map->frame_rate > 0)
+    if (bitstream_map->framerate > 0)
     {
-        pts_tick = (uint64_t)((1000.0 / bitstream_map->frame_rate) * 90);
-        TRACE_1(MUXER, "frame rate : %f\n", bitstream_map->frame_rate);
+        pts_tick = (uint64_t)((1000.0 / bitstream_map->framerate) * 90);
+        TRACE_1(MUXER, "frame rate : %f\n", bitstream_map->framerate);
         TRACE_1(MUXER, "pts_tick   : %llu\n", pts_tick);
     }
     else
     {
-        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->frame_rate);
+        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->framerate);
     }
 
     unsigned int i = 0;
@@ -70,10 +70,10 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id\t: %i\n", i);
-        TRACE_2(MUXER, " | sample type\t: %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size\t: %i\n", size);
-        TRACE_2(MUXER, " | sample offset\t: %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i\n", i);
+        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i\n", size);
+        TRACE_2(MUXER, " | sample offset : %i\n", offset);
 
         // Generate a fixed length PES header
         ////////////////////////////////////////////////////////////////////////

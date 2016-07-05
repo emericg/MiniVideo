@@ -36,14 +36,15 @@
  * http://www.fourcc.org/codecs.php
  * http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
  *
- * Upper and lower cases are present, because we never know what will hit us
- * with those AVI containers...
+ * Both upper and lower cases FourCC are present sometimes, because we encountered
+ * in the wild...
  * These FourCC are set in big endian in this enum, so you may want to flip them
  * if you are reading them from Windows specific stuff (ex: WVF structures).
  */
 typedef enum fourcc_list_e
 {
-    // Video codecs
+    // Video codecs ////////////////////////////////////////////////////////////
+
     fcc_MPEG = 0x4D504547, //!< MPEG-1/2
     fcc_mpeg = 0x6D706567,
     fcc_MPG1 = 0x4D504731,
@@ -55,25 +56,39 @@ typedef enum fourcc_list_e
     fcc_DIV2 = 0x44495632,
     fcc_DIV4 = 0x44495634,
     fcc_DIV5 = 0x44495635,
+
+    fcc_mpg3 = 0x6D706733, //!< DivX 3
     fcc_divx = 0x64697678, //!< DivX 4 -> 6
     fcc_DIVX = 0x44495658,
     fcc_DX50 = 0x44583530, //!< DivX 5
     fcc_DX60 = 0x44583630, //!< DivX 6
 
-    fcc_MPG4 = 0x4D504734, //!< Microsoft MPEG-4
     fcc_MP41 = 0x4D503431, //!< Microsoft MPEG-4 (version 1)
+    fcc_MPG4 = 0x4D504734,
+    fcc_mpg4 = 0x6D706734,
     fcc_MP42 = 0x4D503432, //!< Microsoft MPEG-4 (version 2)
     fcc_MP43 = 0x4D503433, //!< Microsoft MPEG-4 (version 3)
     fcc_DIV3 = 0x44495633,
+    fcc_WMV1 = 0x574D5631, //!< Windows Media Video 7
     fcc_WMV7 = 0x574D5637,
+    fcc_WMV2 = 0x574D5632, //!< Windows Media Video 8
     fcc_WMV8 = 0x574D5638,
     fcc_AP41 = 0x41503431,
     fcc_COL1 = 0x434F4C31,
+    fcc_MP4S = 0x4D503453, //!< Microsoft ISO MPEG-4 version 1 (MPEG-4 Simple Profile compliant)
+    fcc_M4S2 = 0x4D345332, //!< Microsoft ISO MPEG-4 version 1.1 (MPEG-4 Advance Simple Profile compliant)
+    fcc_MSS1 = 0x4D535331, //!< Windows Media Screen 7
+    fcc_MSS2 = 0x4D535332, //!< Windows Media Screen 9
+    fcc_MSA1 = 0x4D534131, //!< Windows Media Screen
+    fcc_WMV3 = 0x574D5633, //!< Windows Media Video 9 (VC-1 compliant)
+    fcc_WMVA = 0x574D5641, //!< Windows Media Video 9 Advanced Profile
+    fcc_WVC1 = 0x57564331, //!< Windows Media Video 9 Advanced Profile (VC-1 compliant)
 
     fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP"
     fcc_XVID = 0x58564944,
     fcc_FMP4 = 0x464D5034,
-    fcc_MP4V = 0x6D703476,
+    fcc_MP4V = 0x4D503456,
+    fcc_mp4v = 0x6D703476,
 
     fcc_D263 = 0x44323633, //!< H.263
     fcc_H263 = 0x48323633,
@@ -104,11 +119,18 @@ typedef enum fourcc_list_e
     fcc_X265 = 0x58323635,
     fcc_x265 = 0x78323635,
 
-    fcc_VP30 = 0x76503330, //!< VPx family
+    fcc_VP30 = 0x76503330,
+    fcc_VP31 = 0x76503331, //!< Ogg Theora
+    fcc_VP32 = 0x76503332,
     fcc_VP40 = 0x56503430,
     fcc_VP50 = 0x56503530,
     fcc_VP60 = 0x56503630,
-    fcc_VP70 = 0x56503730,
+    fcc_VP61 = 0x56503631,
+    fcc_VP62 = 0x56503632,
+    fcc_VP6F = 0x56503646,
+    fcc_VP70 = 0x56503730, //!< VP7 (General Profile)
+    fcc_VP71 = 0x56503731, //!< VP7 (Error Resilient Profile)
+    fcc_VP72 = 0x56503732,
     fcc_VP80 = 0x56503830,
     fcc_VP90 = 0x56503930,
     fcc_VP10 = 0x56503130,
@@ -127,10 +149,18 @@ typedef enum fourcc_list_e
     fcc_apco = 0x6170636f, //!< Apple ProRes 422 (Proxy)
     fcc_apcs = 0x61706373, //!< Apple ProRes 422 (LT)
 
-    fcc_WMV1 = 0x574D5631, //!< Windows Media Video codecs
-    fcc_WMV2 = 0x574D5632,
-    fcc_WMV3 = 0x574D5633,
-    fcc_WVC1 = 0x57564331,
+
+    // Uncommon video codecs ///////////////////////////////////////////////////
+
+    fcc_svq1 = 0x73767131, //!<
+    fcc_SVQ1 = 0x53565131,
+    fcc_svqi = 0x73767169,
+    fcc_SVQ3 = 0x53565133,
+    fcc_cvid = 0x63766964, //!< Cinepak
+    fcc_CVID = 0x43564944,
+    fcc_icod = 0x69636F64, //!< Apple Intermediate Codec
+    fcc_rpza = 0x72707A61, //!< Apple Video
+    fcc_azpr = 0x617A7072,
 
     fcc_dvsd = 0x64767364, //!< DV
     fcc_DVSD = 0x44565344,
@@ -141,18 +171,67 @@ typedef enum fourcc_list_e
     fcc_AI1q = 0x41493171, //!< AVC Intra 100 /  720
     fcc_AI12 = 0x41493132, //!< AVC Intra 100 / 1080
 
-    // Uncompressed video
+/*
+    fcc_ = 0x, //!<
+    fcc_ = 0x,
+    fcc_ = 0x,
+    fcc_ = 0x,
+    fcc_ = 0x,
+    fcc_ = 0x,
+*/
+    // Lossless video codecs ///////////////////////////////////////////////////
+
+    // Uncompressed video //////////////////////////////////////////////////////
+
     fcc_VYUV = 0x56595556, //!< Uncompressed YUV types
     fcc_YUY2 = 0x59555932,
 
-    // Audio
+    // Audio codecs ////////////////////////////////////////////////////////////
+
     fcc_MP4A = 0x4D503441, //!< AAC
-    fcc_mp4A = 0x6D703461,
+    fcc_mp4a = 0x6D703461,
 
     fcc_AC3  = 0x41432D33, //!< Ac-3
-    fcc_ac3  = 0x61632D33  //!< ac-3
+    fcc_ac3  = 0x61632D33, //!< ac-3
+    fcc_AC4  = 0x41432D34, //!< Ac-4
+    fcc_ac4  = 0x61632D34, //!< ac-4
 
-    // Uncompressed audio
+    fcc_alac = 0x616C6163, //!< Apple Lossless Audio Coding
+
+    // Uncommon audio codecs ///////////////////////////////////////////////////
+
+    // Lossless audio codecs ///////////////////////////////////////////////////
+
+    // Uncompressed audio //////////////////////////////////////////////////////
+
+    fcc_alaw = 0x616C6177, //!< A-law logarithmic PCM
+    fcc_ulaw = 0x756C6177, //!< mu-law logarithmic PCM
+
+    fcc_fl32 = 0x666C3332, //!< 32-bit floating point linear PCM (little endian)
+    fcc_f32l = 0x6633326C, //!< 32-bit floating point linear PCM (little endian)
+    fcc_fl64 = 0x666C3634, //!< 64-bit floating point linear PCM (little endian)
+    fcc_f64l = 0x6636346C, //!< 64-bit floating point linear PCM (little endian)
+
+    fcc_raw  = 0x72617720, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_araw = 0x61726177, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_sowt = 0x736F7774, //!< 16-bit signed linear PCM (little endian)
+    fcc_tows = 0x74647773, //!< 16-bit signed linear PCM (big endian)
+    fcc_in24 = 0x696E3234, //!< 24-bit signed linear PCM (big endian)
+    fcc_in32 = 0x696E3332, //!< 32-bit signed linear PCM (big endian)
+    fcc_s8   = 0x73382020, //!< 8-bit signed linear PCM
+    fcc_s16l = 0x7331366C, //!< 16-bit signed linear PCM (little endian)
+    fcc_s16b = 0x73313662, //!< 16-bit signed linear PCM (big endian)
+    fcc_s24l = 0x7332346C, //!< 24-bit signed linear PCM (little endian)
+    fcc_s24b = 0x73323462, //!< 24-bit signed linear PCM (big endian)
+    fcc_s32l = 0x7333326C, //!< 32-bit signed linear PCM (little endian)
+    fcc_s32b = 0x73333262, //!< 32-bit signed linear PCM (big endian)
+    fcc_u8   = 0x75382020, //!< 8-bit unsigned linear PCM
+    fcc_u16l = 0x7531366C, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_u16b = 0x75313662, //!< 16-bit unsigned linear PCM (big endian)
+    fcc_u24l = 0x7532346C, //!< 24-bit unsigned linear PCM (little endian)
+    fcc_u24b = 0x75323462, //!< 24-bit unsigned linear PCM (big endian)
+    fcc_u32l = 0x7533326C, //!< 32-bit unsigned linear PCM (little endian)
+    fcc_u32b = 0x75333262, //!< 32-bit unsigned linear PCM (big endian)
 
 } fourcc_list_e;
 
@@ -160,9 +239,9 @@ typedef enum fourcc_list_e
 
 minivideo_EXPORT AVCodec_e getCodecFromFourCC(const uint32_t fcc);
 
-char *getFccString_le(const int fcc_in, char *fcc_out);
+char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
 
-char *getFccString_be(const int fcc_in, char *fcc_out);
+char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
 
 
 /* ************************************************************************** */

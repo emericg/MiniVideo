@@ -56,7 +56,15 @@ typedef enum MiniVideoErrorCodes_e
 /*!
  * \brief Print informations about the library (version, enabled features, traces levels...) into standard output.
  */
-void minivideo_infos(void);
+void minivideo_print_infos(void);
+
+/*!
+ * \brief Get informations about the library (version and build date/time).
+ *
+ * The date and time strings are static datas and do not need to be freed.
+ */
+void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
+                         const char **minivideo_builddate, const char **minivideo_buildtime);
 
 /*!
  * \brief Determine endianness of the current system.

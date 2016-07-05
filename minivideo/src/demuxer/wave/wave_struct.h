@@ -105,8 +105,9 @@ typedef struct wave_t
 /* ************************************************************************** */
 
 /*!
- * Good ressource about these tags (search for WAVE_FORMAT_):
- * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html
+ * Good ressource about these tags:
+ * http://wiki.multimedia.cx/index.php?title=TwoCC
+ * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html (search for WAVE_FORMAT_)
  */
 typedef enum WaveFormatTag_e
 {

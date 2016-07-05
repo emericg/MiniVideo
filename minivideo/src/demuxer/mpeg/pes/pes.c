@@ -1006,6 +1006,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             uint32_t aspect_ratio_index = (sizes & 0x000000F0) >> 4;
             uint32_t framerate_index    = (sizes & 0x0000000F);
 
+            map->color_matrix = CM_bt601;
             map->width  = (sizes & 0xFFF00000) >> 20;
             map->height = (sizes & 0x000FFF00) >> 8;
 
@@ -1018,15 +1019,15 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->aspectratio = (1.0 / 1.0);
+                    map->display_aspect_ratio = (1.0 / 1.0);
                     break;
                 case 8:
                 case 12:
-                    map->aspectratio = (4.0 / 3.0);
+                    map->display_aspect_ratio = (4.0 / 3.0);
                     break;
                 case 3:
                 case 6:
-                    map->aspectratio = (16.0 / 9.0);
+                    map->display_aspect_ratio = (16.0 / 9.0);
                     break;
                 default:
                     TRACE_WARNING(MPS, "Unsupported MPEG-1 aspect_ratio_index %u\n", aspect_ratio_index);
@@ -1034,23 +1035,23 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                     break;
                 }
             }
-            else // if(_mpeg_version == 2)
+            else // if (_mpeg_version == 2)
             {
                 map->stream_codec = CODEC_MPEG2;
 
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->aspectratio = (1.0 / 1.0);
+                    map->video_aspect_ratio = (1.0 / 1.0);
                     break;
                 case 2:
-                    map->aspectratio = (4.0 / 3.0);
+                    map->video_aspect_ratio = (4.0 / 3.0);
                     break;
                 case 3:
-                    map->aspectratio = (16.0 / 9.0);
+                    map->video_aspect_ratio = (16.0 / 9.0);
                     break;
                 case 4:
-                    map->aspectratio = (2.21 / 1.0);
+                    map->video_aspect_ratio = (2.21 / 1.0);
                     break;
                 default:
                     TRACE_WARNING(MPS, "Unsupported MPEG-2 aspect_ratio_index %u\n", aspect_ratio_index);
@@ -1062,42 +1063,42 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             switch (framerate_index)
             {
             case 1:
-                map->frame_rate = 23.976;
+                map->framerate = 23.976;
                 map->framerate_num = 24000;
                 map->framerate_base = 1001;
                 break;
             case 2:
-                map->frame_rate = 24.0;
+                map->framerate = 24.0;
                 map->framerate_num = 24;
                 map->framerate_base = 1;
                 break;
             case 3:
-                map->frame_rate = 25.0;
+                map->framerate = 25.0;
                 map->framerate_num = 25;
                 map->framerate_base = 1;
                 break;
             case 4:
-                map->frame_rate = 29.970;
+                map->framerate = 29.970;
                 map->framerate_num = 30000;
                 map->framerate_base = 1001;
                 break;
             case 5:
-                map->frame_rate = 30.0;
+                map->framerate = 30.0;
                 map->framerate_num = 30;
                 map->framerate_base = 1;
                 break;
             case 6:
-                map->frame_rate = 50.0;
+                map->framerate = 50.0;
                 map->framerate_num = 50;
                 map->framerate_base = 1;
                 break;
             case 7:
-                map->frame_rate = 59.940;
+                map->framerate = 59.940;
                 map->framerate_num = 60000;
                 map->framerate_base = 1001;
                 break;
             case 8:
-                map->frame_rate = 60.0;
+                map->framerate = 60.0;
                 map->framerate_num = 60;
                 map->framerate_base = 1;
                 break;

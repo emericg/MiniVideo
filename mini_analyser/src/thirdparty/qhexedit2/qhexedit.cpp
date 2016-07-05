@@ -27,6 +27,7 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
 
     connect(&_cursorTimer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
+    connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
     connect(_undoStack, SIGNAL(indexChanged(int)), this, SLOT(dataChangedPrivate(int)));
 
     _cursorTimer.setInterval(500);
@@ -142,9 +143,9 @@ void QHexEdit::setCursorPosition(qint64 position)
     _pxCursorX = (((x / 2) * 3) + (x % 2)) * _pxCharWidth + _pxPosHexX;
 
     if (_overwriteMode)
-        _cursorRect = QRect(_pxCursorX, _pxCursorY + _pxCursorWidth, _pxCharWidth, _pxCursorWidth);
+        _cursorRect = QRect(_pxCursorX - horizontalScrollBar()->value(), _pxCursorY + _pxCursorWidth, _pxCharWidth, _pxCursorWidth);
     else
-        _cursorRect = QRect(_pxCursorX, _pxCursorY - _pxCharHeight + 4, _pxCursorWidth, _pxCharHeight);
+        _cursorRect = QRect(_pxCursorX - horizontalScrollBar()->value(), _pxCursorY - _pxCharHeight + 4, _pxCursorWidth, _pxCharHeight);
 
     // 4. Immiadately draw new cursor
     _blink = true;
@@ -156,11 +157,13 @@ qint64 QHexEdit::cursorPosition(QPoint pos)
 {
     // Calc cursorposition depending on a graphical position
     qint64 result = -1;
-    if ((pos.x() >= _pxPosHexX) && (pos.x() < (_pxPosHexX + (1 + HEXCHARS_IN_LINE) * _pxCharWidth)))
+    int posX = pos.x() + horizontalScrollBar()->value();
+    int posY = pos.y() - 3;
+    if ((posX >= _pxPosHexX) && (posX < (_pxPosHexX + (1 + HEXCHARS_IN_LINE) * _pxCharWidth)))
     {
-        int x = (pos.x() - _pxPosHexX - _pxCharWidth / 2) / _pxCharWidth;
+        int x = (posX - _pxPosHexX - _pxCharWidth / 2) / _pxCharWidth;
         x = (x / 3) * 2 + x % 3;
-        int y = ((pos.y() - 3) / _pxCharHeight) * 2 * BYTES_PER_LINE;
+        int y = (posY / _pxCharHeight) * 2 * BYTES_PER_LINE;
         result = _bPosFirst * 2 + x + y;
     }
     return result;
@@ -297,6 +300,10 @@ void QHexEdit::ensureVisible()
         verticalScrollBar()->setValue((int)(_cursorPosition / 2 / BYTES_PER_LINE));
     if (_cursorPosition > ((_bPosFirst + (_rowsShown - 1)*BYTES_PER_LINE) * 2))
         verticalScrollBar()->setValue((int)(_cursorPosition / 2 / BYTES_PER_LINE) - _rowsShown + 1);
+    if (_pxCursorX < horizontalScrollBar()->value())
+        horizontalScrollBar()->setValue(_pxCursorX);
+    if ((_pxCursorX + _pxCharWidth) > (horizontalScrollBar()->value() + viewport()->width()))
+        horizontalScrollBar()->setValue(_pxCursorX + _pxCharWidth - viewport()->width());
     viewport()->update();
 }
 
@@ -623,12 +630,19 @@ void QHexEdit::keyPressEvent(QKeyEvent *event)
             }
             else
             {
+                bool behindLastByte = false;
+                if ((_cursorPosition / 2) == _chunks->size())
+                    behindLastByte = true;
+
                 _bPosCurrent -= 1;
                 if (_overwriteMode)
                     replace(_bPosCurrent, char(0));
                 else
                     remove(_bPosCurrent, 1);
-                _bPosCurrent -= 1;
+
+                if (!behindLastByte)
+                    _bPosCurrent -= 1;
+                
                 setCursorPosition(2 * _bPosCurrent);
                 resetSelection(2 * _bPosCurrent);
             }
@@ -814,9 +828,12 @@ void QHexEdit::resetSelection()
 
 void QHexEdit::resetSelection(qint64 pos)
 {
+    pos = pos / 2;
     if (pos < 0)
         pos = 0;
-    pos = pos / 2;
+    if (pos > _chunks->size())
+        pos = _chunks->size();
+
     _bSelectionInit = pos;
     _bSelectionBegin = pos;
     _bSelectionEnd = pos;
@@ -824,9 +841,12 @@ void QHexEdit::resetSelection(qint64 pos)
 
 void QHexEdit::setSelection(qint64 pos)
 {
+    pos = pos / 2;
     if (pos < 0)
         pos = 0;
-    pos = pos / 2;
+    if (pos > _chunks->size())
+        pos = _chunks->size();
+
     if (pos >= _bSelectionInit)
     {
         _bSelectionEnd = pos;

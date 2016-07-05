@@ -549,7 +549,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
                     media->tracks_video[tid]->sample_count++;
 
                     if (dwFlags == AVIIF_KEYFRAME)
-                        media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
+                        media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_SYNC;
                     else
                         media->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
 
@@ -1233,7 +1233,7 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
             mytrack->height = track->strf.biHeight;
             mytrack->color_depth = track->strf.biBitCount;
 
-            mytrack->frame_rate = (double)(track->strh.dwRate) / (double)(track->strh.dwScale);
+            mytrack->framerate = (double)(track->strh.dwRate) / (double)(track->strh.dwScale);
             //mytrack->frame_rate = avi->avih.dwMicroSecPerFrame; // But do not trust dwMicroSecPerFrame
         }
     }
@@ -1328,7 +1328,7 @@ static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
                         media->tracks_video[tid]->sample_count++;
 
                         if (avi->tracks[i]->index_entries[i].flags == AVIIF_KEYFRAME)
-                            media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_IDR;
+                            media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_SYNC;
                         else
                             media->tracks_video[tid]->sample_type[sid] = sample_VIDEO;
 

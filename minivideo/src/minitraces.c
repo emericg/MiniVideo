@@ -19,7 +19,7 @@
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
- * \version   0.43
+ * \version   0.44
  */
 
 // MiniTraces header
@@ -38,6 +38,11 @@
 
 #include <time.h>
 
+#ifdef defined(__APPLE__) || defined(__MACH__)
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 /*!
  * \brief Print trace tick with millisecond precision.
  *
@@ -46,13 +51,28 @@
  */
 static void print_trace_tick(void)
 {
-    struct timespec tp;
     long long int time = 0;
 
-    if (clock_gettime(CLOCK_REALTIME, &tp) == 0)
+#if defined(__APPLE__) || defined(__MACH__) // OS X does not have clock_gettime > use clock_get_time
+
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+    if (clock_get_time(cclock, &mts));
     {
-        time = (tp.tv_sec * 1000) + (tp.tv_nsec / 1000000);
+        time = (mts.tv_sec * 1000) + (mts.tv_nsec / 1000000);
     }
+    mach_port_deallocate(mach_task_self(), cclock);
+
+#else
+
+    struct timespec ts;
+    if (clock_gettime(CLOCK_REALTIME, &ts) == 0)
+    {
+        time = (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
+    }
+
+#endif
 
     printf("[%lld]", time);
 }

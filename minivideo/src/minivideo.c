@@ -37,7 +37,7 @@
 #include "demuxer/wave/wave.h"
 #include "demuxer/mpeg/ps/ps.h"
 
-#include "demuxer/bruteforce/bruteforce.h"
+#include "demuxer/esparser/esparser.h"
 #include "demuxer/filter.h"
 
 // Decoder
@@ -56,19 +56,19 @@
 
 /* ************************************************************************** */
 
-void minivideo_infos(void)
+void minivideo_print_infos(void)
 {
-    printf(BLD_GREEN "\nminivideo_infos()\n" CLR_RESET);
+    printf(BLD_GREEN "minivideo_print_infos()\n" CLR_RESET);
     printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
 
-#if defined(__GNUC__) || defined(__GNUG__)
-    printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
-#elif defined(__clang__)
-    printf("* Library built with CLANG '%d.%d.%d'\n", __clang_major__, __clang_minor__, __clang_patch__);
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
+#if defined(__ICC) || defined(__INTEL_COMPILER)
     printf("* Library built with ICC '%d / %s'\n", __INTEL_COMPILER, __INTEL_COMPILER_BUILD_DATE);
+#elif defined(__clang__)
+    printf("* Library built with CLANG '%d.%d'\n", __clang_major__, __clang_minor__);
+#elif defined(__GNUC__) || defined(__GNUG__)
+    printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #endif
 
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
@@ -82,21 +82,28 @@ void minivideo_infos(void)
 #if ENABLE_COLORS
     printf("* COLORS are " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* COLORS are OFF\n" CLR_RESET);
+    printf("* COLORS are OFF\n");
 #endif
 
 #if ENABLE_STDINT
-    printf("* C99 integer support is " BLD_GREEN "ON\n" CLR_RESET);
+    printf("* C99 integer types support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
-    printf("* C99 integer support is " BLD_RED "OFF\n" CLR_RESET);
-    printf("* Integer support is emulated\n");
+    printf("* C99 integer types support is " BLD_RED "OFF\n" CLR_RESET);
+    printf("> Integer types support will be emulated\n");
 #endif
 
 #if ENABLE_STDBOOL
     printf("* C99 boolean support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 boolean support is " BLD_RED "OFF\n" CLR_RESET);
-    printf("* boolean support is emulated\n");
+    printf("> Boolean support will be emulated\n");
+#endif
+
+#if ENABLE_STDALIGN
+    printf("* C11 memory alignement support is " BLD_GREEN "ON\n" CLR_RESET);
+#else
+    printf("* C11 memory alignement support is " BLD_RED "OFF\n" CLR_RESET);
+    printf("> Memory alignement support will be emulated\n");
 #endif
 
 #if ENABLE_JPEG
@@ -118,7 +125,7 @@ void minivideo_infos(void)
 #endif
 
 #if ENABLE_DEBUG
-    printf("\n* MiniVideo library tracing test:\n");
+    printf("* MiniVideo library tracing test:\n");
     TRACE_ERROR(MAIN, "TEST error\n");
     TRACE_WARNING(MAIN, "TEST warning\n");
     TRACE_INFO(MAIN, "TEST info\n");
@@ -130,9 +137,28 @@ void minivideo_infos(void)
 
 /* ************************************************************************** */
 
+void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
+                         const char **minivideo_builddate, const char **minivideo_buildtime)
+{
+    if (minivideo_major && minivideo_minor && minivideo_patch)
+    {
+        *minivideo_major = minivideo_VERSION_MAJOR;
+        *minivideo_minor = minivideo_VERSION_MINOR;
+        *minivideo_patch = minivideo_VERSION_PATCH;
+    }
+
+    if (minivideo_builddate && minivideo_buildtime)
+    {
+        *minivideo_builddate = __DATE__;
+        *minivideo_buildtime = __TIME__;
+    }
+}
+
+/* ************************************************************************** */
+
 int minivideo_endianness(void)
 {
-    int retcode = -1;
+    int endianness = -1;
     int i = 1;
     char *p = (char *)&i;
 
@@ -178,6 +204,10 @@ int minivideo_parse(MediaFile_t *input_media,
     {
         TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!\n");
     }
+    else if (input_media->file_size == 0)
+    {
+        TRACE_ERROR(MAIN, "Unable to parse emtpy file!\n");
+    }
     else
     {
         // Start container parsing
@@ -199,7 +229,7 @@ int minivideo_parse(MediaFile_t *input_media,
                 retcode = ps_fileParse(input_media);
                 break;
             case CONTAINER_ES:
-                retcode = bruteforce_fileParse(input_media, CODEC_H264);
+                retcode = es_fileParse(input_media, CODEC_H264);
                 break;
             case CONTAINER_ES_MP3:
                 retcode = mp3_fileParse(input_media);
@@ -211,8 +241,9 @@ int minivideo_parse(MediaFile_t *input_media,
         }
 
         // Compute some additional metadatas
-        computeBitRates(input_media);
         computeCodecs(input_media);
+        computeAspectRatios(input_media);
+        computeSamplesDatas(input_media);
     }
 
     return retcode;

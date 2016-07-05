@@ -38,7 +38,7 @@ typedef struct Mp4Box_t
     // Box parameters
     int64_t size;           //!< Box size in bytes, including all its fields and contained boxes
     uint32_t boxtype;       //!< A fourCC identifying the box type, see ISO/IEC 14496-12 Table 1
-    uint8_t usertype[16];   //!< 16 bytes "extended type"; its bloat but I don't want to handle each potential deallocation
+    uint8_t usertype[16];   //!< 16 bytes "extended type"
 
     // FullBox parameters
     uint8_t version;        //!< Specifies the version of the format used by this box (used for compatibility)
@@ -58,7 +58,7 @@ typedef struct Mp4Track_t
     unsigned int handlerType;
 
     char name[128];
-    char compressor[32];
+    char compressorname[32];
 
     uint32_t timescale;
     uint32_t mediatime;
@@ -72,13 +72,18 @@ typedef struct Mp4Track_t
 
         // Audio specific parameters
         unsigned int channel_count;
-        unsigned int sample_size;
-        unsigned int sample_rate;
+        unsigned int sample_size_bits;
+        unsigned int sample_rate_hz;
 
         // Video specific parameters
         unsigned int width;
         unsigned int height;
         unsigned int color_depth;
+        unsigned int color_space;
+        unsigned int color_matrix;
+        unsigned int color_range;
+        unsigned int par_h;
+        unsigned int par_v;
 
         // AVC specific parameters
         unsigned int profile;
@@ -94,6 +99,16 @@ typedef struct Mp4Track_t
     // stss
     unsigned int stss_entry_count;                //!< IDR frame count
     unsigned int *stss_sample_number;
+
+    // stts
+    unsigned int stts_entry_count;
+    unsigned int *stts_sample_count;
+    unsigned int *stts_sample_delta;
+
+    // ctts
+    unsigned int ctts_entry_count;
+    unsigned int *ctts_sample_count;
+    int64_t *ctts_sample_offset;
 
     // stsc
     unsigned int stsc_entry_count;
@@ -138,7 +153,8 @@ typedef struct Mp4_t
  * of identification, and is shown so in the boxes below. User extensions use
  * an extended type; in this case, the type field is set to 'uuid'.
  *
- * The boxes marked with an * are mandatory.
+ * The boxes marked with an (*) are mandatory.
+ * The boxes marked with an (v) are vendor specific.
  */
 typedef enum Mp4BoxType_e
 {
@@ -146,10 +162,11 @@ typedef enum Mp4BoxType_e
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
     BOX_UDTA = 0x75647461,                      //!< user data box
+        BOX_HMMT = 0x686D6D74,                  //!< (v) GoPro HiLight tags
 
     BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
         BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations
-        BOX_IODS = 0x696F6473,                  //!<
+        BOX_IODS = 0x696F6473,                  //!< object descriptor box
         BOX_TRAK = 0x7472616B,                  //!< (*) container for individual track or stream
             BOX_TKHD = 0x746b6864,              //!< (*) track header, overall information about the track
             BOX_TREF = 0x74726566,              //!< track reference container
@@ -173,6 +190,8 @@ typedef enum Mp4BoxType_e
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box
+                            BOX_FIEL = 0x6669656C,      //!<
+                            BOX_GAMA = 0x67616D61,      //!<
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
                         BOX_STTS = 0x73747473,          //!< (*) (decoding) time to sample
                         BOX_CTTS = 0x63747473,          //!< (composition / presentation) time to sample
@@ -227,52 +246,25 @@ typedef enum Mp4BoxType_e
  * \enum Mp4HandlerType_e
  * \brief Identifies the content of a track.
  *
- * There are four handler type: audio, video, hint and meta.
+ * There are four major handler type: audio, video, hint and meta.
+ * For others, see: http://www.mp4ra.org/index.html
  */
 typedef enum Mp4HandlerType_e
 {
     HANDLER_AUDIO = 0x736F756E, //!< 'soun'
     HANDLER_VIDEO = 0x76696465, //!< 'vide'
-    HANDLER_TEXT  = 0x74657874, //!< 'text'
-    HANDLER_META  = 0x6D657461, //!< 'meta'
-    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd'
-    HANDLER_HINT  = 0x68696E74  //!< 'hint'
+    HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
+    HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
+    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
+
+    HANDLER_SUBT  = 0x73756274, //!< 'subt'
+    HANDLER_SBTL  = 0x7362746c, //!< 'sbtl' // QuickTime Subtitle track
+    HANDLER_TEXT  = 0x74657874  //!< 'text'
 
     // sdsm // SceneDescriptionStream
     // odsm // ObjectDescriptorStream
 
 } Mp4HandlerType_e;
-
-/*!
- * \enum Mp4SampleEntry_e
- * \brief Different sample values for H.264 video.
- */
-typedef enum Mp4SampleEntry_e
-{
-    SAMPLE_AVC1 = 0x61766331,    //!< H.264 ('avc1')
-    SAMPLE_AVCC = 0x61766343,
-
-    SAMPLE_HVC1 = 0x68766331,    //!< H.265
-    SAMPLE_HEVC = 0x68657663,
-
-    SAMPLE_CFHD = 0x43464844,
-
-    SAMPLE_MP4V = 0x6D703476,    //!< XVID ('mp4v')
-    SAMPLE_MP4A = 0x6D703461,    //!< AAC ('mp4a')
-    SAMPLE_AC3  = 0x61632D33,    //!< AC-3 ('ac-3')
-
-    SAMPLE_RAW_ = 0x72617720,    //!< unsigned linear PCM (16-bit, little endian)
-    SAMPLE_TOWS = 0x746F7773,    //!< signed linear PCM (big endian)
-    SAMPLE_SWOT = 0x73776F74,    //!< signed linear PCM (little endian)
-/*
-    SAMPLE_in24 = 'in24', //!< 24-bit, big endian, linear PCM
-    SAMPLE_in32 = 'in32', //!< 32-bit, big endian, linear PCM
-    SAMPLE_fl32 = 'fl32', //!< 32-bit floating point PCM (Presumably IEEE 32-bit; byte order?)
-    SAMPLE_fl64 = 'fl64', //!< 64-bit floating point PCM (Presumably IEEE 64-bit; byte order?)
-    SAMPLE_alaw = 'alaw', //!< A-law logarithmic PCM
-    SAMPLE_ulaw = 'ulaw', //!< mu-law logarithmic PCM
-*/
-} Mp4SampleEntry_e;
 
 /* ************************************************************************** */
 #endif // PARSER_MP4_STRUCT_H

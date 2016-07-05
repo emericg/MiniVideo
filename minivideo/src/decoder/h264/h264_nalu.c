@@ -120,8 +120,8 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
         nalu->nal_ref_idc = read_bits(bitstr, 2);
         nalu->nal_unit_type = read_bits(bitstr, 5);
 
-        TRACE_1(NALU, "  - nal_ref_idc\t= 0x%02X\n", nalu->nal_ref_idc);
-        TRACE_1(NALU, "  - nal_unit_type\t= 0x%02X\n", nalu->nal_unit_type);
+        TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X\n", nalu->nal_ref_idc);
+        TRACE_1(NALU, "  - nal_unit_type = 0x%02X\n", nalu->nal_unit_type);
 
         if (nalu->nal_unit_type == 14 || nalu->nal_unit_type == 20)
         {
@@ -138,15 +138,15 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
                 nalu->discardable_flag = read_bit(bitstr);
                 nalu->output_flag = read_bit(bitstr);
 
-                TRACE_1(NALU, "  - idr_flag \t\t= %u\n", nalu->idr_flag);
-                TRACE_1(NALU, "  - priority_id \t\t= %u\n", nalu->priority_id);
-                TRACE_1(NALU, "  - no_inter_layer_pred_flag= %u\n", nalu->no_inter_layer_pred_flag);
-                TRACE_1(NALU, "  - dependency_id \t\t= %u\n", nalu->dependency_id);
-                TRACE_1(NALU, "  - quality_id \t\t= %u\n", nalu->quality_id);
-                TRACE_1(NALU, "  - temporal_id \t\t= %u\n", nalu->temporal_id);
-                TRACE_1(NALU, "  - use_ref_base_pic_flag \t= %u\n", nalu->use_ref_base_pic_flag);
-                TRACE_1(NALU, "  - discardable_flag \t= %u\n", nalu->discardable_flag);
-                TRACE_1(NALU, "  - output_flag \t\t= %u\n", nalu->output_flag);
+                TRACE_1(NALU, "  - idr_flag      = %u\n", nalu->idr_flag);
+                TRACE_1(NALU, "  - priority_id   = %u\n", nalu->priority_id);
+                TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u\n", nalu->no_inter_layer_pred_flag);
+                TRACE_1(NALU, "  - dependency_id = %u\n", nalu->dependency_id);
+                TRACE_1(NALU, "  - quality_id    = %u\n", nalu->quality_id);
+                TRACE_1(NALU, "  - temporal_id   = %u\n", nalu->temporal_id);
+                TRACE_1(NALU, "  - use_ref_base_pic_flag    = %u\n", nalu->use_ref_base_pic_flag);
+                TRACE_1(NALU, "  - discardable_flag = %u\n", nalu->discardable_flag);
+                TRACE_1(NALU, "  - output_flag      = %u\n", nalu->output_flag);
 
                 // Check reserved_three_2bits
                 if (read_bits(bitstr, 2) == 3)

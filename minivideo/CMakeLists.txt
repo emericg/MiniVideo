@@ -23,7 +23,7 @@ cmake_policy(SET CMP0054 NEW)
 ###############################################################################
 
 set(minivideo_VERSION_MAJOR 6)
-set(minivideo_VERSION_MINOR 1)
+set(minivideo_VERSION_MINOR 2)
 set(minivideo_VERSION_PATCH 0)
 
 set(ENABLE_COLORS 1) # "Toggle colored terminal output"
@@ -117,15 +117,18 @@ elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
     message(STATUS "* Building with Intel C compiler")
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     message(STATUS "* Building with Visual Studio C compiler")
+elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    message(STATUS "* Building with GCC compiler")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-but-set-variable ")
 endif()
 
 
-# Save options into a "cmake_defines.h" file, using "cmake_defines.h.in" template
+# Generate "minivideo_settings.h" file from a template
 ###############################################################################
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/src/cmake_defines.h.in"
-    "${CMAKE_SOURCE_DIR}/src/cmake_defines.h"
+    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
+    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h"
 )
 
 
@@ -134,7 +137,7 @@ configure_file(
 
 set(minivideo_SRC
     src/minivideo.c
-        src/cmake_defines.h
+        src/minivideo_settings.h
         src/typedef.h
         src/utils.c
         src/avcodecs.c src/avutils.h
@@ -149,11 +152,11 @@ set(minivideo_SRC
     src/export.c
         src/export_utils.c
         src/stb_image_write.h
-    src/demuxer/filter.c
     src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h
     src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
-    src/demuxer/bruteforce/bruteforce.c
+    src/demuxer/esparser/esparser.c
+    src/demuxer/filter.c
     src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
         src/demuxer/mpeg/descriptor_struct.h
         src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h

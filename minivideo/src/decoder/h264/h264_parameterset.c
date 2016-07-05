@@ -117,6 +117,7 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd);
  * \return 1 if SPS seems consistent, 0 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
+ * 7.3.2.1 Sequence parameter set RBSP syntax.
  * 7.4.2.1 Sequence parameter set RBSP semantics.
  */
 int decodeSPS(DecodingContext_t *dc)
@@ -805,7 +806,8 @@ static void scaling_list_8x8(DecodingContext_t *dc, int i)
  * \return 1 if PPS seems consistent, 0 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
- * 7.4.2.2 Picture parameter set RBSP semantics
+ * 7.3.2.2 Picture parameter set RBSP syntax.
+ * 7.4.2.2 Picture parameter set RBSP semantics.
  */
 int decodePPS(DecodingContext_t *dc)
 {
@@ -1138,6 +1140,30 @@ void printPPS(DecodingContext_t *dc)
     }
     TRACE_1(PARAM, "  - second_chroma_qp_index_offset\t\t= %i\n", pps->second_chroma_qp_index_offset);
 #endif // ENABLE_DEBUG
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse Access Unit Delimiter.
+ * \param *dc The current DecodingContext.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 7.3.2.4 Access unit delimiter RBSP syntax.
+ * 7.4.2.4 Access unit delimiter RBSP semantics.
+ */
+int decodeAUD(DecodingContext_t *dc)
+{
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeAUD()\n" CLR_RESET);
+    int retcode = SUCCESS;
+
+    unsigned int primary_pic_type = read_bits(dc->bitstr, 3);
+    TRACE_2(PARAM, "<> " BLD_GREEN "primary_pic_type: %i\n" CLR_RESET, primary_pic_type);
+
+    retcode = h264_rbsp_trailing_bits(dc->bitstr);
+
+    return retcode;
 }
 
 /* ************************************************************************** */

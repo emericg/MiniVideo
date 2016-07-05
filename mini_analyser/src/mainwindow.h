@@ -27,8 +27,10 @@
 #include <minivideo.h>
 
 // minianalyser
-#include "fourcchelper.h"
 #include "hexeditor.h"
+#include "containerexplorer.h"
+#include "fourcchelper.h"
+#include "about.h"
 
 #include <QMainWindow>
 #include <vector>
@@ -39,6 +41,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class QCPRange;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -46,23 +50,41 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
     int setAppPath(const QString &path);
     int loadFile(const QString &file);
 
-public slots:
-    void loadFileDialog();
-
 private slots:
+    void loadFileDialog();
+    void saveFileDialog();
+    void saveDatas();
+
     int printDatas();
-    void closeFile(const QString &file);
-    void closeFile();
+        int printAudioDetails();
+        int printVideoDetails();
+        int printSubtitlesDetails();
+        int printOtherDetails();
+
+    int generateExportDatas();
+        int generateExportDatas_text(MediaFile_t *media, bool detailed);
+        int generateExportDatas_json(MediaFile_t *media, bool detailed);
+        int generateExportDatas_xml(MediaFile_t *media, bool detailed);
+        int generateExportDatas_yaml(MediaFile_t *media, bool detailed);
+
+    void xAxisRangeChanged(const QCPRange &newRange);
+    void yAxisRangeChanged(const QCPRange &newRange);
+
+    void hideStatus();
+    void detachFile();
     void reloadFile(const QString &file);
     void reloadFile();
-    void detachFile();
-    void hideStatus();
-    void openExporter();
+    void closeFile(const QString &file);
+    void closeFile();
+
+    void openExplorer();
     void openHexEditor();
-    void openFourCC();
+    void openFourccHelper();
+    void openAbout();
     void About();
     void AboutQt();
 
@@ -72,15 +94,28 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    FourccHelper *fcc;
-    HexEditor *hexeditor;
-    QTimer *statusTimer;
 
+    ContainerExplorer *explorer;
+    HexEditor *hexeditor;
+    FourccHelper *fcchelper;
+    AboutWindows *aboutwindows;
+
+    QTimer *statusTimer;
     QString applicationPath;
 
     bool emptyFileList;
-    std::vector <MediaFile_t *> mediaList;
+    std::vector <MediaFile_t *> mediaList; // This might need to be smart pointers at some point
 
+    // Text export feature
+    int exportFormat;
+    QString exportDatas;
+    QFile exportFile;
+
+    // Bitrate graph
+    double xRangeMax;
+    double yRangeMax;
+
+    // Save tabs
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;
     QString tabInfosText;
@@ -93,14 +128,27 @@ private:
     QIcon tabSubsIcon;
     QString tabOtherText;
     QIcon tabOtherIcon;
+    QString tabExportText;
+    QIcon tabExportIcon;
+    QString tabDevText;
+    QIcon tabDevIcon;
 
     MediaFile_t *currentMediaFile();
     int analyseFile(const QString &file);
 
+    void setStatus(const QString &text, int type, int duration = 0);
     void handleComboBox(const QString &file);
     void handleTabWidget();
-    void setStatus(const QString &text, int type, int duration = 0);
     void cleanDatas();
+
+    typedef enum TextExportFormat_e
+    {
+        EXPORT_TEXT  = 0,
+        EXPORT_JSON  = 1,
+        EXPORT_XML   = 2,
+        EXPORT_YAML  = 3
+
+    } TextExportFormat_e;
 };
 
 /* ************************************************************************** */

@@ -22,6 +22,7 @@
 #ifndef HEXEDITOR_H
 #define HEXEDITOR_H
 
+// QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
 #include <QWidget>
@@ -38,7 +39,9 @@ class HexEditor : public QWidget
 public:
     explicit HexEditor(QWidget *parent = 0);
     ~HexEditor();
+
     void loadFile(const QString &fileName);
+    void closeFile();
 
 private:
     Ui::HexEditor *ui;

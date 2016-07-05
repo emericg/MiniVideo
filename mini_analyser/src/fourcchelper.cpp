@@ -59,7 +59,7 @@ FourccHelper::FourccHelper(QWidget *parent) :
         ui->radioButton_be->toggle();
     }
 
-    connect(ui->pushButton_exit, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(ui->pushButton_endianness, SIGNAL(clicked(bool)), this, SLOT(endiannessInfo()));
 
     connect(ui->lineEdit_ascii, SIGNAL(textEdited(QString)), this, SLOT(asciiEdited()));
