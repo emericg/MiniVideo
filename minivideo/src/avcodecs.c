@@ -64,6 +64,9 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
         case CONTAINER_RM:
             return "RealMedia [.rm, .rmvb]";
             break;
+        case CONTAINER_R3D:
+            return "Redcode RAW [.r3d]";
+            break;
 
         case CONTAINER_FLAC:
             return "FLAC (Free Lossless Audio Codec) [.flac]";
@@ -127,6 +130,9 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
                 break;
             case CONTAINER_RM:
                 return "RM";
+                break;
+            case CONTAINER_R3D:
+                return "R3D";
                 break;
 
             case CONTAINER_FLAC:
@@ -305,6 +311,26 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 return "GSM";
                 break;
 
+            case CODEC_ATRAC:
+                if (long_description)
+                    return "Sony ATRAC";
+                else
+                    return "ATRAC";
+                break;
+            case CODEC_ATRAC3plus:
+                if (long_description)
+                    return "Sony ATRAC 3 plus";
+                else
+                    return "ATRAC3plus";
+                break;
+
+            case CODEC_RA_28:
+                return "RealAudio 28.8";
+                break;
+            case CODEC_RA_cook:
+                return "RealAudio cook";
+                break;
+
             case CODEC_APE:
                 if (long_description)
                     return "APE (Monkey's Audio)";
@@ -470,6 +496,19 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
             case CODEC_REDCode:
                 return "REDCode";
+                break;
+
+            case CODEC_RV10:
+                return "RealVideo";
+                break;
+            case CODEC_RV20:
+                return "RealVideo G2";
+                break;
+            case CODEC_RV30:
+                return "RealVideo 3";
+                break;
+            case CODEC_RV40:
+                return "RealVideo 4";
                 break;
 
             case CODEC_CINEPAK:

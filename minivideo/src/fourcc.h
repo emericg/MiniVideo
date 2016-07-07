@@ -151,6 +151,12 @@ typedef enum fourcc_list_e
 
     fcc_REDC = 0x52454443, //!< REDCode
 
+    fcc_RV10 = 0x52563130, //!< RealVideo
+    fcc_RV13 = 0x52563133,
+    fcc_rv20 = 0x72763230, //!< RealVideo G2
+    fcc_rv30 = 0x72763330, //!< RealVideo 3
+    fcc_rv40 = 0x72763430, //!< RealVideo 4
+
     // Uncommon video codecs ///////////////////////////////////////////////////
 
     fcc_cvid = 0x63766964, //!< Cinepak
@@ -217,6 +223,13 @@ typedef enum fourcc_list_e
     fcc_agsm = 0x6167736D, //!< GSM
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
+
+    fcc_28_8 = 0x32385F38, //!< RealAudio 28.8
+    fcc_cook = 0x636F6F6B, //!< RealAudio cook
+    fcc_atrc = 0x61747263, //!< Used for Sony ATRAC in RealMedia
+    fcc_dnet = 0x646E6574, //!< Used for A52/AC3 in RealMedia (the byte order of the data is reversed from standard AC3)
+    fcc_raac = 0x72616163, //!< Used for AAC-LC in RealMedia
+    fcc_racp = 0x72616370, //!< Used for HE-AAC in RealMedia
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 

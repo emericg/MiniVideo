@@ -36,36 +36,37 @@ typedef enum ContainerFormat_e
 
     // General purpose containers //////////////////////////////////////////////
 
-    CONTAINER_AVI     =  1, //!< AVI "Audio Video Interleave" (.avi, ...)
-    CONTAINER_ASF     =  2, //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
-    CONTAINER_MKV     =  3, //!< Matroska (.mkv, .mka, .webm)
-    CONTAINER_MP4     =  4, //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
-    CONTAINER_MPEG_PS =  5, //!< MPEG "Program Stream" (.mpg, .vob, ...)
-    CONTAINER_MPEG_TS =  6, //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
-    CONTAINER_MPEG_MT =  7, //!< MPEG "Media Transport" (.mt, .mmt)
-    CONTAINER_MXF     =  8, //!< MXF "Material eXchange Format" (.mxf)
-    CONTAINER_FLV     =  9, //!< SWF "Small Web Format" (.flv)
-    CONTAINER_OGG     = 10, //!< OGG (.ogg, .ogv, .oga, ...)
-    CONTAINER_RM      = 11, //!< RealMedia (.rm, .rmvb)
+    CONTAINER_AVI       =  1, //!< AVI "Audio Video Interleave" (.avi, ...)
+    CONTAINER_ASF       =  2, //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
+    CONTAINER_MKV       =  3, //!< Matroska (.mkv, .mka, .webm)
+    CONTAINER_MP4       =  4, //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
+    CONTAINER_MPEG_PS   =  5, //!< MPEG "Program Stream" (.mpg, .vob, ...)
+    CONTAINER_MPEG_TS   =  6, //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
+    CONTAINER_MPEG_MT   =  7, //!< MPEG "Media Transport" (.mt, .mmt)
+    CONTAINER_MXF       =  8, //!< MXF "Material eXchange Format" (.mxf)
+    CONTAINER_FLV       =  9, //!< SWF "Small Web Format" (.flv)
+    CONTAINER_OGG       = 10, //!< OGG (.ogg, .ogv, .oga, ...)
+    CONTAINER_RM        = 11, //!< RealMedia (.rm, .rmvb)
+    CONTAINER_R3D       = 12, //!< REDCode RAW (.r3d)
 
     // Audio containers ////////////////////////////////////////////////////////
 
-    CONTAINER_FLAC    = 12, //!< FLAC "Free Lossless Audio Codec" (.flac)
-    CONTAINER_WAVE    = 13, //!< WAVE "Waveform Audio File Format" (.wav)
+    CONTAINER_FLAC      = 64, //!< FLAC "Free Lossless Audio Codec" (.flac)
+    CONTAINER_WAVE      = 65, //!< WAVE "Waveform Audio File Format" (.wav)
 
     // ES formats (not containers!) ////////////////////////////////////////////
 
-    CONTAINER_ES      = 16, //!< Undefined "Elementary Stream"
-    CONTAINER_ES_AAC  = 17, //!< AAC "Elementary Stream"
-    CONTAINER_ES_AC3  = 18, //!< AC3 "Elementary Stream"
-    CONTAINER_ES_MP3  = 19, //!< MP3 "Elementary Stream"
+    CONTAINER_ES        = 128, //!< Undefined "Elementary Stream"
+    CONTAINER_ES_AAC    = 129, //!< AAC "Elementary Stream"
+    CONTAINER_ES_AC3    = 130, //!< AC3 "Elementary Stream"
+    CONTAINER_ES_MP3    = 131  //!< MP3 "Elementary Stream"
 
 } ContainerFormat_e;
 
 //! Audio and Video compression standards (codecs)
 typedef enum AVCodec_e
 {
-    CODEC_UNKNOWN     = 0,
+    CODEC_UNKNOWN       = 0,
 
     // Audio codecs ////////////////////////////////////////////////////////////
 
@@ -100,8 +101,13 @@ typedef enum AVCodec_e
     CODEC_WMA           = 49, //!< Windows Media Audio
     CODEC_MPC           = 50, //!< Musepack
     CODEC_GSM           = 51, //!< GSM
+    CODEC_ATRAC         = 52, //!< Sony ATRAC
+    CODEC_ATRAC3plus    = 53, //!< Sony ATRAC 3 plus
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
+
+    CODEC_RA_28         = 54, //!< Real Audio 28.8
+    CODEC_RA_cook       = 55, //!< Real Audio cook
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 
@@ -158,6 +164,11 @@ typedef enum AVCodec_e
     CODEC_PRORES_4444_XQ    = 287, //!< Apple ProRes 4444 (XQ)
 
     CODEC_REDCode       = 288, //!< REDCode
+
+    CODEC_RV10          = 289, //!< RealVideo
+    CODEC_RV20          = 290, //!< RealVideo G2
+    CODEC_RV30          = 291, //!< RealVideo 3
+    CODEC_RV40          = 292, //!< RealVideo 4
 
     // Uncommon video codecs ///////////////////////////////////////////////////
 

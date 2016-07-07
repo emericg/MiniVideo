@@ -233,6 +233,20 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_REDCode;
         break;
 
+    case fcc_RV10:
+    case fcc_RV13:
+        codec = CODEC_RV10;
+        break;
+    case fcc_rv20:
+        codec = CODEC_RV20;
+        break;
+    case fcc_rv30:
+        codec = CODEC_RV30;
+        break;
+    case fcc_rv40:
+        codec = CODEC_RV40;
+        break;
+
     case fcc_cvid:
     case fcc_CVID:
         codec = CODEC_CINEPAK;
@@ -297,7 +311,11 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
 
     case fcc_MP4A:
     case fcc_mp4a:
+    case fcc_raac: // AAC LC
         codec = CODEC_AAC;
+        break;
+    case fcc_racp:
+        codec = CODEC_AAC_HE;
         break;
 
     case fcc_AC3:
@@ -316,6 +334,17 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
 
     case fcc_alac:
         codec = CODEC_ALAC;
+        break;
+
+    case fcc_28_8:
+        codec = CODEC_RA_28;
+        break;
+    case fcc_cook:
+        codec = CODEC_RA_cook;
+        break;
+
+    case fcc_atrc:
+        codec = CODEC_ATRAC;
         break;
 
     case fcc_araw:
