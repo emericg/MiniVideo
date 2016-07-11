@@ -347,7 +347,9 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_ATRAC;
         break;
 
+    case fcc_raw:
     case fcc_araw:
+    case fcc_lpcm:
     case fcc_sowt:
     case fcc_tows:
     case fcc_in24:

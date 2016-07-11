@@ -247,6 +247,7 @@ typedef enum fourcc_list_e
 
     fcc_raw  = 0x72617720, //!< 16-bit unsigned linear PCM (little endian)
     fcc_araw = 0x61726177, //!< 16-bit unsigned linear PCM (little endian)
+    fcc_lpcm = 0x6C70636D, //!< ??
     fcc_sowt = 0x736F7774, //!< 16-bit signed linear PCM (little endian)
     fcc_tows = 0x74647773, //!< 16-bit signed linear PCM (big endian)
     fcc_in24 = 0x696E3234, //!< 24-bit signed linear PCM (big endian)
