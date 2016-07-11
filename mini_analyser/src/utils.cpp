@@ -237,7 +237,9 @@ QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size,
             // Percentage
             double sizepercent = (static_cast<double>(size_int) / static_cast<double>(file_size)) * 100.0;
 
-            if (sizepercent < 0.01)
+            if (sizepercent > 100)
+                size_qstr += " (ERR)";
+            else if (sizepercent < 0.01)
                 size_qstr += " (~0.01%)";
             else
                 size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
