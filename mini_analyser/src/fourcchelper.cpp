@@ -43,6 +43,7 @@ FourccHelper::FourccHelper(QWidget *parent) :
     ui(new Ui::FourccHelper)
 {
     ui->setupUi(this);
+    setMaximumSize(480, 320);
 
     // Detect system endianness and use it as default for the GUI
     if (BYTE_ORDER == LITTLE_ENDIAN)
@@ -58,6 +59,14 @@ FourccHelper::FourccHelper(QWidget *parent) :
         ui->radioButton_be->toggle();
     }
 
+    // Codec finder is hidden when starting
+    ui->label_fourcc_string->hide();
+
+    // Endianness feature is disabled
+    ui->frame_endianness->hide();
+    //connect(ui->radioButton_le, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
+    //connect(ui->radioButton_be, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
+
     connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(ui->pushButton_endianness, SIGNAL(clicked(bool)), this, SLOT(endiannessInfo()));
 
@@ -72,11 +81,6 @@ FourccHelper::FourccHelper(QWidget *parent) :
     connect(ui->pushButton_copy_bin, SIGNAL(clicked(bool)), this, SLOT(binCopy()));
     connect(ui->pushButton_copy_int32le, SIGNAL(clicked(bool)), this, SLOT(int32LECopy()));
     connect(ui->pushButton_copy_int32be, SIGNAL(clicked(bool)), this, SLOT(int32BECopy()));
-
-    // Endianness feature is disabled
-    ui->frame_endianness->hide();
-    //connect(ui->radioButton_le, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
-    //connect(ui->radioButton_be, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
 }
 
 FourccHelper::~FourccHelper()
@@ -140,7 +144,7 @@ void FourccHelper::int32LEEdited()
     internal_hex.clear();
     for (int i = 0; i < 4; i++)
     {
-        char w = (i32 >> (i*8)) & 0xFF;
+        char w = static_cast<char>((i32 >> (i*8)) & 0xFF);
         if (w > 0)
             internal_hex.append(QString::number(w, 16));
     }
@@ -238,29 +242,38 @@ void FourccHelper::findCodec()
         int32_field = ui->lineEdit_int32_BE->text();
     unsigned fcc = int32_field.toUInt(0, 10);
 
-    // Try to find a match
-    codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
-    if (codec != "Unknown")
+    if (fcc)
     {
-        ui->label_fourcc_string->setText(">> " + codec);
-        return;
-    }
-    else
-    {
-        // Switch endianness
-        fcc = endian_flip_32(fcc);
+        ui->label_fourcc_string->show();
 
-        // Try again
+        // Try to find a match
         codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
         if (codec != "Unknown")
         {
-            ui->label_fourcc_string->setText(">> " + codec + + "\n>> " + tr("but the endianness is all wrong!"));
+            ui->label_fourcc_string->setText(">> " + codec);
             return;
         }
-    }
+        else
+        {
+            // Switch endianness
+            fcc = endian_flip_32(fcc);
 
-    // We didn't find a match...
-    ui->label_fourcc_string->setText(tr(">> This FourCC is unknown..."));
+            // Try again
+            codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
+            if (codec != "Unknown")
+            {
+                ui->label_fourcc_string->setText(">> " + codec + + "\n>> " + tr("but the endianness is all wrong!"));
+                return;
+            }
+        }
+
+        // We didn't find a match...
+        ui->label_fourcc_string->setText(tr(">> This FourCC is unknown..."));
+    }
+    else
+    {
+        ui->label_fourcc_string->hide();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
