@@ -355,14 +355,6 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             // Assume constant sample size
             map->bitrate_mode = BITRATE_CBR;
             sample_size_cbr = track->stsz_sample_size;
-
-            // PCM hack
-            if (track->stsz_sample_size == 1 &&
-                (track->codec == CODEC_LPCM || track->codec == CODEC_LogPCM ||
-                 track->codec == CODEC_DPCM || track->codec == CODEC_ADPCM))
-            {
-                sample_size_cbr = track->channel_count * (track->sample_size_bits/8);
-            }
         }
 
         // Set sample type & size
@@ -485,7 +477,8 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 
         for (i = 0; (i < track->stsc_entry_count) && (chunkOffset < track->stco_entry_count); i++)
         {
-            uint32_t n = 0, k = 0, l = 0;
+            uint32_t n = 0, l = 0;
+            k = 0;
 
             if ((i + 1) == track->stsc_entry_count)
             {

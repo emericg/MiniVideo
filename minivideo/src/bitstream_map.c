@@ -308,6 +308,36 @@ static void computeSamplesDatasTrack(BitstreamMap_t *t)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+/*!
+ * \brief PCM sample size hack
+ *
+ * PCM sample size can be recomputed if the informations gathered from the
+ * conteners are wrong (like the sample size). This will also trigger a new
+ * bitrate computation.
+ */
+bool computePCMSettings(BitstreamMap_t *track)
+{
+    bool retcode = SUCCESS;
+    uint32_t sample_size_cbr = track->channel_count * (track->bit_per_sample/8);
+
+    // First, check if the hack is needed
+    if (track->sample_count > 0 && track->sample_size[0] != sample_size_cbr)
+    {
+        TRACE_ERROR(DEMUX, BLD_GREEN "computePCMSettings()\n" CLR_RESET);
+
+        track->sample_per_frames = 1;
+        track->stream_size = track->sample_count * sample_size_cbr;
+        track->bitrate = 0; // reset bitrate
+
+        for (unsigned i = 0; i < track->sample_count; i++)
+        {
+            track->sample_size[i] = sample_size_cbr;
+        }
+    }
+
+    return retcode;
+}
+
 bool computeCodecs(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()\n" CLR_RESET);
@@ -328,6 +358,15 @@ bool computeCodecs(MediaFile_t *media)
         if (media->tracks_audio[i] && media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
         {
             media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
+        }
+
+        // PCM hack
+        if (media->tracks_audio[i]->stream_codec == CODEC_LPCM ||
+            media->tracks_audio[i]->stream_codec == CODEC_LogPCM ||
+            media->tracks_audio[i]->stream_codec == CODEC_DPCM ||
+            media->tracks_audio[i]->stream_codec == CODEC_ADPCM)
+        {
+            computePCMSettings(media->tracks_audio[i]);
         }
     }
 
