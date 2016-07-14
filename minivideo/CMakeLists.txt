@@ -22,9 +22,9 @@ cmake_policy(SET CMP0054 NEW)
 # Pass various options to minivideo source code
 ###############################################################################
 
-set(minivideo_VERSION_MAJOR 6)
-set(minivideo_VERSION_MINOR 2)
-set(minivideo_VERSION_PATCH 0)
+set(minivideo_VERSION_MAJOR 0)
+set(minivideo_VERSION_MINOR 7)
+set(minivideo_VERSION_PATCH 1)
 
 set(ENABLE_COLORS 1) # "Toggle colored terminal output"
 set(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
@@ -85,7 +85,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ###############################################################################
 
 # Generic build flags
-set(CMAKE_C_FLAGS "-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+set(CMAKE_C_FLAGS "-std=c99 -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
 
 # Detect build type (default is release)
 # You can change this using "-DCMAKE_BUILD_TYPE=Debug/Release/RelWithDebInfo/MinSizeRel"

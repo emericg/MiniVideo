@@ -43,8 +43,7 @@ int **malloc2d(const int x, const int y)
     }
     else
     {
-        int i = 0;
-        for (i = 0; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             array2d[i] = (int *)malloc(y * sizeof(int));
 
@@ -71,8 +70,7 @@ int **calloc2d(const int x, const int y)
     }
     else
     {
-        int i = 0;
-        for (i = 0; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             array2d[i] = (int *)calloc(y, sizeof(int));
 
@@ -93,8 +91,7 @@ void free2d(int ***array2d_ptr, const int x)
 {
     if (**array2d_ptr)
     {
-        int i = 0;
-        for (i = 0; i < x; i++)
+        for (int i = 0; i < x; i++)
         {
             if (*array2d_ptr[i])
             {
@@ -161,8 +158,7 @@ int is_prime(const unsigned int n)
         return 0;
     }
 
-    unsigned int i = 2;
-    for (i = 2; i < sqrt(n); i += 2)
+    for (unsigned i = 2; i < sqrt(n); i += 2)
     {
         if ((n % i == 0) && (i != n))
         {

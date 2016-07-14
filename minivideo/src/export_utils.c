@@ -264,8 +264,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
         }
 
         // Cb and Cr extraction + super sampling
-        i = 0;
-        for (mb_lines = 0; mb_lines < mb_lines_total; mb_lines++)
+        for (mb_lines = 0, i = 0; mb_lines < mb_lines_total; mb_lines++)
         {
             for (mb_y = 0; mb_y < 8; mb_y++)
             {
@@ -295,7 +294,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
         }
 
         // Color space convertion
-        for (i = 0; i < (img_width*img_height*3); i += 3)
+        for (i = 0; i < (img_width * img_height * 3); i += 3)
         {
             buffer_rgb[i] = Clip1_YCbCr_8(((298 * buffer_y[i/3]) >> 8) + ((408 * buffer_cr[i/3]) >> 8) - 222); // R
             buffer_rgb[i + 1] = Clip1_YCbCr_8(((298 * buffer_y[i/3]) >> 8) - ((100 * buffer_cb[i/3]) >> 8) - ((208 * buffer_cr[i/3]) >> 8) + 135); // G

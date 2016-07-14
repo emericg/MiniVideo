@@ -402,12 +402,11 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
     jpeg_start_compress(&cinfo, TRUE);
 
     // 5. writing data (JCS_YCbCr colorspace)
-    unsigned int i = 0, j = 0;
     unsigned char *offset_cb = buffer_ycbcr + img_width * img_height;
     unsigned char *offset_cr = buffer_ycbcr + img_width * img_height + img_width * img_height / 4 ;
-    for (j = 0; j < img_height; j += 16)
+    for (unsigned j = 0; j < img_height; j += 16)
     {
-        for (i = 0; i < 16; i++)
+        for (unsigned i = 0; i < 16; i++)
         {
             y[i] = buffer_ycbcr + img_width * (i + j);
 

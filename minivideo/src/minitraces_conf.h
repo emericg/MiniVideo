@@ -131,7 +131,7 @@ static TraceModule_t trace_modules_table[] =
         { "MP3"   , "MP3 parser"                 , TRACE_LEVEL_DEFAULT },
         { "RIF"   , "RIFF parser utils"          , TRACE_LEVEL_DEFAULT },
         { "AVI"   , "AVI parser"                 , TRACE_LEVEL_DEFAULT },
-        { "WAV"   , "WAVE parser"                 , TRACE_LEVEL_DEFAULT },
+        { "WAV"   , "WAVE parser"                , TRACE_LEVEL_DEFAULT },
         { "MPS"   , "MPEG-PS parser"             , TRACE_LEVEL_DEFAULT },
         { "MTS"   , "MPEG-TS parser"             , TRACE_LEVEL_DEFAULT },
         { "FILTR" , "IDR filtering functions"    , TRACE_LEVEL_DEFAULT },

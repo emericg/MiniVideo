@@ -50,7 +50,7 @@ FORMS       += ui/mainwindow.ui \
 
 RESOURCES   += resources/resources.qrc
 
-# OS icons (Mac and Windows)
+# OS icons (macOS and Windows)
 ICON         = resources/app/icon.icns
 RC_ICONS     = resources/app/icon.ico
 
@@ -59,7 +59,7 @@ INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo
 
-# Mac OS X target
+# macOS target
 macx {
 
     # Force Qt to use a particular SDK version (with automatic detection)

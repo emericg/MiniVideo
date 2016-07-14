@@ -1059,11 +1059,10 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
             }
             else
             {
-                int i = 0;
                 slice->mb_skip_run = read_ue(dc->bitstr);
                 slice->prevMbSkipped = (slice->mb_skip_run > 0);
 
-                for (i = 0; i < slice->mb_skip_run; i++)
+                for (int i = 0; i < slice->mb_skip_run; i++)
                 {
                     dc->CurrMbAddr = NextMbAddress(dc, dc->CurrMbAddr);
                 }

@@ -195,8 +195,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
         if (bitstream_map->sample_count > 0)
         {
             TRACE_1(DEMUX, "SAMPLES\n");
-            unsigned int i = 0;
-            for (i = 0; i < bitstream_map->sample_count; i++)
+            for (unsigned  i = 0; i < bitstream_map->sample_count; i++)
             {
                 TRACE_1(DEMUX, "> sample_type      : %i\n", bitstream_map->sample_type[i]);
                 TRACE_1(DEMUX, "  | sample_offset  : %i\n", bitstream_map->sample_offset[i]);
@@ -341,11 +340,9 @@ bool computePCMSettings(BitstreamMap_t *track)
 bool computeCodecs(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()\n" CLR_RESET);
-
     bool retcode = SUCCESS;
-    unsigned i = 0;
 
-    for (i = 0; i < media->tracks_video_count; i++)
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
     {
         if (media->tracks_video[i] && media->tracks_video[i]->stream_codec == CODEC_UNKNOWN)
         {
@@ -353,7 +350,7 @@ bool computeCodecs(MediaFile_t *media)
         }
     }
 
-    for (i = 0; i < media->tracks_audio_count; i++)
+    for (unsigned i = 0; i < media->tracks_audio_count; i++)
     {
         if (media->tracks_audio[i] && media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
         {
@@ -378,11 +375,9 @@ bool computeCodecs(MediaFile_t *media)
 bool computeAspectRatios(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeAspectRatios()\n" CLR_RESET);
-
     bool retcode = SUCCESS;
-    unsigned i = 0;
 
-    for (i = 0; i < media->tracks_video_count; i++)
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
     {
         BitstreamMap_t *t = media->tracks_video[i];
         if (t)
@@ -438,7 +433,7 @@ bool computeAspectRatios(MediaFile_t *media)
         }
     }
 
-    for (i = 0; i < media->tracks_audio_count; i++)
+    for (unsigned i = 0; i < media->tracks_audio_count; i++)
     {
         //
     }
@@ -451,11 +446,9 @@ bool computeAspectRatios(MediaFile_t *media)
 bool computeSamplesDatas(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeSamplesDatas()\n" CLR_RESET);
-
     bool retcode = SUCCESS;
-    unsigned i = 0;
 
-    for (i = 0; i < media->tracks_video_count; i++)
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
     {
         if (media->tracks_video[i])
         {
@@ -463,7 +456,7 @@ bool computeSamplesDatas(MediaFile_t *media)
         }
     }
 
-    for (i = 0; i < media->tracks_audio_count; i++)
+    for (unsigned i = 0; i < media->tracks_audio_count; i++)
     {
         if (media->tracks_audio[i])
         {

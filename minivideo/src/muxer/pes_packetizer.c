@@ -64,8 +64,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->framerate);
     }
 
-    unsigned int i = 0;
-    for (i = 0; i < bitstream_map->sample_count; i++)
+    for (unsigned i = 0; i < bitstream_map->sample_count; i++)
     {
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
