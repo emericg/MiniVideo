@@ -95,8 +95,8 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[
     static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, int c[4][4], int d[4][4]);
     static void idct4x4(int d[4][4], int r[4][4]);
 
-static int transform_8x8_residual(DecodingContext_t *dc, int YCbCr, int c[8][8], int r[8][8]);
-    static void quant8x8(sps_t *sps, int YCbCr, int qP, int c[8][8], int r[8][8]);
+static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[8][8], int r[8][8]);
+    static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int r[8][8]);
     static void idct8x8(int d[8][8], int r[8][8]);
 
 static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, int u[4][4]);

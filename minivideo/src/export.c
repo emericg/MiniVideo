@@ -47,9 +47,10 @@
     #include "stb_image_write.h"
 #endif
 
-// C POSIX library
+#ifndef _WIN32
+// C POSIX libraries
 #include <unistd.h>
-
+#endif
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>

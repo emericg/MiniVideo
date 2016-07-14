@@ -27,6 +27,7 @@
 // minivideo headers
 #include "avcodecs.h"
 #include "typedef.h"
+#include "../build/minivideo_Export.h"
 
 /* ************************************************************************** */
 
@@ -273,7 +274,7 @@ typedef enum fourcc_list_e
 
 /* ************************************************************************** */
 
-AVCodec_e getCodecFromFourCC(const uint32_t fcc);
+minivideo_EXPORT AVCodec_e getCodecFromFourCC(const uint32_t fcc);
 
 char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
 

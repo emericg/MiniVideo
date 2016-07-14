@@ -21,6 +21,7 @@
 
 #include "fourcchelper.h"
 #include "ui_fourcchelper.h"
+#include "portable_endian.h"
 
 // minivideo library
 #include <minivideo.h>

@@ -184,7 +184,7 @@ int is_prime(const unsigned int n)
  * Quick mod 8 operation, particulary useful for finding out how far some bits
  * are from a byte boundary.
  */
-inline int fast_mod8(const int n)
+int fast_mod8(const int n)
 {
     return (n & 0x7);
 }
@@ -196,7 +196,7 @@ inline int fast_mod8(const int n)
  * \param n The value to divide.
  * \return The quotient of the integer division by 8.
  */
-inline int fast_div8(const int n)
+int fast_div8(const int n)
 {
     return (n >> 3);
 }
@@ -204,27 +204,27 @@ inline int fast_div8(const int n)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-inline short smin(short a, short b)
+short smin(short a, short b)
 {
     return (((a) < (b)) ? (a) : (b));
 }
 
-inline short smax(short a, short b)
+short smax(short a, short b)
 {
     return (((a) > (b)) ? (a) : (b));
 }
 
-inline int imin(int a, int b)
+int imin(int a, int b)
 {
     return ((a) < (b)) ? (a) : (b);
 }
 
-inline int imax(int a, int b)
+int imax(int a, int b)
 {
     return ((a) > (b)) ? (a) : (b);
 }
 
-inline int imedian(int a, int b, int c)
+int imedian(int a, int b, int c)
 {
     if (a > b) // a > b
     {
@@ -246,27 +246,27 @@ inline int imedian(int a, int b, int c)
     }
 }
 
-inline double dmin(double a, double b)
+double dmin(double a, double b)
 {
     return ((a) < (b)) ? (a) : (b);
 }
 
-inline double dmax(double a, double b)
+double dmax(double a, double b)
 {
     return ((a) > (b)) ? (a) : (b);
 }
 
-inline int64_t i64min(int64_t a, int64_t b)
+int64_t i64min(int64_t a, int64_t b)
 {
     return ((a) < (b)) ? (a) : (b);
 }
 
-inline int64_t i64max(int64_t a, int64_t b)
+int64_t i64max(int64_t a, int64_t b)
 {
     return ((a) > (b)) ? (a) : (b);
 }
 
-inline short sabs(short x)
+short sabs(short x)
 {
     static const short SHORT_BITS = (sizeof(short) * CHAR_BIT) - 1;
     short y = (short) (x >> SHORT_BITS);
@@ -274,7 +274,7 @@ inline short sabs(short x)
     return (short) ((x ^ y) - y);
 }
 
-inline int iabs(int x)
+int iabs(int x)
 {
     static const int INT_BITS = (sizeof(int) * CHAR_BIT) - 1;
     int y = x >> INT_BITS;
@@ -282,74 +282,74 @@ inline int iabs(int x)
     return (x ^ y) - y;
 }
 
-inline double dabs(double x)
+double dabs(double x)
 {
     return ((x) < 0) ? -(x) : (x);
 }
 
-inline int64_t i64abs(int64_t x)
+int64_t i64abs(int64_t x)
 {
     static const int64_t int64_t_BITS = (sizeof(int64_t) * CHAR_BIT) - 1;
     int64_t y = x >> int64_t_BITS;
     return (x ^ y) - y;
 }
 
-inline double dabs2(double x)
+double dabs2(double x)
 {
     return (x) * (x);
 }
 
-inline int iabs2(int x)
+int iabs2(int x)
 {
     return (x) * (x);
 }
 
-inline int64_t i64abs2(int64_t x)
+int64_t i64abs2(int64_t x)
 {
     return (x) * (x);
 }
 
-inline int isign(int x)
+int isign(int x)
 {
     return ((x > 0) - (x < 0));
 }
 
-inline int isignab(int a, int b)
+int isignab(int a, int b)
 {
     return ((b) < 0) ? -iabs(a) : iabs(a);
 }
 
-inline int rshift_rnd(int x, int a)
+int rshift_rnd(int x, int a)
 {
     return (a > 0) ? ((x + (1 << (a-1))) >> a) : (x << (-a));
 }
 
-inline int rshift_rnd_sign(int x, int a)
+int rshift_rnd_sign(int x, int a)
 {
     return (x > 0) ? ((x + (1 << (a-1))) >> a) : (-((iabs(x) + (1 << (a-1))) >> a));
 }
 
-inline unsigned int rshift_rnd_us(unsigned int x, unsigned int a)
+unsigned int rshift_rnd_us(unsigned int x, unsigned int a)
 {
     return (a > 0) ? ((x + (1 << (a-1))) >> a) : x;
 }
 
-inline int rshift_rnd_sf(int x, int a)
+int rshift_rnd_sf(int x, int a)
 {
     return ((x + (1 << (a-1))) >> a);
 }
 
-inline int shift_off_sf(int x, int o, int a)
+int shift_off_sf(int x, int o, int a)
 {
     return ((x + o) >> a);
 }
 
-inline unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a)
+unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a)
 {
     return ((x + (1 << (a-1))) >> a);
 }
 
-inline int iClip1(int high, int x)
+int iClip1(int high, int x)
 {
     x = imax(x, 0);
     x = imin(x, high);
@@ -357,7 +357,7 @@ inline int iClip1(int high, int x)
     return x;
 }
 
-inline short sClip1(short high, short x)
+short sClip1(short high, short x)
 {
     x = smax(x, 0);
     x = smin(x, high);
@@ -365,7 +365,7 @@ inline short sClip1(short high, short x)
     return x;
 }
 
-inline double dClip1(double high, double x)
+double dClip1(double high, double x)
 {
     x = dmax(x, 0);
     x = dmin(x, high);
@@ -373,7 +373,7 @@ inline double dClip1(double high, double x)
     return x;
 }
 
-inline int iClip3(int low, int high, int x)
+int iClip3(int low, int high, int x)
 {
     x = imax(x, low);
     x = imin(x, high);
@@ -381,7 +381,7 @@ inline int iClip3(int low, int high, int x)
     return x;
 }
 
-inline short sClip3(short low, short high, short x)
+short sClip3(short low, short high, short x)
 {
     x = smax(x, low);
     x = smin(x, high);
@@ -389,7 +389,7 @@ inline short sClip3(short low, short high, short x)
     return x;
 }
 
-inline double dClip3(double low, double high, double x)
+double dClip3(double low, double high, double x)
 {
     x = dmax(x, low);
     x = dmin(x, high);
@@ -399,7 +399,7 @@ inline double dClip3(double low, double high, double x)
 
 /* ************************************************************************** */
 
-inline int iClip1_YCbCr(const int x, const int BitDepth)
+int iClip1_YCbCr(const int x, const int BitDepth)
 {
     return iClip3(0, (1 << BitDepth) - 1, x);
 }
@@ -409,9 +409,8 @@ inline int iClip1_YCbCr_8(const int x)
     return MIN(MAX(x, 0), 255);
 }
 
-inline uint8_t Clip1_YCbCr_8(const int x)
+uint8_t Clip1_YCbCr_8(const int x)
 {
     return MIN(MAX(x, 0), 255);
 }
-
 /* ************************************************************************** */

@@ -26,7 +26,7 @@
 
 #include "typedef.h"
 #include "avutils.h"
-
+#include "../build/minivideo_Export.h"
 /* ************************************************************************** */
 
 //! Container file formats
@@ -221,9 +221,9 @@ typedef enum PictureFormat_e
 
 /* ************************************************************************** */
 
-const char *getContainerString(ContainerFormat_e container, bool long_description);
-const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description);
-const char *getPictureString(PictureFormat_e picture, bool long_description);
+minivideo_EXPORT const char *getContainerString(ContainerFormat_e container, bool long_description);
+minivideo_EXPORT const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description);
+minivideo_EXPORT const char *getPictureString(PictureFormat_e picture, bool long_description);
 
 /* ************************************************************************** */
 #endif // AV_CODECS_H

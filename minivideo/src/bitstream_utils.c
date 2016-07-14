@@ -25,8 +25,10 @@
 #include "bitstream.h"
 #include "minitraces.h"
 
+#ifndef _WIN32
 // C POSIX libraries
 #include <unistd.h>
+#endif
 
 // C standard libraries
 #include <stdio.h>

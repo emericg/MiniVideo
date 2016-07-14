@@ -46,9 +46,9 @@ int InverseRasterScan_y(const int a,
                                const int c,
                                const int d);
 
-void InverseMacroblockScan(int mbAddr,
-                           bool MbaffFrameFlag,
-                           int PicWidthInSamplesL,
+void InverseMacroblockScan(const int mbAddr,
+                           const bool MbaffFrameFlag,
+                           const int PicWidthInSamplesL,
                            int *x,
                            int *y);
 
