@@ -26,7 +26,7 @@
 
 #include "typedef.h"
 #include "avutils.h"
-#include "../build/minivideo_Export.h"
+#include "minivideo_export.h"
 /* ************************************************************************** */
 
 //! Container file formats

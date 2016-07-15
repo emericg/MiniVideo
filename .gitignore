@@ -11,6 +11,9 @@ minivideo/build/*
 MiniVideo*
 *.pro.user
 
+# QMake temporary files
+.qmake.stash
+
 # CMake temporary files
 CMakeLists.txt.user
 CMakeCache.txt
@@ -18,7 +21,10 @@ CMakeFiles
 Makefile
 install_manifest.txt
 cmake_install.cmake
-cmake_defines.h
+
+# CMake genertaed files
+minivideo/src/minivideo_export.h
+minivideo/src/minivideo_settings.h
 
 # Doxygen documentation
 minivideo/doc/doxygen_temp/html/*

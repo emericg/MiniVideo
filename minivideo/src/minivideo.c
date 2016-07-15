@@ -50,9 +50,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// Tools
-#include "portable_endian.h"
+#include <endian.h>
 
 /* ************************************************************************** */
 
@@ -161,30 +159,30 @@ int minivideo_endianness(void)
     int endianness = -1;
     int i = 1;
     char *p = (char *)&i;
-    int retcode;
 
-	if (p[0] == 1)
+#if ENABLE_DEBUG
+    if (p[0] == 1)
     {
-        retcode = LITTLE_ENDIAN; // 1234
+        printf("* System is using LITTLE_ENDIAN\n");
+        endianness = __LITTLE_ENDIAN; // 1234
     }
     else
     {
-        retcode = BIG_ENDIAN; // 4321
+        printf("* System is using BIG_ENDIAN\n");
+        endianness = __BIG_ENDIAN; // 4321
     }
-
-#if ENABLE_DEBUG
-	printf(BLD_GREEN "\nminivideo_endianness()\n" CLR_RESET);
-
-	if (retcode == LITTLE_ENDIAN)
-	{
-		printf("* ENDIANNESS is set to LITTLE_ENDIAN\n");
-	}
-	else
-	{
-		printf("* ENDIANNESS is set to BIG_ENDIAN\n");
-	}
+#else
+    if (p[0] == 1)
+    {
+        endianness = __LITTLE_ENDIAN; // 1234
+    }
+    else
+    {
+        endianness = __BIG_ENDIAN; // 4321
+    }
 #endif // ENABLE_DEBUG
-	return retcode;
+
+    return endianness;
 }
 
 /* ************************************************************************** */

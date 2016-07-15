@@ -32,7 +32,7 @@ extern "C" {
 #include "avcodecs.h"
 #include "fourcc.h"
 #include "mediafile_struct.h"
-#include "../build/minivideo_Export.h"
+#include "minivideo_export.h"
 
 /* ************************************************************************** */
 
