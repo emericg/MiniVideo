@@ -28,6 +28,7 @@
 #include "minitraces.h"
 #include "typedef.h"
 #include "import.h"
+#include "portable_endian.h"
 
 // Demuxers
 #include "demuxer/avi/avi.h"
@@ -36,7 +37,6 @@
 #include "demuxer/mp3/mp3.h"
 #include "demuxer/wave/wave.h"
 #include "demuxer/mpeg/ps/ps.h"
-
 #include "demuxer/esparser/esparser.h"
 #include "demuxer/filter.h"
 
@@ -50,7 +50,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <endian.h>
 
 /* ************************************************************************** */
 

@@ -73,6 +73,8 @@ minivideo_EXPORT void minivideo_get_infos(int *minivideo_major, int *minivideo_m
  * To determine endianness, we use a character pointer to the bytes of an int,
  * and then check its first byte to see if it is 0 (meaning big endianness)
  * or 1 (meaning little endianness).
+ *
+ * See also: https://sourceforge.net/p/predef/wiki/Endianness/
  */
 minivideo_EXPORT int minivideo_endianness(void);
 

@@ -21,14 +21,13 @@
 
 #include "fourcchelper.h"
 #include "ui_fourcchelper.h"
-#include "portable_endian.h"
+#include "thirdparty/portable_endian.h"
 
 // minivideo library
 #include <minivideo.h>
 
 #include <QDesktopServices>
 #include <QUrl>
-
 #include <QDebug>
 
 uint32_t endian_flip_32(uint32_t src)
