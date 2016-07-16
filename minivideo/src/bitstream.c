@@ -317,9 +317,11 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
         else
         {
             // Feed buffer
-            if (fread(bitstr->buffer, sizeof(uint8_t), bitstr->buffer_size, bitstr->bitstream_file) != bitstr->buffer_size)
+            size_t b = fread(bitstr->buffer, sizeof(uint8_t), bitstr->buffer_size, bitstr->bitstream_file);
+
+            if (b != bitstr->buffer_size)
             {
-                TRACE_ERROR(BITS, "<b> Unable to read from the input file!\n");
+                TRACE_ERROR(BITS, "<b> Unable to read from the input file! (%u read instead of %u)\n", b, bitstr->buffer_size);
                 retcode = FAILURE;
             }
             else

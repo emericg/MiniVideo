@@ -67,7 +67,7 @@ static void getInfosFromPath(MediaFile_t *media)
         if (getcwd(cwd, sizeof(cwd)) != NULL)
         {
             strncpy(absolute_filepath, strncat(cwd, media->file_path, sizeof(cwd) - 1), sizeof(absolute_filepath) - 1);
-            temp = fopen(absolute_filepath, "r");
+            temp = fopen(absolute_filepath, "rb");
         }
 
         if (temp != NULL)
@@ -83,7 +83,7 @@ static void getInfosFromPath(MediaFile_t *media)
             {
                 strncpy(absolute_filepath, strncat(cwd, "/", 1), sizeof(absolute_filepath) - 1);
                 strncat(absolute_filepath, media->file_path, sizeof(absolute_filepath) - 1);
-                temp = fopen(absolute_filepath, "r");
+                temp = fopen(absolute_filepath, "rb");
             }
 
             if (temp != NULL)
@@ -535,7 +535,7 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
             TRACE_INFO(IO, "* File path (raw): '%s'\n", filepath);
 
             // Open file, read only
-            media->file_pointer = fopen(filepath, "r");
+            media->file_pointer = fopen(filepath, "rb");
 
             if (media->file_pointer == NULL)
             {

@@ -70,7 +70,7 @@ void make_path_absolute(const char *path, char *path_absolute)
         strncpy(absolute_path_temp, strncat(cwd, path, sizeof(cwd) - 1), sizeof(absolute_path_temp) - 1);
         TRACE_1(IO, "* t1            : '%s'\n", absolute_path_temp);
 
-        temp = fopen(absolute_path_temp, "r");
+        temp = fopen(absolute_path_temp, "rb");
         if (temp != NULL)
         {
             TRACE_2(IO, "* New absolute path found, new using method 1: '%s'\n", absolute_path_temp);
@@ -85,7 +85,7 @@ void make_path_absolute(const char *path, char *path_absolute)
             strncat(absolute_path_temp, path, sizeof(absolute_path_temp) - 1);
             TRACE_1(IO, "* t2            : '%s'\n", absolute_path_temp);
 
-            temp = fopen(absolute_path_temp, "r");
+            temp = fopen(absolute_path_temp, "rb");
             if (temp != NULL)
             {
                 TRACE_2(IO, "* New absolute path found, new using method 2\n");
