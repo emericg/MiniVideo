@@ -313,8 +313,14 @@ background: rgba(255, 170, 0, 128);</string>
         </property>
         <item>
          <widget class="QScrollArea" name="scrollArea">
+          <property name="styleSheet">
+           <string notr="true">background-color: transparent;</string>
+          </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
           </property>
           <property name="lineWidth">
            <number>0</number>
@@ -324,9 +330,6 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
           <widget class="QWidget" name="scrollAreaWidgetContents">
            <property name="geometry">
@@ -3244,9 +3247,6 @@ background: rgba(255, 170, 0, 128);</string>
         <property name="leftMargin">
          <number>6</number>
         </property>
-        <property name="topMargin">
-         <number>3</number>
-        </property>
         <property name="rightMargin">
          <number>6</number>
         </property>
@@ -3259,6 +3259,21 @@ background: rgba(255, 170, 0, 128);</string>
            <bool>true</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_18">
+           <property name="leftMargin">
+            <number>4</number>
+           </property>
+           <property name="topMargin">
+            <number>4</number>
+           </property>
+           <property name="rightMargin">
+            <number>4</number>
+           </property>
+           <property name="bottomMargin">
+            <number>4</number>
+           </property>
+           <property name="spacing">
+            <number>4</number>
+           </property>
            <item row="1" column="2">
             <widget class="QPushButton" name="pushButton_export">
              <property name="text">

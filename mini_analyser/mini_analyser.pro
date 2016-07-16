@@ -40,7 +40,7 @@ HEADERS     += src/main.h \
                src/thirdparty/qhexedit2/chunks.h \
                src/thirdparty/qhexedit2/commands.h \
                src/thirdparty/qcustomplot/qcustomplot.h \
-               src/portable_endian.h
+               src/thirdparty/portable_endian.h
 
 FORMS       += ui/mainwindow.ui \
                ui/explorer.ui \
