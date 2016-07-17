@@ -74,7 +74,7 @@ void make_path_absolute(const char *path, char *path_absolute)
         if (temp != NULL)
         {
             TRACE_2(IO, "* New absolute path found, new using method 1: '%s'\n", absolute_path_temp);
-            strncpy(path_absolute, absolute_path_temp, sizeof(path_absolute) - 1);
+            strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
             fclose(temp);
         }
         else
@@ -89,13 +89,13 @@ void make_path_absolute(const char *path, char *path_absolute)
             if (temp != NULL)
             {
                 TRACE_2(IO, "* New absolute path found, new using method 2\n");
-                strncpy(path_absolute, absolute_path_temp, sizeof(path_absolute) - 1);
+                strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
                 fclose(temp);
             }
             else
             {
                 TRACE_2(IO, "* path seems to be absolute already\n");
-                strncpy(path_absolute, path, sizeof(path_absolute) - 1);
+                strncpy(path_absolute, path, sizeof(*path_absolute) - 1);
             }
         }
     }

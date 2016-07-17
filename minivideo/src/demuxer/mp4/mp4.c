@@ -1446,7 +1446,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         if (bytes_left == namesize + 1)
         {
             skip_bits(bitstr, 8);
-            bytes_left == namesize;
+            bytes_left = namesize;
         }
         if (bytes_left > 128) bytes_left = 128;
 

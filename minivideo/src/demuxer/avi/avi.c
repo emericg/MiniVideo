@@ -749,7 +749,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
     int track_id = 0;
     char fcc[5];
 
-    if (strl_header != NULL ||
+    if (strl_header != NULL &&
         strl_header->dwFourCC == fcc_strl)
     {
         // Print list header
