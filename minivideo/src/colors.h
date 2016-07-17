@@ -24,12 +24,12 @@
 #ifndef COLORS_H
 #define COLORS_H
 /* ************************************************************************** */
-/*
+
 #if ENABLE_COLORS == 1
 
-#define CLR_RESET  "\e[0m"    //!< Reset colored output to default terminal color
+#define CLR_RESET  "\e[0m"      //!< Reset colored output to default terminal color
 
-#define CLR_BLACK  "\e[0;30m" //!< Regular colors
+#define CLR_BLACK  "\e[0;30m"   //!< Regular colors
 #define CLR_RED    "\e[0;31m"
 #define CLR_GREEN  "\e[0;32m"
 #define CLR_YELLOW "\e[0;33m"
@@ -38,7 +38,7 @@
 #define CLR_CYAN   "\e[0;36m"
 #define CLR_WHITE  "\e[0;37m"
 
-#define BLD_BLACK  "\e[1;30m" //!< Bold colors
+#define BLD_BLACK  "\e[1;30m"   //!< Bold colors
 #define BLD_RED    "\e[1;31m"
 #define BLD_GREEN  "\e[1;32m"
 #define BLD_YELLOW "\e[1;33m"
@@ -47,14 +47,14 @@
 #define BLD_CYAN   "\e[1;36m"
 #define BLD_WHITE  "\e[1;37m"
 
-#define OUT_BLACK  "\e[1;30;47m" //!< Grey outlined colors
-#define OUT_RED    "\e[1;31;47m"
-#define OUT_GREEN  "\e[1;32;47m"
-#define OUT_YELLOW "\e[1;33;47m"
-#define OUT_BLUE   "\e[1;34;47m"
-#define OUT_PURPLE "\e[1;35;47m"
-#define OUT_CYAN   "\e[1;36;47m"
-#define OUT_WHITE  "\e[1;37;47m"
+#define OUT_BLACK  "\e[1;37;40m" //!< Grey outlined colors
+#define OUT_RED    "\e[1;37;41m"
+#define OUT_GREEN  "\e[1;37;42m"
+#define OUT_YELLOW "\e[1;37;43m"
+#define OUT_BLUE   "\e[1;37;44m"
+#define OUT_PURPLE "\e[1;37;45m"
+#define OUT_CYAN   "\e[1;37;46m"
+#define OUT_WHITE  "\e[1;30;47m"
 
 #else // ENABLE_COLORS
 
@@ -85,6 +85,6 @@
 #define OUT_WHITE
 
 #endif // ENABLE_COLORS
-*/
+
 /* ************************************************************************** */
 #endif // COLORS_H

@@ -19,8 +19,8 @@ if(WIN32)
     # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-    # Set policy for interpretation of if() arguments as variables or keywords when unquoted to NEW
-    # to avoid warnings.
+    # Set policy for interpretation of if() arguments as variables or keywords
+    # when unquoted to NEW to avoid warnings.
     cmake_policy(SET CMP0054 NEW)
 endif()
 
@@ -28,14 +28,14 @@ if (CMAKE_VERSION VERSION_GREATER "3.3")
     include(GenerateExportHeader)
 endif()
 
-set(ENABLE_COLORS 1) # "Toggle colored terminal output"
-set(ENABLE_STDINT 1) # "Toggle C99 <stdint.h> usage"
-set(ENABLE_STDBOOL 1) # "Toggle C99 <stdbool.h> usage"
-set(ENABLE_STDALIGN 1) # "Toggle C11 <stdalign.h> usage"
+set(ENABLE_COLORS 1) # Toggle colored terminal output
+set(ENABLE_C99_STDINT 1) # Toggle C99 <stdint.h> usage
+set(ENABLE_C99_STDBOOL 1) # Toggle C99 <stdbool.h> usage
+set(ENABLE_C11_STDALIGN 0) # Toggle C11 <stdalign.h> usage
 
-set(ENABLE_JPEG 0) # "Toggle external libjpeg support"
-set(ENABLE_PNG 0) # "Toggle external libpng support"
-set(ENABLE_STBIMWRITE 1) # "Toggle internal stb_image_write library for bmp/png/tga support"
+set(ENABLE_JPEG 0) # Toggle external libjpeg support
+set(ENABLE_PNG 0) # Toggle external libpng support
+set(ENABLE_STBIMWRITE 1) # Toggle internal stb_image_write library for bmp/png/tga support
 
 
 # Build dependencies

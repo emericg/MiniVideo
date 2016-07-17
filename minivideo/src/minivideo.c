@@ -82,21 +82,21 @@ void minivideo_print_infos(void)
     printf("* COLORS are OFF\n");
 #endif
 
-#if ENABLE_STDINT
+#if ENABLE_C99_STDINT
     printf("* C99 integer types support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 integer types support is " BLD_RED "OFF\n" CLR_RESET);
     printf("> Integer types support will be emulated\n");
 #endif
 
-#if ENABLE_STDBOOL
+#if ENABLE_C99_STDBOOL
     printf("* C99 boolean support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C99 boolean support is " BLD_RED "OFF\n" CLR_RESET);
     printf("> Boolean support will be emulated\n");
 #endif
 
-#if ENABLE_STDALIGN
+#if ENABLE_C11_STDALIGN
     printf("* C11 memory alignement support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* C11 memory alignement support is " BLD_RED "OFF\n" CLR_RESET);

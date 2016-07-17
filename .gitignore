@@ -1,4 +1,4 @@
-# Stash folder
+# Stash folder and its content
 stash/
 
 # Build directories
@@ -22,7 +22,7 @@ Makefile
 install_manifest.txt
 cmake_install.cmake
 
-# CMake genertaed files
+# CMake generated files
 minivideo/src/minivideo_export.h
 minivideo/src/minivideo_settings.h
 

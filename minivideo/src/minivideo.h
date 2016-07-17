@@ -63,8 +63,11 @@ minivideo_EXPORT void minivideo_print_infos(void);
  *
  * The date and time strings are static datas and do not need to be freed.
  */
-minivideo_EXPORT void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
-                         const char **minivideo_builddate, const char **minivideo_buildtime);
+minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
+                                          int *minivideo_minor,
+                                          int *minivideo_patch,
+                                          const char **minivideo_builddate,
+                                          const char **minivideo_buildtime);
 
 /*!
  * \brief Determine endianness of the current system.
@@ -103,7 +106,9 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath, MediaFile_t **in
  * the tracks samples informations.
  */
 minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
-                    const bool extract_audio, const bool extract_video, const bool extract_subtitles);
+                                     const bool extract_audio,
+                                     const bool extract_video,
+                                     const bool extract_subtitles);
 
 /*!
  * \brief Decode a video file and export thumbnails.
@@ -121,11 +126,11 @@ minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
  * \todo Split this function into filtering /decoding / extraction stages.
  */
 minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media,
-                     const char *output_directory,
-                     const int picture_format,
-                     const int picture_quality,
-                     const int picture_number,
-                     const int picture_extractionmode);
+                                      const char *output_directory,
+                                      const int picture_format,
+                                      const int picture_quality,
+                                      const int picture_number,
+                                      const int picture_extractionmode);
 
 /*!
  * \brief Extract selected tracks from a video file and export in separated ES files.
@@ -138,15 +143,16 @@ minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media,
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  */
 minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
-                      const char *output_directory,
-                      const bool extract_audio,
-                      const bool extract_video,
-                      const bool extract_subtitles,
-                      const int output_format);
+                                       const char *output_directory,
+                                       const bool extract_audio,
+                                       const bool extract_video,
+                                       const bool extract_subtitles,
+                                       const int output_format);
 
 /*!
  * \brief Close a video file.
  * \param input_media: The MediaFile_t context to destroy.
+ * \return 1 if success, 0 otherwise.
  */
 minivideo_EXPORT int minivideo_close(MediaFile_t **input_media);
 
