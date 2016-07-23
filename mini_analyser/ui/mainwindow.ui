@@ -312,7 +312,7 @@ background: rgba(255, 170, 0, 128);</string>
          <number>0</number>
         </property>
         <item>
-         <widget class="QScrollArea" name="scrollArea">
+         <widget class="QScrollArea" name="scrollArea_infos">
           <property name="styleSheet">
            <string notr="true">background-color: transparent;</string>
           </property>
@@ -341,6 +341,9 @@ background: rgba(255, 170, 0, 128);</string>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
             <property name="leftMargin">
              <number>6</number>
             </property>
@@ -592,7 +595,7 @@ background: rgba(255, 170, 0, 128);</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_video">
+             <widget class="QGroupBox" name="groupBox_infos_video">
               <property name="title">
                <string>Video</string>
               </property>
@@ -872,7 +875,7 @@ background: rgba(255, 170, 0, 128);</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_audio">
+             <widget class="QGroupBox" name="groupBox_infos_audio">
               <property name="title">
                <string>Audio</string>
               </property>
@@ -1152,7 +1155,7 @@ background: rgba(255, 170, 0, 128);</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_other">
+             <widget class="QGroupBox" name="groupBox_infos_other">
               <property name="title">
                <string>Other tracks</string>
               </property>

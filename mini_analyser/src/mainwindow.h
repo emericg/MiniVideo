@@ -91,6 +91,7 @@ private slots:
 protected:
     void dropEvent(QDropEvent *ev);
     void dragEnterEvent(QDragEnterEvent *ev);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     Ui::MainWindow *ui;

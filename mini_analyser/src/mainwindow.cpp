@@ -106,10 +106,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
 #endif
 #ifdef Q_OS_OSX
-    ui->textBrowser_export->setFont(QFont("Andale Mono", 10));
+    ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
 #endif
 #ifdef Q_OS_WIN32
-    ui->textBrowser_export->setFont(QFont("Lucida Console", 10));
+    ui->textBrowser_export->setFont(QFont("Lucida Console", 12));
 #endif
 
     // "Drop zone" is the default tab when starting up
@@ -152,6 +152,13 @@ void MainWindow::dropEvent(QDropEvent *e)
 
         loadFile(fileName);
     }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    // Make sure the scrollAreas don't get wider than our windows
+    int width = ui->tab_infos->width() - 12;
+    ui->groupBox_infos->setMaximumWidth(width);
 }
 
 /* ************************************************************************** */
@@ -214,6 +221,9 @@ int MainWindow::loadFile(const QString &file)
 
             setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
         }
+
+        // Force a resize event, so the scrollAreas don't get wider than our windows
+        resizeEvent(NULL);
     }
 
     return retcode;

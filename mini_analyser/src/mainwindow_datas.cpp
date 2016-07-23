@@ -242,11 +242,11 @@ int MainWindow::printDatas()
 
         if (media->tracks_audio_count == 0 || media->tracks_audio[0] == NULL)
         {
-            ui->groupBox_audio->hide();
+            ui->groupBox_infos_audio->hide();
         }
         else
         {
-            ui->groupBox_audio->show();
+            ui->groupBox_infos_audio->show();
 
             const BitstreamMap_t *t = media->tracks_audio[0];
 
@@ -306,11 +306,11 @@ int MainWindow::printDatas()
 
         if (media->tracks_video_count == 0 || media->tracks_video[0] == NULL)
         {
-            ui->groupBox_video->hide();
+            ui->groupBox_infos_video->hide();
         }
         else
         {
-            ui->groupBox_video->show();
+            ui->groupBox_infos_video->show();
 
             const BitstreamMap_t *t = media->tracks_video[0];
 
@@ -381,11 +381,11 @@ int MainWindow::printDatas()
             media->tracks_subtitles_count <= 0 &&
             media->tracks_others_count <= 0)
         {
-            ui->groupBox_other->hide();
+            ui->groupBox_infos_other->hide();
         }
         else
         {
-            ui->groupBox_other->show();
+            ui->groupBox_infos_other->show();
 
             // Clean it up
             if (ui->verticalLayout_other->layout() != NULL)
@@ -1030,6 +1030,10 @@ int MainWindow::printOtherDetails()
                 ui->verticalLayout_other2_track->addWidget(track);
             }
         }
+
+        // Add new chapters
+        QLabel *chap = new QLabel(tr("No chapters found"));
+        ui->verticalLayout_other2_chapters->addWidget(chap);
 
         // Add new tags
         QLabel *tag = new QLabel(tr("No tags found"));
