@@ -1,4 +1,5 @@
-# Project informations
+# MiniVideo "library" build system
+# This file allows you to build a shared library of MiniVideo
 ###############################################################################
 
 cmake_minimum_required(VERSION 2.6)
@@ -12,21 +13,6 @@ set(minivideo_VERSION_PATCH 1)
 
 # Build settings
 ###############################################################################
-
-if(WIN32)
-    # Turn on the ability to create folders to organize projects (.vcproj)
-    # It creates "CMakePredefinedTargets" folder by default and adds CMake
-    # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-    # Set policy for interpretation of if() arguments as variables or keywords
-    # when unquoted to NEW to avoid warnings.
-    cmake_policy(SET CMP0054 NEW)
-endif()
-
-if (CMAKE_VERSION VERSION_GREATER "3.3")
-    include(GenerateExportHeader)
-endif()
 
 set(ENABLE_COLORS 1) # Toggle colored terminal output
 set(ENABLE_C99_STDINT 1) # Toggle C99 <stdint.h> usage
@@ -65,11 +51,11 @@ if(ENABLE_PNG)
     endif()
 endif()
 
-# Doxygen module
+# Doxygen OPTIONAL module
 find_package(Doxygen) # FindDoxygen.cmake
 
 if(DOXYGEN_FOUND)
-    message(STATUS "* Doxygen found, you can use it to generate a nice API documentation")
+    message(STATUS "* Doxygen found, you can use it to generate a nice API documentation!")
 endif(DOXYGEN_FOUND)
 
 
@@ -111,6 +97,44 @@ elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
 elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     message(STATUS "* Building with Visual Studio C compiler")
+endif()
+
+
+# Platform specific
+################################################################################
+
+# Linux specific stuff
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+    message(STATUS "Building on Linux plateform")
+
+endif()
+
+# macOS specific stuff
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+    message(STATUS "Building on macOS plateform")
+
+endif()
+
+# Windows specific stuff
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+
+    message(STATUS "Building on Windows plateform")
+
+    # Turn on the ability to create folders to organize projects (.vcproj)
+    # It creates "CMakePredefinedTargets" folder by default and adds CMake
+    # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+    # Set policy for interpretation of if() arguments as variables or keywords
+    # when unquoted to NEW to avoid warnings.
+    cmake_policy(SET CMP0054 NEW)
+
+    if(CMAKE_VERSION VERSION_GREATER "3.3")
+        include(GenerateExportHeader)
+    endif()
+
 endif()
 
 
@@ -187,6 +211,7 @@ set(minivideo_SRC
 message("** Building shared library")
 add_library(minivideo_shared SHARED ${minivideo_SRC})
 
+if(WIN32)
 if (CMAKE_VERSION VERSION_GREATER "3.3")
     message("* Generating symbols export header")
     GENERATE_EXPORT_HEADER(minivideo_shared
@@ -194,6 +219,7 @@ if (CMAKE_VERSION VERSION_GREATER "3.3")
                            EXPORT_MACRO_NAME minivideo_EXPORT
                            EXPORT_FILE_NAME "${CMAKE_SOURCE_DIR}/src/minivideo_export.h"
                            STATIC_DEFINE minivideo_BUILT_AS_STATIC)
+endif()
 endif()
 
 #target_link_libraries(minivideo_shared ${JPEG_LIBRARY} ${PNG_LIBRARY})
@@ -216,4 +242,6 @@ endif(CMAKE_BUILD_MODE STREQUAL "Static")
 if(UNIX)
     install(TARGETS minivideo_shared DESTINATION lib/)
     install(FILES src/minivideo.h DESTINATION include/)
+else(WIN32)
+    # TODO
 endif()
