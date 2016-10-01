@@ -11,7 +11,7 @@
 /** \mainpage
 QHexEdit is a binary editor widget for Qt.
 
-\version Version 0.7.7
+\version Version 0.7.8
 \image html qhexedit.png
 */
 
@@ -142,8 +142,8 @@ public:
     */
     QByteArray dataAt(qint64 pos, qint64 count=-1);
 
-    /*! Givs back the data into a \param iODevice starting at position \param pos 
-    and delivering \param count bytes. 
+    /*! Givs back the data into a \param iODevice starting at position \param pos
+    and delivering \param count bytes.
     */
     bool write(QIODevice &iODevice, qint64 pos=0, qint64 count=-1);
 

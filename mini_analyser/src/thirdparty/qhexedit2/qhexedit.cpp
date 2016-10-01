@@ -14,6 +14,15 @@ const int BYTES_PER_LINE = 16;
 
 QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
 {
+    _addressArea = true;
+    _addressWidth = 4;
+    _asciiArea = true;
+    _overwriteMode = true;
+    _highlighting = true;
+    _readOnly = false;
+    _cursorPosition = 0;
+    _lastEventSize = 0;
+
     _chunks = new Chunks();
     _undoStack = new UndoStack(_chunks, this);
 #ifdef Q_OS_WIN32
@@ -642,7 +651,7 @@ void QHexEdit::keyPressEvent(QKeyEvent *event)
 
                 if (!behindLastByte)
                     _bPosCurrent -= 1;
-                
+
                 setCursorPosition(2 * _bPosCurrent);
                 resetSelection(2 * _bPosCurrent);
             }
@@ -967,4 +976,3 @@ void QHexEdit::updateCursor()
         _blink = true;
     viewport()->update(_cursorRect);
 }
-
