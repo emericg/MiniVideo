@@ -815,82 +815,82 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             switch (RATE)
             {
             case 0:
-                map->bitrate = 32;
+                map->bitrate = 32000;
                 break;
             case 1:
-                map->bitrate = 56;
+                map->bitrate = 56000;
                 break;
             case 2:
-                map->bitrate = 64;
+                map->bitrate = 64000;
                 break;
             case 3:
-                map->bitrate = 96;
+                map->bitrate = 96000;
                 break;
             case 4:
-                map->bitrate = 112;
+                map->bitrate = 112000;
                 break;
             case 5:
-                map->bitrate = 128;
+                map->bitrate = 128000;
                 break;
             case 6:
-                map->bitrate = 192;
+                map->bitrate = 192000;
                 break;
             case 7:
-                map->bitrate = 224;
+                map->bitrate = 224000;
                 break;
             case 8:
-                map->bitrate = 256;
+                map->bitrate = 256000;
                 break;
             case 9:
-                map->bitrate = 320;
+                map->bitrate = 320000;
                 break;
             case 10:
-                map->bitrate = 384;
+                map->bitrate = 384000;
                 break;
             case 11:
-                map->bitrate = 448;
+                map->bitrate = 448000;
                 break;
             case 12:
-                map->bitrate = 512;
+                map->bitrate = 512000;
                 break;
             case 13:
-                map->bitrate = 576;
+                map->bitrate = 576000;
                 break;
             case 14:
-                map->bitrate = 640;
+                map->bitrate = 640000;
                 break;
             case 15:
-                map->bitrate = 768;
+                map->bitrate = 768000;
                 break;
             case 16:
-                map->bitrate = 960;
+                map->bitrate = 960000;
                 break;
             case 17:
-                map->bitrate = 1024;
+                map->bitrate = 1024000;
                 break;
             case 18:
-                map->bitrate = 1152;
+                map->bitrate = 1152000;
                 break;
             case 19:
-                map->bitrate = 1280;
+                map->bitrate = 1280000;
                 break;
             case 20:
-                map->bitrate = 1344;
+                map->bitrate = 1344000;
                 break;
             case 21:
-                map->bitrate = 1408;
+                map->bitrate = 1408000;
                 break;
             case 22:
-                map->bitrate = 1411;
+                map->bitrate = 1411000;
                 break;
             case 23:
-                map->bitrate = 1472;
+                map->bitrate = 1472000;
                 break;
             case 24:
-                map->bitrate = 1536;
+                map->bitrate = 1536000;
                 break;
             case 29:
-                map->bitrate = 2048; // Speficifation says "open"
+                map->bitrate = 2048000; // Speficifation says "open"
                 break;
             default:
                 TRACE_WARNING(MPS, "Unsupported DTS RATE %u\n", RATE);
