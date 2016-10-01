@@ -555,7 +555,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "Indeo 5 (Intel Indeo Video 5)";
                 else
                     return "Indeo 5";
-                    break;
+                break;
             case CODEC_CanopusHQ:
                 return "Canopus HQ";
                 break;

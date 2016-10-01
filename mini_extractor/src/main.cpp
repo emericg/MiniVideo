@@ -182,18 +182,6 @@ int main(int argc, char *argv[])
                 extract_subtitles_tracks = 16;
             }
         }
-        else if (strcmp(argv[i], "-pes") == 0)
-        {
-            if (output_format_specified)
-            {
-                std::cerr << "* " YELLOW "Be careful " RESET " you already specified an output format" << std::endl;
-            }
-            else
-            {
-                output_format = stream_level_PES;
-                output_format_specified = true;
-            }
-        }
         else if (strcmp(argv[i], "-es") == 0)
         {
             if (output_format_specified)
@@ -202,7 +190,19 @@ int main(int argc, char *argv[])
             }
             else
             {
-                output_format = stream_level_ES;
+                output_format = 0;
+                output_format_specified = true;
+            }
+        }
+        else if (strcmp(argv[i], "-pes") == 0)
+        {
+            if (output_format_specified)
+            {
+                std::cerr << "* " YELLOW "Be careful " RESET " you already specified an output format" << std::endl;
+            }
+            else
+            {
+                output_format = 1;
                 output_format_specified = true;
             }
         }
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
         if (minivideo_retcode == SUCCESS)
         {
             // Start container parsing
-            minivideo_retcode = minivideo_parse(input_video, extract_audio, extract_video, extract_subtitles);
+            minivideo_retcode = minivideo_parse(input_video, false);
 
             // Export audio and video PES stream
             if (minivideo_retcode == SUCCESS)

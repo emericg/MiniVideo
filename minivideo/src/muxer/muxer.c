@@ -309,7 +309,7 @@ int muxer_export_samples(MediaFile_t *media,
         char output_filename[255];
         stream_output_filename(media, bitstream_map, output_filename, output_format);
 
-        // Create & open PES stream file
+        // Create & open media files
         FILE *f_src = media->file_pointer;
         FILE *f_dst = fopen(output_filename, "wb");
 
@@ -331,13 +331,13 @@ int muxer_export_samples(MediaFile_t *media,
             {
                 if (output_format == 0)
                 {
-                    // Packetize ES into PES
-                    retcode = pes_packetizer(f_src, f_dst, bitstream_map);
+                    // Just write ES
+                    retcode = write_es(f_src, f_dst, bitstream_map);
                 }
                 else // if (output_format == 1)
                 {
-                    // Just write ES
-                    retcode = write_es(f_src, f_dst, bitstream_map);
+                    // Packetize ES into PES
+                    retcode = pes_packetizer(f_src, f_dst, bitstream_map);
                 }
             }
 

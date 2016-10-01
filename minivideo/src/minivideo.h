@@ -96,22 +96,27 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath, MediaFile_t **in
 /*!
  * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
  * \param *input_media: The MediaFile_t context to use.
- * \param extract_audio: Enable audio track parsing.
- * \param extract_video: Enable video track parsing.
- * \param extract_subtitles: Enable subtitles track parsing.
+ * \param extract_metadatas: Enable extensive metadatas parsing.
  * \return TODO ERROR CODE (0 if container parsing is a success, 1 otherwise).
  *
  * The second step in the decoding process is to parse the file's container infos
  * (if appropriate parser is available) and fill the MediaFile_t structure with
  * the tracks samples informations.
  */
-minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
-                                     const bool extract_audio,
-                                     const bool extract_video,
-                                     const bool extract_subtitles);
+minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas);
 
 /*!
- * \brief Decode a video file and export thumbnails.
+ * \brief Decode a video file.
+ * \param *input_media: The MediaFile_t context to use.
+ * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
+ *
+ * \todo This does nothing right now.
+ * \todo Split minivideo_thumbnail() into filtering /decoding / extraction stages.
+ */
+minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media);
+
+/*!
+ * \brief Thumnbail a video file and export thumbnails.
  * \param *input_media: The MediaFile_t context to use.
  * \param *output_directory: The directory where we want to save decoded thumbnail(s).
  * \param picture_format: The picture format for thumbnail(s) we want to extract.
@@ -121,16 +126,14 @@ minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  *
  * Start decoding one or more picture(s) from the video (if an appropriate decoder
- * is available). Picture(s) is/are exported into selected file format.
- *
- * \todo Split this function into filtering /decoding / extraction stages.
+ * is available). Pictures are exported into selected file format.
  */
-minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media,
-                                      const char *output_directory,
-                                      const int picture_format,
-                                      const int picture_quality,
-                                      const int picture_number,
-                                      const int picture_extractionmode);
+minivideo_EXPORT int minivideo_thumbnail(MediaFile_t *input_media,
+                                         const char *output_directory,
+                                         const int picture_format,
+                                         const int picture_quality,
+                                         const int picture_number,
+                                         const int picture_extractionmode);
 
 /*!
  * \brief Extract selected tracks from a video file and export in separated ES files.
@@ -139,7 +142,7 @@ minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media,
  * \param extract_audio: True to extract audio tracks.
  * \param extract_video: True to extract video tracks.
  * \param extract_subtitles: True to extract subtitles tracks.
- * \param output_format: Can be '1' for PES format or '2' for ES format.
+ * \param output_format: '0' for ES format, '1' for PES format.
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  */
 minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,

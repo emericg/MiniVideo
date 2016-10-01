@@ -65,7 +65,7 @@ typedef struct Mp4Track_t
     uint64_t duration;
     uint64_t creation_time;
     uint64_t modification_time;
-    uint8_t language[3];
+    char language[3];
 
     unsigned int bitrate_max;
     unsigned int bitrate_avg;

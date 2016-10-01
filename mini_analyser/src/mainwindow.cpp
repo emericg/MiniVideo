@@ -246,7 +246,7 @@ int MainWindow::analyseFile(const QString &file)
 
         if (retcode == SUCCESS)
         {
-            retcode = minivideo_parse(input_media, true, true, true);
+            retcode = minivideo_parse(input_media, true);
             mediaList.push_back(input_media);
 
             if (retcode != SUCCESS)

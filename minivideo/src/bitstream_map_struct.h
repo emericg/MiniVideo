@@ -61,8 +61,8 @@ typedef struct BitstreamMap_t
     bool track_default;             //!<
     bool track_forced;              //!<
 
-    unsigned int bitrate;           //!< Average bitrate (in bit/s)
     unsigned int bitrate_mode;      //!< Bitrate mode
+    unsigned int bitrate;           //!< Average bitrate (in bit/s)
     unsigned int bitrate_min;       //!< Minimum bitrate (in bit/s)
     unsigned int bitrate_max;       //!< Maximum bitrate (in bit/s)
 

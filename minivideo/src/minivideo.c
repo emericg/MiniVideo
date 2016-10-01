@@ -193,8 +193,7 @@ int minivideo_open(const char *input_filepath, MediaFile_t **input_media)
 
 /* ************************************************************************** */
 
-int minivideo_parse(MediaFile_t *input_media,
-                    const bool extract_audio, const bool extract_video, const bool extract_subtitles)
+int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
 {
     int retcode = FAILURE;
 
@@ -249,16 +248,36 @@ int minivideo_parse(MediaFile_t *input_media,
 
 /* ************************************************************************** */
 
-int minivideo_decode(MediaFile_t *input_media,
-                     const char *output_directory,
-                     const int picture_format,
-                     const int picture_quality,
-                     const int picture_number,
-                     const int picture_extractionmode)
+int minivideo_decode(MediaFile_t *input_media)
 {
     int retcode = FAILURE;
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()\n" CLR_RESET);
+
+    if (input_media != NULL)
+    {
+        //
+    }
+    else
+    {
+        TRACE_ERROR(MAIN, "Unable to decode from a NULL MediaFile_t struct!\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+int minivideo_thumbnail(MediaFile_t *input_media,
+                        const char *output_directory,
+                        const int picture_format,
+                        const int picture_quality,
+                        const int picture_number,
+                        const int picture_extractionmode)
+{
+    int retcode = FAILURE;
+
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnail()\n" CLR_RESET);
 
     if (input_media != NULL)
     {
@@ -293,7 +312,7 @@ int minivideo_decode(MediaFile_t *input_media,
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to start decoding because of an empty MediaFile_t structure! Parsing failed?\n");
+        TRACE_ERROR(MAIN, "Unable to thumbnail from a NULL MediaFile_t struct!\n");
     }
 
     return retcode;
