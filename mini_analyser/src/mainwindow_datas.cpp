@@ -1009,6 +1009,15 @@ int MainWindow::printOtherDetails()
                 delete item;
             }
         }
+        if (ui->verticalLayout_other2_chapters->layout() != NULL)
+        {
+            QLayoutItem *item;
+            while ((item = ui->verticalLayout_other2_chapters->layout()->takeAt(0)) != NULL )
+            {
+                delete item->widget();
+                delete item;
+            }
+        }
         if (ui->verticalLayout_other2_tags->layout() != NULL)
         {
             QLayoutItem *item;
