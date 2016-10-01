@@ -12,17 +12,11 @@ TODO test softwares
 
 - error when an invalid path is passed as argument with the -i option
 - error when an invalid path is passed as argument with the -o option
-- add a non-regression test suit
-- add a performance test suit
-- a "mini_analyser" with metadatas reader, container structure, AND video frame analysis would be very awesome
+- add a non-regression/performance test suit
 - a "mini_player" would definitely be an interesting thing to do
 
 TODO video library
 ------------------
-
-// General features
-- make make_path_absolute() works (to be able to choose picture export directory)
-- webp export
 
 // Error codes handling
 - replace remaining exit(EXIT_FAILURE) by callbacks
@@ -36,18 +30,19 @@ TODO video library
 
 // File parsers
 - MP4 parser (improvements)
-  - faster!
   - progressive streaming support
-- AVI parser
+- AVI parser (improvements)
   - global overhaul
-- WAVE parser
-  - Sample index
+- WAVE parser (improvements)
+  - sample index
+- MP3 parser (improvements)
+  - sample index
 - MPEG PS parser (improvements)
   - multiple frames per PES packet?
   - IDR detection
   - tag_descriptors
-- MKV parser
 - MPEG TS parser
+- MKV parser
 - MXF parser (maybe)
 - ASF parser (maybe)
 

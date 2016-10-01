@@ -1,5 +1,5 @@
-MiniVideo
-=========
+MiniVideo framework
+===================
 
 [![Build Status](https://travis-ci.org/emericg/MiniVideo.svg?branch=master)](https://travis-ci.org/emericg/MiniVideo)
 
@@ -10,12 +10,12 @@ MiniVideo is a small **video decoding library developed from scratch** in C, bun
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The build system uses CMake. Both library and test programs can be installed into your system.  
 
-MiniVideo has been developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
+MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
 * Open H.264 compressed videos and decode them to export intra-coded pictures.
-* Extract various metadatas from container and elementary streams.
+* Extract a bunch of metadatas from media files.
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
@@ -97,6 +97,7 @@ Using mini_analyser
 
 Then drag and drop files to analyse them!
 
+
 Using mini_extractor
 --------------------
 
@@ -143,38 +144,3 @@ Generating error report with cppcheck
 > $ ./generate_cppcheck.sh  
 
 Open "minivideo/doc/cppcheck.html" with your favorite browser.
-
-
-MiniVideo decoding capabilities
-===============================
-
-H.264 unsupported features
---------------------------
-
-// UNSUPPORTED for BP and XP profiles
-- (FMO) Flexible Macroblock Ordering
-- (ASO) Arbitrary slice ordering
-- (RS) Redundant slice
-
-// UNSUPPORTED for XP profile
-- Data partitioning
-- SI and SP slices
-
-// UNSUPPORTED for HiP profile ("HIGH")
-- CABAC decoding process still has a few bugs (WIP)
-- No deblocking filter
-- Interlaced coding (also PicAFF and MBAFF features)
-- 4:0:0 "greyscale" subsampling
-
-// UNSUPPORTED for Hi10P profile ("HIGH + 10bits samples")
-- Sample depths > 8 bits
-
-// UNSUPPORTED for Hi422P profile ("HIGH + 10bits samples + 4:2:2 subsampling")
-- Sample depths > 8 bits
-- 4:2:2 subsampling
-
-// UNSUPPORTED for Hi444P profile ("HIGH + 14bits samples + 4:4:4 subsampling")
-- Sample depths > 10 bits
-- 4:4:4 subsampling
-- Separate color plane coding
-- IPCM macroblocks
