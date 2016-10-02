@@ -599,18 +599,21 @@ int MainWindow::printAudioDetails()
                 bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->duration_ms/1000.0)));
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // Generate datas (bitrate)
+                // Generate datas (bitrate) from A/V samples
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
                 {
-                    x[i] = static_cast<double>(i);
-                    y[i] = static_cast<double>(t->sample_size[i]);
+                    if (t->sample_type[i] == sample_AUDIO)
+                    {
+                        x[i] = static_cast<double>(i);
+                        y[i] = static_cast<double>(t->sample_size[i]);
 
-                    if (t->sample_size[i] > bitratemax_instant)
-                        bitratemax_instant = t->sample_size[i];
+                        if (t->sample_size[i] > bitratemax_instant)
+                            bitratemax_instant = t->sample_size[i];
 
-                    btc.pushSampleSize(t->sample_size[i]);
+                        btc.pushSampleSize(t->sample_size[i]);
+                    }
                 }
 
                 // Generate datas (average bitrate)
@@ -858,18 +861,21 @@ int MainWindow::printVideoDetails()
                 bitrateMinMax btc(t->framerate);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // Generate datas (bitrate)
+                // Generate datas (bitrate) from A/V samples
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
                 {
-                    x[i] = static_cast<double>(i);
-                    y[i] = static_cast<double>(t->sample_size[i]);
+                    if (t->sample_type[i] == sample_VIDEO || t->sample_type[i] == sample_VIDEO_SYNC)
+                    {
+                        x[i] = static_cast<double>(i);
+                        y[i] = static_cast<double>(t->sample_size[i]);
 
-                    if (t->sample_size[i] > bitratemax_instant)
-                        bitratemax_instant = t->sample_size[i];
+                        if (t->sample_size[i] > bitratemax_instant)
+                            bitratemax_instant = t->sample_size[i];
 
-                    btc.pushSampleSize(t->sample_size[i]);
+                        btc.pushSampleSize(t->sample_size[i]);
+                    }
                 }
 
                 // Generate datas (average bitrate)
