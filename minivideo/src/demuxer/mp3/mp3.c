@@ -151,6 +151,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
     int64_t next_frame_offset = 0;
     uint32_t frame_size = 0;
     int64_t frame_pts = 0;
+    uint32_t frame_bitrate = 0;
 
     // Read MP3 frame header content
     uint32_t audio_version_id   = (frame_header & 0x00180000) >> 19;
@@ -201,7 +202,14 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
 
     if (bitrate_index_table[mp3->mpeg_version - 1][mp3->mpeg_layer - 1][bitrate_index])
     {
-        mp3->audio_bitrate_cbr = bitrate_index_table[mp3->mpeg_version - 1][mp3->mpeg_layer - 1][bitrate_index];
+        frame_bitrate = bitrate_index_table[mp3->mpeg_version - 1][mp3->mpeg_layer - 1][bitrate_index];
+
+        mp3->audio_bitrate_vbr += frame_bitrate;
+
+        if (mp3->sample_count == 0)
+            mp3->audio_bitrate_cbr = frame_bitrate;
+        else if (mp3->audio_bitrate_cbr != frame_bitrate)
+            mp3->audio_vbr = true;
     }
 
     if (samplingrate_index_table[mp3->mpeg_version - 1][samplingrate_index])
@@ -214,7 +222,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
         mp3->mpeg_sampleperframe = sampleperframe_table[mp3->mpeg_version - 1][mp3->mpeg_layer - 1];
     }
 
-    if (mp3->audio_bitrate_cbr && mp3->audio_samplingrate)
+    if (frame_bitrate && mp3->audio_samplingrate)
     {
         // Audio frame duration in milliseconds
         if (mp3->mpeg_layer == 1)
@@ -245,13 +253,13 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
         frame_pts = (int64_t)(mp3->audio_pts_tick * mp3->sample_count * 1000.0);
 
         // Frame size
-        frame_size = (uint32_t)((((double)(((double)mp3->mpeg_sampleperframe / 8.0) * (double)mp3->audio_bitrate_cbr) / (double)(mp3->audio_samplingrate)) * 1000.0) + padding_bit);
+        frame_size = (uint32_t)((((double)(((double)mp3->mpeg_sampleperframe / 8.0) * (double)frame_bitrate) / (double)(mp3->audio_samplingrate)) * 1000.0) + padding_bit);
         next_frame_offset = frame_offset + frame_size;
 
         if (frame_size != 0 && next_frame_offset < bitstr->bitstream_size)
         {
             TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)\n",
-                    mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, mp3->audio_bitrate_cbr, mp3->audio_samplingrate);
+                    mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             // Set MP3 frame into the bitstream_map
             int sid = media->tracks_audio[0]->sample_count;
@@ -278,7 +286,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
         else
         {
             TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
-                          mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, mp3->audio_bitrate_cbr, mp3->audio_samplingrate);
+                          mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             if ((frame_size > 0) && (frame_size <= 1152))
             {
@@ -297,7 +305,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
     else
     {
         TRACE_WARNING(MP3, "> Invalid MPEG-%u L%u frame: bad bitrate or samplingrate @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
-                      mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, mp3->audio_bitrate_cbr, mp3->audio_samplingrate);
+                      mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
         // Try "manual parsing", maybe we will find a new startcode closeby...
         next_frame_offset = frame_offset + 1;
@@ -321,22 +329,20 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3, Medi
     uint32_t padding_bit = (frame_header & 0x00000200) >> 9;
     uint32_t frame_bitrate = bitrate_index_table[mp3->mpeg_version - 1][mp3->mpeg_layer - 1][bitrate_index];
 
+    // Bitrate handling
     mp3->audio_bitrate_vbr += frame_bitrate;
-
     if (mp3->audio_bitrate_cbr != frame_bitrate)
-    {
         mp3->audio_vbr = true;
-    }
 
     if (frame_bitrate && mp3->audio_samplingrate)
     {
-        frame_size = (uint32_t)((((double)(((double)mp3->mpeg_sampleperframe / 8.0) * (double)mp3->audio_bitrate_cbr) / (double)(mp3->audio_samplingrate)) * 1000.0) + padding_bit);
+        frame_size = (uint32_t)((((double)(((double)mp3->mpeg_sampleperframe / 8.0) * (double)frame_bitrate) / (double)(mp3->audio_samplingrate)) * 1000.0) + padding_bit);
         next_frame_offset = frame_offset + frame_size;
 
         if (frame_size != 0 && next_frame_offset < bitstr->bitstream_size)
         {
             TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)\n",
-                    mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, mp3->audio_bitrate_cbr, mp3->audio_samplingrate);
+                    mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             // Set MP3 frame into the bitstream_map
             int sid = media->tracks_audio[0]->sample_count;
@@ -363,7 +369,7 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3, Medi
         else
         {
             TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
-                          mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, mp3->audio_bitrate_cbr, mp3->audio_samplingrate);
+                          mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             if ((frame_size > 0) && (frame_size <= 1152))
             {
