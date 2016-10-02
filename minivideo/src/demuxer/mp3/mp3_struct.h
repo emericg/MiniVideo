@@ -29,7 +29,7 @@
 
 /* ************************************************************************** */
 
-//! Structure for mp3 audio infos
+//! Structure for MP3 audio infos
 typedef struct mp3_t
 {
     bool run;
@@ -47,9 +47,9 @@ typedef struct mp3_t
 
     double   media_duration_s;   //!< Media duration in seconds
 
-    uint64_t total_size;         //!< Total size of all the samples of the track
-    uint64_t sample_count;       //!< Total size of all the samples of the track
-    uint32_t max_sample_size;    //!< Size of the biggest sample of the track
+    uint64_t sample_count;       //!< Total size of all the audio samples of the track (not including tags)
+    uint64_t sample_size_total;  //!< Total size of all the audio samples of the track (not including tags)
+    uint32_t sample_size_max;    //!< Size of the biggest audio sample of the track (not including tags)
 
     //SAMPLES SAMPLES
 

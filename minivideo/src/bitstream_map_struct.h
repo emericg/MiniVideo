@@ -123,8 +123,8 @@ typedef struct BitstreamMap_t
     uint32_t *sample_type;          //!< Type (for each samples of the track)
     uint32_t *sample_size;          //!< Size (in byte)
     int64_t *sample_offset;         //!< Offset (in byte)
-    int64_t *sample_pts;            //!< Presentation timestamp (in milliseconds?)
-    int64_t *sample_dts;            //!< Decoding timestamp (in milliseconds?)
+    int64_t *sample_pts;            //!< Presentation timestamp (in nanoseconds)
+    int64_t *sample_dts;            //!< Decoding timestamp (in nanoseconds)
 
 } BitstreamMap_t;
 
