@@ -117,7 +117,7 @@ typedef struct BitstreamMap_t
 
     uint32_t sample_count;          //!< The total number of samples in this track
     uint32_t frame_count;           //!< Number of audio/video frames
-    uint32_t frame_count_idr;       //!< Number of video IDR frames
+    uint32_t frame_count_idr;       //!< Number of audio/video IDR frames
 
     // Samples arrays
     uint32_t *sample_type;          //!< Type (for each samples of the track)
