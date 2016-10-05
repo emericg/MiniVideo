@@ -45,8 +45,6 @@ typedef struct fmtChunk_t
         uint16_t wValidBitsPerSample; //!< Number of valid bits
         uint32_t dwChannelMask;       //!< Speaker position mask
         uint8_t SubFormat[16];        //!< GUID, including the data format code
-            //SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}
-            //SUBTYPE_AMBISONIC_B_FORMAT_IEEE_FLOAT {00000003-0721-11d3-8644-C8C1CA000000}
 
         // MP1
         uint16_t fwHeadLayer;
@@ -104,44 +102,15 @@ typedef struct wave_t
 
 /* ************************************************************************** */
 
-/*!
- * Good ressource about these tags:
- * http://wiki.multimedia.cx/index.php?title=TwoCC
- * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html (search for WAVE_FORMAT_)
- */
-typedef enum WaveFormatTag_e
-{
-    WAVE_FORMAT_UNKNOWN    = 0,
+//SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}
+//SUBTYPE_AMBISONIC_B_FORMAT_IEEE_FLOAT {00000003-0721-11d3-8644-C8C1CA000000}
 
-    WAVE_FORMAT_PCM        = 0x0001,
-    WAVE_FORMAT_ADPCM      = 0x0002,
-    WAVE_FORMAT_IEEE_FLOAT = 0x0003,
-    WAVE_FORMAT_ALAW       = 0x0006,
-    WAVE_FORMAT_MULAW      = 0x0007,
-    WAVE_FORMAT_DTS_MS     = 0x0008,
-
-    WAVE_FORMAT_MP1        = 0x0050,
-    WAVE_FORMAT_MP3        = 0x0055,
-
-    WAVE_FORMAT_AC3        = 0x2000, //!< AC3 or A52
-    WAVE_FORMAT_DTS        = 0x2001,
-    WAVE_FORMAT_AAC        = 0x00FF, //!< AAC
-
-    WAVE_FORMAT_WMAS       = 0x000A, //!< WMA 9 Speech
-    WAVE_FORMAT_WMA1       = 0x0160, //!< WMA version 1
-    WAVE_FORMAT_WMA2       = 0x0161, //!< WMA (v2) 7, 8, 9 Series
-    WAVE_FORMAT_WMAP       = 0x0162, //!< WMA 9 Professional
-    WAVE_FORMAT_WMAL       = 0x0163, //!< WMA 9 Lossless
-
-    WAVE_FORMAT_EXTENSIBLE = 0xFFFE
-
-} WaveFormatTag_e;
 /*
 // GUID SubFormat IDs
-ATRAC3P {0xE923AABF, 0xCB58, 0x4471, {0xA1, 0x19, 0xFF, 0xFA, 0x01, 0xE4, 0xCE, 0x62}}
-GUIDBASE        {0x00000000, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}}
-AMBISONIC_SUBTYPE_PCM        {0x00000001, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
-AMBISONIC_SUBTYPE_IEEE_FLOAT {0x00000003, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
+ATRAC3P                         {0xE923AABF, 0xCB58, 0x4471, {0xA1, 0x19, 0xFF, 0xFA, 0x01, 0xE4, 0xCE, 0x62}}
+GUIDBASE                        {0x00000000, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}}
+AMBISONIC_SUBTYPE_PCM           {0x00000001, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
+AMBISONIC_SUBTYPE_IEEE_FLOAT    {0x00000003, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
 */
 /* ************************************************************************** */
 

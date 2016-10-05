@@ -154,6 +154,7 @@ set(minivideo_SRC
         src/typedef.h
         src/utils.c
         src/avcodecs.c src/avutils.h
+        src/twocc.c
         src/fourcc.c
         src/minitraces.c
         src/minitraces_conf.h

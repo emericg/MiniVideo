@@ -30,6 +30,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../typedef.h"
+#include "../../twocc.h"
 #include "../../fourcc.h"
 #include "../../minitraces.h"
 
@@ -75,7 +76,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
 
             // TODO always check remaining size in chunk
 
-            if (WAVE_FORMAT_PCM)
+            if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM)
             {
                 wave->fmt.cbSize = endian_flip_16(read_bits(bitstr, 16));
 
@@ -86,7 +87,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 for (i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
             }
-            else if (WAVE_FORMAT_MP1)
+            else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1)
             {
                 wave->fmt.fwHeadLayer = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwHeadBitrate = endian_flip_32(read_bits(bitstr, 32));
@@ -97,7 +98,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.dwPTSLow = endian_flip_32(read_bits(bitstr, 32));
                 wave->fmt.dwPTSHigh = endian_flip_32(read_bits(bitstr, 32));
             }
-            else if (WAVE_FORMAT_MP3)
+            else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP3)
             {
                 wave->fmt.wID = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.fdwFlags = endian_flip_32(read_bits(bitstr, 32));
@@ -105,15 +106,14 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.nFramesPerBlock = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.nCodecDelay = endian_flip_16(read_bits(bitstr, 16));
             }
-            else if (WAVE_FORMAT_EXTENSIBLE)
+            else if (wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
             {
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.wSamplesPerBlock = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                int i = 0;
-                for (i = 0; i < 16; i++)
+                for (int i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
             }
             else
@@ -257,7 +257,7 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
     uint64_t pcm_samples_count = 0;
 
     // Init a bitstreamMap_t for each wave track
-    if (wave->fmt.wFormatTag == WAVE_FORMAT_PCM ||
+    if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM ||
         wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
         pcm_samples_count = (wave->data.datasSize) / (wave->fmt.nChannels * (wave->fmt.wBitsPerSample / 8));
@@ -276,8 +276,9 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         BitstreamMap_t *track = media->tracks_audio[media->tracks_audio_count];
 
         track->stream_type  = stream_AUDIO;
+        track->stream_codec = getCodecFromTwoCC(wave->fmt.wFormatTag);
 
-        if (wave->fmt.wFormatTag == WAVE_FORMAT_PCM ||
+        if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM ||
             wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
         {
             track->stream_codec = CODEC_LPCM;
@@ -307,43 +308,6 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             track->pcm_sample_format = 0;
             track->pcm_sample_size = 0;
             track->pcm_sample_endianness = 0;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_ALAW)
-        {
-            track->stream_codec = CODEC_LogPCM;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MULAW)
-        {
-            track->stream_codec = CODEC_LogPCM;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1)
-        {
-            track->stream_codec = CODEC_MPEG_L1;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP3)
-        {
-            track->stream_codec = CODEC_MPEG_L3;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_AAC)
-        {
-            track->stream_codec = CODEC_AAC;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_AC3)
-        {
-            track->stream_codec = CODEC_AC3;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_DTS ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_DTS_MS)
-        {
-            track->stream_codec = CODEC_DTS;
-        }
-        else if (wave->fmt.wFormatTag == WAVE_FORMAT_WMA1 ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_WMA2 ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAL ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAP ||
-                 wave->fmt.wFormatTag == WAVE_FORMAT_WMAS)
-        {
-            track->stream_codec = CODEC_WMA;
         }
 
         // backup computations

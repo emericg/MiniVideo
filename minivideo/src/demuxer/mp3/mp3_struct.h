@@ -51,8 +51,6 @@ typedef struct mp3_t
     uint64_t sample_size_total;  //!< Total size of all the audio samples of the track (not including tags)
     uint32_t sample_size_max;    //!< Size of the biggest audio sample of the track (not including tags)
 
-    //SAMPLES SAMPLES
-
 } mp3_t;
 
 /* ************************************************************************** */
