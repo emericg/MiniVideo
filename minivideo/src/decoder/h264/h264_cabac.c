@@ -137,7 +137,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
  */
 void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int startIdx, const int endIdx, const int maxNumCoeff, const int blkType, const int blkIdx)
 {
-    TRACE_1(CABAC, "> " BLD_GREEN "residual_block_cabac()\n" CLR_RESET);
+    TRACE_1(CABAC, "> " BLD_GREEN "residual_block_cabac()" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     // Shortcut
@@ -343,7 +343,7 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
  */
 int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 {
-    TRACE_1(CABAC, BLD_GREEN "read_ae (" CLR_RESET "SE_Type %i" BLD_GREEN ") =============================\n" CLR_RESET, seType);
+    TRACE_1(CABAC, BLD_GREEN "read_ae (" CLR_RESET "SE_Type %i" BLD_GREEN ") =============================" CLR_RESET, seType);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     // Initialization
@@ -374,7 +374,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 
     if (getBinarization(dc, seType, 999, &prefix, &suffix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Binarization process\n");
+        TRACE_ERROR(CABAC, "Fatal error during Binarization process");
         exit(EXIT_FAILURE);
     }
 
@@ -384,7 +384,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     // Prefix
     if (decodingProcessFlow(dc, seType, 999, 999, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process\n");
+        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process");
         exit(EXIT_FAILURE);
     }
 
@@ -393,7 +393,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     {
         if (decodingProcessFlow(dc, seType, 999, 999, &suffix) == FAILURE)
         {
-            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process\n");
+            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process");
             exit(EXIT_FAILURE);
         }
 
@@ -419,7 +419,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     }
 
     // Print
-    TRACE_1(CABAC, "> read_ae = %i\n", SyntaxElementValue);
+    TRACE_1(CABAC, "> read_ae = %i", SyntaxElementValue);
 
     // Return the Syntax Element value
     return SyntaxElementValue;
@@ -445,7 +445,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
  */
 int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx)
 {
-    TRACE_1(CABAC, BLD_GREEN "read_ae_blk (" CLR_RESET "SE_Type %i" BLD_GREEN ") (" CLR_RESET "BLK_Type %i" BLD_GREEN ") (" CLR_RESET "BLK_Idx %i" BLD_GREEN ") =============================\n" CLR_RESET, seType, blkType, blkIdx);
+    TRACE_1(CABAC, BLD_GREEN "read_ae_blk (" CLR_RESET "SE_Type %i" BLD_GREEN ") (" CLR_RESET "BLK_Type %i" BLD_GREEN ") (" CLR_RESET "BLK_Idx %i" BLD_GREEN ") =============================" CLR_RESET, seType, blkType, blkIdx);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
     // Initialization
@@ -476,7 +476,7 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
 
     if (getBinarization(dc, seType, blkType, &prefix, &suffix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Binarization process\n");
+        TRACE_ERROR(CABAC, "Fatal error during Binarization process");
         exit(EXIT_FAILURE);
     }
 
@@ -486,7 +486,7 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     // Prefix
     if (decodingProcessFlow(dc, seType, blkType, blkIdx, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process\n");
+        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process");
         exit(EXIT_FAILURE);
     }
 
@@ -495,7 +495,7 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     {
         if (decodingProcessFlow(dc, seType, blkType, blkIdx, &suffix) == FAILURE)
         {
-            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process\n");
+            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process");
             exit(EXIT_FAILURE);
         }
 
@@ -507,7 +507,7 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     }
 
     // Print
-    TRACE_1(CABAC, "> read_ae = %i\n", SyntaxElementValue);
+    TRACE_1(CABAC, "> read_ae = %i", SyntaxElementValue);
 
     // Return the Syntax Element value
     return SyntaxElementValue;
@@ -528,12 +528,12 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
  */
 int initCabacContextVariables(DecodingContext_t *dc)
 {
-    TRACE_1(CABAC, BLD_GREEN "initCabacContextVariables()\n" CLR_RESET);
+    TRACE_1(CABAC, BLD_GREEN "initCabacContextVariables()" CLR_RESET);
     int retcode = SUCCESS;
 
     if ((dc->active_slice->cc = (CabacContext_t*)calloc(1, sizeof(CabacContext_t))) == NULL)
     {
-        TRACE_ERROR(SLICE, "Unable to alloc new CabacContext!\n");
+        TRACE_ERROR(SLICE, "Unable to alloc new CabacContext!");
         retcode = FAILURE;
     }
     else
@@ -580,7 +580,7 @@ int initCabacContextVariables(DecodingContext_t *dc)
  */
 int initCabacDecodingEngine(DecodingContext_t *dc)
 {
-    TRACE_1(CABAC, BLD_GREEN "initCabacDecodingEngine()\n" CLR_RESET);
+    TRACE_1(CABAC, BLD_GREEN "initCabacDecodingEngine()" CLR_RESET);
     int retcode = SUCCESS;
 
     dc->active_slice->cc->codIRange = 510;
@@ -589,7 +589,7 @@ int initCabacDecodingEngine(DecodingContext_t *dc)
     if (dc->active_slice->cc->codIOffset == 510 ||
         dc->active_slice->cc->codIOffset == 511)
     {
-        TRACE_ERROR(CABAC, "Error while loading codIOffset: must not be 510 nor 511!\n");
+        TRACE_ERROR(CABAC, "Error while loading codIOffset: must not be 510 nor 511!");
         retcode = FAILURE;
     }
 
@@ -620,7 +620,7 @@ static int getBinarization(DecodingContext_t *dc,
                            SyntaxElementType_e seType, BlockType_e blkType,
                            binarization_t *prefix, binarization_t *suffix)
 {
-    TRACE_1(CABAC, BLD_GREEN "getBinarization()\n" CLR_RESET);
+    TRACE_1(CABAC, BLD_GREEN "getBinarization()" CLR_RESET);
     int retcode = FAILURE;
 
     switch (seType)
@@ -959,7 +959,7 @@ static int getBinarization(DecodingContext_t *dc,
         break;
 
         default:
-            TRACE_ERROR(CABAC, "Unable to select binarization method!\n");
+            TRACE_ERROR(CABAC, "Unable to select binarization method!");
             break;
     }
 
@@ -979,7 +979,7 @@ static int getBinarization(DecodingContext_t *dc,
  */
 static int bp_U(void)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_U()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_U()" CLR_RESET);
 
     // Use static table
 
@@ -1000,7 +1000,7 @@ static int bp_U(void)
  */
 static int bp_TU(const int cMax)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_TU()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_TU()" CLR_RESET);
 
     // Use static tables
 
@@ -1022,7 +1022,7 @@ static int bp_TU(const int cMax)
  */
 static int bp_UEGk(int k, const bool signedValFlag, const int uCoff)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_UEGk()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_UEGk()" CLR_RESET);
     int retcode = FAILURE;
 
     // Prefix
@@ -1100,7 +1100,7 @@ Output of this process is the FL binarization of the syntax element.
  */
 static int bp_FL(const int cMax)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_FL()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_FL()" CLR_RESET);
 
     // Use static table for cMax=1, cMax=3, cMax=7, cMax=15
 
@@ -1123,7 +1123,7 @@ static int bp_FL(const int cMax)
  */
 static int bp_mbType(void)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_mbType()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_mbType()" CLR_RESET);
 
     // Use static table
 
@@ -1143,7 +1143,7 @@ static int bp_mbType(void)
  */
 static int bp_CBP(void)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_CBP()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_CBP()" CLR_RESET);
 
     // (prefix)
     // Use static table of bp_FL(), cMax=15
@@ -1167,7 +1167,7 @@ static int bp_CBP(void)
  */
 static int bp_mbQPd(void)
 {
-    TRACE_2(CABAC, BLD_GREEN " bp_mbQPd()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " bp_mbQPd()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Use static table (U binarization) mapped by Table 9-3.
@@ -1200,7 +1200,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
                                const int blkIdx,
                                binarization_t *bin)
 {
-    TRACE_1(CABAC, BLD_GREEN "decodingProcessFlow()\n" CLR_RESET);
+    TRACE_1(CABAC, BLD_GREEN "decodingProcessFlow()" CLR_RESET);
     int retcode = FAILURE;
 
     int binIdx = -1;
@@ -1212,10 +1212,10 @@ static int decodingProcessFlow(DecodingContext_t *dc,
 
     {
         // Print status
-        TRACE_1(CABAC, "maxBinIdxCtx (%i)\n", bin->maxBinIdxCtx);
-        TRACE_1(CABAC, "ctxIdxOffset (%i)\n", bin->ctxIdxOffset);
-        TRACE_1(CABAC, "bypassFlag (%i)\n", bin->bypassFlag);
-        TRACE_1(CABAC, "levelListIdx (%i)\n", dc->mb_array[dc->CurrMbAddr]->levelListIdx);
+        TRACE_1(CABAC, "maxBinIdxCtx (%i)", bin->maxBinIdxCtx);
+        TRACE_1(CABAC, "ctxIdxOffset (%i)", bin->ctxIdxOffset);
+        TRACE_1(CABAC, "bypassFlag (%i)", bin->bypassFlag);
+        TRACE_1(CABAC, "levelListIdx (%i)", dc->mb_array[dc->CurrMbAddr]->levelListIdx);
     }
 
     // Start decoding bin string
@@ -1239,7 +1239,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
             //2. Given ctxIdx, the value of the bin from the bitstream is decoded.
             if (ctxIdx == -1)
             {
-                TRACE_ERROR(CABAC, "Warning, computation of ctxIdx failed!\n");
+                TRACE_ERROR(CABAC, "Warning, computation of ctxIdx failed!");
                 return FAILURE;
             }
             else if (ctxIdx == 276)
@@ -1250,7 +1250,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
 #if ENABLE_DEBUG
             else if (ctxIdx > 459)
             {
-                TRACE_ERROR(CABAC, "Error, ctxIdx value is too high, please extend cabac_context_init_I table!\n");
+                TRACE_ERROR(CABAC, "Error, ctxIdx value is too high, please extend cabac_context_init_I table!");
                 return FAILURE;
             }
 #endif // ENABLE_DEBUG
@@ -1287,7 +1287,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
             {
                 if (memcmp(decodedSE, (((uint8_t *)(bin->bintable)) + (i*(bin->bintable_x))), binIdx+1) == 0)
                 {
-                    //TRACE_3(CABAC, "binIdx (%i)  |  (MATCH binarization scheme [%i])\n", binIdx, i);
+                    //TRACE_3(CABAC, "binIdx (%i)  |  (MATCH binarization scheme [%i])", binIdx, i);
                     bin->SyntaxElementValue = i;
                     match++;
                 }
@@ -1300,12 +1300,12 @@ static int decodingProcessFlow(DecodingContext_t *dc,
         ////////////////////////////////////////////////////////////////////////
         if (match == 1)
         {
-            TRACE_3(CABAC, "> 1 MATCH, we can stop now\n");
+            TRACE_3(CABAC, "> 1 MATCH, we can stop now");
             retcode = SUCCESS;
         }
         else if (match == 0)
         {
-            TRACE_ERROR(CABAC, "> 0 MATCH, that should not happend\n");
+            TRACE_ERROR(CABAC, "> 0 MATCH, that should not happend");
             retcode = FAILURE;
         }
     }
@@ -1337,7 +1337,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
  */
 static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset)
 {
-    TRACE_2(CABAC, BLD_GREEN " getCtxIdx()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN " getCtxIdx()" CLR_RESET);
 
     int i = -1;
     int ctxIdx = -1, ctxIdxInc = -1;
@@ -1346,7 +1346,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
     if (binIdx > maxBinIdxCtx)
     {
         binIdx = maxBinIdxCtx;
-        TRACE_3(CABAC, " binIdx > maxBinIdxCtx (%i < %i)\n", binIdx, maxBinIdxCtx);
+        TRACE_3(CABAC, " binIdx > maxBinIdxCtx (%i < %i)", binIdx, maxBinIdxCtx);
     }
 
     while (i < 22)
@@ -1370,7 +1370,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
 
         if (ctxIdxInc == -1)
         {
-            TRACE_ERROR(CABAC, "Warning, computation of ctxIdxInc failed!\n");
+            TRACE_ERROR(CABAC, "Warning, computation of ctxIdxInc failed!");
             ctxIdx = -1;
         }
         else
@@ -1395,7 +1395,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
 
             if (ctxIdxInc == -1)
             {
-                TRACE_ERROR(CABAC, "Warning, computation of ctxIdxInc failed!\n");
+                TRACE_ERROR(CABAC, "Warning, computation of ctxIdxInc failed!");
                 ctxIdx = -1;
             }
             else
@@ -1411,12 +1411,12 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
         }
         else
         {
-            TRACE_ERROR(CABAC, "error: seType out of range inside getCtxIdx()\n");
+            TRACE_ERROR(CABAC, "error: seType out of range inside getCtxIdx()");
             return -1;
         }
     }
 
-    TRACE_2(CABAC, " ctxIdx = %i\n", ctxIdx);
+    TRACE_2(CABAC, " ctxIdx = %i", ctxIdx);
     return ctxIdx;
 }
 
@@ -1427,7 +1427,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
  */
 static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
 {
-    TRACE_2(CABAC, BLD_GREEN "  ctxIdxInc()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN "  ctxIdxInc()" CLR_RESET);
     int ctxIdxInc = -1;
 
     switch (ctxIdxOffset)
@@ -1436,7 +1436,7 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
             if (binIdx == 0)
                 ctxIdxInc = deriv_ctxIdxInc_mbtype(dc, ctxIdxOffset);
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=0 and binIdx!=0 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=0 and binIdx!=0 should not happend"); }
         break;
 
         case 3:
@@ -1471,61 +1471,61 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
             else if (binIdx < 3)
                 ctxIdxInc = 3;
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=64 and binIdx>2 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=64 and binIdx>2 should not happend"); }
         break;
 
         case 68:
             if (binIdx == 0)
                 ctxIdxInc = 0;
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=68 and binIdx!=0 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=68 and binIdx!=0 should not happend"); }
         break;
 
         case 69:
             if (binIdx == 0 || binIdx == 1 || binIdx == 2)
                 ctxIdxInc = 0;
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=68 and binIdx!=0,1,2 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=68 and binIdx!=0,1,2 should not happend"); }
         break;
 
         case 70:
-            TRACE_ERROR(CABAC, ">>> UNIMPLEMENTED (deriv_ctxIdxInc with ctxIdxOffset=70 (SyntaxElement : mb_field_decoding_flag))\n");
+            TRACE_ERROR(CABAC, ">>> UNIMPLEMENTED (deriv_ctxIdxInc with ctxIdxOffset=70 (SyntaxElement : mb_field_decoding_flag))");
         break;
 
         case 73:
             if (binIdx == 0 || binIdx == 1 || binIdx == 2 || binIdx == 3)
                 ctxIdxInc = deriv_ctxIdxInc_cbp_luma(dc, decodedSE, binIdx);
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=73 and binIdx!=0,1,2,3 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=73 and binIdx!=0,1,2,3 should not happend"); }
         break;
 
         case 77:
             if (binIdx == 0 || binIdx == 1)
                 ctxIdxInc = deriv_ctxIdxInc_cbp_chroma(dc, decodedSE, binIdx);
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=77 and binIdx!=0,1 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=77 and binIdx!=0,1 should not happend"); }
         break;
 
         case 276:
             if (binIdx == 0)
                 ctxIdxInc = 0;
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=276 and binIdx!=0 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=276 and binIdx!=0 should not happend"); }
         break;
 
         case 399:
             if (binIdx == 0)
                 ctxIdxInc = deriv_ctxIdxInc_transformsize8x8flag(dc);
             else
-            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=399 and binIdx!=0 should not happend\n"); }
+            { TRACE_ERROR(CABAC, "deriv_ctxIdxInc with ctxIdxOffset=399 and binIdx!=0 should not happend"); }
         break;
 
         default:
-            TRACE_ERROR(CABAC, "Unknown ctxIdxOffset = %i\n", ctxIdxOffset);
+            TRACE_ERROR(CABAC, "Unknown ctxIdxOffset = %i", ctxIdxOffset);
         break;
     }
 
-    TRACE_2(CABAC, "  ctxIdxInc() = %i\n", ctxIdxInc);
+    TRACE_2(CABAC, "  ctxIdxInc() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -1547,7 +1547,7 @@ static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const i
  */
 static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_mbtype()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_mbtype()" CLR_RESET);
 
     int mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
     int mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
@@ -1591,7 +1591,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
         condTermFlagB = 0;
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_mbtype() = %i\n", condTermFlagA + condTermFlagB);
+    TRACE_3(CABAC, "  ctxIdxInc_mbtype() = %i", condTermFlagA + condTermFlagB);
     return (condTermFlagA + condTermFlagB);
 }
 
@@ -1608,7 +1608,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
  */
 static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
     int mbAddrA = -1;
     int mbAddrB = -1;
@@ -1682,7 +1682,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
 
     ctxIdxInc = (condTermFlagA + condTermFlagB*2);
 
-    TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i\n", ctxIdxInc);
+    TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -1697,7 +1697,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
  */
 static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
     int condTermFlagA = 1;
     int condTermFlagB = 1;
@@ -1743,7 +1743,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
 
     ctxIdxInc = condTermFlagA + condTermFlagB*2 + ((binIdx == 1) ? 4 : 0);
 
-    TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i\n", ctxIdxInc);
+    TRACE_3(CABAC, "  ctxIdxInc_cbp() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -1759,7 +1759,7 @@ static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[3
  */
 static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_mbQPd()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_mbQPd()" CLR_RESET);
     int ctxIdxInc = 1;
     int prevMbAddr = dc->CurrMbAddr - 1;
 
@@ -1782,7 +1782,7 @@ static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc)
         ctxIdxInc = 0;
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_mbQPd() = %i\n", ctxIdxInc);
+    TRACE_3(CABAC, "  ctxIdxInc_mbQPd() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -1803,7 +1803,7 @@ static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc)
  */
 static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
 {
-    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()" CLR_RESET);
 
     int mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
     int mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
@@ -1843,7 +1843,7 @@ static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
         condTermFlagB = 0;
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_intrachromapredmode() = %i\n", condTermFlagA + condTermFlagB);
+    TRACE_3(CABAC, "  ctxIdxInc_intrachromapredmode() = %i", condTermFlagA + condTermFlagB);
     return (condTermFlagA + condTermFlagB);
 }
 
@@ -1861,7 +1861,7 @@ static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc)
  */
 static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkType, const int blkIdx)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_codedblockflag()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_codedblockflag()" CLR_RESET);
 
     int iYCbCr = 0;
     int mbAddrA = -1;
@@ -2070,8 +2070,8 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
     }
     else //if (blkType > 7)
     {
-        TRACE_ERROR(CABAC, ">>> UNSUPPORTED (blkType > 7)\n");
-        TRACE_ERROR(CABAC, "blkType == %i is out of range\n", blkType);
+        TRACE_ERROR(CABAC, ">>> UNSUPPORTED (blkType > 7)");
+        TRACE_ERROR(CABAC, "blkType == %i is out of range", blkType);
         return -1;
     }
 
@@ -2141,7 +2141,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
             condTermFlagB = true;
     }
 
-    TRACE_3(CABAC, "(blkIdx %i) ctxIdxInc_codedblockflag() = %i   (A:%i + 2*B:%i)\n", blkIdx, condTermFlagA + condTermFlagB*2, condTermFlagA, condTermFlagB);
+    TRACE_3(CABAC, "(blkIdx %i) ctxIdxInc_codedblockflag() = %i   (A:%i + 2*B:%i)", blkIdx, condTermFlagA + condTermFlagB*2, condTermFlagA, condTermFlagB);
     return (condTermFlagA + condTermFlagB*2);
 }
 
@@ -2157,7 +2157,7 @@ static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkTy
  */
 static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
 {
-    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_transformsize8x8flag()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_transformsize8x8flag()" CLR_RESET);
 
     int mbAddrA = dc->mb_array[dc->CurrMbAddr]->mbAddrA;
     int mbAddrB = dc->mb_array[dc->CurrMbAddr]->mbAddrB;
@@ -2189,7 +2189,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
         condTermFlagB = 0;
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_transformsize8x8flag() = %i\n", condTermFlagA + condTermFlagB);
+    TRACE_3(CABAC, "  ctxIdxInc_transformsize8x8flag() = %i", condTermFlagA + condTermFlagB);
     return (condTermFlagA + condTermFlagB);
 }
 
@@ -2207,7 +2207,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
  */
 static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
 {
-    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()" CLR_RESET);
     int ctxIdxInc = -1;
 
     if (ctxIdxOffset == 3)
@@ -2243,10 +2243,10 @@ static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx,
     }
     else
     {
-        TRACE_WARNING(CABAC, "  ctxIdxInc_priorvalues() = %i WTF ARE WE DOING HERE\n", ctxIdxInc);
+        TRACE_WARNING(CABAC, "  ctxIdxInc_priorvalues() = %i WTF ARE WE DOING HERE", ctxIdxInc);
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_priorvalues() = %i\n", ctxIdxInc);
+    TRACE_3(CABAC, "  ctxIdxInc_priorvalues() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -2265,7 +2265,7 @@ static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx,
  */
 static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int binIdx)
 {
-    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_se()\n" CLR_RESET);
+    TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_se()" CLR_RESET);
     int ctxIdxInc = -1;
 
     if (seType == SE_significant_coeff_flag || seType == SE_last_significant_coeff_flag)
@@ -2293,8 +2293,8 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType
     }
     else //if (seType == SE_coeff_abs_level_minus1)
     {
-        TRACE_3(CABAC, "  Eq1 : %i\n", dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelEq1);
-        TRACE_3(CABAC, "  Gt1 : %i\n", dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelGt1);
+        TRACE_3(CABAC, "  Eq1 : %i", dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelEq1);
+        TRACE_3(CABAC, "  Gt1 : %i", dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelGt1);
 
         int Eq1 = dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelEq1;
         int Gt1 = dc->mb_array[dc->CurrMbAddr]->numDecodAbsLevelGt1;
@@ -2316,7 +2316,7 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType
         }
     }
 
-    TRACE_3(CABAC, "  ctxIdxInc_se() = %i\n", ctxIdxInc);
+    TRACE_3(CABAC, "  ctxIdxInc_se() = %i", ctxIdxInc);
     return ctxIdxInc;
 }
 
@@ -2505,7 +2505,7 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
  */
 static int DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr)
 {
-    TRACE_2(CABAC, BLD_GREEN "  DecodeBypass()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN "  DecodeBypass()" CLR_RESET);
 
     int binVal = 0;
 
@@ -2541,7 +2541,7 @@ static int DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr)
  */
 static int DecodeTerminate(CabacContext_t *cc, Bitstream_t *bitstr)
 {
-    TRACE_2(CABAC, BLD_GREEN "  DecodeTerminate()\n" CLR_RESET);
+    TRACE_2(CABAC, BLD_GREEN "  DecodeTerminate()" CLR_RESET);
 
     int binVal = 1;
 

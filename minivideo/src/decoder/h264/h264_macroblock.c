@@ -74,7 +74,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
  */
 int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 {
-    TRACE_INFO(MB, "<> " BLD_GREEN "macroblock_layer(" CLR_RESET "%i" BLD_GREEN ")\n" CLR_RESET, mbAddr);
+    TRACE_INFO(MB, "<> " BLD_GREEN "macroblock_layer(" CLR_RESET "%i" BLD_GREEN ")" CLR_RESET, mbAddr);
     int retcode = FAILURE;
 
     // Macroblock allocation
@@ -84,7 +84,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
     if (dc->mb_array[mbAddr] == NULL)
     {
-        TRACE_ERROR(MB, "Unable to alloc new macroblock!\n");
+        TRACE_ERROR(MB, "Unable to alloc new macroblock!");
     }
     else
     {
@@ -118,13 +118,13 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
         if (mb->mb_type == I_PCM)
         {
 #if ENABLE_IPCM
-            TRACE_3(MB, "---- macroblock_layer - I PCM macroblock\n");
+            TRACE_3(MB, "---- macroblock_layer - I PCM macroblock");
 
             while (bitstream_check_alignment(dc->bitstr) == false)
             {
                 if (read_bit(dc->bitstr) != 0) // pcm_alignment_zero_bit
                 {
-                    TRACE_ERROR(MB, "  Error while reading pcm_alignment_zero_bit: must be 0!\n");
+                    TRACE_ERROR(MB, "  Error while reading pcm_alignment_zero_bit: must be 0!");
                     return FAILURE;
                 }
             }
@@ -149,7 +149,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             // CABAC initialization process //FIXME needed? See 'ITU-T H.264' recommendation 9.3.1.2
             initCabacDecodingEngine(dc);
 #else // ENABLE_IPCM
-            TRACE_ERROR(MB, "I_PCM decoding is currently disabled!\n");
+            TRACE_ERROR(MB, "I_PCM decoding is currently disabled!");
             return UNSUPPORTED;
 #endif // ENABLE_IPCM
         }
@@ -162,7 +162,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 mb->MbPartPredMode[0] != Intra_16x16 &&
                 mb->NumMbPart == 4)
             {
-                TRACE_3(MB, "---- macroblock_layer - mb partition & related\n");
+                TRACE_3(MB, "---- macroblock_layer - mb partition & related");
 
                 int mbPartIdx = 0;
                 for (mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
@@ -186,7 +186,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             else
 #endif // ENABLE_INTER_PRED
             {
-                TRACE_3(MB, "---- macroblock_layer - transform_size_8x8_flag & prediction modes\n");
+                TRACE_3(MB, "---- macroblock_layer - transform_size_8x8_flag & prediction modes");
 
                 if (pps->transform_8x8_mode_flag == true && mb->mb_type == I_NxN)
                 {
@@ -205,7 +205,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 
             if (mb->MbPartPredMode[0] != Intra_16x16)
             {
-                TRACE_3(MB, "---- macroblock_layer - coded block pattern & transform_size_8x8_flag\n");
+                TRACE_3(MB, "---- macroblock_layer - coded block pattern & transform_size_8x8_flag");
 
                 if (pps->entropy_coding_mode_flag)
                     mb->coded_block_pattern = read_ae(dc, SE_coded_block_pattern);
@@ -237,7 +237,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 mb->CodedBlockPatternChroma > 0 ||
                 mb->MbPartPredMode[0] == Intra_16x16)
             {
-                TRACE_3(MB, "---- macroblock_layer - quantization parameter & residual datas\n");
+                TRACE_3(MB, "---- macroblock_layer - quantization parameter & residual datas");
 
                 // Read QP delta
                 if (pps->entropy_coding_mode_flag)
@@ -256,7 +256,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             }
             else
             {
-                TRACE_3(MB, "---- macroblock_layer - No residual datas to decode in this macroblock\n");
+                TRACE_3(MB, "---- macroblock_layer - No residual datas to decode in this macroblock");
             }
 
             // Compute luma Quantization Parameters
@@ -306,7 +306,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
 #endif // ENABLE_DEBUG
         }
 
-        TRACE_3(MB, "---- macroblock_layer - the end\n\n");
+        TRACE_3(MB, "---- macroblock_layer - the end");
     }
 
     return retcode;
@@ -330,7 +330,7 @@ void freeMbArray(DecodingContext_t *dc)
         free(dc->mb_array);
         dc->mb_array = NULL;
 
-        TRACE_1(MB, ">> mb_array freed\n");
+        TRACE_1(MB, ">> mb_array freed");
     }
 }
 
@@ -356,7 +356,7 @@ void freeMbArrayContent(DecodingContext_t *dc)
             }
         }
 
-        TRACE_2(MB, ">> mb_array content freed\n");
+        TRACE_2(MB, ">> mb_array content freed");
     }
 }
 
@@ -374,7 +374,7 @@ void freeMbArrayContent(DecodingContext_t *dc)
  */
 unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr)
 {
-    TRACE_3(MB, "> " BLD_GREEN "NextMbAddress()" "= %i\n" CLR_RESET, CurrMbAddr + 1);
+    TRACE_3(MB, "> " BLD_GREEN "NextMbAddress()" "= %i" CLR_RESET, CurrMbAddr + 1);
 
     return CurrMbAddr + 1;
 }
@@ -392,7 +392,7 @@ unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr)
  */
 static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "mb_pred()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "mb_pred()" CLR_RESET);
 
     if (mb->MbPartPredMode[0] == Intra_4x4 ||
         mb->MbPartPredMode[0] == Intra_8x8 ||
@@ -528,7 +528,7 @@ static void mb_pred(DecodingContext_t *dc, Macroblock_t *mb)
  */
 static void sub_mb_pred(DecodingContext_t *dc, const unsigned int mb_type, unsigned int *sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "sub_mb_pred()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "sub_mb_pred()" CLR_RESET);
 
     // Shortcut
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -637,7 +637,7 @@ static void sub_mb_pred(DecodingContext_t *dc, const unsigned int mb_type, unsig
  */
 static int NumMbPart(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_2(MB, "  > " BLD_GREEN "NumMbPart()\n" CLR_RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "NumMbPart()" CLR_RESET);
     int retcode = 1;
 
     if (slice_type == 0 || slice_type == 5 ||
@@ -765,7 +765,7 @@ static int NumMbPart(const unsigned int slice_type, const unsigned int mb_type)
  */
 static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const int mbPartIdx)
 {
-    TRACE_2(MB, "  > " BLD_GREEN "MbPartPredMode()\n" CLR_RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "MbPartPredMode()" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 2 || slice_type == 7) // I slice
@@ -826,16 +826,16 @@ static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const
     }
     else if (slice_type == 4 || slice_type == 9) // SI slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (SI slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (SI slice)");
     }
     else if (slice_type == 0 || slice_type == 5 ||
              slice_type == 3 || slice_type == 8) // P or SP slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (P and SP slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (P and SP slice)");
     }
     else if (slice_type == 1 || slice_type == 6) // B slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (B slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED (B slice)");
     }
 
     return retcode;
@@ -851,10 +851,10 @@ static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const
  */
 static int MbPartWidth(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartWidth()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartWidth()" CLR_RESET);
     int retcode = 0;
 
-    TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartWidth)\n");
+    TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartWidth)");
 
     return retcode;
 }
@@ -869,10 +869,10 @@ static int MbPartWidth(const unsigned int slice_type, const unsigned int mb_type
  */
 static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartHeight()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "MbPartHeight()" CLR_RESET);
     int retcode = 0;
 
-    TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartHeight)\n");
+    TRACE_WARNING(MB, ">>> UNIMPLEMENTED (MbPartHeight)");
 
     return retcode;
 }
@@ -886,7 +886,7 @@ static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_typ
  */
 static void MbPosition(Macroblock_t *mb, sps_t *sps)
 {
-    TRACE_2(MB, "  > " BLD_GREEN "MbPosition()\n" CLR_RESET);
+    TRACE_2(MB, "  > " BLD_GREEN "MbPosition()" CLR_RESET);
 
     if (mb->mbAddr <= (sps->PicWidthInMbs * sps->FrameHeightInMbs))
     {
@@ -895,7 +895,7 @@ static void MbPosition(Macroblock_t *mb, sps_t *sps)
     }
     else
     {
-        TRACE_ERROR(MB, "Macroblock %i is out of range! There is only %i macroblocks in this picture!\n",
+        TRACE_ERROR(MB, "Macroblock %i is out of range! There is only %i macroblocks in this picture!",
                     mb->mbAddr, sps->PicWidthInMbs * sps->FrameHeightInMbs);
     }
 }
@@ -914,7 +914,7 @@ static void MbPosition(Macroblock_t *mb, sps_t *sps)
  */
 static int NumSubMbPart(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "NumSubMbPart()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "NumSubMbPart()" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -999,7 +999,7 @@ static int NumSubMbPart(const unsigned int slice_type, const unsigned int sub_mb
  */
 static int SubMbPredMode(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPredMode()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPredMode()" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
@@ -1043,16 +1043,16 @@ static int SubMbPredMode(const unsigned int slice_type, const unsigned int sub_m
  */
 static int SubMbPartWidth(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartWidth()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartWidth()" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartWidth(P slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartWidth(P slice)");
     }
     else if (slice_type == 1 || slice_type == 6) // B slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartWidth(B slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartWidth(B slice)");
     }
 
     return retcode;
@@ -1069,16 +1069,16 @@ static int SubMbPartWidth(const unsigned int slice_type, const unsigned int sub_
  */
 static int SubMbPartHeight(const unsigned int slice_type, const unsigned int sub_mb_type)
 {
-    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartHeight()\n" CLR_RESET);
+    TRACE_INFO(MB, "  > " BLD_GREEN "SubMbPartHeight()" CLR_RESET);
     int retcode = 0;
 
     if (slice_type == 0 || slice_type == 5) // P slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartHeight(P slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartHeight(P slice)");
     }
     else if (slice_type == 1 || slice_type == 6) // B slice
     {
-        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartHeight(B slice)\n");
+        TRACE_WARNING(MB, ">>> UNIMPLEMENTED SubMbPartHeight(B slice)");
     }
 
     return retcode;
@@ -1101,7 +1101,7 @@ static int SubMbPartHeight(const unsigned int slice_type, const unsigned int sub
  */
 static void residual_luma(DecodingContext_t *dc, const int startIdx, const int endIdx)
 {
-    TRACE_INFO(MB, "<> " BLD_GREEN "residual_luma()\n" CLR_RESET);
+    TRACE_INFO(MB, "<> " BLD_GREEN "residual_luma()" CLR_RESET);
 
     // Shortcut
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -1109,7 +1109,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
     //
     if (startIdx == 0 && mb->MbPartPredMode[0] == Intra_16x16)
     {
-        TRACE_2(MB, "---- residual_luma 4x4 DC (mb %i - blk 0) ---------------- START - 16x16 DC\n", mb->mbAddr);
+        TRACE_2(MB, "---- residual_luma 4x4 DC (mb %i - blk 0) ---------------- START - 16x16 DC", mb->mbAddr);
 
         if (dc->entropy_coding_mode_flag)
             residual_block_cabac(dc, mb->Intra16x16DCLevel, 0, 15, 16, blk_LUMA_16x16_DC, 0);
@@ -1132,7 +1132,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                 {
                     if (mb->MbPartPredMode[0] == Intra_16x16)
                     {
-                        TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- START - 16x16 AC\n", mb->mbAddr, blkIdx);
+                        TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- START - 16x16 AC", mb->mbAddr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
                             residual_block_cabac(dc, mb->Intra16x16ACLevel[blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
@@ -1141,7 +1141,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                     }
                     else
                     {
-                        TRACE_2(MB, "---- residual_luma 4x4 (mb %i - blk %i/15) ---------------- START\n", mb->mbAddr, blkIdx);
+                        TRACE_2(MB, "---- residual_luma 4x4 (mb %i - blk %i/15) ---------------- START", mb->mbAddr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
                             residual_block_cabac(dc, mb->LumaLevel4x4[blkIdx], startIdx, endIdx, 16, blk_LUMA_4x4, blkIdx);
@@ -1151,7 +1151,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                 }
                 else if (mb->MbPartPredMode[0] == Intra_16x16)
                 {
-                    TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- EMPTY - no 16x16 AC coeff\n\n", mb->mbAddr, blkIdx);
+                    TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- EMPTY - no 16x16 AC coeff", mb->mbAddr, blkIdx);
 
                     int i = 0;
                     for (i = 0; i < 15; i++)
@@ -1162,7 +1162,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                 }
                 else
                 {
-                    TRACE_2(MB, "---- residual_luma 4x4 (mb %i - blk %i/15) ---------------- EMPTY\n\n", mb->mbAddr, blkIdx);
+                    TRACE_2(MB, "---- residual_luma 4x4 (mb %i - blk %i/15) ---------------- EMPTY", mb->mbAddr, blkIdx);
 
                     int i = 0;
                     for (i = 0; i < 16; i++)
@@ -1174,7 +1174,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
 
                 if (!dc->entropy_coding_mode_flag && mb->transform_size_8x8_flag)
                 {
-                    TRACE_2(MB, "---- residual_luma 8x8 from 4x4 (mb %i) ----------------\n\n", mb->mbAddr, blkIdx);
+                    TRACE_2(MB, "---- residual_luma 8x8 from 4x4 (mb %i) ----------------", mb->mbAddr, blkIdx);
 
                     int i = 0;
                     for (i = 0; i < 16; i++)
@@ -1186,7 +1186,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
         }
         else if (mb->CodedBlockPatternLuma & (1 << i8x8))
         {
-            TRACE_2(MB, "---- residual_luma 8x8 (mb %i - blk %i/3) ---------------- START\n", mb->mbAddr, i8x8);
+            TRACE_2(MB, "---- residual_luma 8x8 (mb %i - blk %i/3) ---------------- START", mb->mbAddr, i8x8);
 
             if (dc->entropy_coding_mode_flag)
                 residual_block_cabac(dc, mb->LumaLevel8x8[i8x8], 4 * startIdx, 4 * endIdx + 3, 64, blk_LUMA_8x8, i8x8);
@@ -1195,7 +1195,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
         }
         else
         {
-            TRACE_2(MB, "---- residual_luma 8x8 (mb %i - blk %i/3) ---------------- EMPTY\n\n", mb->mbAddr, i8x8);
+            TRACE_2(MB, "---- residual_luma 8x8 (mb %i - blk %i/3) ---------------- EMPTY", mb->mbAddr, i8x8);
 
             int i = 0;
             for (i = 0; i < 64; i++)
@@ -1205,7 +1205,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
         }
     }
 
-    TRACE_3(MB, "---- residual_luma - the end\n\n");
+    TRACE_3(MB, "---- residual_luma - the end");
 }
 
 /* ************************************************************************** */
@@ -1221,7 +1221,7 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
  */
 static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int endIdx)
 {
-    TRACE_INFO(MB, "<> " BLD_GREEN "residual_chroma()\n" CLR_RESET);
+    TRACE_INFO(MB, "<> " BLD_GREEN "residual_chroma()" CLR_RESET);
 
     // Shortcuts
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -1237,7 +1237,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
         {
             if ((mb->CodedBlockPatternChroma & 3) && (startIdx == 0))
             {
-                TRACE_2(MB, "---- residual_chroma 4x4 DC (mb %i - iCbCr %i - blk 0) ---------------- START\n", mb->mbAddr, iCbCr);
+                TRACE_2(MB, "---- residual_chroma 4x4 DC (mb %i - iCbCr %i - blk 0) ---------------- START", mb->mbAddr, iCbCr);
 
                 if (dc->entropy_coding_mode_flag)
                     residual_block_cabac(dc, mb->ChromaDCLevel[iCbCr], 0, 4 * NumC8x8 - 1, 4 * NumC8x8, blk_CHROMA_DC_Cb + iCbCr, 0);
@@ -1246,7 +1246,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
             }
             else
             {
-                TRACE_2(MB, "---- residual_chroma 4x4 DC (mb %i - iCbCr %i - blk 0) ---------------- EMPTY\n\n", mb->mbAddr, iCbCr);
+                TRACE_2(MB, "---- residual_chroma 4x4 DC (mb %i - iCbCr %i - blk 0) ---------------- EMPTY", mb->mbAddr, iCbCr);
 
                 int i = 0;
                 for (i = 0; i < (4 * NumC8x8); i++)
@@ -1269,7 +1269,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
 
                     if (mb->CodedBlockPatternChroma & 2)
                     {
-                        TRACE_2(MB, "---- residual_chroma 4x4 AC (mb %i - iCbCr %i - blk %i/3) ---------------- START\n", mb->mbAddr, iCbCr, blkIdx);
+                        TRACE_2(MB, "---- residual_chroma 4x4 AC (mb %i - iCbCr %i - blk %i/3) ---------------- START", mb->mbAddr, iCbCr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
                             residual_block_cabac(dc, mb->ChromaACLevel[iCbCr][blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_CHROMA_AC_Cb + iCbCr, blkIdx);
@@ -1278,7 +1278,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
                     }
                     else
                     {
-                        TRACE_2(MB, "---- residual_chroma 4x4 AC (mb %i - iCbCr %i - blk %i/3) ---------------- EMPTY\n\n", mb->mbAddr, iCbCr, blkIdx);
+                        TRACE_2(MB, "---- residual_chroma 4x4 AC (mb %i - iCbCr %i - blk %i/3) ---------------- EMPTY", mb->mbAddr, iCbCr, blkIdx);
 
                         int i = 0;
                         for (i = 0; i < 15; i++)
@@ -1291,7 +1291,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
         }
     }
 
-    TRACE_3(MB, "---- residual_chroma - the end\n\n");
+    TRACE_3(MB, "---- residual_chroma - the end");
 }
 
 /* ************************************************************************** */

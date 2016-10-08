@@ -45,7 +45,7 @@ int h264_decode(MediaFile_t *input_video,
                 const int picture_number,
                 const int picture_extractionmode)
 {
-    TRACE_INFO(H264, BLD_GREEN "h264_decode()\n" CLR_RESET);
+    TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
     int retcode = FAILURE;
 
     // Init decoding context
@@ -53,7 +53,7 @@ int h264_decode(MediaFile_t *input_video,
 
     if (dc == NULL)
     {
-        TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder\n");
+        TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder");
         return retcode;
     }
     else
@@ -86,7 +86,7 @@ int h264_decode(MediaFile_t *input_video,
             {
                 case NALU_TYPE_SLICE: // 1
                 {
-                    TRACE_1(NALU, "This decoder only support IDR slice decoding!\n");
+                    TRACE_1(NALU, "This decoder only support IDR slice decoding!");
                 }
                 break;
 
@@ -95,7 +95,7 @@ int h264_decode(MediaFile_t *input_video,
                     dc->IdrPicFlag = true;
                     nalu_clean_sample(dc->bitstr);
 
-                    TRACE_INFO(MAIN, "> " BLD_GREEN "decodeIDR(%i)\n" CLR_RESET, dc->idrCounter);
+                    TRACE_INFO(MAIN, "> " BLD_GREEN "decodeIDR(%i)" CLR_RESET, dc->idrCounter);
 
                     if (decode_slice(dc))
                     {
@@ -156,7 +156,7 @@ int h264_decode(MediaFile_t *input_video,
                 default:
                 {
                     dc->errorCounter++;
-                    TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)\n", dc->active_nalu->nal_unit_type);
+                    TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)", dc->active_nalu->nal_unit_type);
                 }
                 break;
             }
@@ -167,21 +167,21 @@ int h264_decode(MediaFile_t *input_video,
         else
         {
             dc->errorCounter++;
-            TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)\n", dc->errorCounter);
+            TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)", dc->errorCounter);
         }
 
         if (dc->idrCounter == (unsigned)picture_number)
         {
-            TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!\n" CLR_RESET, dc->idrCounter);
-            TRACE_INFO(H264, "H.264 decoding ended\n");
+            TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
+            TRACE_INFO(H264, "H.264 decoding ended");
             retcode = SUCCESS;
             dc->decoderRunning = false;
         }
 
         if (dc->errorCounter > 64 || retcode == FAILURE)
         {
-            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)\n", dc->errorCounter, dc->active_nalu->nal_unit_type);
-            TRACE_ERROR(H264, "H.264 decoding aborted\n");
+            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
+            TRACE_ERROR(H264, "H.264 decoding aborted");
             retcode = FAILURE;
             dc->decoderRunning = false;
         }
@@ -207,7 +207,7 @@ int h264_decode(MediaFile_t *input_video,
  */
 DecodingContext_t *initDecodingContext(MediaFile_t *media)
 {
-    TRACE_INFO(H264, BLD_GREEN "initDecodingContext()\n" CLR_RESET);
+    TRACE_INFO(H264, BLD_GREEN "initDecodingContext()" CLR_RESET);
     DecodingContext_t *dc = NULL;
 
     if (media != NULL)
@@ -217,7 +217,7 @@ DecodingContext_t *initDecodingContext(MediaFile_t *media)
 
         if (dc == NULL)
         {
-            TRACE_ERROR(H264, "Unable to alloc new DecodingContext!\n");
+            TRACE_ERROR(H264, "Unable to alloc new DecodingContext!");
         }
         else
         {
@@ -270,7 +270,7 @@ DecodingContext_t *initDecodingContext(MediaFile_t *media)
 
                     dc->mb_array = NULL;
 
-                    TRACE_1(H264, "* DecodingContext allocation success\n");
+                    TRACE_1(H264, "* DecodingContext allocation success");
                 }
             }
         }
@@ -292,36 +292,36 @@ DecodingContext_t *initDecodingContext(MediaFile_t *media)
  */
 int checkDecodingContext(DecodingContext_t *dc)
 {
-    TRACE_INFO(H264, "> " BLD_GREEN "checkDecodingContext()\n" CLR_RESET);
+    TRACE_INFO(H264, "> " BLD_GREEN "checkDecodingContext()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (dc->bitstr == NULL)
     {
-        TRACE_WARNING(H264, "* Bitstream structure is invalid!\n");
+        TRACE_WARNING(H264, "* Bitstream structure is invalid!");
         retcode = FAILURE;
     }
 
     if (dc->active_nalu == NULL)
     {
-        TRACE_WARNING(H264, "* NAL Unit structure is invalid!\n");
+        TRACE_WARNING(H264, "* NAL Unit structure is invalid!");
         retcode = FAILURE;
     }
 
     if (dc->sps_array[dc->active_sps] == NULL)
     {
-        TRACE_WARNING(H264, "* SPS structure currently in use is invalid!\n");
+        TRACE_WARNING(H264, "* SPS structure currently in use is invalid!");
         retcode = FAILURE;
     }
 
     if (dc->pps_array[dc->active_pps] == NULL)
     {
-        TRACE_WARNING(H264, "* PPS structure currently in use is invalid!\n");
+        TRACE_WARNING(H264, "* PPS structure currently in use is invalid!");
         retcode = FAILURE;
     }
 
     if (dc->active_slice == NULL)
     {
-        TRACE_WARNING(H264, "* Slice structure is invalid!\n");
+        TRACE_WARNING(H264, "* Slice structure is invalid!");
         retcode = FAILURE;
     }
     else
@@ -329,7 +329,7 @@ int checkDecodingContext(DecodingContext_t *dc)
         pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
         if (pps == NULL)
         {
-            TRACE_WARNING(H264, "* The slice structure refer to an invalid PPS structure!\n");
+            TRACE_WARNING(H264, "* The slice structure refer to an invalid PPS structure!");
             retcode = FAILURE;
         }
         else
@@ -337,7 +337,7 @@ int checkDecodingContext(DecodingContext_t *dc)
             sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
             if (sps == NULL)
             {
-                TRACE_WARNING(H264, "* The slice structure refer to an invalid SPS structure!\n");
+                TRACE_WARNING(H264, "* The slice structure refer to an invalid SPS structure!");
                 retcode = FAILURE;
             }
         }
@@ -365,7 +365,7 @@ int checkDecodingContext(DecodingContext_t *dc)
  */
 void freeDecodingContext(DecodingContext_t **dc_ptr)
 {
-    TRACE_INFO(H264, BLD_GREEN "freeDecodingContext()\n" CLR_RESET);
+    TRACE_INFO(H264, BLD_GREEN "freeDecodingContext()" CLR_RESET);
 
     // free DecodingContext content
     if ((*dc_ptr) != NULL)
@@ -378,7 +378,7 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
             free((*dc_ptr)->active_nalu);
             (*dc_ptr)->active_nalu = NULL;
 
-            TRACE_1(H264, ">> NAL Unit freed\n");
+            TRACE_1(H264, ">> NAL Unit freed");
         }
 
         for (i = 0; i < MAX_SPS; i++)
@@ -401,7 +401,7 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
             free(*dc_ptr);
             *dc_ptr = NULL;
 
-            TRACE_1(H264, ">> DecodingContext freed\n");
+            TRACE_1(H264, ">> DecodingContext freed");
         }
     }
 }
@@ -418,7 +418,7 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
  */
 static int computeNormAdjust(DecodingContext_t *dc)
 {
-    TRACE_2(TRANS, "  > " BLD_GREEN "computeNormAdjust()\n" CLR_RESET);
+    TRACE_2(TRANS, "  > " BLD_GREEN "computeNormAdjust()" CLR_RESET);
     int retcode = FAILURE;
 
     if (dc != NULL)
@@ -459,7 +459,7 @@ static int computeNormAdjust(DecodingContext_t *dc)
                     else
                         dc->normAdjust4x4[q][i][j] = v4x4[q][2];
 
-                    //TRACE_3(DTRANS, "normAdjust4x4[%i][%i][%i] = %i\n", q, ii, jj, normAdjust4x4[q][ii][jj]);
+                    //TRACE_3(DTRANS, "normAdjust4x4[%i][%i][%i] = %i", q, ii, jj, normAdjust4x4[q][ii][jj]);
                 }
             }
 
@@ -481,7 +481,7 @@ static int computeNormAdjust(DecodingContext_t *dc)
                     else
                         dc->normAdjust8x8[q][i][j] = v8x8[q][5];
 
-                    //TRACE_3(DTRANS, "normAdjust8x8[%i][%i][%i] = %i\n", q, ii, jj, normAdjust8x8[q][ii][jj]);
+                    //TRACE_3(DTRANS, "normAdjust8x8[%i][%i][%i] = %i", q, ii, jj, normAdjust8x8[q][ii][jj]);
                 }
             }
         }

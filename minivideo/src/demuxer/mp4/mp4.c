@@ -159,13 +159,13 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
  */
 static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "convertTrack()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "convertTrack()" CLR_RESET);
     bool retcode = SUCCESS;
     BitstreamMap_t *map = NULL;
 
     if (media == NULL || track == NULL)
     {
-        TRACE_ERROR(MP4, "Cannot access audio or video tracks from the MP4 parser!\n");
+        TRACE_ERROR(MP4, "Cannot access audio or video tracks from the MP4 parser!");
         retcode = FAILURE;
     }
 
@@ -205,7 +205,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         }
         else
         {
-            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %u)\n", track->id, track->handlerType);
+            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %u)", track->id, track->handlerType);
 
             retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], track->stsz_sample_count);
             if (retcode == SUCCESS)
@@ -295,7 +295,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 if (map->framerate_base > 0.0)
                     map->framerate = map->framerate_num / map->framerate_base;
 
-                TRACE_1(MP4, "framerate_num: %f  / framerate_base: %f\n",
+                TRACE_1(MP4, "framerate_num: %f  / framerate_base: %f",
                         map->framerate_num, map->framerate_base);
             }
 
@@ -517,7 +517,7 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                             map->sample_pts[index] /= track->timescale;
                         }
 
-                        //TRACE_2(MP4, "#%u > DTS: %lli  /  PTS: %lli\n", index, map->sample_dts[index], map->sample_pts[index]);
+                        //TRACE_2(MP4, "#%u > DTS: %lli  /  PTS: %lli", index, map->sample_dts[index], map->sample_pts[index]);
                     }
 
                     // FIXME // sample description index is not taken into account
@@ -538,26 +538,26 @@ static bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         }
 
 #if ENABLE_DEBUG
-        TRACE_INFO(MP4, BLD_GREEN ">> track content recap:\n" CLR_RESET);
+        TRACE_INFO(MP4, BLD_GREEN ">> track content recap:" CLR_RESET);
         if (map->stream_type == stream_VIDEO)
         {
-            TRACE_1(MP4, "Video Stream\n");
+            TRACE_1(MP4, "Video Stream");
         }
         else if (map->stream_type == stream_AUDIO)
         {
-            TRACE_1(MP4, "Audio Stream\n");
+            TRACE_1(MP4, "Audio Stream");
         }
 
-        TRACE_1(MP4, "sample_count     : %u\n", map->sample_count);
-        TRACE_1(MP4, "sample_count_idr : %u\n", map->frame_count_idr);
+        TRACE_1(MP4, "sample_count     : %u", map->sample_count);
+        TRACE_1(MP4, "sample_count_idr : %u", map->frame_count_idr);
 /*
         for (i = 0; i < map->sample_count; i++)
         {
-            TRACE_2(MP4, "[%u] sample type   > %u\n", i, map->sample_type[i]);
-            TRACE_1(MP4, "[%u] sample size   > %u\n", i, map->sample_size[i]);
-            TRACE_1(MP4, "[%u] sample offset > %lli\n", i, map->sample_offset[i]);
-            TRACE_2(MP4, "[%u] sample pts    > %lli\n", i, map->sample_pts[i]);
-            TRACE_2(MP4, "[%u] sample dts    > %lli\n", i, map->sample_dts[i]);
+            TRACE_2(MP4, "[%u] sample type   > %u", i, map->sample_type[i]);
+            TRACE_1(MP4, "[%u] sample size   > %u", i, map->sample_size[i]);
+            TRACE_1(MP4, "[%u] sample offset > %lli", i, map->sample_offset[i]);
+            TRACE_2(MP4, "[%u] sample pts    > %lli", i, map->sample_pts[i]);
+            TRACE_2(MP4, "[%u] sample dts    > %lli", i, map->sample_dts[i]);
         }
 */
 #endif // ENABLE_DEBUG
@@ -625,12 +625,12 @@ static void freeTrack(Mp4Track_t **track_ptr)
  */
 static int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
-    TRACE_3(MP4, "parse_box_header()\n");
+    TRACE_3(MP4, "parse_box_header()");
     int retcode = SUCCESS;
 
     if (box_header == NULL)
     {
-        TRACE_ERROR(MP4, "Invalid Mp4Box_t structure!\n");
+        TRACE_ERROR(MP4, "Invalid Mp4Box_t structure!");
         retcode = FAILURE;
     }
     else
@@ -687,30 +687,30 @@ static int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 static void print_box_header(Mp4Box_t *box_header)
 {
 #if ENABLE_DEBUG
-    TRACE_2(MP4, "* start offset  : %lli\n", box_header->offset_start);
-    TRACE_2(MP4, "* end offset    : %lli\n", box_header->offset_end);
+    TRACE_2(MP4, "* start offset  : %lli", box_header->offset_start);
+    TRACE_2(MP4, "* end offset    : %lli", box_header->offset_end);
 
     // Print Box header
     if (box_header->size == 1)
     {
-        TRACE_2(MP4, "* box largesize : %lli\n", box_header->size);
+        TRACE_2(MP4, "* box largesize : %lli", box_header->size);
     }
     else
     {
-        TRACE_2(MP4, "* box size      : %lli\n", box_header->size);
+        TRACE_2(MP4, "* box size      : %lli", box_header->size);
     }
 
-    TRACE_2(MP4, "* box type      : 0x%X\n", box_header->boxtype);
+    TRACE_2(MP4, "* box type      : 0x%X", box_header->boxtype);
     if (box_header->boxtype == BOX_UUID)
     {
-        TRACE_2(MP4, "* box usertype  : '%s'\n", box_header->usertype);
+        TRACE_2(MP4, "* box usertype  : '%s'", box_header->usertype);
     }
 
     // Print FullBox header
     if (box_header->version != 0 || box_header->flags != 0)
     {
-        TRACE_2(MP4, "* version       : %u\n", box_header->version);
-        TRACE_2(MP4, "* flags         : 0x%X\n", box_header->flags);
+        TRACE_2(MP4, "* version       : %u", box_header->version);
+        TRACE_2(MP4, "* flags         : 0x%X", box_header->flags);
     }
 #endif // ENABLE_DEBUG
 }
@@ -726,7 +726,7 @@ static void print_box_header(Mp4Box_t *box_header)
  */
 static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_padb()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_padb()" CLR_RESET);
     int retcode = SUCCESS;
 
     unsigned int i;
@@ -764,7 +764,7 @@ static int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
 #if ENABLE_DEBUG
     char fcc[5];
-    TRACE_WARNING(MP4, BLD_GREEN "parse_unknown_box('%s' @ %lli; size is %u)\n" CLR_RESET,
+    TRACE_WARNING(MP4, BLD_GREEN "parse_unknown_box('%s' @ %lli; size is %u)" CLR_RESET,
                   getFccString_le(box_header->boxtype, fcc), box_header->offset_start,
                   box_header->offset_end - box_header->offset_start);
 
@@ -788,7 +788,7 @@ static int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header)
  */
 static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_ftyp()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_ftyp()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read brand identifier
@@ -822,11 +822,11 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> major_brand   : 0x%08X\n", major_brand);
-        TRACE_1(MP4, "> minor_version : %i\n", minor_version);
+        TRACE_1(MP4, "> major_brand   : 0x%08X", major_brand);
+        TRACE_1(MP4, "> minor_version : %i", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
         {
-            TRACE_1(MP4, "> compatible_brands[%i] : '%s' (0x%X)\n",
+            TRACE_1(MP4, "> compatible_brands[%i] : '%s' (0x%X)",
                     i, getFccString_le(compatible_brands[i], fcc), compatible_brands[i]);
         }
     }
@@ -844,7 +844,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  */
 static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_pdin()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_pdin()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -860,7 +860,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "pdin contains %i pairs of values\n", tbr);
+        TRACE_1(MP4, "pdin contains %i pairs of values", tbr);
     }
 #endif // ENABLE_DEBUG
 
@@ -870,8 +870,8 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         unsigned int rate = read_bits(bitstr, 32);
         unsigned int initial_delay = read_bits(bitstr, 32);
 
-        TRACE_1(MP4, "[i] > rate          : %u\n", i, rate);
-        TRACE_1(MP4, "    > initial_delay : %u\n", initial_delay);
+        TRACE_1(MP4, "[i] > rate          : %u", i, rate);
+        TRACE_1(MP4, "    > initial_delay : %u", initial_delay);
     }
 
     return retcode;
@@ -887,7 +887,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  */
 static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_moov()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_moov()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print moov box header
@@ -943,7 +943,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  */
 static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_mdat()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_mdat()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print mdat box header
@@ -965,7 +965,7 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header)
  */
 static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_tkhd()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_tkhd()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -1014,17 +1014,17 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print tkhd box content
-        TRACE_1(MP4, "> creation_time     : %llu\n", track->creation_time);
-        TRACE_1(MP4, "> modification_time : %llu\n", track->modification_time);
-        TRACE_1(MP4, "> track_ID          : %u\n", track->id);
-        TRACE_1(MP4, "> duration          : %llu\n", track->duration);
-        TRACE_1(MP4, "> layer             : %i\n", layer);
-        TRACE_1(MP4, "> alternate_group   : %i\n", alternate_group);
-        TRACE_1(MP4, "> volume            : %i\n", volume);
-        TRACE_1(MP4, "> matrix : [%u, %u, %u, %u, %u, %u, %u, %u, %u]\n",
+        TRACE_1(MP4, "> creation_time     : %llu", track->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu", track->modification_time);
+        TRACE_1(MP4, "> track_ID          : %u", track->id);
+        TRACE_1(MP4, "> duration          : %llu", track->duration);
+        TRACE_1(MP4, "> layer             : %i", layer);
+        TRACE_1(MP4, "> alternate_group   : %i", alternate_group);
+        TRACE_1(MP4, "> volume            : %i", volume);
+        TRACE_1(MP4, "> matrix : [%u, %u, %u, %u, %u, %u, %u, %u, %u]",
                 matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7], matrix[8]);
-        TRACE_1(MP4, "> width  : %u\n", width);
-        TRACE_1(MP4, "> height : %u\n", height);
+        TRACE_1(MP4, "> width  : %u", width);
+        TRACE_1(MP4, "> height : %u", height);
     }
 #endif // ENABLE_DEBUG
 
@@ -1042,7 +1042,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_edst()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_edst()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print trak box header
@@ -1083,7 +1083,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_elst()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_elst()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -1127,7 +1127,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_mvhd()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_mvhd()" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -1179,17 +1179,17 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         print_box_header(box_header);
 
         // Print mvhd box content
-        TRACE_1(MP4, "> creation_time     : %llu\n", mp4->creation_time);
-        TRACE_1(MP4, "> modification_time : %llu\n", mp4->modification_time);
-        TRACE_1(MP4, "> timescale  : %u\n", mp4->timescale);
-        TRACE_1(MP4, "> duration   : %llu\n", mp4->duration);
-        TRACE_1(MP4, "> rate       : %u\n", rate);
-        TRACE_1(MP4, "> volume     : %llu\n", volume);
+        TRACE_1(MP4, "> creation_time     : %llu", mp4->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu", mp4->modification_time);
+        TRACE_1(MP4, "> timescale  : %u", mp4->timescale);
+        TRACE_1(MP4, "> duration   : %llu", mp4->duration);
+        TRACE_1(MP4, "> rate       : %u", rate);
+        TRACE_1(MP4, "> volume     : %llu", volume);
         for (i = 0; i < 9; i++)
         {
-            TRACE_1(MP4, "> matrix[%i] : %i\n", i, matrix[i]);
+            TRACE_1(MP4, "> matrix[%i] : %i", i, matrix[i]);
         }
-        TRACE_1(MP4, "> next track ID     : %u\n", next_track_ID);
+        TRACE_1(MP4, "> next track ID     : %u", next_track_ID);
 
     }
 #endif // ENABLE_DEBUG
@@ -1207,7 +1207,7 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  */
 static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_iods()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_iods()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -1236,7 +1236,7 @@ static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header)
  */
 static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_trak()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_trak()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print trak box header
@@ -1248,7 +1248,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     if (mp4->tracks[track_id] == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to allocate a new mp4 track!\n");
+        TRACE_ERROR(MP4, "Unable to allocate a new mp4 track!");
         retcode = FAILURE;
     }
     else
@@ -1304,7 +1304,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
  */
 static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_mdhd()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_mdhd()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -1343,11 +1343,11 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print mdhd box content
-        TRACE_1(MP4, "> creation_time     : %llu\n", track->creation_time);
-        TRACE_1(MP4, "> modification_time : %llu\n", track->modification_time);
-        TRACE_1(MP4, "> timescale   : %u\n", track->timescale);
-        TRACE_1(MP4, "> duration    : %llu\n", track->duration);
-        TRACE_1(MP4, "> language[3] : '%c%c%c'\n",
+        TRACE_1(MP4, "> creation_time     : %llu", track->creation_time);
+        TRACE_1(MP4, "> modification_time : %llu", track->modification_time);
+        TRACE_1(MP4, "> timescale   : %u", track->timescale);
+        TRACE_1(MP4, "> duration    : %llu", track->duration);
+        TRACE_1(MP4, "> language[3] : '%c%c%c'",
                 track->language[0], track->language[1], track->language[2]);
     }
 #endif // ENABLE_DEBUG
@@ -1369,7 +1369,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_mdia()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_mdia()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print mdia box header
@@ -1421,7 +1421,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_hdlr()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_hdlr()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -1464,10 +1464,10 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Print hdlr box content
         char fcc[5];
-        TRACE_1(MP4, "> pre_defined  : %u\n", pre_defined);
-        TRACE_1(MP4, "> handler_type : 0x%X (%s)\n", track->handlerType,
+        TRACE_1(MP4, "> pre_defined  : %u", pre_defined);
+        TRACE_1(MP4, "> handler_type : 0x%X (%s)", track->handlerType,
                 getFccString_le(track->handlerType, fcc));
-        TRACE_1(MP4, "> name         : '%s'\n", track->name);
+        TRACE_1(MP4, "> name         : '%s'", track->name);
 
     }
 #endif // ENABLE_DEBUG
@@ -1475,7 +1475,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     if (track->handlerType != HANDLER_AUDIO &&
         track->handlerType != HANDLER_VIDEO)
     {
-        TRACE_1(MP4, "Not an audio or video track, ignoring\n");
+        TRACE_1(MP4, "Not an audio or video track, ignoring");
     }
 
     return retcode;
@@ -1495,7 +1495,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_minf()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_minf()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print minf box header
@@ -1547,7 +1547,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stbl()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stbl()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print stbl box header
@@ -1619,7 +1619,7 @@ static int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stsd()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
@@ -1655,27 +1655,27 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             if (box_subheader.boxtype == fcc_mp4a)
             {
                 track->codec = CODEC_AAC;
-                TRACE_1(MP4, "> Audio track is using AAC codec\n");
+                TRACE_1(MP4, "> Audio track is using AAC codec");
             }
             else if (box_subheader.boxtype == fcc_AC3 || box_subheader.boxtype == fcc_ac3)
             {
                 track->codec = CODEC_AC3;
-                TRACE_1(MP4, "> Audio track is using AC3 codec\n");
+                TRACE_1(MP4, "> Audio track is using AC3 codec");
             }
             else if (box_subheader.boxtype == fcc_AC4 || box_subheader.boxtype == fcc_ac4)
             {
                 track->codec = CODEC_AC4;
-                TRACE_1(MP4, "> Audio track is using AC4 codec\n");
+                TRACE_1(MP4, "> Audio track is using AC4 codec");
             }
             else if (box_subheader.boxtype == fcc_sowt)
             {
                 track->codec = CODEC_LPCM;
-                TRACE_1(MP4, "> Audio track is using PCM audio\n");
+                TRACE_1(MP4, "> Audio track is using PCM audio");
             }
             else
             {
                 track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)\n",
+                TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)",
                               getFccString_le(box_subheader.boxtype, fcc));
             }
 
@@ -1699,27 +1699,27 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             if (box_subheader.boxtype == fcc_avc1)
             {
                 track->codec = CODEC_H264;
-                TRACE_1(MP4, "> Video track is using H.264 codec\n");
+                TRACE_1(MP4, "> Video track is using H.264 codec");
             }
             else if (box_subheader.boxtype == fcc_hvc1)
             {
                 track->codec = CODEC_H265;
-                TRACE_1(MP4, "> Video track is using H.265 codec\n");
+                TRACE_1(MP4, "> Video track is using H.265 codec");
             }
             else if (box_subheader.boxtype == fcc_mp4v)
             {
                 track->codec = CODEC_MPEG4_ASP;
-                TRACE_1(MP4, "> Video track is using XVID codec\n");
+                TRACE_1(MP4, "> Video track is using XVID codec");
             }
             else if (box_subheader.boxtype == fcc_CFHD)
             {
                 track->codec = CODEC_VC5;
-                TRACE_1(MP4, "> Video track is using CineForm codec\n");
+                TRACE_1(MP4, "> Video track is using CineForm codec");
             }
             else
             {
                 track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in video track (%s)\n",
+                TRACE_WARNING(MP4, "> Unknown codec in video track (%s)",
                               getFccString_le(box_subheader.boxtype, fcc));
             }
 
@@ -1761,13 +1761,13 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 print_box_header(&box_subheader);
 
                 // Print VisualSampleEntry box content
-                TRACE_1(MP4, "> width  : %u\n", track->width);
-                TRACE_1(MP4, "> height : %u\n", track->height);
-                TRACE_1(MP4, "> horizresolution : 0x%X\n", horizresolution);
-                TRACE_1(MP4, "> vertresolution  : 0x%X\n", vertresolution);
-                TRACE_1(MP4, "> frame_count     : %u\n", frame_count);
-                TRACE_1(MP4, "> compressor      : '%s'\n", track->compressorname);
-                TRACE_1(MP4, "> color depth     : %u\n", track->color_depth);
+                TRACE_1(MP4, "> width  : %u", track->width);
+                TRACE_1(MP4, "> height : %u", track->height);
+                TRACE_1(MP4, "> horizresolution : 0x%X", horizresolution);
+                TRACE_1(MP4, "> vertresolution  : 0x%X", vertresolution);
+                TRACE_1(MP4, "> frame_count     : %u", frame_count);
+                TRACE_1(MP4, "> compressor      : '%s'", track->compressorname);
+                TRACE_1(MP4, "> color depth     : %u", track->color_depth);
             }
 #endif // ENABLE_DEBUG
 
@@ -1828,7 +1828,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         break;
 
         default:
-            TRACE_1(MP4, "Unknown track type, skipped...\n");
+            TRACE_1(MP4, "Unknown track type, skipped...");
         break;
     }
 
@@ -1849,7 +1849,7 @@ static int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_avcC()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_avcC()" CLR_RESET);
     int retcode = SUCCESS;
 
     // avcC box means H.264 codec
@@ -1896,24 +1896,24 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> configurationVersion  : %u\n", configurationVersion);
-        TRACE_1(MP4, "> AVCProfileIndication  : %u\n", AVCProfileIndication);
-        TRACE_1(MP4, "> profile_compatibility : %u\n", profile_compatibility);
-        TRACE_1(MP4, "> AVCLevelIndication    : %u\n", AVCLevelIndication);
-        TRACE_1(MP4, "> lengthSizeMinusOne    : %u\n", lengthSizeMinusOne);
+        TRACE_1(MP4, "> configurationVersion  : %u", configurationVersion);
+        TRACE_1(MP4, "> AVCProfileIndication  : %u", AVCProfileIndication);
+        TRACE_1(MP4, "> profile_compatibility : %u", profile_compatibility);
+        TRACE_1(MP4, "> AVCLevelIndication    : %u", AVCLevelIndication);
+        TRACE_1(MP4, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
 
-        TRACE_1(MP4, "> numOfSequenceParameterSets    = %u\n", track->sps_count);
+        TRACE_1(MP4, "> numOfSequenceParameterSets    = %u", track->sps_count);
         for (i = 0; i < track->sps_count; i++)
         {
-            TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u\n", i, track->sps_sample_size[i]);
-            TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %u\n", i, track->sps_sample_offset[i]);
+            TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
+            TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %u", i, track->sps_sample_offset[i]);
         }
 
-        TRACE_1(MP4, "> numOfPictureParameterSets     = %u\n", track->pps_count);
+        TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->pps_count);
         for (i = 0; i < track->pps_count; i++)
         {
-            TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u\n", i, track->pps_sample_size[i]);
-            TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %u\n", i, track->pps_sample_offset[i]);
+            TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
+            TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %u", i, track->pps_sample_offset[i]);
         }
     }
 #endif // ENABLE_DEBUG
@@ -1933,7 +1933,7 @@ static int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_btrt()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_btrt()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
@@ -1947,9 +1947,9 @@ static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> bufferSizeDB : %u\n", bufferSizeDB);
-        TRACE_1(MP4, "> maxBitrate   : %u\n", track->bitrate_max);
-        TRACE_1(MP4, "> avgBitrate   : %u\n", track->bitrate_avg);
+        TRACE_1(MP4, "> bufferSizeDB : %u", bufferSizeDB);
+        TRACE_1(MP4, "> maxBitrate   : %u", track->bitrate_max);
+        TRACE_1(MP4, "> avgBitrate   : %u", track->bitrate_avg);
     }
 #endif // ENABLE_DEBUG
 
@@ -1968,7 +1968,7 @@ static int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_clap()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_clap()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
@@ -1990,18 +1990,18 @@ static int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        //TRACE_1(MP4, "> clap_size   : %u\n", clap_size);
-        //TRACE_1(MP4, "> clap_type   : %u\n", clap_type);
+        //TRACE_1(MP4, "> clap_size   : %u", clap_size);
+        //TRACE_1(MP4, "> clap_type   : %u", clap_type);
 
-        TRACE_1(MP4, "> cleanApertureWidthN   : %u\n", cleanApertureWidthN);
-        TRACE_1(MP4, "> cleanApertureWidthD   : %u\n", cleanApertureWidthD);
-        TRACE_1(MP4, "> cleanApertureHeightN  : %u\n", cleanApertureHeightN);
-        TRACE_1(MP4, "> cleanApertureHeightD  : %u\n", cleanApertureHeightD);
+        TRACE_1(MP4, "> cleanApertureWidthN   : %u", cleanApertureWidthN);
+        TRACE_1(MP4, "> cleanApertureWidthD   : %u", cleanApertureWidthD);
+        TRACE_1(MP4, "> cleanApertureHeightN  : %u", cleanApertureHeightN);
+        TRACE_1(MP4, "> cleanApertureHeightD  : %u", cleanApertureHeightD);
 
-        TRACE_1(MP4, "> horizOffN  : %u\n", horizOffN);
-        TRACE_1(MP4, "> horizOffD  : %u\n", horizOffD);
-        TRACE_1(MP4, "> vertOffN   : %u\n", vertOffN);
-        TRACE_1(MP4, "> vertOffD   : %u\n", vertOffD);
+        TRACE_1(MP4, "> horizOffN  : %u", horizOffN);
+        TRACE_1(MP4, "> horizOffD  : %u", horizOffD);
+        TRACE_1(MP4, "> vertOffN   : %u", vertOffN);
+        TRACE_1(MP4, "> vertOffD   : %u", vertOffD);
     }
 #endif // ENABLE_DEBUG
 
@@ -2020,7 +2020,7 @@ static int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_colr()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_colr()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
@@ -2069,13 +2069,13 @@ static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Print box content
         char fcc[5];
-        TRACE_1(MP4, "> colour_type             : %u\n", getFccString_le(colour_type, fcc));
+        TRACE_1(MP4, "> colour_type             : %u", getFccString_le(colour_type, fcc));
         if (colour_type == 'nclc' || colour_type == 'nclx')
         {
-            TRACE_1(MP4, "> colour_primaries        : %u\n", colour_primaries);
-            TRACE_1(MP4, "> transfer_characteristics: %u\n", transfer_characteristics);
-            TRACE_1(MP4, "> matrix_coefficients     : %u\n", matrix_coefficients);
-            TRACE_1(MP4, "> full_range_flag         : %u\n", track->color_range);
+            TRACE_1(MP4, "> colour_primaries        : %u", colour_primaries);
+            TRACE_1(MP4, "> transfer_characteristics: %u", transfer_characteristics);
+            TRACE_1(MP4, "> matrix_coefficients     : %u", matrix_coefficients);
+            TRACE_1(MP4, "> full_range_flag         : %u", track->color_range);
         }
     }
 #endif // ENABLE_DEBUG
@@ -2090,7 +2090,7 @@ static int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_fiel()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_fiel()" CLR_RESET);
     int retcode = SUCCESS;
 
     // TODO
@@ -2105,7 +2105,7 @@ static int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_gama()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_gama()" CLR_RESET);
     int retcode = SUCCESS;
 
     // TODO
@@ -2125,7 +2125,7 @@ static int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_pasp()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_pasp()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
@@ -2141,10 +2141,10 @@ static int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        //TRACE_1(MP4, "> pasp_size : %u\n", pasp_size);
-        //TRACE_1(MP4, "> pasp_type : %u\n", pasp_type);
-        TRACE_1(MP4, "> hSpacing  : %u\n", track->par_h);
-        TRACE_1(MP4, "> vSpacing  : %u\n", track->par_v);
+        //TRACE_1(MP4, "> pasp_size : %u", pasp_size);
+        //TRACE_1(MP4, "> pasp_type : %u", pasp_type);
+        TRACE_1(MP4, "> hSpacing  : %u", track->par_h);
+        TRACE_1(MP4, "> vSpacing  : %u", track->par_v);
     }
 #endif // ENABLE_DEBUG
 
@@ -2164,7 +2164,7 @@ static int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stts()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stts()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -2180,7 +2180,7 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     if (track->stts_sample_count == NULL || track->stts_sample_delta == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
+        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
         retcode = FAILURE;
     }
     else
@@ -2198,7 +2198,7 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> entry_count   : %u\n", track->stts_entry_count);
+        TRACE_1(MP4, "> entry_count   : %u", track->stts_entry_count);
 #if TRACE_1
         TRACE_1(MP4, "> sample_number : [");
         for (i = 0; i < track->stts_entry_count; i++)
@@ -2225,7 +2225,7 @@ static int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_ctts()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_ctts()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -2241,7 +2241,7 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     if (track->ctts_sample_count == NULL || track->ctts_sample_offset == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
+        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
         retcode = FAILURE;
     }
     else
@@ -2263,7 +2263,7 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> entry_count   : %u\n", track->ctts_entry_count);
+        TRACE_1(MP4, "> entry_count   : %u", track->ctts_entry_count);
 #if TRACE_1
         TRACE_1(MP4, "> sample_number : [");
         for (i = 0; i < track->ctts_entry_count; i++)
@@ -2293,7 +2293,7 @@ static int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stss()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stss()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -2307,7 +2307,7 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     if (track->stss_sample_number == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!\n");
+        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
         retcode = FAILURE;
     }
     else
@@ -2323,7 +2323,7 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 
             // Print box content
-            TRACE_1(MP4, "> entry_count   : %u\n", track->stss_entry_count);
+            TRACE_1(MP4, "> entry_count   : %u", track->stss_entry_count);
 #if TRACE_1
             TRACE_1(MP4, "> sample_number : [");
             for (i = 0; i < track->stss_entry_count; i++)
@@ -2354,7 +2354,7 @@ static int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stsc()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsc()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -2372,7 +2372,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         track->stsc_samples_per_chunk == NULL ||
         track->stsc_sample_description_index == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to alloc first_chunk, samples_per_chunk or sample_description_index tables!\n");
+        TRACE_ERROR(MP4, "Unable to alloc first_chunk, samples_per_chunk or sample_description_index tables!");
         retcode = FAILURE;
     }
     else
@@ -2390,7 +2390,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 #if TRACE_1
             // Print box content
-            TRACE_1(MP4, "> entry_count : %u\n", track->stsc_entry_count);
+            TRACE_1(MP4, "> entry_count : %u", track->stsc_entry_count);
 
             TRACE_1(MP4, "> first_chunk : [");
             for (i = 0; i < track->stsc_entry_count; i++)
@@ -2440,7 +2440,7 @@ static int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stsz()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsz()" CLR_RESET);
     int retcode = SUCCESS;
     unsigned int i = 0;
     int field_size = 32;
@@ -2468,7 +2468,7 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         if (track->stsz_entry_size == NULL)
         {
-             TRACE_ERROR(MP4, "Unable to alloc entry_size table!\n");
+             TRACE_ERROR(MP4, "Unable to alloc entry_size table!");
              retcode = FAILURE;
         }
         else
@@ -2486,8 +2486,8 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         print_box_header(box_header);
 
         // Print box content
-        TRACE_1(MP4, "> sample_count : %u\n", track->stsz_sample_count);
-        TRACE_1(MP4, "> sample_size  : %u\n", track->stsz_sample_size);
+        TRACE_1(MP4, "> sample_count : %u", track->stsz_sample_count);
+        TRACE_1(MP4, "> sample_size  : %u", track->stsz_sample_size);
 /*
         if (track->stsz_sample_size == 0)
         {
@@ -2519,7 +2519,7 @@ static int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  */
 static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_stco()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "parse_stco()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Read FullBox attributs
@@ -2533,7 +2533,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     if (track->stco_chunk_offset == NULL)
     {
-        TRACE_ERROR(MP4, "Unable to alloc chunk_offset table!\n");
+        TRACE_ERROR(MP4, "Unable to alloc chunk_offset table!");
         retcode = FAILURE;
     }
     else
@@ -2558,7 +2558,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             print_box_header(box_header);
 
             // Print box content
-            TRACE_1(MP4, "> entry_count  : %u\n", track->stco_entry_count);
+            TRACE_1(MP4, "> entry_count  : %u", track->stco_entry_count);
 /*
             TRACE_1(MP4, "> chunk_offset : [");
             for (i = 0; i < track->stco_entry_count; i++)
@@ -2579,7 +2579,7 @@ static int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
 int mp4_fileParse(MediaFile_t *media)
 {
-    TRACE_INFO(MP4, BLD_GREEN "mp4_fileParse()\n" CLR_RESET);
+    TRACE_INFO(MP4, BLD_GREEN "mp4_fileParse()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Init bitstream to parse container infos

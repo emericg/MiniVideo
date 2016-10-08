@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2015 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,8 +18,8 @@
  *
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
- * \version   0.44
+ * \date      2016
+ * \version   0.50
  */
 
 // MiniTraces header
@@ -31,10 +31,16 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#define MINITRACE_EOL "\n\r"
+#else // linux, macOS, and everyone else...
+#define MINITRACES_EOL "\n"
+#endif
+
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#if DEBUG_WITH_TIMESTAMPS
+#if MINITRACES_TIMESTAMPS
 
 #include <time.h>
 
@@ -100,7 +106,7 @@ static void print_trace_time(void)
     }
 }
 
-#endif // DEBUG_WITH_TIMESTAMPS
+#endif // MINITRACES_TIMESTAMPS
 
 /* ************************************************************************** */
 
@@ -157,12 +163,12 @@ void MiniTraces_info(void)
     printf(PID BLD_GREEN "\nMiniTraces_infos()" CLR_RESET " version 0.4\n");
 
     printf(PID "\n* TRACE LEVELS ENABLED:\n");
-    TRACE_ERROR(MAIN, "ERROR traces enabled\n");
-    TRACE_WARNING(MAIN, "WARNING traces enabled\n");
-    TRACE_INFO(MAIN, "INFO traces enabled\n");
-    TRACE_1(MAIN, "LVL 1 traces enabled\n");
-    TRACE_2(MAIN, "LVL 2 traces enabled\n");
-    TRACE_3(MAIN, "LVL 3 traces enabled\n");
+    TRACE_ERROR(MAIN, "ERROR traces enabled");
+    TRACE_WARNING(MAIN, "WARNING traces enabled");
+    TRACE_INFO(MAIN, "INFO traces enabled");
+    TRACE_1(MAIN, "LVL 1 traces enabled");
+    TRACE_2(MAIN, "LVL 2 traces enabled");
+    TRACE_3(MAIN, "LVL 3 traces enabled");
 
     printf(PID "\n* TRACE MODULES CONFIGURATION:\n");
     for (i = 0; i < trace_module_count; i++)
@@ -180,7 +186,7 @@ void MiniTraces_info(void)
 void MiniTraces_print(const char *file, const int line, const char *func,
                       const unsigned level, const unsigned module, const char *payload, ...)
 {
-#if ENABLE_TRACES > 0
+#if MINITRACES_LEVEL > 0
     if (module > trace_module_count)
     {
         printf("[TRACE][%s] module[%d] unknown\n", __FUNCTION__, (int)module);
@@ -199,9 +205,9 @@ void MiniTraces_print(const char *file, const int line, const char *func,
         ////////////////////////////////////////////////////////////////////////
 
         // Print the trace timestamp
-#if DEBUG_WITH_TIMESTAMPS == 1
+#if MINITRACES_TIMESTAMPS == 1
         print_trace_tick();
-#elif DEBUG_WITH_TIMESTAMPS == 2
+#elif MINITRACES_TIMESTAMPS == 2
         print_trace_time();
 #endif
 
@@ -209,31 +215,32 @@ void MiniTraces_print(const char *file, const int line, const char *func,
         const char *level_string = get_trace_level_string(level);
         printf("[%s][%5s]", level_string, trace_modules_table[module].module_name);
 
-#if DEBUG_WITH_FUNC_INFO
+#if MINITRACES_FUNC_INFO
         // Print the function where the trace came from
         printf(BLD_WHITE "[%s]" CLR_RESET, func);
 #endif
 
-#if DEBUG_WITH_FILE_INFO
+#if MINITRACES_FILE_INFO
         // Print the line of code that triggered the trace output
         const char *tmp = strrchr(file, '/');
         printf("{%s:%d}", tmp ? ++tmp : file, line);
 #endif
 
-        // Customizable header / body separator
-        ////////////////////////////////////////////////////////////////////////
-
-        printf(" ");
-
         // Trace body
         ////////////////////////////////////////////////////////////////////////
+
+        // Customizable header / body separator
+        printf(" ");
 
         va_list args;
         va_start(args, payload);
         vprintf(payload, args);
         va_end(args);
 
-#if DEBUG_WITH_FORCED_SYNC
+        // End of the line
+        printf(MINITRACES_EOL);
+
+#if MINITRACES_FORCED_SYNC
         // Force terminal synchronisazion (very slow!)
         fflush(stdout);
 #endif

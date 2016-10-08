@@ -46,12 +46,12 @@
  */
 static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
 {
-    TRACE_INFO(WAV, BLD_GREEN "parse_fmt()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "parse_fmt()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (fmt_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid fmt_header structure!\n");
+        TRACE_ERROR(WAV, "Invalid fmt_header structure!");
         retcode = FAILURE;
     }
     else
@@ -67,7 +67,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         }
         else
         {
-            TRACE_WARNING(WAV, "OMG EMPTY fmt CHUNK\n");
+            TRACE_WARNING(WAV, "OMG EMPTY fmt CHUNK");
         }
 
         if (fmt_header->dwSize >= 18)
@@ -118,7 +118,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             }
             else
             {
-                TRACE_WARNING(WAV, "Invalid fmt chunk extension size...\n");
+                TRACE_WARNING(WAV, "Invalid fmt chunk extension size...");
             }
         }
 
@@ -127,22 +127,22 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         print_chunk_header(fmt_header);
 
         // Print content
-        TRACE_1(WAV, "> wFormatTag      : %u\n", wave->fmt.wFormatTag);
-        TRACE_1(WAV, "> nChannels       : %u\n", wave->fmt.nChannels);
-        TRACE_1(WAV, "> nSamplesPerSec  : %u\n", wave->fmt.nSamplesPerSec);
-        TRACE_1(WAV, "> nAvgBytesPerSec : %u\n", wave->fmt.nAvgBytesPerSec);
-        TRACE_1(WAV, "> nBlockAlign     : %u\n", wave->fmt.nBlockAlign);
-        TRACE_1(WAV, "> wBitsPerSample  : %u\n", wave->fmt.wBitsPerSample);
+        TRACE_1(WAV, "> wFormatTag      : %u", wave->fmt.wFormatTag);
+        TRACE_1(WAV, "> nChannels       : %u", wave->fmt.nChannels);
+        TRACE_1(WAV, "> nSamplesPerSec  : %u", wave->fmt.nSamplesPerSec);
+        TRACE_1(WAV, "> nAvgBytesPerSec : %u", wave->fmt.nAvgBytesPerSec);
+        TRACE_1(WAV, "> nBlockAlign     : %u", wave->fmt.nBlockAlign);
+        TRACE_1(WAV, "> wBitsPerSample  : %u", wave->fmt.wBitsPerSample);
 
         // Extension
         if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18)
         {
-            TRACE_1(WAV, "> cbSize             : %u\n", wave->fmt.cbSize);
+            TRACE_1(WAV, "> cbSize             : %u", wave->fmt.cbSize);
 
-            TRACE_1(WAV, "> wValidBitsPerSample: %u\n", wave->fmt.wValidBitsPerSample);
-            TRACE_1(WAV, "> dwChannelMask      : %u\n", wave->fmt.dwChannelMask);
+            TRACE_1(WAV, "> wValidBitsPerSample: %u", wave->fmt.wValidBitsPerSample);
+            TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
-            TRACE_1(WAV, "> SubFormat : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}\n",
+            TRACE_1(WAV, "> SubFormat : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
                     wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
                     wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
                     wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
@@ -163,12 +163,12 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
  */
 static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wave)
 {
-    TRACE_INFO(WAV, BLD_GREEN "parse_fact()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "parse_fact()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (fact_header == NULL || fact_header->dwSize < 4)
     {
-        TRACE_ERROR(WAV, "Invalid fact_header structure!\n");
+        TRACE_ERROR(WAV, "Invalid fact_header structure!");
         retcode = FAILURE;
     }
     else
@@ -180,7 +180,7 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
         print_chunk_header(fact_header);
 
         // Print content
-        TRACE_1(WAV, "> dwSampleLength     : %u\n", wave->fact.dwSampleLength);
+        TRACE_1(WAV, "> dwSampleLength     : %u", wave->fact.dwSampleLength);
 #endif
     }
 
@@ -194,12 +194,12 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
  */
 static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave)
 {
-    TRACE_INFO(WAV, BLD_GREEN "parse_cue()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "parse_cue()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (data_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid data_header structure!\n");
+        TRACE_ERROR(WAV, "Invalid data_header structure!");
         retcode = FAILURE;
     }
     else
@@ -222,12 +222,12 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave
  */
 static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave)
 {
-    TRACE_INFO(WAV, BLD_GREEN "parse_data()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "parse_data()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (data_header == NULL)
     {
-        TRACE_ERROR(WAV, "Invalid data_header structure!\n");
+        TRACE_ERROR(WAV, "Invalid data_header structure!");
         retcode = FAILURE;
     }
     else
@@ -240,8 +240,8 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
         print_chunk_header(data_header);
 
         // Print content
-        TRACE_1(WAV, "> datasOffset     : %u\n", wave->data.datasOffset);
-        TRACE_1(WAV, "> datasSize       : %u\n", wave->data.datasSize);
+        TRACE_1(WAV, "> datasOffset     : %u", wave->data.datasOffset);
+        TRACE_1(WAV, "> datasSize       : %u", wave->data.datasSize);
 #endif
     }
 
@@ -374,7 +374,7 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
 static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
 {
-    TRACE_INFO(WAV, BLD_GREEN "wave_indexer()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "wave_indexer()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Convert index into a bitstream map
@@ -394,7 +394,7 @@ static int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
 
 int wave_fileParse(MediaFile_t *media)
 {
-    TRACE_INFO(WAV, BLD_GREEN "wave_fileParse()\n" CLR_RESET);
+    TRACE_INFO(WAV, BLD_GREEN "wave_fileParse()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
@@ -441,7 +441,7 @@ int wave_fileParse(MediaFile_t *media)
                 case fcc_cue_:
                     retcode = parse_cue(bitstr, &chunk_header, &wave);
                 default:
-                    TRACE_WARNING(WAV, BLD_GREEN "Unknown chunk type (%s)\n" CLR_RESET,
+                    TRACE_WARNING(WAV, BLD_GREEN "Unknown chunk type (%s)" CLR_RESET,
                                   getFccString_le(chunk_header.dwFourCC, fcc));
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);

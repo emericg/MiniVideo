@@ -49,7 +49,7 @@
  */
 void make_path_absolute(const char *path, char *path_absolute)
 {
-    TRACE_2(IO, "make_path_absolute()\n");
+    TRACE_2(IO, "make_path_absolute()");
 
     // Check if 'path' is absolute
     char *pos_first_slash_p = strchr(path, '/');
@@ -57,7 +57,7 @@ void make_path_absolute(const char *path, char *path_absolute)
     if (pos_first_slash_p != NULL &&
         (pos_first_slash_p - path) == 0)
     {
-        TRACE_2(IO, "* path seems to be absolute already (first caracter is /)\n");
+        TRACE_2(IO, "* path seems to be absolute already (first caracter is /)");
     }
     else
     {
@@ -68,12 +68,12 @@ void make_path_absolute(const char *path, char *path_absolute)
         // First attempt
         getcwd(cwd, sizeof(cwd));
         strncpy(absolute_path_temp, strncat(cwd, path, sizeof(cwd) - 1), sizeof(absolute_path_temp) - 1);
-        TRACE_1(IO, "* t1            : '%s'\n", absolute_path_temp);
+        TRACE_1(IO, "* t1            : '%s'", absolute_path_temp);
 
         temp = fopen(absolute_path_temp, "rb");
         if (temp != NULL)
         {
-            TRACE_2(IO, "* New absolute path found, new using method 1: '%s'\n", absolute_path_temp);
+            TRACE_2(IO, "* New absolute path found, new using method 1: '%s'", absolute_path_temp);
             strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
             fclose(temp);
         }
@@ -83,26 +83,26 @@ void make_path_absolute(const char *path, char *path_absolute)
             getcwd(cwd, sizeof(cwd));
             strncpy(absolute_path_temp, strncat(cwd, "/", 1), sizeof(absolute_path_temp) - 1);
             strncat(absolute_path_temp, path, sizeof(absolute_path_temp) - 1);
-            TRACE_1(IO, "* t2            : '%s'\n", absolute_path_temp);
+            TRACE_1(IO, "* t2            : '%s'", absolute_path_temp);
 
             temp = fopen(absolute_path_temp, "rb");
             if (temp != NULL)
             {
-                TRACE_2(IO, "* New absolute path found, new using method 2\n");
+                TRACE_2(IO, "* New absolute path found, new using method 2");
                 strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
                 fclose(temp);
             }
             else
             {
-                TRACE_2(IO, "* path seems to be absolute already\n");
+                TRACE_2(IO, "* path seems to be absolute already");
                 strncpy(path_absolute, path, sizeof(*path_absolute) - 1);
             }
         }
     }
 
     // Print results
-    TRACE_1(IO, "* Directory path            : '%s'\n", path);
-    TRACE_1(IO, "* Directory path (absolute) : '%s'\n", path_absolute);
+    TRACE_1(IO, "* Directory path            : '%s'", path);
+    TRACE_1(IO, "* Directory path (absolute) : '%s'", path_absolute);
 }
 
 /* ************************************************************************** */
@@ -116,7 +116,7 @@ void make_path_absolute(const char *path, char *path_absolute)
  */
 int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 {
-    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_ycbcr()\n" CLR_RESET);
+    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_ycbcr()" CLR_RESET);
     int missing_mbs = 0;
 
     // Shortcut
@@ -138,7 +138,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 
     if (buffer_ycbcr == NULL)
     {
-        TRACE_ERROR(IO, "YCbCr buffer is null!\n");
+        TRACE_ERROR(IO, "YCbCr buffer is null!");
         missing_mbs = mb_lines_total * mb_columns_total;
     }
     else
@@ -208,7 +208,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
  */
 int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
 {
-    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_rgb()\n" CLR_RESET);
+    TRACE_INFO(IO, " > " BLD_GREEN "mb_to_rgb()" CLR_RESET);
     int missing_mbs = 0;
 
     // Shortcut
@@ -234,7 +234,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
         buffer_cb == NULL ||
         buffer_cr == NULL)
     {
-        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!\n");
+        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!");
         missing_mbs = mb_lines_total * mb_columns_total;
     }
     else

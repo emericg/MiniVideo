@@ -48,14 +48,14 @@
  */
 static void getInfosFromPath(MediaFile_t *media)
 {
-    TRACE_2(IO, "getInfosFromPath()\n");
+    TRACE_2(IO, "getInfosFromPath()");
 
     // Check if mediaFile->filepath is an absolute path
     char *pos_first_slash_p = strchr(media->file_path, '/');
 
     if ((pos_first_slash_p != NULL) && ((pos_first_slash_p - media->file_path) == 0))
     {
-        TRACE_2(IO, "* mediaFile->file_path seems to be an absolute path already (first caracter is /)\n");
+        TRACE_2(IO, "* mediaFile->file_path seems to be an absolute path already (first caracter is /)");
     }
     else
     {
@@ -72,7 +72,7 @@ static void getInfosFromPath(MediaFile_t *media)
 
         if (temp != NULL)
         {
-            TRACE_2(IO, "* New absolute file path found, new using method 1: '%s'\n", absolute_filepath);
+            TRACE_2(IO, "* New absolute file path found, new using method 1: '%s'", absolute_filepath);
             strncpy(media->file_path, absolute_filepath, sizeof(media->file_path) - 1);
             fclose(temp);
         }
@@ -88,13 +88,13 @@ static void getInfosFromPath(MediaFile_t *media)
 
             if (temp != NULL)
             {
-                TRACE_2(IO, "* New absolute file path found, new using method 2\n");
+                TRACE_2(IO, "* New absolute file path found, new using method 2");
                 strncpy(media->file_path, absolute_filepath, sizeof(media->file_path) - 1);
                 fclose(temp);
             }
             else
             {
-                TRACE_2(IO, "* mediaFile->file_path seems to be an absolute path already\n");
+                TRACE_2(IO, "* mediaFile->file_path seems to be an absolute path already");
             }
         }
     }
@@ -130,19 +130,19 @@ static void getInfosFromPath(MediaFile_t *media)
         }
         else
         {
-            TRACE_WARNING(IO, "* Cannot find file name and extension!\n");
+            TRACE_WARNING(IO, "* Cannot find file name and extension!");
         }
     }
     else
     {
-        TRACE_WARNING(IO, "* Cannot find file directory, name and extension!\n");
+        TRACE_WARNING(IO, "* Cannot find file directory, name and extension!");
     }
 
     // Print results
-    TRACE_1(IO, "* File path      : '%s'\n", media->file_path);
-    TRACE_1(IO, "* File directory : '%s'\n", media->file_directory);
-    TRACE_1(IO, "* File name      : '%s'\n", media->file_name);
-    TRACE_1(IO, "* File extension : '%s'\n", media->file_extension);
+    TRACE_1(IO, "* File path      : '%s'", media->file_path);
+    TRACE_1(IO, "* File directory : '%s'", media->file_directory);
+    TRACE_1(IO, "* File name      : '%s'", media->file_name);
+    TRACE_1(IO, "* File extension : '%s'", media->file_extension);
 }
 
 /* ************************************************************************** */
@@ -153,7 +153,7 @@ static void getInfosFromPath(MediaFile_t *media)
  */
 static void getSize(MediaFile_t *media)
 {
-    TRACE_2(IO, "getSize()\n");
+    TRACE_2(IO, "getSize()");
 
     fseek(media->file_pointer, 0, SEEK_END);
     media->file_size = (int64_t)ftell(media->file_pointer);
@@ -161,15 +161,15 @@ static void getSize(MediaFile_t *media)
 
     if (media->file_size < 1024) // < 1 KiB
     {
-        TRACE_1(IO, "* File size      : %i bytes\n", media->file_size);
+        TRACE_1(IO, "* File size      : %i bytes", media->file_size);
     }
     else if (media->file_size < 1048576) // < 1 MiB
     {
-        TRACE_1(IO, "* File size      : %.2f KiB (%.2f KB)\n", (double)media->file_size / 1024.0, (double)media->file_size / 1000.0);
+        TRACE_1(IO, "* File size      : %.2f KiB (%.2f KB)", (double)media->file_size / 1024.0, (double)media->file_size / 1000.0);
     }
     else // >= 1 MiB
     {
-        TRACE_1(IO, "* File size      : %.2f MiB (%.2f MB)\n", (double)media->file_size / 1024.0 / 1024.0, (double)media->file_size / 1000.0 / 1000.0);
+        TRACE_1(IO, "* File size      : %.2f MiB (%.2f MB)", (double)media->file_size / 1024.0 / 1024.0, (double)media->file_size / 1000.0 / 1000.0);
     }
 }
 
@@ -185,7 +185,7 @@ static void getSize(MediaFile_t *media)
  */
 static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
 {
-    TRACE_2(IO, "getContainerUsingStartcodes()\n");
+    TRACE_2(IO, "getContainerUsingStartcodes()");
 
     // Set container to unknown
     ContainerFormat_e container = CONTAINER_UNKNOWN;
@@ -198,12 +198,12 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
     // Parse the file to find evidence of a container format
     if (buffer[0] == 0x47)
     {
-        TRACE_1(IO, "* File type      : TS (MPEG 'Transport Stream') container detected\n");
+        TRACE_1(IO, "* File type      : TS (MPEG 'Transport Stream') container detected");
         container = CONTAINER_MPEG_TS;
     }
     else if (buffer[0] == 0x1A && buffer[1] == 0x45 && buffer[2] == 0xDF && buffer[3] == 0xA3)
     {
-        TRACE_1(IO, "* File type      : EBML file detected, possibly MKV or WebM container\n");
+        TRACE_1(IO, "* File type      : EBML file detected, possibly MKV or WebM container");
         container = CONTAINER_MKV;
     }
     else if (buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46)
@@ -216,17 +216,17 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
 
         if (buffer[8] == 0x41 && buffer[9] == 0x56 && buffer[10] == 0x49 && buffer[11] == 0x20)
         {
-            TRACE_1(IO, "* File type      : AVI container detected\n");
+            TRACE_1(IO, "* File type      : AVI container detected");
             container = CONTAINER_AVI;
         }
         else if (buffer[8] == 0x57 && buffer[9] == 0x41 && buffer[10] == 0x56 && buffer[11] == 0x45)
         {
-            TRACE_1(IO, "* File type      : WAVE container detected\n");
+            TRACE_1(IO, "* File type      : WAVE container detected");
             container = CONTAINER_WAVE;
         }
         else
         {
-            TRACE_WARNING(IO, "* File type      : Unknown RIFF container detected\n");
+            TRACE_WARNING(IO, "* File type      : Unknown RIFF container detected");
         }
     }
     else if (buffer[0] == 0x00 && buffer[1] == 0x00)
@@ -235,18 +235,18 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
         {
             if (buffer[3] == 0xBA)
             {
-                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected\n");
+                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected");
                 container = CONTAINER_MPEG_PS;
             }
             else if (buffer[3] == 0xB3)
             {
-                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)\n");
+                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)");
                 container = CONTAINER_ES;
                 //media->codec_video = CODEC_MPEG12;
             }
             else if (buffer[3] == 0x67)
             {
-                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)\n");
+                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)");
                 container = CONTAINER_ES;
                 //media->codec_video = CODEC_H264;
             }
@@ -255,18 +255,18 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
         {
             if (buffer[4] == 0xBA)
             {
-                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected\n");
+                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected");
                 container = CONTAINER_MPEG_PS;
             }
             else if (buffer[4] == 0xB3)
             {
-                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)\n");
+                TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)");
                 container = CONTAINER_ES;
                 //media->codec_video = CODEC_MPEG12;
             }
             else if (buffer[4] == 0x67)
             {
-                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)\n");
+                TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)");
                 container = CONTAINER_ES;
                 //media->codec_video = CODEC_H264;
             }
@@ -276,34 +276,34 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
         {
             // MP4: 00 00 xx xx 66 74 79 70 // (size) f t y p
 
-            TRACE_1(IO, "* File type      : MP4 container detected\n");
+            TRACE_1(IO, "* File type      : MP4 container detected");
             container = CONTAINER_MP4;
         }
     }
     else if (buffer[0] == 0x4F && buffer[1] == 0x67 && buffer[2] == 0x67 && buffer[3] == 0x53)
     {
-        TRACE_1(IO, "* File type      : OGG container detected\n");
+        TRACE_1(IO, "* File type      : OGG container detected");
         container = CONTAINER_OGG;
     }
     else if (buffer[0] == 0x66 && buffer[1] == 0x61 && buffer[2] == 0x4C && buffer[3] == 0x43)
     {
-        TRACE_1(IO, "* File type      : FLAC container detected\n");
+        TRACE_1(IO, "* File type      : FLAC container detected");
         container = CONTAINER_FLAC;
     }
     else if (buffer[0] == 0x06 && buffer[1] == 0x0E && buffer[2] == 0x2B && buffer[3] == 0x34)
     {
-        TRACE_1(IO, "* File type      : MXF container detected\n");
+        TRACE_1(IO, "* File type      : MXF container detected");
         container = CONTAINER_MXF;
     }
     else if (buffer[0] == 0x46 && buffer[1] == 0x4C && buffer[2] == 0x56 && buffer[3] == 0x01)
     {
-        TRACE_1(IO, "* File type      : FLV container detected\n");
+        TRACE_1(IO, "* File type      : FLV container detected");
         container = CONTAINER_FLV;
     }
     else if (buffer[0] == 0xFF &&
              (buffer[1] == 0xFE || buffer[1] == 0xFD ||buffer[1] == 0xFB))
     {
-        TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected\n");
+        TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected");
         container = CONTAINER_ES_MP3;
     }
 
@@ -322,7 +322,7 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
  */
 static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
 {
-    TRACE_2(IO, "getContainerUsingExtension()\n");
+    TRACE_2(IO, "getContainerUsingExtension()");
 
     // Set container to unknown
     ContainerFormat_e container = CONTAINER_UNKNOWN;
@@ -332,7 +332,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
         if (strncmp(media->file_extension, "avi", 255) == 0 ||
             strncmp(media->file_extension, "divx", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : AVI container detected\n");
+            TRACE_1(IO, "* File extension  : AVI container detected");
             container = CONTAINER_AVI;
         }
         else if (strncmp(media->file_extension, "webm", 255) == 0 ||
@@ -341,7 +341,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "mks", 255) == 0 ||
                  strncmp(media->file_extension, "mk3d", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : MKV container detected\n");
+            TRACE_1(IO, "* File extension  : MKV container detected");
             container = CONTAINER_MKV;
         }
         else if (strncmp(media->file_extension, "mov", 255) == 0 ||
@@ -358,7 +358,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "qt", 255)  == 0 ||
                  strncmp(media->file_extension, "f4v", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : MP4 container detected\n");
+            TRACE_1(IO, "* File extension  : MP4 container detected");
             container = CONTAINER_MP4;
         }
         else if (strncmp(media->file_extension, "ps", 255) == 0  ||
@@ -369,7 +369,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "mpg", 255) == 0 ||
                  strncmp(media->file_extension, "mpeg", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : PS (MPEG 'Program Stream') container detected\n");
+            TRACE_1(IO, "* File extension  : PS (MPEG 'Program Stream') container detected");
             container = CONTAINER_MPEG_PS;
         }
         else if (strncmp(media->file_extension, "ts", 255) == 0  ||
@@ -377,14 +377,14 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "mts", 255) == 0 ||
                  strncmp(media->file_extension, "m2ts", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : TS (MPEG 'Transport Stream') container detected\n");
+            TRACE_1(IO, "* File extension  : TS (MPEG 'Transport Stream') container detected");
             container = CONTAINER_MPEG_TS;
         }
         else if (strncmp(media->file_extension, "asf", 255) == 0 ||
                  strncmp(media->file_extension, "wma", 255) == 0 ||
                  strncmp(media->file_extension, "wmv", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : ASF container detected\n");
+            TRACE_1(IO, "* File extension  : ASF container detected");
             container = CONTAINER_ASF;
         }
         else if (strncmp(media->file_extension, "ogg", 255) == 0 ||
@@ -395,60 +395,60 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "spx", 255) == 0 ||
                  strncmp(media->file_extension, "opus", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : OGG container detected\n");
+            TRACE_1(IO, "* File extension  : OGG container detected");
             container = CONTAINER_OGG;
         }
         else if (strncmp(media->file_extension, "mxf", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : MXF container detected\n");
+            TRACE_1(IO, "* File extension  : MXF container detected");
             container = CONTAINER_MXF;
         }
         else if (strncmp(media->file_extension, "flv", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : SWF container detected\n");
+            TRACE_1(IO, "* File extension  : SWF container detected");
             container = CONTAINER_FLV;
         }
         else if (strncmp(media->file_extension, "flac", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : FLAC container detected\n");
+            TRACE_1(IO, "* File extension  : FLAC container detected");
             container = CONTAINER_FLAC;
         }
         else if (strncmp(media->file_extension, "wav", 255) == 0 ||
                  strncmp(media->file_extension, "wave", 255) == 0 ||
                  strncmp(media->file_extension, "amb", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : WAVE container detected\n");
+            TRACE_1(IO, "* File extension  : WAVE container detected");
             container = CONTAINER_WAVE;
         }
         else if (strncmp(media->file_extension, "rm", 255) == 0 ||
                  strncmp(media->file_extension, "rmvb", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : RealMedia container detected\n");
+            TRACE_1(IO, "* File extension  : RealMedia container detected");
             container = CONTAINER_RM;
         }
         else if (strncmp(media->file_extension, "264", 255) == 0 ||
                  strncmp(media->file_extension, "h264", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : H.264 ES detected\n");
+            TRACE_1(IO, "* File extension  : H.264 ES detected");
             container = CONTAINER_ES;
             //codec = CODEC_H264;
         }
         else if (strncmp(media->file_extension, "265", 255) == 0 ||
                  strncmp(media->file_extension, "h265", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : H.265 ES detected\n");
+            TRACE_1(IO, "* File extension  : H.265 ES detected");
             container = CONTAINER_ES;
             //codec = CODEC_H265;
         }
         else if (strncmp(media->file_extension, "aac", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : AAC ES detected\n");
+            TRACE_1(IO, "* File extension  : AAC ES detected");
             container = CONTAINER_ES_AAC;
             //codec = CODEC_AAC;
         }
         else if (strncmp(media->file_extension, "ac3", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : AC3 ES detected\n");
+            TRACE_1(IO, "* File extension  : AC3 ES detected");
             container = CONTAINER_ES_AC3;
             //codec = CODEC_AC3;
         }
@@ -456,7 +456,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "mp2", 255) == 0 ||
                  strncmp(media->file_extension, "mp3", 255) == 0)
         {
-            TRACE_1(IO, "* File extension  : MP3 ES detected\n");
+            TRACE_1(IO, "* File extension  : MP3 ES detected");
             container = CONTAINER_ES_MP3;
             //codec = CODEC_MP3;
         }
@@ -478,14 +478,14 @@ static void getContainer(MediaFile_t *media)
 
     if (media->container == CONTAINER_UNKNOWN)
     {
-        TRACE_WARNING(IO, "* Unknown container format: startcodes detection failed...\n");
+        TRACE_WARNING(IO, "* Unknown container format: startcodes detection failed...");
 
         // Fallback: detect container format using file extension
         media->container = getContainerUsingExtension(media);
 
         if (media->container == CONTAINER_UNKNOWN)
         {
-            TRACE_ERROR(IO, "* Unknown container format: file extension detection failed...\n");
+            TRACE_ERROR(IO, "* Unknown container format: file extension detection failed...");
         }
     }
 }
@@ -509,13 +509,13 @@ static void getContainer(MediaFile_t *media)
  */
 int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
 {
-    TRACE_INFO(IO, BLD_GREEN "import_fileOpen()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileOpen()" CLR_RESET);
 
     int retcode = FAILURE;
 
     if (filepath == NULL)
     {
-        TRACE_ERROR(IO, "* File path is invalid\n");
+        TRACE_ERROR(IO, "* File path is invalid");
     }
     else
     {
@@ -524,7 +524,7 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
 
         if (*media_ptr == NULL)
         {
-            TRACE_ERROR(IO, "* Unable to allocate a MediaFile_t structure!\n");
+            TRACE_ERROR(IO, "* Unable to allocate a MediaFile_t structure!");
         }
         else
         {
@@ -532,20 +532,20 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
 
             // Set filepath in MediaFile_t
             strncpy(media->file_path, filepath, sizeof(media->file_path) - 1);
-            TRACE_INFO(IO, "* File path (raw): '%s'\n", filepath);
+            TRACE_INFO(IO, "* File path (raw): '%s'", filepath);
 
             // Open file, read only
             media->file_pointer = fopen(filepath, "rb");
 
             if (media->file_pointer == NULL)
             {
-                TRACE_ERROR(IO, "Unable to open the media file: '%s'!\n", filepath);
+                TRACE_ERROR(IO, "Unable to open the media file: '%s'!", filepath);
                 free(*media_ptr);
                 *media_ptr = NULL;
             }
             else
             {
-                TRACE_1(IO, "* File successfully opened\n");
+                TRACE_1(IO, "* File successfully opened");
 
                 // Extract some informations from the media file
                 getInfosFromPath(media);
@@ -569,7 +569,7 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
  */
 int import_fileClose(MediaFile_t **media_ptr)
 {
-    TRACE_INFO(IO, BLD_GREEN "import_fileClose()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileClose()" CLR_RESET);
     int retcode = SUCCESS;
     int i = 0;
 
@@ -579,12 +579,12 @@ int import_fileClose(MediaFile_t **media_ptr)
         {
             if (fclose((*media_ptr)->file_pointer) == 0)
             {
-                TRACE_1(IO, "* File successfully closed\n");
+                TRACE_1(IO, "* File successfully closed");
                 retcode = SUCCESS;
             }
             else
             {
-                TRACE_ERROR(IO, "Unable to close that file!\n");
+                TRACE_ERROR(IO, "Unable to close that file!");
                 retcode = FAILURE;
             }
         }
@@ -608,7 +608,7 @@ int import_fileClose(MediaFile_t **media_ptr)
             free(*media_ptr);
             *media_ptr = NULL;
 
-            TRACE_1(IO, ">> MediaFile freed\n");
+            TRACE_1(IO, ">> MediaFile freed");
         }
     }
 
@@ -623,34 +623,34 @@ int import_fileClose(MediaFile_t **media_ptr)
  */
 void import_fileStatus(MediaFile_t *media)
 {
-    TRACE_INFO(IO, BLD_GREEN "import_fileStatus()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "import_fileStatus()" CLR_RESET);
 
     unsigned i = 0;
 
     // File
     if (media->file_pointer)
     {
-        TRACE_1(IO, "file_pointer is " BLD_GREEN "open\n" CLR_RESET);
+        TRACE_1(IO, "file_pointer is " BLD_GREEN "open" CLR_RESET);
     }
     else
     {
-        TRACE_1(IO, "file_pointer is " BLD_RED "closed\n" CLR_RESET);
+        TRACE_1(IO, "file_pointer is " BLD_RED "closed" CLR_RESET);
     }
 
     // File info
-    TRACE_1(IO, "* File path      : '%s'\n", media->file_path);
-    TRACE_1(IO, "* File directory : '%s'\n", media->file_directory);
-    TRACE_1(IO, "* File name      : '%s'\n", media->file_name);
-    TRACE_1(IO, "* File extension : '%s'\n", media->file_extension);
-    TRACE_1(IO, "* File size      : %i MiB  /  %i MB\n",
+    TRACE_1(IO, "* File path      : '%s'", media->file_path);
+    TRACE_1(IO, "* File directory : '%s'", media->file_directory);
+    TRACE_1(IO, "* File name      : '%s'", media->file_name);
+    TRACE_1(IO, "* File extension : '%s'", media->file_extension);
+    TRACE_1(IO, "* File size      : %i MiB  /  %i MB",
             media->file_size / 1024 / 1024,
             media->file_size / 1000 / 1000);
 
     // File format
-    TRACE_1(IO, "* File container :  '%s'\n", getContainerString(media->container, 1));
+    TRACE_1(IO, "* File container :  '%s'", getContainerString(media->container, 1));
 
     // Audio track(s)
-    TRACE_1(IO, "* %i audio track(s)\n", media->tracks_audio_count);
+    TRACE_1(IO, "* %i audio track(s)", media->tracks_audio_count);
     for (i = 0; i < media->tracks_audio_count; i++)
     {
         if (media->tracks_audio[i])
@@ -658,7 +658,7 @@ void import_fileStatus(MediaFile_t *media)
     }
 
     // Video track(s)
-    TRACE_1(IO, "* %i video track(s)\n", media->tracks_video_count);
+    TRACE_1(IO, "* %i video track(s)", media->tracks_video_count);
     for (i = 0; i < media->tracks_video_count; i++)
     {
         if (media->tracks_video[i])
@@ -666,7 +666,7 @@ void import_fileStatus(MediaFile_t *media)
     }
 
     // Subtitles track(s)
-    TRACE_1(IO, "* %i subtitles track(s)\n", media->tracks_subtitles_count);
+    TRACE_1(IO, "* %i subtitles track(s)", media->tracks_subtitles_count);
     for (i = 0; i < media->tracks_audio_count; i++)
     {
         if (media->tracks_subt[i])

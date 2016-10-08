@@ -62,18 +62,18 @@ static int parse_JUNK(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffC
 
         if (skip_bits(bitstr, jump) == FAILURE)
         {
-            TRACE_ERROR(AVI, BLD_GREEN "parse_JUNK()" CLR_RESET " >> Unable to skip %i bytes\n", chunk_header_child->dwSize);
+            TRACE_ERROR(AVI, BLD_GREEN "parse_JUNK()" CLR_RESET " >> Unable to skip %i bytes", chunk_header_child->dwSize);
             retcode = FAILURE;
         }
         else
         {
-            TRACE_1(AVI, BLD_GREEN "parse_JUNK()\n" CLR_RESET);
+            TRACE_1(AVI, BLD_GREEN "parse_JUNK()" CLR_RESET);
             retcode = SUCCESS;
         }
     }
     else
     {
-        TRACE_WARNING(AVI, "parse_JUNK() >> Unable to skip this chunk!\n");
+        TRACE_WARNING(AVI, "parse_JUNK() >> Unable to skip this chunk!");
         retcode = FAILURE;
     }
 
@@ -86,12 +86,12 @@ static int parse_JUNK(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffC
 
 static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_string()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_string()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (chunk_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid chunk_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid chunk_header structure!");
         retcode = FAILURE;
     }
     else
@@ -100,7 +100,7 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 
         if (string == NULL)
         {
-            TRACE_ERROR(AVI, "Unable to allocate string!\n");
+            TRACE_ERROR(AVI, "Unable to allocate string!");
             retcode = FAILURE;
         }
         else
@@ -135,12 +135,12 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 
 static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_avih()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_avih()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (avih_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid avih_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid avih_header structure!");
         retcode = FAILURE;
     }
     else
@@ -167,16 +167,16 @@ static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
         print_chunk_header(avih_header);
 
         // Print avih content
-        TRACE_1(AVI, "> dwMicroSecPerFrame\t: %u\n", avi->avih.dwMicroSecPerFrame);
-        TRACE_1(AVI, "> dwMaxBytesPerSec\t\t: %u\n", avi->avih.dwMaxBytesPerSec);
-        TRACE_1(AVI, "> dwPaddingGranularity\t: %u\n", avi->avih.dwPaddingGranularity);
-        TRACE_1(AVI, "> dwFlags\t\t\t: %u\n", avi->avih.dwFlags);
-        TRACE_1(AVI, "> dwTotalFrames\t\t: %u\n", avi->avih.dwTotalFrames);
-        TRACE_1(AVI, "> dwInitialFrames\t\t: %u\n", avi->avih.dwInitialFrames);
-        TRACE_1(AVI, "> dwStreams\t\t\t: %u\n", avi->avih.dwStreams);
-        TRACE_1(AVI, "> dwSuggestedBufferSize\t: %u\n", avi->avih.dwSuggestedBufferSize);
-        TRACE_1(AVI, "> dwWidth\t\t\t: %u\n", avi->avih.dwWidth);
-        TRACE_1(AVI, "> dwHeight\t\t\t: %u\n", avi->avih.dwHeight);
+        TRACE_1(AVI, "> dwMicroSecPerFrame\t: %u", avi->avih.dwMicroSecPerFrame);
+        TRACE_1(AVI, "> dwMaxBytesPerSec\t\t: %u", avi->avih.dwMaxBytesPerSec);
+        TRACE_1(AVI, "> dwPaddingGranularity\t: %u", avi->avih.dwPaddingGranularity);
+        TRACE_1(AVI, "> dwFlags\t\t\t: %u", avi->avih.dwFlags);
+        TRACE_1(AVI, "> dwTotalFrames\t\t: %u", avi->avih.dwTotalFrames);
+        TRACE_1(AVI, "> dwInitialFrames\t\t: %u", avi->avih.dwInitialFrames);
+        TRACE_1(AVI, "> dwStreams\t\t\t: %u", avi->avih.dwStreams);
+        TRACE_1(AVI, "> dwSuggestedBufferSize\t: %u", avi->avih.dwSuggestedBufferSize);
+        TRACE_1(AVI, "> dwWidth\t\t\t: %u", avi->avih.dwWidth);
+        TRACE_1(AVI, "> dwHeight\t\t\t: %u", avi->avih.dwHeight);
     }
 
     return retcode;
@@ -186,12 +186,12 @@ static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
 
 static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_dmlh()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_dmlh()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (dmlh_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid dmlh_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid dmlh_header structure!");
         retcode = FAILURE;
     }
     else
@@ -205,7 +205,7 @@ static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
 
 #if ENABLE_DEBUG
         // Print dmlh content
-        TRACE_1(AVI, "> dwTotalFrames\t: %u\n", avi->avih.dwTotalFrames);
+        TRACE_1(AVI, "> dwTotalFrames\t: %u", avi->avih.dwTotalFrames);
 #endif
     }
 
@@ -216,12 +216,12 @@ static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
 
 static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_strh()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strh()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (strh_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid strh_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid strh_header structure!");
         retcode = FAILURE;
     }
     else
@@ -252,23 +252,23 @@ static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, AviTrack_t 
 
         // Print strh content
         char fcc[5];
-        TRACE_1(AVI, "> fccType\t\t: 0x%08X ('%s')\n", track->strh.fccType, getFccString_le(track->strh.fccType, fcc));
-        TRACE_1(AVI, "> fccHandler\t: 0x%08X ('%s')\n", track->strh.fccHandler, getFccString_le(track->strh.fccHandler, fcc));
-        TRACE_1(AVI, "> dwFlags\t\t: %u\n", track->strh.dwFlags);
-        TRACE_1(AVI, "> wPriority\t\t: %u\n", track->strh.wPriority);
-        TRACE_1(AVI, "> wLanguage\t\t: %u\n", track->strh.wLanguage);
-        TRACE_1(AVI, "> dwInitialFrames\t: %u\n", track->strh.dwInitialFrames);
-        TRACE_1(AVI, "> dwScale\t\t: %u\n", track->strh.dwScale);
-        TRACE_1(AVI, "> dwRate\t\t: %u\n", track->strh.dwRate);
-        TRACE_1(AVI, "> dwStart\t\t: %u\n", track->strh.dwStart);
-        TRACE_1(AVI, "> dwLength\t\t: %u\n", track->strh.dwLength);
-        TRACE_1(AVI, "> dwSuggestedBufferSize : %u\n", track->strh.dwSuggestedBufferSize);
-        TRACE_1(AVI, "> dwQuality\t\t: %u\n", track->strh.dwQuality);
-        TRACE_1(AVI, "> dwSampleSize\t: %u\n", track->strh.dwSampleSize);
-        TRACE_1(AVI, "> rcFrame_x\t\t: %u\n", track->strh.rcFrame_x);
-        TRACE_1(AVI, "> rcFrame_y\t\t: %u\n", track->strh.rcFrame_y);
-        TRACE_1(AVI, "> rcFrame_w\t\t: %u\n", track->strh.rcFrame_w);
-        TRACE_1(AVI, "> rcFrame_h\t\t: %u\n", track->strh.rcFrame_h);
+        TRACE_1(AVI, "> fccType\t\t: 0x%08X ('%s')", track->strh.fccType, getFccString_le(track->strh.fccType, fcc));
+        TRACE_1(AVI, "> fccHandler\t: 0x%08X ('%s')", track->strh.fccHandler, getFccString_le(track->strh.fccHandler, fcc));
+        TRACE_1(AVI, "> dwFlags\t\t: %u", track->strh.dwFlags);
+        TRACE_1(AVI, "> wPriority\t\t: %u", track->strh.wPriority);
+        TRACE_1(AVI, "> wLanguage\t\t: %u", track->strh.wLanguage);
+        TRACE_1(AVI, "> dwInitialFrames\t: %u", track->strh.dwInitialFrames);
+        TRACE_1(AVI, "> dwScale\t\t: %u", track->strh.dwScale);
+        TRACE_1(AVI, "> dwRate\t\t: %u", track->strh.dwRate);
+        TRACE_1(AVI, "> dwStart\t\t: %u", track->strh.dwStart);
+        TRACE_1(AVI, "> dwLength\t\t: %u", track->strh.dwLength);
+        TRACE_1(AVI, "> dwSuggestedBufferSize : %u", track->strh.dwSuggestedBufferSize);
+        TRACE_1(AVI, "> dwQuality\t\t: %u", track->strh.dwQuality);
+        TRACE_1(AVI, "> dwSampleSize\t: %u", track->strh.dwSampleSize);
+        TRACE_1(AVI, "> rcFrame_x\t\t: %u", track->strh.rcFrame_x);
+        TRACE_1(AVI, "> rcFrame_y\t\t: %u", track->strh.rcFrame_y);
+        TRACE_1(AVI, "> rcFrame_w\t\t: %u", track->strh.rcFrame_w);
+        TRACE_1(AVI, "> rcFrame_h\t\t: %u", track->strh.rcFrame_h);
 #endif // ENABLE_DEBUG
     }
 
@@ -279,12 +279,12 @@ static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, AviTrack_t 
 
 static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_strf()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strf()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (strf_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid strf_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid strf_header structure!");
         retcode = FAILURE;
     }
     else
@@ -309,17 +309,17 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             track->strf.biClrImportant = endian_flip_32(read_bits(bitstr, 32));
 
 #if ENABLE_DEBUG
-            TRACE_1(AVI, "> biSize\t\t: %u\n", track->strf.biSize);
-            TRACE_1(AVI, "> biWidth\t\t: %i\n", track->strf.biWidth);
-            TRACE_1(AVI, "> biHeight\t\t: %i\n", track->strf.biHeight);
-            TRACE_1(AVI, "> biPlanes\t\t: %u\n", track->strf.biPlanes);
-            TRACE_1(AVI, "> biBitCount\t: %u\n", track->strf.biBitCount);
-            TRACE_1(AVI, "> biCompression\t: %u\n", track->strf.biCompression);
-            TRACE_1(AVI, "> biSizeImage\t: %u\n", track->strf.biSizeImage);
-            TRACE_1(AVI, "> biXPelsPerMeter\t: %i\n", track->strf.biXPelsPerMeter);
-            TRACE_1(AVI, "> biYPelsPerMeter\t: %i\n", track->strf.biYPelsPerMeter);
-            TRACE_1(AVI, "> biClrUsed\t\t: %u\n", track->strf.biClrUsed);
-            TRACE_1(AVI, "> biClrImportant\t: %u\n", track->strf.biClrImportant);
+            TRACE_1(AVI, "> biSize\t\t: %u", track->strf.biSize);
+            TRACE_1(AVI, "> biWidth\t\t: %i", track->strf.biWidth);
+            TRACE_1(AVI, "> biHeight\t\t: %i", track->strf.biHeight);
+            TRACE_1(AVI, "> biPlanes\t\t: %u", track->strf.biPlanes);
+            TRACE_1(AVI, "> biBitCount\t: %u", track->strf.biBitCount);
+            TRACE_1(AVI, "> biCompression\t: %u", track->strf.biCompression);
+            TRACE_1(AVI, "> biSizeImage\t: %u", track->strf.biSizeImage);
+            TRACE_1(AVI, "> biXPelsPerMeter\t: %i", track->strf.biXPelsPerMeter);
+            TRACE_1(AVI, "> biYPelsPerMeter\t: %i", track->strf.biYPelsPerMeter);
+            TRACE_1(AVI, "> biClrUsed\t\t: %u", track->strf.biClrUsed);
+            TRACE_1(AVI, "> biClrImportant\t: %u", track->strf.biClrImportant);
 #endif // ENABLE_DEBUG
         }
         else if (track->strh.fccType == fcc_auds)
@@ -332,17 +332,17 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
             track->strf.nBlockAlign = endian_flip_16(read_bits(bitstr, 16));
             track->strf.wBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
 
-            TRACE_1(AVI, "> wFormatTag\t: %u\n", track->strf.wFormatTag);
-            TRACE_1(AVI, "> nChannels\t\t: %u\n", track->strf.nChannels);
-            TRACE_1(AVI, "> nSamplesPerSec\t: %u\n", track->strf.nSamplesPerSec);
-            TRACE_1(AVI, "> nAvgBytesPerSec\t: %u\n", track->strf.nAvgBytesPerSec);
-            TRACE_1(AVI, "> nBlockAlign\t: %u\n", track->strf.nBlockAlign);
-            TRACE_1(AVI, "> wBitsPerSample\t: %u\n", track->strf.wBitsPerSample);
+            TRACE_1(AVI, "> wFormatTag\t: %u", track->strf.wFormatTag);
+            TRACE_1(AVI, "> nChannels\t\t: %u", track->strf.nChannels);
+            TRACE_1(AVI, "> nSamplesPerSec\t: %u", track->strf.nSamplesPerSec);
+            TRACE_1(AVI, "> nAvgBytesPerSec\t: %u", track->strf.nAvgBytesPerSec);
+            TRACE_1(AVI, "> nBlockAlign\t: %u", track->strf.nBlockAlign);
+            TRACE_1(AVI, "> wBitsPerSample\t: %u", track->strf.wBitsPerSample);
 
             // Parse WAVEFORMATEX extention
             if (track->strf.wFormatTag == 0)
             {
-                TRACE_2(AVI, "> EXT > No wave format TAG\n");
+                TRACE_2(AVI, "> EXT > No wave format TAG");
                 track->strh.fccHandler = CODEC_UNKNOWN;
             }
             else
@@ -351,13 +351,13 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
 
                 if (track->strf.wFormatTag == WAVE_FORMAT_MP1)
                 {
-                    TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
+                    TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT");
                     track->strh.fccHandler = CODEC_MPEG_L1;
 
                     if (byte_left >= 24)
                     {
                         uint16_t cbSize = endian_flip_16(read_bits(bitstr, 16));
-                        TRACE_1(AVI, "> cbSize\t\t: %u\n", cbSize);
+                        TRACE_1(AVI, "> cbSize\t\t: %u", cbSize);
 
                         uint16_t fwHeadLayer = endian_flip_16(read_bits(bitstr, 16));
                         uint32_t dwHeadBitrate = endian_flip_32(read_bits(bitstr, 32));
@@ -368,25 +368,25 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                         uint32_t dwPTSLow = endian_flip_32(read_bits(bitstr, 32));
                         uint32_t dwPTSHigh = endian_flip_32(read_bits(bitstr, 32));
 
-                        TRACE_1(AVI, "> fwHeadLayer\t: %u\n", fwHeadLayer);
-                        TRACE_1(AVI, "> dwHeadBitrate\t: %u\n", dwHeadBitrate);
-                        TRACE_1(AVI, "> fwHeadMode\t: %u\n", fwHeadMode);
-                        TRACE_1(AVI, "> fwHeadModeExt\t: %u\n", fwHeadModeExt);
-                        TRACE_1(AVI, "> wHeadEmphasis\t: %u\n", wHeadEmphasis);
-                        TRACE_1(AVI, "> fwHeadFlags\t: %u\n", fwHeadFlags);
-                        TRACE_1(AVI, "> dwPTSLow\t: %u\n", dwPTSLow);
-                        TRACE_1(AVI, "> dwPTSHigh\t: %u\n", dwPTSHigh);
+                        TRACE_1(AVI, "> fwHeadLayer\t: %u", fwHeadLayer);
+                        TRACE_1(AVI, "> dwHeadBitrate\t: %u", dwHeadBitrate);
+                        TRACE_1(AVI, "> fwHeadMode\t: %u", fwHeadMode);
+                        TRACE_1(AVI, "> fwHeadModeExt\t: %u", fwHeadModeExt);
+                        TRACE_1(AVI, "> wHeadEmphasis\t: %u", wHeadEmphasis);
+                        TRACE_1(AVI, "> fwHeadFlags\t: %u", fwHeadFlags);
+                        TRACE_1(AVI, "> dwPTSLow\t: %u", dwPTSLow);
+                        TRACE_1(AVI, "> dwPTSHigh\t: %u", dwPTSHigh);
                     }
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_MP3)
                 {
-                    TRACE_1(AVI, "> EXT > MPEGLAYER3WAVEFORMAT\n");
+                    TRACE_1(AVI, "> EXT > MPEGLAYER3WAVEFORMAT");
                     track->strh.fccHandler = CODEC_MPEG_L3;
 
                     if (byte_left >= 11)
                     {
                         uint16_t cbSize = endian_flip_16(read_bits(bitstr, 16));
-                        TRACE_1(AVI, "> cbSize\t\t: %u\n", cbSize);
+                        TRACE_1(AVI, "> cbSize\t\t: %u", cbSize);
 
                         uint16_t wID = endian_flip_16(read_bits(bitstr, 16));
                         uint32_t fdwFlags = endian_flip_32(read_bits(bitstr, 32));
@@ -394,22 +394,22 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                         uint16_t nFramesPerBlock = endian_flip_16(read_bits(bitstr, 16));
                         uint16_t nCodecDelay = endian_flip_16(read_bits(bitstr, 16));
 
-                        TRACE_1(AVI, "> wID\t\t: %u\n", wID);
-                        TRACE_1(AVI, "> fdwFlags\t\t: %u\n", fdwFlags);
-                        TRACE_1(AVI, "> nBlockSize\t: %u\n", nBlockSize);
-                        TRACE_1(AVI, "> nFramesPerBlock\t: %u\n", nFramesPerBlock);
-                        TRACE_1(AVI, "> nCodecDelay\t: %u\n", nCodecDelay);
+                        TRACE_1(AVI, "> wID\t\t: %u", wID);
+                        TRACE_1(AVI, "> fdwFlags\t\t: %u", fdwFlags);
+                        TRACE_1(AVI, "> nBlockSize\t: %u", nBlockSize);
+                        TRACE_1(AVI, "> nFramesPerBlock\t: %u", nFramesPerBlock);
+                        TRACE_1(AVI, "> nCodecDelay\t: %u", nCodecDelay);
                     }
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
                 {
-                    TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT\n");
+                    TRACE_1(AVI, "> EXT > MPEG1WAVEFORMAT");
                     track->strh.fccHandler = CODEC_LPCM;
 
                     if (byte_left >= 28)
                     {
                         uint16_t cbSize = endian_flip_16(read_bits(bitstr, 16));
-                        TRACE_1(AVI, "> cbSize\t\t: %u\n", cbSize);
+                        TRACE_1(AVI, "> cbSize\t\t: %u", cbSize);
 
                         uint16_t samples_wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                         uint16_t samples_wSamplesPerBlock = endian_flip_16(read_bits(bitstr, 16));
@@ -423,11 +423,11 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                             SubFormat_GUID[i] = read_bits(bitstr, 8);
                         }
 
-                        TRACE_1(AVI, "> samples_wValidBitsPerSample\t: %u\n", samples_wValidBitsPerSample);
-                        TRACE_1(AVI, "> samples_wSamplesPerBlock\t: %u\n", samples_wSamplesPerBlock);
-                        TRACE_1(AVI, "> samples_wReserved\t: %u\n", samples_wReserved);
-                        TRACE_1(AVI, "> dwChannelMask\t: %u\n", dwChannelMask);
-                        TRACE_1(AVI, "> SubFormat_GUID\t: [%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u]\n",
+                        TRACE_1(AVI, "> samples_wValidBitsPerSample\t: %u", samples_wValidBitsPerSample);
+                        TRACE_1(AVI, "> samples_wSamplesPerBlock\t: %u", samples_wSamplesPerBlock);
+                        TRACE_1(AVI, "> samples_wReserved\t: %u", samples_wReserved);
+                        TRACE_1(AVI, "> dwChannelMask\t: %u", dwChannelMask);
+                        TRACE_1(AVI, "> SubFormat_GUID\t: [%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u]",
                                 SubFormat_GUID[0], SubFormat_GUID[1], SubFormat_GUID[2], SubFormat_GUID[3],
                                 SubFormat_GUID[4], SubFormat_GUID[5], SubFormat_GUID[6], SubFormat_GUID[7],
                                 SubFormat_GUID[8], SubFormat_GUID[9], SubFormat_GUID[10], SubFormat_GUID[11],
@@ -436,17 +436,17 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_AAC)
                 {
-                    TRACE_1(AVI, "> EXT > AAC\n");
+                    TRACE_1(AVI, "> EXT > AAC");
                     track->strh.fccHandler = CODEC_AAC;
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_AC3)
                 {
-                    TRACE_1(AVI, "> EXT > AC3\n");
+                    TRACE_1(AVI, "> EXT > AC3");
                     track->strh.fccHandler = CODEC_AC3;
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_DTS)
                 {
-                    TRACE_1(AVI, "> EXT > DTS\n");
+                    TRACE_1(AVI, "> EXT > DTS");
                     track->strh.fccHandler = CODEC_DTS;
                 }
                 else if (track->strf.wFormatTag == WAVE_FORMAT_WMAS ||
@@ -455,7 +455,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
                          track->strf.wFormatTag == WAVE_FORMAT_WMAP ||
                          track->strf.wFormatTag == WAVE_FORMAT_WMAL)
                 {
-                    TRACE_1(AVI, "> EXT > WMA\n");
+                    TRACE_1(AVI, "> EXT > WMA");
                     track->strh.fccHandler = CODEC_WMA;
                 }
             }
@@ -477,13 +477,13 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, AviTrack_t 
  */
 static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_idx1()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_idx1()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
     if (idx1_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid idx1_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid idx1_header structure!");
         retcode = FAILURE;
     }
     else
@@ -493,7 +493,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
 
         // Compute number of index entries
         uint32_t index_entry_count = idx1_header->dwSize / 16;
-        TRACE_1(AVI, "> index_entry : %u\n", index_entry_count);
+        TRACE_1(AVI, "> index_entry : %u", index_entry_count);
 
         // Check if the tracks have already been indexed
         int track_left = 0;
@@ -510,14 +510,14 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
 
         if (track_left == 0)
         {
-            TRACE_1(AVI, "> We have an other way to index the file content\n");
+            TRACE_1(AVI, "> We have an other way to index the file content");
             return SUCCESS;
         }
 
         if (retcode == SUCCESS)
         {
             uint32_t movioffset = avi->movi_offset + 4; // +4 to skip the chunk size
-            TRACE_1(AVI, "> movi_offset : %i\n", movioffset);
+            TRACE_1(AVI, "> movi_offset : %i", movioffset);
 
             // Parse index structure
             for (i = 0; i < index_entry_count; i++)
@@ -530,7 +530,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
                 // Set sample into bitstream map
                 if ((dwChunkId & 0x0000FFFF) == 0x7762) // wb: audio
                 {
-                    TRACE_3(AVI, BLD_BLUE "> AUDIO\n" CLR_RESET);
+                    TRACE_3(AVI, BLD_BLUE "> AUDIO" CLR_RESET);
                     int tid = 0;
                     int sid = media->tracks_audio[tid]->sample_count;
                     media->tracks_audio[tid]->sample_count++;
@@ -543,7 +543,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x6463) // dc: video
                 {
-                    TRACE_3(AVI, BLD_BLUE "> VIDEO\n" CLR_RESET);
+                    TRACE_3(AVI, BLD_BLUE "> VIDEO" CLR_RESET);
                     int tid = 0;
                     int sid = media->tracks_video[tid]->sample_count;
                     media->tracks_video[tid]->sample_count++;
@@ -560,7 +560,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7478) // tx: subtitles
                 {
-                    TRACE_3(AVI, BLD_BLUE "> TEXT\n" CLR_RESET);
+                    TRACE_3(AVI, BLD_BLUE "> TEXT" CLR_RESET);
                     int tid = 0;
                     int sid = media->tracks_subt[tid]->sample_count;
 
@@ -587,14 +587,14 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
 */
                 else
                 {
-                    TRACE_WARNING(AVI, "Unknown chunk type in idx1 (0x%08X) ('%s')!\n", dwChunkId, getFccString_le(dwChunkId, fcc));
+                    TRACE_WARNING(AVI, "Unknown chunk type in idx1 (0x%08X) ('%s')!", dwChunkId, getFccString_le(dwChunkId, fcc));
                 }
 
                 // Print
-                TRACE_3(AVI, "> dwChunkId\t: 0x%08X ('%s')\n", dwChunkId, getFccString_le(dwChunkId, fcc));
-                TRACE_3(AVI, "> dwFlags\t\t: %u\n", dwFlags);
-                TRACE_3(AVI, "> dwChunkOffset\t: %u\n", dwChunkOffset);
-                TRACE_3(AVI, "> dwChunkLength\t: %u\n", dwChunkLength);
+                TRACE_3(AVI, "> dwChunkId\t: 0x%08X ('%s')", dwChunkId, getFccString_le(dwChunkId, fcc));
+                TRACE_3(AVI, "> dwFlags\t\t: %u", dwFlags);
+                TRACE_3(AVI, "> dwChunkOffset\t: %u", dwChunkOffset);
+                TRACE_3(AVI, "> dwChunkLength\t: %u", dwChunkLength);
             }
 
             for (i = 0; i < avi->tracks_count; i++)
@@ -620,12 +620,12 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
  */
 static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t *track)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_indx()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_indx()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (indx_header == NULL)
     {
-        TRACE_ERROR(AVI, "Invalid indx_header structure!\n");
+        TRACE_ERROR(AVI, "Invalid indx_header structure!");
         retcode = FAILURE;
     }
     else
@@ -641,18 +641,18 @@ static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t 
         uint32_t dwChunkId = read_bits(bitstr, 32);
 
         char fcc[5];
-        TRACE_1(AVI, "> wLongsPerEntry\t: %u\n", wLongsPerEntry);
-        TRACE_1(AVI, "> bIndexSubType\t: %u\n", bIndexSubType);
-        TRACE_1(AVI, "> bIndexType\t: %u\n", bIndexType);
-        TRACE_1(AVI, "> nEntriesInUse\t: %u\n", nEntriesInUse);
-        TRACE_1(AVI, "> dwChunkId\t: 0x%08X ('%s')!\n", dwChunkId, getFccString_le(dwChunkId, fcc));
+        TRACE_1(AVI, "> wLongsPerEntry\t: %u", wLongsPerEntry);
+        TRACE_1(AVI, "> bIndexSubType\t: %u", bIndexSubType);
+        TRACE_1(AVI, "> bIndexType\t: %u", bIndexType);
+        TRACE_1(AVI, "> nEntriesInUse\t: %u", nEntriesInUse);
+        TRACE_1(AVI, "> dwChunkId\t: 0x%08X ('%s')!", dwChunkId, getFccString_le(dwChunkId, fcc));
 
         // Index specifics code
         ////////////////////////////////////////////////////////////////////////
 
         if (bIndexType == AVI_INDEX_OF_INDEXES)
         {
-            TRACE_INFO(AVI, BLD_GREEN "> AVI Super Index Chunk\n" CLR_RESET);
+            TRACE_INFO(AVI, BLD_GREEN "> AVI Super Index Chunk" CLR_RESET);
 
             uint32_t dwReserved[3];
             dwReserved[0] = endian_flip_32(read_bits(bitstr, 32));
@@ -668,15 +668,15 @@ static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t 
                 track->superindex_entries[i].size = endian_flip_32(read_bits(bitstr, 32));
                 uint32_t dwDuration = endian_flip_32(read_bits(bitstr, 32));
 
-                TRACE_1(AVI, " > qwOffset\t\t= %lli\n", track->superindex_entries[i].offset);
-                TRACE_1(AVI, "  > dwSize\t\t: %lli\n", track->superindex_entries[i].size);
-                TRACE_1(AVI, "  > dwDuration\t: %u\n", dwDuration);
+                TRACE_1(AVI, " > qwOffset\t\t= %lli", track->superindex_entries[i].offset);
+                TRACE_1(AVI, "  > dwSize\t\t: %lli", track->superindex_entries[i].size);
+                TRACE_1(AVI, "  > dwDuration\t: %u", dwDuration);
             }
         }
         else if (bIndexType == AVI_INDEX_OF_CHUNKS)
         {
             // AVI Standard Index Chunk // AVI Field Index Chunk
-            TRACE_INFO(AVI, BLD_GREEN "> AVI Standard Index Chunk\n" CLR_RESET);
+            TRACE_INFO(AVI, BLD_GREEN "> AVI Standard Index Chunk" CLR_RESET);
 
             // Alloc index entries
             int start = 0;
@@ -696,7 +696,7 @@ static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t 
             int64_t qwOffset_base = endian_flip_64(read_bits_64(bitstr, 64));
             uint32_t dwReserved3 = endian_flip_32(read_bits(bitstr, 32));
 
-            TRACE_1(AVI, " > qwOffset_base\t: %lli\n", qwOffset_base);
+            TRACE_1(AVI, " > qwOffset_base\t: %lli", qwOffset_base);
 
             unsigned int i = 0;
             for (i = start; i < track->index_count; i++)
@@ -711,18 +711,18 @@ static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t 
                 if ((dwSize & 0x10000000) == 0)
                     track->index_entries[i].flags = AVIIF_KEYFRAME;
 
-                TRACE_1(AVI, "  > dwOffset\t= %lli\n", track->index_entries[i].offset);
-                TRACE_1(AVI, "   > dwSize\t: %lli\n", track->index_entries[i].size);
+                TRACE_1(AVI, "  > dwOffset\t= %lli", track->index_entries[i].offset);
+                TRACE_1(AVI, "   > dwSize\t: %lli", track->index_entries[i].size);
             }
         }
         else if (bIndexType == AVI_INDEX_IS_DATA)
         {
-            TRACE_WARNING(AVI, "AVI_INDEX_IS_DATA index > unsupported\n");
+            TRACE_WARNING(AVI, "AVI_INDEX_IS_DATA index > unsupported");
             retcode = FAILURE;
         }
         else
         {
-            TRACE_ERROR(AVI, "Unknown type of index: fatal error\n");
+            TRACE_ERROR(AVI, "Unknown type of index: fatal error");
             retcode = FAILURE;
         }
     }
@@ -744,7 +744,7 @@ static int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, AviTrack_t 
  */
 static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_strl()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_strl()" CLR_RESET);
     int retcode = SUCCESS;
     int track_id = 0;
     char fcc[5];
@@ -764,7 +764,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
 
         if (avi->tracks[track_id] == NULL)
         {
-            TRACE_ERROR(AVI, "Unable to allocate a new avi track!\n");
+            TRACE_ERROR(AVI, "Unable to allocate a new avi track!");
             retcode = FAILURE;
         }
         else
@@ -791,7 +791,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i\n", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
                     retcode = skip_list(bitstr, strl_header, &list_header);
                     break;
                 }
@@ -815,7 +815,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                 //    retcode = parse_strd(bitstr, &chunk_header, avi->tracks[track_id]);
                 //    break;
                 case fcc_strn:
-                    TRACE_INFO(AVI, BLD_GREEN "parse_strn()\n" CLR_RESET);
+                    TRACE_INFO(AVI, BLD_GREEN "parse_strn()" CLR_RESET);
                     print_chunk_header(&chunk_header);
                     retcode = parse_string(bitstr, &chunk_header);
                     break;
@@ -826,7 +826,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                     retcode = parse_JUNK(bitstr, strl_header, &chunk_header);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type!\n");
+                    TRACE_WARNING(AVI, "Unknown chunk type!");
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, strl_header, &chunk_header);
                     break;
@@ -841,7 +841,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
     }
     else
     {
-        TRACE_ERROR(AVI, "We are not in a strl box\n");
+        TRACE_ERROR(AVI, "We are not in a strl box");
         retcode = FAILURE;
     }
 
@@ -859,7 +859,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
  */
 static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_odml()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_odml()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
@@ -886,7 +886,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i\n", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown list type (0x%08X) ('%s') @ %i", list_header.dwFourCC, getFccString_le(list_header.dwFourCC, fcc));
                     retcode = skip_list(bitstr, odml_header, &list_header);
                     break;
                 }
@@ -904,7 +904,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                     retcode = parse_dmlh(bitstr, &chunk_header, avi);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type (0x%08X) ('%s') @ %i\n", chunk_header.dwFourCC, getFccString_le(chunk_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown chunk type (0x%08X) ('%s') @ %i", chunk_header.dwFourCC, getFccString_le(chunk_header.dwFourCC, fcc));
                     retcode = skip_chunk(bitstr, odml_header, &chunk_header);
                     break;
                 }
@@ -918,7 +918,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
     }
     else
     {
-        TRACE_ERROR(AVI, "We are not in a odml box\n");
+        TRACE_ERROR(AVI, "We are not in a odml box");
         retcode = FAILURE;
     }
 
@@ -948,7 +948,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
  */
 static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_movi()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_movi()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (movi_header != NULL &&
@@ -978,7 +978,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                 {
                 case fcc_rec_:
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type\n");
+                    TRACE_WARNING(AVI, "Unknown list type");
                     print_list_header(&list_header);
                     retcode = skip_list(bitstr, movi_header, &list_header);
                     break;
@@ -994,7 +994,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                 switch (chunk_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type\n");
+                    TRACE_WARNING(AVI, "Unknown chunk type");
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, movi_header, &chunk_header);
                     break;
@@ -1006,7 +1006,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
     }
     else
     {
-        TRACE_ERROR(AVI, "We are not in a movi box\n");
+        TRACE_ERROR(AVI, "We are not in a movi box");
         retcode = FAILURE;
     }
 
@@ -1017,7 +1017,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
 
 static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_INFO()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_INFO()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
@@ -1044,7 +1044,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                 switch (list_header.dwFourCC)
                 {
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type ('%s')\n", getFccString_le(list_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown list type ('%s')", getFccString_le(list_header.dwFourCC, fcc));
                     print_list_header(&list_header);
                     retcode = skip_list(bitstr, INFO_header, &list_header);
                     break;
@@ -1066,7 +1066,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                     retcode = parse_JUNK(bitstr, INFO_header, &chunk_header);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')\n", getFccString_le(chunk_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')", getFccString_le(chunk_header.dwFourCC, fcc));
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, INFO_header, &chunk_header);
                     break;
@@ -1081,7 +1081,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
     }
     else
     {
-        TRACE_ERROR(AVI, "We are not in a INFO box\n");
+        TRACE_ERROR(AVI, "We are not in a INFO box");
         retcode = FAILURE;
     }
 
@@ -1092,7 +1092,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
 
 static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "parse_hdrl()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "parse_hdrl()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
@@ -1125,7 +1125,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     retcode = parse_odml(bitstr, &list_header, avi);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown list type ('%s')\n", getFccString_le(list_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown list type ('%s')", getFccString_le(list_header.dwFourCC, fcc));
                     print_list_header(&list_header);
                     retcode = skip_list(bitstr, hdrl_header, &list_header);
                     break;
@@ -1147,7 +1147,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     retcode = parse_JUNK(bitstr, hdrl_header, &chunk_header);
                     break;
                 default:
-                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')\n", getFccString_le(chunk_header.dwFourCC, fcc));
+                    TRACE_WARNING(AVI, "Unknown chunk type ('%s')", getFccString_le(chunk_header.dwFourCC, fcc));
                     print_chunk_header(&chunk_header);
                     retcode = skip_chunk(bitstr, hdrl_header, &chunk_header);
                     break;
@@ -1162,7 +1162,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
     }
     else
     {
-        TRACE_ERROR(AVI, "We are not in a hdrl box\n");
+        TRACE_ERROR(AVI, "We are not in a hdrl box");
         retcode = FAILURE;
     }
 
@@ -1271,7 +1271,7 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, int index_
 
 static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
 {
-    TRACE_INFO(AVI, BLD_GREEN "avi_indexer()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "avi_indexer()" CLR_RESET);
     int retcode = SUCCESS;
     unsigned int i = 0, j = 0;
 
@@ -1279,7 +1279,7 @@ static int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
     {
         if (avi->tracks[i]->track_indexed == 1)
         {
-            TRACE_1(AVI, "> track already indexed\n");
+            TRACE_1(AVI, "> track already indexed");
         }
         else
         {
@@ -1372,7 +1372,7 @@ void avi_clean(avi_t *avi)
 
 int avi_fileParse(MediaFile_t *media)
 {
-    TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()\n" CLR_RESET);
+    TRACE_INFO(AVI, BLD_GREEN "avi_fileParse()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
 
@@ -1424,7 +1424,7 @@ int avi_fileParse(MediaFile_t *media)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)\n" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1446,7 +1446,7 @@ int avi_fileParse(MediaFile_t *media)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)\n" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;
@@ -1475,7 +1475,7 @@ int avi_fileParse(MediaFile_t *media)
                             retcode = parse_movi(bitstr, &list_header, &avi);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)\n" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown liist type (%s)" CLR_RESET, getFccString_le(list_header.dwFourCC, fcc));
                             print_list_header(&list_header);
                             retcode = skip_list(bitstr, &RIFF_header, &list_header);
                             break;
@@ -1497,7 +1497,7 @@ int avi_fileParse(MediaFile_t *media)
                             retcode = parse_JUNK(bitstr, &RIFF_header, &chunk_header);
                             break;
                         default:
-                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)\n" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
+                            TRACE_WARNING(AVI, BLD_GREEN "Unknown chuunk type (%s)" CLR_RESET, getFccString_le(chunk_header.dwFourCC, fcc));
                             print_chunk_header(&chunk_header);
                             retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
                             break;
@@ -1509,7 +1509,7 @@ int avi_fileParse(MediaFile_t *media)
             }
             else
             {
-                TRACE_ERROR(AVI, "Unable to find RIFF AVI or AVIX headers!\n");
+                TRACE_ERROR(AVI, "Unable to find RIFF AVI or AVIX headers!");
                 retcode = FAILURE;
             }
 

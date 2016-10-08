@@ -44,19 +44,19 @@
  */
 int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 {
-    TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (*bitstream_map != NULL)
     {
-        TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map: not null!\n");
+        TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map: not null!");
         retcode = FAILURE;
     }
     else
     {
         if (entries == 0)
         {
-            TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map: no entries to allocate!\n");
+            TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map: no entries to allocate!");
             retcode = FAILURE;
         }
         else
@@ -65,7 +65,7 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 
             if (*bitstream_map == NULL)
             {
-                TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!\n");
+                TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!");
                 retcode = FAILURE;
             }
             else
@@ -82,7 +82,7 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
                     (*bitstream_map)->sample_pts == NULL ||
                     (*bitstream_map)->sample_dts == NULL)
                 {
-                    TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!\n");
+                    TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!");
 
                     if ((*bitstream_map)->sample_type != NULL)
                         free((*bitstream_map)->sample_type);
@@ -116,7 +116,7 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
 {
     if ((*bitstream_map) != NULL)
     {
-        TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()\n" CLR_RESET);
+        TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()" CLR_RESET);
 
         // Textual metadatas
         free((*bitstream_map)->stream_encoder);
@@ -148,7 +148,7 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
         free(*bitstream_map);
         *bitstream_map = NULL;
 
-        TRACE_1(DEMUX, "<b> Bitstream_map freed\n");
+        TRACE_1(DEMUX, "<b> Bitstream_map freed");
     }
 }
 
@@ -165,42 +165,42 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 
     if (bitstream_map == NULL)
     {
-        TRACE_ERROR(DEMUX, "Invalid bitstream_map structure!\n");
+        TRACE_ERROR(DEMUX, "Invalid bitstream_map structure!");
     }
     else
     {
-        TRACE_INFO(DEMUX, BLD_GREEN "print_bitstream_map()\n" CLR_RESET);
+        TRACE_INFO(DEMUX, BLD_GREEN "print_bitstream_map()" CLR_RESET);
 
         if (bitstream_map->stream_type == stream_VIDEO &&
             bitstream_map->sample_count > 0)
         {
-            TRACE_INFO(DEMUX, "Elementary stream type > VIDEO\n");
+            TRACE_INFO(DEMUX, "Elementary stream type > VIDEO");
         }
         else if (bitstream_map->stream_type == stream_AUDIO &&
                  bitstream_map->sample_count > 0)
         {
-            TRACE_INFO(DEMUX, "Elementary stream type > AUDIO\n");
+            TRACE_INFO(DEMUX, "Elementary stream type > AUDIO");
         }
         else
         {
-            TRACE_WARNING(DEMUX, "Unknown elementary stream type!\n");
+            TRACE_WARNING(DEMUX, "Unknown elementary stream type!");
         }
 
-        TRACE_1(DEMUX, "Track codec:     '%s'\n", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec, true));
+        TRACE_1(DEMUX, "Track codec:     '%s'", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec, true));
 
-        TRACE_INFO(DEMUX, "> samples alignment: %i\n", bitstream_map->sample_alignment);
-        TRACE_INFO(DEMUX, "> samples count    : %i\n", bitstream_map->sample_count);
-        TRACE_INFO(DEMUX, "> IDR samples count: %i\n", bitstream_map->frame_count_idr);
+        TRACE_INFO(DEMUX, "> samples alignment: %i", bitstream_map->sample_alignment);
+        TRACE_INFO(DEMUX, "> samples count    : %i", bitstream_map->sample_count);
+        TRACE_INFO(DEMUX, "> IDR samples count: %i", bitstream_map->frame_count_idr);
 
         if (bitstream_map->sample_count > 0)
         {
-            TRACE_1(DEMUX, "SAMPLES\n");
+            TRACE_1(DEMUX, "SAMPLES");
             for (unsigned  i = 0; i < bitstream_map->sample_count; i++)
             {
-                TRACE_1(DEMUX, "> sample_type      : %i\n", bitstream_map->sample_type[i]);
-                TRACE_1(DEMUX, "  | sample_offset  : %i\n", bitstream_map->sample_offset[i]);
-                TRACE_1(DEMUX, "  | sample_size    : %i\n", bitstream_map->sample_size[i]);
-                TRACE_1(DEMUX, "  | sample_timecode: %i\n", bitstream_map->sample_pts[i]);
+                TRACE_1(DEMUX, "> sample_type      : %i", bitstream_map->sample_type[i]);
+                TRACE_1(DEMUX, "  | sample_offset  : %i", bitstream_map->sample_offset[i]);
+                TRACE_1(DEMUX, "  | sample_size    : %i", bitstream_map->sample_size[i]);
+                TRACE_1(DEMUX, "  | sample_timecode: %i", bitstream_map->sample_pts[i]);
             }
         }
     }
@@ -239,12 +239,12 @@ static void computeSamplesDatasTrack(BitstreamMap_t *t)
         {
             frameinterval = t->sample_pts[1] - t->sample_pts[0];
         }
-        TRACE_ERROR(DEMUX, "pts1: %lli \n", t->sample_pts[0]);
-        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[1]);
-        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[2]);
-        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[3]);
-        TRACE_ERROR(DEMUX, "pts2: %lli \n", t->sample_pts[55]);
-        TRACE_ERROR(DEMUX, "frameinterval: %lli \n", frameinterval);
+        TRACE_ERROR(DEMUX, "pts1: %lli", t->sample_pts[0]);
+        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[1]);
+        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[2]);
+        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[3]);
+        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[55]);
+        TRACE_ERROR(DEMUX, "frameinterval: %lli", frameinterval);
 */
         // Iterate on each sample
         for (j = 0; j < t->sample_count; j++)
@@ -322,7 +322,7 @@ bool computePCMSettings(BitstreamMap_t *track)
     // First, check if the hack is needed
     if (track->sample_count > 0 && track->sample_size[0] != sample_size_cbr)
     {
-        TRACE_ERROR(DEMUX, BLD_GREEN "computePCMSettings()\n" CLR_RESET);
+        TRACE_ERROR(DEMUX, BLD_GREEN "computePCMSettings()" CLR_RESET);
 
         track->sample_per_frames = 1;
         track->stream_size = track->sample_count * sample_size_cbr;
@@ -339,7 +339,7 @@ bool computePCMSettings(BitstreamMap_t *track)
 
 bool computeCodecs(MediaFile_t *media)
 {
-    TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "computeCodecs()" CLR_RESET);
     bool retcode = SUCCESS;
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)
@@ -374,7 +374,7 @@ bool computeCodecs(MediaFile_t *media)
 
 bool computeAspectRatios(MediaFile_t *media)
 {
-    TRACE_INFO(DEMUX, BLD_GREEN "computeAspectRatios()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "computeAspectRatios()" CLR_RESET);
     bool retcode = SUCCESS;
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)
@@ -445,7 +445,7 @@ bool computeAspectRatios(MediaFile_t *media)
 
 bool computeSamplesDatas(MediaFile_t *media)
 {
-    TRACE_INFO(DEMUX, BLD_GREEN "computeSamplesDatas()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "computeSamplesDatas()" CLR_RESET);
     bool retcode = SUCCESS;
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)

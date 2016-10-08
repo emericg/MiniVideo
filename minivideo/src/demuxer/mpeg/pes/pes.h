@@ -33,13 +33,13 @@
 
 #define MARKER_BIT \
     if (read_bit(bitstr) != 1) { \
-        TRACE_ERROR(MPS, "wrong 'marker_bit' (M1)\n"); \
+        TRACE_ERROR(MPS, "wrong 'marker_bit' (M1)"); \
         return FAILURE; \
     }
 /*
 #define MARKER_BITS (x) \
     if (read_bits(bitstr, x) != 2) { \
-        TRACE_ERROR(MPS, "wrong 'marker_bits' (Mx)\n"); \
+        TRACE_ERROR(MPS, "wrong 'marker_bits' (Mx)"); \
         return FAILURE; \
     }
 */

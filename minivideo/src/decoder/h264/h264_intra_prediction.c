@@ -111,7 +111,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb);
  */
 int intra_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_INFO(INTRA, "<> " BLD_GREEN "intra_prediction_process()\n" CLR_RESET);
+    TRACE_INFO(INTRA, "<> " BLD_GREEN "intra_prediction_process()" CLR_RESET);
     int retcode = FAILURE;
 
     if (mb->mb_type == I_PCM)
@@ -160,7 +160,7 @@ int intra_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
  */
 static int Intra_4x4_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_luma_prediction_process()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_luma_prediction_process()" CLR_RESET);
     int retcode = SUCCESS;
     int luma4x4BlkIdx = 0;
 
@@ -195,7 +195,7 @@ static int Intra_4x4_luma_prediction_process(DecodingContext_t *dc, Macroblock_t
  */
 static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma4x4BlkIdx)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_deriv_PredMode()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_deriv_PredMode()" CLR_RESET);
 /*
     // Table 8-2: Specification of Intra4x4PredMode[luma4x4BlkIdx] and associated names
     0   Intra_4x4_Vertical
@@ -217,10 +217,10 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
 
     deriv_4x4lumablocks(dc, luma4x4BlkIdx, &mbAddrA_temp, &blkA, &mbAddrB_temp, &blkB);
 
-    TRACE_3(INTRA, "  > blkA : %i\n", blkA);
-    TRACE_3(INTRA, "  > blkB : %i\n", blkB);
-    TRACE_3(INTRA, "  > mbAddrA_temp : %i\n", mbAddrA_temp);
-    TRACE_3(INTRA, "  > mbAddrB_temp : %i\n", mbAddrB_temp);
+    TRACE_3(INTRA, "  > blkA : %i", blkA);
+    TRACE_3(INTRA, "  > blkB : %i", blkB);
+    TRACE_3(INTRA, "  > mbAddrA_temp : %i", mbAddrA_temp);
+    TRACE_3(INTRA, "  > mbAddrB_temp : %i", mbAddrB_temp);
 
     // 2
     bool dcPredModePredictedFlag = false;
@@ -238,7 +238,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             pps->constrained_intra_pred_flag == true)
             dcPredModePredictedFlag = true;
     }
-    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i\n", dcPredModePredictedFlag);
+    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i", dcPredModePredictedFlag);
 
     // 3
     int intraMxMPredModeA = 2;
@@ -253,7 +253,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             else if (dc->mb_array[mbAddrA_temp]->MbPartPredMode[0] == Intra_8x8)
                 intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra8x8PredMode[blkA >> 2];
 
-            TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i\n", intraMxMPredModeA);
+            TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i", intraMxMPredModeA);
         }
     }
 
@@ -266,13 +266,13 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             else if (dc->mb_array[mbAddrB_temp]->MbPartPredMode[0] == Intra_8x8)
                 intraMxMPredModeB = dc->mb_array[mbAddrB_temp]->Intra8x8PredMode[blkB >> 2];
 
-            TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i\n", intraMxMPredModeB);
+            TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i", intraMxMPredModeB);
         }
     }
 
     // 4
     int predIntra4x4PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
-    TRACE_3(INTRA, "  > predIntra4x4PredMode\t: %i\n", predIntra4x4PredMode);
+    TRACE_3(INTRA, "  > predIntra4x4PredMode\t: %i", predIntra4x4PredMode);
 
     if (mb->prev_intra4x4_pred_mode_flag[luma4x4BlkIdx] == true)
     {
@@ -286,7 +286,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             mb->Intra4x4PredMode[luma4x4BlkIdx] = mb->rem_intra4x4_pred_mode[luma4x4BlkIdx] + 1;
     }
 
-    TRACE_3(INTRA, "  > Intra4x4PredMode\t: %i\n", mb->Intra4x4PredMode[luma4x4BlkIdx]);
+    TRACE_3(INTRA, "  > Intra4x4PredMode\t: %i", mb->Intra4x4PredMode[luma4x4BlkIdx]);
 }
 
 /* ************************************************************************** */
@@ -314,8 +314,8 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
  */
 static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma4x4BlkIdx)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_pred_sample()\n" CLR_RESET);
-    TRACE_1(INTRA, "  > blkIdx %i\n", luma4x4BlkIdx);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_4x4_pred_sample()" CLR_RESET);
+    TRACE_1(INTRA, "  > blkIdx %i", luma4x4BlkIdx);
 
     // Shortcut
     pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
@@ -352,7 +352,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_4x4 prediction (mb=%i)  (xW=%i, yW=%i)\n", mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_4x4 prediction (mb=%i)  (xW=%i, yW=%i)", mbAddrN, xW, yW);
         }
         else
         {
@@ -361,7 +361,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ip.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -381,7 +381,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_4x4 prediction (mb=%i)  (xW=%i, yW=%i)\n", y, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_4x4 prediction (mb=%i)  (xW=%i, yW=%i)", y, mbAddrN, xW, yW);
         }
         else
         {
@@ -390,7 +390,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", y, ip.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -411,7 +411,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true) ||
             (x > 3 && (luma4x4BlkIdx == 3 || luma4x4BlkIdx == 11)))
         {
-            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_4x4 prediction (mb=%i) (xW=%i, yW=%i)\n", x, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_4x4 prediction (mb=%i) (xW=%i, yW=%i)", x, mbAddrN, xW, yW);
         }
         else
         {
@@ -424,7 +424,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
                 ip.sample_up_right = true;
 
             ip.ph[x +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", x, ip.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
         }
     }
 
@@ -470,7 +470,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
             Intra_4x4_Horizontal_Up(pred4x4L, &ip);
             break;
         default:
-            TRACE_ERROR(INTRA, "Unable to understand 4x4 prediction mode!\n");
+            TRACE_ERROR(INTRA, "Unable to understand 4x4 prediction mode!");
             break;
     }
 
@@ -495,7 +495,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
  */
 static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 are marked
@@ -510,7 +510,7 @@ static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -530,7 +530,7 @@ static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ], with y = 0..3, are
@@ -545,7 +545,7 @@ static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -567,7 +567,7 @@ static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_DC()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_DC()" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -626,7 +626,7 @@ static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_DC prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_DC prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -646,7 +646,7 @@ static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Left()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Left()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -669,7 +669,7 @@ static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Diagonal_Down_Left prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Diagonal_Down_Left prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -689,7 +689,7 @@ static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *
  */
 static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Right()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Diagonal_Down_Right()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and p[ -1, y ]
@@ -715,7 +715,7 @@ static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t 
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Diagonal_Down_Right prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Diagonal_Down_Right prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -735,7 +735,7 @@ static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t 
  */
 static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Right()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Right()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and
@@ -770,7 +770,7 @@ static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical_Right prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical_Right prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -790,7 +790,7 @@ static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Down()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Down()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..3 and
@@ -825,7 +825,7 @@ static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal_Down prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal_Down prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -845,7 +845,7 @@ static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Left()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Vertical_Left()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -868,7 +868,7 @@ static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical_Left prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Vertical_Left prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -888,7 +888,7 @@ static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_4x4_Horizontal_Up(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Up()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_4x4_Horizontal_Up()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..3 are
@@ -918,7 +918,7 @@ static int Intra_4x4_Horizontal_Up(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal_Up prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_4x4_Horizontal_Up prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -941,7 +941,7 @@ static int Intra_4x4_Horizontal_Up(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
  */
 static int Intra_8x8_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_luma_prediction_process()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_luma_prediction_process()" CLR_RESET);
     int retcode = SUCCESS;
     int luma8x8BlkIdx = 0;
 
@@ -976,7 +976,7 @@ static int Intra_8x8_luma_prediction_process(DecodingContext_t *dc, Macroblock_t
  */
 static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma8x8BlkIdx)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_deriv_PredMode()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_deriv_PredMode()" CLR_RESET);
 /*
     // Table 8-3: Specification of Intra8x8PredMode[luma8x8BlkIdx] and associated names
     0   Intra_8x8_Vertical
@@ -998,11 +998,11 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
 
     deriv_8x8lumablocks(dc, luma8x8BlkIdx, &mbAddrA_temp, &blkA, &mbAddrB_temp, &blkB);
 
-    TRACE_2(INTRA, "  > blkIdx : %i\n", luma8x8BlkIdx);
-    TRACE_2(INTRA, "  > blkA : %i\n", blkA);
-    TRACE_2(INTRA, "  > blkB : %i\n", blkB);
-    TRACE_2(INTRA, "  > mbAddrA_temp : %i\n", mbAddrA_temp);
-    TRACE_2(INTRA, "  > mbAddrB_temp : %i\n", mbAddrB_temp);
+    TRACE_2(INTRA, "  > blkIdx : %i", luma8x8BlkIdx);
+    TRACE_2(INTRA, "  > blkA : %i", blkA);
+    TRACE_2(INTRA, "  > blkB : %i", blkB);
+    TRACE_2(INTRA, "  > mbAddrA_temp : %i", mbAddrA_temp);
+    TRACE_2(INTRA, "  > mbAddrB_temp : %i", mbAddrB_temp);
 
     // 2
     bool dcPredModePredictedFlag = false;
@@ -1020,7 +1020,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             pps->constrained_intra_pred_flag == true)
             dcPredModePredictedFlag = true;
     }
-    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i\n", dcPredModePredictedFlag);
+    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i", dcPredModePredictedFlag);
 
     // 3
     int intraMxMPredModeA = 2;
@@ -1059,13 +1059,13 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
         }
     }
 
-    TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i\n", intraMxMPredModeA);
-    TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i\n", intraMxMPredModeB);
+    TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i", intraMxMPredModeA);
+    TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i", intraMxMPredModeB);
 
     // 4
     int predIntra8x8PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
 
-    TRACE_3(INTRA, "  > predIntra8x8PredMode\t: %i\n", predIntra8x8PredMode);
+    TRACE_3(INTRA, "  > predIntra8x8PredMode\t: %i", predIntra8x8PredMode);
 
     if (mb->prev_intra8x8_pred_mode_flag[luma8x8BlkIdx])
     {
@@ -1079,7 +1079,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             mb->Intra8x8PredMode[luma8x8BlkIdx] = mb->rem_intra8x8_pred_mode[luma8x8BlkIdx] + 1;
     }
 
-    TRACE_2(INTRA, "  > Intra8x8PredMode\t: %i\n", mb->Intra8x8PredMode[luma8x8BlkIdx]);
+    TRACE_2(INTRA, "  > Intra8x8PredMode\t: %i", mb->Intra8x8PredMode[luma8x8BlkIdx]);
 }
 
 /* ************************************************************************** */
@@ -1106,8 +1106,8 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
  */
 static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const unsigned int luma8x8BlkIdx)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_pred_sample()\n" CLR_RESET);
-    TRACE_1(INTRA, "  > blkIdx %i\n", luma8x8BlkIdx);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_pred_sample()" CLR_RESET);
+    TRACE_1(INTRA, "  > blkIdx %i", luma8x8BlkIdx);
 
     // Shortcut
     pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
@@ -1152,7 +1152,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)\n", mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)", mbAddrN, xW, yW);
         }
         else
         {
@@ -1161,7 +1161,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ip.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -1181,7 +1181,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)\n", y, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)", y, mbAddrN, xW, yW);
         }
         else
         {
@@ -1190,7 +1190,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", y, ip.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -1210,7 +1210,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)\n", x, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_8x8 prediction (mb=%i) (xW=%i, yW=%i)", x, mbAddrN, xW, yW);
         }
         else
         {
@@ -1223,7 +1223,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
                 ip.sample_up_right = true;
 
             ip.ph[x +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", x, ip.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
         }
     }
 
@@ -1270,7 +1270,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
             Intra_8x8_Horizontal_Up(pred8x8L, &ipprime);
             break;
         default:
-            TRACE_ERROR(INTRA, "Unable to understand 8x8 prediction mode!\n");
+            TRACE_ERROR(INTRA, "Unable to understand 8x8 prediction mode!");
             break;
     }
 
@@ -1294,7 +1294,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
  */
 static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ipprime)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_sample_filtering()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_8x8_sample_filtering()" CLR_RESET);
 
     // Parameters copy
     ipprime->sample_left = ip->sample_left;
@@ -1365,7 +1365,7 @@ static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ippri
  */
 static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 are marked
@@ -1380,7 +1380,7 @@ static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1400,7 +1400,7 @@ static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ], with y = 0..7, are marked
@@ -1415,7 +1415,7 @@ static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1435,7 +1435,7 @@ static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_DC()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_DC()" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -1491,7 +1491,7 @@ static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_DC prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_DC prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1511,7 +1511,7 @@ static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Left()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Left()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..15 are marked
@@ -1534,7 +1534,7 @@ static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Diagonal_Down_Left prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Diagonal_Down_Left prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1553,7 +1553,7 @@ static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *
  */
 static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Right()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Diagonal_Down_Right()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and p[ -1, y ]
@@ -1579,7 +1579,7 @@ static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t 
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Diagonal_Down_Right prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Diagonal_Down_Right prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1599,7 +1599,7 @@ static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t 
  */
 static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Right()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Right()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and
@@ -1634,7 +1634,7 @@ static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical_Right prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical_Right prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1654,7 +1654,7 @@ static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Down()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Down()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..7 and
@@ -1689,7 +1689,7 @@ static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal_Down prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal_Down prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1709,7 +1709,7 @@ static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Left()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Vertical_Left()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     The values of the prediction samples pred8x8L[ x, y ], with x, y = 0..7, are
@@ -1732,7 +1732,7 @@ static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical_Left prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Vertical_Left prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1752,7 +1752,7 @@ static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Up()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_8x8_Horizontal_Up()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..7 are marked
@@ -1785,7 +1785,7 @@ static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal_Up prediction for block n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_8x8_Horizontal_Up prediction for block n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1808,7 +1808,7 @@ static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
  */
 static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_16x16_luma_prediction_process()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_16x16_luma_prediction_process()" CLR_RESET);
 /*
     // Table 8-4: Specification of Intra16x16PredMode and associated names
     0   Intra_16x16_Vertical
@@ -1843,7 +1843,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)\n", mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)", mbAddrN, xW, yW);
         }
         else
         {
@@ -1851,7 +1851,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
             //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.phv = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ip.phv, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.phv, mbAddrN, xW, yW);
         }
     }
 
@@ -1867,7 +1867,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)\n", y, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)", y, mbAddrN, xW, yW);
         }
         else
         {
@@ -1876,7 +1876,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 
             ip.sample_left = true;
             ip.pv[y] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", y, ip.pv[y], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y], mbAddrN, xW, yW);
         }
     }
 
@@ -1892,7 +1892,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)\n", x, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_16x16 prediction (mb=%i) (xW=%i, yW=%i)", x, mbAddrN, xW, yW);
         }
         else
         {
@@ -1901,7 +1901,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 
             ip.sample_up = true;
             ip.ph[x] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i, -1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", x, ip.ph[x], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i, -1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x], mbAddrN, xW, yW);
         }
     }
 
@@ -1921,7 +1921,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
             Intra_16x16_Plane(mb->predL, &ip);
             break;
         default:
-            TRACE_ERROR(INTRA, "Unable to understand 16x16 prediction mode!\n");
+            TRACE_ERROR(INTRA, "Unable to understand 16x16 prediction mode!");
             break;
     }
 
@@ -1944,7 +1944,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
  */
 static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Vertical()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Vertical()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ x, -1 ]
@@ -1959,7 +1959,7 @@ static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Vertical prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Vertical prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -1979,7 +1979,7 @@ static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Horizontal()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Horizontal()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ -1, y ]
@@ -1994,7 +1994,7 @@ static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Horizontal prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Horizontal prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2016,7 +2016,7 @@ static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_DC()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_DC()" CLR_RESET);
     int retcode = SUCCESS;
 
     int x = 0, y = 0;
@@ -2075,7 +2075,7 @@ static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_DC prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_DC prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2095,7 +2095,7 @@ static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Plane()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_16x16_Plane()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This Intra_16x16 prediction mode shall be used only when the samples p[ x, -1 ] with
@@ -2133,7 +2133,7 @@ static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Plane prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_16x16_Plane prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2156,8 +2156,8 @@ static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
  */
 static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "Intra_Chroma_prediction_process()\n" CLR_RESET);
-    TRACE_1(INTRA, "  > blkIdx %i\n", dc->CurrMbAddr);
+    TRACE_1(INTRA, "> " BLD_GREEN "Intra_Chroma_prediction_process()" CLR_RESET);
+    TRACE_1(INTRA, "  > blkIdx %i", dc->CurrMbAddr);
 
     // Shortcuts
     pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
@@ -2198,7 +2198,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_Chroma prediction (mb=%i)  (xW=%i, yW=%i)\n", mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] is NOT available for Intra_Chroma prediction (mb=%i)  (xW=%i, yW=%i)", mbAddrN, xW, yW);
         }
         else
         {
@@ -2212,8 +2212,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 */
             ipCb.pv[0] = ipCb.ph[0] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.pv[0] = ipCr.ph[0] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv Cb[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ipCb.pv[0], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample phv Cr[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", ipCr.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv Cb[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ipCb.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv Cr[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ipCr.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -2229,7 +2229,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_4x4_chroma prediction (mb=%i)  (xW=%i, yW=%i)\n", y, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] is NOT available for Intra_4x4_chroma prediction (mb=%i)  (xW=%i, yW=%i)", y, mbAddrN, xW, yW);
         }
         else
         {
@@ -2246,8 +2246,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 
             ipCb.pv[y +1] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.pv[y +1] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv Cb[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", y, ipCb.pv[y +1], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample pv Cr[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", y, ipCr.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv Cb[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ipCb.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv Cr[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ipCr.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -2263,7 +2263,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
         if (mbAddrN == -1 ||
             (dc->mb_array[mbAddrN]->MbPartPredMode[0] > 3 && pps->constrained_intra_pred_flag == true))
         {
-            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_4x4_chroma prediction (mb=%i) (xW=%i, yW=%i)\n", x, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] is NOT available for Intra_4x4_chroma prediction (mb=%i) (xW=%i, yW=%i)", x, mbAddrN, xW, yW);
         }
         else
         {
@@ -2280,8 +2280,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 
             ipCb.ph[x +1] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.ph[x +1] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph Cb[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", x, ipCb.ph[x +1], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample ph Cr[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)\n", x, ipCr.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph Cb[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ipCb.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph Cr[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ipCr.ph[x +1], mbAddrN, xW, yW);
         }
     }
 
@@ -2305,7 +2305,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
             Intra_Chroma_Plane(mb->predCr, &ipCr);
             break;
         default:
-            TRACE_ERROR(INTRA, "Unable to understand chroma prediction mode!\n");
+            TRACE_ERROR(INTRA, "Unable to understand chroma prediction mode!");
             break;
     }
 
@@ -2337,7 +2337,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
  */
 static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_DC()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_DC()" CLR_RESET);
 
     int retcode = SUCCESS;
     int sum = 0;
@@ -2352,7 +2352,7 @@ static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
         sum = 0;
         InverseChroma4x4BlkScan(chroma4x4BlkIdx, &xO, &yO);
 
-        TRACE_1(INTRA, "xO = %i, yO = %i\n", xO, yO);
+        TRACE_1(INTRA, "xO = %i, yO = %i", xO, yO);
 
         if (!ip->sample_left && !ip->sample_up)
         {
@@ -2453,7 +2453,7 @@ static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Horizontal()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Horizontal()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ -1, y ] with y = 0..MbHeightC - 1,
@@ -2468,7 +2468,7 @@ static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Horizontal prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Horizontal prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2488,7 +2488,7 @@ static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Vertical()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Vertical()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ] with x = 0..MbWidthC - 1
@@ -2503,7 +2503,7 @@ static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Vertical prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Vertical prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2523,7 +2523,7 @@ static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
 {
-    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Plane()\n" CLR_RESET);
+    TRACE_1(INTRA, "  > " BLD_GREEN "Intra_Chroma_Plane()" CLR_RESET);
     int retcode = SUCCESS;
 /*
     This mode shall be used only when the samples p[ x, -1 ], with x = 0..MbWidthC - 1
@@ -2556,7 +2556,7 @@ static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
     }
     else
     {
-        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Plane prediction for macroblock n°%i\n", ip->blkIdx);
+        TRACE_ERROR(INTRA, "Unable to perform Intra_Chroma_Plane prediction for macroblock n°%i", ip->blkIdx);
         retcode = FAILURE;
     }
 
@@ -2584,7 +2584,7 @@ static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
  */
 static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(INTRA, "> " BLD_GREEN "ipcm_construction_process()\n" CLR_RESET);
+    TRACE_1(INTRA, "> " BLD_GREEN "ipcm_construction_process()" CLR_RESET);
     int retcode = FAILURE;
 
 #if ENABLE_IPCM

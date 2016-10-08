@@ -39,7 +39,7 @@ int **malloc2d(const int x, const int y)
 
     if (array2d == NULL)
     {
-        TRACE_ERROR(TOOL, "malloc2d: memory allocation failed on array2d[]!\n");
+        TRACE_ERROR(TOOL, "malloc2d: memory allocation failed on array2d[]!");
     }
     else
     {
@@ -49,7 +49,7 @@ int **malloc2d(const int x, const int y)
 
             if (array2d[i] == NULL)
             {
-                TRACE_ERROR(TOOL, "malloc2d: memory allocation failed on array2d[%i][]!\n", i);
+                TRACE_ERROR(TOOL, "malloc2d: memory allocation failed on array2d[%i][]!", i);
                 free2d(&array2d, x);
             }
         }
@@ -66,7 +66,7 @@ int **calloc2d(const int x, const int y)
 
     if (array2d == NULL)
     {
-        TRACE_ERROR(TOOL, "calloc2d: memory allocation failed on array2d[]!\n");
+        TRACE_ERROR(TOOL, "calloc2d: memory allocation failed on array2d[]!");
     }
     else
     {
@@ -76,7 +76,7 @@ int **calloc2d(const int x, const int y)
 
             if (array2d[i] == NULL)
             {
-                TRACE_ERROR(TOOL, "calloc2d: memory allocation failed on array2d[%i][]!\n", i);
+                TRACE_ERROR(TOOL, "calloc2d: memory allocation failed on array2d[%i][]!", i);
                 free2d(&array2d, x);
             }
         }
@@ -110,7 +110,7 @@ void free2d(int ***array2d_ptr, const int x)
 void print2d(int **array2d, int arraySize)
 {
 #if ENABLE_DEBUG
-    TRACE_1(TOOL, "print2d()\n");
+    TRACE_1(TOOL, "print2d()");
 
     int x = 0, y = 0;
     for (x = 0; x < arraySize; x++)
@@ -154,7 +154,7 @@ int is_prime(const unsigned int n)
 {
     if (n > 9999)
     {
-        TRACE_WARNING(TOOL, "is_prime(%i) will not be computed, too big!\n", n);
+        TRACE_WARNING(TOOL, "is_prime(%i) will not be computed, too big!", n);
         return 0;
     }
 

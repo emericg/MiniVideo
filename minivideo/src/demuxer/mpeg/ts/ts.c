@@ -41,7 +41,7 @@ int ts_fileParse(MediaFile_t *media)
 {
     int retcode = SUCCESS;
 
-    TRACE_INFO(MPS, BLD_GREEN "ts_fileParse()\n" CLR_RESET);
+    TRACE_INFO(MPS, BLD_GREEN "ts_fileParse()" CLR_RESET);
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(media, NULL);

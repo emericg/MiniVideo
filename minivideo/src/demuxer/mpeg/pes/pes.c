@@ -106,7 +106,7 @@ int jumpy_pes(Bitstream_t *bitstr, PesHeader_t *header)
  */
 int parse_pes_header(Bitstream_t *bitstr, PesHeader_t *header)
 {
-    TRACE_2(MPS, "> parse_pes_header()\n");
+    TRACE_2(MPS, "> parse_pes_header()");
 
     header->offset_start    = bitstream_get_absolute_byte_offset(bitstr);
 
@@ -137,10 +137,10 @@ int parse_pes_header(Bitstream_t *bitstr, PesHeader_t *header)
  */
 int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 {
-    TRACE_2(MPS, "> parse_pes()\n");
+    TRACE_2(MPS, "> parse_pes()");
     int retcode = SUCCESS;
 
-    TRACE_INFO(MPS, "parse_pes() 0x%X @ %lli\n",
+    TRACE_INFO(MPS, "parse_pes() 0x%X @ %lli",
                header->start_code, bitstream_get_absolute_byte_offset(bitstr));
 
     // "regular" PES packet?
@@ -162,7 +162,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 
             if (read_bits(bitstr, 2) != 2)
             {
-                TRACE_ERROR(MPS, "wrong 'marker_bits'\n");
+                TRACE_ERROR(MPS, "wrong 'marker_bits'");
                 return FAILURE;
             }
 
@@ -184,7 +184,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
             {
                 if (read_bits(bitstr, 4) != 2)
                 {
-                    TRACE_ERROR(MPS, "wrong 'marker_bit'\n");
+                    TRACE_ERROR(MPS, "wrong 'marker_bit'");
                     return FAILURE;
                 }
                 packet->PTS = read_bits(bitstr, 3) << 30;
@@ -198,7 +198,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
             {
                 if (read_bits(bitstr, 4) != 3)
                 {
-                    TRACE_ERROR(MPS, "wrong 'marker_bit'\n");
+                    TRACE_ERROR(MPS, "wrong 'marker_bit'");
                     return FAILURE;
                 }
                 packet->PTS = read_bits(bitstr, 3) << 30;
@@ -209,7 +209,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
                 MARKER_BIT
                 if (read_bits(bitstr, 4) != 1)
                 {
-                    TRACE_ERROR(MPS, "wrong 'marker_bit'\n");
+                    TRACE_ERROR(MPS, "wrong 'marker_bit'");
                     return FAILURE;
                 }
                 packet->DTS = read_bits(bitstr, 3) << 30;
@@ -323,7 +323,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
                 {
                     if (read_bits(bitstr, 2) != 1)
                     {
-                        TRACE_ERROR(MPS, "wrong 'marker_bit'\n");
+                        TRACE_ERROR(MPS, "wrong 'marker_bit'");
                         return FAILURE;
                     }
                     packet->PSTD_buffer_scale = read_bit(bitstr);
@@ -373,7 +373,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
             {
                 if (next_bits(bitstr, 2) != 0)
                 {
-                    TRACE_ERROR(MPS, "wrong 'marker_bit' PESv1\n");
+                    TRACE_ERROR(MPS, "wrong 'marker_bit' PESv1");
                     return FAILURE;
                 }
 
@@ -403,7 +403,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 
                     if (read_bits(bitstr, 4) != 1)
                     {
-                        TRACE_ERROR(MPS, "wrong 'marker_bit' (PTS_DTS_flag==3)\n");
+                        TRACE_ERROR(MPS, "wrong 'marker_bit' (PTS_DTS_flag==3)");
                         return FAILURE;
                     }
 
@@ -420,7 +420,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 
                     if (read_bits(bitstr, 4) == 0x0F)
                     {
-                        TRACE_ERROR(MPS, "wrong 'marker_bit' (PTS_DTS_flag==0)\n");
+                        TRACE_ERROR(MPS, "wrong 'marker_bit' (PTS_DTS_flag==0)");
                         return FAILURE;
                     }
                 }
@@ -437,7 +437,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
         {
             if (read_bits(bitstr, 8) != 0xFF)
             {
-                TRACE_ERROR(MPS, BLD_GREEN "wrong 'stuffing_byte'\n" CLR_RESET);
+                TRACE_ERROR(MPS, BLD_GREEN "wrong 'stuffing_byte'" CLR_RESET);
                 return FAILURE;
             }
         }
@@ -456,15 +456,15 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 
 void print_pes(PesHeader_t *header, PesPacket_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "print_pes()\n" CLR_RESET);
+    TRACE_INFO(MPS, BLD_GREEN "print_pes()" CLR_RESET);
 
     // Header
-    TRACE_INFO(MPS, " packet_start_offset = %lli\n", header->offset_start);
-    TRACE_INFO(MPS, " packet_end_offset   = %lli\n", header->offset_end);
+    TRACE_INFO(MPS, " packet_start_offset = %lli", header->offset_start);
+    TRACE_INFO(MPS, " packet_end_offset   = %lli", header->offset_end);
 
-    TRACE_INFO(MPS, " packet_start_code\t\t= 0x%06X\n", header->start_code);
-    TRACE_INFO(MPS, " stream_id\t\t\t= 0x%02X\n", header->start_code);
-    TRACE_INFO(MPS, " PES_packet_length\t\t= %i\n", header->payload_length);
+    TRACE_INFO(MPS, " packet_start_code\t\t= 0x%06X", header->start_code);
+    TRACE_INFO(MPS, " stream_id\t\t\t= 0x%02X", header->start_code);
+    TRACE_INFO(MPS, " PES_packet_length\t\t= %i", header->payload_length);
 
     // "regular" PES packet?
     if ((header->stream_id != SID_PROGRAM_STREAM_MAP) &&
@@ -476,125 +476,125 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
         (header->stream_id != SID_DSMCC_STREAM) &&
         (header->stream_id != SID_2221E))
     {
-        TRACE_1(MPS, " PES_scrambling_control\t= %i\n", packet->PES_scrambling_control);
-        TRACE_1(MPS, " PES_priority\t\t= %i\n", packet->PES_priority);
-        TRACE_1(MPS, " data_alignment_indicator\t= %i\n", packet->data_alignment_indicator);
-        TRACE_1(MPS, " copyright\t\t\t= %i\n", packet->copyright);
-        TRACE_1(MPS, " original_or_copy\t\t= %i\n", packet->original_or_copy);
-        TRACE_1(MPS, " PTS_DTS_flag\t\t= %i\n", packet->PTS_DTS_flag);
-        TRACE_1(MPS, " ESCR_flag\t\t\t= %i\n", packet->ESCR_flag);
-        TRACE_1(MPS, " ES_rate_flag\t\t= %i\n", packet->ES_rate_flag);
-        TRACE_1(MPS, " DSM_trick_mode_flag\t= %i\n", packet->DSM_trick_mode_flag);
-        TRACE_1(MPS, " additional_copy_info_flag\t= %i\n", packet->additional_copy_info_flag);
-        TRACE_1(MPS, " PES_CRC_flag\t\t= %i\n", packet->PES_CRC_flag);
-        TRACE_1(MPS, " PES_extension_flag\t\t= %i\n", packet->PES_extension_flag);
-        TRACE_1(MPS, " PES_header_data_length\t= %i\n", packet->PES_header_data_length);
+        TRACE_1(MPS, " PES_scrambling_control\t= %i", packet->PES_scrambling_control);
+        TRACE_1(MPS, " PES_priority\t\t= %i", packet->PES_priority);
+        TRACE_1(MPS, " data_alignment_indicator\t= %i", packet->data_alignment_indicator);
+        TRACE_1(MPS, " copyright\t\t\t= %i", packet->copyright);
+        TRACE_1(MPS, " original_or_copy\t\t= %i", packet->original_or_copy);
+        TRACE_1(MPS, " PTS_DTS_flag\t\t= %i", packet->PTS_DTS_flag);
+        TRACE_1(MPS, " ESCR_flag\t\t\t= %i", packet->ESCR_flag);
+        TRACE_1(MPS, " ES_rate_flag\t\t= %i", packet->ES_rate_flag);
+        TRACE_1(MPS, " DSM_trick_mode_flag\t= %i", packet->DSM_trick_mode_flag);
+        TRACE_1(MPS, " additional_copy_info_flag\t= %i", packet->additional_copy_info_flag);
+        TRACE_1(MPS, " PES_CRC_flag\t\t= %i", packet->PES_CRC_flag);
+        TRACE_1(MPS, " PES_extension_flag\t\t= %i", packet->PES_extension_flag);
+        TRACE_1(MPS, " PES_header_data_length\t= %i", packet->PES_header_data_length);
 
         if (packet->PTS_DTS_flag == 2)
         {
-            TRACE_1(MPS, " PTS\t\t\t= %i\n", packet->PTS);
+            TRACE_1(MPS, " PTS\t\t\t= %i", packet->PTS);
         }
         else if (packet->PTS_DTS_flag == 3)
         {
-            TRACE_1(MPS, " PTS\t\t\t= %i\n", packet->PTS);
-            TRACE_1(MPS, " DTS\t\t\t= %i\n", packet->DTS);
+            TRACE_1(MPS, " PTS\t\t\t= %i", packet->PTS);
+            TRACE_1(MPS, " DTS\t\t\t= %i", packet->DTS);
         }
 
         if (packet->ESCR_flag == 1)
         {
-            TRACE_1(MPS, " ESCR_base\t\t\t= %i\n", packet->ESCR_base);
-            TRACE_1(MPS, " ESCR_extension\\tt= %i\n", packet->ESCR_extension);
+            TRACE_1(MPS, " ESCR_base\t\t\t= %i", packet->ESCR_base);
+            TRACE_1(MPS, " ESCR_extension\\tt= %i", packet->ESCR_extension);
         }
 
         if (packet->ES_rate_flag == 1)
         {
-            TRACE_1(MPS, " ES_rate\t= %i\n", packet->ES_rate);
+            TRACE_1(MPS, " ES_rate\t= %i", packet->ES_rate);
         }
 
         if (packet->DSM_trick_mode_flag == 1)
         {
-            TRACE_1(MPS, " trick_mode_control\t= %i\n", packet->trick_mode_control);
+            TRACE_1(MPS, " trick_mode_control\t= %i", packet->trick_mode_control);
 
             if (packet->trick_mode_control == TM_FAST_FORWARD)
             {
-                TRACE_1(MPS, " field_id\t= %i\n", packet->field_id);
-                TRACE_1(MPS, " intra_slice_refresh\t= %i\n", packet->intra_slice_refresh);
-                TRACE_1(MPS, " frequency_truncation\t= %i\n", packet->frequency_truncation);
+                TRACE_1(MPS, " field_id\t= %i", packet->field_id);
+                TRACE_1(MPS, " intra_slice_refresh\t= %i", packet->intra_slice_refresh);
+                TRACE_1(MPS, " frequency_truncation\t= %i", packet->frequency_truncation);
             }
             else if (packet->trick_mode_control == TM_SLOW_MOTION)
             {
-                TRACE_1(MPS, " rep_cntrl\t\t= %i\n", packet->rep_cntrl);
+                TRACE_1(MPS, " rep_cntrl\t\t= %i", packet->rep_cntrl);
             }
             else if (packet->trick_mode_control == TM_FREEZE_FRAME)
             {
-                TRACE_1(MPS, " field_id\t\t= %i\n", packet->field_id);
+                TRACE_1(MPS, " field_id\t\t= %i", packet->field_id);
             }
             else if (packet->trick_mode_control == TM_FAST_REVERSE)
             {
-                TRACE_1(MPS, " field_id\t\t= %i\n", packet->field_id);
-                TRACE_1(MPS, " intra_slice_refresh\t= %i\n", packet->intra_slice_refresh);
-                TRACE_1(MPS, " frequency_truncation\t= %i\n", packet->frequency_truncation);
+                TRACE_1(MPS, " field_id\t\t= %i", packet->field_id);
+                TRACE_1(MPS, " intra_slice_refresh\t= %i", packet->intra_slice_refresh);
+                TRACE_1(MPS, " frequency_truncation\t= %i", packet->frequency_truncation);
             }
             else if (packet->trick_mode_control == TM_SLOW_REVERSE)
             {
-                TRACE_1(MPS, " rep_cntrl\t\t= %i\n", packet->rep_cntrl);
+                TRACE_1(MPS, " rep_cntrl\t\t= %i", packet->rep_cntrl);
             }
         }
 
         if (packet->additional_copy_info_flag == 1)
         {
-            TRACE_1(MPS, " additional_copy_info\t= %i\n", packet->additional_copy_info);
+            TRACE_1(MPS, " additional_copy_info\t= %i", packet->additional_copy_info);
         }
 
         if (packet->PES_CRC_flag == 1)
         {
-            TRACE_1(MPS, " previous_PES_packet_CRC\t= %i\n", packet->previous_PES_packet_CRC);
+            TRACE_1(MPS, " previous_PES_packet_CRC\t= %i", packet->previous_PES_packet_CRC);
         }
 
         if (packet->PES_extension_flag == 1)
         {
-            TRACE_1(MPS, " PES_private_data_flag\t= %i\n", packet->PES_private_data_flag);
-            TRACE_1(MPS, " pack_header_field_flag\t= %i\n", packet->pack_header_field_flag);
-            TRACE_1(MPS, " program_packet_sequence_counter_flag = %i\n", packet->program_packet_sequence_counter_flag);
-            TRACE_1(MPS, " PSTD_buffer_flag\t\t= %i\n", packet->PSTD_buffer_flag);
-            TRACE_1(MPS, " PES_extension_flag_2\t= %i\n", packet->PES_extension_flag_2);
+            TRACE_1(MPS, " PES_private_data_flag\t= %i", packet->PES_private_data_flag);
+            TRACE_1(MPS, " pack_header_field_flag\t= %i", packet->pack_header_field_flag);
+            TRACE_1(MPS, " program_packet_sequence_counter_flag = %i", packet->program_packet_sequence_counter_flag);
+            TRACE_1(MPS, " PSTD_buffer_flag\t\t= %i", packet->PSTD_buffer_flag);
+            TRACE_1(MPS, " PES_extension_flag_2\t= %i", packet->PES_extension_flag_2);
 
             if (packet->PES_private_data_flag == 1)
             {
                 int i = 0;
                 for (i = 0; i < 16; i++)
                 {
-                    TRACE_1(MPS, " PES_private_data[%i]\t= %i\n", i, packet->PES_private_data[i]);
+                    TRACE_1(MPS, " PES_private_data[%i]\t= %i", i, packet->PES_private_data[i]);
                 }
             }
 
             if (packet->pack_header_field_flag == 1)
             {
-                TRACE_1(MPS, " pack_field_length\t= %i\n", packet->pack_field_length);
+                TRACE_1(MPS, " pack_field_length\t= %i", packet->pack_field_length);
                 // TODO
                 //parse_pack_header(bitstr, wtf);
             }
 
             if (packet->program_packet_sequence_counter_flag == 1)
             {
-                TRACE_1(MPS, " program_packet_sequence_counter\t= %i\n", packet->program_packet_sequence_counter);
-                TRACE_1(MPS, " MPEG1_MPEG2_identifier\t= %i\n", packet->MPEG1_MPEG2_identifier);
-                TRACE_1(MPS, " original_stuff_length\t= %i\n", packet->original_stuff_length);
+                TRACE_1(MPS, " program_packet_sequence_counter\t= %i", packet->program_packet_sequence_counter);
+                TRACE_1(MPS, " MPEG1_MPEG2_identifier\t= %i", packet->MPEG1_MPEG2_identifier);
+                TRACE_1(MPS, " original_stuff_length\t= %i", packet->original_stuff_length);
             }
 
             if (packet->PSTD_buffer_flag == 1)
             {
-                TRACE_1(MPS, " PSTD_buffer_scale\t\t= %i\n", packet->PSTD_buffer_scale);
-                TRACE_1(MPS, " PSTD_buffer_size\t\t= %i\n", packet->PSTD_buffer_size);
+                TRACE_1(MPS, " PSTD_buffer_scale\t\t= %i", packet->PSTD_buffer_scale);
+                TRACE_1(MPS, " PSTD_buffer_size\t\t= %i", packet->PSTD_buffer_size);
             }
 
             if (packet->PES_extension_flag_2 == 1)
             {
-                TRACE_1(MPS, " PES_extension_field_length\t= %i\n", packet->PES_extension_field_length);
+                TRACE_1(MPS, " PES_extension_field_length\t= %i", packet->PES_extension_field_length);
                 int i = 0;
                 for (i = 0; i < packet->PES_extension_field_length; i++)
                 {
-                    TRACE_1(MPS, " reserved\t\t= xx\n");
+                    TRACE_1(MPS, " reserved\t\t= xx");
                 }
             }
         }
@@ -612,13 +612,13 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
  */
 int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "  parse_pes_padding()\n" CLR_RESET);
+    TRACE_INFO(MPS, BLD_GREEN "  parse_pes_padding()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (header->payload_length != 0)
     {
         skip_bits(bitstr, header->payload_length * 8);
-        TRACE_INFO(MPS, "  > skip_padding_packet() >> %i bytes\n", header->payload_length);
+        TRACE_INFO(MPS, "  > skip_padding_packet() >> %i bytes", header->payload_length);
         retcode = SUCCESS;
     }
     else
@@ -645,7 +645,7 @@ int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *pac
 int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 BitstreamMap_t *map)
 {
-    TRACE_2(MPS, "> parse_pes_a()\n");
+    TRACE_2(MPS, "> parse_pes_a()");
     int retcode = SUCCESS;
 
     if (header->stream_id == SID_PRIVATE_STREAM_1)
@@ -674,7 +674,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 map->sampling_rate = 32000.0;
                 break;
             default:
-                TRACE_WARNING(MPS, "Unsupported AC3 fscod %u\n", fscod);
+                TRACE_WARNING(MPS, "Unsupported AC3 fscod %u", fscod);
                 retcode = FAILURE;
                 break;
             }
@@ -758,7 +758,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 map->bitrate = 640;
                 break;
             default:
-                TRACE_WARNING(MPS, "Unsupported AC3 frmsizcod %u\n", frmsizcod);
+                TRACE_WARNING(MPS, "Unsupported AC3 frmsizcod %u", frmsizcod);
                 retcode = FAILURE;
                 break;
             }
@@ -807,7 +807,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 map->sampling_rate = 48000;
                 break;
             default:
-                TRACE_WARNING(MPS, "Unsupported DTS SFREQ %u\n", SFREQ);
+                TRACE_WARNING(MPS, "Unsupported DTS SFREQ %u", SFREQ);
                 retcode = FAILURE;
                 break;
             }
@@ -893,14 +893,14 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 map->bitrate = 2048000; // Speficifation says "open"
                 break;
             default:
-                TRACE_WARNING(MPS, "Unsupported DTS RATE %u\n", RATE);
+                TRACE_WARNING(MPS, "Unsupported DTS RATE %u", RATE);
                 retcode = FAILURE;
                 break;
             }
         }
         else // audio codec in private stream could also be : LPCM, AAC, ... ?
         {
-            TRACE_WARNING(MPS, "Unknown audio codec (0x%08X) inside audio private stream\n", startcode);
+            TRACE_WARNING(MPS, "Unknown audio codec (0x%08X) inside audio private stream", startcode);
             retcode = FAILURE;
         }
     }
@@ -963,7 +963,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
         }
         else
         {
-            TRACE_WARNING(MPS, "Unknown ES type (0x%04X) inside PES audio packet (id: 0x%02X)\n",
+            TRACE_WARNING(MPS, "Unknown ES type (0x%04X) inside PES audio packet (id: 0x%02X)",
                           read, header->stream_id);
             retcode = FAILURE;
         }
@@ -985,15 +985,15 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
 int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 BitstreamMap_t *map)
 {
-    TRACE_2(MPS, "> parse_pes_v()\n");
+    TRACE_2(MPS, "> parse_pes_v()");
     int retcode = SUCCESS;
 
     // Avoid trying to get infos from a splitted video sample
     if (packet->PTS)
     {
-        TRACE_2(MPS, "Trying get_video_infos() @ \n");
+        TRACE_2(MPS, "Trying get_video_infos() @ ");
 
-        TRACE_INFO(MPS, "parse_pes_v() 0x%X @ %lli\n",
+        TRACE_INFO(MPS, "parse_pes_v() 0x%X @ %lli",
                    header->start_code, bitstream_get_absolute_byte_offset(bitstr));
 
         // Look for a sequence header start code
@@ -1030,7 +1030,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                     map->display_aspect_ratio = (16.0 / 9.0);
                     break;
                 default:
-                    TRACE_WARNING(MPS, "Unsupported MPEG-1 aspect_ratio_index %u\n", aspect_ratio_index);
+                    TRACE_WARNING(MPS, "Unsupported MPEG-1 aspect_ratio_index %u", aspect_ratio_index);
                     retcode = FAILURE;
                     break;
                 }
@@ -1054,7 +1054,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                     map->video_aspect_ratio = (2.21 / 1.0);
                     break;
                 default:
-                    TRACE_WARNING(MPS, "Unsupported MPEG-2 aspect_ratio_index %u\n", aspect_ratio_index);
+                    TRACE_WARNING(MPS, "Unsupported MPEG-2 aspect_ratio_index %u", aspect_ratio_index);
                     retcode = FAILURE;
                     break;
                 }
@@ -1103,14 +1103,14 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 map->framerate_base = 1;
                 break;
             default:
-                TRACE_WARNING(MPS, "Unsupported MPEG-1/2 framerate_index %u\n", framerate_index);
+                TRACE_WARNING(MPS, "Unsupported MPEG-1/2 framerate_index %u", framerate_index);
                 retcode = FAILURE;
                 break;
             }
         }
         else
         {
-            TRACE_WARNING(MPS, "Unknown ES type (0x%08X) inside PES video packet (id: 0x%02X)\n",
+            TRACE_WARNING(MPS, "Unknown ES type (0x%08X) inside PES video packet (id: 0x%02X)",
                           start_code, header->stream_id);
             retcode = FAILURE;
         }

@@ -73,7 +73,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
                 printf("[MB] - mb_type\t\t\t= P_Skip (%u)\n", mb->mb_type);
             break;
             default:
-                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%u)\n", mb->mb_type);
+                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%u)", mb->mb_type);
             break;
         }
 
@@ -158,7 +158,7 @@ void print_macroblock_layer(DecodingContext_t *dc, Macroblock_t *mb)
                 printf("[MB] - mb_type\t\t\t= B_Skip (%u)\n", mb->mb_type);
             break;
             default:
-                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%u)\n", mb->mb_type);
+                TRACE_ERROR(MB, "[MB] - mb_type\t\t\t= unknow (%u)", mb->mb_type);
             break;
         }
     }

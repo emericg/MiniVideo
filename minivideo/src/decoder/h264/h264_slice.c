@@ -63,7 +63,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm);
  */
 int decode_slice(DecodingContext_t *dc)
 {
-    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSlice()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSlice()" CLR_RESET);
     int retcode = SUCCESS;
 
     // New slice allocation
@@ -71,7 +71,7 @@ int decode_slice(DecodingContext_t *dc)
 
     if (dc->active_slice == NULL)
     {
-        TRACE_ERROR(SLICE, "Unable to alloc new Slice!\n");
+        TRACE_ERROR(SLICE, "Unable to alloc new Slice!");
         retcode = FAILURE;
     }
     else
@@ -141,7 +141,7 @@ void free_slice(slice_t **slice_ptr)
             free(*slice_ptr);
             *slice_ptr = NULL;
 
-            TRACE_1(SLICE, ">> Slice freed\n");
+            TRACE_1(SLICE, ">> Slice freed");
         }
     }
 }
@@ -155,7 +155,7 @@ void free_slice(slice_t **slice_ptr)
  */
 static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceHeader()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceHeader()" CLR_RESET);
 
     // Slice header decoding
     ////////////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 
     if (slice->slice_type == 1 || slice->slice_type == 6) // B frame
     {
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (B frame)\n");
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (B frame)");
         return UNSUPPORTED;
 
         slice->direct_spatial_mv_pred_flag = read_bit(dc->bitstr);
@@ -238,7 +238,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
         slice->slice_type == 3 || slice->slice_type == 8 ||
         slice->slice_type == 1 || slice->slice_type == 6) // P, SP, B frame
     {
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (P, SP, B frame)\n");
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (P, SP, B frame)");
         return UNSUPPORTED;
 /*
         slice->num_ref_idx_active_override_flag = read_bit(dc->bitstr);
@@ -257,7 +257,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 
     if (dc->active_nalu->nal_unit_type == 20)
     {
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (unit_type == 20: MVC extension)\n");
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (unit_type == 20: MVC extension)");
         return UNSUPPORTED;
     }
     else
@@ -305,7 +305,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
         slice->slice_qs_delta = read_se(dc->bitstr);
         slice->SliceQSY = 26 + pps->pic_init_qs_minus26 + slice->slice_qs_delta;
 #else // ENABLE_SWITCHING_SLICE
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (slice_type == SP || slice_type == SI)\n");
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (slice_type == SP || slice_type == SI)");
         return UNSUPPORTED;
 #endif // ENABLE_SWITCHING_SLICE
     }
@@ -325,7 +325,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 
     if (pps->num_slice_groups_minus1 > 0 && pps->slice_group_map_type >= 3 && pps->slice_group_map_type <= 5)
     {
-        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (FMO)\n");
+        TRACE_ERROR(SLICE, ">>> UNSUPPORTED (FMO)");
         return UNSUPPORTED;
     }
 
@@ -342,7 +342,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 static void printSliceHeader(DecodingContext_t *dc)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "> " BLD_GREEN "printSliceHeader()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "printSliceHeader()" CLR_RESET);
 
     // Shortcut
     slice_t *slice = dc->active_slice;
@@ -350,7 +350,7 @@ static void printSliceHeader(DecodingContext_t *dc)
     // Check structure
     if (slice == NULL)
     {
-        TRACE_ERROR(SLICE, "  Invalid slice structure!\n");
+        TRACE_ERROR(SLICE, "  Invalid slice structure!");
         return;
     }
 
@@ -359,55 +359,55 @@ static void printSliceHeader(DecodingContext_t *dc)
     sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Print values
-    TRACE_1(SLICE, "  - first_mb_in_slice\t\t= %i\n", slice->first_mb_in_slice);
-    TRACE_1(SLICE, "  - slice_type\t\t\t= %i\n", slice->slice_type);
-    TRACE_1(SLICE, "  - pic_parameter_set_id\t\t= %i\n", slice->pic_parameter_set_id);
+    TRACE_1(SLICE, "  - first_mb_in_slice\t\t= %i", slice->first_mb_in_slice);
+    TRACE_1(SLICE, "  - slice_type\t\t\t= %i", slice->slice_type);
+    TRACE_1(SLICE, "  - pic_parameter_set_id\t\t= %i", slice->pic_parameter_set_id);
 
     if (sps->separate_colour_plane_flag)
     {
-        TRACE_1(SLICE, "  - colour_plane_id\t\t\t= %i\n", slice->colour_plane_id);
+        TRACE_1(SLICE, "  - colour_plane_id\t\t\t= %i", slice->colour_plane_id);
     }
 
-    TRACE_1(SLICE, "  - frame_num\t\t\t= %i\n", slice->frame_num);
-    TRACE_1(SLICE, "  - MaxPicNum\t\t\t: %i\n", slice->MaxPicNum);
-    TRACE_1(SLICE, "  - CurrPicNum\t\t\t: %i\n", slice->CurrPicNum);
+    TRACE_1(SLICE, "  - frame_num\t\t\t= %i", slice->frame_num);
+    TRACE_1(SLICE, "  - MaxPicNum\t\t\t: %i", slice->MaxPicNum);
+    TRACE_1(SLICE, "  - CurrPicNum\t\t\t: %i", slice->CurrPicNum);
 
     if (sps->frame_mbs_only_flag == false)
     {
-        TRACE_1(SLICE, "  - field_pic_flag\t\t= %i\n", slice->field_pic_flag);
+        TRACE_1(SLICE, "  - field_pic_flag\t\t= %i", slice->field_pic_flag);
 
         if (slice->field_pic_flag)
         {
-            TRACE_1(SLICE, "  - bottom_field_flag\t\t= %i\n", slice->bottom_field_flag);
+            TRACE_1(SLICE, "  - bottom_field_flag\t\t= %i", slice->bottom_field_flag);
         }
     }
 
-    TRACE_1(SLICE, "  - MbaffFrameFlag\t\t\t: %i\n", slice->MbaffFrameFlag);
-    TRACE_1(SLICE, "  - PicHeightInMbs\t\t\t: %i\n", slice->PicHeightInMbs);
-    TRACE_1(SLICE, "  - PicHeightInSamplesL\t\t: %i\n", slice->PicHeightInSamplesL);
-    TRACE_1(SLICE, "  - PicHeightInSamplesC\t\t: %i\n", slice->PicHeightInSamplesC);
-    TRACE_1(SLICE, "  - PicSizeInMbs\t\t\t: %i\n", slice->PicSizeInMbs);
+    TRACE_1(SLICE, "  - MbaffFrameFlag\t\t\t: %i", slice->MbaffFrameFlag);
+    TRACE_1(SLICE, "  - PicHeightInMbs\t\t\t: %i", slice->PicHeightInMbs);
+    TRACE_1(SLICE, "  - PicHeightInSamplesL\t\t: %i", slice->PicHeightInSamplesL);
+    TRACE_1(SLICE, "  - PicHeightInSamplesC\t\t: %i", slice->PicHeightInSamplesC);
+    TRACE_1(SLICE, "  - PicSizeInMbs\t\t\t: %i", slice->PicSizeInMbs);
 
     if (dc->IdrPicFlag)
     {
-        TRACE_1(SLICE, "  - idr_pic_id\t\t\t= %i\n", slice->idr_pic_id);
+        TRACE_1(SLICE, "  - idr_pic_id\t\t\t= %i", slice->idr_pic_id);
     }
 
     if (sps->pic_order_cnt_type == 0)
     {
-        TRACE_1(SLICE, "  - pic_order_cnt_lsb\t\t= %i\n", slice->pic_order_cnt_lsb);
+        TRACE_1(SLICE, "  - pic_order_cnt_lsb\t\t= %i", slice->pic_order_cnt_lsb);
 
         if (pps->bottom_field_pic_order_in_frame_present_flag && slice->field_pic_flag == false)
         {
-            TRACE_1(SLICE, "  - delta_pic_order_cnt_bottom\t= %i\n", slice->delta_pic_order_cnt_bottom);
+            TRACE_1(SLICE, "  - delta_pic_order_cnt_bottom\t= %i", slice->delta_pic_order_cnt_bottom);
         }
     }
     else if (sps->pic_order_cnt_type == 1 && sps->delta_pic_order_always_zero_flag == false)
     {
-        TRACE_1(SLICE, "  - delta_pic_order_cnt[0]\t= %i\n", slice->delta_pic_order_cnt[0]);
+        TRACE_1(SLICE, "  - delta_pic_order_cnt[0]\t= %i", slice->delta_pic_order_cnt[0]);
         if (pps->bottom_field_pic_order_in_frame_present_flag && slice->field_pic_flag == false)
         {
-            TRACE_1(SLICE, "  - delta_pic_order_cnt[1]\t= %i\n", slice->delta_pic_order_cnt[1]);
+            TRACE_1(SLICE, "  - delta_pic_order_cnt[1]\t= %i", slice->delta_pic_order_cnt[1]);
         }
     }
 
@@ -431,36 +431,36 @@ static void printSliceHeader(DecodingContext_t *dc)
         printDRPM(dc, slice->drpm);
     }
 
-    TRACE_1(SLICE, "  - slice_qp_delta\t\t\t= %i\n", slice->slice_qp_delta);
-    TRACE_1(SLICE, "  - SliceQPY\t\t\t: %i\n", slice->SliceQPY);
+    TRACE_1(SLICE, "  - slice_qp_delta\t\t\t= %i", slice->slice_qp_delta);
+    TRACE_1(SLICE, "  - SliceQPY\t\t\t: %i", slice->SliceQPY);
 
     if (slice->slice_type == 3 || slice->slice_type == 8 ||
         slice->slice_type == 4 || slice->slice_type == 9) // SP, SI frame
     {
         if (slice->slice_type == 4 || slice->slice_type == 9) // SI frame
         {
-            TRACE_1(SLICE, "  - sp_for_switch_flag\t\t\t= %i\n", slice->sp_for_switch_flag);
+            TRACE_1(SLICE, "  - sp_for_switch_flag\t\t\t= %i", slice->sp_for_switch_flag);
         }
-        TRACE_1(SLICE, "  - slice_qs_delta\t\t\t= %i\n", slice->slice_qs_delta);
-        TRACE_1(SLICE, "  - SliceQSY\t\t\t: %i\n", slice->SliceQSY);
+        TRACE_1(SLICE, "  - slice_qs_delta\t\t\t= %i", slice->slice_qs_delta);
+        TRACE_1(SLICE, "  - SliceQSY\t\t\t: %i", slice->SliceQSY);
     }
 
     if (pps->deblocking_filter_control_present_flag)
     {
-        TRACE_1(SLICE, "  - disable_deblocking_filter_idc\t= %i\n", slice->disable_deblocking_filter_idc);
+        TRACE_1(SLICE, "  - disable_deblocking_filter_idc\t= %i", slice->disable_deblocking_filter_idc);
 
         if (slice->disable_deblocking_filter_idc != 1)
         {
-            TRACE_1(SLICE, "  - slice_alpha_c0_offset_div2\t= %i\n", slice->slice_alpha_c0_offset_div2);
-            TRACE_1(SLICE, "  - slice_beta_offset_div2\t\t= %i\n", slice->slice_beta_offset_div2);
-            TRACE_1(SLICE, "  - FilterOffsetA\t\t\t: %i\n", slice->FilterOffsetA);
-            TRACE_1(SLICE, "  - FilterOffsetB\t\t\t: %i\n", slice->FilterOffsetB);
+            TRACE_1(SLICE, "  - slice_alpha_c0_offset_div2\t= %i", slice->slice_alpha_c0_offset_div2);
+            TRACE_1(SLICE, "  - slice_beta_offset_div2\t\t= %i", slice->slice_beta_offset_div2);
+            TRACE_1(SLICE, "  - FilterOffsetA\t\t\t: %i", slice->FilterOffsetA);
+            TRACE_1(SLICE, "  - FilterOffsetB\t\t\t: %i", slice->FilterOffsetB);
         }
     }
 
     if (pps->num_slice_groups_minus1 > 0 && pps->slice_group_map_type >= 3 && pps->slice_group_map_type <= 5)
     {
-        TRACE_1(SLICE, "  - slice_group_change_cycle\t= %i\n", slice->slice_group_change_cycle);
+        TRACE_1(SLICE, "  - slice_group_change_cycle\t= %i", slice->slice_group_change_cycle);
     }
 #endif // ENABLE_DEBUG
 }
@@ -477,7 +477,7 @@ static void printSliceHeader(DecodingContext_t *dc)
  */
 static int checkSliceHeader(DecodingContext_t *dc)
 {
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "checkSliceHeader()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "checkSliceHeader()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -486,7 +486,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
     // Check structure
     if (slice == NULL)
     {
-        TRACE_ERROR(SLICE, "  Invalid slice_header structure!\n");
+        TRACE_ERROR(SLICE, "  Invalid slice_header structure!");
         retcode = FAILURE;
     }
     else // Check values
@@ -497,25 +497,25 @@ static int checkSliceHeader(DecodingContext_t *dc)
 
         if (slice->slice_type > 9)
         {
-            TRACE_WARNING(SLICE, "  - slice_type is %i but should be in range [0,9]\n", slice->slice_type);
+            TRACE_WARNING(SLICE, "  - slice_type is %i but should be in range [0,9]", slice->slice_type);
             retcode = FAILURE;
         }
         else if (dc->active_nalu->nal_unit_type == 5 &&
                  (slice->slice_type != 2 && slice->slice_type != 7 &&
                   slice->slice_type != 4 && slice->slice_type != 9)) // Not I or SI slice
         {
-            TRACE_WARNING(SLICE, "  - slice_type is %i but should be 2,4,7,9 (because this frame is an IDR)\n", slice->slice_type);
+            TRACE_WARNING(SLICE, "  - slice_type is %i but should be 2,4,7,9 (because this frame is an IDR)", slice->slice_type);
             retcode = FAILURE;
         }
 
         if (slice->pic_parameter_set_id > 255)
         {
-            TRACE_WARNING(SLICE, "  - pic_parameter_set_id is %i but should be in range [0,255]\n", slice->pic_parameter_set_id);
+            TRACE_WARNING(SLICE, "  - pic_parameter_set_id is %i but should be in range [0,255]", slice->pic_parameter_set_id);
             retcode = FAILURE;
         }
         else if (dc->pps_array[slice->pic_parameter_set_id] == NULL)
         {
-            TRACE_WARNING(SLICE, "  - this slice refere to a PPS (nb %i) which doesn't exist\n", slice->pic_parameter_set_id);
+            TRACE_WARNING(SLICE, "  - this slice refere to a PPS (nb %i) which doesn't exist", slice->pic_parameter_set_id);
             retcode = FAILURE;
         }
 
@@ -523,7 +523,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         {
             if (slice->colour_plane_id > 2)
             {
-                TRACE_WARNING(SLICE, "  - colour_plane_id is %i but should be in range [0,2]\n", slice->colour_plane_id);
+                TRACE_WARNING(SLICE, "  - colour_plane_id is %i but should be in range [0,2]", slice->colour_plane_id);
                 retcode = FAILURE;
             }
         }
@@ -532,7 +532,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         {
             if (slice->frame_num != 0)
             {
-                TRACE_WARNING(SLICE, "  - frame_num is %i but should be 0 (because this frame is an IDR)\n", slice->frame_num);
+                TRACE_WARNING(SLICE, "  - frame_num is %i but should be 0 (because this frame is an IDR)", slice->frame_num);
                 retcode = FAILURE;
             }
         }
@@ -543,11 +543,11 @@ static int checkSliceHeader(DecodingContext_t *dc)
 
         if (sps->frame_mbs_only_flag == false)
         {
-            TRACE_1(SLICE, "  - field_pic_flag\t\t: %i\n", slice->field_pic_flag);
+            TRACE_1(SLICE, "  - field_pic_flag\t\t: %i", slice->field_pic_flag);
 
             if (slice->field_pic_flag)
             {
-                TRACE_1(SLICE, "  - bottom_field_flag\t\t: %i\n", slice->bottom_field_flag);
+                TRACE_1(SLICE, "  - bottom_field_flag\t\t: %i", slice->bottom_field_flag);
             }
         }
 
@@ -555,7 +555,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         {
             if (slice->idr_pic_id > 65535)
             {
-                TRACE_WARNING(SLICE, "  - idr_pic_id is %i but should be in range [0,65535]\n", slice->idr_pic_id);
+                TRACE_WARNING(SLICE, "  - idr_pic_id is %i but should be in range [0,65535]", slice->idr_pic_id);
                 retcode = FAILURE;
             }
         }
@@ -564,7 +564,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         {
             if (slice->pic_order_cnt_lsb > sps->MaxPicOrderCntLsb-1)
             {
-                TRACE_WARNING(SLICE, "  - pic_order_cnt_lsb is %i but should be in range [0,MaxPicOrderCntLsb-1=%i]\n", slice->pic_order_cnt_lsb, sps->MaxPicOrderCntLsb-1);
+                TRACE_WARNING(SLICE, "  - pic_order_cnt_lsb is %i but should be in range [0,MaxPicOrderCntLsb-1=%i]", slice->pic_order_cnt_lsb, sps->MaxPicOrderCntLsb-1);
                 retcode = FAILURE;
             }
 
@@ -573,7 +573,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
             {/*
                 if ()
                 {
-                    TRACE_WARNING(DSLICE, "  - delta_pic_order_cnt_bottom is %i but \n", slice->delta_pic_order_cnt_bottom);
+                    TRACE_WARNING(DSLICE, "  - delta_pic_order_cnt_bottom is %i but ", slice->delta_pic_order_cnt_bottom);
                     retcode = FAILURE;
                 }
             */}
@@ -583,7 +583,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
             // always true if delta_pic[0]_order_cnt is an int32
             if (slice->delta_pic_order_cnt[0] < -2147483647 && slice->delta_pic_order_cnt[0] > 2147483647)
             {
-                TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[0] is %i but should be in range [-2147483647,2147483647]\n", slice->delta_pic_order_cnt[0]);
+                TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[0] is %i but should be in range [-2147483647,2147483647]", slice->delta_pic_order_cnt[0]);
                 retcode = FAILURE;
             }
 
@@ -592,7 +592,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
                 // always true if delta_pic_order_cnt[1] is an int32
                 if (slice->delta_pic_order_cnt[1] < -2147483647 && slice->delta_pic_order_cnt[1] > 2147483647)
                 {
-                    TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[1] is %i but should be in range [-2147483647,2147483647]\n", slice->delta_pic_order_cnt[1]);
+                    TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[1] is %i but should be in range [-2147483647,2147483647]", slice->delta_pic_order_cnt[1]);
                     retcode = FAILURE;
                 }
             }
@@ -623,7 +623,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
 
         if (slice->SliceQPY < -(sps->QpBdOffsetY) || slice->SliceQPY > 51)
         {
-            TRACE_WARNING(SLICE, "  - SliceQPY is %i but should be in range [-QpBdOffsetY=%i,51] %i\n", slice->SliceQPY, sps->QpBdOffsetY);
+            TRACE_WARNING(SLICE, "  - SliceQPY is %i but should be in range [-QpBdOffsetY=%i,51] %i", slice->SliceQPY, sps->QpBdOffsetY);
             retcode = FAILURE;
         }
 
@@ -631,20 +631,20 @@ static int checkSliceHeader(DecodingContext_t *dc)
         {
             if (slice->disable_deblocking_filter_idc > 2)
             {
-                TRACE_WARNING(SLICE, "  - disable_deblocking_filter_idc is %i but should be in range [0-2]\n", slice->disable_deblocking_filter_idc);
+                TRACE_WARNING(SLICE, "  - disable_deblocking_filter_idc is %i but should be in range [0-2]", slice->disable_deblocking_filter_idc);
                 retcode = FAILURE;
             }
             else if (slice->disable_deblocking_filter_idc != 1)
             {
                 if (slice->slice_alpha_c0_offset_div2 < -6 || slice->slice_alpha_c0_offset_div2 > 6)
                 {
-                    TRACE_WARNING(SLICE, "  - slice_alpha_c0_offset_div2 is %i but should be in range [-6,6]\n", slice->slice_alpha_c0_offset_div2);
+                    TRACE_WARNING(SLICE, "  - slice_alpha_c0_offset_div2 is %i but should be in range [-6,6]", slice->slice_alpha_c0_offset_div2);
                     retcode = FAILURE;
                 }
 
                 if (slice->slice_beta_offset_div2 < -6 || slice->slice_beta_offset_div2 > 6)
                 {
-                    TRACE_WARNING(SLICE, "  - slice_beta_offset_div2 is %i but should be in range [-6,6]\n", slice->slice_beta_offset_div2);
+                    TRACE_WARNING(SLICE, "  - slice_beta_offset_div2 is %i but should be in range [-6,6]", slice->slice_beta_offset_div2);
                     retcode = FAILURE;
                 }
             }
@@ -653,7 +653,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         if (pps->num_slice_groups_minus1 > 0 && pps->slice_group_map_type >= 3 && pps->slice_group_map_type <= 5)
         {
             // The value of slice_group_change_cycle shall to ceil(PicSizeInMapUnits÷SliceGroupChangeRate), inclusive.
-            TRACE_1(DSLICE, "  - slice_group_change_cycle\t: %i\n", slice->slice_group_change_cycle);
+            TRACE_1(DSLICE, "  - slice_group_change_cycle\t: %i", slice->slice_group_change_cycle);
         }
 */
     }
@@ -671,7 +671,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
  */
 static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeRPLM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeRPLM()" CLR_RESET);
 
     // RPLM allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -679,7 +679,7 @@ static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
     rplm_t *rplm = (rplm_t*)calloc(1, sizeof(rplm_t));
     if (rplm == NULL)
     {
-        TRACE_ERROR(SLICE, "Unable to alloc new RPLM!\n");
+        TRACE_ERROR(SLICE, "Unable to alloc new RPLM!");
     }
     else
     {
@@ -740,38 +740,38 @@ static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
 static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "printRPLM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "printRPLM()" CLR_RESET);
 
     // Check structure
     if (rplm == NULL)
     {
-        TRACE_ERROR(SLICE, "    Invalid RPML structure!\n");
+        TRACE_ERROR(SLICE, "    Invalid RPML structure!");
         return;
     }
 
     // Print values
     if (rplm->ref_pic_list_modification_flag_l0)
     {
-        TRACE_1(SLICE, "    - l0  modification_of_pic_nums_idc\t= %i\n", rplm->modification_of_pic_nums_idc);
+        TRACE_1(SLICE, "    - l0  modification_of_pic_nums_idc\t= %i", rplm->modification_of_pic_nums_idc);
 
-        TRACE_1(SLICE, "    - l0  abs_diff_pic_num_minus1\t\t= %i\n", rplm->abs_diff_pic_num_minus1);
-        TRACE_1(SLICE, "    - l0  long_term_pic_num\t\t\t= %i\n", rplm->long_term_pic_num);
+        TRACE_1(SLICE, "    - l0  abs_diff_pic_num_minus1\t\t= %i", rplm->abs_diff_pic_num_minus1);
+        TRACE_1(SLICE, "    - l0  long_term_pic_num\t\t\t= %i", rplm->long_term_pic_num);
     }
     else
     {
-        TRACE_1(SLICE, "    - ref_pic_list_modification_flag_l0 is not defined\n");
+        TRACE_1(SLICE, "    - ref_pic_list_modification_flag_l0 is not defined");
     }
 
     if (rplm->ref_pic_list_modification_flag_l1)
     {
-        TRACE_1(SLICE, "    - l1  modification_of_pic_nums_idc\t= %i\n", rplm->modification_of_pic_nums_idc);
+        TRACE_1(SLICE, "    - l1  modification_of_pic_nums_idc\t= %i", rplm->modification_of_pic_nums_idc);
 
-        TRACE_1(SLICE, "    - l1  abs_diff_pic_num_minus1\t\t= %i\n", rplm->abs_diff_pic_num_minus1);
-        TRACE_1(SLICE, "    - l1  long_term_pic_num\t\t\t= %i\n", rplm->long_term_pic_num);
+        TRACE_1(SLICE, "    - l1  abs_diff_pic_num_minus1\t\t= %i", rplm->abs_diff_pic_num_minus1);
+        TRACE_1(SLICE, "    - l1  long_term_pic_num\t\t\t= %i", rplm->long_term_pic_num);
     }
     else
     {
-        TRACE_1(SLICE, "    - ref_pic_list_modification_flag_l1 is not defined\n");
+        TRACE_1(SLICE, "    - ref_pic_list_modification_flag_l1 is not defined");
     }
 #endif // ENABLE_DEBUG
 }
@@ -789,18 +789,18 @@ static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
  */
 static int checkRPLM(DecodingContext_t *dc, rplm_t *rplm)
 {
-    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkRPLM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkRPLM()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structure
     if (rplm == NULL)
     {
-        TRACE_ERROR(SLICE, "    Invalid RPML structure!\n");
+        TRACE_ERROR(SLICE, "    Invalid RPML structure!");
         retcode = FAILURE;
     }
     else // Check values
     {
-        TRACE_WARNING(SLICE, "    >>> UNIMPLEMENTED (checkRPLM)\n");
+        TRACE_WARNING(SLICE, "    >>> UNIMPLEMENTED (checkRPLM)");
     }
 
     return retcode;
@@ -815,7 +815,7 @@ static int checkRPLM(DecodingContext_t *dc, rplm_t *rplm)
  */
 static pwt_t *decodePWT(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodePWT()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodePWT()" CLR_RESET);
 
     // PWT allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -823,14 +823,14 @@ static pwt_t *decodePWT(DecodingContext_t *dc, slice_t *slice)
     pwt_t *pwt = (pwt_t*)calloc(1, sizeof(pwt_t));
     if (pwt == NULL)
     {
-        TRACE_ERROR(SLICE, "Unable to alloc new PWT!\n");
+        TRACE_ERROR(SLICE, "Unable to alloc new PWT!");
     }
     else
     {
         // PWT decoding
         ////////////////////////////////////////////////////////////////////////
 
-        TRACE_WARNING(SLICE, ">>> UNIMPLEMENTED (prediction_weight_table)\n");
+        TRACE_WARNING(SLICE, ">>> UNIMPLEMENTED (prediction_weight_table)");
     }
 
     return pwt;
@@ -845,7 +845,7 @@ static pwt_t *decodePWT(DecodingContext_t *dc, slice_t *slice)
  */
 static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeDRPM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "decodeDRPM()" CLR_RESET);
 
     // DRPM allocation
     ////////////////////////////////////////////////////////////////////////////
@@ -853,7 +853,7 @@ static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
     drpm_t *drpm = (drpm_t*)calloc(1, sizeof(drpm_t));
     if (drpm == NULL)
     {
-        TRACE_ERROR(SLICE, "Unable to alloc new DRPM!\n");
+        TRACE_ERROR(SLICE, "Unable to alloc new DRPM!");
     }
     else
     {
@@ -916,32 +916,32 @@ static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
 static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
 {
 #if ENABLE_DEBUG
-    TRACE_INFO(SLICE, "  > " BLD_GREEN "printDRPM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "  > " BLD_GREEN "printDRPM()" CLR_RESET);
 
     // Check structure
     if (drpm == NULL)
     {
-        TRACE_ERROR(SLICE, "    Invalid DRPM structure!\n");
+        TRACE_ERROR(SLICE, "    Invalid DRPM structure!");
         return;
     }
 
     // Print values
     if (dc->IdrPicFlag)
     {
-        TRACE_1(SLICE, "    - no_output_of_prior_pics_flag\t= %i\n", drpm->no_output_of_prior_pics_flag);
-        TRACE_1(SLICE, "    - long_term_reference_flag\t= %i\n", drpm->long_term_reference_flag);
+        TRACE_1(SLICE, "    - no_output_of_prior_pics_flag\t= %i", drpm->no_output_of_prior_pics_flag);
+        TRACE_1(SLICE, "    - long_term_reference_flag\t= %i", drpm->long_term_reference_flag);
     }
     else
     {
-        TRACE_1(SLICE, "    - adaptive_ref_pic_marking_mode_flag\t= %i\n", drpm->adaptive_ref_pic_marking_mode_flag);
+        TRACE_1(SLICE, "    - adaptive_ref_pic_marking_mode_flag\t= %i", drpm->adaptive_ref_pic_marking_mode_flag);
         if (drpm->adaptive_ref_pic_marking_mode_flag)
         {
-            TRACE_1(SLICE, "    - (last) memory_management_control_operation\t= %i\n", drpm->memory_management_control_operation);
+            TRACE_1(SLICE, "    - (last) memory_management_control_operation\t= %i", drpm->memory_management_control_operation);
 
-            TRACE_1(SLICE, "    - difference_of_pic_nums_minus1\t\t= %i\n", drpm->difference_of_pic_nums_minus1);
-            TRACE_1(SLICE, "    - long_term_pic_num\t\t\t= %i\n", drpm->long_term_pic_num);
-            TRACE_1(SLICE, "    - long_term_frame_idx\t\t\t= %i\n", drpm->long_term_frame_idx);
-            TRACE_1(SLICE, "    - max_long_term_frame_idx_plus1\t\t= %i\n", drpm->max_long_term_frame_idx_plus1);
+            TRACE_1(SLICE, "    - difference_of_pic_nums_minus1\t\t= %i", drpm->difference_of_pic_nums_minus1);
+            TRACE_1(SLICE, "    - long_term_pic_num\t\t\t= %i", drpm->long_term_pic_num);
+            TRACE_1(SLICE, "    - long_term_frame_idx\t\t\t= %i", drpm->long_term_frame_idx);
+            TRACE_1(SLICE, "    - max_long_term_frame_idx_plus1\t\t= %i", drpm->max_long_term_frame_idx_plus1);
         }
     }
 #endif // ENABLE_DEBUG
@@ -960,13 +960,13 @@ static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
  */
 static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
 {
-    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkDRPM()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "    > " BLD_GREEN "checkDRPM()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structure
     if (drpm == NULL)
     {
-        TRACE_ERROR(SLICE, "    Invalid DRPM structure!\n");
+        TRACE_ERROR(SLICE, "    Invalid DRPM structure!");
         retcode = FAILURE;
     }
     else // Check values
@@ -977,21 +977,21 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
             {
                 if (drpm->memory_management_control_operation > 6)
                 {
-                    TRACE_WARNING(SLICE, "    - memory_management_control_operation is %i but should be in range [0,6]\n", drpm->memory_management_control_operation);
+                    TRACE_WARNING(SLICE, "    - memory_management_control_operation is %i but should be in range [0,6]", drpm->memory_management_control_operation);
                     retcode = FAILURE;
                 }
                 else
                 {
                     if (drpm->long_term_frame_idx > drpm->MaxLongTermFrameIdx)
                     {
-                        TRACE_WARNING(SLICE, "    - long_term_frame_idx is %i but should be in range [0,MaxLongTermFrameIdx=%i]\n", drpm->long_term_frame_idx, drpm->MaxLongTermFrameIdx);
+                        TRACE_WARNING(SLICE, "    - long_term_frame_idx is %i but should be in range [0,MaxLongTermFrameIdx=%i]", drpm->long_term_frame_idx, drpm->MaxLongTermFrameIdx);
                         retcode = FAILURE;
                     }
 
                     unsigned int max_num_ref_frames = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id]->max_num_ref_frames;
                     if (drpm->max_long_term_frame_idx_plus1 > max_num_ref_frames)
                     {
-                        TRACE_WARNING(SLICE, "    - max_long_term_frame_idx_plus1 is %i but should be in range [0,max_num_ref_frames=%i]\n", drpm->max_long_term_frame_idx_plus1, max_num_ref_frames);
+                        TRACE_WARNING(SLICE, "    - max_long_term_frame_idx_plus1 is %i but should be in range [0,max_num_ref_frames=%i]", drpm->max_long_term_frame_idx_plus1, max_num_ref_frames);
                         retcode = FAILURE;
                     }
                 }
@@ -1012,7 +1012,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
  */
 static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
 {
-    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceData()\n" CLR_RESET);
+    TRACE_INFO(SLICE, "> " BLD_GREEN "decodeSliceData()" CLR_RESET);
 
     // Initialization
     int retcode = SUCCESS;
@@ -1033,7 +1033,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
         {
             if (read_bit(dc->bitstr) == 0) // cabac_alignment_one_bit
             {
-                TRACE_ERROR(SLICE, "cabac_alignment_one_bit must be 1\n");
+                TRACE_ERROR(SLICE, "cabac_alignment_one_bit must be 1");
                 return FAILURE;
             }
         }
@@ -1086,7 +1086,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 else
                     slice->mb_field_decoding_flag = read_bit(dc->bitstr);
 
-                TRACE_ERROR(DSLICE, ">>> UNSUPPORTED (interlaced mode)\n");
+                TRACE_ERROR(DSLICE, ">>> UNSUPPORTED (interlaced mode)");
                 return UNSUPPORTED;
             }
 #endif // ENABLE_MBAFF
@@ -1123,7 +1123,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 slice->end_of_slice_flag = read_ae(dc, SE_end_of_slice_flag);
                 if (slice->end_of_slice_flag)
                 {
-                    TRACE_INFO(SLICE, "end_of_slice_flag detected!\n");
+                    TRACE_INFO(SLICE, "end_of_slice_flag detected!");
                     slice->moreDataFlag = false;
                 }
             }

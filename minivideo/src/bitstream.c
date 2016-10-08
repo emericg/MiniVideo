@@ -67,13 +67,13 @@
  */
 Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()\n" CLR_RESET);
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()" CLR_RESET);
     Bitstream_t *bitstr = NULL;
 
     if (media == NULL ||
         media->file_pointer == NULL)
     {
-        TRACE_ERROR(BITS, "<b> Unable to use MediaFile_t structure!\n");
+        TRACE_ERROR(BITS, "<b> Unable to use MediaFile_t structure!");
     }
     else
     {
@@ -82,7 +82,7 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 
         if (bitstr == NULL)
         {
-            TRACE_ERROR(BITS, "<b> Unable to calloc bitstream unit!\n");
+            TRACE_ERROR(BITS, "<b> Unable to calloc bitstream unit!");
         }
         else
         {
@@ -108,7 +108,7 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
             //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 8) to prevent some cases of invalid 64 bits reads near the end of the buffer
             if ((bitstr->buffer = (uint8_t*)calloc(bitstr->buffer_size, sizeof(uint8_t))) == NULL)
             {
-                TRACE_ERROR(BITS, "<b> Unable to calloc the bitstream buffer!\n");
+                TRACE_ERROR(BITS, "<b> Unable to calloc the bitstream buffer!");
                 free(bitstr);
                 bitstr = NULL;
             }
@@ -135,11 +135,11 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 
     if (bitstr != NULL)
     {
-        TRACE_1(BITS, "<b> Bitstream initialization success\n");
+        TRACE_1(BITS, "<b> Bitstream initialization success");
     }
     else
     {
-        TRACE_ERROR(BITS, "<b> Bitstream initialization FAILED!\n");
+        TRACE_ERROR(BITS, "<b> Bitstream initialization FAILED!");
     }
 
     // Return the bitstream structure pointer
@@ -157,11 +157,11 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
  */
 int buffer_feed_next_sample(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_next_sample()\n" CLR_RESET);
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_next_sample()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print stats?
-    //TRACE_1(BITS, "<b> Status before reallocation:\n");
+    //TRACE_1(BITS, "<b> Status before reallocation:");
     //bitstream_print_stats(bitstr);
 
     // Check for premature end of file
@@ -169,7 +169,7 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
     {
         if ((bitstr->buffer_size - bitstr->buffer_offset) < 8)
         {
-            TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!\n");
+            TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!");
             retcode = FAILURE;
         }
         else
@@ -193,7 +193,7 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
             bitstr->bitstream_offset <= 0 ||
             bitstr->buffer_size == 0)
         {
-            TRACE_ERROR(BITS, "<b> Corrupted bitstream_map->sample[i] values!\n");
+            TRACE_ERROR(BITS, "<b> Corrupted bitstream_map->sample[i] values!");
             retcode = FAILURE;
         }
         else
@@ -205,7 +205,7 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
 
             if (bitstr->buffer == NULL)
             {
-                TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!\n");
+                TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!");
                 retcode = FAILURE;
             }
             else
@@ -213,7 +213,7 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
                 // Move file pointer
                 if (fseek(bitstr->bitstream_file, bitstr->bitstream_offset, SEEK_SET) != 0)
                 {
-                    TRACE_ERROR(BITS, "<b> Unable to seek through the input file!\n");
+                    TRACE_ERROR(BITS, "<b> Unable to seek through the input file!");
                     retcode = FAILURE;
                 }
                 else
@@ -221,18 +221,18 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
                     // Feed buffer
                     if (fread(bitstr->buffer, sizeof(uint8_t), bitstr->buffer_size, bitstr->bitstream_file) != bitstr->buffer_size)
                     {
-                        TRACE_ERROR(BITS, "<b> Unable to read from the input file!\n");
+                        TRACE_ERROR(BITS, "<b> Unable to read from the input file!");
                         retcode = FAILURE;
                     }
                     else
                     {
-                        TRACE_1(BITS, "<b> Bitstream buffer reallocation succeed!\n");
+                        TRACE_1(BITS, "<b> Bitstream buffer reallocation succeed!");
                         retcode = SUCCESS;
                     }
                 }
 
                 // Print stats?
-                //TRACE_1(BITS, "<b> Status after reallocation:\n");
+                //TRACE_1(BITS, "<b> Status after reallocation:");
                 //bitstream_print_stats(bitstr);
 
                 // Update sample position
@@ -258,11 +258,11 @@ int buffer_feed_next_sample(Bitstream_t *bitstr)
  */
 int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_dynamic()\n" CLR_RESET);
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_dynamic()" CLR_RESET);
     int retcode = FAILURE;
 
     // Print stats?
-    //TRACE_1(BITS, "<b> Status before reallocation:\n");
+    //TRACE_1(BITS, "<b> Status before reallocation:");
     //bitstream_print_stats(bitstr);
 
     // Update current offset into the bitstream
@@ -280,7 +280,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
     // Check for premature end of file
     if (bitstr->bitstream_offset >= bitstr->bitstream_size)
     {
-        TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!\n");
+        TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!");
         retcode = FAILURE;
         exit(EXIT_FAILURE);
     }
@@ -299,19 +299,19 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
 
             if (bitstr->buffer == NULL)
             {
-                TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!\n");
+                TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!");
                 retcode = FAILURE;
             }
             else
             {
-                TRACE_1(BITS, "<b> Bitstream buffer resized from %uB to %uB\n", buffer_size_saved, bitstr->buffer_size);
+                TRACE_1(BITS, "<b> Bitstream buffer resized from %uB to %uB", buffer_size_saved, bitstr->buffer_size);
             }
         }
 
         // Move file pointer
         if (fseek(bitstr->bitstream_file, bitstr->bitstream_offset, SEEK_SET) != 0)
         {
-            TRACE_ERROR(BITS, "<b> Unable to seek through the input file!\n");
+            TRACE_ERROR(BITS, "<b> Unable to seek through the input file!");
             retcode = FAILURE;
         }
         else
@@ -321,17 +321,17 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
 
             if (b != bitstr->buffer_size)
             {
-                TRACE_ERROR(BITS, "<b> Unable to read from the input file! (%u read instead of %u)\n", b, bitstr->buffer_size);
+                TRACE_ERROR(BITS, "<b> Unable to read from the input file! (%u read instead of %u)", b, bitstr->buffer_size);
                 retcode = FAILURE;
             }
             else
             {
-                TRACE_1(BITS, "<b> Bitstream buffer feeded!\n");
+                TRACE_1(BITS, "<b> Bitstream buffer feeded!");
                 retcode = SUCCESS;
             }
 
             // Print stats?
-            //TRACE_1(BITS, "<b> Status after reallocation:\n");
+            //TRACE_1(BITS, "<b> Status after reallocation:");
             //bitstream_print_stats(bitstr);
         }
     }
@@ -349,7 +349,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
  */
 void free_bitstream(Bitstream_t **bitstr_ptr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "free_bitstream()\n" CLR_RESET);
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "free_bitstream()" CLR_RESET);
 
     if (*bitstr_ptr != NULL)
     {
@@ -358,14 +358,14 @@ void free_bitstream(Bitstream_t **bitstr_ptr)
             free((*bitstr_ptr)->buffer);
             (*bitstr_ptr)->buffer = NULL;
 
-            TRACE_1(BITS, "<b> Bitstream buffer freed\n");
+            TRACE_1(BITS, "<b> Bitstream buffer freed");
         }
 
         {
             free(*bitstr_ptr);
             *bitstr_ptr = NULL;
 
-            TRACE_1(BITS, "<b> Bitstream freed\n");
+            TRACE_1(BITS, "<b> Bitstream freed");
         }
     }
 }
@@ -383,7 +383,7 @@ void free_bitstream(Bitstream_t **bitstr_ptr)
  */
 uint32_t read_bit(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bit()" CLR_RESET " starting at bit offset %i\n", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bit()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
     uint32_t bit = 0;
     uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
     uint32_t start_byte = (uint32_t)(bitstr->buffer_offset / 8);
@@ -414,7 +414,7 @@ uint32_t read_bit(Bitstream_t *bitstr)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   bit     : %i\n", bit);
+    TRACE_2(BITS, "<b>   bit     : %i", bit);
 
     return bit;
 }
@@ -432,7 +432,7 @@ uint32_t read_bit(Bitstream_t *bitstr)
  */
 uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits(%u)" CLR_RESET " starting at bit offset %i\n", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint32_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
@@ -444,23 +444,23 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
     ////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_DEBUG
-    TRACE_2(BITS, "<b>   n       : %u\n", n);
-    TRACE_2(BITS, "<b>   fp      : %u\n", fp);
-    TRACE_2(BITS, "<b>   bo      : %u\n", bitstr->buffer_offset);
-    TRACE_2(BITS, "<b>   start   : %u\n", byte_current);
-    TRACE_2(BITS, "<b>   tbr     : %u\n", tbr);
+    TRACE_2(BITS, "<b>   n       : %u", n);
+    TRACE_2(BITS, "<b>   fp      : %u", fp);
+    TRACE_2(BITS, "<b>   bo      : %u", bitstr->buffer_offset);
+    TRACE_2(BITS, "<b>   start   : %u", byte_current);
+    TRACE_2(BITS, "<b>   tbr     : %u", tbr);
 
     // Check if we can read n bits
     ////////////////////////////////////////////////////////////////////////
 
     if (n == 0)
     {
-        TRACE_WARNING(BITS, "This function cannot read 0 bits!\n");
+        TRACE_WARNING(BITS, "This function cannot read 0 bits!");
         return FAILURE;
     }
     else if (n > 32)
     {
-        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!\n", n);
+        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!", n);
         return FAILURE;
     } else
 #endif // ENABLE_DEBUG
@@ -534,8 +534,8 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   content = 0d%u\n", bits);
-    TRACE_2(BITS, "<b>   content = 0x%08X\n", bits);
+    TRACE_2(BITS, "<b>   content = 0d%u", bits);
+    TRACE_2(BITS, "<b>   content = 0x%08X", bits);
 
     return bits;
 }
@@ -553,7 +553,7 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
  */
 uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits_64(%u)" CLR_RESET " starting at bit offset %i\n", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits_64(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint64_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
@@ -565,23 +565,23 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
     ////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_DEBUG
-    TRACE_2(BITS, "<b>   n       : %u\n", n);
-    TRACE_2(BITS, "<b>   fp      : %u\n", fp);
-    TRACE_2(BITS, "<b>   bo      : %u\n", bitstr->buffer_offset);
-    TRACE_2(BITS, "<b>   start   : %u\n", byte_current);
-    TRACE_2(BITS, "<b>   tbr     : %u\n", tbr);
+    TRACE_2(BITS, "<b>   n       : %u", n);
+    TRACE_2(BITS, "<b>   fp      : %u", fp);
+    TRACE_2(BITS, "<b>   bo      : %u", bitstr->buffer_offset);
+    TRACE_2(BITS, "<b>   start   : %u", byte_current);
+    TRACE_2(BITS, "<b>   tbr     : %u", tbr);
 
     // Check if we can read n bits
     ////////////////////////////////////////////////////////////////////////
 
     if (n == 0)
     {
-        TRACE_WARNING(BITS, "This function cannot read 0 bits!\n");
+        TRACE_WARNING(BITS, "This function cannot read 0 bits!");
         return FAILURE;
     }
     else if (n > 64)
     {
-        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 64 bits!\n", n);
+        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 64 bits!", n);
         return FAILURE;
     } else
 #endif // ENABLE_DEBUG
@@ -655,8 +655,8 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   content = 0d%LLu\n", bits);
-    TRACE_2(BITS, "<b>   content = 0x%16X\n", bits);
+    TRACE_2(BITS, "<b>   content = 0d%LLu", bits);
+    TRACE_2(BITS, "<b>   content = 0x%16X", bits);
 
     return bits;
 }
@@ -674,7 +674,7 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
  */
 uint32_t read_byte_aligned(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_byte_aligned()" CLR_RESET " starting at bit offset %i\n", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_byte_aligned()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
     uint32_t byte = 0;
 
     // Fill new data into the bitstream buffer, if needed
@@ -694,7 +694,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
 #if ENABLE_DEBUG
     if ((bitstr->buffer_offset % 8) != 0)
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
 #endif // ENABLE_DEBUG
@@ -710,7 +710,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   byte    : %02X\n", byte);
+    TRACE_2(BITS, "<b>   byte    : %02X", byte);
 
     return byte;
 }
@@ -727,7 +727,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
  */
 uint32_t next_byte_aligned(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_byte_aligned()" CLR_RESET " starting at bit offset %i\n", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_byte_aligned()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
     uint32_t byte = 0;
 
     // Fill new data into the bitstream buffer, if needed
@@ -747,7 +747,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
 #if ENABLE_DEBUG
     if ((bitstr->buffer_offset % 8) != 0)
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)\n", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
 #endif // ENABLE_DEBUG
@@ -760,7 +760,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   byte    : %02X\n", byte);
+    TRACE_2(BITS, "<b>   byte    : %02X", byte);
 
     return byte;
 }
@@ -778,7 +778,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
  */
 uint32_t next_bit(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_bit()" CLR_RESET " starting at bit offset %i\n", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_bit()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
 
     uint32_t bit = 0;
     uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
@@ -807,7 +807,7 @@ uint32_t next_bit(Bitstream_t *bitstr)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   bit     = %i\n", bit);
+    TRACE_2(BITS, "<b>   bit     = %i", bit);
 
     return bit;
 }
@@ -825,7 +825,7 @@ uint32_t next_bit(Bitstream_t *bitstr)
  */
 uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_bits(%u)" CLR_RESET " starting at bit offset %i\n", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_bits(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint32_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
@@ -837,23 +837,23 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
     ////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_DEBUG
-    TRACE_2(BITS, "<b>   n       : %u\n", n);
-    TRACE_2(BITS, "<b>   fp      : %u\n", fp);
-    TRACE_2(BITS, "<b>   bo      : %u\n", bitstr->buffer_offset);
-    TRACE_2(BITS, "<b>   start   : %u\n", byte_current);
-    TRACE_2(BITS, "<b>   tbr     : %u\n", tbr);
+    TRACE_2(BITS, "<b>   n       : %u", n);
+    TRACE_2(BITS, "<b>   fp      : %u", fp);
+    TRACE_2(BITS, "<b>   bo      : %u", bitstr->buffer_offset);
+    TRACE_2(BITS, "<b>   start   : %u", byte_current);
+    TRACE_2(BITS, "<b>   tbr     : %u", tbr);
 
     // Check if we can read n bits
     ////////////////////////////////////////////////////////////////////////
 
     if (n == 0)
     {
-        TRACE_WARNING(BITS, "This function cannot read 0 bits!\n");
+        TRACE_WARNING(BITS, "This function cannot read 0 bits!");
         return FAILURE;
     }
     else if (n > 32)
     {
-        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!\n", n);
+        TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!", n);
         return FAILURE;
     }
     else
@@ -926,8 +926,8 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
     // Return result
     ////////////////////////////////////////////////////////////////////////
 
-    TRACE_2(BITS, "<b>   content = 0d%u\n", bits);
-    TRACE_2(BITS, "<b>   content = 0x%08X\n", bits);
+    TRACE_2(BITS, "<b>   content = 0d%u", bits);
+    TRACE_2(BITS, "<b>   content = 0x%08X", bits);
 
     return bits;
 }
@@ -995,11 +995,11 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
 #if ENABLE_DEBUG
     if (retcode == SUCCESS)
     {
-        TRACE_2(BITS, "<b> " BLD_BLUE "skip_bits(%u)" CLR_RESET " SUCCESS\n", n);
+        TRACE_2(BITS, "<b> " BLD_BLUE "skip_bits(%u)" CLR_RESET " SUCCESS", n);
     }
     else
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "skip_bits(%u)" CLR_RESET " Cannot skip bits at bit offset\n", n, bitstr->buffer_offset);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "skip_bits(%u)" CLR_RESET " Cannot skip bits at bit offset", n, bitstr->buffer_offset);
     }
 #endif // ENABLE_DEBUG
 
@@ -1039,11 +1039,11 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
 #if ENABLE_DEBUG
     if (retcode == SUCCESS)
     {
-        TRACE_2(BITS, "<b> " BLD_BLUE "rewind_bits(%u)" CLR_RESET " SUCCESS\n", n);
+        TRACE_2(BITS, "<b> " BLD_BLUE "rewind_bits(%u)" CLR_RESET " SUCCESS", n);
     }
     else
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "rewind_bits(%u)" CLR_RESET " Cannot rewind bits at bit offset %u\n", n, bitstr->buffer_offset);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "rewind_bits(%u)" CLR_RESET " Cannot rewind bits at bit offset %u", n, bitstr->buffer_offset);
     }
 #endif // ENABLE_DEBUG
 
@@ -1078,11 +1078,11 @@ int bitstream_goto_offset(Bitstream_t *bitstr, const int64_t n)
 #if ENABLE_DEBUG
     if (retcode == SUCCESS)
     {
-        TRACE_2(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Success\n", n);
+        TRACE_2(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Success", n);
     }
     else
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Cannot jump outside bitstream boundaries!\n", n);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Cannot jump outside bitstream boundaries!", n);
     }
 #endif // ENABLE_DEBUG
 

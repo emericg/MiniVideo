@@ -44,7 +44,7 @@
  */
 int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> pes_packetizer()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> pes_packetizer()" CLR_RESET);
     int retcode = SUCCESS;
 
     // 3000 = ~ 33,333 * 90 (30 fps)
@@ -56,12 +56,12 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     if (bitstream_map->framerate > 0)
     {
         pts_tick = (uint64_t)((1000.0 / bitstream_map->framerate) * 90);
-        TRACE_1(MUXER, "frame rate : %f\n", bitstream_map->framerate);
-        TRACE_1(MUXER, "pts_tick   : %llu\n", pts_tick);
+        TRACE_1(MUXER, "frame rate : %f", bitstream_map->framerate);
+        TRACE_1(MUXER, "pts_tick   : %llu", pts_tick);
     }
     else
     {
-        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.\n", bitstream_map->framerate);
+        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.", bitstream_map->framerate);
     }
 
     for (unsigned i = 0; i < bitstream_map->sample_count; i++)
@@ -69,10 +69,10 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id     : %i\n", i);
-        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size   : %i\n", size);
-        TRACE_2(MUXER, " | sample offset : %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i", i);
+        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i", size);
+        TRACE_2(MUXER, " | sample offset : %i", offset);
 
         // Generate a fixed length PES header
         ////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
         if (fseek(f_src, offset, SEEK_SET) != 0)
         {
-            TRACE_ERROR(MUXER, "Unable to seek through the input file!\n");
+            TRACE_ERROR(MUXER, "Unable to seek through the input file!");
             retcode = FAILURE;
         }
         else
@@ -187,7 +187,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
             if (pes_data == NULL)
             {
-                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!\n");
+                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!");
                 retcode = FAILURE;
             }
             else
@@ -197,7 +197,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                 if (read != size)
                 {
-                    TRACE_ERROR(MUXER, "read != size (%i / %i)\n", read, size);
+                    TRACE_ERROR(MUXER, "read != size (%i / %i)", read, size);
                     retcode = FAILURE;
                 }
                 else
@@ -217,7 +217,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                     if (write != size)
                     {
-                        TRACE_ERROR(MUXER, "write != size (%i / %i)\n", write, size);
+                        TRACE_ERROR(MUXER, "write != size (%i / %i)", write, size);
                         retcode = FAILURE;
                     }
                 }

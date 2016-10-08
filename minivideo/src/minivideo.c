@@ -122,13 +122,13 @@ void minivideo_print_infos(void)
 #endif
 
 #if ENABLE_DEBUG
-    printf("* MiniVideo library tracing test:\n");
-    TRACE_ERROR(MAIN, "TEST error\n");
-    TRACE_WARNING(MAIN, "TEST warning\n");
-    TRACE_INFO(MAIN, "TEST info\n");
-    TRACE_1(MAIN, "TEST lvl 1\n");
-    TRACE_2(MAIN, "TEST lvl 2\n");
-    TRACE_3(MAIN, "TEST lvl 3\n\n");
+    printf("* MiniVideo library tracing test:");
+    TRACE_ERROR(MAIN, "TEST error");
+    TRACE_WARNING(MAIN, "TEST warning");
+    TRACE_INFO(MAIN, "TEST info");
+    TRACE_1(MAIN, "TEST lvl 1");
+    TRACE_2(MAIN, "TEST lvl 2");
+    TRACE_3(MAIN, "TEST lvl 3");
 #endif
 }
 
@@ -199,11 +199,11 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
 
     if (input_media == NULL)
     {
-        TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!");
     }
     else if (input_media->file_size == 0)
     {
-        TRACE_ERROR(MAIN, "Unable to parse emtpy file!\n");
+        TRACE_ERROR(MAIN, "Unable to parse emtpy file!");
     }
     else
     {
@@ -211,7 +211,7 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
         switch (input_media->container)
         {
             case CONTAINER_UNKNOWN:
-                TRACE_ERROR(MAIN, "Unwknown container file format: unable to parse this file!\n");
+                TRACE_ERROR(MAIN, "Unwknown container file format: unable to parse this file!");
                 break;
             case CONTAINER_AVI:
                 retcode = avi_fileParse(input_media);
@@ -232,7 +232,7 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
                 retcode = mp3_fileParse(input_media);
                 break;
             default:
-                TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!\n",
+                TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!",
                             getContainerString(input_media->container, 0));
                 break;
         }
@@ -252,7 +252,7 @@ int minivideo_decode(MediaFile_t *input_media)
 {
     int retcode = FAILURE;
 
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()\n" CLR_RESET);
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()" CLR_RESET);
 
     if (input_media != NULL)
     {
@@ -260,7 +260,7 @@ int minivideo_decode(MediaFile_t *input_media)
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to decode from a NULL MediaFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to decode from a NULL MediaFile_t struct!");
     }
 
     return retcode;
@@ -277,7 +277,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
 {
     int retcode = FAILURE;
 
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnail()\n" CLR_RESET);
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnail()" CLR_RESET);
 
     if (input_media != NULL)
     {
@@ -287,7 +287,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
 
         if (picture_number_filtered == 0)
         {
-            TRACE_ERROR(MAIN, "No picture to decode after filtering!\n");
+            TRACE_ERROR(MAIN, "No picture to decode after filtering!");
         }
         else
         {
@@ -298,13 +298,13 @@ int minivideo_thumbnail(MediaFile_t *input_media,
             switch (input_media->tracks_video[0]->stream_codec)
             {
                 case CODEC_UNKNOWN:
-                    TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!\n");
+                    TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!");
                     break;
                 case CODEC_H264:
                     retcode = h264_decode(input_media, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
                     break;
                 default:
-                    TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!\n",
+                    TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!",
                                 getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec, true));
                     break;
             }
@@ -312,7 +312,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to thumbnail from a NULL MediaFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to thumbnail from a NULL MediaFile_t struct!");
     }
 
     return retcode;
@@ -329,7 +329,7 @@ int minivideo_extract(MediaFile_t *input_media,
 {
     int retcode = FAILURE;
 
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_extract()\n" CLR_RESET);
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_extract()" CLR_RESET);
 
     if (input_media != NULL && output_directory != NULL)
     {
@@ -348,7 +348,7 @@ int minivideo_extract(MediaFile_t *input_media,
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to extract from a NULL MediaFile_t struct!\n");
+        TRACE_ERROR(MAIN, "Unable to extract from a NULL MediaFile_t struct!");
     }
 
     return retcode;

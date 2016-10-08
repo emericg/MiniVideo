@@ -37,7 +37,7 @@
 
 static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> write_pes()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> write_pes()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Write packets
@@ -46,14 +46,14 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id     : %i\n", i);
-        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size   : %i\n", size);
-        TRACE_2(MUXER, " | sample offset : %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i", i);
+        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i", size);
+        TRACE_2(MUXER, " | sample offset : %i", offset);
 
         if (fseek(f_src, offset, SEEK_SET) != 0)
         {
-            TRACE_ERROR(MUXER, "Unable to seek through the input file!\n");
+            TRACE_ERROR(MUXER, "Unable to seek through the input file!");
             retcode = FAILURE;
         }
         else
@@ -62,7 +62,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
             if (pes_buffer == NULL)
             {
-                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!\n");
+                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!");
                 retcode = FAILURE;
             }
             else
@@ -72,7 +72,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                 if (read != size)
                 {
-                    TRACE_ERROR(MUXER, "read != size (%i / %i)\n", read, size);
+                    TRACE_ERROR(MUXER, "read != size (%i / %i)", read, size);
                     retcode = FAILURE;
                 }
                 else
@@ -81,7 +81,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                     if (write != size)
                     {
-                        TRACE_ERROR(MUXER, "write != size (%i / %i)\n", write, size);
+                        TRACE_ERROR(MUXER, "write != size (%i / %i)", write, size);
                         retcode = FAILURE;
                     }
                 }
@@ -98,7 +98,7 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
 static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> write_es()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> write_es()" CLR_RESET);
     int retcode = SUCCESS;
 
     for (unsigned i = 0; i < bitstream_map->sample_count; i++)
@@ -106,14 +106,14 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         size_t size   = (size_t)bitstream_map->sample_size[i];
         size_t offset = (size_t)bitstream_map->sample_offset[i];
 
-        TRACE_2(MUXER, " > Sample id     : %i\n", i);
-        TRACE_2(MUXER, " | sample type   : %i\n", bitstream_map->sample_type[i]);
-        TRACE_2(MUXER, " | sample size   : %i\n", size);
-        TRACE_2(MUXER, " | sample offset : %i\n", offset);
+        TRACE_2(MUXER, " > Sample id     : %i", i);
+        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample size   : %i", size);
+        TRACE_2(MUXER, " | sample offset : %i", offset);
 
         if (fseek(f_src, offset, SEEK_SET) != 0)
         {
-            TRACE_ERROR(MUXER, "Unable to seek through the input file!\n");
+            TRACE_ERROR(MUXER, "Unable to seek through the input file!");
             retcode = FAILURE;
         }
         else
@@ -122,7 +122,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
             if (pes_buffer == NULL)
             {
-                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!\n");
+                TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!");
                 retcode = FAILURE;
             }
             else
@@ -132,7 +132,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                 if (read != size)
                 {
-                    TRACE_ERROR(MUXER, "read != size (%i / %i)\n", read, size);
+                    TRACE_ERROR(MUXER, "read != size (%i / %i)", read, size);
                     retcode = FAILURE;
                 }
                 else
@@ -149,7 +149,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
                     if (write != size)
                     {
-                        TRACE_ERROR(MUXER, "write != size (%i / %i)\n", write, size);
+                        TRACE_ERROR(MUXER, "write != size (%i / %i)", write, size);
                         retcode = FAILURE;
                     }
                 }
@@ -170,7 +170,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
  */
 static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structures
@@ -178,35 +178,35 @@ static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
     {
         if (bitstream_map->stream_type == stream_AUDIO)
         {
-            TRACE_1(MUXER, " > stream type : AUDIO\n");
+            TRACE_1(MUXER, " > stream type : AUDIO");
         }
         else if (bitstream_map->stream_type == stream_VIDEO)
         {
-            TRACE_1(MUXER, " > stream type : VIDEO\n");
+            TRACE_1(MUXER, " > stream type : VIDEO");
         }
         else if (bitstream_map->stream_type == stream_TEXT)
         {
-            TRACE_1(MUXER, " > stream type : VIDEO\n");
+            TRACE_1(MUXER, " > stream type : VIDEO");
         }
         else
         {
-            TRACE_ERROR(MUXER, " > This is not an AUDIO / VIDEO / TEXT stream!\n");
+            TRACE_ERROR(MUXER, " > This is not an AUDIO / VIDEO / TEXT stream!");
             retcode = FAILURE;
         }
 
         if (bitstream_map->sample_count > 0)
         {
-            TRACE_1(MUXER, " > number of samples: %i\n", bitstream_map->sample_count);
+            TRACE_1(MUXER, " > number of samples: %i", bitstream_map->sample_count);
         }
         else
         {
-            TRACE_ERROR(MUXER, " > This stream does not contain any sample!?\n");
+            TRACE_ERROR(MUXER, " > This stream does not contain any sample!?");
             retcode = FAILURE;
         }
     }
     else
     {
-        TRACE_ERROR(MUXER, " > Void stream: cannot mux anything!\n");
+        TRACE_ERROR(MUXER, " > Void stream: cannot mux anything!");
         retcode = FAILURE;
     }
 
@@ -221,7 +221,7 @@ static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
  */
 static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Generate stream name
@@ -249,7 +249,7 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
         else
         {
             strncat(output_filename, ".audio", 254);
-            TRACE_WARNING(MUXER, " > Unknown AUDIO codec, using generic file extension\n");
+            TRACE_WARNING(MUXER, " > Unknown AUDIO codec, using generic file extension");
         }
     }
     else // if (bitstream_map->stream_type == stream_VIDEO)
@@ -277,12 +277,12 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
         else
         {
             strncat(output_filename, ".video", 254);
-            TRACE_WARNING(MUXER, " > Unknown VIDEO codec, using generic file extension\n");
+            TRACE_WARNING(MUXER, " > Unknown VIDEO codec, using generic file extension");
         }
     }
 
     // Print generated file name
-    TRACE_INFO(MUXER, " > File name : '%s'\n", output_filename);
+    TRACE_INFO(MUXER, " > File name : '%s'", output_filename);
 
     return retcode;
 }
@@ -298,7 +298,7 @@ int muxer_export_samples(MediaFile_t *media,
                          BitstreamMap_t *bitstream_map,
                          const int output_format)
 {
-    TRACE_INFO(MUXER, BLD_GREEN "> muxer_export_sample()\n" CLR_RESET);
+    TRACE_INFO(MUXER, BLD_GREEN "> muxer_export_sample()" CLR_RESET);
 
     // Check stream
     int retcode = stream_infos(media, bitstream_map);
@@ -315,7 +315,7 @@ int muxer_export_samples(MediaFile_t *media,
 
         if (f_dst == NULL)
         {
-            TRACE_ERROR(MUXER, " > Cannot create or open output file!\n");
+            TRACE_ERROR(MUXER, " > Cannot create or open output file!");
             retcode = FAILURE;
         }
         else
@@ -344,7 +344,7 @@ int muxer_export_samples(MediaFile_t *media,
             // Close stream file
             if (fclose(f_dst) != 0)
             {
-                TRACE_ERROR(MUXER, " > Cannot close output file!\n");
+                TRACE_ERROR(MUXER, " > Cannot close output file!");
                 retcode = FAILURE;
             }
         }

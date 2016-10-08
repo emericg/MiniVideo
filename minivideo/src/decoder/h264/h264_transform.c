@@ -120,7 +120,7 @@ static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag, i
  */
 void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkIdx)
 {
-    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_luma()\n" CLR_RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_luma()" CLR_RESET);
 
     int c[4][4] = {{0}};
     int r[4][4] = {{0}};
@@ -138,7 +138,7 @@ void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkId
         (mb->Intra4x4PredMode[luma4x4BlkIdx] == 0 || mb->Intra4x4PredMode[luma4x4BlkIdx] == 1))
     {
         //transformbypass_decoding(dc, 4, 4, mb->Intra4x4PredMode[luma4x4BlkIdx], r);
-        TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)\n");
+        TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)");
     }
 
     // 4
@@ -167,7 +167,7 @@ void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkId
  */
 void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " BLD_GREEN "transform16x16_luma()\n" CLR_RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform16x16_luma()" CLR_RESET);
 
     // 1 (DC coefficients)
     int c1[4][4] = {{0}};
@@ -209,7 +209,7 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
         (mb->Intra16x16PredMode == 0 || mb->Intra16x16PredMode == 1))
     {
         //transformbypass_decoding(dc, mb->Intra16x16PredMode, rMb, 16, 16);
-        TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)\n");
+        TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)");
     }
 
     // 4
@@ -235,7 +235,7 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
  */
 void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkIdx)
 {
-    TRACE_1(TRANS, "<> " BLD_GREEN "transform8x8_luma()\n" CLR_RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform8x8_luma()" CLR_RESET);
 
     int c[8][8] = {{0}};
     int r[8][8] = {{0}};
@@ -253,7 +253,7 @@ void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkId
         (mb->Intra8x8PredMode[luma8x8BlkIdx] == 0 || mb->Intra8x8PredMode[luma8x8BlkIdx] == 1))
      {
          //transformbypass_decoding(dc, 8, 8, mb->Intra8x8PredMode[luma8x8BlkIdx], r);
-         TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)\n");
+         TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)");
      }
 
     // 4
@@ -285,7 +285,7 @@ void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkId
  */
 void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma()\n" CLR_RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma()" CLR_RESET);
 
     // Shortcuts
     pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
@@ -381,7 +381,7 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
             (mb->IntraChromaPredMode == 1 || mb->IntraChromaPredMode == 2))
         {
             //transformbypass_decoding(dc, (2 - mb->IntraChromaPredMode), rMb, sps->MbWidthC, sps->MbHeightC);
-            TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)\n");
+            TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)");
         }
 
         // 4
@@ -413,9 +413,9 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
  */
 void transform4x4_chroma_cat3(DecodingContext_t *dc, Macroblock_t *mb)
 {
-    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma_cat3()\n" CLR_RESET);
+    TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma_cat3()" CLR_RESET);
 
-    TRACE_ERROR(TRANS, ">>> UNSUPPORTED (ChromaArrayType == 3)\n");
+    TRACE_ERROR(TRANS, ">>> UNSUPPORTED (ChromaArrayType == 3)");
 }
 
 /* ************************************************************************** */
@@ -439,7 +439,7 @@ void transform4x4_chroma_cat3(DecodingContext_t *dc, Macroblock_t *mb)
  */
 void inverse_scan_4x4(int list[16], int matrix[4][4])
 {
-    TRACE_2(TRANS, " inverse_scan_4x4()\n");
+    TRACE_2(TRANS, " inverse_scan_4x4()");
 
     // Table transfer
     int zz = 0;
@@ -469,7 +469,7 @@ void inverse_scan_4x4(int list[16], int matrix[4][4])
  */
 void inverse_scan_8x8(int list[64], int matrix[8][8])
 {
-    TRACE_2(TRANS, " inverse_scan_8x8()\n");
+    TRACE_2(TRANS, " inverse_scan_8x8()");
 
     // Table transfer
     int zz = 0;
@@ -488,7 +488,7 @@ void inverse_scan_8x8(int list[64], int matrix[8][8])
 static void print2x2(int block[2][2])
 {
 #if ENABLE_DEBUG
-    TRACE_2(TRANS, " print2x2()\n");
+    TRACE_2(TRANS, " print2x2()");
 
     // Print residual block
     printf("+-------------------+\n");
@@ -522,7 +522,7 @@ static void print2x2(int block[2][2])
 static void print4x4(int block[4][4])
 {
 #if ENABLE_DEBUG
-    TRACE_2(TRANS, " print4x4()\n");
+    TRACE_2(TRANS, " print4x4()");
 
     // Print residual block
     printf("+-------------------+\n");
@@ -556,7 +556,7 @@ static void print4x4(int block[4][4])
 static void print8_tx8(int block[8][8])
 {
 #if ENABLE_DEBUG
-    TRACE_2(TRANS, " print8_tx8()\n");
+    TRACE_2(TRANS, " print8_tx8()");
 
     // Print residual block
     printf("+---------------------------------------+\n");
@@ -597,7 +597,7 @@ static void print8_tx8(int block[8][8])
  */
 static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
 {
-    TRACE_2(TRANS, " derivChromaQP()\n");
+    TRACE_2(TRANS, " derivChromaQP()");
 
     // Shortcuts
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
@@ -653,7 +653,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
-        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
+        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_INTER_PRED
@@ -662,7 +662,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
-        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
+        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
@@ -679,10 +679,10 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     {
         for (q = 0; q < 6; q++)
         {
-            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i\n", YCbCr, q);
+            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 4; i++)
                 for (j = 0; j < 4; j++)
-                    TRACE_1(DTRANS, "levelscale_4x4: %i\n", sps->LevelScale4x4[YCbCr][q][i][j]);
+                    TRACE_1(DTRANS, "levelscale_4x4: %i", sps->LevelScale4x4[YCbCr][q][i][j]);
         }
     }
 */
@@ -705,7 +705,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
-        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)\n");
+        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_INTER_PRED
@@ -714,7 +714,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
-        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)\n");
+        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
@@ -731,10 +731,10 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     {
         for (q = 0; q < 6; q++)
         {
-            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i\n", YCbCr, q);
+            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 8; i++)
                 for (j = 0; j < 8; j++)
-                    TRACE_1(DTRANS, "  levelscale_8x8[%i][%i]: %i\n", i, j, sps->LevelScale8x8[YCbCr][q][i][j]);
+                    TRACE_1(DTRANS, "  levelscale_8x8[%i][%i]: %i", i, j, sps->LevelScale8x8[YCbCr][q][i][j]);
         }
     }
 */
@@ -755,7 +755,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
  */
 static int transform_16x16_lumadc(DecodingContext_t *dc, int c[4][4], int dcY[4][4])
 {
-    TRACE_2(TRANS, " transform_16x16_lumadc()\n");
+    TRACE_2(TRANS, " transform_16x16_lumadc()");
     int retcode = SUCCESS;
 
     // Shortcuts
@@ -826,7 +826,7 @@ static int transform_16x16_lumadc(DecodingContext_t *dc, int c[4][4], int dcY[4]
  */
 static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[2][2], int dcC[2][2])
 {
-    TRACE_2(TRANS, " transform_2x2_chromadc()\n");
+    TRACE_2(TRANS, " transform_2x2_chromadc()");
     int retcode = SUCCESS;
 
     // Shortcuts
@@ -874,7 +874,7 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
  */
 static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[4][4], int dcC[4][4])
 {
-    TRACE_2(TRANS, " transform_4x4_chromadc()\n");
+    TRACE_2(TRANS, " transform_4x4_chromadc()");
     int retcode = SUCCESS;
 
     // Shortcuts
@@ -923,7 +923,7 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
  */
 static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[2][2], int dcC[2][2])
 {
-    TRACE_2(TRANS, "quant2x2_chromadc()\n");
+    TRACE_2(TRANS, "quant2x2_chromadc()");
     int i = 0, j = 0;
 
     // Scale
@@ -951,7 +951,7 @@ static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[2
  */
 static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[4][4], int dcC[4][4])
 {
-    TRACE_2(TRANS, "quant4x4_chromadc()\n");
+    TRACE_2(TRANS, "quant4x4_chromadc()");
     int i = 0, j = 0;
 
     // Scale
@@ -987,7 +987,7 @@ static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[4
  */
 static void idct2x2_chromadc(int c[2][2], int f[2][2])
 {
-    TRACE_2(TRANS, "idct2x2_chromadc()\n");
+    TRACE_2(TRANS, "idct2x2_chromadc()");
     int i = 0, j = 0, k = 0;
     int t1[2][2] = {{0}};
 
@@ -1017,7 +1017,7 @@ static void idct2x2_chromadc(int c[2][2], int f[2][2])
  */
 static void idct4x4_chromadc(int c[4][4], int f[4][4])
 {
-    TRACE_2(TRANS, "idct4x4_chromadc()\n");
+    TRACE_2(TRANS, "idct4x4_chromadc()");
     int i = 0, j = 0, k = 0;
     int t1[2][2] = {{0}};
 
@@ -1048,7 +1048,7 @@ static void idct4x4_chromadc(int c[4][4], int f[4][4])
  */
 static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[4][4], int r[4][4])
 {
-    TRACE_2(TRANS, " transform_4x4_residual()\n");
+    TRACE_2(TRANS, " transform_4x4_residual()");
     int retcode = SUCCESS;
 
     // Shortcuts
@@ -1099,7 +1099,7 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[
  */
 static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, int c[4][4], int d[4][4])
 {
-    TRACE_2(TRANS, " quant4x4()\n");
+    TRACE_2(TRANS, " quant4x4()");
 
     // Initialization
     int i = 0, j = 0;
@@ -1144,7 +1144,7 @@ static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, cons
  */
 static void idct4x4(int d[4][4], int r[4][4])
 {
-    TRACE_2(TRANS, " idct4x4()\n");
+    TRACE_2(TRANS, " idct4x4()");
 
     int e[4][4] = {{0}};
     int f[4][4] = {{0}};
@@ -1204,7 +1204,7 @@ static void idct4x4(int d[4][4], int r[4][4])
  */
 static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[8][8], int r[8][8])
 {
-    TRACE_2(TRANS, " transform_8x8_residual()\n");
+    TRACE_2(TRANS, " transform_8x8_residual()");
     int retcode = SUCCESS;
 
     // Shortcuts
@@ -1255,7 +1255,7 @@ static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[
  */
 static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int d[8][8])
 {
-    TRACE_2(TRANS, " quant8x8()\n");
+    TRACE_2(TRANS, " quant8x8()");
 
     // Initialization
     int i = 0, j = 0;
@@ -1294,7 +1294,7 @@ static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int
  */
 static void idct8x8(int d[8][8], int r[8][8])
 {
-    TRACE_2(TRANS, " idct8x8()\n");
+    TRACE_2(TRANS, " idct8x8()");
 
     int e[8][8];
     int f[8][8];
@@ -1397,7 +1397,7 @@ static void idct8x8(int d[8][8], int r[8][8])
  */
 static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, int u[4][4])
 {
-    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4()\n" CLR_RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1408,12 +1408,12 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
     int xO = 0, yO = 0;
 
     InverseLuma4x4BlkScan(blkIdx, &xO, &yO);
-    TRACE_2(TRANS, "xO yO : %i - %i\n", xO, yO);
+    TRACE_2(TRANS, "xO yO : %i - %i", xO, yO);
 
     // Derivation of upper-left luma sample of the current macroblock
     //int xP = 0, yP = 0;
     //InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    //TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
+    //TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
 
     // Picture construction
     for (i = 0; i < 4; i++)
@@ -1439,7 +1439,7 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
  */
 static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[4][4])
 {
-    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4chroma()\n" CLR_RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4chroma()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1450,12 +1450,12 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
     int xO = 0, yO = 0;
 
     InverseChroma4x4BlkScan(blkIdx, &xO, &yO);
-    TRACE_2(TRANS, "xO yO : %i - %i\n", xO, yO);
+    TRACE_2(TRANS, "xO yO : %i - %i", xO, yO);
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
+    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     if (YCbCr == 1)
@@ -1488,7 +1488,7 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
  */
 static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx, int u[8][8])
 {
-    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8()\n" CLR_RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1499,12 +1499,12 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
     int xO = 0, yO = 0;
 
     InverseLuma8x8BlkScan(blkIdx, &xO, &yO);
-    TRACE_2(TRANS, "xO yO : %i - %i\n", xO, yO);
+    TRACE_2(TRANS, "xO yO : %i - %i", xO, yO);
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
+    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     for (i = 0; i < 8; i++)
@@ -1530,7 +1530,7 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
  */
 static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[8][8])
 {
-    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8chroma()\n" CLR_RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8chroma()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1541,12 +1541,12 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
     int xO = 0, yO = 0;
 
     InverseChroma4x4BlkScan(blkIdx, &xO, &yO);
-    TRACE_2(TRANS, "xO yO : %i - %i\n", xO, yO);
+    TRACE_2(TRANS, "xO yO : %i - %i", xO, yO);
 /*
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
+    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     if (YCbCr == 1)
@@ -1578,7 +1578,7 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
  */
 static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][16])
 {
-    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_16x16()\n" CLR_RESET);
+    TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_16x16()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Shortcut
@@ -1587,14 +1587,14 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i\n", xP, yP);
+    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
 */
 
     // Picture construction
 #if ENABLE_MBAFF
     if (dc->active_slice->MbaffFrameFlag)
     {
-        TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)\n")
+        TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)")
         return UNSUPPORTED;
     }
     else
@@ -1624,9 +1624,9 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
  */
 static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag, int **r, int nW, int nH)
 {
-    TRACE_2(TRANS, " transformbypass_decoding()\n");
+    TRACE_2(TRANS, " transformbypass_decoding()");
 
-    TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)\n");
+    TRACE_WARNING(TRANS, ">>> UNIMPLEMENTED (transformbypass_decoding)");
 
     return NULL;
 }

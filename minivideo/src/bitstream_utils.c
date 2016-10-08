@@ -43,11 +43,11 @@
  */
 void bitstream_print_stats(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b>   bitstream offset  (byte) : " BLD_BLUE "%lli" CLR_RESET " / " BLD_BLUE "%lli\n" CLR_RESET, bitstr->bitstream_offset, bitstr->bitstream_size);
-    TRACE_1(BITS, "<b>   buffer offset     (byte) : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset/8, bitstr->buffer_size);
-    TRACE_1(BITS, "<b>   buffer offset     (bit)  : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset, bitstr->buffer_size*8);
-    TRACE_1(BITS, "<b>   buffer offset % 8 (bit)  : " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_offset%8);
-    TRACE_1(BITS, "<b>   buffer discarded byte    : " BLD_BLUE "%u\n" CLR_RESET, bitstr->buffer_discarded_bytes);
+    TRACE_1(BITS, "<b>   bitstream offset  (byte) : " BLD_BLUE "%lli" CLR_RESET " / " BLD_BLUE "%lli" CLR_RESET, bitstr->bitstream_offset, bitstr->bitstream_size);
+    TRACE_1(BITS, "<b>   buffer offset     (byte) : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u" CLR_RESET, bitstr->buffer_offset/8, bitstr->buffer_size);
+    TRACE_1(BITS, "<b>   buffer offset     (bit)  : " BLD_BLUE "%u" CLR_RESET " / " BLD_BLUE "%u" CLR_RESET, bitstr->buffer_offset, bitstr->buffer_size*8);
+    TRACE_1(BITS, "<b>   buffer offset % 8 (bit)  : " BLD_BLUE "%u" CLR_RESET, bitstr->buffer_offset%8);
+    TRACE_1(BITS, "<b>   buffer discarded byte    : " BLD_BLUE "%u" CLR_RESET, bitstr->buffer_discarded_bytes);
 }
 
 /* ************************************************************************** */
@@ -60,7 +60,7 @@ void bitstream_print_stats(Bitstream_t *bitstr)
  */
 void bitstream_print_buffer(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_print_buffer()\n" CLR_RESET);
+    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_print_buffer()" CLR_RESET);
 
     unsigned int i = 0, j = 0;
     unsigned int row = 21, line = 16;
@@ -97,7 +97,7 @@ void bitstream_print_buffer(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current byte offset is %lli\n" CLR_RESET,
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current byte offset is %lli" CLR_RESET,
                bitstream_get_absolute_byte_offset(bitstr));
 }
 
@@ -109,7 +109,7 @@ void bitstream_print_absolute_byte_offset(Bitstream_t *bitstr)
  */
 void bitstream_print_absolute_bit_offset(Bitstream_t *bitstr)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current bit offset is %lli\n" CLR_RESET,
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "Current bit offset is %lli" CLR_RESET,
                bitstream_get_absolute_bit_offset(bitstr));
 }
 
@@ -127,13 +127,13 @@ bool bitstream_check_alignment(Bitstream_t *bitstr)
 
     if ((bitstr->buffer_offset % 8) == 0)
     {
-        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is aligned" CLR_RESET " at current byte offset %lli\n",
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is aligned" CLR_RESET " at current byte offset %lli",
                 bitstream_get_absolute_byte_offset(bitstr));
         alignment = true;
     }
     else
     {
-        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is NOT aligned" CLR_RESET " at current byte offset %lli + %i bit(s)\n",
+        TRACE_1(BITS, "<b> " BLD_BLUE "Bitstream is NOT aligned" CLR_RESET " at current byte offset %lli + %i bit(s)",
                 bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
     }
 
@@ -153,7 +153,7 @@ bool bitstream_check_alignment(Bitstream_t *bitstr)
  */
 bool bitstream_force_alignment(Bitstream_t *bitstr)
 {
-    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_force_alignment()\n" CLR_RESET);
+    TRACE_1(BITS, "<b> " BLD_BLUE "bitstream_force_alignment()" CLR_RESET);
     bool alignment = true;
 
     // Check if bitstream is already aligned
@@ -161,14 +161,14 @@ bool bitstream_force_alignment(Bitstream_t *bitstr)
     {
         // Compute bit alignment
         int bit_alignment = 8 - (bitstr->buffer_offset % 8);
-        TRACE_2(BITS, "<b> +%i bit(s) alignment needed\n", bit_alignment);
+        TRACE_2(BITS, "<b> +%i bit(s) alignment needed", bit_alignment);
 
         // Load next data if needed
         if ((bitstr->buffer_offset + bit_alignment) > (bitstr->buffer_size * 8))
         {
             if (buffer_feed_dynamic(bitstr, -1) == FAILURE)
             {
-                TRACE_ERROR(BITS, "<b> Bitstream cannot be aligned\n");
+                TRACE_ERROR(BITS, "<b> Bitstream cannot be aligned");
                 alignment = false;
             }
         }
@@ -179,7 +179,7 @@ bool bitstream_force_alignment(Bitstream_t *bitstr)
 
             // Alignment operation
             bitstr->buffer_offset += bit_alignment;
-            TRACE_1(BITS, "<b> Bitstream now aligned: %i bit(s) offset applied\n", bit_alignment);
+            TRACE_1(BITS, "<b> Bitstream now aligned: %i bit(s) offset applied", bit_alignment);
         }
     }
 
@@ -200,14 +200,14 @@ bool bitstream_force_alignment(Bitstream_t *bitstr)
  */
 bool more_bitstream_data(Bitstream_t *bitstr)
 {
-    TRACE_2(BITS, "<b> " BLD_BLUE "more_bitstream_data()\n" CLR_RESET);
+    TRACE_2(BITS, "<b> " BLD_BLUE "more_bitstream_data()" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
     {
         if ((bitstr->bitstream_offset + (bitstr->buffer_offset / 8)) >= bitstr->bitstream_size)
         {
-            TRACE_2(BITS, "<b> No more data in the bitstream!\n");
+            TRACE_2(BITS, "<b> No more data in the bitstream!");
             retcode = false;
         }
     }
@@ -217,7 +217,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
         {
             if ((bitstr->buffer_size - bitstr->buffer_offset) < 8)
             {
-                TRACE_2(BITS, "<b> No more data in the bitstream!\n");
+                TRACE_2(BITS, "<b> No more data in the bitstream!");
                 retcode = false;
             }
         }
@@ -238,7 +238,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
  */
 bool h264_rbsp_trailing_bits(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "h264_rbsp_trailing_bits()\n" CLR_RESET);
+    TRACE_3(BITS, "<b> " BLD_BLUE "h264_rbsp_trailing_bits()" CLR_RESET);
     bool retcode = true;
 
     if (read_bit(bitstr) == 1) // rbsp_stop_one_bit
@@ -275,7 +275,7 @@ bool h264_rbsp_trailing_bits(Bitstream_t *bitstr)
  */
 bool h264_more_rbsp_data(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_data()\n" CLR_RESET);
+    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_data()" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
@@ -314,7 +314,7 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
                 {
                     startcode_size++;
                     startcode_pos = bitstream_get_absolute_byte_offset(bitstr) - startcode_size;
-                    TRACE_3(BITS, "<b> %uB start_code_prefix found at byte offset %u\n", startcode_size, startcode_pos);
+                    TRACE_3(BITS, "<b> %uB start_code_prefix found at byte offset %u", startcode_size, startcode_pos);
                 }
                 else
                 {
@@ -335,18 +335,18 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
 
                 if (bits_left < 8)
                 {
-                    TRACE_3(BITS, "<b> %u bits left in current NAL Unit! Checking for trailing data.\n", bits_left);
+                    TRACE_3(BITS, "<b> %u bits left in current NAL Unit! Checking for trailing data.", bits_left);
 
                     // Count trailing bits
                     if (next_bits(bitstr, bits_left) == 1) // or == (pow(2, bits_left) -1) ??
                     {
-                        TRACE_3(BITS, "<b> These bits are trailing bits: no more useful data in current NAL Unit\n");
+                        TRACE_3(BITS, "<b> These bits are trailing bits: no more useful data in current NAL Unit");
                         retcode = false;
                     }
                 }
                 else
                 {
-                    TRACE_3(BITS, "<b> %u bits left in current NAL Unit! No need to check for trailing data\n", bits_left);
+                    TRACE_3(BITS, "<b> %u bits left in current NAL Unit! No need to check for trailing data", bits_left);
                 }
             }
         }
@@ -368,18 +368,18 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
             }
             else // Count trailing bits
             {
-                TRACE_3(BITS, "<b> %u bits left in current NAL Unit! Checking for trailing data.\n", bits_left);
+                TRACE_3(BITS, "<b> %u bits left in current NAL Unit! Checking for trailing data.", bits_left);
 
                 if (next_bits(bitstr, bits_left) == 1) // or == (pow(2, bits_left) -1) ??
                 {
-                    TRACE_3(BITS, "<b> These bits are trailing bits: no more useful data in current NAL Unit\n");
+                    TRACE_3(BITS, "<b> These bits are trailing bits: no more useful data in current NAL Unit");
                     retcode = false;
                 }
             }
         }
         else
         {
-            TRACE_3(BITS, "<b> %u bits left in current NAL Unit! No need to check for trailing data\n", bits_left);
+            TRACE_3(BITS, "<b> %u bits left in current NAL Unit! No need to check for trailing data", bits_left);
         }
     }
 
@@ -402,7 +402,7 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
  */
 bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_trailing_data()\n" CLR_RESET);
+    TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_trailing_data()" CLR_RESET);
     bool retcode = true;
 
     if (bitstr->bitstream_map == NULL)
@@ -411,7 +411,7 @@ bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
         {
             if (next_bits(bitstr, 24) == 0x000001 && next_bits(bitstr, 32) == 0x00000001)
             {
-                TRACE_3(BITS, "<b> No more data or trailing data in rbsp\n");
+                TRACE_3(BITS, "<b> No more data or trailing data in rbsp");
                 retcode = false;
             }
         }
@@ -420,7 +420,7 @@ bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
     {
         if (bitstr->buffer_offset >= bitstr->buffer_size*8)
         {
-            TRACE_3(BITS, "<b> No more data or trailing data in rbsp\n");
+            TRACE_3(BITS, "<b> No more data or trailing data in rbsp");
             retcode = false;
         }
     }
@@ -440,7 +440,7 @@ bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
  */
 uint16_t endian_flip_16(uint16_t src)
 {
-    TRACE_3(BITS, "    endian_flip_16()\n");
+    TRACE_3(BITS, "    endian_flip_16()");
 
     return ( ((src & 0x00FF) << 8)
            | ((src & 0xFF00) >> 8) );
@@ -458,7 +458,7 @@ uint16_t endian_flip_16(uint16_t src)
  */
 uint16_t endian_flip_cut_16(uint16_t src, const int n)
 {
-    TRACE_3(BITS, "    endian_flip_cut_16()\n");
+    TRACE_3(BITS, "    endian_flip_cut_16()");
 
     if (n > 0 && n < 16)
     {
@@ -482,7 +482,7 @@ uint16_t endian_flip_cut_16(uint16_t src, const int n)
  */
 uint32_t endian_flip_32(uint32_t src)
 {
-    TRACE_3(BITS, "    endian_flip_32()\n");
+    TRACE_3(BITS, "    endian_flip_32()");
 
     return ( ((src & 0x000000FF) << 24)
            | ((src & 0x0000FF00) <<  8)
@@ -502,7 +502,7 @@ uint32_t endian_flip_32(uint32_t src)
  */
 uint32_t endian_flip_cut_32(uint32_t src, const  int n)
 {
-    TRACE_3(BITS, "    endian_flip_cut_32()\n");
+    TRACE_3(BITS, "    endian_flip_cut_32()");
 
     if (n > 0 && n < 32)
     {
@@ -528,7 +528,7 @@ uint32_t endian_flip_cut_32(uint32_t src, const  int n)
  */
 uint64_t endian_flip_64(uint64_t src)
 {
-    TRACE_3(BITS, "    endian_flip_64()\n");
+    TRACE_3(BITS, "    endian_flip_64()");
 
     return ( ((src & 0x00000000000000FFULL) << 56)
            | ((src & 0x000000000000FF00ULL) << 40)
@@ -552,7 +552,7 @@ uint64_t endian_flip_64(uint64_t src)
  */
 uint64_t endian_flip_cut_64(uint64_t src, const int n)
 {
-    TRACE_3(BITS, "    endian_flip_cut_64()\n");
+    TRACE_3(BITS, "    endian_flip_cut_64()");
 
     if (n > 0 && n < 64)
     {

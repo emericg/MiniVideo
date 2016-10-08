@@ -61,7 +61,7 @@ static unsigned int get_codeNum(Bitstream_t *bitstr);
  */
 static unsigned int get_codeNum(Bitstream_t *bitstr)
 {
-    TRACE_1(EXPGO, "get_codeNum()\n");
+    TRACE_1(EXPGO, "get_codeNum()");
 
     int leadingZeroBits = -1;
     unsigned int b = 0;
@@ -78,7 +78,7 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
         codeNum = (unsigned int)(pow(2, leadingZeroBits) - 1 + read_bits(bitstr, leadingZeroBits));
     }
 
-    TRACE_1(EXPGO, "codeNum  = %i\n", codeNum);
+    TRACE_1(EXPGO, "codeNum  = %i", codeNum);
     return codeNum;
 }
 
@@ -91,7 +91,7 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
  */
 unsigned int read_ue(Bitstream_t *bitstr)
 {
-    TRACE_1(EXPGO, "read_ue()\n");
+    TRACE_1(EXPGO, "read_ue()");
 
     return get_codeNum(bitstr);
 }
@@ -106,12 +106,12 @@ unsigned int read_ue(Bitstream_t *bitstr)
  */
 int read_se(Bitstream_t *bitstr)
 {
-    TRACE_1(EXPGO, "read_se()\n");
+    TRACE_1(EXPGO, "read_se()");
 
     unsigned int codeNum = get_codeNum(bitstr);
     int se = (int)(pow(-1.0, codeNum+1) * ceil(codeNum/2.0));
 
-    TRACE_1(EXPGO, "read_se(k:%i) = %i\n", codeNum, se);
+    TRACE_1(EXPGO, "read_se(k:%i) = %i", codeNum, se);
     return se;
 }
 
@@ -129,7 +129,7 @@ int read_se(Bitstream_t *bitstr)
  */
 unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool intracoding_flag)
 {
-    TRACE_1(EXPGO, "read_me()\n");
+    TRACE_1(EXPGO, "read_me()");
     unsigned int coded_block_pattern = 0;
 
     int cat = 1;
@@ -141,7 +141,7 @@ unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool int
     // Fetch syntax element 'coded_block_pattern' value
     coded_block_pattern = NCBP[cat][get_codeNum(bitstr)][!intracoding_flag];
 
-    TRACE_1(EXPGO, "coded_block_pattern = %i\n", coded_block_pattern);
+    TRACE_1(EXPGO, "coded_block_pattern = %i", coded_block_pattern);
     return coded_block_pattern;
 }
 
@@ -155,7 +155,7 @@ unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool int
  */
 unsigned int read_te(Bitstream_t *bitstr, int range)
 {
-    TRACE_1(EXPGO, "read_te()\n");
+    TRACE_1(EXPGO, "read_te()");
     unsigned int codeNum = 0;
 
     if (range > 1)
@@ -167,7 +167,7 @@ unsigned int read_te(Bitstream_t *bitstr, int range)
         codeNum = !read_bit(bitstr);
     }
 
-    TRACE_1(EXPGO, "te = %i\n", codeNum);
+    TRACE_1(EXPGO, "te = %i", codeNum);
     return codeNum;
 }
 

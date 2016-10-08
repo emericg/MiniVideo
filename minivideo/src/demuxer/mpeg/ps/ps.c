@@ -49,7 +49,7 @@
  */
 static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeader_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_pack_header()" CLR_RESET " @ %lli\n",
+    TRACE_INFO(MPS, BLD_GREEN "parse_pack_header()" CLR_RESET " @ %lli",
                header->offset_start);
 
     int retcode = SUCCESS;
@@ -60,7 +60,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
 
     if (read_bits(bitstr, 2) != 1)
     {
-        TRACE_ERROR(MPS, "wrong 'marker_bits'\n");
+        TRACE_ERROR(MPS, "wrong 'marker_bits'");
         return FAILURE;
     }
 
@@ -84,7 +84,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
     {
         if (read_bits(bitstr, 8) != 0xFF)
         {
-            TRACE_ERROR(MPS, "Wrong 'stuffing_byte'\n");
+            TRACE_ERROR(MPS, "Wrong 'stuffing_byte'");
             return FAILURE;
         }
     }
@@ -92,7 +92,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
     // System header // TODO split into its own function?
     if (next_bits(bitstr, 32) == 0x000001BB)
     {
-        TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli\n",
+        TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli",
                    bitstream_get_absolute_byte_offset(bitstr) - 4);
         skip_bits(bitstr, 48); // start code + size
 
@@ -124,7 +124,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
     }
     else
     {
-        TRACE_2(MPS, " > No system_header()\n");
+        TRACE_2(MPS, " > No system_header()");
     }
 
     // Pack header have no length field, so we just have to parse them correctly
@@ -148,7 +148,7 @@ static int parse_system_header(Bitstream_t *bitstr, PesHeader_t *header, SystemH
 {
     int retcode = SUCCESS;
 
-    TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli\n",
+    TRACE_INFO(MPS, BLD_GREEN "parse_system_header()" CLR_RESET " @ %lli",
                header->offset_start);
 
     MARKER_BIT
@@ -195,7 +195,7 @@ static int parse_system_header(Bitstream_t *bitstr, PesHeader_t *header, SystemH
  */
 int parse_program_stream_map(Bitstream_t *bitstr, PesHeader_t *header, ProgramStreamMap_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_map()" CLR_RESET " @ %lli\n",
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_map()" CLR_RESET " @ %lli",
                header->offset_start);
     int retcode = SUCCESS;
     int i = 0, N1 = 0, N2 = 0;
@@ -243,7 +243,7 @@ int parse_program_stream_map(Bitstream_t *bitstr, PesHeader_t *header, ProgramSt
  */
 static int parse_program_stream_directory(Bitstream_t *bitstr, PesHeader_t *header, ProgramStreamDirectory_t *packet)
 {
-    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %lli\n",
+    TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %lli",
                header->offset_start);
     int retcode = SUCCESS;
     int i = 0;
@@ -309,7 +309,7 @@ int ps_fileParse(MediaFile_t *media)
 {
     int retcode = SUCCESS;
 
-    TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()\n" CLR_RESET);
+    TRACE_INFO(MPS, BLD_GREEN "ps_fileParse()" CLR_RESET);
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(media, NULL);
@@ -363,7 +363,7 @@ int ps_fileParse(MediaFile_t *media)
                 mpg.stat_packet_psd++;
                 break;
             case SID_PRIVATE_STREAM_2:
-                TRACE_2(MPS, BLD_GREEN "Private Stream 2 PES" CLR_RESET " @ %lli\n", pes_header.offset_start);
+                TRACE_2(MPS, BLD_GREEN "Private Stream 2 PES" CLR_RESET " @ %lli", pes_header.offset_start);
                 mpg.stat_packet_private++;
                 break;
             case SID_PADDING:
@@ -378,7 +378,7 @@ int ps_fileParse(MediaFile_t *media)
             case 0xD9: case 0xDA: case 0xDB: case 0xDC: case 0xDD: case 0xDE:
             case 0xDF: case SID_PRIVATE_STREAM_1: case SID_AUDIO:
             {
-                TRACE_INFO(MPS, BLD_GREEN "parse_pes_audio()" CLR_RESET " @ %lli\n", pes_header.offset_start);
+                TRACE_INFO(MPS, BLD_GREEN "parse_pes_audio()" CLR_RESET " @ %lli", pes_header.offset_start);
 
                 // Find a trackid
                 unsigned track_id = pes_header.stream_id - 0xC0;
@@ -419,7 +419,7 @@ int ps_fileParse(MediaFile_t *media)
             case 0xEB: case 0xEC: case 0xED: case 0xEE: case 0xEF:
             case SID_VIDEO:
             {
-                TRACE_INFO(MPS, BLD_GREEN "parse_pes_video()" CLR_RESET " @ %lli\n", pes_header.offset_start + 6);
+                TRACE_INFO(MPS, BLD_GREEN "parse_pes_video()" CLR_RESET " @ %lli", pes_header.offset_start + 6);
 
                 // Init bitstream_map (as needed) to store samples
                 unsigned track_id = pes_header.stream_id - 0xE0;
@@ -453,7 +453,7 @@ int ps_fileParse(MediaFile_t *media)
                 break;
 
             default:
-                TRACE_WARNING(MPS, "Unknown PES packet type (0x%02X) @ %lli\n",
+                TRACE_WARNING(MPS, "Unknown PES packet type (0x%02X) @ %lli",
                               pes_header.stream_id, pes_header.offset_start);
                 mpg.stat_packet_other++;
                 break;
@@ -466,15 +466,15 @@ int ps_fileParse(MediaFile_t *media)
         free_bitstream(&bitstr);
 
         // Recap
-        TRACE_INFO(MPS, "MPEG PS (version %u) stats\n", mpg.mpeg_version);
-        TRACE_INFO(MPS, "- Pack Headers:    %u\n", mpg.stat_packheader);
-        TRACE_INFO(MPS, "- System Headers:  %u\n", mpg.stat_systemheader);
-        TRACE_INFO(MPS, "- PSM packets:     %u\n", mpg.stat_packet_psm);
-        TRACE_INFO(MPS, "- PSD packets:     %u\n", mpg.stat_packet_psd);
-        TRACE_INFO(MPS, "- Private packets: %u\n", mpg.stat_packet_private);
-        TRACE_INFO(MPS, "- Audio packets:   %u\n", mpg.stat_packet_audio);
-        TRACE_INFO(MPS, "- Video packets:   %u\n", mpg.stat_packet_video);
-        TRACE_INFO(MPS, "- Unknown packets: %u\n", mpg.stat_packet_other);
+        TRACE_INFO(MPS, "MPEG PS (version %u) stats", mpg.mpeg_version);
+        TRACE_INFO(MPS, "- Pack Headers:    %u", mpg.stat_packheader);
+        TRACE_INFO(MPS, "- System Headers:  %u", mpg.stat_systemheader);
+        TRACE_INFO(MPS, "- PSM packets:     %u", mpg.stat_packet_psm);
+        TRACE_INFO(MPS, "- PSD packets:     %u", mpg.stat_packet_psd);
+        TRACE_INFO(MPS, "- Private packets: %u", mpg.stat_packet_private);
+        TRACE_INFO(MPS, "- Audio packets:   %u", mpg.stat_packet_audio);
+        TRACE_INFO(MPS, "- Video packets:   %u", mpg.stat_packet_video);
+        TRACE_INFO(MPS, "- Unknown packets: %u", mpg.stat_packet_other);
     }
     else
     {

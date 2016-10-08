@@ -64,7 +64,7 @@
  */
 static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv420()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv420()" CLR_RESET);
     int retcode = FAILURE;
     unsigned int missing_mbs = 0;
 
@@ -91,7 +91,7 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
         buffer_cb == NULL ||
         buffer_cr == NULL)
     {
-        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!\n");
+        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!");
         missing_mbs = mb_lines_total * mb_columns_total;
     }
     else
@@ -157,12 +157,12 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
         }
         else if (missing_mbs == dc->PicSizeInMbs)
         {
-            TRACE_ERROR(IO, "* Picture written on disk ommiting all macroblocks!\n");
+            TRACE_ERROR(IO, "* Picture written on disk ommiting all macroblocks!");
             retcode = FAILURE;
         }
         else
         {
-            TRACE_WARNING(IO, "* Picture written on disk ommiting approximately %i/%i macroblock(s)!\n", missing_mbs, dc->PicSizeInMbs);
+            TRACE_WARNING(IO, "* Picture written on disk ommiting approximately %i/%i macroblock(s)!", missing_mbs, dc->PicSizeInMbs);
             retcode = SUCCESS;
         }
     }
@@ -196,7 +196,7 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv444()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_yuv444()" CLR_RESET);
     int retcode = FAILURE;
     unsigned int missing_mbs = 0;
 
@@ -223,7 +223,7 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
         buffer_cb == NULL ||
         buffer_cr == NULL)
     {
-        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!\n");
+        TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!");
         missing_mbs = mb_lines_total * mb_columns_total;
     }
     else
@@ -295,12 +295,12 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
         }
         else if (missing_mbs == dc->PicSizeInMbs)
         {
-            TRACE_ERROR(IO, "* Picture written on disk ommiting all macroblocks!\n");
+            TRACE_ERROR(IO, "* Picture written on disk ommiting all macroblocks!");
             retcode = FAILURE;
         }
         else
         {
-            TRACE_WARNING(IO, "* Picture written on disk ommiting approximately %i/%i macroblock(s)!\n", missing_mbs, dc->PicSizeInMbs);
+            TRACE_WARNING(IO, "* Picture written on disk ommiting approximately %i/%i macroblock(s)!", missing_mbs, dc->PicSizeInMbs);
             retcode = SUCCESS;
         }
     }
@@ -340,7 +340,7 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -445,7 +445,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_png()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_png()" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -551,7 +551,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -582,7 +582,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_tga()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_tga()" CLR_RESET);
     int retcode = FAILURE;
 
     // Shortcut
@@ -616,7 +616,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 int export_idr(DecodingContext_t *dc)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr()\n" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr()" CLR_RESET);
     int retcode = FAILURE;
 
     // Picture file
@@ -644,14 +644,14 @@ int export_idr(DecodingContext_t *dc)
 #if ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
     if (dc->output_format < PICTURE_YUV420)
     {
-        TRACE_WARNING(IO, "No export library available, forcing YCbCr 4:2:0\n");
+        TRACE_WARNING(IO, "No export library available, forcing YCbCr 4:2:0");
         dc->output_format = PICTURE_YUV420;
     }
 #else
     #if ENABLE_JPEG == 0
         if (dc->output_format == PICTURE_JPG)
         {
-            TRACE_WARNING(IO, "No jpg export library available, trying png\n");
+            TRACE_WARNING(IO, "No jpg export library available, trying png");
             dc->output_format++; // to png
         }
     #endif // ENABLE_JPEG
@@ -659,7 +659,7 @@ int export_idr(DecodingContext_t *dc)
     #if ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_PNG)
         {
-            TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0\n");
+            TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0");
             dc->output_format = PICTURE_YUV420;
         }
     #endif // ENABLE_PNG
@@ -667,7 +667,7 @@ int export_idr(DecodingContext_t *dc)
     #if ENABLE_STBIMWRITE == 0
         if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
         {
-            TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0\n");
+            TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0");
             dc->output_format = PICTURE_YUV420;
         }
     #endif // ENABLE_STBIMWRITE
@@ -676,27 +676,27 @@ int export_idr(DecodingContext_t *dc)
     // Picture file extension checker
     if (dc->output_format == PICTURE_JPG)
     {
-        TRACE_1(IO, "* Picture file format : JPG\n");
+        TRACE_1(IO, "* Picture file format : JPG");
         strncpy(PictureFile.file_extension, "jpg", 8);
     }
     else if (dc->output_format == PICTURE_PNG)
     {
-        TRACE_1(IO, "* Picture file format : PNG\n");
+        TRACE_1(IO, "* Picture file format : PNG");
         strncpy(PictureFile.file_extension, "png", 8);
     }
     else if (dc->output_format == PICTURE_BMP)
     {
-        TRACE_1(IO, "* Picture file format : BMP\n");
+        TRACE_1(IO, "* Picture file format : BMP");
         strncpy(PictureFile.file_extension, "bmp", 8);
     }
     else if (dc->output_format == PICTURE_TGA)
     {
-        TRACE_1(IO, "* Picture file format : TGA\n");
+        TRACE_1(IO, "* Picture file format : TGA");
         strncpy(PictureFile.file_extension, "tga", 8);
     }
     else
     {
-        TRACE_1(IO, "* Picture file format : YUV 4:x:x\n");
+        TRACE_1(IO, "* Picture file format : YUV 4:x:x");
         strncpy(PictureFile.file_extension, "yuv", 8);
     }
 
@@ -708,8 +708,8 @@ int export_idr(DecodingContext_t *dc)
 
     if (PictureFile.file_pointer == NULL)
     {
-        TRACE_1(IO, "* Picture file path   : '%s'\n", PictureFile.file_name);
-        TRACE_ERROR(IO, "* Unable to create/open file!\n");
+        TRACE_1(IO, "* Picture file path   : '%s'", PictureFile.file_name);
+        TRACE_ERROR(IO, "* Unable to create/open file!");
 
         retcode = FAILURE;
     }
@@ -717,9 +717,9 @@ int export_idr(DecodingContext_t *dc)
     {
         sps_t *sps = dc->sps_array[dc->active_sps];
 
-        TRACE_1(IO, "* Picture file name   : '%s'\n", PictureFile.file_name);
-        TRACE_1(IO, "* Picture definition  : %ix%i\n", sps->PicWidthInMbs*16, sps->PicHeightInMapUnits*16);
-        TRACE_1(IO, "* Picture file successfully created\n");
+        TRACE_1(IO, "* Picture file name   : '%s'", PictureFile.file_name);
+        TRACE_1(IO, "* Picture definition  : %ix%i", sps->PicWidthInMbs*16, sps->PicHeightInMapUnits*16);
+        TRACE_1(IO, "* Picture file successfully created");
 
         // Start export
         if (dc->output_format == PICTURE_JPG)
@@ -748,13 +748,13 @@ int export_idr(DecodingContext_t *dc)
         }
         else
         {
-            TRACE_ERROR(IO, "* No export file format specified!\n");
+            TRACE_ERROR(IO, "* No export file format specified!");
         }
 
         // Return value
         if (retcode == SUCCESS)
         {
-            TRACE_1(IO, "* Picture content successfully written on disk\n");
+            TRACE_1(IO, "* Picture content successfully written on disk");
             dc->picture_exported++;
         }
 

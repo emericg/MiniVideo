@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2015 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,8 +18,8 @@
  *
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
- * \version   0.44
+ * \date      2016
+ * \version   0.50
  */
 
 #ifndef MINITRACES_H
@@ -28,6 +28,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
 /* ************************************************************************** */
 
 /*!
@@ -82,7 +83,7 @@ typedef struct TraceModule_t
 
 /* ************************************************************************** */
 
-#if ENABLE_TRACES == 2
+#if MINITRACES_LEVEL == 2
 
 // TRACE MACROS, fully enabled
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
@@ -92,7 +93,7 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )       MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_2,    MODULE, __VA_ARGS__ )
 #define TRACE_3( MODULE, ... )       MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_3,    MODULE, __VA_ARGS__ )
 
-#elif ENABLE_TRACES == 1
+#elif MINITRACES_LEVEL == 1
 
 // TRACE MACROS, release config
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
@@ -102,7 +103,7 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#else // ENABLE_TRACES == 0
+#else // MINITRACES_LEVEL == 0
 
 // TRACE MACROS disabled
 #define TRACE_ERROR( MODULE, ... )
@@ -112,11 +113,11 @@ typedef struct TraceModule_t
 #define TRACE_2( MODULE, ... )
 #define TRACE_3( MODULE, ... )
 
-#endif // ENABLE_TRACES
+#endif // MINITRACES_LEVEL
 
 /* ************************************************************************** */
 
-#if ENABLE_COLORS == 1
+#if MINITRACES_COLORS == 1
 
 #define CLR_RESET  "\e[0m" //!< Reset colored output to default color of the terminal
 
@@ -150,7 +151,7 @@ typedef struct TraceModule_t
 #define OUT_CYAN   "\e[1;37;46m"
 #define OUT_WHITE  "\e[1;30;47m"
 
-#else // ENABLE_COLORS == 0
+#else // MINITRACES_COLORS == 0
 
 #define CLR_RESET
 #define CLR_BLACK
@@ -178,9 +179,10 @@ typedef struct TraceModule_t
 #define OUT_CYAN
 #define OUT_WHITE
 
-#endif // ENABLE_COLORS
+#endif // MINITRACES_COLORS
 
 /* ************************************************************************** */
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

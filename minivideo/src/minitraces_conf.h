@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2015 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,42 +18,42 @@
  *
  * \file      minitraces_conf.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2015
- * \version   0.44
+ * \date      2016
+ * \version   0.50
  */
 
 #ifndef MINITRACES_CONF_H
 #define MINITRACES_CONF_H
 /* ************************************************************************** */
 
-// Import setting macros from minivideo
-#include "minivideo_settings.h"
-
 // =============================================================================
 // GENERAL SETTINGS
 // =============================================================================
 
+// Import setting macros from minivideo, and map them to the ones from MiniTraces.
+#include "minivideo_settings.h"
+
 #if ENABLE_DEBUG == 1
-#define ENABLE_TRACES    2   // Enables all traces levels
+#define MINITRACES_LEVEL    2   // Enables all traces levels
 #else
-#define ENABLE_TRACES    1   // Only error and warnings traces
+#define MINITRACES_LEVEL    1   // Only error and warnings traces
 #endif
 
 // Enable terminal colored output
 #if ENABLE_COLORS == 1
-#undef ENABLE_COLORS
-#define ENABLE_COLORS    1
+#undef MINITRACES_COLORS
+#define MINITRACES_COLORS   1
 #else
 #undef ENABLE_COLORS
-#define ENABLE_COLORS    0
+#define MINITRACES_COLORS   0
 #endif
 
 // Advanced debugging features
-#define DEBUG_WITH_TIMESTAMPS       0   //!< 0: disabled, 1: trace tick (in milliseconds), 2: trace time (hh:mm:ss)
-#define DEBUG_WITH_FUNC_INFO        1
-#define DEBUG_WITH_FILE_INFO        1
-#define DEBUG_WITH_FORCED_SYNC      0
-#define DEBUG_WITH_STRICT_PADDING   0   //!< Not implemented yet
+#define MINITRACES_TIMESTAMPS       0   //!< 0: disabled, 1: trace tick (in milliseconds), 2: trace time (hh:mm:ss)
+#define MINITRACES_FUNC_INFO        0
+#define MINITRACES_FILE_INFO        1
+#define MINITRACES_FORCED_SYNC      0
+#define MINITRACES_STRICT_PADDING   0   //!< Not implemented yet
 
 // =============================================================================
 // PROGRAM IDENTIFIER
@@ -61,11 +61,11 @@
 
 /*!
  * This string will be used to easily identify from which program a trace comes
- * from if multiple program are outputting traces with MiniTraces at the same time.
- * Leave blank if you don't need this feature!
- *
+ * from if multiple program are outputting traces with MiniTraces at the same time. *
  * You can use bracket, spaces, colors...
  * Example: #define PID OUT_BLUE "[MINITRACE]" CLR_RESET " "
+ *
+ * Leave it blank if you don't need this feature!
  */
 #define PID ""
 

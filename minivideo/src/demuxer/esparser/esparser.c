@@ -39,7 +39,7 @@
 
 int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
 {
-    TRACE_INFO(DEMUX, BLD_GREEN "es_fileParse()\n" CLR_RESET);
+    TRACE_INFO(DEMUX, BLD_GREEN "es_fileParse()" CLR_RESET);
 
     // Search parameters
     int64_t search_offset = 0;
@@ -96,14 +96,14 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
 
                                 media->tracks_video[0]->sample_count++;
                                 media->tracks_video[0]->frame_count_idr++;
-                                TRACE_1(DEMUX, "* IDR nal unit found at byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
+                                TRACE_1(DEMUX, "* IDR nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
                             }
                             else
                             {
                                 media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_PARAM;
 
                                 media->tracks_video[0]->sample_count++;
-                                TRACE_1(DEMUX, "* SPS or PPS nal unit found at byte offset %i\n", bitstream_get_absolute_byte_offset(bitstr));
+                                TRACE_1(DEMUX, "* SPS or PPS nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
                             }
                         }
                     }
@@ -115,7 +115,7 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
 
             if (media->tracks_video[0]->sample_count == 0)
             {
-                TRACE_ERROR(DEMUX, "* No NAL Unit have been found in this bitstream!\n");
+                TRACE_ERROR(DEMUX, "* No NAL Unit have been found in this bitstream!");
                 retcode = FAILURE;
             }
             else
@@ -124,12 +124,12 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
                 media->tracks_video[0]->sample_size[media->tracks_video[0]->sample_count - 1] = media->file_size - media->tracks_video[0]->sample_offset[media->tracks_video[0]->sample_count - 1];
 
 #if ENABLE_DEBUG
-                TRACE_INFO(DEMUX, "bitstream_map->totalsamples = %i\n", media->tracks_video[0]->sample_count);
+                TRACE_INFO(DEMUX, "bitstream_map->totalsamples = %i", media->tracks_video[0]->sample_count);
                 unsigned int i = 0;
                 for (i = 0; i < media->tracks_video[0]->sample_count; i++)
                 {
-                    TRACE_1(DEMUX, "bitstream_map->sample_offset[%i] = %i\n", i, media->tracks_video[0]->sample_offset[i]);
-                    TRACE_1(DEMUX, "bitstream_map->sample_size[%i] = %i\n", i, media->tracks_video[0]->sample_size[i]);
+                    TRACE_1(DEMUX, "bitstream_map->sample_offset[%i] = %i", i, media->tracks_video[0]->sample_offset[i]);
+                    TRACE_1(DEMUX, "bitstream_map->sample_size[%i] = %i", i, media->tracks_video[0]->sample_size[i]);
                 }
 #endif // ENABLE_DEBUG
             }

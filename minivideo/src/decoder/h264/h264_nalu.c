@@ -39,17 +39,17 @@
  */
 nalu_t *initNALU(void)
 {
-    TRACE_INFO(NALU, BLD_GREEN "initNALU()\n" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "initNALU()" CLR_RESET);
 
     // NAL Unit allocation
     nalu_t *nalu = NULL;
     if ((nalu = (nalu_t*)calloc(1, sizeof(nalu_t))) == NULL)
     {
-        TRACE_ERROR(NALU, "Unable to alloc new NAL Unit!\n");
+        TRACE_ERROR(NALU, "Unable to alloc new NAL Unit!");
     }
     else
     {
-        TRACE_1(NALU, "* NAL Unit allocation success\n");
+        TRACE_1(NALU, "* NAL Unit allocation success");
     }
 
     // Return the NALU
@@ -65,7 +65,7 @@ nalu_t *initNALU(void)
  */
 void nalu_reset(nalu_t *nalu)
 {
-    TRACE_INFO(NALU, BLD_GREEN "nalu_reset()\n\n" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "nalu_reset()" CLR_RESET);
 
     if (nalu != NULL)
     {
@@ -85,7 +85,7 @@ void nalu_reset(nalu_t *nalu)
         nalu->discardable_flag = 0;
         nalu->output_flag = 0;
 
-        TRACE_2(NALU, "* NAL Unit re-initialization success\n");
+        TRACE_2(NALU, "* NAL Unit re-initialization success");
     }
 }
 
@@ -108,7 +108,7 @@ void nalu_reset(nalu_t *nalu)
  */
 int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
 {
-    TRACE_INFO(NALU, "> " BLD_GREEN "nalu_parse_header()\n" CLR_RESET);
+    TRACE_INFO(NALU, "> " BLD_GREEN "nalu_parse_header()" CLR_RESET);
     int retcode = FAILURE;
 
     // Set NAL Unit header offset
@@ -120,8 +120,8 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
         nalu->nal_ref_idc = read_bits(bitstr, 2);
         nalu->nal_unit_type = read_bits(bitstr, 5);
 
-        TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X\n", nalu->nal_ref_idc);
-        TRACE_1(NALU, "  - nal_unit_type = 0x%02X\n", nalu->nal_unit_type);
+        TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X", nalu->nal_ref_idc);
+        TRACE_1(NALU, "  - nal_unit_type = 0x%02X", nalu->nal_unit_type);
 
         if (nalu->nal_unit_type == 14 || nalu->nal_unit_type == 20)
         {
@@ -138,41 +138,41 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
                 nalu->discardable_flag = read_bit(bitstr);
                 nalu->output_flag = read_bit(bitstr);
 
-                TRACE_1(NALU, "  - idr_flag      = %u\n", nalu->idr_flag);
-                TRACE_1(NALU, "  - priority_id   = %u\n", nalu->priority_id);
-                TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u\n", nalu->no_inter_layer_pred_flag);
-                TRACE_1(NALU, "  - dependency_id = %u\n", nalu->dependency_id);
-                TRACE_1(NALU, "  - quality_id    = %u\n", nalu->quality_id);
-                TRACE_1(NALU, "  - temporal_id   = %u\n", nalu->temporal_id);
-                TRACE_1(NALU, "  - use_ref_base_pic_flag    = %u\n", nalu->use_ref_base_pic_flag);
-                TRACE_1(NALU, "  - discardable_flag = %u\n", nalu->discardable_flag);
-                TRACE_1(NALU, "  - output_flag      = %u\n", nalu->output_flag);
+                TRACE_1(NALU, "  - idr_flag      = %u", nalu->idr_flag);
+                TRACE_1(NALU, "  - priority_id   = %u", nalu->priority_id);
+                TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u", nalu->no_inter_layer_pred_flag);
+                TRACE_1(NALU, "  - dependency_id = %u", nalu->dependency_id);
+                TRACE_1(NALU, "  - quality_id    = %u", nalu->quality_id);
+                TRACE_1(NALU, "  - temporal_id   = %u", nalu->temporal_id);
+                TRACE_1(NALU, "  - use_ref_base_pic_flag    = %u", nalu->use_ref_base_pic_flag);
+                TRACE_1(NALU, "  - discardable_flag = %u", nalu->discardable_flag);
+                TRACE_1(NALU, "  - output_flag      = %u", nalu->output_flag);
 
                 // Check reserved_three_2bits
                 if (read_bits(bitstr, 2) == 3)
                 {
                     retcode = SUCCESS;
-                    TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i\n", nalu->nal_offset);
+                    TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
                 }
                 else
                 {
-                    TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_three_2bits value)\n", nalu->nal_offset);
+                    TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_three_2bits value)", nalu->nal_offset);
                 }
             }
             else
             {
-                TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_one_bit value)\n", nalu->nal_offset);
+                TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_one_bit value)", nalu->nal_offset);
             }
         }
         else
         {
             retcode = SUCCESS;
-            TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i\n", nalu->nal_offset);
+            TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
         }
     }
     else
     {
-        TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong forbidden_zero_bit value)\n", nalu->nal_offset);
+        TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong forbidden_zero_bit value)", nalu->nal_offset);
     }
 
     return retcode;
@@ -194,7 +194,7 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
  */
 int nalu_clean_sample(Bitstream_t *bitstr)
 {
-    TRACE_INFO(NALU, BLD_GREEN "nalu_clean_sample()\n" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "nalu_clean_sample()" CLR_RESET);
 
     unsigned int buffer_offset_saved = bitstr->buffer_offset;
 
@@ -227,8 +227,8 @@ int nalu_clean_sample(Bitstream_t *bitstr)
                 bitstr->buffer_size--;
                 bitstr->buffer_discarded_bytes++;
 
-                TRACE_2(NALU, "emulation_prevention_three_byte removed at buffer offset: %i\n", current_byte_offset);
-                TRACE_2(NALU, "emulation_prevention_three_byte removed at bitstream offset: %i\n", bitstream_get_absolute_byte_offset(bitstr));
+                TRACE_2(NALU, "emulation_prevention_three_byte removed at buffer offset: %i", current_byte_offset);
+                TRACE_2(NALU, "emulation_prevention_three_byte removed at bitstream offset: %i", bitstream_get_absolute_byte_offset(bitstr));
             }
 
             // Reset search

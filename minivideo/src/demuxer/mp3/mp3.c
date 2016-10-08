@@ -39,7 +39,7 @@
 
 static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
 {
-    TRACE_1(MP3, BLD_GREEN "mp3_indexer_track()\n" CLR_RESET);
+    TRACE_1(MP3, BLD_GREEN "mp3_indexer_track()" CLR_RESET);
     int retcode = FAILURE;
 
     // Write track metadatas (samples have been written already)
@@ -94,7 +94,7 @@ static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
 
 static int mp3_indexer(MediaFile_t *media, mp3_t *mp3)
 {
-    TRACE_INFO(MP3, BLD_GREEN "mp3_indexer()\n" CLR_RESET);
+    TRACE_INFO(MP3, BLD_GREEN "mp3_indexer()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (media && media->tracks_audio[0])
@@ -258,7 +258,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
 
         if (frame_size != 0 && next_frame_offset < bitstr->bitstream_size)
         {
-            TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)\n",
+            TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)",
                     mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             // Set MP3 frame into the bitstream_map
@@ -285,7 +285,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
         }
         else
         {
-            TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
+            TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)",
                           mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             if ((frame_size > 0) && (frame_size <= 1152))
@@ -304,7 +304,7 @@ int64_t parse_frame_full(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3,
     }
     else
     {
-        TRACE_WARNING(MP3, "> Invalid MPEG-%u L%u frame: bad bitrate or samplingrate @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
+        TRACE_WARNING(MP3, "> Invalid MPEG-%u L%u frame: bad bitrate or samplingrate @ %lli + size: %u (bitrate: %u, samplingrate: %u)",
                       mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
         // Try "manual parsing", maybe we will find a new startcode closeby...
@@ -341,7 +341,7 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3, Medi
 
         if (frame_size != 0 && next_frame_offset < bitstr->bitstream_size)
         {
-            TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)\n",
+            TRACE_2(MP3, "> Valid MPEG-%u Layer %u frame @ %lli, size: %u (bitrate: %u, samplingrate: %u)",
                     mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             // Set MP3 frame into the bitstream_map
@@ -368,7 +368,7 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3, Medi
         }
         else
         {
-            TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
+            TRACE_WARNING(MP3, "> Invalid MPEG-%u Layer %u frame: out of boundaries @ %lli + size: %u (bitrate: %u, samplingrate: %u)",
                           mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
             if ((frame_size > 0) && (frame_size <= 1152))
@@ -387,7 +387,7 @@ int64_t parse_frame(Bitstream_t *bitstr, uint32_t frame_header, mp3_t *mp3, Medi
     }
     else
     {
-        TRACE_WARNING(MP3, "> Invalid MPEG-%u L%u frame: bad bitrate or samplingrate @ %lli + size: %u (bitrate: %u, samplingrate: %u)\n",
+        TRACE_WARNING(MP3, "> Invalid MPEG-%u L%u frame: bad bitrate or samplingrate @ %lli + size: %u (bitrate: %u, samplingrate: %u)",
                       mp3->mpeg_version, mp3->mpeg_layer, frame_offset, frame_size, frame_bitrate, mp3->audio_samplingrate);
 
         // Try "manual parsing", maybe we will find a new startcode closeby...
@@ -403,7 +403,7 @@ int mp3_fileParse(MediaFile_t *media)
 {
     int retcode = SUCCESS;
 
-    TRACE_INFO(MP3, BLD_GREEN "mp3_fileParse()\n" CLR_RESET);
+    TRACE_INFO(MP3, BLD_GREEN "mp3_fileParse()" CLR_RESET);
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(media, NULL);
@@ -442,7 +442,7 @@ int mp3_fileParse(MediaFile_t *media)
             // note: check frame header against 11 bits long instead of 12, to be compatible with MPEG-1/2/2.5
             if ((frame_header & 0xFFE00000) == 0xFFE00000)
             {
-                TRACE_1(MP3, "> MP3 frame @ %lli\n", frame_offset);
+                TRACE_1(MP3, "> MP3 frame @ %lli", frame_offset);
 
                 if (first_frame_parsed == false)
                 {
@@ -460,7 +460,7 @@ int mp3_fileParse(MediaFile_t *media)
             }
             else if ((frame_header & 0xFFFFFF00) == 0x54414700)
             {
-                TRACE_INFO(MP3, "> ID3v1 tag @ %lli\n", frame_offset);
+                TRACE_INFO(MP3, "> ID3v1 tag @ %lli", frame_offset);
                 mp3.run = false;
 
                 // Set TAG the bitstream_map
@@ -480,7 +480,7 @@ int mp3_fileParse(MediaFile_t *media)
                 int id3tag_version = ((frame_header & 0x000000FF) << 8) + read_bits(bitstr, 8);
                 /*int id3tag_flag =*/ read_bits(bitstr, 8);
 
-                TRACE_INFO(MP3, "> ID3v2.%i @ %lli\n", id3tag_version, frame_offset);
+                TRACE_INFO(MP3, "> ID3v2.%i @ %lli", id3tag_version, frame_offset);
 
                 uint32_t id3tag_size = read_bits(bitstr, 8) & 0x0000007F;
                 id3tag_size <<= 7;
@@ -508,7 +508,7 @@ int mp3_fileParse(MediaFile_t *media)
             }
             else if (frame_header == 0x4C595249)
             {
-                TRACE_INFO(MP3, "> Lyrics3 tag @ %lli\n", frame_offset);
+                TRACE_INFO(MP3, "> Lyrics3 tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
                 // Set TAG the bitstream_map
@@ -525,7 +525,7 @@ int mp3_fileParse(MediaFile_t *media)
             }
             else if (frame_header == 0x58696E67)
             {
-                TRACE_INFO(MP3, "> XING tag @ %lli\n", frame_offset);
+                TRACE_INFO(MP3, "> XING tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
                 // Set TAG the bitstream_map
@@ -542,7 +542,7 @@ int mp3_fileParse(MediaFile_t *media)
             }
             else if (frame_header == 0x56425249)
             {
-                TRACE_INFO(MP3, "> VBRI tag @ %lli\n", frame_offset);
+                TRACE_INFO(MP3, "> VBRI tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
                 // Set TAG the bitstream_map
@@ -559,7 +559,7 @@ int mp3_fileParse(MediaFile_t *media)
             }
             else if (frame_header == 0x41504554)
             {
-                TRACE_WARNING(MP3, "> APE tag @ %lli\n", frame_offset);
+                TRACE_WARNING(MP3, "> APE tag @ %lli", frame_offset);
 
                 /*uint32_t apetag_header =*/ read_bits(bitstr, 32); // 0x41474558, second part of the tag header
                 /*uint32_t apetag_version =*/ read_bits(bitstr, 32);
@@ -584,7 +584,7 @@ int mp3_fileParse(MediaFile_t *media)
             {
                 // Try to find a new startcode closeby...
                 frame_offset += 1;
-                TRACE_3(MP3, "Unknown frame header @ %lli (startcode: 0x%X)\n",
+                TRACE_3(MP3, "Unknown frame header @ %lli (startcode: 0x%X)",
                         frame_offset, frame_header);
             }
         }
