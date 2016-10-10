@@ -29,9 +29,11 @@
 // QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
-#include <QWidget>
 #include <QMainWindow>
+#include <QWidget>
 #include <QResizeEvent>
+#include <QFile>
+#include <QDomDocument>
 
 namespace Ui {
 class ContainerExplorer;
@@ -44,13 +46,15 @@ class ContainerExplorer : public QMainWindow
 
     Ui::ContainerExplorer *ui;
 
-    MediaFile_t *media = NULL;
-    BitstreamMap_t *track = NULL;
+    MediaFile_t *media = nullptr;
+    BitstreamMap_t *track = nullptr;
     BitstreamMap_t *tracks[16] = {0};
 
-    QString curFile;
-    QFile file;
-    QByteArray fileDatas;
+    QFile mediaFile;
+    QByteArray mediaDatas;
+
+    QFile xmlFile;
+    QDomDocument xmlDatas;
 
     void resizeEvent(QResizeEvent *event);
 
@@ -64,13 +68,23 @@ public:
     void loadTracks();
 
 public slots:
+    void clearContent();
     void tabSwitch(int intex);
     void loadSamples(int track_id);
     void sampleSelection();
     void sampleSelection(int sample_id);
     void containerSelection();
     void containerSelection(QTreeWidgetItem *item, int column);
-    void clearContent();
+
+    bool loadXmlFile();
+        void xmlHeaderParser(QDomNode &n);
+        void xmlStructureParser(QDomNode &n);
+        void xmlAtomParser(QDomNode &n, QTreeWidgetItem *item);
+
+    QTreeWidgetItem *createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset);
+    void findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements);
+    bool findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement);
+
 };
 
 /* ************************************************************************** */

@@ -71,7 +71,11 @@ QString getTimestampString(const uint64_t timestamp)
 {
     QString timestamp_qstr;
 
-    if (timestamp > 0)
+    if (timestamp == 0)
+    {
+        timestamp_qstr = "0 ns";
+    }
+    else
     {
         uint64_t hours = timestamp / 3600000000;
         uint64_t minutes = (timestamp - (hours * 3600000000)) / 60000000;
@@ -81,19 +85,19 @@ QString getTimestampString(const uint64_t timestamp)
 
         if (hours > 0)
         {
-            timestamp_qstr += QString::number(hours) + ":";
+            timestamp_qstr += QString::number(hours) + " h ";
         }
         if (minutes > 0)
         {
-            timestamp_qstr += QString::number(minutes) + ":";
+            timestamp_qstr += QString::number(minutes) + " m ";
         }
         if (seconds > 0)
         {
-            timestamp_qstr += QString::number(seconds) + ":";
+            timestamp_qstr += QString::number(seconds) + " s ";
         }
         if (ms > 0)
         {
-            timestamp_qstr += QString::number(ms) + ":";
+            timestamp_qstr += QString::number(ms) + " ms ";
         }
         timestamp_qstr += QString::number(ns) + QObject::tr(" ns");
     }
@@ -470,6 +474,8 @@ QString getSampleTypeString(const unsigned sampleType)
         sample_type_qstr = QObject::tr("Text sample");
     else if (sampleType == sample_TEXT_FILE)
         sample_type_qstr = QObject::tr("Text file");
+    else if (sampleType == sample_RAW)
+        sample_type_qstr = QObject::tr("RAW datas");
     else if (sampleType == sample_OTHER)
         sample_type_qstr = QObject::tr("Other sample");
     else

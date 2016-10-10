@@ -23,10 +23,12 @@
 #include "ui_explorer.h"
 #include "utils.h"
 
+#include <QFontDatabase>
 #include <QByteArray>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QTreeWidget>
+#include <QLabel>
 #include <QDebug>
 
 ContainerExplorer::ContainerExplorer(QWidget *parent) :
@@ -35,13 +37,18 @@ ContainerExplorer::ContainerExplorer(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->widget_hex->setReadOnly(true);
-
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSwitch(int)));
     connect(ui->tabWidget_tracks, SIGNAL(currentChanged(int)), this, SLOT(loadSamples(int)));
 
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
     connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(containerSelection(QTreeWidgetItem *, int)));
+
+    // Setup HEX widget
+    ui->widget_hex->setReadOnly(true);
+#ifdef Q_OS_LINUX
+    int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 11));
+#endif
 }
 
 ContainerExplorer::~ContainerExplorer()
@@ -59,15 +66,16 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
     if (media)
     {
         this->media = (MediaFile_t *)media;
-        file.setFileName(QString::fromLocal8Bit(media->file_path));
+        mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
         setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
 
-        if (!ui->widget_hex->setData(file))
+        if (!ui->widget_hex->setData(mediaFile))
         {
             return;
         }
 
+        loadXmlFile();
         loadTracks();
         loadSamples(0);
         containerSelection();
@@ -126,7 +134,7 @@ void ContainerExplorer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, tr("Video #") + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_video[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_video[i];
             }
         }
@@ -136,7 +144,7 @@ void ContainerExplorer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, tr("Audio #") + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_audio[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_audio[i];
             }
         }
@@ -146,7 +154,7 @@ void ContainerExplorer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, tr("Subtitles #") + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_subt[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_subt[i];
             }
         }
@@ -173,12 +181,23 @@ void ContainerExplorer::loadSamples(int tid)
     {
         track = tracks[tid];
 
-        for (uint32_t i = 0; i < tracks[tid]->sample_count; i++)
+        uint32_t sample_to_load_max = 512000;
+        uint32_t sample_to_load = track->sample_count;
+        if (sample_to_load > sample_to_load_max)
+            sample_to_load = sample_to_load_max;
+
+        uint32_t i = 0;
+        for (i = 0; i < sample_to_load; i++)
         {
             if (track->sample_type[i] != sample_OTHER)
                 ui->listWidget->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
             else
                 ui->listWidget->addItem(tr("Sample #") + QString::number(i));
+        }
+
+        if (i == sample_to_load_max)
+        {
+            ui->listWidget->addItem(tr("Maximum of 512k samples reached!"));
         }
     }
     else
@@ -186,10 +205,8 @@ void ContainerExplorer::loadSamples(int tid)
         track = NULL;
     }
 
-    if (ui->tabWidget->currentIndex() == 1)
-    {
-        ui->listWidget->setCurrentRow(0);
-    }
+    // Force initial selection
+    ui->listWidget->setCurrentRow(0);
 }
 
 void ContainerExplorer::sampleSelection()
@@ -207,10 +224,6 @@ void ContainerExplorer::sampleSelection(int sid)
     {
         int64_t offset = track->sample_offset[sid];
         int64_t size = track->sample_size[sid];
-        QString pts = QString::number(static_cast<double>(track->sample_pts[sid] / 1000.0), 'f', 3) + " ms";
-        QString dts = QString::number(static_cast<double>(track->sample_dts[sid] / 1000.0), 'f', 3) + " ms";
-        pts += "   (" + getTimestampString(track->sample_pts[sid]) + ")";
-        dts += "   (" + getTimestampString(track->sample_dts[sid]) + ")";
 
         // Infos
         ui->labelTitle->setText(getSampleTypeString(track->sample_type[sid]) + " #" + QString::number(sid));
@@ -227,24 +240,28 @@ void ContainerExplorer::sampleSelection(int sid)
         ui->gridLayout_content->addWidget(ds, 1, 1);
         ui->gridLayout_content->addWidget(doo, 2, 1);
 
-        if (track->sample_pts[sid] >= 0 && track->sample_dts[sid] >= 0)
+        if (track->sample_pts[sid] >= 0 || track->sample_dts[sid] >= 0)
         {
+            QString pts = QString::number(static_cast<double>(track->sample_pts[sid] / 1000.0), 'f', 3) + " ms";
+            pts += "   (" + getTimestampString(track->sample_pts[sid]) + ")";
             QLabel *lp = new QLabel(tr("> PTS"));
-            QLabel *ld = new QLabel(tr("> DTS"));
             QLineEdit *dp = new QLineEdit(pts);
             dp->setReadOnly(true);
+            ui->gridLayout_content->addWidget(lp, 3, 0);
+            ui->gridLayout_content->addWidget(dp, 3, 1);
+
+            QString dts = QString::number(static_cast<double>(track->sample_dts[sid] / 1000.0), 'f', 3) + " ms";
+            dts += "   (" + getTimestampString(track->sample_dts[sid]) + ")";
+            QLabel *ld = new QLabel(tr("> DTS"));
             QLineEdit *dd = new QLineEdit(dts);
             dd->setReadOnly(true);
-
-            ui->gridLayout_content->addWidget(lp, 3, 0);
             ui->gridLayout_content->addWidget(ld, 4, 0);
-            ui->gridLayout_content->addWidget(dp, 3, 1);
             ui->gridLayout_content->addWidget(dd, 4, 1);
         }
 
         // HexEditor
         ui->widget_hex->setReadOnly(true);
-        ui->widget_hex->setData(file);
+        ui->widget_hex->setData(mediaFile);
         ui->widget_hex->setData(ui->widget_hex->dataAt(offset, size));
     }
 }
@@ -253,28 +270,78 @@ void ContainerExplorer::containerSelection()
 {
     clearContent();
 
-    // Infos
-    ui->labelTitle->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+    if (!media)
+        return;
 
     // Infos
+    ui->labelTitle->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+    QLabel *fpl = new QLabel(tr("File path:"));
+    QLabel *fp = new QLabel(QString::fromLocal8Bit(media->file_path));
+    QLabel *fsl = new QLabel(tr("File size:"));
+    QLineEdit *fs = new QLineEdit(QString::number(media->file_size));
+    fs->setReadOnly(true);
+
+    ui->gridLayout_content->addWidget(fpl, 0, 0);
+    ui->gridLayout_content->addWidget(fp, 0, 1);
+    ui->gridLayout_content->addWidget(fsl, 1, 0);
+    ui->gridLayout_content->addWidget(fs, 1, 1);
 
     // HexEditor
     ui->widget_hex->setReadOnly(true);
-    ui->widget_hex->setData(file);
+    ui->widget_hex->setData(mediaFile);
 }
 
 void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
 {
     clearContent();
 
-    // Infos
-    ui->labelTitle->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+    QString selected_fcc = item->text(0);
+    int selected_offset = item->data(0, Qt::UserRole).toInt();
+    int selected_size = 0;
+    //qDebug() << "Atom fcc:" << selected_fcc << "@" << selected_offset << "clicked";
 
-    // Infos
+    QDomElement eSelected;
+    if (findElement(xmlDatas.documentElement(), "offset", selected_offset, eSelected) == true)
+    {
+        selected_size = eSelected.attributeNode("size").value().toInt();
+        int fieldCount = 0;
 
-    // HexEditor
-    ui->widget_hex->setReadOnly(true);
-    ui->widget_hex->setData(file);
+        // Infos
+        ui->labelTitle->setText(selected_fcc);
+        QLabel *lb_offset = new QLabel(tr("<b>> Atom offset:</b>"));
+        QLineEdit *le_offset = new QLineEdit(QString::number(selected_offset));
+        le_offset->setReadOnly(true);
+        QLabel *lb_size = new QLabel("<b>> Atom size:</b>");
+        QLineEdit *le_size = new QLineEdit(QString::number(selected_size));
+        le_size->setReadOnly(true);
+        ui->gridLayout_content->addWidget(lb_offset, fieldCount, 0);
+        ui->gridLayout_content->addWidget(le_offset, fieldCount++, 1);
+        ui->gridLayout_content->addWidget(lb_size, fieldCount, 0);
+        ui->gridLayout_content->addWidget(le_size, fieldCount++, 1);
+
+        // Parse element and set fields
+        QDomNode structure_node = eSelected.firstChild();
+        while (structure_node.isNull() == false)
+        {
+            QDomElement e = structure_node.toElement();
+            if (e.isNull() == false && e.tagName() != "atom")
+            {
+                QLabel *fl = new QLabel(e.tagName());
+                QLineEdit *fv = new QLineEdit(e.text());
+                fv->setReadOnly(true);
+
+                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_content->addWidget(fv, fieldCount, 1);
+            }
+            structure_node = structure_node.nextSibling();
+            fieldCount++;
+        }
+
+        // HexEditor
+        ui->widget_hex->setReadOnly(true);
+        ui->widget_hex->setData(mediaFile);
+        ui->widget_hex->setData(ui->widget_hex->dataAt(selected_offset, selected_size));
+    }
 }
 
 /**
@@ -343,6 +410,179 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 void ContainerExplorer::clearContent()
 {
     //qDebug() << "CLEARING CONTENT";
+    ui->labelTitle->setText("");
     remove(ui->gridLayout_content, 0, 0, true);
     remove(ui->gridLayout_content, 1, 1, true);
+}
+
+/* ************************************************************************** */
+
+bool ContainerExplorer::loadXmlFile()
+{
+    //qDebug() << "loadXmlFile()";
+    bool status = true;
+
+    ui->treeWidget->clear();
+
+    if (!media)
+        return false;
+
+    // Load XML file and make it a QDomDocument
+    QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+    xmlFile.close();
+    xmlFile.setFileName(filename);
+    if (!xmlFile.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "xmlFile.open(" << filename << ") > error";
+        return false;
+    }
+    if (!xmlDatas.setContent(&xmlFile))
+    {
+        qDebug() << "xmlDoc.setContent() > error";
+        xmlFile.close();
+        return false;
+    }
+    xmlFile.close();
+
+    // Actual XML data parsing
+    QDomNode root_node = xmlDatas.documentElement().firstChild();
+    while (root_node.isNull() == false)
+    {
+        QDomElement e = root_node.toElement(); // try to convert the node to an element
+        if (e.isNull() == false)
+        {
+            if (e.tagName() == "header")
+            {
+                xmlHeaderParser(e);
+            }
+            else if (e.tagName() == "structure")
+            {
+                xmlStructureParser(e);
+            }
+            else
+            {
+                // qDebug() << "[0]" << qPrintable(e.tagName()); // Unknown element...
+            }
+        }
+        root_node = root_node.nextSibling();
+    }
+
+    return status;
+}
+
+void ContainerExplorer::xmlHeaderParser(QDomNode &root)
+{
+    //qDebug() << "xmlHeaderParser() >>>" << root.toElement().tagName();
+
+    QDomNode header_node = root.firstChild();
+    while (header_node.isNull() == false)
+    {
+        QDomElement e = header_node.toElement();
+        if (e.isNull() == false)
+        {
+            //qDebug() << "h " << qPrintable(e.tagName()); // structure fields parsing
+        }
+        header_node = header_node.nextSibling();
+    }
+}
+
+void ContainerExplorer::xmlStructureParser(QDomNode &root)
+{
+    //qDebug() << "xmlStructureParser() >>>" << root.toElement().tagName();
+
+    QDomNode structure_node = root.firstChild();
+    while (structure_node.isNull() == false)
+    {
+        QDomElement e = structure_node.toElement();
+        if (e.isNull() == false)
+        {
+            if (e.tagName() == "atom")
+            {
+                xmlAtomParser(e, nullptr);
+            }
+            else
+            {
+                //qDebug() << "s " << qPrintable(e.tagName()); // structure fields parsing
+            }
+        }
+        structure_node = structure_node.nextSibling();
+    }
+}
+
+void ContainerExplorer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
+{
+    QString fcc = root.toElement().attributeNode("fcc").value();
+    QString offset = root.toElement().attributeNode("offset").value();
+    //qDebug() << "> xmlAtomParser() >" << fcc;
+
+    QTreeWidgetItem *child_item = createChildItem(item, fcc, offset);
+    ui->treeWidget->setItemExpanded(child_item, true);
+
+    QDomNode structure_node = root.firstChild();
+    while (structure_node.isNull() == false)
+    {
+        QDomElement e = structure_node.toElement();
+        if (e.isNull() == false)
+        {
+            if (e.tagName() == "atom")
+            {
+                xmlAtomParser(e, child_item);
+            }
+            else
+            {
+                //qDebug() << "a " << qPrintable(e.tagName()); // ATOM fields parsing
+            }
+        }
+        structure_node = structure_node.nextSibling();
+    }
+}
+
+QTreeWidgetItem *ContainerExplorer::createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset)
+{
+    QTreeWidgetItem *childItem;
+    if (item)
+    {
+        childItem = new QTreeWidgetItem(item);
+    }
+    else
+    {
+        childItem = new QTreeWidgetItem(ui->treeWidget);
+    }
+    childItem->setData(0, Qt::UserRole, offset);
+    childItem->setText(0, fcc);
+
+    return childItem;
+}
+
+void ContainerExplorer::findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements)
+{
+    if (elem.attributes().contains(attr))
+        foundElements.append(elem);
+
+    QDomElement child = elem.firstChildElement();
+    while (!child.isNull())
+    {
+        findElementsWithAttribute(child, attr, foundElements);
+        child = child.nextSiblingElement();
+    }
+}
+
+bool ContainerExplorer::findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement)
+{
+    bool status = false;
+
+    QList<QDomElement> eCandidates;
+    findElementsWithAttribute(xmlDatas.documentElement(), attr, eCandidates);
+
+    for (QDomElement e: eCandidates)
+    {
+        if (value == e.attributeNode(attr).value().toInt())
+        {
+            foundElement = e;
+            status = true;
+            break;
+        }
+    }
+
+    return status;
 }

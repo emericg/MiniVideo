@@ -5,7 +5,7 @@
 
 TARGET       = mini_analyser
 TEMPLATE     = app
-QT          += core svg gui widgets printsupport
+QT          += core svg gui widgets xml printsupport
 CONFIG      += c++11
 
 OBJECTS_DIR  = build/
