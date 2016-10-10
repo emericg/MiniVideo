@@ -122,7 +122,7 @@ void minivideo_print_infos(void)
 #endif
 
 #if ENABLE_DEBUG
-    printf("* MiniVideo library tracing test:");
+    printf("* MiniVideo library tracing test:\n");
     TRACE_ERROR(MAIN, "TEST error");
     TRACE_WARNING(MAIN, "TEST warning");
     TRACE_INFO(MAIN, "TEST info");

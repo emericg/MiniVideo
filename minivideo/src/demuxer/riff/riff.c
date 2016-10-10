@@ -76,7 +76,7 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
 /* ************************************************************************** */
 
 /*!
- * \brief Print an RIFF list header.
+ * \brief Print a RIFF list header.
  */
 void print_list_header(RiffList_t *list_header)
 {

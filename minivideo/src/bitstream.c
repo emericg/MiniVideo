@@ -955,10 +955,10 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
 {
     int retcode = FAILURE;
 
-    // Check if destination is in the current buffer
+    // Check if destination is outside the current buffer
     if ((bitstr->buffer_offset + n) > (bitstr->buffer_size * 8))
     {
-        // If not, check if its in the next one
+        // If it is, check if its in the next one
         if (n < (bitstr->buffer_size * 8))
         {
             // Refresh buffer

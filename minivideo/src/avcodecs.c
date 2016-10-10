@@ -267,15 +267,21 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                 return "OPUS";
                 break;
 
+            case CODEC_AC2:
+                if (long_description)
+                    return "AC-2 (Dolby Labs AC-2)";
+                else
+                    return "AC-2";
+                break;
             case CODEC_AC3:
                 if (long_description)
-                    return "AC-3 (Dolby Digital)";
+                    return "AC-3 (Dolby Digital AC-3)";
                 else
                     return "AC-3";
                 break;
             case CODEC_EAC3:
                 if (long_description)
-                    return "EAC-3 (Dolby Digital+)";
+                    return "EAC-3 (Dolby Digital AC-3+)";
                 else
                     return "EAC-3";
                 break;

@@ -49,6 +49,8 @@ typedef enum SampleType_e
 {
     sample_UNKNOWN = 0,
 
+    sample_RAW,
+
     sample_AUDIO,
     sample_AUDIO_TAG,
 
