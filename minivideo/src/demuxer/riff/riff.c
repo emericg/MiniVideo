@@ -58,15 +58,33 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
         // Parse RIFF list header
         list_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
         list_header->dwList       = read_bits(bitstr, 32);
-        list_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
-        list_header->dwFourCC     = read_bits(bitstr, 32);
-        list_header->offset_end   = list_header->offset_start + list_header->dwSize + 8;
 
-        if (list_header->dwList != fcc_RIFF &&
-            list_header->dwList != fcc_LIST)
+        if (list_header->dwList == fcc_RIFF ||
+            list_header->dwList == fcc_LIST)
         {
-            TRACE_1(RIF, "We are looking for a RIFF list, however this is neither a LIST nor a RIFF (0x%04X)", list_header->dwList);
+            list_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
+            list_header->dwFourCC     = read_bits(bitstr, 32);
+        }
+        else if (list_header->dwList == fcc_FFIR ||
+                 list_header->dwList == fcc_TSIL)
+        {
+            TRACE_WARNING(RIF, "Invalid RiffList_t endianness...");
+            list_header->dwList       = endian_flip_32(list_header->dwList);
+            list_header->dwSize       = read_bits(bitstr, 32);
+            list_header->dwFourCC     = endian_flip_32(read_bits(bitstr, 32));
+        }
+        else
+        {
+            TRACE_WARNING(RIF, "We are looking for a RIFF list, however this is neither a LIST nor a RIFF (0x%04X)",
+                          list_header->dwList);
             retcode = FAILURE;
+        }
+
+        list_header->offset_end   = list_header->offset_start + list_header->dwSize + 8;
+        if (list_header->offset_end > bitstr->bitstream_size)
+        {
+            list_header->offset_end = bitstr->bitstream_size;
+            list_header->dwSize = list_header->offset_end - list_header->offset_start;
         }
     }
 

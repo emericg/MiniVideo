@@ -30,50 +30,41 @@
 /* ************************************************************************** */
 
 /*!
- * \struct RiffList_t
- * \brief Basic data structures for RIFF formated files.
+ * \brief Basic container structure of RIFF formated files.
  *
- * There are 2 types of atoms in RIFF formated files: LIST and CHUNK.
+ * There are 2 types of atoms in RIFF formated files:
+ * - LIST can only contains other LIST or CHUNK.
+ * - CHUNK can only contains datas.
  *
- * - 'dwFourCC' describes the type of the chunk.
- * - 'dwSize' contains the size of the chunk or list, including the first byte
- *   after the dwSize value. In the case of Lists, this includes the 4 bytes
- *   taken by the 'dwFourCC' field.
- *
- * The offset_start value indicate the start of the LIST, after dwList and
- * dwSize, but not including dwFourCC.
- *
- * The value of dwList can be 'RIFF' ('RIFF-List') or 'LIST' ('List').
+ * Common value of dwList can be 'RIFF' ('RIFF-List') or 'LIST' ('List').
  */
 typedef struct RiffList_t
 {
-    int64_t offset_start;
+    int64_t offset_start;   //!< absolute offset of the LIST beginning
     int64_t offset_end;
 
     // List parameters
-    uint32_t dwList;
-    uint32_t dwSize;
-    uint32_t dwFourCC;
+    uint32_t dwList;        //!< indicate the type of list we are parsing
+    uint32_t dwSize;        //!< LIST size, not including dwFourCC nor dwSize (but including dwFourCC)
+    uint32_t dwFourCC;      //!< LIST identifier
 
 } RiffList_t;
 
 /*!
- * \struct RiffChunk_t
- * \brief Basic data structures for RIFF formated files.
+ * \brief Basic data structure of RIFF formated files.
  *
- * Very similar to RiffList_t, but:
- * - 'dwSize' contains the size of the chunk, including the first byte after the
- *   'dwSize' value.
- * - Cannot contain other RiffList_t nor RiffChunk_t elements.
+ * There are 2 types of atoms in RIFF formated files:
+ * - LIST can only contains other LIST or CHUNK.
+ * - CHUNK can only contains datas.
  */
 typedef struct RiffChunk_t
 {
-    int64_t offset_start;
+    int64_t offset_start;   //!< absolute offset of the CHUNK beginning
     int64_t offset_end;
 
     // Chunk parameters
-    uint32_t dwFourCC;
-    uint32_t dwSize;
+    uint32_t dwFourCC;      //!< CHUNK identifier
+    uint32_t dwSize;        //!< CHUNK size, not including dwFourCC nor dwSize
 
 } RiffChunk_t;
 
@@ -84,8 +75,11 @@ typedef enum RIFF_fcc_e
     fcc_RIFF   = 0x52494646,
     fcc_LIST   = 0x4C495354,
 
-    fcc_RIFX   = 0x52494658,
-    fcc_FFIR   = 0x46464952
+    fcc_FFIR   = 0x46464952,
+    fcc_TSIL   = 0x5453494C,
+
+    fcc_RIFX   = 0x52494658,    //!< Used by Open-DML AVI
+    fcc_RF64   = 0x52463634,    //!< Used by RIFF64
 
 } RIFF_fcc_e;
 

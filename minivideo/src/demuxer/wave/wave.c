@@ -42,6 +42,34 @@
 /* ************************************************************************** */
 
 /*!
+ * \brief Parse unknown chunk.
+ */
+static int parse_unkn(Bitstream_t *bitstr, RiffChunk_t *unkn_header, wave_t *wave)
+{
+    int retcode = SUCCESS;
+
+    if (unkn_header == NULL)
+    {
+        TRACE_ERROR(WAV, "Invalid unkn_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        char fcc[5];
+        TRACE_WARNING(WAV, BLD_GREEN "parse_unkn(chunk type %s)" CLR_RESET,
+                      getFccString_le(unkn_header->dwFourCC, fcc));
+
+#if ENABLE_DEBUG
+        print_chunk_header(unkn_header);
+#endif
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief Parse fmt chunk.
  */
 static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
@@ -67,7 +95,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         }
         else
         {
-            TRACE_WARNING(WAV, "OMG EMPTY fmt CHUNK");
+            TRACE_WARNING(WAV, "EMPTY fmt CHUNK");
         }
 
         if (fmt_header->dwSize >= 18)
@@ -83,8 +111,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                int i = 0;
-                for (i = 0; i < 16; i++)
+                for (int i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
             }
             else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1)
@@ -123,33 +150,27 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         }
 
 #if ENABLE_DEBUG
-        // Print header
         print_chunk_header(fmt_header);
-
-        // Print content
         TRACE_1(WAV, "> wFormatTag      : %u", wave->fmt.wFormatTag);
         TRACE_1(WAV, "> nChannels       : %u", wave->fmt.nChannels);
         TRACE_1(WAV, "> nSamplesPerSec  : %u", wave->fmt.nSamplesPerSec);
         TRACE_1(WAV, "> nAvgBytesPerSec : %u", wave->fmt.nAvgBytesPerSec);
         TRACE_1(WAV, "> nBlockAlign     : %u", wave->fmt.nBlockAlign);
         TRACE_1(WAV, "> wBitsPerSample  : %u", wave->fmt.wBitsPerSample);
-
-        // Extension
-        if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18)
+        if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18) // extension
         {
             TRACE_1(WAV, "> cbSize             : %u", wave->fmt.cbSize);
 
             TRACE_1(WAV, "> wValidBitsPerSample: %u", wave->fmt.wValidBitsPerSample);
             TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
-            TRACE_1(WAV, "> SubFormat : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+            TRACE_1(WAV, "> SubFormat: {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
                     wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
                     wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
                     wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
                     wave->fmt.SubFormat[8], wave->fmt.SubFormat[9],
                     wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
         }
-
 #endif // ENABLE_DEBUG
     }
 
@@ -176,10 +197,7 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
         wave->fact.dwSampleLength = endian_flip_32(read_bits(bitstr, 32));
 
 #if ENABLE_DEBUG
-        // Print header
         print_chunk_header(fact_header);
-
-        // Print content
         TRACE_1(WAV, "> dwSampleLength     : %u", wave->fact.dwSampleLength);
 #endif
     }
@@ -204,11 +222,37 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave
     }
     else
     {
-#if ENABLE_DEBUG
-        // Print header
-        print_chunk_header(data_header);
+        // TODO
 
-        // Print content
+#if ENABLE_DEBUG
+        print_chunk_header(data_header);
+#endif
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse bext chunk.
+ */
+static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave)
+{
+    TRACE_INFO(WAV, BLD_GREEN "parse_bext()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (data_header == NULL)
+    {
+        TRACE_ERROR(WAV, "Invalid data_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        // TODO
+
+#if ENABLE_DEBUG
+        print_chunk_header(data_header);
 #endif
     }
 
@@ -236,10 +280,7 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
         wave->data.datasSize = data_header->dwSize;
 
 #if ENABLE_DEBUG
-        // Print header
         print_chunk_header(data_header);
-
-        // Print content
         TRACE_1(WAV, "> datasOffset     : %u", wave->data.datasOffset);
         TRACE_1(WAV, "> datasSize       : %u", wave->data.datasSize);
 #endif
@@ -359,7 +400,7 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             track->sample_count = track->frame_count_idr = 1;
             track->bitrate_mode = BITRATE_UNKNOWN;
 
-            track->sample_type[0] = sample_UNKNOWN;
+            track->sample_type[0] = sample_RAW;
             track->sample_size[0] = wave->data.datasSize;
             track->sample_offset[0] = wave->data.datasOffset;
             track->sample_pts[0] = 0;
@@ -410,45 +451,73 @@ int wave_fileParse(MediaFile_t *media)
         // A convenient way to stop the parser
         wave.run = true;
 
-        // Read RIFF header
-        RiffList_t RIFF_header;
-        retcode = parse_list_header(bitstr, &RIFF_header);
-        print_list_header(&RIFF_header);
 
-        // First level chunk
-        if (RIFF_header.dwList == fcc_RIFF &&
-            RIFF_header.dwFourCC == fcc_WAVE)
+        // Loop on 1st level chunks
+        while (wave.run == true &&
+               retcode == SUCCESS &&
+               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 8))
         {
-            // Loop on 2st level chunks
-            while (wave.run == true &&
-                   retcode == SUCCESS &&
-                   bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 8))
+            // Read RIFF header
+            RiffList_t RIFF_header;
+            retcode = parse_list_header(bitstr, &RIFF_header);
+            print_list_header(&RIFF_header);
+
+            // First level chunk
+            if (RIFF_header.dwList == fcc_RIFF &&
+                RIFF_header.dwFourCC == fcc_WAVE)
             {
-                RiffChunk_t chunk_header;
-                retcode = parse_chunk_header(bitstr, &chunk_header);
-
-                switch (chunk_header.dwFourCC)
+                // Loop on 2st level chunks
+                while (wave.run == true &&
+                       retcode == SUCCESS &&
+                       bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
                 {
-                case fcc_fmt_:
-                    retcode = parse_fmt(bitstr, &chunk_header, &wave);
-                    break;
-                case fcc_fact:
-                    retcode = parse_fact(bitstr, &chunk_header, &wave);
-                    break;
-                case fcc_data:
-                    retcode = parse_data(bitstr, &chunk_header, &wave);
-                    break;
-                case fcc_cue_:
-                    retcode = parse_cue(bitstr, &chunk_header, &wave);
-                default:
-                    TRACE_WARNING(WAV, BLD_GREEN "Unknown chunk type (%s)" CLR_RESET,
-                                  getFccString_le(chunk_header.dwFourCC, fcc));
-                    print_chunk_header(&chunk_header);
-                    retcode = skip_chunk(bitstr, &RIFF_header, &chunk_header);
-                    break;
-                }
+                    RiffChunk_t chunk_header;
+                    retcode = parse_chunk_header(bitstr, &chunk_header);
 
-                jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                    switch (chunk_header.dwFourCC)
+                    {
+                    case fcc_fmt_:
+                        retcode = parse_fmt(bitstr, &chunk_header, &wave);
+                        break;
+                    case fcc_fact:
+                        retcode = parse_fact(bitstr, &chunk_header, &wave);
+                        break;
+                    case fcc_data:
+                        retcode = parse_data(bitstr, &chunk_header, &wave);
+                        break;
+                    case fcc_cue_:
+                        retcode = parse_cue(bitstr, &chunk_header, &wave);
+                        break;
+                    case fcc_bext:
+                        retcode = parse_bext(bitstr, &chunk_header, &wave);
+                        break;
+                    default:
+                        retcode = parse_unkn(bitstr, &chunk_header, &wave);
+                        break;
+                    }
+
+                    jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                }
+            }
+            else
+            {
+                // Loop on 2st level chunks
+                while (wave.run == true &&
+                       retcode == SUCCESS &&
+                       bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
+                {
+                    RiffChunk_t chunk_header;
+                    retcode = parse_chunk_header(bitstr, &chunk_header);
+
+                    switch (chunk_header.dwFourCC)
+                    {
+                    default:
+                        retcode = parse_unkn(bitstr, &chunk_header, &wave);
+                        break;
+                    }
+
+                    jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                }
             }
         }
 

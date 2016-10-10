@@ -84,14 +84,44 @@ typedef struct dataChunk_t
 
 typedef struct cueChunk_t
 {
-    uint32_t what;                //!< ?
+    uint32_t what;      //!< ?
 
 } cueChunk_t;
+
+typedef struct JUNKChunk_t
+{
+    uint32_t what;      //!< ?
+
+} JUNKChunk_t;
+
+typedef struct bwfChunk_t
+{
+    uint8_t description[256];
+    uint8_t originator[32];
+    uint8_t originatorReference[32];
+    uint8_t originatorDate[10];     //!< yyyy:mm:dd (ASCII string)
+    uint8_t originationTime[8];     //!< hh:mm:ss (ASCII string)
+    uint32_t timeReferenceLow;
+    uint32_t timeReferenceHigh;
+    uint16_t version;
+    uint8_t UMID[64];
+
+    uint16_t loudnessVal;
+    uint16_t loudnessRange;
+    uint16_t maxTruePeakLevel;
+    uint16_t maxMomentaryLoudnes;
+    uint16_t maxShortTermLoudness;
+
+    uint8_t Reserved[180];
+
+    uint8_t codingHistory;          //!< ASCII string
+
+} bwfChunk_t;
 
 //! Structure for WAVE audio infos
 typedef struct wave_t
 {
-    bool run; //!< A convenient way to stop the parser from any sublevel
+    bool run;           //!< A convenient way to stop the parser from any sublevel
 
     fmtChunk_t fmt;
     factChunk_t fact;
@@ -101,10 +131,6 @@ typedef struct wave_t
 } wave_t;
 
 /* ************************************************************************** */
-
-//SUBTYPE_AMBISONIC_B_FORMAT_PCM {00000001-0721-11d3-8644-C8C1CA000000}
-//SUBTYPE_AMBISONIC_B_FORMAT_IEEE_FLOAT {00000003-0721-11d3-8644-C8C1CA000000}
-
 /*
 // GUID SubFormat IDs
 ATRAC3P                         {0xE923AABF, 0xCB58, 0x4471, {0xA1, 0x19, 0xFF, 0xFA, 0x01, 0xE4, 0xCE, 0x62}}
@@ -121,7 +147,14 @@ typedef enum wave_fcc_e
     fcc_fmt_   = 0x666D7420,
     fcc_fact   = 0x66616374,
     fcc_data   = 0x64617461,
-    fcc_cue_   = 0x63756520
+    fcc_cue_   = 0x63756520,
+    fcc_JUNK   = 0x4A554E4B,
+
+    fcc_bext   = 0x62657874,    //!< Used by BWF
+
+    fcc_big1   = 0x62696731,    //!< Used by RF64
+    fcc_ds64   = 0x64733634,
+    fcc_r64m   = 0x7236346D
 
 } wave_fcc_e;
 
