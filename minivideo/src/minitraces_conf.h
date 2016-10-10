@@ -95,7 +95,7 @@ enum TraceModule_e
         WAV,
         MPS,
         MTS,
-        FILTER,
+        FILTR,
     MUXER,
     H264,
         NALU,

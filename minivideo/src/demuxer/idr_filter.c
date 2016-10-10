@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      filter.c
+ * \file      idr_filter.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2011
  */
 
 // minivideo headers
-#include "filter.h"
+#include "idr_filter.h"
 #include "../import.h"
 #include "../bitstream_map.h"
 #include "../typedef.h"
@@ -35,59 +35,45 @@
 
 /* ************************************************************************** */
 
-/*!
- * \brief Depending on picture_extractionmode parameter, choose some IDR from the bitstreamMap_t structure and delete the others.
- * \param **bitstream_map_pointer: docme.
- * \param picture_number: The number of thumbnail(s) we want to extract.
- * \param picture_extraction_mode: The method of distribution for thumbnails extraction.
- * \return The number of picture available in the bitstream map (0 means error).
- *
- * \todo This needs work...
- *
- * The IDR filter aim to remove irrelevant frames from the decode stream. By irrelevant we mean:
- * - Unicolor images (black or green screen) like the very first or very last frames of a stream.
- * - Images carrying less visual informations than the average.
- * - If specified, the filter select images spread over the duration of the film.
- */
-int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
+int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
                   int picture_number, const int picture_extraction_mode)
 {
-    TRACE_INFO(FILTER, BLD_GREEN "idr_filtering()" CLR_RESET);
+    TRACE_INFO(FILTR, BLD_GREEN "idr_filtering()" CLR_RESET);
     int retcode = FAILURE;
 
     int i = 0;
     int temporary_totalsamples_idr = 0;
     int temporary_sample_id[999] = {0};
 
-    if (bitstream_map_pointer == NULL || *bitstream_map_pointer == NULL)
+    if (bitstream_map_ptr == NULL || *bitstream_map_ptr == NULL)
     {
-        TRACE_ERROR(FILTER, "Invalid bitstream_map structure!");
+        TRACE_ERROR(FILTR, "Invalid bitstream_map structure!");
     }
     else
     {
-        BitstreamMap_t *map = *bitstream_map_pointer;
+        BitstreamMap_t *map = *bitstream_map_ptr;
 
         // Check if the bitstream_map is containing video data
         if (map->stream_type != stream_VIDEO)
         {
-            TRACE_WARNING(FILTER, "This is not an video bitstream_map!");
+            TRACE_WARNING(FILTR, "This is not an video bitstream_map!");
         }
 
         // Check if we have enough IDR samples inside the video
         if (map->frame_count_idr == 0)
         {
-            TRACE_WARNING(FILTER, "No IDR samples inside the stream, 0 pictures will be extracted!", map->frame_count_idr);
+            TRACE_WARNING(FILTR, "No IDR samples inside the stream, 0 pictures will be extracted!", map->frame_count_idr);
             picture_number = 0;
         }
         else if (map->frame_count_idr < picture_number)
         {
-            TRACE_WARNING(FILTER, "Not enough IDR samples inside the stream, only %i pictures will be extracted!", map->frame_count_idr);
+            TRACE_WARNING(FILTR, "Not enough IDR samples inside the stream, only %i pictures will be extracted!", map->frame_count_idr);
             picture_number = map->frame_count_idr;
         }
 
         if (picture_extraction_mode == PICTURE_UNFILTERED)
         {
-            TRACE_1(FILTER, "PICTURE_UNFILTERED is specified: no need to process bitstream_map.");
+            TRACE_1(FILTR, "PICTURE_UNFILTERED is specified: no need to process bitstream_map.");
             retcode = picture_number;
         }
         else
@@ -114,31 +100,31 @@ int idr_filtering(BitstreamMap_t **bitstream_map_pointer,
             if (map->frame_count_idr > 48)
             {
                 frame_borders = (int)ceil(map->frame_count_idr * 0.03);
-                TRACE_1(FILTER, "frame_borders is %i", frame_borders);
+                TRACE_1(FILTR, "frame_borders is %i", frame_borders);
             }
 
             for (i = frame_borders; i < (map->frame_count_idr - frame_borders); i++)
             {
                 if (map->sample_size[i + spspps] > frame_sizethreshold)
                 {
-                    TRACE_1(FILTER, "IDR %i (size: %i / threshold: %i)", i, map->sample_size[i + spspps], frame_sizethreshold);
+                    TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i)", i, map->sample_size[i + spspps], frame_sizethreshold);
 
                     temporary_sample_id[temporary_totalsamples_idr] = i + spspps;
                     temporary_totalsamples_idr++;
                 }
                 else
                 {
-                    TRACE_1(FILTER, "IDR %i (size: %i / threshold: %i) > REMOVED", i, map->sample_size[i + spspps], frame_sizethreshold);
+                    TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i) > REMOVED", i, map->sample_size[i + spspps], frame_sizethreshold);
                 }
             }
 
-            TRACE_1(FILTER, "We have a total of %i IDR after the first cut", temporary_totalsamples_idr);
+            TRACE_1(FILTR, "We have a total of %i IDR after the first cut", temporary_totalsamples_idr);
             if (picture_number > temporary_totalsamples_idr)
                 picture_number = temporary_totalsamples_idr;
 
             // Jump between two frames in PICTURE_DISTRIBUTED mode
             int frame_jump = (int)ceil(temporary_totalsamples_idr / (picture_number-1));
-            TRACE_1(FILTER, "frame_jump is %i", frame_jump);
+            TRACE_1(FILTR, "frame_jump is %i", frame_jump);
 
             // Init bitstream_map_filtered
             BitstreamMap_t *map_filtered = NULL;

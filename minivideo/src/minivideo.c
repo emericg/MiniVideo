@@ -38,7 +38,7 @@
 #include "demuxer/wave/wave.h"
 #include "demuxer/mpeg/ps/ps.h"
 #include "demuxer/esparser/esparser.h"
-#include "demuxer/filter.h"
+#include "demuxer/idr_filter.h"
 
 // Decoder
 #include "decoder/h264/h264.h"
