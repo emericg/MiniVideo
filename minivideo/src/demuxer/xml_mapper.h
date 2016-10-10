@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2015 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,38 +16,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      riff.h
+ * \file      xml_mapper.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2015
+ * \date      2016
  */
 
-#ifndef PARSER_RIFF_H
-#define PARSER_RIFF_H
+#ifndef XML_MAPPER_H
+#define XML_MAPPER_H
 
 // minivideo headers
-#include "riff_struct.h"
-#include "../../import.h"
-#include "../../bitstream.h"
+#include "../import.h"
 
 /* ************************************************************************** */
 
-int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header);
+/*!
+ * \brief Open the xmlMapper.
+ * \param *media[in]: A pointer to a MediaFile_t structure.
+ * \param **xml[in,out]: Mapping file.
+ */
+int xmlMapperOpen(MediaFile_t *media, FILE **xml);
 
-void print_list_header(RiffList_t *list_header);
-
-void write_list_header(RiffList_t *list_header, FILE *xml);
-
-int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child);
-
-int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header);
-
-void print_chunk_header(RiffChunk_t *chunk_header);
-
-void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml);
-
-int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child);
-
-int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end);
+/*!
+ * \brief Close the xmlMapper.
+ * \param **xml[in]: Mapping file.
+ */
+int xmlMapperClose(FILE **xml);
 
 /* ************************************************************************** */
-#endif // PARSER_RIFF_H
+#endif // XML_MAPPER_H

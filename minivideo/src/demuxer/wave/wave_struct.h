@@ -128,6 +128,8 @@ typedef struct wave_t
     dataChunk_t data;
     cueChunk_t cue;
 
+    FILE *xml;          //!< Temporary file used by the xmlMapper
+
 } wave_t;
 
 /* ************************************************************************** */

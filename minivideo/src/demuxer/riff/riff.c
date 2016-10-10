@@ -127,7 +127,42 @@ void print_list_header(RiffList_t *list_header)
 /* ************************************************************************** */
 
 /*!
- * \brief Skip a list header and content.
+ * \brief Write a RIFF list header to a file for the xmlMapper.
+ */
+void write_list_header(RiffList_t *list_header, FILE *xml)
+{
+    if (xml)
+    {
+        if (list_header == NULL)
+        {
+            TRACE_ERROR(RIF, "Invalid RiffList_t structure!");
+        }
+        else
+        {
+            char fcc[5];
+
+            if (list_header->dwList == fcc_RIFF)
+            {
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF header\" offset=\"%li\" size=\"%u\">\n",
+                        getFccString_le(list_header->dwFourCC, fcc),
+                        list_header->offset_start,
+                        list_header->dwSize);
+            }
+            else
+            {
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF list\" offset=\"%li\" size=\"%u\">\n",
+                        getFccString_le(list_header->dwFourCC, fcc),
+                        list_header->offset_start,
+                        list_header->dwSize);
+            }
+        }
+    }
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Skip a RIFF list header and content.
  */
 int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child)
 {
@@ -215,6 +250,30 @@ void print_chunk_header(RiffChunk_t *chunk_header)
         TRACE_2(RIF, "* CHUNK fcc : 0x%08X ('%s')",
                 chunk_header->dwFourCC,
                 getFccString_le(chunk_header->dwFourCC, fcc));
+    }
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Write a RIFF chunk header to a file for the xmlMapper.
+ */
+void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
+{
+    if (xml)
+    {
+        if (chunk_header == NULL)
+        {
+            TRACE_ERROR(RIF, "Invalid RiffChunk_t structure!");
+        }
+        else
+        {
+            char fcc[5];
+            fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF chunk\" offset=\"%li\" size=\"%u\">\n",
+                    getFccString_le(chunk_header->dwFourCC, fcc),
+                    chunk_header->offset_start,
+                    chunk_header->dwSize);
+        }
     }
 }
 

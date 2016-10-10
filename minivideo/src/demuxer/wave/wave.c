@@ -26,6 +26,7 @@
 #include "wave_struct.h"
 #include "../riff/riff.h"
 #include "../riff/riff_struct.h"
+#include "../xml_mapper.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -62,6 +63,12 @@ static int parse_unkn(Bitstream_t *bitstr, RiffChunk_t *unkn_header, wave_t *wav
 #if ENABLE_DEBUG
         print_chunk_header(unkn_header);
 #endif
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(unkn_header, wave->xml);
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -172,6 +179,31 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
         }
 #endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(fmt_header, wave->xml);
+            fprintf(wave->xml, "  <wFormatTag>%u</wFormatTag>\n", wave->fmt.wFormatTag);
+            fprintf(wave->xml, "  <nChannels>%u</nChannels>\n", wave->fmt.nChannels);
+            fprintf(wave->xml, "  <nSamplesPerSec>%u</nSamplesPerSec>\n", wave->fmt.nSamplesPerSec);
+            fprintf(wave->xml, "  <nAvgBytesPerSec>%u</nAvgBytesPerSec>\n", wave->fmt.nAvgBytesPerSec);
+            fprintf(wave->xml, "  <nBlockAlign>%u</nBlockAlign>\n", wave->fmt.nBlockAlign);
+            fprintf(wave->xml, "  <wBitsPerSample>%u</wBitsPerSample>\n", wave->fmt.wBitsPerSample);
+            if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18) // extension
+            {
+                fprintf(wave->xml, "  <cbSize>%u</cbSize>\n", wave->fmt.cbSize);
+                fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
+                fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
+                fprintf(wave->xml, "  <SubFormat>%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X</SubFormat>\n",
+                        wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
+                        wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
+                        wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
+                        wave->fmt.SubFormat[8], wave->fmt.SubFormat[9],
+                        wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
+            }
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -200,6 +232,13 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
         print_chunk_header(fact_header);
         TRACE_1(WAV, "> dwSampleLength     : %u", wave->fact.dwSampleLength);
 #endif
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(fact_header, wave->xml);
+            fprintf(wave->xml, "  <dwSampleLength>%li</dwSampleLength>\n", wave->fact.dwSampleLength);
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -227,6 +266,12 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave
 #if ENABLE_DEBUG
         print_chunk_header(data_header);
 #endif
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(data_header, wave->xml);
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -254,6 +299,12 @@ static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
 #if ENABLE_DEBUG
         print_chunk_header(data_header);
 #endif
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(data_header, wave->xml);
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -284,6 +335,14 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
         TRACE_1(WAV, "> datasOffset     : %u", wave->data.datasOffset);
         TRACE_1(WAV, "> datasSize       : %u", wave->data.datasSize);
 #endif
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(data_header, wave->xml);
+            fprintf(wave->xml, "  <datasOffset>%li</datasOffset>\n", wave->data.datasOffset);
+            fprintf(wave->xml, "  <datasSize>%li</datasSize>\n", wave->data.datasSize);
+            fprintf(wave->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -327,6 +386,10 @@ static int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             if (wave->fact.dwSampleLength)
             {
                 track->stream_size = wave->fact.dwSampleLength * (wave->fmt.wBitsPerSample*8) * wave->fmt.nChannels;
+
+                if (track->stream_size != (uint64_t)wave->data.datasSize)
+                    TRACE_WARNING(WAV, "track->stream_size != wave->data.datasSize (%d vs %d)",
+                                  track->stream_size, wave->data.datasSize);
 
                 if (wave->fmt.nSamplesPerSec)
                     track->duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
@@ -451,6 +514,8 @@ int wave_fileParse(MediaFile_t *media)
         // A convenient way to stop the parser
         wave.run = true;
 
+        // xmlMapper
+        xmlMapperOpen(media, &wave.xml);
 
         // Loop on 1st level chunks
         while (wave.run == true &&
@@ -461,6 +526,7 @@ int wave_fileParse(MediaFile_t *media)
             RiffList_t RIFF_header;
             retcode = parse_list_header(bitstr, &RIFF_header);
             print_list_header(&RIFF_header);
+            write_list_header(&RIFF_header, wave.xml);
 
             // First level chunk
             if (RIFF_header.dwList == fcc_RIFF &&
@@ -519,7 +585,12 @@ int wave_fileParse(MediaFile_t *media)
                     jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                 }
             }
+
+            if (wave.xml) fprintf(wave.xml, "  </atom>\n");
         }
+
+        // xmlMapper
+        xmlMapperClose(&wave.xml);
 
         // Go for the indexation
         retcode = wave_indexer(bitstr, media, &wave),

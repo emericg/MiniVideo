@@ -171,6 +171,7 @@ set(minivideo_SRC
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
     src/demuxer/esparser/esparser.c
     src/demuxer/idr_filter.c
+    src/demuxer/xml_mapper.c
     src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
         src/demuxer/mpeg/descriptor_struct.h
         src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h

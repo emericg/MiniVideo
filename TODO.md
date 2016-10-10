@@ -34,9 +34,7 @@ TODO video library
 - AVI parser (improvements)
   - global overhaul
 - WAVE parser (improvements)
-  - sample index
-- MP3 parser (improvements)
-  - sample index
+  - BWF and RF64 support
 - MPEG PS parser (improvements)
   - multiple frames per PES packet?
   - IDR detection
