@@ -122,14 +122,16 @@ typedef struct AviTrack_t
 //! Structure for AVI video infos
 typedef struct avi_t
 {
-    bool run; //!< A convenient way to stop the parser from any sublevel
+    bool run;                   //!< A convenient way to stop the parser from any sublevel
 
     AviHeader_t avih;
 
     unsigned int tracks_count;
     AviTrack_t *tracks[16];
 
-    unsigned int movi_offset; //!< DEPRECATED it was a way to stop the parser, and a qbaseoffset for indexation
+    unsigned int movi_offset;   //!< DEPRECATED it was a way to stop the parser, and a qbaseoffset for indexation
+
+    FILE *xml;                  //!< Temporary file used by the xmlMapper
 
 } avi_t;
 

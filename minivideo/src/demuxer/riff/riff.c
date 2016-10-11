@@ -40,8 +40,7 @@
 
 /*!
  * \brief Parse a RIFF list header.
- *
- * bitstr pointer is not checked for performance reason.
+ * \note 'bitstr' pointer is not checked for performance reasons.
  */
 int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
 {
@@ -68,19 +67,20 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
         else if (list_header->dwList == fcc_FFIR ||
                  list_header->dwList == fcc_TSIL)
         {
-            TRACE_WARNING(RIF, "Invalid RiffList_t endianness...");
+            // HACK // Bad endianness
+            TRACE_WARNING(RIF, "Invalid RiffList_t endianness... Trying to fix...");
             list_header->dwList       = endian_flip_32(list_header->dwList);
             list_header->dwSize       = read_bits(bitstr, 32);
             list_header->dwFourCC     = endian_flip_32(read_bits(bitstr, 32));
         }
         else
         {
-            TRACE_WARNING(RIF, "We are looking for a RIFF list, however this is neither a LIST nor a RIFF (0x%04X)",
-                          list_header->dwList);
+            TRACE_WARNING(RIF, "Invalid RIFF list header (0x%04X)", list_header->dwList);
             retcode = FAILURE;
         }
 
-        list_header->offset_end   = list_header->offset_start + list_header->dwSize + 8;
+        // HACK // Make sure our list doesn't go outside the file
+        list_header->offset_end = list_header->offset_start + list_header->dwSize + 8;
         if (list_header->offset_end > bitstr->bitstream_size)
         {
             list_header->offset_end = bitstr->bitstream_size;
@@ -98,6 +98,7 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header)
  */
 void print_list_header(RiffList_t *list_header)
 {
+#if ENABLE_DEBUG
     if (list_header == NULL)
     {
         TRACE_ERROR(RIF, "Invalid RiffList_t structure!");
@@ -122,6 +123,7 @@ void print_list_header(RiffList_t *list_header)
                 list_header->dwFourCC,
                 getFccString_le(list_header->dwFourCC, fcc));
     }
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */
@@ -204,8 +206,7 @@ int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *l
 
 /*!
  * \brief Parse a RIFF chunk header.
- *
- * bitstr pointer is not checked for performance reason.
+ * \note 'bitstr' pointer is not checked for performance reasons.
  */
 int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
 {
@@ -224,6 +225,13 @@ int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
         chunk_header->dwFourCC     = read_bits(bitstr, 32);
         chunk_header->dwSize       = endian_flip_32(read_bits(bitstr, 32));
         chunk_header->offset_end   = chunk_header->offset_start + chunk_header->dwSize + 8;
+
+        // HACK // Make sure our chunk doesn't go outside the file
+        if (chunk_header->offset_end > bitstr->bitstream_size)
+        {
+            chunk_header->offset_end = bitstr->bitstream_size;
+            chunk_header->dwSize = chunk_header->offset_end - chunk_header->offset_start;
+        }
     }
 
     return retcode;
@@ -236,6 +244,7 @@ int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header)
  */
 void print_chunk_header(RiffChunk_t *chunk_header)
 {
+#if ENABLE_DEBUG
     if (chunk_header == NULL)
     {
         TRACE_ERROR(RIF, "Invalid RiffChunk_t structure!");
@@ -251,6 +260,7 @@ void print_chunk_header(RiffChunk_t *chunk_header)
                 chunk_header->dwFourCC,
                 getFccString_le(chunk_header->dwFourCC, fcc));
     }
+#endif // ENABLE_DEBUG
 }
 
 /* ************************************************************************** */

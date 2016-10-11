@@ -43,7 +43,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
     TRACE_INFO(MAPPR, BLD_GREEN "xmlMapperOpen()" CLR_RESET);
     int retcode = SUCCESS;
 
-    if (media)
+    if (media && media->container_mapper)
     {
         char xmlPath[4096];
         memset(xmlPath, 0, 4096);

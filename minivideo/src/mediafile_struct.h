@@ -56,6 +56,7 @@ typedef struct MediaFile_t
     unsigned int duration;              //!< Content duration in milliseconds
 
     ContainerFormat_e container;        //!< File format / container used by this video file
+    bool container_mapper;              //!< Enables the xml container mapper
 
     // A/V track(s) datas and infos
     unsigned int tracks_audio_count;

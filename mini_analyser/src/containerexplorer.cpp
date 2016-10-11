@@ -306,8 +306,17 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
         selected_size = eSelected.attributeNode("size").value().toInt();
         int fieldCount = 0;
 
-        // Infos
-        ui->labelTitle->setText(selected_fcc);
+        // Set title
+        if (eSelected.attributeNode("title").isAttr())
+        {
+            ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"0xFFFFFF\">(" + selected_fcc + ")</font>");
+        }
+        else
+        {
+            ui->labelTitle->setText(selected_fcc);
+        }
+
+        // Set atom settings
         QLabel *lb_offset = new QLabel(tr("<b>> Atom offset:</b>"));
         QLineEdit *le_offset = new QLineEdit(QString::number(selected_offset));
         le_offset->setReadOnly(true);
@@ -319,22 +328,41 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
         ui->gridLayout_content->addWidget(lb_size, fieldCount, 0);
         ui->gridLayout_content->addWidget(le_size, fieldCount++, 1);
 
-        // Parse element and set fields
+        // Parse element and set atom fields
         QDomNode structure_node = eSelected.firstChild();
         while (structure_node.isNull() == false)
         {
             QDomElement e = structure_node.toElement();
-            if (e.isNull() == false && e.tagName() != "atom")
+            if (e.isNull() == false)
             {
-                QLabel *fl = new QLabel(e.tagName());
-                QLineEdit *fv = new QLineEdit(e.text());
-                fv->setReadOnly(true);
+                if (e.tagName() == "title")
+                {
+                    ui->labelTitle->setText(e.text() + "  <font color=\"0xFFFFFF\">(" + selected_fcc + ")</font>");
+                }
+                else if (e.tagName() == "desc")
+                {
+                    QLabel *fl = new QLabel(e.tagName());
+                    ui->gridLayout_content->addWidget(fl, fieldCount++, 1);
+                }
+                else if (e.tagName() != "atom")
+                {
+                    QLabel *fl = new QLabel(e.tagName());
+                    QLineEdit *fv = new QLineEdit(e.text());
+                    if (e.attributeNode("unit").isAttr())
+                    {
+                        fv->setText(fv->text() + "  (unit: " + e.attributeNode("unit").value() + ")");
+                    }
+                    if (e.attributeNode("note").isAttr())
+                    {
+                        fv->setText(fv->text() + "  (note: " + e.attributeNode("note").value() + ")");
+                    }
+                    fv->setReadOnly(true);
 
-                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
-                ui->gridLayout_content->addWidget(fv, fieldCount, 1);
+                    ui->gridLayout_content->addWidget(fl, fieldCount, 0);
+                    ui->gridLayout_content->addWidget(fv, fieldCount++, 1);
+                }
             }
             structure_node = structure_node.nextSibling();
-            fieldCount++;
         }
 
         // HexEditor

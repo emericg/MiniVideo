@@ -207,6 +207,12 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
     }
     else
     {
+        // Enable the container mapping
+        if (extract_metadatas == true)
+        {
+            input_media->container_mapper = true;
+        }
+
         // Start container parsing
         switch (input_media->container)
         {
@@ -238,9 +244,12 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
         }
 
         // Compute some additional metadatas
-        computeCodecs(input_media);
-        computeAspectRatios(input_media);
-        computeSamplesDatas(input_media);
+        if (extract_metadatas == true)
+        {
+            computeCodecs(input_media);
+            computeAspectRatios(input_media);
+            computeSamplesDatas(input_media);
+        }
     }
 
     return retcode;
