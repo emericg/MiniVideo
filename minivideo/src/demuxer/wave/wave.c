@@ -43,40 +43,6 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Parse unknown chunk.
- */
-static int parse_unkn(Bitstream_t *bitstr, RiffChunk_t *unkn_header, wave_t *wave)
-{
-    int retcode = SUCCESS;
-
-    if (unkn_header == NULL)
-    {
-        TRACE_ERROR(WAV, "Invalid unkn_header structure!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        char fcc[5];
-        TRACE_WARNING(WAV, BLD_GREEN "parse_unkn(chunk type %s)" CLR_RESET,
-                      getFccString_le(unkn_header->dwFourCC, fcc));
-
-#if ENABLE_DEBUG
-        print_chunk_header(unkn_header);
-#endif
-        // xmlMapper
-        if (wave->xml)
-        {
-            write_chunk_header(unkn_header, wave->xml);
-            fprintf(wave->xml, "  </atom>\n");
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
  * \brief Parse fmt chunk.
  */
 static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
@@ -617,8 +583,11 @@ int wave_fileParse(MediaFile_t *media)
                     case fcc_bext:
                         retcode = parse_bext(bitstr, &chunk_header, &wave);
                         break;
+                    case fcc_JUNK:
+                        retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
+                        break;
                     default:
-                        retcode = parse_unkn(bitstr, &chunk_header, &wave);
+                        retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
                         break;
                     }
 
@@ -637,8 +606,11 @@ int wave_fileParse(MediaFile_t *media)
 
                     switch (chunk_header.dwFourCC)
                     {
+                    case fcc_JUNK:
+                        retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
+                        break;
                     default:
-                        retcode = parse_unkn(bitstr, &chunk_header, &wave);
+                        retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
                         break;
                     }
 

@@ -330,6 +330,137 @@ int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t 
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse unknown list.
+ */
+int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml)
+{
+    TRACE_INFO(AVI, BLD_GREEN "parse_odml()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (unkn_header == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid unkn_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        char fcc[5];
+        TRACE_WARNING(RIF, BLD_GREEN "parse_unkn_list(list type: %s / list fcc: %s)" CLR_RESET,
+                      getFccString_le(unkn_header->dwList, fcc),
+                      getFccString_le(unkn_header->dwFourCC, fcc));
+
+        // Print list header
+        print_list_header(unkn_header);
+        write_list_header(unkn_header, xml);
+
+        // Bytes left in the odml list
+        int byte_left = unkn_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
+
+        // Loop on "odml" content
+        while (retcode == SUCCESS &&
+               byte_left > 12 &&
+               bitstream_get_absolute_byte_offset(bitstr) < unkn_header->offset_end)
+        {
+            if (next_bits(bitstr, 32) == fcc_LIST)
+            {
+                RiffList_t list_header;
+                retcode = parse_list_header(bitstr, &list_header);
+
+                parse_unkn_list(bitstr, &list_header, xml);
+
+                jumpy_riff(bitstr, unkn_header, list_header.offset_end);
+            }
+            else
+            {
+                RiffChunk_t chunk_header;
+                retcode = parse_chunk_header(bitstr, &chunk_header);
+
+                retcode = parse_unkn_chunk(bitstr, &chunk_header, xml);
+
+                jumpy_riff(bitstr, unkn_header, chunk_header.offset_end);
+            }
+
+            // Byte left in the odml list?
+            byte_left = unkn_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
+        }
+
+        if (xml) fprintf(xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse unknown chunk.
+ */
+int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml)
+{
+    int retcode = SUCCESS;
+
+    if (unkn_header == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid unkn_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        char fcc[5];
+        TRACE_WARNING(RIF, BLD_GREEN "parse_unkn_chunk(chunk fcc: %s)" CLR_RESET,
+                      getFccString_le(unkn_header->dwFourCC, fcc));
+
+#if ENABLE_DEBUG
+        print_chunk_header(unkn_header);
+#endif
+        // xmlMapper
+        if (xml)
+        {
+            write_chunk_header(unkn_header, xml);
+            fprintf(xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse JUNK chunk.
+ */
+int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml)
+{
+    int retcode = SUCCESS;
+
+    if (JUNK_header == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid JUNK_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        TRACE_INFO(RIF, BLD_GREEN "parse_JUNK()" CLR_RESET);
+
+#if ENABLE_DEBUG
+        print_chunk_header(JUNK_header);
+#endif
+        // xmlMapper
+        if (xml)
+        {
+            write_chunk_header(JUNK_header, xml);
+            fprintf(xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
  * \brief Jumpy protect your parsing - RIFF edition.

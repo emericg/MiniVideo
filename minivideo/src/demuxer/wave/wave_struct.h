@@ -150,7 +150,6 @@ typedef enum wave_fcc_e
     fcc_fact   = 0x66616374,
     fcc_data   = 0x64617461,
     fcc_cue_   = 0x63756520,
-    fcc_JUNK   = 0x4A554E4B,
 
     fcc_bext   = 0x62657874,    //!< Used by BWF
 

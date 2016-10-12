@@ -167,8 +167,6 @@ typedef enum avi_fcc_e
     fcc_movi   = 0x6D6F7669,            //!< Movie Data
         fcc_rec_   = 0x72656320,        //!< Movie Data
 
-    fcc_JUNK   = 0x4A554E4B
-
 } avi_fcc_e;
 
 //! TwoCC used by indexes

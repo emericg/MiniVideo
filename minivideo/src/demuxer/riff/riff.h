@@ -47,6 +47,16 @@ void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml);
 
 int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child);
 
+/* ************************************************************************** */
+
+int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml);
+
+int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml);
+
+int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml);
+
+/* ************************************************************************** */
+
 int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end);
 
 /* ************************************************************************** */

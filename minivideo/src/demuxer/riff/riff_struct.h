@@ -84,4 +84,12 @@ typedef enum RIFF_fcc_e
 } RIFF_fcc_e;
 
 /* ************************************************************************** */
+
+typedef enum RIFF_common_fcc_e
+{
+    fcc_JUNK   = 0x4A554E4B
+
+} RIFF_common_fcc_e;
+
+/* ************************************************************************** */
 #endif // PARSER_RIFF_STRUCT_H
