@@ -577,6 +577,7 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
         TRACE_1(AVI, "> index_entry : %u", index_entry_count);
 
         if (avi->xml) fprintf(avi->xml, "  <index_entry_count>%u</index_entry_count>\n", index_entry_count);
+        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
 
         // Check if the tracks have already been indexed
         int track_left = 0;
@@ -685,8 +686,6 @@ static int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1
                 avi->tracks[i]->track_indexed = true;
             }
         }
-
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
     }
 
     return retcode;
