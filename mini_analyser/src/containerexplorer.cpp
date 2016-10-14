@@ -28,6 +28,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QLabel>
 #include <QDebug>
 
@@ -58,7 +59,10 @@ ContainerExplorer::~ContainerExplorer()
 
 void ContainerExplorer::resizeEvent(QResizeEvent *event)
 {
-    //
+    // Make sure the scrollAreas don't get wider than our windows
+    int width = this->width() - ui->tabWidget->width() - 24;
+    ui->scrollAreaWidgetContents_2->setMaximumWidth(width);
+    ui->labelTitle->setMaximumWidth(width);
 }
 
 void ContainerExplorer::loadMedia(const MediaFile_t *media)
@@ -79,6 +83,9 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
         loadTracks();
         loadSamples(0);
         containerSelection();
+
+        // Force a resize event, so the scrollAreas don't get wider than our windows
+        resizeEvent(NULL);
     }
 }
 
@@ -347,6 +354,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
                 else if (e.tagName() != "atom")
                 {
                     QLabel *fl = new QLabel(e.tagName());
+                    fl->setAlignment(Qt::AlignRight);
                     QLineEdit *fv = new QLineEdit(e.text());
                     if (e.attributeNode("unit").isAttr())
                     {
