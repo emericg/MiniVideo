@@ -129,7 +129,7 @@ typedef struct Mp4Track_t
 
 typedef struct Mp4_t
 {
-    bool run; //!< A convenient way to stop the parser from any sublevel
+    bool run;                   //!< A convenient way to stop the parser from any sublevel
 
     uint32_t timescale;
     uint64_t duration;
@@ -138,6 +138,8 @@ typedef struct Mp4_t
 
     uint32_t tracks_count;
     Mp4Track_t *tracks[16];
+
+    FILE *xml;                  //!< Temporary file used by the xmlMapper
 
 } Mp4_t;
 
