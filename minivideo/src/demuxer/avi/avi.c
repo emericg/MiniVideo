@@ -99,10 +99,8 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
             if (avi->xml)
             {
                 write_chunk_header(chunk_header, avi->xml);
-                if (chunk_header->dwFourCC == fcc_strn)
-                    fprintf(avi->xml, "  <title>Stream Name</title>\n");
-                if (chunk_header->dwFourCC == fcc_ISFT)
-                    fprintf(avi->xml, "  <title>Encoder Name</title>\n");
+                if (chunk_header->dwFourCC == fcc_strn) fprintf(avi->xml, "  <title>Stream Name</title>\n");
+                if (chunk_header->dwFourCC == fcc_ISFT) fprintf(avi->xml, "  <title>Encoder Name</title>\n");
                 fprintf(avi->xml, "  <string>%s</string>\n", string);
                 fprintf(avi->xml, "  </atom>\n");
             }

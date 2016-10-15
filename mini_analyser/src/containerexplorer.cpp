@@ -354,16 +354,16 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
                 else if (e.tagName() != "atom")
                 {
                     QLabel *fl = new QLabel(e.tagName());
-                    fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                    if (e.attributeNode("index").isAttr())
+                        fl->setText(fl->text() + " #" + e.attributeNode("index").value());
+
                     QLineEdit *fv = new QLineEdit(e.text());
                     if (e.attributeNode("unit").isAttr())
-                    {
                         fv->setText(fv->text() + "  (unit: " + e.attributeNode("unit").value() + ")");
-                    }
                     if (e.attributeNode("note").isAttr())
-                    {
                         fv->setText(fv->text() + "  (note: " + e.attributeNode("note").value() + ")");
-                    }
+
+                    fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                     fv->setReadOnly(true);
 
                     ui->gridLayout_content->addWidget(fl, fieldCount, 0);

@@ -2802,7 +2802,8 @@ int mp4_fileParse(MediaFile_t *media)
             retcode = parse_box_header(bitstr, &box_header);
 
             // Then parse box content
-            if (retcode == SUCCESS)
+            if (retcode == SUCCESS &&
+                bitstream_get_absolute_byte_offset(bitstr) < box_header.offset_end)
             {
                 switch (box_header.boxtype)
                 {

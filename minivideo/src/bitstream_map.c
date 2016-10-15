@@ -35,8 +35,8 @@
 
 /*!
  * \brief Initialize a bitstream_map structure with a fixed number of entries.
- * \param bitstream_map A pointer to the *bitstreamMap_t structure to initialize.
- * \param entries The number of sample to init into the bitstreamMap_t structure.
+ * \param bitstream_map: A pointer to the *bitstreamMap_t structure to initialize.
+ * \param entries: The number of sample to init into the bitstreamMap_t structure.
  * \return 1 if succeed, 0 otherwise.
  *
  * Everything inside the bitstreamMap_t structure is set to 0, even the number
@@ -311,13 +311,13 @@ static void computeSamplesDatasTrack(BitstreamMap_t *t)
  * \brief PCM sample size hack
  *
  * PCM sample size can be recomputed if the informations gathered from the
- * conteners are wrong (like the sample size). This will also trigger a new
+ * containers seems wrong (like the sample size). This will also trigger a new
  * bitrate computation.
  */
 bool computePCMSettings(BitstreamMap_t *track)
 {
     bool retcode = SUCCESS;
-    uint32_t sample_size_cbr = track->channel_count * (track->bit_per_sample/8);
+    uint32_t sample_size_cbr = track->channel_count * (track->bit_per_sample / 8);
 
     // First, check if the hack is needed
     if (track->sample_count > 0 && track->sample_size[0] != sample_size_cbr)

@@ -459,12 +459,12 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
     TRACE_INFO(MPS, BLD_GREEN "print_pes()" CLR_RESET);
 
     // Header
-    TRACE_INFO(MPS, " packet_start_offset = %lli", header->offset_start);
-    TRACE_INFO(MPS, " packet_end_offset   = %lli", header->offset_end);
+    TRACE_INFO(MPS, " packet_start_offset   = %lli", header->offset_start);
+    TRACE_INFO(MPS, " packet_end_offset     = %lli", header->offset_end);
 
-    TRACE_INFO(MPS, " packet_start_code\t\t= 0x%06X", header->start_code);
-    TRACE_INFO(MPS, " stream_id\t\t\t= 0x%02X", header->start_code);
-    TRACE_INFO(MPS, " PES_packet_length\t\t= %i", header->payload_length);
+    TRACE_INFO(MPS, " packet_start_code     = 0x%06X", header->start_code);
+    TRACE_INFO(MPS, " stream_id             = 0x%02X", header->start_code);
+    TRACE_INFO(MPS, " PES_packet_length     = %i", header->payload_length);
 
     // "regular" PES packet?
     if ((header->stream_id != SID_PROGRAM_STREAM_MAP) &&
@@ -476,44 +476,44 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
         (header->stream_id != SID_DSMCC_STREAM) &&
         (header->stream_id != SID_2221E))
     {
-        TRACE_1(MPS, " PES_scrambling_control\t= %i", packet->PES_scrambling_control);
-        TRACE_1(MPS, " PES_priority\t\t= %i", packet->PES_priority);
-        TRACE_1(MPS, " data_alignment_indicator\t= %i", packet->data_alignment_indicator);
-        TRACE_1(MPS, " copyright\t\t\t= %i", packet->copyright);
-        TRACE_1(MPS, " original_or_copy\t\t= %i", packet->original_or_copy);
-        TRACE_1(MPS, " PTS_DTS_flag\t\t= %i", packet->PTS_DTS_flag);
-        TRACE_1(MPS, " ESCR_flag\t\t\t= %i", packet->ESCR_flag);
-        TRACE_1(MPS, " ES_rate_flag\t\t= %i", packet->ES_rate_flag);
-        TRACE_1(MPS, " DSM_trick_mode_flag\t= %i", packet->DSM_trick_mode_flag);
-        TRACE_1(MPS, " additional_copy_info_flag\t= %i", packet->additional_copy_info_flag);
-        TRACE_1(MPS, " PES_CRC_flag\t\t= %i", packet->PES_CRC_flag);
-        TRACE_1(MPS, " PES_extension_flag\t\t= %i", packet->PES_extension_flag);
-        TRACE_1(MPS, " PES_header_data_length\t= %i", packet->PES_header_data_length);
+        TRACE_1(MPS, " PES_scrambling_control   = %i", packet->PES_scrambling_control);
+        TRACE_1(MPS, " PES_priority             = %i", packet->PES_priority);
+        TRACE_1(MPS, " data_alignment_indicator = %i", packet->data_alignment_indicator);
+        TRACE_1(MPS, " copyright                = %i", packet->copyright);
+        TRACE_1(MPS, " original_or_copy         = %i", packet->original_or_copy);
+        TRACE_1(MPS, " PTS_DTS_flag             = %i", packet->PTS_DTS_flag);
+        TRACE_1(MPS, " ESCR_flag                = %i", packet->ESCR_flag);
+        TRACE_1(MPS, " ES_rate_flag             = %i", packet->ES_rate_flag);
+        TRACE_1(MPS, " DSM_trick_mode_flag      = %i", packet->DSM_trick_mode_flag);
+        TRACE_1(MPS, " additional_copy_info_flag= %i", packet->additional_copy_info_flag);
+        TRACE_1(MPS, " PES_CRC_flag             = %i", packet->PES_CRC_flag);
+        TRACE_1(MPS, " PES_extension_flag       = %i", packet->PES_extension_flag);
+        TRACE_1(MPS, " PES_header_data_length   = %i", packet->PES_header_data_length);
 
         if (packet->PTS_DTS_flag == 2)
         {
-            TRACE_1(MPS, " PTS\t\t\t= %i", packet->PTS);
+            TRACE_1(MPS, " PTS      = %i", packet->PTS);
         }
         else if (packet->PTS_DTS_flag == 3)
         {
-            TRACE_1(MPS, " PTS\t\t\t= %i", packet->PTS);
-            TRACE_1(MPS, " DTS\t\t\t= %i", packet->DTS);
+            TRACE_1(MPS, " PTS      = %i", packet->PTS);
+            TRACE_1(MPS, " DTS      = %i", packet->DTS);
         }
 
         if (packet->ESCR_flag == 1)
         {
-            TRACE_1(MPS, " ESCR_base\t\t\t= %i", packet->ESCR_base);
-            TRACE_1(MPS, " ESCR_extension\\tt= %i", packet->ESCR_extension);
+            TRACE_1(MPS, " ESCR_base        = %i", packet->ESCR_base);
+            TRACE_1(MPS, " ESCR_extension   = %i", packet->ESCR_extension);
         }
 
         if (packet->ES_rate_flag == 1)
         {
-            TRACE_1(MPS, " ES_rate\t= %i", packet->ES_rate);
+            TRACE_1(MPS, " ES_rate  = %i", packet->ES_rate);
         }
 
         if (packet->DSM_trick_mode_flag == 1)
         {
-            TRACE_1(MPS, " trick_mode_control\t= %i", packet->trick_mode_control);
+            TRACE_1(MPS, " trick_mode_control= %i", packet->trick_mode_control);
 
             if (packet->trick_mode_control == TM_FAST_FORWARD)
             {
