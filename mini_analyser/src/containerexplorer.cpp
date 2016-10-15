@@ -316,7 +316,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
         // Set title
         if (eSelected.attributeNode("title").isAttr())
         {
-            ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"0xFFFFFF\">(" + selected_fcc + ")</font>");
+            ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
         }
         else
         {
@@ -344,7 +344,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
             {
                 if (e.tagName() == "title")
                 {
-                    ui->labelTitle->setText(e.text() + "  <font color=\"0xFFFFFF\">(" + selected_fcc + ")</font>");
+                    ui->labelTitle->setText(e.text() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
                 }
                 else if (e.tagName() == "desc")
                 {
@@ -354,7 +354,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
                 else if (e.tagName() != "atom")
                 {
                     QLabel *fl = new QLabel(e.tagName());
-                    fl->setAlignment(Qt::AlignRight);
+                    fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                     QLineEdit *fv = new QLineEdit(e.text());
                     if (e.attributeNode("unit").isAttr())
                     {
