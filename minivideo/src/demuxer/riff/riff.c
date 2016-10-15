@@ -148,14 +148,14 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
                 fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF header\" offset=\"%li\" size=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
-                        list_header->dwSize);
+                        list_header->dwSize + 8);
             }
             else
             {
                 fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF list\" offset=\"%li\" size=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
-                        list_header->dwSize);
+                        list_header->dwSize + 8);
             }
         }
     }
@@ -282,7 +282,7 @@ void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
             fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF chunk\" offset=\"%li\" size=\"%u\">\n",
                     getFccString_le(chunk_header->dwFourCC, fcc),
                     chunk_header->offset_start,
-                    chunk_header->dwSize);
+                    chunk_header->dwSize + 8);
         }
     }
 }

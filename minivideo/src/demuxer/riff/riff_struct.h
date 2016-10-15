@@ -45,7 +45,7 @@ typedef struct RiffList_t
 
     // List parameters
     uint32_t dwList;        //!< indicate the type of list we are parsing
-    uint32_t dwSize;        //!< LIST size, not including dwFourCC nor dwSize (but including dwFourCC)
+    uint32_t dwSize;        //!< LIST payload size (NOT including dwFourCC nor dwSize, but including dwFourCC)
     uint32_t dwFourCC;      //!< LIST identifier
 
 } RiffList_t;
@@ -64,7 +64,7 @@ typedef struct RiffChunk_t
 
     // Chunk parameters
     uint32_t dwFourCC;      //!< CHUNK identifier
-    uint32_t dwSize;        //!< CHUNK size, not including dwFourCC nor dwSize
+    uint32_t dwSize;        //!< CHUNK payload size (NOT including dwFourCC nor dwSize)
 
 } RiffChunk_t;
 
@@ -87,7 +87,34 @@ typedef enum RIFF_fcc_e
 
 typedef enum RIFF_common_fcc_e
 {
-    fcc_JUNK   = 0x4A554E4B
+    fcc_JUNK   = 0x4A554E4B,
+
+    fcc_INFO   = 0x494E464F,
+        fcc_IARL   = 0x4941524C,   //!< Archive Location
+        fcc_IART   = 0x49415254,   //!< Artist
+        fcc_ICMS   = 0x49434D53,   //!< Commissioned
+        fcc_ICMT   = 0x49434D74,   //!< Comments
+        fcc_ICOP   = 0x49434F50,   //!< Copyright
+        fcc_ICRD   = 0x49435244,   //!< Creation date
+        fcc_ICRP   = 0x49435250,   //!< Cropped
+        fcc_IDIM   = 0x4944494D,   //!< Dimensions
+        fcc_IDPI   = 0x49445049,   //!< Dots Per Inch
+        fcc_IENG   = 0x49454E47,   //!< Engineer
+        fcc_IGNR   = 0x49474E52,   //!< Genre
+        fcc_IKEY   = 0x494B4559,   //!< Keywords
+        fcc_ILGT   = 0x494C4754,   //!< Lightness
+        fcc_IMED   = 0x494D4544,   //!< Medium
+        fcc_INAM   = 0x494E414d,   //!< Name
+        fcc_IPLT   = 0x49504C54,   //!< Palette Setting
+        fcc_IPRD   = 0x49505244,   //!< Product
+        fcc_ISBJ   = 0x4953424A,   //!< Subject
+        fcc_ISFT   = 0x49534654,   //!< Software
+        fcc_ISHP   = 0x49534850,   //!< Sharpness
+        fcc_ISRC   = 0x49535243,   //!< Source
+        fcc_ISRF   = 0x49535246,   //!< Source Form
+        fcc_ITCH   = 0x49544348,   //!< Technician
+
+    fcc_CSET   = 0x43534554        //!< Character Set
 
 } RIFF_common_fcc_e;
 

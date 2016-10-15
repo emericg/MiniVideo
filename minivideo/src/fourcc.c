@@ -84,12 +84,17 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_MPEG2;
         break;
 
+    case fcc_H261:
+        codec = CODEC_H261;
+        break;
+
     case fcc_xvid:
     case fcc_XVID:
     case fcc_FMP4:
     case fcc_MP4V:
     case fcc_mp4v:
     case fcc_mpg3:
+    case fcc_div3:
     case fcc_divx:
     case fcc_DIVX:
     case fcc_DX50:
@@ -274,10 +279,11 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_iV32:
         codec = CODEC_INDEO3;
         break;
-    case fcc_IV41:
+    case fcc_iv41:
     case fcc_iV41:
-    case fcc_IV42:
+    case fcc_IV41:
     case fcc_iV42:
+    case fcc_IV42:
         codec = CODEC_INDEO4;
         break;
     case fcc_IV50:

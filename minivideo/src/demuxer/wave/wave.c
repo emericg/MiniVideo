@@ -296,6 +296,7 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave
         if (wave->xml)
         {
             write_chunk_header(data_header, wave->xml);
+            fprintf(wave->xml, "  <title>Cue Points</title>\n");
             fprintf(wave->xml, "  </atom>\n");
         }
     }

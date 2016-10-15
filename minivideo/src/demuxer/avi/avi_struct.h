@@ -161,11 +161,8 @@ typedef enum avi_fcc_e
             fcc_dmlh   = 0x646D6C68,    //!< Extended AVI Header
             fcc_vprp   = 0x76707270,    //!< Video Properties Header
 
-    fcc_INFO   = 0x494E464F,
-        fcc_ISFT   = 0x49534654,        //!< Encoder name?
-
     fcc_movi   = 0x6D6F7669,            //!< Movie Data
-        fcc_rec_   = 0x72656320,        //!< Movie Data
+        fcc_rec_   = 0x72656320         //!<
 
 } avi_fcc_e;
 

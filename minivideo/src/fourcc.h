@@ -53,11 +53,14 @@ typedef enum fourcc_list_e
     fcc_MPG2 = 0x4D504732,
     fcc_mpg2 = 0x6D706732,
 
+    fcc_H261 = 0x48323631, //!< H.261
+
     fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
     fcc_DIV2 = 0x44495632,
     fcc_DIV4 = 0x44495634,
     fcc_DIV5 = 0x44495635,
 
+    fcc_div3 = 0x64697633, //!< DivX 3
     fcc_mpg3 = 0x6D706733, //!< DivX 3
     fcc_divx = 0x64697678, //!< DivX 4 -> 6
     fcc_DIVX = 0x44495658,
@@ -172,8 +175,9 @@ typedef enum fourcc_list_e
     fcc_IV32 = 0x49563332,
     fcc_iV31 = 0x69563331,
     fcc_iV32 = 0x69563332,
-    fcc_IV41 = 0x49563431,
+    fcc_iv41 = 0x69763431,
     fcc_iV41 = 0x69563431,
+    fcc_IV41 = 0x49563431,
     fcc_IV42 = 0x49563432,
     fcc_iV42 = 0x69563432,
     fcc_IV50 = 0x49563530,

@@ -67,17 +67,25 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
         }
         else
         {
-            unsigned int i = 0;
-            for (i = 0; i < chunk_header->dwSize; i++)
+            for (uint32_t i = 0; i < chunk_header->dwSize; i++)
             {
                 string[i] = read_bits(bitstr, 8);
             }
 
+            // Check for additionnal 0x00 bytes at the end of the string. This is
+            // a hack based on the fact that AVI string chunk often return erroneous size.
+            // We read one byte until its not equal to 0x00.
+            while (next_bits(bitstr, 8) == 0)
+            {
+                //TRACE_WARNING(AVI, "SKIPPING ONE BYTE!");
+                skip_bits(bitstr, 8);
+                chunk_header->dwSize++;
+                chunk_header->offset_end++;
+            }
+
 #if ENABLE_DEBUG
-            // Chunk Header
             print_chunk_header(chunk_header);
 #if TRACE_1
-            // Chunk content
             TRACE_1(AVI, "> '");
             for (i = 0; i < chunk_header->dwSize; i++)
             {
@@ -91,6 +99,10 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
             if (avi->xml)
             {
                 write_chunk_header(chunk_header, avi->xml);
+                if (chunk_header->dwFourCC == fcc_strn)
+                    fprintf(avi->xml, "  <title>Stream Name</title>\n");
+                if (chunk_header->dwFourCC == fcc_ISFT)
+                    fprintf(avi->xml, "  <title>Encoder Name</title>\n");
                 fprintf(avi->xml, "  <string>%s</string>\n", string);
                 fprintf(avi->xml, "  </atom>\n");
             }
@@ -206,6 +218,64 @@ static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
 
 /* ************************************************************************** */
 
+static int parse_vprp(Bitstream_t *bitstr, RiffChunk_t *vprp_header, avi_t *avi)
+{
+    TRACE_INFO(AVI, BLD_GREEN "parse_vprp()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (vprp_header == NULL)
+    {
+        TRACE_ERROR(AVI, "Invalid parse_vprp structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        // Parse chunk content
+        uint32_t _VideoFormatToken = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _VideoStandard = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwVerticalRefreshRate = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwHTotalInT = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwVTotalInLines = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwFrameAspectRatio = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwFrameWidthInPixels = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwFrameHeightInLines = endian_flip_32(read_bits(bitstr, 32));
+        uint32_t _dwFieldPerFrame = endian_flip_32(read_bits(bitstr, 32));
+
+#if ENABLE_DEBUG
+        print_chunk_header(vprp_header);
+        TRACE_1(AVI, "> _VideoFormatToken: %u", _VideoFormatToken);
+        TRACE_1(AVI, "> _VideoStandard: %u", _VideoStandard);
+        TRACE_1(AVI, "> _dwVerticalRefreshRate: %u", _dwVerticalRefreshRate);
+        TRACE_1(AVI, "> _dwHTotalInT: %u", _dwHTotalInT);
+        TRACE_1(AVI, "> _dwVTotalInLines: %u", _dwVTotalInLines);
+        TRACE_1(AVI, "> _dwFrameAspectRatio: %u", _dwFrameAspectRatio);
+        TRACE_1(AVI, "> _dwFrameWidthInPixels: %u", _dwFrameWidthInPixels);
+        TRACE_1(AVI, "> _dwFrameHeightInLines: %u", _dwFrameHeightInLines);
+        TRACE_1(AVI, "> _dwFieldPerFrame: %u", _dwFieldPerFrame);
+#endif
+        // xmlMapper
+        if (avi->xml)
+        {
+            write_chunk_header(vprp_header, avi->xml);
+            fprintf(avi->xml, "  <title>Video Properties Header</title>\n");
+            fprintf(avi->xml, "  <_VideoFormatToken>%u</_VideoFormatToken>\n", _VideoFormatToken);
+            fprintf(avi->xml, "  <_VideoStandard>%u</_VideoStandard>\n", _VideoStandard);
+            fprintf(avi->xml, "  <_dwVerticalRefreshRate>%u</_dwVerticalRefreshRate>\n", _dwVerticalRefreshRate);
+            fprintf(avi->xml, "  <_dwHTotalInT>%u</_dwHTotalInT>\n", _dwHTotalInT);
+            fprintf(avi->xml, "  <_dwVTotalInLines>%u</_dwVTotalInLines>\n", _dwVTotalInLines);
+            fprintf(avi->xml, "  <_dwFrameAspectRatio>%u</_dwFrameAspectRatio>\n", _dwFrameAspectRatio);
+            fprintf(avi->xml, "  <_dwFrameWidthInPixels>%u</_dwFrameWidthInPixels>\n", _dwFrameWidthInPixels);
+            fprintf(avi->xml, "  <_dwFrameHeightInLines>%u</_dwFrameHeightInLines>\n", _dwFrameHeightInLines);
+            fprintf(avi->xml, "  <_dwFieldPerFrame>%u</_dwFieldPerFrame>\n", _dwFieldPerFrame);
+            fprintf(avi->xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
 static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, avi_t *avi, AviTrack_t *track)
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_strh()" CLR_RESET);
@@ -295,6 +365,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
 {
     TRACE_INFO(AVI, BLD_GREEN "parse_strf()" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     if (strf_header == NULL)
     {
@@ -316,7 +387,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
             track->strf.biHeight = endian_flip_32(read_bits(bitstr, 32));
             track->strf.biPlanes = endian_flip_16(read_bits(bitstr, 16));
             track->strf.biBitCount = endian_flip_16(read_bits(bitstr, 16));
-            track->strf.biCompression = endian_flip_32(read_bits(bitstr, 32));
+            track->strf.biCompression = read_bits(bitstr, 32);
             track->strf.biSizeImage = endian_flip_32(read_bits(bitstr, 32));
             track->strf.biXPelsPerMeter = endian_flip_32(read_bits(bitstr, 32));
             track->strf.biYPelsPerMeter = endian_flip_32(read_bits(bitstr, 32));
@@ -329,7 +400,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
             TRACE_1(AVI, "> biHeight    : %i", track->strf.biHeight);
             TRACE_1(AVI, "> biPlanes    : %u", track->strf.biPlanes);
             TRACE_1(AVI, "> biBitCount  : %u", track->strf.biBitCount);
-            TRACE_1(AVI, "> biCompression   : %u", track->strf.biCompression);
+            TRACE_1(AVI, "> biCompression   : %u ('%s')", track->strf.biCompression, getFccString_le(track->strf.biCompression, fcc));
             TRACE_1(AVI, "> biSizeImage     : %u", track->strf.biSizeImage);
             TRACE_1(AVI, "> biXPelsPerMeter : %i", track->strf.biXPelsPerMeter);
             TRACE_1(AVI, "> biYPelsPerMeter : %i", track->strf.biYPelsPerMeter);
@@ -343,7 +414,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                 fprintf(avi->xml, "  <biHeight>%i</biHeight>\n", track->strf.biHeight);
                 fprintf(avi->xml, "  <biPlanes>%u</biPlanes>\n", track->strf.biPlanes);
                 fprintf(avi->xml, "  <biBitCount>%u</biBitCount>\n", track->strf.biBitCount);
-                fprintf(avi->xml, "  <biCompression>%u</biCompression>\n", track->strf.biCompression);
+                fprintf(avi->xml, "  <biCompression>%s</biCompression>\n", getFccString_le(track->strf.biCompression, fcc));
                 fprintf(avi->xml, "  <biSizeImage>%u</biSizeImage>\n", track->strf.biSizeImage);
                 fprintf(avi->xml, "  <biXPelsPerMeter>%i</biXPelsPerMeter>\n", track->strf.biXPelsPerMeter);
                 fprintf(avi->xml, "  <biYPelsPerMeter>%i</biYPelsPerMeter>\n", track->strf.biYPelsPerMeter);
@@ -854,9 +925,6 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
         write_list_header(strl_header, avi->xml);
         if (avi->xml) fprintf(avi->xml, "  <title>Stream List</title>\n");
 
-        // Bytes left in the strl list
-        int byte_left = strl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
-
         // Init a new AviTrack_t structure to store strl content
         track_id = avi->tracks_count;
         avi->tracks[track_id] = (AviTrack_t*)calloc(1, sizeof(AviTrack_t));
@@ -879,8 +947,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
         // Loop on "strl" content
         while (avi->run == true &&
                retcode == SUCCESS &&
-               byte_left > 12 &&
-               bitstream_get_absolute_byte_offset(bitstr) < strl_header->offset_end)
+               bitstream_get_absolute_byte_offset(bitstr) < (strl_header->offset_end - 8))
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
@@ -913,8 +980,6 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                 //    retcode = parse_strd(bitstr, &chunk_header, avi->tracks[track_id]);
                 //    break;
                 case fcc_strn:
-                    TRACE_INFO(AVI, BLD_GREEN "parse_strn()" CLR_RESET);
-                    print_chunk_header(&chunk_header);
                     retcode = parse_string(bitstr, &chunk_header, avi);
                     break;
                 case fcc_indx:
@@ -930,9 +995,6 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
 
                 jumpy_riff(bitstr, strl_header, chunk_header.offset_end);
             }
-
-            // Byte left in the strl list?
-            byte_left = strl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
         }
 
         if (avi->xml) fprintf(avi->xml, "  </atom>\n");
@@ -969,14 +1031,10 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
         write_list_header(odml_header, avi->xml);
         if (avi->xml) fprintf(avi->xml, "  <title>Open DML extension</title>\n");
 
-        // Bytes left in the odml list
-        int byte_left = odml_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
-
         // Loop on "odml" content
         while (avi->run == true &&
                retcode == SUCCESS &&
-               byte_left > 12 &&
-               bitstream_get_absolute_byte_offset(bitstr) < odml_header->offset_end)
+               bitstream_get_absolute_byte_offset(bitstr) < (odml_header->offset_end - 8))
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
@@ -1002,6 +1060,9 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                 case fcc_dmlh:
                     retcode = parse_dmlh(bitstr, &chunk_header, avi);
                     break;
+                case fcc_vprp:
+                    retcode = parse_vprp(bitstr, &chunk_header, avi);
+                    break;
                 default:
                     retcode = parse_unkn_chunk(bitstr, &chunk_header, avi->xml);
                     break;
@@ -1009,9 +1070,6 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
 
                 jumpy_riff(bitstr, odml_header, chunk_header.offset_end);
             }
-
-            // Byte left in the odml list?
-            byte_left = odml_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
         }
 
         if (avi->xml) fprintf(avi->xml, "  </atom>\n");
@@ -1126,14 +1184,11 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
         print_list_header(INFO_header);
         write_list_header(INFO_header, avi->xml);
 
-        // Bytes left in the INFO list
-        int byte_left = INFO_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
 
         // Loop on "INFO" content
         while (avi->run == true &&
                retcode == SUCCESS &&
-               byte_left > 12 &&
-               bitstream_get_absolute_byte_offset(bitstr) < INFO_header->offset_end)
+               bitstream_get_absolute_byte_offset(bitstr) < (INFO_header->offset_end - 8))
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
@@ -1156,11 +1211,15 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
 
                 switch (chunk_header.dwFourCC)
                 {
-                case fcc_ISFT:
-                    retcode = parse_string(bitstr, &chunk_header, avi);
-                    break;
                 case fcc_JUNK:
                     retcode = parse_JUNK(bitstr, &chunk_header, avi->xml);
+                    break;
+
+                case fcc_ISFT:
+                case fcc_INAM:
+                case fcc_IART:
+                case fcc_IPRD:
+                    retcode = parse_string(bitstr, &chunk_header, avi);
                     break;
                 default:
                     retcode = parse_unkn_chunk(bitstr, &chunk_header, avi->xml);
@@ -1169,9 +1228,6 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
 
                 jumpy_riff(bitstr, INFO_header, chunk_header.offset_end);
             }
-
-            // Byte left in the INFO box?
-            byte_left = INFO_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
         }
 
         if (avi->xml) fprintf(avi->xml, "  </atom>\n");
@@ -1200,14 +1256,10 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
         write_list_header(hdrl_header, avi->xml);
         if (avi->xml) fprintf(avi->xml, "  <title>Main AVI Header</title>\n");
 
-        // Bytes left in the hdrl list
-        int byte_left = hdrl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
-
         // Loop on "hdrl" content
         while (avi->run == true &&
                retcode == SUCCESS &&
-               byte_left > 12 &&
-               bitstream_get_absolute_byte_offset(bitstr) < hdrl_header->offset_end)
+               bitstream_get_absolute_byte_offset(bitstr) < (hdrl_header->offset_end - 8))
         {
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
@@ -1242,6 +1294,9 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                 case fcc_JUNK:
                     retcode = parse_JUNK(bitstr, &chunk_header, avi->xml);
                     break;
+                case fcc_ISFT:
+                    retcode = parse_string(bitstr, &chunk_header, avi);
+                    break;
                 default:
                     retcode = parse_unkn_chunk(bitstr, &chunk_header, avi->xml);
                     break;
@@ -1249,9 +1304,6 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
 
                 jumpy_riff(bitstr, hdrl_header, chunk_header.offset_end);
             }
-
-            // Byte left in the hdrl list?
-            byte_left = hdrl_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
         }
 
         if (avi->xml) fprintf(avi->xml, "  </atom>\n");
@@ -1315,7 +1367,10 @@ static int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t i
             media->tracks_video_count++;
 
             mytrack->stream_type = stream_VIDEO;
-            mytrack->stream_fcc  = track->strh.fccHandler;
+            if (track->strh.fccHandler)
+                mytrack->stream_fcc  = track->strh.fccHandler;
+            else if (track->strf.biCompression)
+                mytrack->stream_fcc  = track->strf.biCompression;
 
             if (track->strh.fccHandler == fcc_xvid ||
                 track->strh.fccHandler == fcc_XVID ||
@@ -1506,7 +1561,7 @@ int avi_fileParse(MediaFile_t *media)
                 // Loop on 2nd level list/chunk
                 while (avi.run == true &&
                        retcode == SUCCESS &&
-                       bitstream_get_absolute_byte_offset(bitstr) < RIFF_header.dwSize)
+                       bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
                     {
@@ -1559,7 +1614,7 @@ int avi_fileParse(MediaFile_t *media)
                 // Loop on 2nd level list/chunk
                 while (avi.run == true &&
                        retcode == SUCCESS &&
-                       bitstream_get_absolute_byte_offset(bitstr) < RIFF_header.dwSize)
+                       bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
                 {
                     if (next_bits(bitstr, 32) == fcc_LIST)
                     {

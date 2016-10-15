@@ -146,16 +146,17 @@ typedef enum wave_fcc_e
 {
     fcc_WAVE   = 0x57415645,
 
-    fcc_fmt_   = 0x666D7420,
-    fcc_fact   = 0x66616374,
-    fcc_data   = 0x64617461,
-    fcc_cue_   = 0x63756520,
+    fcc_fmt_   = 0x666D7420,    //!< Format
+    fcc_fact   = 0x66616374,    //!< Facts
+    fcc_data   = 0x64617461,    //!< Datas
+    fcc_cue_   = 0x63756520,    //!< Cue Points
+    fcc_plst   = 0x706C7374,    //!< Playlist
 
     fcc_bext   = 0x62657874,    //!< Used by BWF
 
     fcc_big1   = 0x62696731,    //!< Used by RF64
-    fcc_ds64   = 0x64733634,
-    fcc_r64m   = 0x7236346D
+        fcc_ds64   = 0x64733634,
+        fcc_r64m   = 0x7236346D
 
 } wave_fcc_e;
 
