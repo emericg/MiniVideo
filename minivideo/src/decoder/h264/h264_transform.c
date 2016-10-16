@@ -653,7 +653,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
-        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
+        TRACE_ERROR(SPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_INTER_PRED
@@ -662,7 +662,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
-        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
+        TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
@@ -679,10 +679,10 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
     {
         for (q = 0; q < 6; q++)
         {
-            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
+            TRACE_1(TRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 4; i++)
                 for (j = 0; j < 4; j++)
-                    TRACE_1(DTRANS, "levelscale_4x4: %i", sps->LevelScale4x4[YCbCr][q][i][j]);
+                    TRACE_1(TRANS, "levelscale_4x4: %i", sps->LevelScale4x4[YCbCr][q][i][j]);
         }
     }
 */
@@ -705,7 +705,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
-        TRACE_ERROR(DSPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
+        TRACE_ERROR(SPATIAL, ">>> UNSUPPORTED (MbPartPredMode > 3)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_INTER_PRED
@@ -714,7 +714,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     if (sps->separate_colour_plane_flag)
     {
         YCbCr = sps->separate_colour_plane_flag;
-        TRACE_ERROR(DPARAMS, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
+        TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
         return UNSUPPORTED;
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
@@ -731,10 +731,10 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
     {
         for (q = 0; q < 6; q++)
         {
-            TRACE_1(DTRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
+            TRACE_1(TRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 8; i++)
                 for (j = 0; j < 8; j++)
-                    TRACE_1(DTRANS, "  levelscale_8x8[%i][%i]: %i", i, j, sps->LevelScale8x8[YCbCr][q][i][j]);
+                    TRACE_1(TRANS, "  levelscale_8x8[%i][%i]: %i", i, j, sps->LevelScale8x8[YCbCr][q][i][j]);
         }
     }
 */
@@ -1413,7 +1413,7 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
     // Derivation of upper-left luma sample of the current macroblock
     //int xP = 0, yP = 0;
     //InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    //TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
+    //TRACE_3(TRANS, "xP yP : %i - %i", xP, yP);
 
     // Picture construction
     for (i = 0; i < 4; i++)
@@ -1455,7 +1455,7 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
+    TRACE_3(TRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     if (YCbCr == 1)
@@ -1504,7 +1504,7 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
+    TRACE_3(TRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     for (i = 0; i < 8; i++)
@@ -1546,7 +1546,7 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
+    TRACE_3(TRANS, "xP yP : %i - %i", xP, yP);
 */
     // Picture construction
     if (YCbCr == 1)
@@ -1587,14 +1587,14 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
     // Derivation of upper-left luma sample of the current macroblock
     int xP = 0, yP = 0;
     InverseMacroblockScan(mb->mbAddr, false, sps->PicWidthInSamplesL, &xP, &yP);
-    TRACE_3(DTRANS, "xP yP : %i - %i", xP, yP);
+    TRACE_3(TRANS, "xP yP : %i - %i", xP, yP);
 */
 
     // Picture construction
 #if ENABLE_MBAFF
     if (dc->active_slice->MbaffFrameFlag)
     {
-        TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)")
+        TRACE_ERROR(TRANS, ">>> UNSUPPORTED (MbaffFrameFlag)")
         return UNSUPPORTED;
     }
     else

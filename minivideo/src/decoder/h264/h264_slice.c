@@ -359,58 +359,57 @@ static void printSliceHeader(DecodingContext_t *dc)
     sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Print values
-    TRACE_1(SLICE, "  - first_mb_in_slice\t\t= %i", slice->first_mb_in_slice);
-    TRACE_1(SLICE, "  - slice_type\t\t\t= %i", slice->slice_type);
-    TRACE_1(SLICE, "  - pic_parameter_set_id\t\t= %i", slice->pic_parameter_set_id);
+    TRACE_1(SLICE, "  - first_mb_in_slice   = %i", slice->first_mb_in_slice);
+    TRACE_1(SLICE, "  - slice_type          = %i", slice->slice_type);
+    TRACE_1(SLICE, "  - pic_parameter_set_id= %i", slice->pic_parameter_set_id);
 
     if (sps->separate_colour_plane_flag)
     {
-        TRACE_1(SLICE, "  - colour_plane_id\t\t\t= %i", slice->colour_plane_id);
+        TRACE_1(SLICE, "  - colour_plane_id     = %i", slice->colour_plane_id);
     }
 
-    TRACE_1(SLICE, "  - frame_num\t\t\t= %i", slice->frame_num);
-    TRACE_1(SLICE, "  - MaxPicNum\t\t\t: %i", slice->MaxPicNum);
-    TRACE_1(SLICE, "  - CurrPicNum\t\t\t: %i", slice->CurrPicNum);
+    TRACE_1(SLICE, "  - frame_num           = %i", slice->frame_num);
+    TRACE_1(SLICE, "  - MaxPicNum           : %i", slice->MaxPicNum);
+    TRACE_1(SLICE, "  - CurrPicNum          : %i", slice->CurrPicNum);
 
     if (sps->frame_mbs_only_flag == false)
     {
-        TRACE_1(SLICE, "  - field_pic_flag\t\t= %i", slice->field_pic_flag);
+        TRACE_1(SLICE, "  - field_pic_flag      = %i", slice->field_pic_flag);
 
         if (slice->field_pic_flag)
         {
-            TRACE_1(SLICE, "  - bottom_field_flag\t\t= %i", slice->bottom_field_flag);
+            TRACE_1(SLICE, "  - bottom_field_flag   = %i", slice->bottom_field_flag);
         }
     }
 
-    TRACE_1(SLICE, "  - MbaffFrameFlag\t\t\t: %i", slice->MbaffFrameFlag);
-    TRACE_1(SLICE, "  - PicHeightInMbs\t\t\t: %i", slice->PicHeightInMbs);
-    TRACE_1(SLICE, "  - PicHeightInSamplesL\t\t: %i", slice->PicHeightInSamplesL);
-    TRACE_1(SLICE, "  - PicHeightInSamplesC\t\t: %i", slice->PicHeightInSamplesC);
-    TRACE_1(SLICE, "  - PicSizeInMbs\t\t\t: %i", slice->PicSizeInMbs);
+    TRACE_1(SLICE, "  - MbaffFrameFlag      : %i", slice->MbaffFrameFlag);
+    TRACE_1(SLICE, "  - PicHeightInMbs      : %i", slice->PicHeightInMbs);
+    TRACE_1(SLICE, "  - PicHeightInSamplesL : %i", slice->PicHeightInSamplesL);
+    TRACE_1(SLICE, "  - PicHeightInSamplesC : %i", slice->PicHeightInSamplesC);
+    TRACE_1(SLICE, "  - PicSizeInMbs        : %i", slice->PicSizeInMbs);
 
     if (dc->IdrPicFlag)
     {
-        TRACE_1(SLICE, "  - idr_pic_id\t\t\t= %i", slice->idr_pic_id);
+        TRACE_1(SLICE, "  - idr_pic_id          = %i", slice->idr_pic_id);
     }
 
     if (sps->pic_order_cnt_type == 0)
     {
-        TRACE_1(SLICE, "  - pic_order_cnt_lsb\t\t= %i", slice->pic_order_cnt_lsb);
+        TRACE_1(SLICE, "  - pic_order_cnt_lsb       = %i", slice->pic_order_cnt_lsb);
 
         if (pps->bottom_field_pic_order_in_frame_present_flag && slice->field_pic_flag == false)
         {
-            TRACE_1(SLICE, "  - delta_pic_order_cnt_bottom\t= %i", slice->delta_pic_order_cnt_bottom);
+            TRACE_1(SLICE, "  - delta_pic_order_cnt_bottom  = %i", slice->delta_pic_order_cnt_bottom);
         }
     }
     else if (sps->pic_order_cnt_type == 1 && sps->delta_pic_order_always_zero_flag == false)
     {
-        TRACE_1(SLICE, "  - delta_pic_order_cnt[0]\t= %i", slice->delta_pic_order_cnt[0]);
+        TRACE_1(SLICE, "  - delta_pic_order_cnt[0]  = %i", slice->delta_pic_order_cnt[0]);
         if (pps->bottom_field_pic_order_in_frame_present_flag && slice->field_pic_flag == false)
         {
-            TRACE_1(SLICE, "  - delta_pic_order_cnt[1]\t= %i", slice->delta_pic_order_cnt[1]);
+            TRACE_1(SLICE, "  - delta_pic_order_cnt[1]= %i", slice->delta_pic_order_cnt[1]);
         }
     }
-
 
     if (dc->active_nalu->nal_unit_type != 20)
     {
@@ -431,36 +430,36 @@ static void printSliceHeader(DecodingContext_t *dc)
         printDRPM(dc, slice->drpm);
     }
 
-    TRACE_1(SLICE, "  - slice_qp_delta\t\t\t= %i", slice->slice_qp_delta);
-    TRACE_1(SLICE, "  - SliceQPY\t\t\t: %i", slice->SliceQPY);
+    TRACE_1(SLICE, "  - slice_qp_delta      = %i", slice->slice_qp_delta);
+    TRACE_1(SLICE, "  - SliceQPY            : %i", slice->SliceQPY);
 
     if (slice->slice_type == 3 || slice->slice_type == 8 ||
         slice->slice_type == 4 || slice->slice_type == 9) // SP, SI frame
     {
         if (slice->slice_type == 4 || slice->slice_type == 9) // SI frame
         {
-            TRACE_1(SLICE, "  - sp_for_switch_flag\t\t\t= %i", slice->sp_for_switch_flag);
+            TRACE_1(SLICE, "  - sp_for_switch_flag  = %i", slice->sp_for_switch_flag);
         }
-        TRACE_1(SLICE, "  - slice_qs_delta\t\t\t= %i", slice->slice_qs_delta);
-        TRACE_1(SLICE, "  - SliceQSY\t\t\t: %i", slice->SliceQSY);
+        TRACE_1(SLICE, "  - slice_qs_delta      = %i", slice->slice_qs_delta);
+        TRACE_1(SLICE, "  - SliceQSY            : %i", slice->SliceQSY);
     }
 
     if (pps->deblocking_filter_control_present_flag)
     {
-        TRACE_1(SLICE, "  - disable_deblocking_filter_idc\t= %i", slice->disable_deblocking_filter_idc);
+        TRACE_1(SLICE, "  - disable_deblocking_filter_idc= %i", slice->disable_deblocking_filter_idc);
 
         if (slice->disable_deblocking_filter_idc != 1)
         {
-            TRACE_1(SLICE, "  - slice_alpha_c0_offset_div2\t= %i", slice->slice_alpha_c0_offset_div2);
-            TRACE_1(SLICE, "  - slice_beta_offset_div2\t\t= %i", slice->slice_beta_offset_div2);
-            TRACE_1(SLICE, "  - FilterOffsetA\t\t\t: %i", slice->FilterOffsetA);
-            TRACE_1(SLICE, "  - FilterOffsetB\t\t\t: %i", slice->FilterOffsetB);
+            TRACE_1(SLICE, "  - slice_alpha_c0_offset_div2= %i", slice->slice_alpha_c0_offset_div2);
+            TRACE_1(SLICE, "  - slice_beta_offset_div2= %i", slice->slice_beta_offset_div2);
+            TRACE_1(SLICE, "  - FilterOffsetA       : %i", slice->FilterOffsetA);
+            TRACE_1(SLICE, "  - FilterOffsetB       : %i", slice->FilterOffsetB);
         }
     }
 
     if (pps->num_slice_groups_minus1 > 0 && pps->slice_group_map_type >= 3 && pps->slice_group_map_type <= 5)
     {
-        TRACE_1(SLICE, "  - slice_group_change_cycle\t= %i", slice->slice_group_change_cycle);
+        TRACE_1(SLICE, "  - slice_group_change_cycle    = %i", slice->slice_group_change_cycle);
     }
 #endif // ENABLE_DEBUG
 }
@@ -543,11 +542,11 @@ static int checkSliceHeader(DecodingContext_t *dc)
 
         if (sps->frame_mbs_only_flag == false)
         {
-            TRACE_1(SLICE, "  - field_pic_flag\t\t: %i", slice->field_pic_flag);
+            TRACE_1(SLICE, "  - field_pic_flag  : %i", slice->field_pic_flag);
 
             if (slice->field_pic_flag)
             {
-                TRACE_1(SLICE, "  - bottom_field_flag\t\t: %i", slice->bottom_field_flag);
+                TRACE_1(SLICE, "  - bottom_field_flag: %i", slice->bottom_field_flag);
             }
         }
 
@@ -573,7 +572,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
             {/*
                 if ()
                 {
-                    TRACE_WARNING(DSLICE, "  - delta_pic_order_cnt_bottom is %i but ", slice->delta_pic_order_cnt_bottom);
+                    TRACE_WARNING(SLICE, "  - delta_pic_order_cnt_bottom is %i but ", slice->delta_pic_order_cnt_bottom);
                     retcode = FAILURE;
                 }
             */}
@@ -653,7 +652,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
         if (pps->num_slice_groups_minus1 > 0 && pps->slice_group_map_type >= 3 && pps->slice_group_map_type <= 5)
         {
             // The value of slice_group_change_cycle shall to ceil(PicSizeInMapUnits÷SliceGroupChangeRate), inclusive.
-            TRACE_1(DSLICE, "  - slice_group_change_cycle\t: %i", slice->slice_group_change_cycle);
+            TRACE_1(SLICE, "  - slice_group_change_cycle: %i", slice->slice_group_change_cycle);
         }
 */
     }
@@ -752,10 +751,10 @@ static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
     // Print values
     if (rplm->ref_pic_list_modification_flag_l0)
     {
-        TRACE_1(SLICE, "    - l0  modification_of_pic_nums_idc\t= %i", rplm->modification_of_pic_nums_idc);
+        TRACE_1(SLICE, "    - l0  modification_of_pic_nums_idc= %i", rplm->modification_of_pic_nums_idc);
 
-        TRACE_1(SLICE, "    - l0  abs_diff_pic_num_minus1\t\t= %i", rplm->abs_diff_pic_num_minus1);
-        TRACE_1(SLICE, "    - l0  long_term_pic_num\t\t\t= %i", rplm->long_term_pic_num);
+        TRACE_1(SLICE, "    - l0  abs_diff_pic_num_minus1   = %i", rplm->abs_diff_pic_num_minus1);
+        TRACE_1(SLICE, "    - l0  long_term_pic_num         = %i", rplm->long_term_pic_num);
     }
     else
     {
@@ -764,10 +763,10 @@ static void printRPLM(DecodingContext_t *dc, rplm_t *rplm)
 
     if (rplm->ref_pic_list_modification_flag_l1)
     {
-        TRACE_1(SLICE, "    - l1  modification_of_pic_nums_idc\t= %i", rplm->modification_of_pic_nums_idc);
+        TRACE_1(SLICE, "    - l1  modification_of_pic_nums_idc= %i", rplm->modification_of_pic_nums_idc);
 
-        TRACE_1(SLICE, "    - l1  abs_diff_pic_num_minus1\t\t= %i", rplm->abs_diff_pic_num_minus1);
-        TRACE_1(SLICE, "    - l1  long_term_pic_num\t\t\t= %i", rplm->long_term_pic_num);
+        TRACE_1(SLICE, "    - l1  abs_diff_pic_num_minus1   = %i", rplm->abs_diff_pic_num_minus1);
+        TRACE_1(SLICE, "    - l1  long_term_pic_num         = %i", rplm->long_term_pic_num);
     }
     else
     {
@@ -928,20 +927,20 @@ static void printDRPM(DecodingContext_t *dc, drpm_t *drpm)
     // Print values
     if (dc->IdrPicFlag)
     {
-        TRACE_1(SLICE, "    - no_output_of_prior_pics_flag\t= %i", drpm->no_output_of_prior_pics_flag);
-        TRACE_1(SLICE, "    - long_term_reference_flag\t= %i", drpm->long_term_reference_flag);
+        TRACE_1(SLICE, "    - no_output_of_prior_pics_flag  = %i", drpm->no_output_of_prior_pics_flag);
+        TRACE_1(SLICE, "    - long_term_reference_flag      = %i", drpm->long_term_reference_flag);
     }
     else
     {
-        TRACE_1(SLICE, "    - adaptive_ref_pic_marking_mode_flag\t= %i", drpm->adaptive_ref_pic_marking_mode_flag);
+        TRACE_1(SLICE, "    - adaptive_ref_pic_marking_mode_flag= %i", drpm->adaptive_ref_pic_marking_mode_flag);
         if (drpm->adaptive_ref_pic_marking_mode_flag)
         {
-            TRACE_1(SLICE, "    - (last) memory_management_control_operation\t= %i", drpm->memory_management_control_operation);
+            TRACE_1(SLICE, "    - (last) memory_management_control_operation= %i", drpm->memory_management_control_operation);
 
-            TRACE_1(SLICE, "    - difference_of_pic_nums_minus1\t\t= %i", drpm->difference_of_pic_nums_minus1);
-            TRACE_1(SLICE, "    - long_term_pic_num\t\t\t= %i", drpm->long_term_pic_num);
-            TRACE_1(SLICE, "    - long_term_frame_idx\t\t\t= %i", drpm->long_term_frame_idx);
-            TRACE_1(SLICE, "    - max_long_term_frame_idx_plus1\t\t= %i", drpm->max_long_term_frame_idx_plus1);
+            TRACE_1(SLICE, "    - difference_of_pic_nums_minus1 = %i", drpm->difference_of_pic_nums_minus1);
+            TRACE_1(SLICE, "    - long_term_pic_num             = %i", drpm->long_term_pic_num);
+            TRACE_1(SLICE, "    - long_term_frame_idx           = %i", drpm->long_term_frame_idx);
+            TRACE_1(SLICE, "    - max_long_term_frame_idx_plus1 = %i", drpm->max_long_term_frame_idx_plus1);
         }
     }
 #endif // ENABLE_DEBUG
@@ -1086,7 +1085,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
                 else
                     slice->mb_field_decoding_flag = read_bit(dc->bitstr);
 
-                TRACE_ERROR(DSLICE, ">>> UNSUPPORTED (interlaced mode)");
+                TRACE_ERROR(SLICE, ">>> UNSUPPORTED (interlaced mode)");
                 return UNSUPPORTED;
             }
 #endif // ENABLE_MBAFF

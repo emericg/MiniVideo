@@ -82,9 +82,9 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
 
 #if ENABLE_DEBUG
             print_chunk_header(chunk_header);
-#if TRACE_1
+#ifdef TRACE_1
             TRACE_1(AVI, "> '");
-            for (i = 0; i < chunk_header->dwSize; i++)
+            for (uint32_t i = 0; i < chunk_header->dwSize; i++)
             {
                 printf("%c", string[i]);
             }

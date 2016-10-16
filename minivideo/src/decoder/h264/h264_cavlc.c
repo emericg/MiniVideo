@@ -212,7 +212,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
         mb->TotalCoeffs_chroma[1][blkIdx] = TotalCoeffs;
     else
     {
-        //TRACE_WARNING(DCAVLC, "Could not save TotalCoeffs!");
+        //TRACE_WARNING(CAVLC, "Could not save TotalCoeffs!");
     }
 
     if (TotalCoeffs > 0 && TotalCoeffs <= maxNumCoeff)
@@ -235,7 +235,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
                 level[i] = 1 - 2 * trailing_ones_sign_flag;
 
                 TRACE_3(CAVLC, "trailing_ones_sign_flag = %i", trailing_ones_sign_flag);
-                TRACE_3(CAVLC, "level[%i]\t\t: %i", i, level[i]);
+                TRACE_3(CAVLC, "level[%i]               : %i", i, level[i]);
             }
             else
             {
@@ -258,9 +258,9 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
                     int level_suffix = read_bits(dc->bitstr, levelSuffixSize);
                     levelCode += level_suffix;
 
-                    TRACE_3(CAVLC, "> level_suffix\t: %i", level_suffix);
-                    TRACE_3(CAVLC, "levelSuffixSize\t: %i", levelSuffixSize);
-                    TRACE_3(CAVLC, "levelCode\t\t: %i", levelCode);
+                    TRACE_3(CAVLC, "> level_suffix  : %i", level_suffix);
+                    TRACE_3(CAVLC, "levelSuffixSize : %i", levelSuffixSize);
+                    TRACE_3(CAVLC, "levelCode       : %i", levelCode);
                 }
 
                 if (level_prefix >= 15 && suffixLength == 0)
@@ -290,9 +290,9 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
                     }
                 }
 
-                TRACE_3(CAVLC, "suffixLength\t= %i", suffixLength);
-                TRACE_3(CAVLC, "levelCode\t\t: %i", levelCode);
-                TRACE_3(CAVLC, "level[%i]\t\t: %i", i, level[i]);
+                TRACE_3(CAVLC, "suffixLength = %i", suffixLength);
+                TRACE_3(CAVLC, "levelCode    : %i", levelCode);
+                TRACE_3(CAVLC, "level[%i]    : %i", i, level[i]);
             }
         }
 
@@ -338,7 +338,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
         {
             coeffNum += run[i] + 1;
             coeffLevel[startIdx + coeffNum] = level[i];
-            TRACE_1(CAVLC, "# \e[1;35m" "coeffLevel[%i]" CLR_RESET "\t= %i", startIdx + coeffNum, coeffLevel[startIdx + coeffNum]);
+            TRACE_1(CAVLC, "# " BLD_PURPLE "coeffLevel[%i]" CLR_RESET " = %i", startIdx + coeffNum, coeffLevel[startIdx + coeffNum]);
         }
     }
 
@@ -646,9 +646,9 @@ int read_ce_coefftoken(DecodingContext_t *dc, const int nC, int *TotalCoeffs, in
     // Print & return results
     ////////////////////////////////////////////////////////////////////////////
 
-    TRACE_1(CAVLC, "> coeff_token found\t: %i (lzb=%i, b=%i)", coeff_token, leadingZeroBits, b);
-    TRACE_1(CAVLC, "> TotalCoeff\t: %i", *TotalCoeffs);
-    TRACE_1(CAVLC, "> TrailingOnes\t: %i", *TrailingOnes);
+    TRACE_1(CAVLC, "> coeff_token found : %i (lzb=%i, b=%i)", coeff_token, leadingZeroBits, b);
+    TRACE_1(CAVLC, "> TotalCoeff        : %i", *TotalCoeffs);
+    TRACE_1(CAVLC, "> TrailingOnes      : %i", *TrailingOnes);
 
     return coeff_token;
 }
@@ -684,7 +684,7 @@ int read_ce_levelprefix(DecodingContext_t *dc)
     }
 
     // Return level_prefix syntax element value
-    TRACE_3(CAVLC, "> level_prefix\t: %i", leadingZeroBits);
+    TRACE_3(CAVLC, "> level_prefix: %i", leadingZeroBits);
     return leadingZeroBits;
 }
 
@@ -722,7 +722,7 @@ int read_ce_totalzeros(DecodingContext_t *dc, const int vlcnum, const int chroma
     }
 
     // Return total_zeros syntax element value
-    TRACE_3(CAVLC, "> total_zeros\t: %i", total_zeros);
+    TRACE_3(CAVLC, "> total_zeros: %i", total_zeros);
     return total_zeros;
 }
 
@@ -753,7 +753,7 @@ int read_ce_runbefore(DecodingContext_t *dc, const int vlcnum)
     }
 
     // Return run_before syntax element value
-    TRACE_3(CAVLC, "> run_before\t: %i", run_before);
+    TRACE_3(CAVLC, "> run_before: %i", run_before);
     return run_before;
 }
 
@@ -777,7 +777,7 @@ static int code_from_bitstream_2d(DecodingContext_t *dc,
                                   const int tabwidth, const int tabheight,
                                   int *code)
 {
-    //TRACE_3(DCAVLC, BLD_GREEN "code_from_bitstream_2d()" CLR_RESET);
+    //TRACE_3(CAVLC, BLD_GREEN "code_from_bitstream_2d()" CLR_RESET);
 
     const uint8_t *len = &lentab[0];
     const uint8_t *cod = &codtab[0];
@@ -789,9 +789,9 @@ static int code_from_bitstream_2d(DecodingContext_t *dc,
         for (i = 0; i < tabwidth; i++)
         {
 /*
-            TRACE_3(DCAVLC, " > current cod : %i", *cod);
-            TRACE_3(DCAVLC, " > current len : %i", *len);
-            TRACE_3(DCAVLC, " > current bits(%i) : %i", *len, next_bits(dc->bitstr, *len));
+            TRACE_3(CAVLC, " > current cod : %i", *cod);
+            TRACE_3(CAVLC, " > current len : %i", *len);
+            TRACE_3(CAVLC, " > current bits(%i) : %i", *len, next_bits(dc->bitstr, *len));
 */
             if ((*len == 0) || (next_bits(dc->bitstr, *len) != *cod))
             {
@@ -806,10 +806,10 @@ static int code_from_bitstream_2d(DecodingContext_t *dc,
                 // The syntax element value
                 *code =  i;
 /*
-                TRACE_2(DCAVLC, " > [B2D] code : %i", *code);
-                TRACE_2(DCAVLC, " > [B2D]  len : %i", *len);
-                TRACE_2(DCAVLC, " > [B2D]    i : %i", i);
-                TRACE_2(DCAVLC, " > [B2D]    j : %i", j);
+                TRACE_2(CAVLC, " > [B2D] code : %i", *code);
+                TRACE_2(CAVLC, " > [B2D]  len : %i", *len);
+                TRACE_2(CAVLC, " > [B2D]    i : %i", i);
+                TRACE_2(CAVLC, " > [B2D]    j : %i", j);
 */
                 return 0;
             }

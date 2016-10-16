@@ -238,7 +238,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             pps->constrained_intra_pred_flag == true)
             dcPredModePredictedFlag = true;
     }
-    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i", dcPredModePredictedFlag);
+    TRACE_3(INTRA, "  > dcPredModePredictedFlag: %i", dcPredModePredictedFlag);
 
     // 3
     int intraMxMPredModeA = 2;
@@ -253,7 +253,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             else if (dc->mb_array[mbAddrA_temp]->MbPartPredMode[0] == Intra_8x8)
                 intraMxMPredModeA = dc->mb_array[mbAddrA_temp]->Intra8x8PredMode[blkA >> 2];
 
-            TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i", intraMxMPredModeA);
+            TRACE_3(INTRA, "  > intraMxMPredModeA: %i", intraMxMPredModeA);
         }
     }
 
@@ -266,13 +266,13 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             else if (dc->mb_array[mbAddrB_temp]->MbPartPredMode[0] == Intra_8x8)
                 intraMxMPredModeB = dc->mb_array[mbAddrB_temp]->Intra8x8PredMode[blkB >> 2];
 
-            TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i", intraMxMPredModeB);
+            TRACE_3(INTRA, "  > intraMxMPredModeB: %i", intraMxMPredModeB);
         }
     }
 
     // 4
     int predIntra4x4PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
-    TRACE_3(INTRA, "  > predIntra4x4PredMode\t: %i", predIntra4x4PredMode);
+    TRACE_3(INTRA, "  > predIntra4x4PredMode: %i", predIntra4x4PredMode);
 
     if (mb->prev_intra4x4_pred_mode_flag[luma4x4BlkIdx] == true)
     {
@@ -286,7 +286,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             mb->Intra4x4PredMode[luma4x4BlkIdx] = mb->rem_intra4x4_pred_mode[luma4x4BlkIdx] + 1;
     }
 
-    TRACE_3(INTRA, "  > Intra4x4PredMode\t: %i", mb->Intra4x4PredMode[luma4x4BlkIdx]);
+    TRACE_3(INTRA, "  > Intra4x4PredMode: %i", mb->Intra4x4PredMode[luma4x4BlkIdx]);
 }
 
 /* ************************************************************************** */
@@ -361,7 +361,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i      (mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -390,7 +390,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i       (mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -424,7 +424,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
                 ip.sample_up_right = true;
 
             ip.ph[x +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i       (mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
         }
     }
 
@@ -1020,7 +1020,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             pps->constrained_intra_pred_flag == true)
             dcPredModePredictedFlag = true;
     }
-    TRACE_3(INTRA, "  > dcPredModePredictedFlag\t: %i", dcPredModePredictedFlag);
+    TRACE_3(INTRA, "  > dcPredModePredictedFlag: %i", dcPredModePredictedFlag);
 
     // 3
     int intraMxMPredModeA = 2;
@@ -1059,13 +1059,13 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
         }
     }
 
-    TRACE_3(INTRA, "  > intraMxMPredModeA\t: %i", intraMxMPredModeA);
-    TRACE_3(INTRA, "  > intraMxMPredModeB\t: %i", intraMxMPredModeB);
+    TRACE_3(INTRA, "  > intraMxMPredModeA: %i", intraMxMPredModeA);
+    TRACE_3(INTRA, "  > intraMxMPredModeB: %i", intraMxMPredModeB);
 
     // 4
     int predIntra8x8PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
 
-    TRACE_3(INTRA, "  > predIntra8x8PredMode\t: %i", predIntra8x8PredMode);
+    TRACE_3(INTRA, "  > predIntra8x8PredMode: %i", predIntra8x8PredMode);
 
     if (mb->prev_intra8x8_pred_mode_flag[luma8x8BlkIdx])
     {
@@ -1079,7 +1079,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
             mb->Intra8x8PredMode[luma8x8BlkIdx] = mb->rem_intra8x8_pred_mode[luma8x8BlkIdx] + 1;
     }
 
-    TRACE_2(INTRA, "  > Intra8x8PredMode\t: %i", mb->Intra8x8PredMode[luma8x8BlkIdx]);
+    TRACE_2(INTRA, "  > Intra8x8PredMode: %i", mb->Intra8x8PredMode[luma8x8BlkIdx]);
 }
 
 /* ************************************************************************** */
@@ -1161,7 +1161,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_up_left = true;
             ip.pv[0] = ip.ph[0] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i      (mb=%i) (xW=%i, yW=%i)", ip.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -1190,7 +1190,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
             ip.sample_left = true;
             ip.pv[y +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i      (mb=%i) (xW=%i, yW=%i)", y, ip.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -1223,7 +1223,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
                 ip.sample_up_right = true;
 
             ip.ph[x +1] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i,-1] = %i      (mb=%i) (xW=%i, yW=%i)", x, ip.ph[x +1], mbAddrN, xW, yW);
         }
     }
 
@@ -1851,7 +1851,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
             //InverseMacroblockScan(mbAddrN, false, sps->PicWidthInSamplesL, &xM, &yM);
 
             ip.phv = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ip.phv, mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv[-1,-1] = %i      (mb=%i) (xW=%i, yW=%i)", ip.phv, mbAddrN, xW, yW);
         }
     }
 
@@ -1876,7 +1876,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 
             ip.sample_left = true;
             ip.pv[y] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ip.pv[y], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv[-1,%i] = %i      (mb=%i) (xW=%i, yW=%i)", y, ip.pv[y], mbAddrN, xW, yW);
         }
     }
 
@@ -1901,7 +1901,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 
             ip.sample_up = true;
             ip.ph[x] = dc->mb_array[mbAddrN]->SprimeL[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph[%i, -1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ip.ph[x], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph[%i, -1] = %i      (mb=%i) (xW=%i, yW=%i)", x, ip.ph[x], mbAddrN, xW, yW);
         }
     }
 
@@ -2212,8 +2212,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 */
             ipCb.pv[0] = ipCb.ph[0] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.pv[0] = ipCr.ph[0] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample phv Cb[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ipCb.pv[0], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample phv Cr[-1,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", ipCr.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv Cb[-1,-1] = %i      (mb=%i) (xW=%i, yW=%i)", ipCb.pv[0], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample phv Cr[-1,-1] = %i      (mb=%i) (xW=%i, yW=%i)", ipCr.pv[0], mbAddrN, xW, yW);
         }
     }
 
@@ -2246,8 +2246,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 
             ipCb.pv[y +1] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.pv[y +1] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample pv Cb[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ipCb.pv[y +1], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample pv Cr[-1,%i] = %i\t\t(mb=%i) (xW=%i, yW=%i)", y, ipCr.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv Cb[-1,%i] = %i      (mb=%i) (xW=%i, yW=%i)", y, ipCb.pv[y +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample pv Cr[-1,%i] = %i      (mb=%i) (xW=%i, yW=%i)", y, ipCr.pv[y +1], mbAddrN, xW, yW);
         }
     }
 
@@ -2280,8 +2280,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 
             ipCb.ph[x +1] = dc->mb_array[mbAddrN]->SprimeCb[/*xM + */xW][/*yM + */yW];
             ipCr.ph[x +1] = dc->mb_array[mbAddrN]->SprimeCr[/*xM + */xW][/*yM + */yW];
-            TRACE_2(INTRA, "  > sample ph Cb[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ipCb.ph[x +1], mbAddrN, xW, yW);
-            TRACE_2(INTRA, "  > sample ph Cr[%i,-1] = %i\t\t(mb=%i) (xW=%i, yW=%i)", x, ipCr.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph Cb[%i,-1] = %i      (mb=%i) (xW=%i, yW=%i)", x, ipCb.ph[x +1], mbAddrN, xW, yW);
+            TRACE_2(INTRA, "  > sample ph Cr[%i,-1] = %i      (mb=%i) (xW=%i, yW=%i)", x, ipCr.ph[x +1], mbAddrN, xW, yW);
         }
     }
 

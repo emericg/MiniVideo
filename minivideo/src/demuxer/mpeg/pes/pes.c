@@ -517,84 +517,84 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
 
             if (packet->trick_mode_control == TM_FAST_FORWARD)
             {
-                TRACE_1(MPS, " field_id\t= %i", packet->field_id);
-                TRACE_1(MPS, " intra_slice_refresh\t= %i", packet->intra_slice_refresh);
-                TRACE_1(MPS, " frequency_truncation\t= %i", packet->frequency_truncation);
+                TRACE_1(MPS, " field_id             = %i", packet->field_id);
+                TRACE_1(MPS, " intra_slice_refresh  = %i", packet->intra_slice_refresh);
+                TRACE_1(MPS, " frequency_truncation = %i", packet->frequency_truncation);
             }
             else if (packet->trick_mode_control == TM_SLOW_MOTION)
             {
-                TRACE_1(MPS, " rep_cntrl\t\t= %i", packet->rep_cntrl);
+                TRACE_1(MPS, " rep_cntrl= %i", packet->rep_cntrl);
             }
             else if (packet->trick_mode_control == TM_FREEZE_FRAME)
             {
-                TRACE_1(MPS, " field_id\t\t= %i", packet->field_id);
+                TRACE_1(MPS, " field_id= %i", packet->field_id);
             }
             else if (packet->trick_mode_control == TM_FAST_REVERSE)
             {
-                TRACE_1(MPS, " field_id\t\t= %i", packet->field_id);
-                TRACE_1(MPS, " intra_slice_refresh\t= %i", packet->intra_slice_refresh);
-                TRACE_1(MPS, " frequency_truncation\t= %i", packet->frequency_truncation);
+                TRACE_1(MPS, " field_id             = %i", packet->field_id);
+                TRACE_1(MPS, " intra_slice_refresh  = %i", packet->intra_slice_refresh);
+                TRACE_1(MPS, " frequency_truncation = %i", packet->frequency_truncation);
             }
             else if (packet->trick_mode_control == TM_SLOW_REVERSE)
             {
-                TRACE_1(MPS, " rep_cntrl\t\t= %i", packet->rep_cntrl);
+                TRACE_1(MPS, " rep_cntrl= %i", packet->rep_cntrl);
             }
         }
 
         if (packet->additional_copy_info_flag == 1)
         {
-            TRACE_1(MPS, " additional_copy_info\t= %i", packet->additional_copy_info);
+            TRACE_1(MPS, " additional_copy_info= %i", packet->additional_copy_info);
         }
 
         if (packet->PES_CRC_flag == 1)
         {
-            TRACE_1(MPS, " previous_PES_packet_CRC\t= %i", packet->previous_PES_packet_CRC);
+            TRACE_1(MPS, " previous_PES_packet_CRC= %i", packet->previous_PES_packet_CRC);
         }
 
         if (packet->PES_extension_flag == 1)
         {
-            TRACE_1(MPS, " PES_private_data_flag\t= %i", packet->PES_private_data_flag);
-            TRACE_1(MPS, " pack_header_field_flag\t= %i", packet->pack_header_field_flag);
-            TRACE_1(MPS, " program_packet_sequence_counter_flag = %i", packet->program_packet_sequence_counter_flag);
-            TRACE_1(MPS, " PSTD_buffer_flag\t\t= %i", packet->PSTD_buffer_flag);
-            TRACE_1(MPS, " PES_extension_flag_2\t= %i", packet->PES_extension_flag_2);
+            TRACE_1(MPS, " PES_private_data_flag    = %i", packet->PES_private_data_flag);
+            TRACE_1(MPS, " pack_header_field_flag   = %i", packet->pack_header_field_flag);
+            TRACE_1(MPS, " program_packet_sequence_counter_flag= %i", packet->program_packet_sequence_counter_flag);
+            TRACE_1(MPS, " PSTD_buffer_flag         = %i", packet->PSTD_buffer_flag);
+            TRACE_1(MPS, " PES_extension_flag_2     = %i", packet->PES_extension_flag_2);
 
             if (packet->PES_private_data_flag == 1)
             {
                 int i = 0;
                 for (i = 0; i < 16; i++)
                 {
-                    TRACE_1(MPS, " PES_private_data[%i]\t= %i", i, packet->PES_private_data[i]);
+                    TRACE_1(MPS, " PES_private_data[%i]= %i", i, packet->PES_private_data[i]);
                 }
             }
 
             if (packet->pack_header_field_flag == 1)
             {
-                TRACE_1(MPS, " pack_field_length\t= %i", packet->pack_field_length);
+                TRACE_1(MPS, " pack_field_length= %i", packet->pack_field_length);
                 // TODO
                 //parse_pack_header(bitstr, wtf);
             }
 
             if (packet->program_packet_sequence_counter_flag == 1)
             {
-                TRACE_1(MPS, " program_packet_sequence_counter\t= %i", packet->program_packet_sequence_counter);
-                TRACE_1(MPS, " MPEG1_MPEG2_identifier\t= %i", packet->MPEG1_MPEG2_identifier);
-                TRACE_1(MPS, " original_stuff_length\t= %i", packet->original_stuff_length);
+                TRACE_1(MPS, " program_packet_sequence_counter  = %i", packet->program_packet_sequence_counter);
+                TRACE_1(MPS, " MPEG1_MPEG2_identifier           = %i", packet->MPEG1_MPEG2_identifier);
+                TRACE_1(MPS, " original_stuff_length            = %i", packet->original_stuff_length);
             }
 
             if (packet->PSTD_buffer_flag == 1)
             {
-                TRACE_1(MPS, " PSTD_buffer_scale\t\t= %i", packet->PSTD_buffer_scale);
-                TRACE_1(MPS, " PSTD_buffer_size\t\t= %i", packet->PSTD_buffer_size);
+                TRACE_1(MPS, " PSTD_buffer_scale= %i", packet->PSTD_buffer_scale);
+                TRACE_1(MPS, " PSTD_buffer_size = %i", packet->PSTD_buffer_size);
             }
 
             if (packet->PES_extension_flag_2 == 1)
             {
-                TRACE_1(MPS, " PES_extension_field_length\t= %i", packet->PES_extension_field_length);
+                TRACE_1(MPS, " PES_extension_field_length= %i", packet->PES_extension_field_length);
                 int i = 0;
                 for (i = 0; i < packet->PES_extension_field_length; i++)
                 {
-                    TRACE_1(MPS, " reserved\t\t= xx");
+                    TRACE_1(MPS, " reserved= xx");
                 }
             }
         }

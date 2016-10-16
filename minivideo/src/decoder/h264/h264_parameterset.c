@@ -553,11 +553,11 @@ static int checkSPS(DecodingContext_t *dc, sps_t *sps)
         }
 
         //FIXME The value of max_num_ref_frames shall be in the range of 0 to MaxDpbFrames (as specified insubclause A.3.1 or A.3.2)
-        //TRACE_WARNING(DPARAMS, "  - max_num_ref_frames is %i but should be in range [1,x]", sps->max_num_ref_frames);
+        //TRACE_WARNING(PARAM, "  - max_num_ref_frames is %i but should be in range [1,x]", sps->max_num_ref_frames);
 
         //FIXME allowed range of values specified by constraints in Annex A.
-        //TRACE_1(DPARAMS, "  - pic_width_in_mbs_minus1\t\t\t: %i", sps->pic_width_in_mbs_minus1);
-        //TRACE_1(DPARAMS, "  - pic_height_in_map_units_minus1\t\t: %i", sps->pic_height_in_map_units_minus1);
+        //TRACE_1(PARAM, "  - pic_width_in_mbs_minus1       : %i", sps->pic_width_in_mbs_minus1);
+        //TRACE_1(PARAM, "  - pic_height_in_map_units_minus1: %i", sps->pic_height_in_map_units_minus1);
 
         if (sps->frame_mbs_only_flag == false && sps->direct_8x8_inference_flag == false)
         {
@@ -574,10 +574,10 @@ static int checkSPS(DecodingContext_t *dc, sps_t *sps)
         if (sps->frame_cropping_flag)
         {
             //FIXME check that
-            //TRACE_1(DPARAMS, "  - frame_crop_left_offset\t\t\t: %i", sps->frame_crop_left_offset);
-            //TRACE_1(DPARAMS, "  - frame_crop_right_offset\t\t\t: %i", sps->frame_crop_right_offset);
-            //TRACE_1(DPARAMS, "  - frame_crop_top_offset\t\t\t: %i", sps->frame_crop_top_offset);
-            //TRACE_1(DPARAMS, "  - frame_crop_bottom_offset\t\t: %i", sps->frame_crop_bottom_offset);
+            //TRACE_1(PARAM, "  - frame_crop_left_offset    : %i", sps->frame_crop_left_offset);
+            //TRACE_1(PARAM, "  - frame_crop_right_offset   : %i", sps->frame_crop_right_offset);
+            //TRACE_1(PARAM, "  - frame_crop_top_offset     : %i", sps->frame_crop_top_offset);
+            //TRACE_1(PARAM, "  - frame_crop_bottom_offset  : %i", sps->frame_crop_bottom_offset);
         }
 
         // Check VUI content
@@ -614,94 +614,94 @@ void printSPS(DecodingContext_t *dc)
     }
 
     // Print SPS values
-    TRACE_1(PARAM, "  - profile_idc\t\t\t\t= %i", sps->profile_idc);
+    TRACE_1(PARAM, "  - profile_idc     = %i", sps->profile_idc);
     for (i = 0; i < 6; i++)
     {
-        TRACE_1(PARAM, "  - constraint_setX_flag[%i]\t\t\t= %i", i, sps->constraint_setX_flag[i]);
+        TRACE_1(PARAM, "  - constraint_setX_flag[%i]= %i", i, sps->constraint_setX_flag[i]);
     }
-    TRACE_1(PARAM, "  - level_idc\t\t\t\t= %i", sps->level_idc);
-    TRACE_1(PARAM, "  - seq_parameter_set_id\t\t\t= %i", sps->seq_parameter_set_id);
+    TRACE_1(PARAM, "  - level_idc       = %i", sps->level_idc);
+    TRACE_1(PARAM, "  - seq_parameter_set_id= %i", sps->seq_parameter_set_id);
 
-    TRACE_1(PARAM, "  - chroma_format_idc\t\t\t= %i", sps->chroma_format_idc);
-    TRACE_1(PARAM, "  - ChromaArrayType\t\t\t\t: %i", sps->ChromaArrayType);
-    TRACE_1(PARAM, "  - SubWidthC\t\t\t\t: %i", sps->SubWidthC);
-    TRACE_1(PARAM, "  - SubHeightC\t\t\t\t: %i", sps->SubHeightC);
-    TRACE_1(PARAM, "  - MbWidthC\t\t\t\t: %i", sps->MbWidthC);
-    TRACE_1(PARAM, "  - MbHeightC\t\t\t\t: %i", sps->MbHeightC);
+    TRACE_1(PARAM, "  - chroma_format_idc   = %i", sps->chroma_format_idc);
+    TRACE_1(PARAM, "  - ChromaArrayType : %i", sps->ChromaArrayType);
+    TRACE_1(PARAM, "  - SubWidthC       : %i", sps->SubWidthC);
+    TRACE_1(PARAM, "  - SubHeightC      : %i", sps->SubHeightC);
+    TRACE_1(PARAM, "  - MbWidthC        : %i", sps->MbWidthC);
+    TRACE_1(PARAM, "  - MbHeightC       : %i", sps->MbHeightC);
 
     if (sps->chroma_format_idc == 3)
     {
-        TRACE_1(PARAM, "  - separate_colour_plane_flag\t\t= %i", sps->separate_colour_plane_flag);
+        TRACE_1(PARAM, "  - separate_colour_plane_flag= %i", sps->separate_colour_plane_flag);
     }
 
-    TRACE_1(PARAM, "  - bit_depth_luma_minus8\t\t\t= %i", sps->bit_depth_luma_minus8);
-    TRACE_1(PARAM, "  - BitDepthY\t\t\t\t: %i", sps->BitDepthY);
-    TRACE_1(PARAM, "  - QpBdOffsetY\t\t\t\t: %i", sps->QpBdOffsetY);
-    TRACE_1(PARAM, "  - bit_depth_chroma_minus8\t\t\t= %i", sps->bit_depth_chroma_minus8);
-    TRACE_1(PARAM, "  - BitDepthC\t\t\t\t: %i", sps->BitDepthC);
-    TRACE_1(PARAM, "  - QpBdOffsetC\t\t\t\t: %i", sps->QpBdOffsetC);
-    TRACE_1(PARAM, "  - RawMbBits\t\t\t\t: %i", sps->RawMbBits);
-    TRACE_1(PARAM, "  - qpprime_y_zero_transform_bypass_flag\t= %i", sps->qpprime_y_zero_transform_bypass_flag);
+    TRACE_1(PARAM, "  - bit_depth_luma_minus8   = %i", sps->bit_depth_luma_minus8);
+    TRACE_1(PARAM, "  - BitDepthY               : %i", sps->BitDepthY);
+    TRACE_1(PARAM, "  - QpBdOffsetY             : %i", sps->QpBdOffsetY);
+    TRACE_1(PARAM, "  - bit_depth_chroma_minus8 = %i", sps->bit_depth_chroma_minus8);
+    TRACE_1(PARAM, "  - BitDepthC               : %i", sps->BitDepthC);
+    TRACE_1(PARAM, "  - QpBdOffsetC             : %i", sps->QpBdOffsetC);
+    TRACE_1(PARAM, "  - RawMbBits               : %i", sps->RawMbBits);
+    TRACE_1(PARAM, "  - qpprime_y_zero_transform_bypass_flag= %i", sps->qpprime_y_zero_transform_bypass_flag);
 
-    TRACE_1(PARAM, "  - seq_scaling_matrix_present_flag\t\t= %i", sps->seq_scaling_matrix_present_flag);
+    TRACE_1(PARAM, "  - seq_scaling_matrix_present_flag     = %i", sps->seq_scaling_matrix_present_flag);
     if (sps->seq_scaling_matrix_present_flag)
     {
          for (i = 0; i < ((dc->ChromaArrayType != 3) ? 8 : 12); i++)
          {
-             TRACE_1(PARAM, "  - seq_scaling_list_present_flag[%i]\t= %i", i, sps->seq_scaling_list_present_flag[i]);
+             TRACE_1(PARAM, "  - seq_scaling_list_present_flag[%i]= %i", i, sps->seq_scaling_list_present_flag[i]);
          }
     }
 
-    TRACE_1(PARAM, "  - log2_max_frame_num_minus4\t\t= %i", sps->log2_max_frame_num_minus4);
-    TRACE_1(PARAM, "  - MaxFrameNum\t\t\t\t: %i", sps->MaxFrameNum);
-    TRACE_1(PARAM, "  - pic_order_cnt_type\t\t\t= %i", sps->pic_order_cnt_type);
+    TRACE_1(PARAM, "  - log2_max_frame_num_minus4   = %i", sps->log2_max_frame_num_minus4);
+    TRACE_1(PARAM, "  - MaxFrameNum                 : %i", sps->MaxFrameNum);
+    TRACE_1(PARAM, "  - pic_order_cnt_type          = %i", sps->pic_order_cnt_type);
     if (sps->pic_order_cnt_type == 0)
     {
-        TRACE_1(PARAM, "  - log2_max_pic_order_cnt_lsb_minus4\t= %i", sps->log2_max_pic_order_cnt_lsb_minus4);
-        TRACE_1(PARAM, "  - MaxPicOrderCntLsb\t\t\t: %i", sps->MaxPicOrderCntLsb);
+        TRACE_1(PARAM, "  - log2_max_pic_order_cnt_lsb_minus4= %i", sps->log2_max_pic_order_cnt_lsb_minus4);
+        TRACE_1(PARAM, "  - MaxPicOrderCntLsb           : %i", sps->MaxPicOrderCntLsb);
     }
     else if (sps->pic_order_cnt_type == 1)
     {
-        TRACE_1(PARAM, "  - delta_pic_order_always_zero_flag\t\t= %i", sps->delta_pic_order_always_zero_flag);
-        TRACE_1(PARAM, "  - offset_for_non_ref_pic\t\t= %i", sps->offset_for_non_ref_pic);
-        TRACE_1(PARAM, "  - offset_for_top_to_bottom_field\t\t= %i", sps->offset_for_top_to_bottom_field);
-        TRACE_1(PARAM, "  - num_ref_frames_in_pic_order_cnt_cycle\t\t= %i", sps->num_ref_frames_in_pic_order_cnt_cycle);
+        TRACE_1(PARAM, "  - delta_pic_order_always_zero_flag= %i", sps->delta_pic_order_always_zero_flag);
+        TRACE_1(PARAM, "  - offset_for_non_ref_pic          = %i", sps->offset_for_non_ref_pic);
+        TRACE_1(PARAM, "  - offset_for_top_to_bottom_field  = %i", sps->offset_for_top_to_bottom_field);
+        TRACE_1(PARAM, "  - num_ref_frames_in_pic_order_cnt_cycle= %i", sps->num_ref_frames_in_pic_order_cnt_cycle);
 
         for (i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
         {
-            TRACE_1(PARAM, "  - offset_for_ref_frame[i]\t\t= %i", i, sps->offset_for_ref_frame[i]);
+            TRACE_1(PARAM, "  - offset_for_ref_frame[i]         = %i", i, sps->offset_for_ref_frame[i]);
         }
     }
 
-    TRACE_1(PARAM, "  - max_num_ref_frames\t\t\t= %i", sps->max_num_ref_frames);
-    TRACE_1(PARAM, "  - gaps_in_frame_num_value_allowed_flag\t= %i", sps->gaps_in_frame_num_value_allowed_flag);
-    TRACE_1(PARAM, "  - pic_width_in_mbs_minus1\t\t\t= %i", sps->pic_width_in_mbs_minus1);
-    TRACE_1(PARAM, "  - PicWidthInMbs\t\t\t\t: %i", sps->PicWidthInMbs);
-    TRACE_1(PARAM, "  - PicWidthInSamplesL\t\t\t: %i", sps->PicWidthInSamplesL);
-    TRACE_1(PARAM, "  - PicWidthInSamplesC\t\t\t: %i", sps->PicWidthInSamplesC);
-    TRACE_1(PARAM, "  - pic_height_in_map_units_minus1\t\t= %i", sps->pic_height_in_map_units_minus1);
-    TRACE_1(PARAM, "  - frame_mbs_only_flag\t\t\t= %i", sps->frame_mbs_only_flag);
-    TRACE_1(PARAM, "  - FrameHeightInMbs\t\t\t: %i", sps->FrameHeightInMbs);
+    TRACE_1(PARAM, "  - max_num_ref_frames      = %i", sps->max_num_ref_frames);
+    TRACE_1(PARAM, "  - gaps_in_frame_num_value_allowed_flag= %i", sps->gaps_in_frame_num_value_allowed_flag);
+    TRACE_1(PARAM, "  - pic_width_in_mbs_minus1 = %i", sps->pic_width_in_mbs_minus1);
+    TRACE_1(PARAM, "  - PicWidthInMbs           : %i", sps->PicWidthInMbs);
+    TRACE_1(PARAM, "  - PicWidthInSamplesL      : %i", sps->PicWidthInSamplesL);
+    TRACE_1(PARAM, "  - PicWidthInSamplesC      : %i", sps->PicWidthInSamplesC);
+    TRACE_1(PARAM, "  - pic_height_in_map_units_minus1= %i", sps->pic_height_in_map_units_minus1);
+    TRACE_1(PARAM, "  - frame_mbs_only_flag     = %i", sps->frame_mbs_only_flag);
+    TRACE_1(PARAM, "  - FrameHeightInMbs        : %i", sps->FrameHeightInMbs);
 
     if (sps->frame_mbs_only_flag == false)
     {
-        TRACE_1(PARAM, "  - mb_adaptive_frame_field_flag\t\t= %i", sps->mb_adaptive_frame_field_flag);
+        TRACE_1(PARAM, "  - mb_adaptive_frame_field_flag= %i", sps->mb_adaptive_frame_field_flag);
     }
 
-    TRACE_1(PARAM, "  - direct_8x8_inference_flag\t\t= %i", sps->direct_8x8_inference_flag);
+    TRACE_1(PARAM, "  - direct_8x8_inference_flag= %i", sps->direct_8x8_inference_flag);
 
-    TRACE_1(PARAM, "  - frame_cropping_flag\t\t\t= %i", sps->frame_cropping_flag);
+    TRACE_1(PARAM, "  - frame_cropping_flag     = %i", sps->frame_cropping_flag);
     if (sps->frame_cropping_flag)
     {
-        TRACE_1(PARAM, "  - frame_crop_left_offset\t\t\t= %i", sps->frame_crop_left_offset);
-        TRACE_1(PARAM, "  - frame_crop_right_offset\t\t\t= %i", sps->frame_crop_right_offset);
-        TRACE_1(PARAM, "  - frame_crop_top_offset\t\t\t= %i", sps->frame_crop_top_offset);
-        TRACE_1(PARAM, "  - frame_crop_bottom_offset\t\t= %i", sps->frame_crop_bottom_offset);
-        TRACE_1(PARAM, "  - CropUnitX\t\t\t\t: %i", sps->CropUnitX);
-        TRACE_1(PARAM, "  - CropUnitY\t\t\t\t: %i", sps->CropUnitY);
+        TRACE_1(PARAM, "  - frame_crop_left_offset      = %i", sps->frame_crop_left_offset);
+        TRACE_1(PARAM, "  - frame_crop_right_offset     = %i", sps->frame_crop_right_offset);
+        TRACE_1(PARAM, "  - frame_crop_top_offset       = %i", sps->frame_crop_top_offset);
+        TRACE_1(PARAM, "  - frame_crop_bottom_offset    = %i", sps->frame_crop_bottom_offset);
+        TRACE_1(PARAM, "  - CropUnitX   : %i", sps->CropUnitX);
+        TRACE_1(PARAM, "  - CropUnitY   : %i", sps->CropUnitY);
     }
 
-    TRACE_1(PARAM, "  - vui_parameters_present_flag\t\t= %i", sps->vui_parameters_present_flag);
+    TRACE_1(PARAM, "  - vui_parameters_present_flag= %i", sps->vui_parameters_present_flag);
     if (sps->vui_parameters_present_flag)
     {
         printVUI(sps->vui);
@@ -747,7 +747,7 @@ static void scaling_list_4x4(DecodingContext_t *dc, int i)
         sps->ScalingList4x4[i][j] = (nextScale == 0) ? lastScale : nextScale;
         lastScale = sps->ScalingList4x4[i][j];
 
-        //TRACE_3(DPARAMS, "ScalingList4x4 : %i", sps->ScalingList4x4[i][j])
+        //TRACE_3(PARAM, "ScalingList4x4 : %i", sps->ScalingList4x4[i][j])
     }
 
     // Transform the list into a matrix
@@ -791,7 +791,7 @@ static void scaling_list_8x8(DecodingContext_t *dc, int i)
         sps->ScalingList8x8[i][j] = (nextScale == 0) ? lastScale : nextScale;
         lastScale = sps->ScalingList8x8[i][j];
 
-        //TRACE_3(DPARAMS, "ScalingList8x8 : %i", sps->ScalingList8x8[i][j])
+        //TRACE_3(PARAM, "ScalingList8x8 : %i", sps->ScalingList8x8[i][j])
     }
 
     // Transform the list into a matrix
@@ -1027,7 +1027,7 @@ static int checkPPS(DecodingContext_t *dc, pps_t *pps)
 /*
         if ((pps->pic_init_qp_minus26 < -(26 + dc->sps_array[pps->seq_parameter_set_id]->QpBdOffsetY)) || pps->pic_init_qp_minus26 > 25)
         {
-            TRACE_WARNING(DPARAMS, "  - pic_init_qp_minus26 is %i but should be in range [-(26 + QpBdOffsetY),25]", pps->pic_init_qp_minus26);
+            TRACE_WARNING(PARAM, "  - pic_init_qp_minus26 is %i but should be in range [-(26 + QpBdOffsetY),25]", pps->pic_init_qp_minus26);
             retcode = FAILURE;
         }
 */
@@ -1077,68 +1077,68 @@ void printPPS(DecodingContext_t *dc)
     }
 
     // Print PPS values
-    TRACE_1(PARAM, "  - pic_parameter_set_id\t\t\t= %i", pps->pic_parameter_set_id);
-    TRACE_1(PARAM, "  - seq_parameter_set_id\t\t\t= %i", pps->seq_parameter_set_id);
-    TRACE_1(PARAM, "  - entropy_coding_mode_flag\t\t= %i", pps->entropy_coding_mode_flag);
+    TRACE_1(PARAM, "  - pic_parameter_set_id        = %i", pps->pic_parameter_set_id);
+    TRACE_1(PARAM, "  - seq_parameter_set_id        = %i", pps->seq_parameter_set_id);
+    TRACE_1(PARAM, "  - entropy_coding_mode_flag    = %i", pps->entropy_coding_mode_flag);
     TRACE_1(PARAM, "  - bottom_field_pic_order_in_frame_present_flag = %i", pps->bottom_field_pic_order_in_frame_present_flag);
-    TRACE_1(PARAM, "  - num_slice_groups_minus1\t\t\t= %i", pps->num_slice_groups_minus1);
+    TRACE_1(PARAM, "  - num_slice_groups_minus1     = %i", pps->num_slice_groups_minus1);
     if (pps->num_slice_groups_minus1 > 0)
     {
         unsigned int iGroup = 0;
-        TRACE_1(PARAM, "  - slice_group_map_type\t\t\t= %i", pps->slice_group_map_type);
+        TRACE_1(PARAM, "  - slice_group_map_type    = %i", pps->slice_group_map_type);
         if (pps->slice_group_map_type == 0)
         {
             for (iGroup = 0; iGroup <= pps->num_slice_groups_minus1; iGroup++)
             {
-//                TRACE_1(DPARAMS, "  - run_length_minus1[%i]\t= %i", iGroup, pps->run_length_minus1[iGroup]);
+//                TRACE_1(PARAM, "  - run_length_minus1[%i]= %i", iGroup, pps->run_length_minus1[iGroup]);
             }
         }
         else if (pps->slice_group_map_type == 2)
         {
             for (iGroup = 0; iGroup < pps->num_slice_groups_minus1; iGroup++)
             {
-//                TRACE_1(DPARAMS, "  - top_left[%i]\t\t= %i", iGroup, pps->top_left[iGroup]);
-//                TRACE_1(DPARAMS, "  - bottom_right[%i]\t\t= %i", iGroup, pps->bottom_right[iGroup]);
+//                TRACE_1(PARAM, "  - top_left[%i]      = %i", iGroup, pps->top_left[iGroup]);
+//                TRACE_1(PARAM, "  - bottom_right[%i]  = %i", iGroup, pps->bottom_right[iGroup]);
             }
         }
         else if (pps->slice_group_map_type == 3 ||
                  pps->slice_group_map_type == 4 ||
                  pps->slice_group_map_type == 5)
         {
-            TRACE_1(PARAM, "  - slice_group_change_direction_flag\t\t= %i", pps->slice_group_change_direction_flag);
-            TRACE_1(PARAM, "  - slice_group_change_rate_minus1\t\t= %i", pps->slice_group_change_rate_minus1);
+            TRACE_1(PARAM, "  - slice_group_change_direction_flag= %i", pps->slice_group_change_direction_flag);
+            TRACE_1(PARAM, "  - slice_group_change_rate_minus1   = %i", pps->slice_group_change_rate_minus1);
         }
         else if (pps->slice_group_map_type == 6)
         {
-            TRACE_1(PARAM, "  - pic_size_in_map_units_minus1\t\t= %i", pps->pic_size_in_map_units_minus1);
+            TRACE_1(PARAM, "  - pic_size_in_map_units_minus1    = %i", pps->pic_size_in_map_units_minus1);
             for (i = 0; i <= pps->pic_size_in_map_units_minus1; i++)
             {
-//                TRACE_1(DPARAMS, "  - slice_group_id[%i]\t\t= %i", i, pps->slice_group_id[i]);
+//                TRACE_1(PARAM, "  - slice_group_id[%i]        = %i", i, pps->slice_group_id[i]);
             }
         }
     }
 
-    TRACE_1(PARAM, "  - num_ref_idx_l0_default_active_minus1\t= %i", pps->num_ref_idx_l0_default_active_minus1);
-    TRACE_1(PARAM, "  - num_ref_idx_l1_default_active_minus1\t= %i", pps->num_ref_idx_l1_default_active_minus1);
-    TRACE_1(PARAM, "  - weighted_pred_flag\t\t\t= %i", pps->weighted_pred_flag);
-    TRACE_1(PARAM, "  - weighted_bipred_idc\t\t\t= %i", pps->weighted_bipred_idc);
-    TRACE_1(PARAM, "  - pic_init_qp_minus26\t\t\t= %i", pps->pic_init_qp_minus26);
-    TRACE_1(PARAM, "  - pic_init_qs_minus26\t\t\t= %i", pps->pic_init_qs_minus26);
-    TRACE_1(PARAM, "  - chroma_qp_index_offset\t\t\t= %i", pps->chroma_qp_index_offset);
-    TRACE_1(PARAM, "  - deblocking_filter_control_present_flag\t= %i", pps->deblocking_filter_control_present_flag);
-    TRACE_1(PARAM, "  - constrained_intra_pred_flag\t\t= %i", pps->constrained_intra_pred_flag);
-    TRACE_1(PARAM, "  - redundant_pic_cnt_present_flag\t\t= %i", pps->redundant_pic_cnt_present_flag);
+    TRACE_1(PARAM, "  - num_ref_idx_l0_default_active_minus1= %i", pps->num_ref_idx_l0_default_active_minus1);
+    TRACE_1(PARAM, "  - num_ref_idx_l1_default_active_minus1= %i", pps->num_ref_idx_l1_default_active_minus1);
+    TRACE_1(PARAM, "  - weighted_pred_flag      = %i", pps->weighted_pred_flag);
+    TRACE_1(PARAM, "  - weighted_bipred_idc     = %i", pps->weighted_bipred_idc);
+    TRACE_1(PARAM, "  - pic_init_qp_minus26     = %i", pps->pic_init_qp_minus26);
+    TRACE_1(PARAM, "  - pic_init_qs_minus26     = %i", pps->pic_init_qs_minus26);
+    TRACE_1(PARAM, "  - chroma_qp_index_offset  = %i", pps->chroma_qp_index_offset);
+    TRACE_1(PARAM, "  - deblocking_filter_control_present_flag= %i", pps->deblocking_filter_control_present_flag);
+    TRACE_1(PARAM, "  - constrained_intra_pred_flag     = %i", pps->constrained_intra_pred_flag);
+    TRACE_1(PARAM, "  - redundant_pic_cnt_present_flag  = %i", pps->redundant_pic_cnt_present_flag);
 
-    TRACE_1(PARAM, "  - transform_8x8_mode_flag\t\t\t= %i", pps->transform_8x8_mode_flag);
-    TRACE_1(PARAM, "  - pic_scaling_matrix_present_flag\t\t= %i", pps->pic_scaling_matrix_present_flag);
+    TRACE_1(PARAM, "  - transform_8x8_mode_flag         = %i", pps->transform_8x8_mode_flag);
+    TRACE_1(PARAM, "  - pic_scaling_matrix_present_flag = %i", pps->pic_scaling_matrix_present_flag);
     if (pps->pic_scaling_matrix_present_flag)
     {
          for (i = 0; i < ((dc->ChromaArrayType != 3) ? 8 : 12); i++)
          {
-             TRACE_1(PARAM, "  - pic_scaling_list_present_flag[%i]\t= %i", i, pps->pic_scaling_list_present_flag[i]);
+             TRACE_1(PARAM, "  - pic_scaling_list_present_flag[%i]= %i", i, pps->pic_scaling_list_present_flag[i]);
          }
     }
-    TRACE_1(PARAM, "  - second_chroma_qp_index_offset\t\t= %i", pps->second_chroma_qp_index_offset);
+    TRACE_1(PARAM, "  - second_chroma_qp_index_offset   = %i", pps->second_chroma_qp_index_offset);
 #endif // ENABLE_DEBUG
 }
 
@@ -1579,74 +1579,74 @@ void printVUI(vui_t *vui)
     }
 
     // Print VUI values
-    TRACE_1(PARAM, "    - aspect_ratio_info_present_flag\t= %i", vui->aspect_ratio_info_present_flag);
+    TRACE_1(PARAM, "    - aspect_ratio_info_present_flag= %i", vui->aspect_ratio_info_present_flag);
     if (vui->aspect_ratio_info_present_flag)
     {
-        TRACE_1(PARAM, "    - aspect_ratio_idc\t\t\t= %i", vui->aspect_ratio_idc);
+        TRACE_1(PARAM, "    - aspect_ratio_idc  = %i", vui->aspect_ratio_idc);
         if (vui->aspect_ratio_idc == 255) // 255 : Extended_SAR
         {
-            TRACE_1(PARAM, "    - sar_width\t\t\t= %i", vui->sar_width);
-            TRACE_1(PARAM, "    - sar_height\t\t\t= %i", vui->sar_height);
+            TRACE_1(PARAM, "    - sar_width         = %i", vui->sar_width);
+            TRACE_1(PARAM, "    - sar_height        = %i", vui->sar_height);
         }
     }
 
-    TRACE_1(PARAM, "    - overscan_info_present_flag\t\t= %i", vui->overscan_info_present_flag);
+    TRACE_1(PARAM, "    - overscan_info_present_flag= %i", vui->overscan_info_present_flag);
     if (vui->overscan_info_present_flag)
     {
-        TRACE_1(PARAM, "    - overscan_appropriate_flag\t\t= %i", vui->overscan_appropriate_flag);
+        TRACE_1(PARAM, "    - overscan_appropriate_flag= %i", vui->overscan_appropriate_flag);
     }
 
-    TRACE_1(PARAM, "    - video_signal_type_present_flag\t= %i", vui->video_signal_type_present_flag);
+    TRACE_1(PARAM, "    - video_signal_type_present_flag= %i", vui->video_signal_type_present_flag);
     if (vui->video_signal_type_present_flag)
     {
-        TRACE_1(PARAM, "    - video_format\t\t\t\t= %i", vui->video_format);
-        TRACE_1(PARAM, "    - video_full_range_flag\t\t\t= %i", vui->video_full_range_flag);
-        TRACE_1(PARAM, "    - colour_description_present_flag\t= %i", vui->colour_description_present_flag);
+        TRACE_1(PARAM, "    - video_format          = %i", vui->video_format);
+        TRACE_1(PARAM, "    - video_full_range_flag = %i", vui->video_full_range_flag);
+        TRACE_1(PARAM, "    - colour_description_present_flag= %i", vui->colour_description_present_flag);
         if (vui->colour_description_present_flag)
         {
-            TRACE_1(PARAM, "    - colour_primaries\t\t\t= %i", vui->colour_primaries);
-            TRACE_1(PARAM, "    - transfer_characteristics\t\t= %i", vui->transfer_characteristics);
-            TRACE_1(PARAM, "    - matrix_coefficients\t\t\t= %i", vui->matrix_coefficients);
+            TRACE_1(PARAM, "    - colour_primaries          = %i", vui->colour_primaries);
+            TRACE_1(PARAM, "    - transfer_characteristics  = %i", vui->transfer_characteristics);
+            TRACE_1(PARAM, "    - matrix_coefficients       = %i", vui->matrix_coefficients);
         }
     }
 
-    TRACE_1(PARAM, "    - chroma_loc_info_present_flag\t\t= %i", vui->chroma_loc_info_present_flag);
+    TRACE_1(PARAM, "    - chroma_loc_info_present_flag          = %i", vui->chroma_loc_info_present_flag);
     if (vui->chroma_loc_info_present_flag)
     {
-        TRACE_1(PARAM, "    - chroma_sample_loc_type_top_field\t\t= %i", vui->chroma_sample_loc_type_top_field);
-        TRACE_1(PARAM, "    - chroma_sample_loc_type_bottom_field\t= %i", vui->chroma_sample_loc_type_bottom_field);
+        TRACE_1(PARAM, "    - chroma_sample_loc_type_top_field      = %i", vui->chroma_sample_loc_type_top_field);
+        TRACE_1(PARAM, "    - chroma_sample_loc_type_bottom_field   = %i", vui->chroma_sample_loc_type_bottom_field);
     }
 
-    TRACE_1(PARAM, "    - timing_info_present_flag\t\t= %i", vui->timing_info_present_flag);
+    TRACE_1(PARAM, "    - timing_info_present_flag      = %i", vui->timing_info_present_flag);
     if (vui->timing_info_present_flag)
     {
-        TRACE_1(PARAM, "    - num_units_in_tick\t\t\t= %i", vui->num_units_in_tick);
-        TRACE_1(PARAM, "    - time_scale\t\t\t\t= %i", vui->time_scale);
-        TRACE_1(PARAM, "    - fixed_frame_rate_flag\t\t\t= %i", vui->fixed_frame_rate_flag);
+        TRACE_1(PARAM, "    - num_units_in_tick     = %i", vui->num_units_in_tick);
+        TRACE_1(PARAM, "    - time_scale            = %i", vui->time_scale);
+        TRACE_1(PARAM, "    - fixed_frame_rate_flag = %i", vui->fixed_frame_rate_flag);
     }
 
-    TRACE_1(PARAM, "    - nal_hrd_parameters_present_flag\t= %i", vui->nal_hrd_parameters_present_flag);
-    TRACE_1(PARAM, "    - vcl_hrd_parameters_present_flag\t= %i", vui->vcl_hrd_parameters_present_flag);
+    TRACE_1(PARAM, "    - nal_hrd_parameters_present_flag= %i", vui->nal_hrd_parameters_present_flag);
+    TRACE_1(PARAM, "    - vcl_hrd_parameters_present_flag= %i", vui->vcl_hrd_parameters_present_flag);
 
     // HRD
     if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
     {
-        TRACE_1(PARAM, "    - low_delay_hrd_flag\t\t\t= %i", vui->low_delay_hrd_flag);
+        TRACE_1(PARAM, "    - low_delay_hrd_flag        = %i", vui->low_delay_hrd_flag);
         printHRD(vui->hrd);
     }
 
-    TRACE_1(PARAM, "    - pic_struct_present_flag\t\t= %i", vui->pic_struct_present_flag);
-    TRACE_1(PARAM, "    - bitstream_restriction_flag\t\t= %i", vui->bitstream_restriction_flag);
+    TRACE_1(PARAM, "    - pic_struct_present_flag       = %i", vui->pic_struct_present_flag);
+    TRACE_1(PARAM, "    - bitstream_restriction_flag    = %i", vui->bitstream_restriction_flag);
 
     if (vui->bitstream_restriction_flag)
     {
         TRACE_1(PARAM, "    - motion_vectors_over_pic_boundaries_flag = %i", vui->motion_vectors_over_pic_boundaries_flag);
-        TRACE_1(PARAM, "    - max_bytes_per_pic_denom\t\t= %i", vui->max_bytes_per_pic_denom);
-        TRACE_1(PARAM, "    - max_bits_per_mb_denom\t\t\t= %i", vui->max_bits_per_mb_denom);
-        TRACE_1(PARAM, "    - log2_max_mv_length_horizontal\t\t= %i", vui->log2_max_mv_length_horizontal);
-        TRACE_1(PARAM, "    - log2_max_mv_length_vertical\t\t= %i", vui->log2_max_mv_length_vertical);
-        TRACE_1(PARAM, "    - num_reorder_frames\t\t\t= %i", vui->num_reorder_frames);
-        TRACE_1(PARAM, "    - max_dec_frame_buffering\t\t= %i", vui->max_dec_frame_buffering);
+        TRACE_1(PARAM, "    - max_bytes_per_pic_denom       = %i", vui->max_bytes_per_pic_denom);
+        TRACE_1(PARAM, "    - max_bits_per_mb_denom         = %i", vui->max_bits_per_mb_denom);
+        TRACE_1(PARAM, "    - log2_max_mv_length_horizontal = %i", vui->log2_max_mv_length_horizontal);
+        TRACE_1(PARAM, "    - log2_max_mv_length_vertical   = %i", vui->log2_max_mv_length_vertical);
+        TRACE_1(PARAM, "    - num_reorder_frames            = %i", vui->num_reorder_frames);
+        TRACE_1(PARAM, "    - max_dec_frame_buffering       = %i", vui->max_dec_frame_buffering);
     }
 #endif // ENABLE_DEBUG
 }
@@ -1741,8 +1741,8 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
         }
 
         //FIXME No boundaries specified?
-        //TRACE_1(DPARAMS, "      - bit_rate_scale\t\t: %i", hrd->bit_rate_scale);
-        //TRACE_1(DPARAMS, "      - cpb_size_scale\t\t: %i", hrd->cpb_size_scale);
+        //TRACE_1(PARAM, "      - bit_rate_scale    : %i", hrd->bit_rate_scale);
+        //TRACE_1(PARAM, "      - cpb_size_scale    : %i", hrd->cpb_size_scale);
 
         unsigned int SchedSelIdx = 0;
         for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
@@ -1798,22 +1798,22 @@ void printHRD(hrd_t *hrd)
     }
 
     // Print HRD values
-    TRACE_1(PARAM, "      - cpb_cnt_minus1\t\t\t= %i", hrd->cpb_cnt_minus1);
-    TRACE_1(PARAM, "      - bit_rate_scale\t\t\t= %i", hrd->bit_rate_scale);
-    TRACE_1(PARAM, "      - cpb_size_scale\t\t\t= %i", hrd->cpb_size_scale);
+    TRACE_1(PARAM, "      - cpb_cnt_minus1  = %i", hrd->cpb_cnt_minus1);
+    TRACE_1(PARAM, "      - bit_rate_scale  = %i", hrd->bit_rate_scale);
+    TRACE_1(PARAM, "      - cpb_size_scale  = %i", hrd->cpb_size_scale);
 
     unsigned int SchedSelIdx = 0;
     for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
     {
-        TRACE_1(PARAM, "      - bit_rate_value_minus1[%i]\t\t= %i", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
-        TRACE_1(PARAM, "      - cpb_size_value_minus1[%i]\t\t= %i", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx]);
-        TRACE_1(PARAM, "      - cbr_flag[%i]\t\t\t\t= %i", SchedSelIdx, hrd->cbr_flag[SchedSelIdx]);
+        TRACE_1(PARAM, "      - bit_rate_value_minus1[%i]       = %i", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
+        TRACE_1(PARAM, "      - cpb_size_value_minus1[%i]       = %i", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx]);
+        TRACE_1(PARAM, "      - cbr_flag[%i]                    = %i", SchedSelIdx, hrd->cbr_flag[SchedSelIdx]);
     }
 
     TRACE_1(PARAM, "      - initial_cpb_removal_delay_length_minus1 = %i", hrd->initial_cpb_removal_delay_length_minus1);
-    TRACE_1(PARAM, "      - cpb_removal_delay_length_minus1\t= %i", hrd->cpb_removal_delay_length_minus1);
-    TRACE_1(PARAM, "      - dpb_output_delay_length_minus1\t= %i", hrd->dpb_output_delay_length_minus1);
-    TRACE_1(PARAM, "      - time_offset_length\t\t\t= %i", hrd->time_offset_length);
+    TRACE_1(PARAM, "      - cpb_removal_delay_length_minus1 = %i", hrd->cpb_removal_delay_length_minus1);
+    TRACE_1(PARAM, "      - dpb_output_delay_length_minus1  = %i", hrd->dpb_output_delay_length_minus1);
+    TRACE_1(PARAM, "      - time_offset_length          = %i", hrd->time_offset_length);
 #endif // ENABLE_DEBUG
 }
 

@@ -123,7 +123,7 @@ void InverseMacroblockScan(const int mbAddr,
     TRACE_1(SPATIAL, BLD_GREEN "   InverseMacroblockScan()" CLR_RESET);
 
 #if ENABLE_MBAFF
-    TRACE_ERROR(DTRANS, ">>> UNSUPPORTED (MbaffFrameFlag)")
+    TRACE_ERROR(TRANS, ">>> UNSUPPORTED (MbaffFrameFlag)")
     return;
 #endif // ENABLE_MBAFF
 
