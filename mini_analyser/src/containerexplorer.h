@@ -74,6 +74,7 @@ public slots:
     void sampleSelection();
     void sampleSelection(int sample_id);
     void containerSelection();
+    void containerSelectionChanged();
     void containerSelection(QTreeWidgetItem *item, int column);
 
     bool loadXmlFile();

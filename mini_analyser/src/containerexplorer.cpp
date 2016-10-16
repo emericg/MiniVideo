@@ -42,7 +42,7 @@ ContainerExplorer::ContainerExplorer(QWidget *parent) :
     connect(ui->tabWidget_tracks, SIGNAL(currentChanged(int)), this, SLOT(loadSamples(int)));
 
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
-    connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(containerSelection(QTreeWidgetItem *, int)));
+    connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
 
     // Setup HEX widget
     ui->widget_hex->setReadOnly(true);
@@ -298,20 +298,23 @@ void ContainerExplorer::containerSelection()
     ui->widget_hex->setData(mediaFile);
 }
 
+void ContainerExplorer::containerSelectionChanged()
+{
+    containerSelection(ui->treeWidget->currentItem(), 0);
+}
+
 void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
 {
     clearContent();
 
-    QString selected_fcc = item->text(0);
     int selected_offset = item->data(0, Qt::UserRole).toInt();
-    int selected_size = 0;
-    //qDebug() << "Atom fcc:" << selected_fcc << "@" << selected_offset << "clicked";
 
     QDomElement eSelected;
     if (findElement(xmlDatas.documentElement(), "offset", selected_offset, eSelected) == true)
     {
-        selected_size = eSelected.attributeNode("size").value().toInt();
-        int fieldCount = 0;
+        QString selected_fcc = eSelected.attributeNode("fcc").value();
+        int selected_size = eSelected.attributeNode("size").value().toInt();
+        //qDebug() << "Atom fcc:" << selected_fcc << "@" << selected_offset << "clicked";
 
         // Set title
         if (eSelected.attributeNode("title").isAttr())
@@ -324,6 +327,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
         }
 
         // Set atom settings
+        int fieldCount = 0;
         QLabel *lb_offset = new QLabel(tr("<b>> Atom offset:</b>"));
         QLineEdit *le_offset = new QLineEdit(QString::number(selected_offset));
         le_offset->setReadOnly(true);
@@ -446,7 +450,9 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 void ContainerExplorer::clearContent()
 {
     //qDebug() << "CLEARING CONTENT";
-    ui->labelTitle->setText("");
+    //ui->labelTitle->setText("");
+    remove(ui->gridLayout_header, 0, 0, true);
+    remove(ui->gridLayout_header, 1, 1, true);
     remove(ui->gridLayout_content, 0, 0, true);
     remove(ui->gridLayout_content, 1, 1, true);
 }
@@ -552,7 +558,11 @@ void ContainerExplorer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
     //qDebug() << "> xmlAtomParser() >" << fcc;
 
     QTreeWidgetItem *child_item = createChildItem(item, fcc, offset);
-    ui->treeWidget->setItemExpanded(child_item, true);
+    child_item->setIcon(0, QIcon(":/img/img/C.png"));
+    if (fcc != "trak" && fcc != "moof") // don't expand tracks && moof
+    {
+        ui->treeWidget->setItemExpanded(child_item, true);
+    }
 
     QDomNode structure_node = root.firstChild();
     while (structure_node.isNull() == false)
@@ -563,7 +573,17 @@ void ContainerExplorer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
             if (e.tagName() == "atom")
             {
                 xmlAtomParser(e, child_item);
+                if (fcc == "trak" || fcc == "strl")
+                    child_item->setIcon(0, QIcon(":/img/img/T.png"));
+                else
+                    child_item->setIcon(0, QIcon(":/img/img/L.png"));
             }
+/*
+            else if (e.tagName() == "title")
+            {
+                child_item->setText(0, child_item->text(0) + " (" + e.text() + ")");
+            }
+*/
             else
             {
                 //qDebug() << "a " << qPrintable(e.tagName()); // ATOM fields parsing

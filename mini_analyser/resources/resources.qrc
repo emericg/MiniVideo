@@ -33,6 +33,9 @@
         <file>app/icon.svg</file>
         <file>app/icon.png</file>
         <file>img/dropzone.png</file>
+        <file>img/C.png</file>
+        <file>img/L.png</file>
+        <file>img/T.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/DejaVuSansMono.ttf</file>
