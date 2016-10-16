@@ -263,7 +263,7 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
         if (wave->xml)
         {
             write_chunk_header(fact_header, wave->xml);
-            fprintf(wave->xml, "  <dwSampleLength>%li</dwSampleLength>\n", wave->fact.dwSampleLength);
+            fprintf(wave->xml, "  <dwSampleLength>%u</dwSampleLength>\n", wave->fact.dwSampleLength);
             fprintf(wave->xml, "  </atom>\n");
         }
     }

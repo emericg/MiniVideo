@@ -160,10 +160,10 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             pes_header[8] = (uint8_t)(pes_header_size - 9);
         }
 
-#if TRACE_1
+/*
         {
             // Print PES header
-            TRACE_1(DMUXER, " > header : 0x");
+            TRACE_1(MUXER, " > header : 0x");
             int j = 0;
             for (j = 0; j < 14; j++)
             {
@@ -171,7 +171,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             }
             printf("\n");
         }
-#endif // TRACE_1
+*/
 
         // Write packet header + data
         ////////////////////////////////////////////////////////////////////////
