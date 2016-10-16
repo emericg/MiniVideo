@@ -115,20 +115,20 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         unsigned int i = 0, j = 0;
 
         map->stream_fcc = track->fcc;
-        map->stream_codec = track->codec;
+        map->stream_codec = (AVCodec_e)track->codec;
 
-        if (track->compressorname)
+        if(strnlen(track->compressorname, 32) > 0)
         {
-            map->stream_encoder = malloc(sizeof(track->compressorname));
+            map->stream_encoder = (char *)malloc(sizeof(track->compressorname));
             strncpy(map->stream_encoder, track->compressorname, sizeof(track->compressorname));
         }
-        if (track->name)
+        if(strnlen(track->name, 128) > 0)
         {
-            map->track_title = malloc(sizeof(track->name));
+            map->track_title = (char *)malloc(sizeof(track->name));
             strncpy(map->track_title, track->name, sizeof(track->name));
         }
 
-        map->track_languagecode = malloc(4);
+        map->track_languagecode = (char *)malloc(4);
         strncpy(map->track_languagecode, track->language, 3);
         map->track_languagecode[3] = '\0';
 
@@ -331,8 +331,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                     int64_t dts = map->sample_dts[k];
                     int64_t pts = dts + track->ctts_sample_offset[i] + _samples_pts_to_dts_shift;
 
-                    // Assign pts
-                    map->sample_pts[k] = pts;
+                    map->sample_pts[k] = pts; // Assign pts
                 }
             }
         }
@@ -423,13 +422,12 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                     }
                 }
 
-                // Increase chunk offset
-                chunkOffset++;
+                chunkOffset++; // Increase chunk offset
             }
         }
 
 #if ENABLE_DEBUG
-        TRACE_INFO(MP4, BLD_GREEN ">> track content recap:" CLR_RESET);
+        TRACE_1(MP4, BLD_GREEN ">> track content recap:" CLR_RESET);
         if (map->stream_type == stream_VIDEO)
         {
             TRACE_1(MP4, "Video Stream");
@@ -496,6 +494,12 @@ void freeTrack(Mp4Track_t **track_ptr)
 
         // stco / co64
         free((*track_ptr)->stco_chunk_offset);
+
+        // sdtp
+        free((*track_ptr)->sdtp_is_leading);
+        free((*track_ptr)->sdtp_sample_depends_on);
+        free((*track_ptr)->sdtp_sample_is_depended_on);
+        free((*track_ptr)->sdtp_sample_has_redundancy);
 
         // track
         free(*track_ptr);

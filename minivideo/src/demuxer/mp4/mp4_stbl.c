@@ -69,7 +69,8 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
         {
             switch (box_subheader.boxtype)
             {
@@ -77,28 +78,31 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     retcode = parse_stsd(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STTS:
-                    retcode = parse_stts(bitstr, &box_subheader, track);
+                    retcode = parse_stts(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_CTTS:
-                    retcode = parse_ctts(bitstr, &box_subheader, track);
+                    retcode = parse_ctts(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STSS:
-                    retcode = parse_stss(bitstr, &box_subheader, track);
+                    retcode = parse_stss(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STSC:
-                    retcode = parse_stsc(bitstr, &box_subheader, track);
+                    retcode = parse_stsc(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STSZ:
-                    retcode = parse_stsz(bitstr, &box_subheader, track);
+                    retcode = parse_stsz(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STZ2:
-                    retcode = parse_stsz(bitstr, &box_subheader, track);
+                    retcode = parse_stsz(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STCO:
-                    retcode = parse_stco(bitstr, &box_subheader, track);
+                    retcode = parse_stco(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_CO64:
-                    retcode = parse_stco(bitstr, &box_subheader, track);
+                    retcode = parse_stco(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_SDTP:
+                    retcode = parse_sdtp(bitstr, &box_subheader, track, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
@@ -134,8 +138,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // Parse box content
     unsigned int reserved[6] = {0};
-    int i = 0;
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
         reserved[i] = read_bits(bitstr, 8);
     }
@@ -253,7 +256,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             unsigned int frame_count = read_bits(bitstr, 16);
 
             uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
-            for (i = 0; i < 31; i++)
+            for (int i = 0; i < 31; i++)
             {
                 track->compressorname[i] = (char)read_bits(bitstr, 8);
             }
@@ -295,25 +298,28 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     switch (box_subsubheader.boxtype)
                     {
                         case BOX_AVCC:
-                            retcode = parse_avcC(bitstr, &box_subsubheader, track);
+                            retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
+                            break;
+                        case BOX_HVCC:
+                            retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_BTRT:
                             retcode = parse_btrt(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_CLAP:
-                            retcode = parse_clap(bitstr, &box_subsubheader, track);
+                            retcode = parse_clap(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_COLR:
-                            retcode = parse_colr(bitstr, &box_subsubheader, track);
+                            retcode = parse_colr(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_FIEL:
-                            retcode = parse_fiel(bitstr, &box_subsubheader, track);
+                            retcode = parse_fiel(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_GAMA:
-                            retcode = parse_gama(bitstr, &box_subsubheader, track);
+                            retcode = parse_gama(bitstr, &box_subsubheader, track, mp4);
                             break;
                         case BOX_PASP:
-                            retcode = parse_pasp(bitstr, &box_subsubheader, track);
+                            retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
                             break;
                         default:
                             retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
@@ -348,7 +354,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief AVCConfigurationBox.
+ * \brief AVC Configuration Box.
  *
  * From 'ISO/IEC 14496-15' specification:
  * 5.2.4 Decoder configuration information.
@@ -357,7 +363,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
  * 14496-10 video content.
  * Contain AVCDecoderConfigurationRecord data structure (5.2.4.1.1 Syntax, 5.2.4.1.2 Semantics).
  */
-int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_avcC()" CLR_RESET);
     int retcode = SUCCESS;
@@ -412,36 +418,76 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     for (i = 0; i < track->sps_count; i++)
     {
         TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
-        TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %u", i, track->sps_sample_offset[i]);
+        TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
     }
 
     TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->pps_count);
     for (i = 0; i < track->pps_count; i++)
     {
         TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
-        TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %u", i, track->pps_sample_offset[i]);
+        TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
     }
 #endif // ENABLE_DEBUG
-    /*
+
     // xmlMapper
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Movie Header</title>\n");
-        fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", mp4->creation_time);
-        fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", mp4->modification_time);
-        fprintf(mp4->xml, "  <timescale>%u</timescale>\n", mp4->timescale);
-        fprintf(mp4->xml, "  <duration>%lu</duration>\n", mp4->duration);
-        fprintf(mp4->xml, "  <rate>%u</rate>\n", rate);
-        fprintf(mp4->xml, "  <volume>%u</volume>\n", volume);
-        fprintf(mp4->xml, "  <matrix>[%i, %i, %i, %i, %i, %i, %i, %i, %i]</matrix>\n",
-                matrix[0], matrix[1], matrix[2], matrix[3], matrix[4],
-                matrix[5], matrix[6], matrix[7], matrix[8]);
-        //for (i = 0; i < 9; i++)
-        //    fprintf(mp4->xml, "  <matrix index=\"%i\">%i</matrix>\n", i, matrix[i]);
+        fprintf(mp4->xml, "  <title>AVC Configuration</title>\n");
+        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
+        fprintf(mp4->xml, "  <AVCProfileIndication>%u</AVCProfileIndication>\n", AVCProfileIndication);
+        fprintf(mp4->xml, "  <profile_compatibility>%u</profile_compatibility>\n", profile_compatibility);
+        fprintf(mp4->xml, "  <AVCLevelIndication>%u</AVCLevelIndication>\n", AVCLevelIndication);
+        fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
+
+        fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
+        for (i = 0; i < track->sps_count; i++)
+        {
+            fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
+            fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%li</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
+        }
+
+        fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
+        for (i = 0; i < track->pps_count; i++)
+        {
+            fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
+            fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
+        }
+
         fprintf(mp4->xml, "  </atom>\n");
     }
-*/
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief HEVC Configuration Box.
+ *
+ * From 'ISO/IEC x' specification:
+ */
+int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_hvcC()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // hvcC box means H.265 codec
+    track->codec = CODEC_H265;
+
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>HEVC Configuration</title>\n");
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
     return retcode;
 }
 
@@ -477,8 +523,8 @@ int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Bitrate</title>\n");
-        fprintf(mp4->xml, "  <bufferSizeDB>%lu</bufferSizeDB>\n", bufferSizeDB);
-        fprintf(mp4->xml, "  <bitrate_max>%lu</bitrate_max>\n", track->bitrate_max);
+        fprintf(mp4->xml, "  <bufferSizeDB>%u</bufferSizeDB>\n", bufferSizeDB);
+        fprintf(mp4->xml, "  <bitrate_max>%u</bitrate_max>\n", track->bitrate_max);
         fprintf(mp4->xml, "  <bitrate_avg>%u</bitrate_avg>\n", track->bitrate_avg);
         fprintf(mp4->xml, "  </atom>\n");
     }
@@ -489,14 +535,14 @@ int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief CleanApertureBox.
+ * \brief Clean Aperture Box.
  *
  * From 'ISO/IEC 14496-12' specification:
  * 8.5.2 Sample Description Box
  * 8.5.2.2 Syntax
  * 8.5.2.3 Semantics
  */
-int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_clap()" CLR_RESET);
     int retcode = SUCCESS;
@@ -515,25 +561,34 @@ int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     unsigned int vertOffD = read_bits(bitstr, 32);
 
 #if ENABLE_DEBUG
-    {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        //TRACE_1(MP4, "> clap_size   : %u", clap_size);
-        //TRACE_1(MP4, "> clap_type   : %u", clap_type);
-
-        TRACE_1(MP4, "> cleanApertureWidthN   : %u", cleanApertureWidthN);
-        TRACE_1(MP4, "> cleanApertureWidthD   : %u", cleanApertureWidthD);
-        TRACE_1(MP4, "> cleanApertureHeightN  : %u", cleanApertureHeightN);
-        TRACE_1(MP4, "> cleanApertureHeightD  : %u", cleanApertureHeightD);
-
-        TRACE_1(MP4, "> horizOffN  : %u", horizOffN);
-        TRACE_1(MP4, "> horizOffD  : %u", horizOffD);
-        TRACE_1(MP4, "> vertOffN   : %u", vertOffN);
-        TRACE_1(MP4, "> vertOffD   : %u", vertOffD);
-    }
+    print_box_header(box_header);
+    //TRACE_1(MP4, "> clap_size   : %u", clap_size);
+    //TRACE_1(MP4, "> clap_type   : %u", clap_type);
+    TRACE_1(MP4, "> cleanApertureWidthN   : %u", cleanApertureWidthN);
+    TRACE_1(MP4, "> cleanApertureWidthD   : %u", cleanApertureWidthD);
+    TRACE_1(MP4, "> cleanApertureHeightN  : %u", cleanApertureHeightN);
+    TRACE_1(MP4, "> cleanApertureHeightD  : %u", cleanApertureHeightD);
+    TRACE_1(MP4, "> horizOffN  : %u", horizOffN);
+    TRACE_1(MP4, "> horizOffD  : %u", horizOffD);
+    TRACE_1(MP4, "> vertOffN   : %u", vertOffN);
+    TRACE_1(MP4, "> vertOffD   : %u", vertOffD);
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Clean Aperture</title>\n");
+        fprintf(mp4->xml, "  <cleanApertureWidthN>%u</cleanApertureWidthN>\n", cleanApertureWidthN);
+        fprintf(mp4->xml, "  <cleanApertureWidthD>%u</cleanApertureWidthD>\n", cleanApertureWidthD);
+        fprintf(mp4->xml, "  <cleanApertureHeightN>%u</cleanApertureHeightN>\n", cleanApertureHeightN);
+        fprintf(mp4->xml, "  <cleanApertureHeightD>%u</cleanApertureHeightD>\n", cleanApertureHeightD);
+        fprintf(mp4->xml, "  <horizOffN>%u</horizOffN>\n", horizOffN);
+        fprintf(mp4->xml, "  <horizOffD>%u</horizOffD>\n", horizOffD);
+        fprintf(mp4->xml, "  <vertOffN>%u</vertOffN>\n", vertOffN);
+        fprintf(mp4->xml, "  <vertOffD>%u</vertOffD>\n", vertOffD);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -541,17 +596,18 @@ int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 /* ************************************************************************** */
 
 /*!
- * \brief ColourInformationBox.
+ * \brief Colour Information Box.
  *
  * From 'ISO/IEC 14496-12' specification:
  * 8.5.2 Sample Description Box
  * 8.5.2.2 Syntax
  * 8.5.2.3 Semantics
  */
-int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_colr()" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
     // Parse box content
     unsigned int colour_type = read_bits(bitstr, 32);
@@ -593,22 +649,32 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     }
 
 #if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> colour_type             : %u", getFccString_le(colour_type, fcc));
+    if (colour_type == 'nclc' || colour_type == 'nclx')
     {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        char fcc[5];
-        TRACE_1(MP4, "> colour_type             : %u", getFccString_le(colour_type, fcc));
-        if (colour_type == 'nclc' || colour_type == 'nclx')
-        {
-            TRACE_1(MP4, "> colour_primaries        : %u", colour_primaries);
-            TRACE_1(MP4, "> transfer_characteristics: %u", transfer_characteristics);
-            TRACE_1(MP4, "> matrix_coefficients     : %u", matrix_coefficients);
-            TRACE_1(MP4, "> full_range_flag         : %u", track->color_range);
-        }
+        TRACE_1(MP4, "> colour_primaries        : %u", colour_primaries);
+        TRACE_1(MP4, "> transfer_characteristics: %u", transfer_characteristics);
+        TRACE_1(MP4, "> matrix_coefficients     : %u", matrix_coefficients);
+        TRACE_1(MP4, "> full_range_flag         : %u", track->color_range);
     }
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Colour Information</title>\n");
+        fprintf(mp4->xml, "  <colour_type>%u</colour_type>\n", colour_type);
+        if (colour_type == 'nclc' || colour_type == 'nclx')
+        {
+            fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
+            fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);
+            fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
+            fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
+        }
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -618,7 +684,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 /*!
  * \brief FIEL box.
  */
-int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_fiel()" CLR_RESET);
     int retcode = SUCCESS;
@@ -633,7 +699,7 @@ int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 /*!
  * \brief GAMA box.
  */
-int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_gama()" CLR_RESET);
     int retcode = SUCCESS;
@@ -646,37 +712,83 @@ int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
 /* ************************************************************************** */
 
 /*!
- * \brief PixelAspectRatioBox.
+ * \brief Padding Bits box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.7.6 Padding Bits Box.
+ */
+int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_padb()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Parse box content
+    unsigned int i;
+    unsigned int sample_count = read_bits(bitstr, 32);
+
+    for (i = 0; i < ((sample_count + 1)/2); i++)
+    {
+        const int reserved1 = read_bit(bitstr);
+        int pad1 = read_bits(bitstr, 3);
+        const int reserved2 = read_bit(bitstr);
+        int pad2 = read_bits(bitstr, 3);
+    }
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> sample_count  : %u", sample_count);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Padding Bits</title>\n");
+        fprintf(mp4->xml, "  <sample_count>%u</sample_count>\n", sample_count);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Pixel Aspect Ratio Box.
  *
  * From 'ISO/IEC 14496-12' specification:
  * 8.5.2 Sample Description Box
  * 8.5.2.2 Syntax
  * 8.5.2.3 Semantics
  */
-int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_pasp()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
-    //unsigned int pasp_size = read_bits(bitstr, 32);
-    //unsigned int pasp_type = read_bits(bitstr, 32);
-
     track->par_h = read_bits(bitstr, 32);
     track->par_v = read_bits(bitstr, 32);
 
 #if ENABLE_DEBUG
-    {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        //TRACE_1(MP4, "> pasp_size : %u", pasp_size);
-        //TRACE_1(MP4, "> pasp_type : %u", pasp_type);
-        TRACE_1(MP4, "> hSpacing  : %u", track->par_h);
-        TRACE_1(MP4, "> vSpacing  : %u", track->par_v);
-    }
+    print_box_header(box_header);
+    TRACE_1(MP4, "> hSpacing  : %u", track->par_h);
+    TRACE_1(MP4, "> vSpacing  : %u", track->par_v);
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Pixel Aspect Ratio</title>\n");
+        fprintf(mp4->xml, "  <hSpacing>%u</hSpacing>\n", track->par_h);
+        fprintf(mp4->xml, "  <vSpacing>%u</vSpacing>\n", track->par_v);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -692,7 +804,7 @@ int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  * This box contains a compact version of a table that allows indexing from
  * decoding time to sample number.
  */
-int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stts()" CLR_RESET);
     int retcode = SUCCESS;
@@ -723,22 +835,30 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     }
 
 #if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> entry_count   : %u", track->stts_entry_count);
+/*
+    TRACE_1(MP4, "> sample_number : [");
+    for (i = 0; i < track->stts_entry_count; i++)
     {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        TRACE_1(MP4, "> entry_count   : %u", track->stts_entry_count);
-#if TRACE_1
-        TRACE_1(MP4, "> sample_number : [");
-        for (i = 0; i < track->stts_entry_count; i++)
-        {
-            printf("(%u / %u),", track->stts_sample_count[i], track->stts_sample_delta[i]);
-        }
-        printf("]\n");
-#endif // TRACE_1
+        printf("(%u / %u),", track->stts_sample_count[i], track->stts_sample_delta[i]);
     }
+    printf("]\n");
+*/
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Decoding Time to Sample</title>\n");
+        fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stts_entry_count);
+        fprintf(mp4->xml, "  <stts_sample_delta>[");
+        for (i = 0; i < track->stts_entry_count; i++)
+            fprintf(mp4->xml, "%u, ", track->stts_sample_delta[i]);
+        fprintf(mp4->xml, "]</stts_sample_delta>\n");
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -753,7 +873,7 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  *
  * This box provides the offset between decoding time and composition time.
  */
-int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_ctts()" CLR_RESET);
     int retcode = SUCCESS;
@@ -788,25 +908,30 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     }
 
 #if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> entry_count   : %u", track->ctts_entry_count);
+/*
+    TRACE_1(MP4, "> sample_number : [");
+    for (i = 0; i < track->ctts_entry_count; i++)
     {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        TRACE_1(MP4, "> entry_count   : %u", track->ctts_entry_count);
-#if TRACE_1
-        TRACE_1(MP4, "> sample_number : [");
-        for (i = 0; i < track->ctts_entry_count; i++)
-        {
-            if (box_header->version == 0)
-                printf("(%u / %u),", track->ctts_sample_count[i], track->ctts_sample_offset_u[i]);
-            else
-                printf("(%u / %i),", track->ctts_sample_count[i], track->ctts_sample_offset_i[i]);
-        }
-        printf("]\n");
-#endif // TRACE_1
+        printf("(%u / %li),", track->ctts_sample_count[i], track->ctts_sample_offset[i]);
     }
+    printf("]\n");
+*/
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Composition Time to Sample</title>\n");
+        fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->ctts_entry_count);
+        fprintf(mp4->xml, "  <ctts_sample_delta>[");
+        for (i = 0; i < track->ctts_entry_count; i++)
+            fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
+        fprintf(mp4->xml, "]</ctts_sample_delta>\n");
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -821,7 +946,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  *
  * This box provides a compact marking of the random access points within the stream.
  */
-int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stss()" CLR_RESET);
     int retcode = SUCCESS;
@@ -848,22 +973,30 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
         }
 
 #if ENABLE_DEBUG
+        print_box_header(box_header);
+        TRACE_1(MP4, "> entry_count   : %u", track->stss_entry_count);
+/*
+        TRACE_1(MP4, "> sample_number : [");
+        for (i = 0; i < track->stss_entry_count; i++)
         {
-            // Print box header
-            print_box_header(box_header);
-
-            // Print box content
-            TRACE_1(MP4, "> entry_count   : %u", track->stss_entry_count);
-#if TRACE_1
-            TRACE_1(MP4, "> sample_number : [");
-            for (i = 0; i < track->stss_entry_count; i++)
-            {
-                printf("%u, ", track->stss_sample_number[i]);
-            }
-            printf("]\n");
-#endif // TRACE_1
+            printf("%u, ", track->stss_sample_number[i]);
         }
+        printf("]\n");
+*/
 #endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            write_box_header(box_header, mp4->xml);
+            fprintf(mp4->xml, "  <title>Sync Sample</title>\n");
+            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stss_entry_count);
+            fprintf(mp4->xml, "  <stss_sample_number>[");
+            for (i = 0; i < track->stss_entry_count; i++)
+                fprintf(mp4->xml, "%u, ", track->stss_sample_number[i]);
+            fprintf(mp4->xml, "]</stss_sample_number>\n");
+            fprintf(mp4->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -882,7 +1015,7 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  * be used to find the chunk that contains a sample, its position, and the associated
  * sample description.
  */
-int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsc()" CLR_RESET);
     int retcode = SUCCESS;
@@ -915,36 +1048,58 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
         }
 
 #if ENABLE_DEBUG
+        print_box_header(box_header);
+/*
+        // Print box content
+        TRACE_1(MP4, "> entry_count : %u", track->stsc_entry_count);
+
+        TRACE_1(MP4, "> first_chunk : [");
+        for (i = 0; i < track->stsc_entry_count; i++)
         {
-            // Print box header
-            print_box_header(box_header);
-#if TRACE_1
-            // Print box content
-            TRACE_1(MP4, "> entry_count : %u", track->stsc_entry_count);
-
-            TRACE_1(MP4, "> first_chunk : [");
-            for (i = 0; i < track->stsc_entry_count; i++)
-            {
-                printf("%u, ", track->stsc_first_chunk[i]);
-            }
-            printf("]\n");
-
-            TRACE_1(MP4, "> samples_per_chunk : [");
-            for (i = 0; i < track->stsc_entry_count; i++)
-            {
-                printf("%u, ", track->stsc_samples_per_chunk[i]);
-            }
-            printf("]\n");
-
-            TRACE_1(MP4, "> sample_description_index : [");
-            for (i = 0; i < track->stsc_entry_count; i++)
-            {
-                printf("%u, ", track->stsc_sample_description_index[i]);
-            }
-            printf("]\n");
-#endif // TRACE_1
+            printf("%u, ", track->stsc_first_chunk[i]);
         }
+        printf("]\n");
+
+        TRACE_1(MP4, "> samples_per_chunk : [");
+        for (i = 0; i < track->stsc_entry_count; i++)
+        {
+            printf("%u, ", track->stsc_samples_per_chunk[i]);
+        }
+        printf("]\n");
+
+        TRACE_1(MP4, "> sample_description_index : [");
+        for (i = 0; i < track->stsc_entry_count; i++)
+        {
+            printf("%u, ", track->stsc_sample_description_index[i]);
+        }
+        printf("]\n");
+*/
 #endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            write_box_header(box_header, mp4->xml);
+            fprintf(mp4->xml, "  <title>Sample To Chunk</title>\n");
+            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stsc_entry_count);
+
+            fprintf(mp4->xml, "  <first_chunk>[");
+            for (i = 0; i < track->stss_entry_count; i++)
+                fprintf(mp4->xml, "%u, ", track->stsc_first_chunk[i]);
+            fprintf(mp4->xml, "]</first_chunk>\n");
+
+            fprintf(mp4->xml, "  <samples_per_chunk>[");
+            for (i = 0; i < track->stss_entry_count; i++)
+                fprintf(mp4->xml, "%u, ", track->stsc_samples_per_chunk[i]);
+            fprintf(mp4->xml, "]</samples_per_chunk>\n");
+
+            fprintf(mp4->xml, "  <stsc_sample_description_index>[");
+            for (i = 0; i < track->stss_entry_count; i++)
+                fprintf(mp4->xml, "%u, ", track->stsc_sample_description_index[i]);
+            fprintf(mp4->xml, "]</stsc_sample_description_index>\n");
+
+            fprintf(mp4->xml, "  </atom>\n");
+        }
     }
 
     return retcode;
@@ -968,12 +1123,12 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  * - The STZ2 variant permits smaller size fields, to save space when the sizes
  *   are varying but small.
  */
-int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsz()" CLR_RESET);
     int retcode = SUCCESS;
     unsigned int i = 0;
-    int field_size = 32;
+    unsigned int field_size = 32;
 
     // Read FullBox attributs
     box_header->version = (uint8_t)read_bits(bitstr, 8);
@@ -1011,26 +1166,34 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
     }
 
 #if ENABLE_DEBUG
-    {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-        TRACE_1(MP4, "> sample_count : %u", track->stsz_sample_count);
-        TRACE_1(MP4, "> sample_size  : %u", track->stsz_sample_size);
+    print_box_header(box_header);
 /*
-        if (track->stsz_sample_size == 0)
-        {
-            TRACE_1(MP4, "> entry_size : [");
-            for (i = 0; i < track->stsz_sample_count; i++)
-            {
-                printf("%u, ", track->stsz_entry_size[i]);
-            }
-            printf("]\n");
-        }
-*/
+    TRACE_1(MP4, "> sample_count : %u", track->stsz_sample_count);
+    TRACE_1(MP4, "> sample_size  : %u", track->stsz_sample_size);
+    if (track->stsz_sample_size == 0)
+    {
+        TRACE_1(MP4, "> entry_size : [");
+        for (i = 0; i < track->stsz_sample_count; i++)
+            printf("%u, ", track->stsz_entry_size[i]);
+        printf("]\n");
     }
+*/
 #endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Sample Size</title>\n");
+        fprintf(mp4->xml, "  <sample_count>%u</sample_count>\n", track->stsz_sample_count);
+        fprintf(mp4->xml, "  <sample_size>%u</sample_size>\n", track->stsz_sample_size);
+        fprintf(mp4->xml, "  <entry_size>[");
+        if (track->stsz_sample_size == 0)
+            for (i = 0; i < track->stsz_sample_count; i++)
+                fprintf(mp4->xml, "%u, ", track->stsz_entry_size[i]);
+        fprintf(mp4->xml, "]</entry_size>\n");
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
@@ -1047,7 +1210,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
  * There are two variants, permitting the use of 32-bit (STCO variant) or 64-bit
  * offsets (CO64 variant).
  */
-int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
+int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stco()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1082,23 +1245,143 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track)
                 track->stco_chunk_offset[i] = (int64_t)read_bits(bitstr, 32);
             }
         }
-#if ENABLE_DEBUG
-        {
-            // Print box header
-            print_box_header(box_header);
 
-            // Print box content
-            TRACE_1(MP4, "> entry_count  : %u", track->stco_entry_count);
+#if ENABLE_DEBUG
+        print_box_header(box_header);
 /*
-            TRACE_1(MP4, "> chunk_offset : [");
+        TRACE_1(MP4, "> entry_count  : %u", track->stco_entry_count);
+
+        TRACE_1(MP4, "> chunk_offset : [");
+        for (i = 0; i < track->stco_entry_count; i++)
+        {
+            printf("%li, ", track->stco_chunk_offset[i]);
+        }
+        printf("]\n");
+*/
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            write_box_header(box_header, mp4->xml);
+            fprintf(mp4->xml, "  <title>Chunk Offset</title>\n");
+            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stco_entry_count);
+            fprintf(mp4->xml, "  <chunk_offset>[");
             for (i = 0; i < track->stco_entry_count; i++)
+                fprintf(mp4->xml, "%li, ", track->stco_chunk_offset[i]);
+            fprintf(mp4->xml, "]</chunk_offset>\n");
+            fprintf(mp4->xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Independent and Disposable Samples - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.6.4 Independent and Disposable Samples Box.
+ */
+int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_sdtp()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    uint32_t sample_count = track->stsz_sample_count;
+    if (sample_count == 0)
+        sample_count = track->ctts_entry_count;
+
+    // Parse box content
+    if (sample_count > 0)
+    {
+        unsigned int i = 0;
+        track->sdtp_is_leading = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
+        track->sdtp_sample_depends_on = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
+        track->sdtp_sample_is_depended_on = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
+        track->sdtp_sample_has_redundancy = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
+
+        if (track->sdtp_is_leading == NULL || track->sdtp_sample_depends_on == NULL ||
+            track->sdtp_sample_is_depended_on == NULL || track->sdtp_sample_has_redundancy == NULL)
+        {
+            TRACE_ERROR(MP4, "Unable to alloc sdtp tables!");
+            retcode = FAILURE;
+        }
+        else
+        {
+            for (i = 0; i < sample_count; i++)
             {
-                printf("%lli, ", track->stco_chunk_offset[i]);
+                track->sdtp_is_leading[i] = (int8_t)read_bits(bitstr, 2);
+                track->sdtp_sample_depends_on[i] = (int8_t)read_bits(bitstr, 2);
+                track->sdtp_sample_is_depended_on[i] = (int8_t)read_bits(bitstr, 2);
+                track->sdtp_sample_has_redundancy[i] = (int8_t)read_bits(bitstr, 2);
+            }
+
+#if ENABLE_DEBUG
+            print_box_header(box_header);
+/*
+            TRACE_1(MP4, "> sdtp_is_leading : [");
+            for (i = 0; i < sample_count; i++)
+            {
+                printf("%u, ", track->sdtp_is_leading[i]);
+            }
+            printf("]\n");
+            TRACE_1(MP4, "> sdtp_is_leading : [");
+            for (i = 0; i < sample_count; i++)
+            {
+                printf("%u, ", track->sdtp_is_leading[i]);
+            }
+            printf("]\n");
+            TRACE_1(MP4, "> sdtp_is_leading : [");
+            for (i = 0; i < sample_count; i++)
+            {
+                printf("%u, ", track->sdtp_is_leading[i]);
+            }
+            printf("]\n");
+            TRACE_1(MP4, "> sdtp_is_leading : [");
+            for (i = 0; i < sample_count; i++)
+            {
+                printf("%u, ", track->sdtp_is_leading[i]);
             }
             printf("]\n");
 */
-        }
 #endif // ENABLE_DEBUG
+
+            // xmlMapper
+            if (mp4->xml)
+            {
+                write_box_header(box_header, mp4->xml);
+                fprintf(mp4->xml, "  <title>Independent and Disposable Samples</title>\n");
+
+                fprintf(mp4->xml, "  <sdtp_is_leading>[");
+                for (i = 0; i < sample_count; i++)
+                    fprintf(mp4->xml, "%u, ", track->sdtp_is_leading[i]);
+                fprintf(mp4->xml, "]</sdtp_is_leading>\n");
+
+                fprintf(mp4->xml, "  <sdtp_sample_depends_on>[");
+                for (i = 0; i < sample_count; i++)
+                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_depends_on[i]);
+                fprintf(mp4->xml, "]</sdtp_sample_depends_on>\n");
+
+                fprintf(mp4->xml, "  <sdtp_sample_is_depended_on>[");
+                for (i = 0; i < sample_count; i++)
+                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_is_depended_on[i]);
+                fprintf(mp4->xml, "]</sdtp_sample_is_depended_on>\n");
+
+                fprintf(mp4->xml, "  <sdtp_sample_has_redundancy>[");
+                for (i = 0; i < sample_count; i++)
+                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_has_redundancy[i]);
+                fprintf(mp4->xml, "]</sdtp_sample_has_redundancy>\n");
+
+                fprintf(mp4->xml, "  </atom>\n");
+            }
+        }
     }
 
     return retcode;

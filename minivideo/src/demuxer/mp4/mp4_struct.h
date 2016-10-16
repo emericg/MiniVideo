@@ -126,6 +126,12 @@ typedef struct Mp4Track_t
     unsigned int stco_entry_count;
     int64_t *stco_chunk_offset;
 
+    // sdtp
+    uint8_t *sdtp_is_leading;
+    uint8_t *sdtp_sample_depends_on;
+    uint8_t *sdtp_sample_is_depended_on;
+    uint8_t *sdtp_sample_has_redundancy;
+
 } Mp4Track_t;
 
 typedef struct Mp4_t
@@ -186,10 +192,12 @@ typedef enum Mp4BoxType_e
                     BOX_NMHD = 0x6E6D6864,      //!< null media header
                     BOX_DINF = 0x64696E66,              //!< (*) data information box, container
                         BOX_DREF = 0x64726566,          //!< (*) data reference box, declares source(s) of media data in track
-                            BOX_URL = 0x75726C20,       //!<
+                        BOX_URL = 0x75726C20,           //!< data entry url box
+                        BOX_URN = 0x75726E20,           //!< data entry urn box
                     BOX_STBL = 0x7374626C,              //!< (*) sample table box, container for the time/space map
                         BOX_STSD = 0x73747364,          //!< (*) sample descriptions (codec types, initialization, etc)
                             BOX_AVCC = 0x61766343,      //!< AVC configuration box
+                            BOX_HVCC = 0x68766343,      //!< HEVC configuration box
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box

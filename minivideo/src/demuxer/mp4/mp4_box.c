@@ -97,8 +97,8 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
         }
 
         // Init "FullBox" parameters
-        box_header->version = 0;
-        box_header->flags = 0;
+        box_header->version = 0xFF;
+        box_header->flags = 0xFFFFFFFF;
     }
 
     return retcode;
@@ -167,7 +167,7 @@ void print_box_header(Mp4Box_t *box_header)
         }
 
         // Print FullBox header
-        if (box_header->version != 0 || box_header->flags != 0)
+        if (box_header->version != 0xFF || box_header->flags != 0xFFFFFFFF)
         {
             TRACE_2(MP4, "* version       : %u", box_header->version);
             TRACE_2(MP4, "* flags         : 0x%X", box_header->flags);
@@ -193,10 +193,20 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml)
         {
             char fcc[5];
 
-            fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 box\" offset=\"%li\" size=\"%li\">\n",
-                    getFccString_le(box_header->boxtype, fcc),
-                    box_header->offset_start,
-                    box_header->size);
+            if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
+            {
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 box\" offset=\"%li\" size=\"%li\">\n",
+                        getFccString_le(box_header->boxtype, fcc),
+                        box_header->offset_start,
+                        box_header->size);
+            }
+            else
+            {
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 fullbox\" offset=\"%li\" size=\"%li\">\n",
+                        getFccString_le(box_header->boxtype, fcc),
+                        box_header->offset_start,
+                        box_header->size);
+            }
         }
     }
 }

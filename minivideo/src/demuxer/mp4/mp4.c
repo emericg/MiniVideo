@@ -45,42 +45,6 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Padding bits box.
- *
- * From 'ISO/IEC 14496-12' specification:
- * 8.7.6 Padding Bits Box.
- */
-static int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header)
-{
-    TRACE_INFO(MP4, BLD_GREEN "parse_padb()" CLR_RESET);
-    int retcode = SUCCESS;
-
-    unsigned int i;
-    unsigned int sample_count = read_bits(bitstr, 32);
-
-    for (i = 0; i < ((sample_count + 1)/2); i++)
-    {
-        const int reserved1 = read_bit(bitstr);
-        int pad1 = read_bits(bitstr, 3);
-        const int reserved2 = read_bit(bitstr);
-        int pad2 = read_bits(bitstr, 3);
-    }
-
-#if ENABLE_DEBUG
-    {
-        // Print box header
-        print_box_header(box_header);
-
-        // Print box content
-    }
-#endif // ENABLE_DEBUG
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
  * \brief File Type Box.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -199,10 +163,61 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /* ************************************************************************** */
 
 /*!
+ * \brief Meta Box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.11.1 The Meta box
+ *
+ * A meta box contains descriptive or annotative metadata.
+ */
+static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_meta()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    fprintf(mp4->xml, "  <title>Meta</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+        {
+            switch (box_subheader.boxtype)
+            {
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief User Data Box.
  *
  * From 'ISO/IEC 14496-12' specification:
- *  User Data Box.
+ * 8.10.1 User Data Box
  */
 static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
@@ -222,10 +237,14 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
         {
             switch (box_subheader.boxtype)
             {
+                case BOX_META:
+                    retcode = parse_meta(bitstr, &box_subheader, mp4);
+                    break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;
@@ -387,6 +406,249 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Video Media Header Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.4.5.2 Video Media Header Box.
+ */
+static int parse_vmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_vmhd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    uint16_t graphicsmode = read_bits(bitstr, 16);
+    uint16_t opcolor[3] = {0};
+    for (int i = 0; i < 3; i++)
+    {
+        opcolor[i] = read_bits(bitstr, 16);
+    }
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> graphicsmode    : %u", graphicsmode);
+    TRACE_1(MP4, "> opcolor         : [%u, %u, %u]", opcolor[0], opcolor[1], opcolor[2]);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Video Media Header</title>\n");
+        fprintf(mp4->xml, "  <graphicsmode>%u</graphicsmode>\n", graphicsmode);
+        fprintf(mp4->xml, "  <opcolor>[%u, %u, %u]</opcolor>\n", opcolor[0], opcolor[1], opcolor[2]);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Sound Media Header Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.4.5.3 Sound Media Header Box.
+ */
+static int parse_smhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_smhd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    uint16_t balance = read_bits(bitstr, 16);
+    uint16_t reserved = read_bits(bitstr, 16);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> balance    : %u", balance);
+    TRACE_1(MP4, "> reserved   : %u", reserved);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Sound Media Header</title>\n");
+        fprintf(mp4->xml, "  <balance>%u</balance>\n", balance);
+        fprintf(mp4->xml, "  <reserved>%u</reserved>\n", reserved);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Hint Media Header Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.4.5.4 Sound Media Header Box.
+ */
+static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_hmhd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    uint16_t maxPDUsize = read_bits(bitstr, 16);
+    uint16_t avgPDUsize = read_bits(bitstr, 16);
+    uint32_t maxbitrate = read_bits(bitstr, 32);
+    uint32_t avgbitrate = read_bits(bitstr, 32);
+    uint32_t reserved = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> maxPDUsize  : %u", maxPDUsize);
+    TRACE_1(MP4, "> avgPDUsize  : %u", avgPDUsize);
+    TRACE_1(MP4, "> maxbitrate  : %u", maxbitrate);
+    TRACE_1(MP4, "> avgbitrate  : %u", avgbitrate);
+    TRACE_1(MP4, "> reserved    : %u", reserved);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Hint Media Header</title>\n");
+        fprintf(mp4->xml, "  <maxPDUsize>%u</maxPDUsize>\n", maxPDUsize);
+        fprintf(mp4->xml, "  <avgPDUsize>%u</avgPDUsize>\n", avgPDUsize);
+        fprintf(mp4->xml, "  <maxbitrate>%u</maxbitrate>\n", maxbitrate);
+        fprintf(mp4->xml, "  <avgbitrate>%u</avgbitrate>\n", avgbitrate);
+        fprintf(mp4->xml, "  <reserved>%u</reserved>\n", reserved);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Data Reference Box.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.7.2 Data Reference Box.
+ *
+ * The data reference object contains a table of data references (normally URLs)
+ * that declare the location(s) of the media data used within the presentation.
+ * This box does not contain informations, only other boxes.
+ */
+static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_dref()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Data Reference</title>\n");
+
+    uint32_t entry_count = read_bits(bitstr, 32);
+    if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS)
+        {
+            switch (box_subheader.boxtype)
+            {
+                case BOX_URL:
+                case BOX_URN:
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Data Information Box.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.7.1 Data Information Box.
+ *
+ * The data information box contains objects that declare the location of the
+ * media information in a track.
+ * This box does not contain informations, only other boxes.
+ */
+static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_dinf()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Data Information</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+        {
+            switch (box_subheader.boxtype)
+            {
+                case BOX_DREF:
+                    retcode = parse_dref(bitstr, &box_subheader, track, mp4);
+                    break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
 
 /*!
  * \brief Media Information Box.
@@ -421,8 +683,17 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         {
             switch (box_subheader.boxtype)
             {
+                case BOX_VMHD:
+                    retcode = parse_vmhd(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_SMHD:
+                    retcode = parse_smhd(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_HMHD:
+                    retcode = parse_hmhd(bitstr, &box_subheader, track, mp4);
+                    break;
                 case BOX_DINF:
-                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    retcode = parse_dinf(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STBL:
                     retcode = parse_stbl(bitstr, &box_subheader, track, mp4);
@@ -471,7 +742,8 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
         {
             switch (box_subheader.boxtype)
             {
@@ -504,7 +776,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  * \brief Edit List Box - Fullbox.
  *
  * From 'ISO/IEC 14496-12' specification:
- * x.X.x Edit List
+ * 8.6.6 Edit List Box.
  */
 static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -515,24 +787,48 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Edit List</title>\n");
+    }
+
     // Read box content
     if (box_header->version == 1)
     {
-        // TODO
+        // TODO ?
+        TRACE_WARNING(MP4, "parse_elst() version 1 not supported");
     }
     else // if (version == 0)
     {
-        uint32_t entries = read_bits(bitstr, 32);
-        for (uint32_t i = 0; i < entries; i++)
+        uint32_t entry_count = read_bits(bitstr, 32);
+
+        TRACE_1(MP4, "> entry_count: %u", entry_count);
+        if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
+
+        for (uint32_t i = 0; i < entry_count; i++)
         {
             uint32_t segmentDuration = read_bits(bitstr, 32);
             track->mediatime = read_bits(bitstr, 32);
             uint32_t mediaRate = read_bits(bitstr, 32);
 
+            if (mp4->xml)
+            {
+                fprintf(mp4->xml, "  <entry index=\"%u\">segmentDuration: %u / mediaTime: %u / mediaRate: %u</entry>\n",
+                        i, segmentDuration, track->mediatime, mediaRate);
+            }
+
             // we only need one "mediaTime", used to compute framerate of "progressive download" files
-            break;
+            //break;
         }
     }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
 
     return retcode;
 }
@@ -543,7 +839,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  * \brief Edit Box - Fullbox.
  *
  * From 'ISO/IEC 14496-12' specification:
- * x.X.x Edit Box
+ * 8.6.5 Edit Box.
  */
 static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -563,7 +859,8 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
         {
             switch (box_subheader.boxtype)
             {
