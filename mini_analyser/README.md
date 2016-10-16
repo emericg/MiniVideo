@@ -6,18 +6,14 @@ Introduction
 
 mini_analyser is a software designed to help you extract the maximum of informations and meta-datas from multimedia files, using the minivideo library.
 
-### Supported video codec (decoding)
-- H.264 / MPEG-4 part 10 "Advance Video Coding"
-  - please note that at still a few bugs inside CABAC decoding process being worked on...
-
 ### Supported container formats (import modules)
 - AVI [.avi]
 - WAVE [.wav]
-- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MP3 "elementary stream" (.mp3)
-- H.264 "elementary stream" ("Annex B" format) [.264]
+- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
+- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 
 Building mini_analyser

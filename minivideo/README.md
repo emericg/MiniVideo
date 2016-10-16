@@ -19,11 +19,11 @@ The minivideo library can:
 ### Supported container formats (import modules)
 - AVI [.avi]
 - WAVE [.wav]
-- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MP3 "elementary stream" (.mp3)
-- H.264 "elementary stream" ("Annex B" format) [.264]
+- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
+- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 ### Supported container formats (export modules)
 - Elementary Streams
