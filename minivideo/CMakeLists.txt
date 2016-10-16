@@ -166,7 +166,7 @@ set(minivideo_SRC
     src/export.c
         src/export_utils.c
         src/stb_image_write.h
-    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h
+    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_box.c src/demuxer/mp4/mp4_stbl.c src/demuxer/mp4/mp4_convert.c src/demuxer/mp4/mp4_struct.h
     src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
     src/demuxer/esparser/esparser.c
@@ -177,8 +177,8 @@ set(minivideo_SRC
         src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h
         src/demuxer/mpeg/ts/ts.c src/demuxer/mpeg/ts/ts_struct.h
     src/demuxer/riff/riff.c src/demuxer/riff/riff_struct.h
-        src/demuxer/avi/avi.c src/demuxer/avi/avi_struct.h
-        src/demuxer/wave/wave.c src/demuxer/wave/wave_struct.h
+        src/demuxer/avi/avi.c src/demuxer/avi/avi_convert.c src/demuxer/avi/avi_struct.h
+        src/demuxer/wave/wave.c src/demuxer/wave/wave_convert.c src/demuxer/wave/wave_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
     src/decoder/h264/h264.c

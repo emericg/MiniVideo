@@ -24,6 +24,10 @@
 #ifndef PARSER_MKV_STRUCT_H
 #define PARSER_MKV_STRUCT_H
 
+// minivideo headers
+#include "../../typedef.h"
+#include <stdio.h>
+
 /* ************************************************************************** */
 
 /*!
@@ -82,6 +86,7 @@ typedef enum EbmlElement_e
     element_Tags = 0x1254C367             //!< (level 1) Tagging
 
     //element_ = 0x, //!<
+
 } EbmlElement_e;
 
 /*!
@@ -101,6 +106,15 @@ typedef enum EbmlDocType_e
     CodecID_H264[15] = {'V', '_', 'M', 'P', 'E', 'G', '4', '/', 'I', 'S', 'O', '/', 'A', 'V', 'C'};
     CodecID_XVID[15] = {'V', '_', 'M', 'P', 'E', 'G', '4', '/', 'I', 'S', 'O', '/', 'A', 'S', 'P'};
 */
+
+//! Structure for MKV video infos
+typedef struct mkv_t
+{
+    bool run;                   //!< A convenient way to stop the parser from any sublevel
+
+    FILE *xml;                  //!< Temporary file used by the xmlMapper
+
+} mkv_t;
 
 /* ************************************************************************** */
 #endif // PARSER_MKV_STRUCT_H

@@ -26,12 +26,13 @@
 
 // minivideo headers
 #include "../../../typedef.h"
+#include <stdio.h>
 
 /* ************************************************************************** */
 
 typedef struct MpegPs_t
 {
-    bool run; //!< A convenient way to stop the parser from any sublevel
+    bool run;                       //!< A convenient way to stop the parser from any sublevel
 
     unsigned mpeg_version;
 
@@ -44,17 +45,10 @@ typedef struct MpegPs_t
     unsigned stat_packet_video;
     unsigned stat_packet_other;
 
+    FILE *xml;                      //!< Temporary file used by the xmlMapper
+
 } MpegPs_t;
 
-typedef struct MpegPsInternal_t
-{
-    bool run; //!< A convenient way to stop the parser from any sublevel
-
-    MpegPs_t mps;
-
-} MpegPsInternal_t;
-
-/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!

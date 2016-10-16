@@ -26,30 +26,33 @@
 
 // minivideo headers
 #include "../../typedef.h"
+#include <stdio.h>
 
 /* ************************************************************************** */
 
 //! Structure for MP3 audio infos
 typedef struct mp3_t
 {
-    bool run;
+    bool run;                  //!< A convenient way to stop the parser from any sublevel
 
     uint32_t mpeg_version;
     uint32_t mpeg_layer;
     uint32_t mpeg_sampleperframe;
 
-    uint32_t audio_bitrate_cbr;  //!< Audio bitrate of the first frame (if CBR, otherwise use audio_bitrate_vbr)
-    uint32_t audio_bitrate_vbr;  //!< If VBR, we store the average bitrate here
-    uint32_t audio_samplingrate; //!< In Hertz
-    double   audio_pts_tick;     //!< In milliseconds
-    bool     audio_vbr;          //!< True if VBR, false if CBR
-    uint32_t audio_channels;     //!< Indicates channel mode
+    uint32_t audio_bitrate_cbr; //!< Audio bitrate of the first frame (if CBR, otherwise use audio_bitrate_vbr)
+    uint32_t audio_bitrate_vbr; //!< If VBR, we store the average bitrate here
+    uint32_t audio_samplingrate;//!< In Hertz
+    double   audio_pts_tick;    //!< In milliseconds
+    bool     audio_vbr;         //!< True if VBR, false if CBR
+    uint32_t audio_channels;    //!< Indicates channel mode
 
-    double   media_duration_s;   //!< Media duration in seconds
+    double   media_duration_s;  //!< Media duration in seconds
 
-    uint64_t sample_count;       //!< Total size of all the audio samples of the track (not including tags)
-    uint64_t sample_size_total;  //!< Total size of all the audio samples of the track (not including tags)
-    uint32_t sample_size_max;    //!< Size of the biggest audio sample of the track (not including tags)
+    uint64_t sample_count;      //!< Total size of all the audio samples of the track (not including tags)
+    uint64_t sample_size_total; //!< Total size of all the audio samples of the track (not including tags)
+    uint32_t sample_size_max;   //!< Size of the biggest audio sample of the track (not including tags)
+
+    FILE *xml;                  //!< Temporary file used by the xmlMapper
 
 } mp3_t;
 
@@ -64,8 +67,6 @@ typedef enum MPEGChannelMode_e
     CHAN_DUAL           = 3
 
 } MPEGChannelMode_e;
-
-/* ************************************************************************** */
 
 //! Audio version ID // Sampling Rate Index
 static const uint32_t samplingrate_index_table[3][4] =
