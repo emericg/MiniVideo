@@ -30,17 +30,22 @@
 
 /* ************************************************************************** */
 
+/*!
+ * Format Chunk.
+ */
 typedef struct fmtChunk_t
 {
-    uint16_t wFormatTag;          //!< Format code
-    uint16_t nChannels;           //!< Number of interleaved channels
-    uint32_t nSamplesPerSec;      //!< Sampling rate (blocks per second)
-    uint32_t nAvgBytesPerSec;     //!< Data rate (in bytes)
-    uint16_t nBlockAlign;         //!< Data block size (in bytes)
-    uint16_t wBitsPerSample;      //!< Bits per sample (in bits)
+    uint16_t wFormatTag;        //!< Format code
+    uint16_t nChannels;         //!< Number of interleaved channels
+    uint32_t nSamplesPerSec;    //!< Sampling rate (blocks per second)
+    uint32_t nAvgBytesPerSec;   //!< Data rate (in bytes)
+    uint16_t nBlockAlign;       //!< Data block size (in bytes)
+
+    // PCM extension
+    uint16_t wBitsPerSample;    //!< Bits per sample (in bits)
 
     // fmt chunk extension
-    uint16_t cbSize;              //!< Size of the extension (in bytes)
+    uint16_t cbSize;             //!< Size of the extension (in bytes)
 
         // PCM
         uint16_t wValidBitsPerSample; //!< Number of valid bits
@@ -70,52 +75,62 @@ typedef struct fmtChunk_t
 
 } fmtChunk_t;
 
+/*!
+ * Fact Chunk.
+ */
 typedef struct factChunk_t
 {
-    uint32_t dwSampleLength;      //!< Number of samples (per channel)
+    uint32_t dwSampleLength;        //!< Number of samples (per channel)
 
 } factChunk_t;
 
+/*!
+ * Data Chunk.
+ */
 typedef struct dataChunk_t
 {
-    int64_t datasOffset;          //!< Offset of the first sample of this data chunk
-    int64_t datasSize;            //!< Size of all the samples of this data chunk (in bytes)
+    int64_t datasOffset;            //!< Offset of the first sample of this data chunk
+    int64_t datasSize;              //!< Size of all the samples of this data chunk (in bytes)
 
 } dataChunk_t;
 
 typedef struct cueChunk_t
 {
-    uint32_t what;      //!< ?
+    uint32_t dwCuePoints;           //!< Cue points count
+
+    uint32_t *dwName;
+    uint32_t *dwPosition;
+    uint32_t *fccChunk;
+    uint32_t *dwChunkStart;
+    uint32_t *dwBlockStart;
+    uint32_t *dwSampleOffset;
 
 } cueChunk_t;
 
-typedef struct JUNKChunk_t
-{
-    uint32_t what;      //!< ?
-
-} JUNKChunk_t;
-
+/*!
+ * Broadcast Audio Extension Chunk.
+ */
 typedef struct bwfChunk_t
 {
-    uint8_t description[256];
-    uint8_t originator[32];
-    uint8_t originatorReference[32];
-    uint8_t originatorDate[10];     //!< yyyy:mm:dd (ASCII string)
-    uint8_t originationTime[8];     //!< hh:mm:ss (ASCII string)
-    uint32_t timeReferenceLow;
-    uint32_t timeReferenceHigh;
-    uint16_t version;
-    uint8_t UMID[64];
+    uint8_t Description[256];       //!< Description of the sound sequence (ASCII string)
+    uint8_t Originator[32];         //!< Name of the originator (ASCII string)
+    uint8_t OriginatorReference[32];//!< Reference of the originator (ASCII string)
+    uint8_t OriginatorDate[10];     //!< yyyy:mm:dd (ASCII string)
+    uint8_t OriginationTime[8];     //!< hh:mm:ss (ASCII string)
+    uint32_t TimeReferenceLow;
+    uint32_t TimeReferenceHigh;
+    uint16_t Version;               //!< Version of the BWF format
+    uint8_t UMID[64];               //!< SMPTE UMID
 
-    uint16_t loudnessVal;
-    uint16_t loudnessRange;
-    uint16_t maxTruePeakLevel;
-    uint16_t maxMomentaryLoudnes;
-    uint16_t maxShortTermLoudness;
+    uint16_t LoudnessVal;
+    uint16_t LoudnessRange;
+    uint16_t MaxTruePeakLevel;
+    uint16_t MaxMomentaryLoudnes;
+    uint16_t MaxShortTermLoudness;
 
-    uint8_t Reserved[180];
+    // (reserved bytes)
 
-    uint8_t codingHistory;          //!< ASCII string
+    uint8_t *CodingHistory;          //!< ASCII string
 
 } bwfChunk_t;
 
@@ -128,6 +143,7 @@ typedef struct wave_t
     factChunk_t fact;
     dataChunk_t data;
     cueChunk_t cue;
+    bwfChunk_t bwf;
 
     FILE *xml;          //!< Temporary file used by the xmlMapper
 
@@ -145,8 +161,6 @@ AMBISONIC_SUBTYPE_IEEE_FLOAT    {0x00000003, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 
 
 typedef enum wave_fcc_e
 {
-    fcc_WAVE   = 0x57415645,
-
     fcc_fmt_   = 0x666D7420,    //!< Format
     fcc_fact   = 0x66616374,    //!< Facts
     fcc_data   = 0x64617461,    //!< Datas

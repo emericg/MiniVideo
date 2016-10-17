@@ -40,11 +40,11 @@
  */
 typedef struct RiffList_t
 {
-    int64_t offset_start;   //!< absolute offset of the LIST beginning
+    int64_t offset_start;   //!< Absolute offset of the LIST beginning
     int64_t offset_end;
 
     // List parameters
-    uint32_t dwList;        //!< indicate the type of list we are parsing
+    uint32_t dwList;        //!< Indicate the type of list we are parsing
     uint32_t dwSize;        //!< LIST payload size (NOT including dwFourCC nor dwSize, but including dwFourCC)
     uint32_t dwFourCC;      //!< LIST identifier
 
@@ -59,7 +59,7 @@ typedef struct RiffList_t
  */
 typedef struct RiffChunk_t
 {
-    int64_t offset_start;   //!< absolute offset of the CHUNK beginning
+    int64_t offset_start;   //!< Absolute offset of the CHUNK beginning
     int64_t offset_end;
 
     // Chunk parameters
@@ -75,11 +75,14 @@ typedef enum RIFF_fcc_e
     fcc_RIFF   = 0x52494646,
     fcc_LIST   = 0x4C495354,
 
-    fcc_FFIR   = 0x46464952,
+    fcc_FFIR   = 0x46464952,    //!< Error handling (RIFF and LIST backward...)
     fcc_TSIL   = 0x5453494C,
 
+    // RIFF Formats
     fcc_RIFX   = 0x52494658,    //!< Used by Open-DML AVI
-    fcc_RF64   = 0x52463634,    //!< Used by RIFF64
+    fcc_WAVE   = 0x57415645,    //!< WAVE audio files
+    fcc_RF64   = 0x52463634,    //!< RF64 (WAVE extension)
+    fcc_BW64   = 0x42573634,    //!< BW64 (WAVE extension)
 
 } RIFF_fcc_e;
 

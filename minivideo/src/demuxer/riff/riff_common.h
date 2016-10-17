@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2015 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,47 +16,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      riff.h
+ * \file      riff_common.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2015
+ * \date      2016
  */
 
-#ifndef PARSER_RIFF_H
-#define PARSER_RIFF_H
+#ifndef PARSER_RIFF_COMMON_H
+#define PARSER_RIFF_COMMON_H
 
 // minivideo headers
 #include "riff_struct.h"
-#include "riff_common.h"
 #include "../../import.h"
 #include "../../bitstream.h"
 
 /* ************************************************************************** */
 
-int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header);
-
-void print_list_header(RiffList_t *list_header);
-
-void write_list_header(RiffList_t *list_header, FILE *xml);
-
-int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child);
-
-int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header);
-
-void print_chunk_header(RiffChunk_t *chunk_header);
-
-void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml);
-
-int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child);
+/*!
+ * Character Set Chunk.
+ */
+typedef struct CsetChunk_t
+{
+    uint32_t wCodePage;
+    uint32_t wCountryCode;
+    uint32_t wLanguage;
+    uint32_t wDialect;
+} CsetChunk_t;
 
 /* ************************************************************************** */
 
-int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml);
+int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml);
 
-int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml);
-
-/* ************************************************************************** */
-
-int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end);
+int parse_CSET(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, CsetChunk_t *cset, FILE *xml);
 
 /* ************************************************************************** */
-#endif // PARSER_RIFF_H
+#endif // PARSER_RIFF_COMMON_H

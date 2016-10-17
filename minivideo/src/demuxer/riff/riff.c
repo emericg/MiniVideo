@@ -23,7 +23,6 @@
 
 // minivideo headers
 #include "riff.h"
-#include "riff_struct.h"
 #include "../../fourcc.h"
 #include "../../utils.h"
 #include "../../bitstream_utils.h"
@@ -420,38 +419,6 @@ int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml)
         if (xml)
         {
             write_chunk_header(unkn_header, xml);
-            fprintf(xml, "  </atom>\n");
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Parse JUNK chunk.
- */
-int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml)
-{
-    int retcode = SUCCESS;
-
-    if (JUNK_header == NULL)
-    {
-        TRACE_ERROR(RIF, "Invalid JUNK_header structure!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        TRACE_INFO(RIF, BLD_GREEN "parse_JUNK()" CLR_RESET);
-
-#if ENABLE_DEBUG
-        print_chunk_header(JUNK_header);
-#endif
-        // xmlMapper
-        if (xml)
-        {
-            write_chunk_header(JUNK_header, xml);
             fprintf(xml, "  </atom>\n");
         }
     }
