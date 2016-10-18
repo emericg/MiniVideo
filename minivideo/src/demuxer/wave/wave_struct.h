@@ -94,6 +94,9 @@ typedef struct dataChunk_t
 
 } dataChunk_t;
 
+/*!
+ * Cue Points Chunk.
+ */
 typedef struct cueChunk_t
 {
     uint32_t dwCuePoints;           //!< Cue points count
@@ -106,6 +109,19 @@ typedef struct cueChunk_t
     uint32_t *dwSampleOffset;
 
 } cueChunk_t;
+
+/*!
+ * Playlist Chunk.
+ */
+typedef struct plstChunk_t
+{
+    uint32_t dwSegments;           //!< Play segment count
+
+    uint32_t *dwName;
+    uint32_t *dwLength;
+    uint32_t *dwLoops;
+
+} plstChunk_t;
 
 /*!
  * Broadcast Audio Extension Chunk.
@@ -134,6 +150,29 @@ typedef struct bwfChunk_t
 
 } bwfChunk_t;
 
+/*!
+ * ChunkSize64 Chunk.
+ */
+typedef struct big1Chunk_t
+{
+    uint64_t chunkSize;
+
+} big1Chunk_t;
+
+/*!
+ * DataSize64 Chunk.
+ */
+typedef struct ds64Chunk_t
+{
+    uint64_t riffSize;
+    uint64_t dataSize;
+    uint64_t sampleCount;
+    uint32_t tableLength;
+
+    // data table?
+
+} ds64Chunk_t;
+
 //! Structure for WAVE audio infos
 typedef struct wave_t
 {
@@ -143,6 +182,7 @@ typedef struct wave_t
     factChunk_t fact;
     dataChunk_t data;
     cueChunk_t cue;
+    plstChunk_t plst;
     bwfChunk_t bwf;
 
     FILE *xml;          //!< Temporary file used by the xmlMapper
@@ -161,17 +201,21 @@ AMBISONIC_SUBTYPE_IEEE_FLOAT    {0x00000003, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 
 
 typedef enum wave_fcc_e
 {
-    fcc_fmt_   = 0x666D7420,    //!< Format
-    fcc_fact   = 0x66616374,    //!< Facts
-    fcc_data   = 0x64617461,    //!< Datas
-    fcc_cue_   = 0x63756520,    //!< Cue Points
-    fcc_plst   = 0x706C7374,    //!< Playlist
+    fcc_fmt_    = 0x666D7420,   //!< Format
+    fcc_fact    = 0x66616374,   //!< Facts
+    fcc_data    = 0x64617461,   //!< Datas
+    fcc_cue_    = 0x63756520,   //!< Cue Points
+    fcc_plst    = 0x706C7374,   //!< Playlist
+    fcc_labl    = 0x6C61626C,   //!< Label
+    fcc_note    = 0x6E6F7465,   //!< Note
 
-    fcc_bext   = 0x62657874,    //!< Used by BWF
+    // Used by BWF
+    fcc_bext    = 0x62657874,   //!< Broadcast Audio Extension
 
-    fcc_big1   = 0x62696731,    //!< Used by RF64
-        fcc_ds64   = 0x64733634,
-        fcc_r64m   = 0x7236346D
+    // Used by RF64
+    fcc_big1    = 0x62696731,   //!< Chunk Size 64
+        fcc_ds64= 0x64733634,   //!< Data Size 64
+        fcc_r64m= 0x7236346D    //!< Marker
 
 } wave_fcc_e;
 

@@ -506,7 +506,12 @@ int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
 
+/*!
+ * \brief Free the allocated content of a avi_t structure.
+ * \param *avi A pointer to a avi_t structure.
+ */
 void avi_clean(avi_t *avi)
 {
     if (avi)

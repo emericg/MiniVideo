@@ -1166,10 +1166,45 @@ int avi_fileParse(MediaFile_t *media)
                     }
                 }
             }
-            else
+            else // unknown list, we still want to map it
             {
-                TRACE_ERROR(AVI, "Unable to find RIFF AVI or AVIX headers!");
-                retcode = FAILURE;
+                // Loop on 2st level chunks
+                while (avi.run == true &&
+                       retcode == SUCCESS &&
+                       bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
+                {
+                    if (next_bits(bitstr, 32) == fcc_LIST)
+                    {
+                        RiffList_t list_header;
+                        retcode = parse_list_header(bitstr, &list_header);
+
+                        switch (list_header.dwFourCC)
+                        {
+                        default:
+                            retcode = parse_unkn_list(bitstr, &list_header, avi.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                    }
+                    else
+                    {
+                        RiffChunk_t chunk_header;
+                        retcode = parse_chunk_header(bitstr, &chunk_header);
+
+                        switch (chunk_header.dwFourCC)
+                        {
+                        case fcc_JUNK:
+                            retcode = parse_JUNK(bitstr, &chunk_header, avi.xml);
+                            break;
+                        default:
+                            retcode = parse_unkn_chunk(bitstr, &chunk_header, avi.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                    }
+                }
             }
 
             if (avi.xml) fprintf(avi.xml, "  </atom>\n");

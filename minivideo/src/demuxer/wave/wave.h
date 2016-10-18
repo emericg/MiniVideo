@@ -34,8 +34,12 @@
  * \param *media[in,out]: A pointer to a MediaFile_t structure.
  * \return 1 if succeed, 0 otherwise.
  *
- * Based on a lot of various documentations, website, and tinkering.
- * The WAVE parser only set metadatas and does not (yet) index the PCM samples.
+ * This WAVE parser supports:
+ * - WAVE (from Microsoft "Multimedia Programming Interface and Data Specifications 1.0"
+ *   as well as Microsoft "New Multimedia Data Types and Data Techniques")
+ * - BWF (EBU Tech 3285 and ITU-R BS.1352)
+ * - BWF64 (ITU-R BS.2088)
+ * - RF64 (EBU Tech 3306)
  */
 int wave_fileParse(MediaFile_t *media);
 

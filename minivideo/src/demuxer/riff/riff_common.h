@@ -40,13 +40,16 @@ typedef struct CsetChunk_t
     uint32_t wCountryCode;
     uint32_t wLanguage;
     uint32_t wDialect;
+
 } CsetChunk_t;
 
 /* ************************************************************************** */
 
 int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml);
 
-int parse_CSET(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, CsetChunk_t *cset, FILE *xml);
+int parse_PAD(Bitstream_t *bitstr, RiffChunk_t *PAD_header, FILE *xml);
+
+int parse_CSET(Bitstream_t *bitstr, RiffChunk_t *CEST_header, CsetChunk_t *cset, FILE *xml);
 
 /* ************************************************************************** */
 #endif // PARSER_RIFF_COMMON_H

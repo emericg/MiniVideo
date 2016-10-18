@@ -38,6 +38,7 @@
 
 // C standard libraries
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* ************************************************************************** */
@@ -276,28 +277,170 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
 /*!
  * \brief Parse cue chunk.
  */
-static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave)
+static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *cue_header, wave_t *wave)
 {
     TRACE_INFO(WAV, BLD_GREEN "parse_cue()" CLR_RESET);
     int retcode = SUCCESS;
+    char fcc[5];
 
-    if (data_header == NULL)
+    if (cue_header == NULL || cue_header->dwSize  < 4)
     {
-        TRACE_ERROR(WAV, "Invalid data_header structure!");
+        TRACE_ERROR(WAV, "Invalid cue_header structure!");
         retcode = FAILURE;
     }
     else
     {
-        // TODO
+        wave->cue.dwCuePoints = endian_flip_32(read_bits(bitstr, 32));
+
+        if (cue_header->dwSize >= (4 + wave->cue.dwCuePoints * 24))
+        {
+            wave->cue.dwName = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+            wave->cue.dwPosition = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+            wave->cue.fccChunk = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+            wave->cue.dwChunkStart = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+            wave->cue.dwBlockStart = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+            wave->cue.dwSampleOffset = (uint32_t*)calloc(wave->cue.dwCuePoints, sizeof(uint32_t));
+
+            if (wave->cue.dwName && wave->cue.dwPosition && wave->cue.fccChunk &&
+                wave->cue.dwChunkStart && wave->cue.dwBlockStart && wave->cue.dwSampleOffset)
+            {
+                for (uint32_t i = 0; i < wave->cue.dwCuePoints; i++)
+                {
+                    wave->cue.dwName[i] = read_bits(bitstr, 32);
+                    wave->cue.dwPosition[i] = endian_flip_32(read_bits(bitstr, 32));
+                    wave->cue.fccChunk[i] = read_bits(bitstr, 32);
+                    wave->cue.dwChunkStart[i] = endian_flip_32(read_bits(bitstr, 32));
+                    wave->cue.dwBlockStart[i] = endian_flip_32(read_bits(bitstr, 32));
+                    wave->cue.dwSampleOffset[i] = endian_flip_32(read_bits(bitstr, 32));
+                }
+            }
+        }
+        else
+        {
+            TRACE_ERROR(WAV, "Cue chunk is too small!");
+            retcode = FAILURE;
+        }
 
 #if ENABLE_DEBUG
-        print_chunk_header(data_header);
-#endif
+        print_chunk_header(cue_header);
+        TRACE_1(WAV, "> dwCuePoints     : %u", wave->cue.dwCuePoints);
+
+        if (wave->cue.dwName && wave->cue.dwPosition && wave->cue.fccChunk &&
+            wave->cue.dwChunkStart && wave->cue.dwBlockStart && wave->cue.dwSampleOffset)
+        {
+            for (uint32_t i = 0; i < wave->cue.dwCuePoints; i++)
+            {
+                TRACE_1(WAV, "> dwName          : 0x%08X ('%s')",
+                        wave->cue.dwName[i], getFccString_le(wave->cue.dwName[i], fcc));
+                TRACE_1(WAV, "> dwPosition      : %u", wave->cue.dwPosition[i]);
+                TRACE_1(WAV, "> fccChunk        : 0x%08X ('%s')",
+                        wave->cue.fccChunk[i], getFccString_le(wave->cue.fccChunk[i], fcc));
+                TRACE_1(WAV, "> dwChunkStart    : %u", wave->cue.dwChunkStart[i]);
+                TRACE_1(WAV, "> dwBlockStart    : %u", wave->cue.dwBlockStart[i]);
+                TRACE_1(WAV, "> dwSampleOffset  : %u", wave->cue.dwSampleOffset[i]);
+            }
+        }
+#endif // ENABLE_DEBUG
+
         // xmlMapper
         if (wave->xml)
         {
-            write_chunk_header(data_header, wave->xml);
+            write_chunk_header(cue_header, wave->xml);
             fprintf(wave->xml, "  <title>Cue Points</title>\n");
+            fprintf(wave->xml, "  <dwCuePoints>%u</dwCuePoints>\n", wave->cue.dwCuePoints);
+            if (wave->cue.dwName && wave->cue.dwPosition && wave->cue.fccChunk &&
+                wave->cue.dwChunkStart && wave->cue.dwBlockStart && wave->cue.dwSampleOffset)
+            {
+                for (uint32_t i = 0; i < wave->cue.dwCuePoints; i++)
+                {
+                    fprintf(wave->xml, "    <dwName index=\"%u\">%s</dwName>\n", i, getFccString_le(wave->cue.dwName[i], fcc));
+                    fprintf(wave->xml, "    <dwPosition index=\"%u\">%u</dwPosition>\n", i, wave->cue.dwPosition[i]);
+                    fprintf(wave->xml, "    <fccChunk index=\"%u\">%s</fccChunk>\n", i, getFccString_le(wave->cue.fccChunk[i], fcc));
+                    fprintf(wave->xml, "    <dwChunkStart index=\"%u\">%u</dwChunkStart>\n", i, wave->cue.dwChunkStart[i]);
+                    fprintf(wave->xml, "    <dwBlockStart index=\"%u\">%u</dwBlockStart>\n", i, wave->cue.dwBlockStart[i]);
+                    fprintf(wave->xml, "    <dwSampleOffset index=\"%u\">%u</dwSampleOffset>\n", i, wave->cue.dwSampleOffset[i]);
+                }
+            }
+            fprintf(wave->xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse plst chunk.
+ */
+static int parse_plst(Bitstream_t *bitstr, RiffChunk_t *plst_header, wave_t *wave)
+{
+    TRACE_INFO(WAV, BLD_GREEN "parse_plst()" CLR_RESET);
+    int retcode = SUCCESS;
+    char fcc[5];
+
+    if (plst_header == NULL || plst_header->dwSize  < 4)
+    {
+        TRACE_ERROR(WAV, "Invalid plst_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        wave->plst.dwSegments = endian_flip_32(read_bits(bitstr, 32));
+
+        if (plst_header->dwSize >= (4 + wave->plst.dwSegments * 12))
+        {
+            wave->plst.dwName = (uint32_t*)calloc(wave->plst.dwSegments, sizeof(uint32_t));
+            wave->plst.dwLength = (uint32_t*)calloc(wave->plst.dwSegments, sizeof(uint32_t));
+            wave->plst.dwLoops = (uint32_t*)calloc(wave->plst.dwSegments, sizeof(uint32_t));
+
+            if (wave->plst.dwName && wave->plst.dwLength && wave->plst.dwLoops)
+            {
+                for (uint32_t i = 0; i < wave->plst.dwSegments; i++)
+                {
+                    wave->plst.dwName[i] = read_bits(bitstr, 32);
+                    wave->plst.dwLength[i] = endian_flip_32(read_bits(bitstr, 32));
+                    wave->plst.dwLoops[i] = endian_flip_32(read_bits(bitstr, 32));
+                }
+            }
+        }
+        else
+        {
+            TRACE_ERROR(WAV, "Cue chunk is too small!");
+            retcode = FAILURE;
+        }
+
+#if ENABLE_DEBUG
+        print_chunk_header(plst_header);
+        TRACE_1(WAV, "> dwSegments          : %u", wave->plst.dwSegments);
+
+        if (wave->plst.dwName && wave->plst.dwLength && wave->plst.dwLoops)
+        {
+            for (uint32_t i = 0; i < wave->plst.dwSegments; i++)
+            {
+                TRACE_1(WAV, "> dwName          : 0x%08X ('%s')",
+                        wave->plst.dwName[i], getFccString_le(wave->plst.dwName[i], fcc));
+                TRACE_1(WAV, "> dwLength        : %u", wave->plst.dwLength[i]);
+                TRACE_1(WAV, "> dwLoops         : %u", wave->plst.dwLoops[i]);
+            }
+        }
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (wave->xml)
+        {
+            write_chunk_header(plst_header, wave->xml);
+            fprintf(wave->xml, "  <title>Playlist</title>\n");
+            fprintf(wave->xml, "  <dwCuePoints>%u</dwCuePoints>\n", wave->cue.dwCuePoints);
+            if (wave->plst.dwName && wave->plst.dwLength && wave->plst.dwLoops)
+            {
+                for (uint32_t i = 0; i < wave->plst.dwSegments; i++)
+                {
+                    fprintf(wave->xml, "    <dwName index=\"%u\">%s</dwName>\n", i, getFccString_le(wave->plst.dwName[i], fcc));
+                    fprintf(wave->xml, "    <dwLength index=\"%u\">%u</dwLength>\n", i, wave->plst.dwLength[i]);
+                    fprintf(wave->xml, "    <dwLoops index=\"%u\">%u</dwLoops>\n", i, wave->plst.dwLoops[i]);
+                }
+            }
             fprintf(wave->xml, "  </atom>\n");
         }
     }
@@ -309,28 +452,114 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave
 
 /*!
  * \brief Parse bext chunk.
+ *
+ * From 'EBU Tech 3285' specification:
+ * 2.3 Broadcast Audio Extension Chunk
  */
-static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wave)
+static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *bext_header, wave_t *wave)
 {
     TRACE_INFO(WAV, BLD_GREEN "parse_bext()" CLR_RESET);
     int retcode = SUCCESS;
 
-    if (data_header == NULL)
+    if (bext_header == NULL || bext_header->dwSize < 348)
     {
-        TRACE_ERROR(WAV, "Invalid data_header structure!");
+        TRACE_ERROR(WAV, "Invalid bext_header structure!");
         retcode = FAILURE;
     }
     else
     {
-        // TODO
+        for (uint32_t i = 0; i < 256; i++)
+        {
+            wave->bwf.Description[i] = read_bits(bitstr, 8);
+        }
+        for (uint32_t i = 0; i < 32; i++)
+        {
+            wave->bwf.Originator[i] = read_bits(bitstr, 8);
+        }
+        for (uint32_t i = 0; i < 32; i++)
+        {
+            wave->bwf.OriginatorReference[i] = read_bits(bitstr, 8);
+        }
+        for (uint32_t i = 0; i < 32; i++)
+        {
+            wave->bwf.OriginatorDate[i] = read_bits(bitstr, 8);
+        }
+        for (uint32_t i = 0; i < 10; i++)
+        {
+            wave->bwf.OriginationTime[i] = read_bits(bitstr, 8);
+        }
+
+        wave->bwf.TimeReferenceLow = endian_flip_32(read_bits(bitstr, 32));
+        wave->bwf.TimeReferenceHigh = endian_flip_32(read_bits(bitstr, 32));
+        wave->bwf.Version = endian_flip_16(read_bits(bitstr, 16));
+
+        if (wave->bwf.Version >= 1 && bext_header->dwSize >= 412)
+        {
+            for (uint32_t i = 0; i < 64; i++)
+            {
+                wave->bwf.UMID[i] = read_bits(bitstr, 8);
+            }
+        }
+        if (wave->bwf.Version >= 2 && bext_header->dwSize >= 422)
+        {
+            wave->bwf.LoudnessVal = endian_flip_16(read_bits(bitstr, 16));
+            wave->bwf.LoudnessRange = endian_flip_16(read_bits(bitstr, 16));
+            wave->bwf.MaxTruePeakLevel = endian_flip_16(read_bits(bitstr, 16));
+            wave->bwf.MaxMomentaryLoudnes = endian_flip_16(read_bits(bitstr, 16));
+            wave->bwf.MaxShortTermLoudness = endian_flip_16(read_bits(bitstr, 16));
+        }
 
 #if ENABLE_DEBUG
-        print_chunk_header(data_header);
+        print_chunk_header(bext_header);
+        TRACE_1(WAV, "> Description         : '%s'", wave->bwf.Description);
+        TRACE_1(WAV, "> Originator          : '%s'", wave->bwf.Originator);
+        TRACE_1(WAV, "> OriginatorReference : '%s'", wave->bwf.OriginatorReference);
+        TRACE_1(WAV, "> OriginatorDate      : '%s'", wave->bwf.OriginatorDate);
+        TRACE_1(WAV, "> OriginationTime     : '%s'", wave->bwf.OriginationTime);
+        TRACE_1(WAV, "> TimeReferenceLow    : %u", wave->bwf.TimeReferenceLow);
+        TRACE_1(WAV, "> TimeReferenceHigh   : %u", wave->bwf.TimeReferenceHigh);
+        TRACE_1(WAV, "> Version             : %u", wave->bwf.Version);
+
+        if (wave->bwf.Version >= 1)
+        {
+            TRACE_1(WAV, "> UMID                : '%s'", wave->bwf.UMID);
+        }
+        if (wave->bwf.Version >= 2)
+        {
+            TRACE_1(WAV, "> LoudnessVal         : %u", wave->bwf.LoudnessVal);
+            TRACE_1(WAV, "> LoudnessRange       : %u", wave->bwf.LoudnessRange);
+            TRACE_1(WAV, "> MaxTruePeakLevel    : %u", wave->bwf.MaxTruePeakLevel);
+            TRACE_1(WAV, "> MaxMomentaryLoudnes : %u", wave->bwf.MaxMomentaryLoudnes);
+            TRACE_1(WAV, "> MaxShortTermLoudness: %u", wave->bwf.MaxShortTermLoudness);
+        }
 #endif
         // xmlMapper
         if (wave->xml)
         {
-            write_chunk_header(data_header, wave->xml);
+            write_chunk_header(bext_header, wave->xml);
+            fprintf(wave->xml, "  <title>Broadcast Audio Extension</title>\n");
+            fprintf(wave->xml, "  <Description>%s</Description>\n", wave->bwf.Description);
+            fprintf(wave->xml, "  <Originator>%s</Originator>\n", wave->bwf.Originator);
+            fprintf(wave->xml, "  <OriginatorReference>%s</OriginatorReference>\n", wave->bwf.OriginatorReference);
+            fprintf(wave->xml, "  <OriginatorDate>%s</OriginatorDate>\n", wave->bwf.OriginatorDate);
+            fprintf(wave->xml, "  <OriginationTime>%s</OriginationTime>\n", wave->bwf.OriginationTime);
+            fprintf(wave->xml, "  <TimeReferenceLow>%u</TimeReferenceLow>\n", wave->bwf.TimeReferenceLow);
+            fprintf(wave->xml, "  <TimeReferenceHigh>%u</TimeReferenceHigh>\n", wave->bwf.TimeReferenceHigh);
+            fprintf(wave->xml, "  <Version>%u</Version>\n", wave->bwf.Version);
+
+            if (wave->bwf.Version >= 1)
+            {
+                fprintf(wave->xml, "  <UMID>%s</UMID>\n", wave->bwf.UMID);
+            }
+            if (wave->bwf.Version >= 2)
+            {
+                fprintf(wave->xml, "  <LoudnessVal>%u</LoudnessVal>\n", wave->bwf.LoudnessVal);
+                fprintf(wave->xml, "  <LoudnessRange>%u</LoudnessRange>\n", wave->bwf.LoudnessRange);
+                fprintf(wave->xml, "  <MaxTruePeakLevel>%u</MaxTruePeakLevel>\n", wave->bwf.MaxTruePeakLevel);
+                fprintf(wave->xml, "  <MaxMomentaryLoudnes>%u</MaxMomentaryLoudnes>\n", wave->bwf.MaxMomentaryLoudnes);
+                fprintf(wave->xml, "  <MaxShortTermLoudness>%u</MaxShortTermLoudness>\n", wave->bwf.MaxShortTermLoudness);
+            }
+
             fprintf(wave->xml, "  </atom>\n");
         }
     }
@@ -411,7 +640,6 @@ int wave_fileParse(MediaFile_t *media)
             print_list_header(&RIFF_header);
             write_list_header(&RIFF_header, wave.xml);
 
-            // First level chunk
             if (RIFF_header.dwList == fcc_RIFF &&
                 RIFF_header.dwFourCC == fcc_WAVE)
             {
@@ -419,6 +647,76 @@ int wave_fileParse(MediaFile_t *media)
                 while (wave.run == true &&
                        retcode == SUCCESS &&
                        bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
+                {
+                    if (next_bits(bitstr, 32) == fcc_LIST)
+                    {
+                        RiffList_t list_header;
+                        retcode = parse_list_header(bitstr, &list_header);
+
+                        switch (list_header.dwFourCC)
+                        {
+                        default:
+                            retcode = parse_unkn_list(bitstr, &list_header, wave.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                    }
+                    else
+                    {
+                        RiffChunk_t chunk_header;
+                        retcode = parse_chunk_header(bitstr, &chunk_header);
+
+                        switch (chunk_header.dwFourCC)
+                        {
+                        case fcc_fmt_:
+                            retcode = parse_fmt(bitstr, &chunk_header, &wave);
+                            break;
+                        case fcc_fact:
+                            retcode = parse_fact(bitstr, &chunk_header, &wave);
+                            break;
+                        case fcc_data:
+                            retcode = parse_data(bitstr, &chunk_header, &wave);
+                            break;
+                        case fcc_cue_:
+                            retcode = parse_cue(bitstr, &chunk_header, &wave);
+                            break;
+                        case fcc_bext:
+                            retcode = parse_bext(bitstr, &chunk_header, &wave);
+                            break;
+                        case fcc_JUNK:
+                            retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
+                            break;
+                        case fcc_PAD:
+                            retcode = parse_PAD(bitstr, &chunk_header, wave.xml);
+                            break;
+                        default:
+                            retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                    }
+                }
+            }
+            else if ((RIFF_header.dwList == fcc_RF64 || RIFF_header.dwList == fcc_BW64) &&
+                     RIFF_header.dwFourCC == fcc_WAVE)
+            {
+                if (next_bits(bitstr, 32) == fcc_LIST)
+                {
+                    RiffList_t list_header;
+                    retcode = parse_list_header(bitstr, &list_header);
+
+                    switch (list_header.dwFourCC)
+                    {
+                    default:
+                        retcode = parse_unkn_list(bitstr, &list_header, wave.xml);
+                        break;
+                    }
+
+                    jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                }
+                else
                 {
                     RiffChunk_t chunk_header;
                     retcode = parse_chunk_header(bitstr, &chunk_header);
@@ -437,11 +735,17 @@ int wave_fileParse(MediaFile_t *media)
                     case fcc_cue_:
                         retcode = parse_cue(bitstr, &chunk_header, &wave);
                         break;
+                    case fcc_plst:
+                        retcode = parse_plst(bitstr, &chunk_header, &wave);
+                        break;
                     case fcc_bext:
                         retcode = parse_bext(bitstr, &chunk_header, &wave);
                         break;
                     case fcc_JUNK:
                         retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
+                        break;
+                    case fcc_PAD:
+                        retcode = parse_PAD(bitstr, &chunk_header, wave.xml);
                         break;
                     default:
                         retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
@@ -451,27 +755,47 @@ int wave_fileParse(MediaFile_t *media)
                     jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                 }
             }
-            else
+            else // unknown list, we still want to map it
             {
                 // Loop on 2st level chunks
                 while (wave.run == true &&
                        retcode == SUCCESS &&
                        bitstream_get_absolute_byte_offset(bitstr) < (RIFF_header.offset_end - 8))
                 {
-                    RiffChunk_t chunk_header;
-                    retcode = parse_chunk_header(bitstr, &chunk_header);
-
-                    switch (chunk_header.dwFourCC)
+                    if (next_bits(bitstr, 32) == fcc_LIST)
                     {
-                    case fcc_JUNK:
-                        retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
-                        break;
-                    default:
-                        retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
-                        break;
-                    }
+                        RiffList_t list_header;
+                        retcode = parse_list_header(bitstr, &list_header);
 
-                    jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        switch (list_header.dwFourCC)
+                        {
+                        default:
+                            retcode = parse_unkn_list(bitstr, &list_header, wave.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                    }
+                    else
+                    {
+                        RiffChunk_t chunk_header;
+                        retcode = parse_chunk_header(bitstr, &chunk_header);
+
+                        switch (chunk_header.dwFourCC)
+                        {
+                        case fcc_JUNK:
+                            retcode = parse_JUNK(bitstr, &chunk_header, wave.xml);
+                            break;
+                        case fcc_PAD:
+                            retcode = parse_PAD(bitstr, &chunk_header, wave.xml);
+                            break;
+                        default:
+                            retcode = parse_unkn_chunk(bitstr, &chunk_header, wave.xml);
+                            break;
+                        }
+
+                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                    }
                 }
             }
 
@@ -483,6 +807,9 @@ int wave_fileParse(MediaFile_t *media)
 
         // Go for the indexation
         retcode = wave_indexer(bitstr, media, &wave),
+
+        // Free wave_t structure content
+        wave_clean(&wave);
 
         // Free bitstream
         free_bitstream(&bitstr);

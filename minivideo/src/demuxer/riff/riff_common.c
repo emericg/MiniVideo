@@ -61,6 +61,40 @@ int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml)
         if (xml)
         {
             write_chunk_header(JUNK_header, xml);
+            fprintf(xml, "  <title>JUNK (filler datas)</title>\n");
+            fprintf(xml, "  </atom>\n");
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse PAD chunk.
+ */
+int parse_PAD(Bitstream_t *bitstr, RiffChunk_t *PAD_header, FILE *xml)
+{
+    int retcode = SUCCESS;
+
+    if (PAD_header == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid PAD_header structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        TRACE_INFO(RIF, BLD_GREEN "parse_PAD()" CLR_RESET);
+
+#if ENABLE_DEBUG
+        print_chunk_header(PAD_header);
+#endif
+        // xmlMapper
+        if (xml)
+        {
+            write_chunk_header(PAD_header, xml);
+            fprintf(xml, "  <title>PAD (padding datas)</title>\n");
             fprintf(xml, "  </atom>\n");
         }
     }

@@ -91,6 +91,7 @@ typedef enum RIFF_fcc_e
 typedef enum RIFF_common_fcc_e
 {
     fcc_JUNK   = 0x4A554E4B,
+    fcc_PAD    = 0x50414420,
 
     fcc_INFO   = 0x494E464F,
         fcc_IARL   = 0x4941524C,   //!< Archive Location
@@ -101,6 +102,7 @@ typedef enum RIFF_common_fcc_e
         fcc_ICRD   = 0x49435244,   //!< Creation date
         fcc_ICRP   = 0x49435250,   //!< Cropped
         fcc_IDIM   = 0x4944494D,   //!< Dimensions
+        fcc_IDIT   = 0x49444954,   //!< Digitization Time
         fcc_IDPI   = 0x49445049,   //!< Dots Per Inch
         fcc_IENG   = 0x49454E47,   //!< Engineer
         fcc_IGNR   = 0x49474E52,   //!< Genre
@@ -113,6 +115,7 @@ typedef enum RIFF_common_fcc_e
         fcc_ISBJ   = 0x4953424A,   //!< Subject
         fcc_ISFT   = 0x49534654,   //!< Software
         fcc_ISHP   = 0x49534850,   //!< Sharpness
+        fcc_ISMP   = 0x49534D50,   //!< SMPTE time code of digitization
         fcc_ISRC   = 0x49535243,   //!< Source
         fcc_ISRF   = 0x49535246,   //!< Source Form
         fcc_ITCH   = 0x49544348,   //!< Technician

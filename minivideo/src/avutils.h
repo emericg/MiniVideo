@@ -89,29 +89,55 @@ typedef enum FramerateMode_e
 
 /* ************************************************************************** */
 
-//! Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field
+/*!
+ * \brief Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field.
+ *
+ * With the advent of Windows 2000 Microsoft introduced the multichannel extension
+ * to its RIFF/WAVE file format, called Wave Format Extensible. The main purpose
+ * of this file format was to support multichannel audio in PC gaming applications.
+ */
 typedef enum AudioSpeakers_e
 {
-    SPEAKER_FRONT_LEFT              = 0x1,
-    SPEAKER_FRONT_RIGHT             = 0x2,
-    SPEAKER_FRONT_CENTER            = 0x4,
-    SPEAKER_LOW_FREQUENCY           = 0x8,
-    SPEAKER_BACK_LEFT               = 0x10,
-    SPEAKER_BACK_RIGHT              = 0x20,
-    SPEAKER_FRONT_LEFT_OF_CENTER    = 0x40,
-    SPEAKER_FRONT_RIGHT_OF_CENTER   = 0x80,
-    SPEAKER_BACK_CENTER             = 0x100,
-    SPEAKER_SIDE_LEFT               = 0x200,
-    SPEAKER_SIDE_RIGHT              = 0x400,
-    SPEAKER_TOP_CENTER              = 0x800,
-    SPEAKER_TOP_FRONT_LEFT          = 0x1000,
-    SPEAKER_TOP_FRONT_CENTER        = 0x2000,
-    SPEAKER_TOP_FRONT_RIGHT         = 0x4000,
-    SPEAKER_TOP_BACK_LEFT           = 0x8000,
-    SPEAKER_TOP_BACK_CENTER         = 0x10000,
-    SPEAKER_TOP_BACK_RIGHT          = 0x20000
+    SPEAKER_FRONT_LEFT              = 0x00000001,
+    SPEAKER_FRONT_RIGHT             = 0x00000002,
+    SPEAKER_FRONT_CENTER            = 0x00000004,
+    SPEAKER_LOW_FREQUENCY           = 0x00000008,
+    SPEAKER_BACK_LEFT               = 0x00000010,
+    SPEAKER_BACK_RIGHT              = 0x00000020,
+    SPEAKER_FRONT_LEFT_OF_CENTER    = 0x00000040,
+    SPEAKER_FRONT_RIGHT_OF_CENTER   = 0x00000080,
+    SPEAKER_BACK_CENTER             = 0x00000100,
+    SPEAKER_SIDE_LEFT               = 0x00000200,
+    SPEAKER_SIDE_RIGHT              = 0x00000400,
+    SPEAKER_TOP_CENTER              = 0x00000800,
+    SPEAKER_TOP_FRONT_LEFT          = 0x00001000,
+    SPEAKER_TOP_FRONT_CENTER        = 0x00002000,
+    SPEAKER_TOP_FRONT_RIGHT         = 0x00004000,
+    SPEAKER_TOP_BACK_LEFT           = 0x00008000,
+    SPEAKER_TOP_BACK_CENTER         = 0x00010000,
+    SPEAKER_TOP_BACK_RIGHT          = 0x00020000,
+
+    // (See AudioSpeakersExtended_e)
+
+    SPEAKER_ALL                     = 0x80000000
 
 } AudioSpeakers_e;
+
+/*!
+ * \brief Audio speakers from WAVEFORMATEXTENSIBLE, with new fields from RF64.
+ */
+typedef enum AudioSpeakersExtended_e
+{
+    SPEAKER_BITSTREAM_1_LEFT        = 0x00800000,
+    SPEAKER_BITSTREAM_1_RIGHT       = 0x01000000,
+    SPEAKER_BITSTREAM_2_LEFT        = 0x02000000,
+    SPEAKER_BITSTREAM_2_RIGHT       = 0x04000000,
+    SPEAKER_CONTROLSAMPLE_1         = 0x08000000,
+    SPEAKER_CONTROLSAMPLE_2         = 0x10000000,
+    SPEAKER_STEREO_LEFT             = 0x20000000,
+    SPEAKER_STEREO_RIGHT            = 0x40000000
+
+} AudioSpeakersExtended_e;
 
 //! Audio channel modes
 typedef enum ChannelMode_e

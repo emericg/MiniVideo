@@ -37,6 +37,7 @@
 
 // C standard libraries
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* ************************************************************************** */
@@ -178,6 +179,35 @@ int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
     {
         media->tracks_audio_count = 1;
         media->duration = media->tracks_audio[0]->duration_ms;
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Free the allocated content of a wave_t structure.
+ * \param *wave A pointer to a wave_t structure.
+ */
+int wave_clean(wave_t *wave)
+{
+    TRACE_INFO(WAV, BLD_GREEN "wave_clean()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (wave != NULL)
+    {
+        free(wave->cue.dwName);
+        free(wave->cue.dwPosition);
+        free(wave->cue.fccChunk);
+        free(wave->cue.dwChunkStart);
+        free(wave->cue.dwBlockStart);
+        free(wave->cue.dwSampleOffset);
+
+        free(wave->plst.dwName);
+        free(wave->plst.dwLength);
+        free(wave->plst.dwLoops);
     }
 
     return retcode;
