@@ -136,6 +136,9 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stsd()" CLR_RESET);
     int retcode = SUCCESS;
 
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description</title>\n");
+
     // Parse box content
     unsigned int reserved[6] = {0};
     for (int i = 0; i < 6; i++)
@@ -149,10 +152,13 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     retcode = parse_box_header(bitstr, &box_subheader);
 
     // Read FullBox attributs
-    box_header->version = (uint8_t)read_bits(bitstr, 8);
-    box_header->flags = read_bits(bitstr, 24);
+    box_subheader.version = (uint8_t)read_bits(bitstr, 8);
+    box_subheader.flags = read_bits(bitstr, 24);
 
-    /*unsigned int entry_count =*/ read_bits(bitstr, 32);
+    unsigned int entry_count = read_bits(bitstr, 32);
+
+    write_box_header(&box_subheader, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description Extension</title>\n");
 
     char fcc[5];
     track->fcc = box_subheader.boxtype; // save fourcc as backup
@@ -347,6 +353,9 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             TRACE_1(MP4, "Unknown track type, skipped...");
         break;
     }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
 
     return retcode;
 }
@@ -691,6 +700,13 @@ int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // TODO
 
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
     return retcode;
 }
 
@@ -705,6 +721,13 @@ int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     // TODO
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
 
     return retcode;
 }
