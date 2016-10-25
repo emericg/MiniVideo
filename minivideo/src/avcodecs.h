@@ -179,6 +179,8 @@ typedef enum AVCodec_e
     CODEC_CanopusHQX    = 311,  //!< Canopus HQX
     CODEC_icod          = 312,  //!< Apple Intermediate Codec
     CODEC_rpza          = 313,  //!< Apple Video / "road pizza"
+    CODEC_BINK          = 314,  //!< Bink Video!
+    CODEC_BINK2         = 315,  //!< Bink2
 
     // Lossless video codecs ///////////////////////////////////////////////////
 

@@ -52,6 +52,9 @@ typedef enum fourcc_list_e
     fcc_mpg1 = 0x6D706731,
     fcc_MPG2 = 0x4D504732,
     fcc_mpg2 = 0x6D706732,
+    fcc_DVR  = 0x44565220,
+    fcc_PIM1 = 0x50494D31,
+    fcc_PIM2 = 0x50494D32,
 
     fcc_H261 = 0x48323631, //!< H.261
 
@@ -166,15 +169,18 @@ typedef enum fourcc_list_e
     fcc_cvid = 0x63766964, //!< Cinepak
     fcc_CVID = 0x43564944,
     fcc_SNOW = 0x534E4F57, //!< Snow
+    fcc_snow = 0x736E6F77, //!< Snow
     fcc_svq1 = 0x73767131, //!< Sorenson Video
     fcc_SVQ1 = 0x53565131,
     fcc_svqi = 0x73767169,
     fcc_SVQ3 = 0x53565133,
     fcc_RT21 = 0x52543231, //!< Intel Indeo Video 2 or Real-Time Video 2
     fcc_IV31 = 0x49563331, //!< Intel Indeo Video 3
-    fcc_IV32 = 0x49563332,
     fcc_iV31 = 0x69563331,
+    fcc_iv31 = 0x69763331,
+    fcc_IV32 = 0x49563332,
     fcc_iV32 = 0x69563332,
+    fcc_iv32 = 0x69763332,
     fcc_iv41 = 0x69763431,
     fcc_iV41 = 0x69563431,
     fcc_IV41 = 0x49563431,
@@ -203,6 +209,11 @@ typedef enum fourcc_list_e
     fcc_AI15 = 0x41493135, //!< AVC Intra 100 / 1080 interlaced
     fcc_AI1q = 0x41493171, //!< AVC Intra 100 /  720
     fcc_AI12 = 0x41493132, //!< AVC Intra 100 / 1080
+
+    fcc_BIKf = 0x42494B66, //!< Bink Video!
+    fcc_BIKg = 0x42494B67,
+    fcc_BIKh = 0x42494B68,
+    fcc_BIKi = 0x42494B69,
 
     // Lossless video codecs ///////////////////////////////////////////////////
 

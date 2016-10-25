@@ -75,12 +75,15 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     {
     case fcc_MPG1:
     case fcc_mpg1:
+    case fcc_PIM1:
         codec = CODEC_MPEG1;
         break;
     case fcc_MPEG:
     case fcc_mpeg:
     case fcc_MPG2:
     case fcc_mpg2:
+    case fcc_PIM2:
+    case fcc_DVR:
         codec = CODEC_MPEG2;
         break;
 
@@ -258,6 +261,7 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         break;
 
     case fcc_SNOW:
+    case fcc_snow:
         codec = CODEC_SNOW;
         break;
 
@@ -277,6 +281,8 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_IV32:
     case fcc_iV31:
     case fcc_iV32:
+    case fcc_iv31:
+    case fcc_iv32:
         codec = CODEC_INDEO3;
         break;
     case fcc_iv41:
@@ -301,6 +307,13 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_rpza:
     case fcc_azpr:
         codec = CODEC_rpza;
+        break;
+
+    case fcc_BIKf:
+    case fcc_BIKg:
+    case fcc_BIKh:
+    case fcc_BIKi:
+        codec = CODEC_BINK;
         break;
 
     case fcc_FFV1:

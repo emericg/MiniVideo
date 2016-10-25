@@ -577,6 +577,12 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
             case CODEC_rpza:
                 return "Apple Video";
                 break;
+            case CODEC_BINK:
+                return "Bink Video!";
+                break;
+            case CODEC_BINK2:
+                return "Bink2 Video!";
+                break;
 
             case CODEC_FFV1:
                 return "FFV1";
