@@ -165,6 +165,9 @@
           <height>256</height>
          </size>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
@@ -176,8 +179,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>697</width>
-           <height>318</height>
+           <width>688</width>
+           <height>325</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">

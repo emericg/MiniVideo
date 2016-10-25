@@ -50,6 +50,12 @@ ContainerExplorer::ContainerExplorer(QWidget *parent) :
     int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
     ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 11));
 #endif
+#ifdef Q_OS_OSX
+    ui->widget_hex->setFont(QFont("Andale Mono", 14));
+#endif
+#ifdef Q_OS_WIN32
+    ui->widget_hex->setFont(QFont("Lucida Console", 12));
+#endif
 }
 
 ContainerExplorer::~ContainerExplorer()
