@@ -185,7 +185,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -193,7 +193,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -230,7 +230,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -238,7 +238,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -569,7 +569,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -619,7 +619,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -627,7 +627,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -671,7 +671,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -679,7 +679,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -735,7 +735,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -743,7 +743,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -852,7 +852,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -860,7 +860,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 
         // Then parse subbox content
         if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -1016,7 +1016,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -1198,7 +1198,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
@@ -1293,15 +1293,16 @@ int mp4_fileParse(MediaFile_t *media)
         // Loop on 1st level boxes
         while (mp4.run == true &&
                retcode == SUCCESS &&
-               bitstream_get_absolute_byte_offset(bitstr) < media->file_size)
+               bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - 8))
         {
             // Read box header
             Mp4Box_t box_header;
             retcode = parse_box_header(bitstr, &box_header);
 
             // Then parse box content
-            if (retcode == SUCCESS &&
-                bitstream_get_absolute_byte_offset(bitstr) < box_header.offset_end)
+            if (mp4.run == true &&
+                retcode == SUCCESS &&
+                bitstream_get_absolute_byte_offset(bitstr) < (box_header.offset_end - 8))
             {
                 switch (box_header.boxtype)
                 {

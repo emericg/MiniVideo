@@ -456,10 +456,11 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
- * \brief Free a videoTrack_t structure.
- * \param **track_ptr A pointer to the videoTrack_t structure we want to freed.
+ * \brief Free an Mp4Track_t structure.
+ * \param **track_ptr A pointer to the Mp4Track_t structure we want to freed.
  */
 void freeTrack(Mp4Track_t **track_ptr)
 {

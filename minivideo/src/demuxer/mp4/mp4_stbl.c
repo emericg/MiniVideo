@@ -62,15 +62,16 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
     {
         // Parse subbox header
         Mp4Box_t box_subheader;
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
+        if (mp4->run == true &&
+            retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
             {
@@ -841,8 +842,6 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->stts_sample_count = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
     track->stts_sample_delta = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
 
-    uint32_t i = 0;
-
     if (track->stts_sample_count == NULL || track->stts_sample_delta == NULL)
     {
         TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
@@ -850,7 +849,7 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     }
     else
     {
-        for (i = 0; i < track->stts_entry_count; i++)
+        for (unsigned i = 0; i < track->stts_entry_count; i++)
         {
             track->stts_sample_count[i] = read_bits(bitstr, 32);
             track->stts_sample_delta[i] = read_bits(bitstr, 32);
@@ -862,10 +861,9 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> entry_count   : %u", track->stts_entry_count);
 /*
     TRACE_1(MP4, "> sample_number : [");
-    for (i = 0; i < track->stts_entry_count; i++)
-    {
-        printf("(%u / %u),", track->stts_sample_count[i], track->stts_sample_delta[i]);
-    }
+    for (unsigned i = 0; i < track->stts_entry_count; i++)
+        for (unsigned j = 0; j < track->stts_sample_count[i]; j++)
+            printf("(%u / %u),", track->stts_sample_count[i], track->stts_sample_delta[i]);
     printf("]\n");
 */
 #endif // ENABLE_DEBUG
@@ -877,8 +875,9 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <title>Decoding Time to Sample</title>\n");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stts_entry_count);
         fprintf(mp4->xml, "  <stts_sample_delta>[");
-        for (i = 0; i < track->stts_entry_count; i++)
-            fprintf(mp4->xml, "%u, ", track->stts_sample_delta[i]);
+        for (unsigned i = 0; i < track->stts_entry_count; i++)
+            for (unsigned j = 0; j < track->stts_sample_count[i]; j++)
+                fprintf(mp4->xml, "%u, ", track->stts_sample_delta[i]);
         fprintf(mp4->xml, "]</stts_sample_delta>\n");
         fprintf(mp4->xml, "  </atom>\n");
     }
@@ -936,9 +935,8 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /*
     TRACE_1(MP4, "> sample_number : [");
     for (i = 0; i < track->ctts_entry_count; i++)
-    {
-        printf("(%u / %li),", track->ctts_sample_count[i], track->ctts_sample_offset[i]);
-    }
+        for (int j = 0; j < track->ctts_sample_count[i]; j++)
+            printf("(%u / %li),", track->ctts_sample_count[i], track->ctts_sample_offset[i]);
     printf("]\n");
 */
 #endif // ENABLE_DEBUG
@@ -951,7 +949,8 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->ctts_entry_count);
         fprintf(mp4->xml, "  <ctts_sample_delta>[");
         for (i = 0; i < track->ctts_entry_count; i++)
-            fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
+            for (int j = 0; j < track->ctts_sample_count[i]; j++)
+                fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
         fprintf(mp4->xml, "]</ctts_sample_delta>\n");
         fprintf(mp4->xml, "  </atom>\n");
     }
