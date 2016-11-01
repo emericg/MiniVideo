@@ -137,226 +137,270 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stsd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description</title>\n");
-
-    // Parse box content
-    unsigned int reserved[6] = {0};
-    for (int i = 0; i < 6; i++)
-    {
-        reserved[i] = read_bits(bitstr, 8);
-    }
-    /*unsigned int data_reference_index =*/ read_bits(bitstr, 16);
-
-    // Parse subbox header
-    Mp4Box_t box_subheader;
-    retcode = parse_box_header(bitstr, &box_subheader);
-
     // Read FullBox attributs
-    box_subheader.version = (uint8_t)read_bits(bitstr, 8);
-    box_subheader.flags = read_bits(bitstr, 24);
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
 
+    // Parse stsd box content
     unsigned int entry_count = read_bits(bitstr, 32);
 
-    write_box_header(&box_subheader, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description Extension</title>\n");
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
 
-    char fcc[5];
-    track->fcc = box_subheader.boxtype; // save fourcc as backup
-
-    // Then parse subbox content
-    switch (track->handlerType)
+    // Parse subbox header (> SampleEntry)
+    ////////////////////////////////////////////////////////////////////////////
+    for (unsigned int i = 0; i < entry_count; i++)
     {
-        case HANDLER_AUDIO:
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+        track->fcc = box_subheader.boxtype; // save fourcc as backup
+
+        // Parse subbox content (> SampleEntry)
+        unsigned int reserved[6] = {0};
+        for (int i = 0; i < 6; i++)
         {
-            // AudioSampleEntry
-            // Box Types: ‘mp4a’
+            reserved[i] = read_bits(bitstr, 8);
+        }
+        unsigned int data_reference_index = read_bits(bitstr, 16);
 
-            if (box_subheader.boxtype == fcc_mp4a)
-            {
-                track->codec = CODEC_AAC;
-                TRACE_1(MP4, "> Audio track is using AAC codec");
-            }
-            else if (box_subheader.boxtype == fcc_AC3 || box_subheader.boxtype == fcc_ac3)
-            {
-                track->codec = CODEC_AC3;
-                TRACE_1(MP4, "> Audio track is using AC3 codec");
-            }
-            else if (box_subheader.boxtype == fcc_AC4 || box_subheader.boxtype == fcc_ac4)
-            {
-                track->codec = CODEC_AC4;
-                TRACE_1(MP4, "> Audio track is using AC4 codec");
-            }
-            else if (box_subheader.boxtype == fcc_sowt)
-            {
-                track->codec = CODEC_LPCM;
-                TRACE_1(MP4, "> Audio track is using PCM audio");
-            }
-            else
-            {
-                track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)",
-                              getFccString_le(box_subheader.boxtype, fcc));
-            }
+        write_box_header(&box_subheader, mp4->xml);
+        if (mp4->xml) fprintf(mp4->xml, "  <data_reference_index>%u</data_reference_index>\n", data_reference_index);
 
-            /*const unsigned int reserved[0] =*/ read_bits(bitstr, 32);
-            /*const unsigned int reserved[1] =*/ read_bits(bitstr, 32);
-
-            track->channel_count = read_bits(bitstr, 16);
-            track->sample_size_bits = read_bits(bitstr, 16);
-
-            /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
-            /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
-
-            track->sample_rate_hz = read_bits(bitstr, 16);
-        } break;
-
-        case HANDLER_VIDEO:
+        // Then parse subbox content (> SampleEntry extensions)
+        switch (track->handlerType)
         {
-            // VisualSampleEntry
-            // Box Types: 'avc1', 'm4ds', 'hev1', 'CFHD'
+            case HANDLER_AUDIO:
+                parse_stsd_audio(bitstr, &box_subheader, track, mp4);
+                break;
 
-            if (box_subheader.boxtype == fcc_avc1)
-            {
-                track->codec = CODEC_H264;
-                TRACE_1(MP4, "> Video track is using H.264 codec");
-            }
-            else if (box_subheader.boxtype == fcc_hvc1)
-            {
-                track->codec = CODEC_H265;
-                TRACE_1(MP4, "> Video track is using H.265 codec");
-            }
-            else if (box_subheader.boxtype == fcc_mp4v)
-            {
-                track->codec = CODEC_MPEG4_ASP;
-                TRACE_1(MP4, "> Video track is using XVID codec");
-            }
-            else if (box_subheader.boxtype == fcc_CFHD)
-            {
-                track->codec = CODEC_VC5;
-                TRACE_1(MP4, "> Video track is using CineForm codec");
-            }
-            else
-            {
-                track->codec = CODEC_UNKNOWN;
-                TRACE_WARNING(MP4, "> Unknown codec in video track (%s)",
-                              getFccString_le(box_subheader.boxtype, fcc));
-            }
+            case HANDLER_VIDEO:
+                parse_stsd_video(bitstr, &box_subheader, track, mp4);
+                break;
 
-            /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
-            /*const unsigned int reserved =*/ read_bits(bitstr, 16);
+            case HANDLER_TEXT:
+            case HANDLER_META:
+            case HANDLER_TMCD:
+            case HANDLER_HINT:
+                TRACE_1(MP4, "Unhandled track type, skipped...");
+                break;
 
-            unsigned int pre_defined[3] = {0};
-            pre_defined[0] = read_bits(bitstr, 32);
-            pre_defined[1] = read_bits(bitstr, 32);
-            pre_defined[2] = read_bits(bitstr, 32);
+            default:
+                TRACE_1(MP4, "Unknown track type, skipped...");
+                break;
+        }
 
-            track->width = read_bits(bitstr, 16);
-            track->height = read_bits(bitstr, 16);
-
-            // 0x00480000; // 72 dpi
-            unsigned int horizresolution = read_bits(bitstr, 32);
-            unsigned int vertresolution = read_bits(bitstr, 32);
-
-            /*const unsigned int reserved =*/ read_bits(bitstr, 32);
-
-            unsigned int frame_count = read_bits(bitstr, 16);
-
-            uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
-            for (int i = 0; i < 31; i++)
-            {
-                track->compressorname[i] = (char)read_bits(bitstr, 8);
-            }
-            track->compressorname[compressorsize] = '\0';
-
-            track->color_depth = read_bits(bitstr, 16);
-            /*int pre_defined = */ read_bits(bitstr, 16);
-
-#if ENABLE_DEBUG
-            {
-                // Print box header
-                print_box_header(box_header);
-
-                // Print VisualSampleEntry box header
-                print_box_header(&box_subheader);
-
-                // Print VisualSampleEntry box content
-                TRACE_1(MP4, "> width  : %u", track->width);
-                TRACE_1(MP4, "> height : %u", track->height);
-                TRACE_1(MP4, "> horizresolution : 0x%X", horizresolution);
-                TRACE_1(MP4, "> vertresolution  : 0x%X", vertresolution);
-                TRACE_1(MP4, "> frame_count     : %u", frame_count);
-                TRACE_1(MP4, "> compressor      : '%s'", track->compressorname);
-                TRACE_1(MP4, "> color depth     : %u", track->color_depth);
-            }
-#endif // ENABLE_DEBUG
-
-            while (retcode == SUCCESS &&
-                   bitstream_get_absolute_byte_offset(bitstr) < box_subheader.offset_end)
-            {
-                // Parse subbox header
-                Mp4Box_t box_subsubheader;
-                retcode = parse_box_header(bitstr, &box_subsubheader);
-
-                // Then parse subbox content
-                ////////////////////////////////////////////////////////////////
-                if (retcode == SUCCESS)
-                {
-                    switch (box_subsubheader.boxtype)
-                    {
-                        case BOX_AVCC:
-                            retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_HVCC:
-                            retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_BTRT:
-                            retcode = parse_btrt(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_CLAP:
-                            retcode = parse_clap(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_COLR:
-                            retcode = parse_colr(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_FIEL:
-                            retcode = parse_fiel(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_GAMA:
-                            retcode = parse_gama(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        case BOX_PASP:
-                            retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
-                            break;
-                        default:
-                            retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
-                            break;
-                    }
-
-                    jumpy_mp4(bitstr, &box_subheader, &box_subsubheader);
-                }
-            }
-        } break;
-
-        case HANDLER_TEXT:
-        break;
-
-        case HANDLER_META:
-        break;
-
-        case HANDLER_TMCD:
-        break;
-
-        case HANDLER_HINT:
-        break;
-
-        default:
-            TRACE_1(MP4, "Unknown track type, skipped...");
-        break;
+        if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
     }
 
     if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_audio()" CLR_RESET);
+    int retcode = SUCCESS;
+    char fcc[5];
+
+    // AudioSampleEntry
+    {
+        if (box_header->boxtype == fcc_mp4a)
+        {
+            track->codec = CODEC_AAC;
+            TRACE_1(MP4, "> Audio track is using AAC codec");
+        }
+        else if (box_header->boxtype == fcc_AC3 ||
+                 box_header->boxtype == fcc_ac3)
+        {
+            track->codec = CODEC_AC3;
+            TRACE_1(MP4, "> Audio track is using AC3 codec");
+        }
+        else if (box_header->boxtype == fcc_AC4 ||
+                 box_header->boxtype == fcc_ac4)
+        {
+            track->codec = CODEC_AC4;
+            TRACE_1(MP4, "> Audio track is using AC4 codec");
+        }
+        else if (box_header->boxtype == fcc_sowt)
+        {
+            track->codec = CODEC_LPCM;
+            TRACE_1(MP4, "> Audio track is using PCM audio");
+        }
+        else
+        {
+            track->codec = CODEC_UNKNOWN;
+            TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)",
+                          getFccString_le(box_header->boxtype, fcc));
+        }
+
+        /*const unsigned int reserved[0] =*/ read_bits(bitstr, 32);
+        /*const unsigned int reserved[1] =*/ read_bits(bitstr, 32);
+
+        track->channel_count = read_bits(bitstr, 16);
+        track->sample_size_bits = read_bits(bitstr, 16);
+
+        /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
+        /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
+
+        track->sample_rate_hz = read_bits(bitstr, 16);
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+        TRACE_1(MP4, "> channel_count   : %u", track->channel_count);
+        TRACE_1(MP4, "> sample_size_bits: %u", track->sample_size_bits);
+        TRACE_1(MP4, "> sample_rate_hz  : %u", track->sample_rate_hz);
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Audio Sample Entry</title>\n");
+            fprintf(mp4->xml, "  <channel_count>%u</channel_count>\n", track->channel_count);
+            fprintf(mp4->xml, "  <sample_size_bits>%u</sample_size_bits>\n", track->sample_size_bits);
+            fprintf(mp4->xml, "  <sample_rate_hz>%u</sample_rate_hz>\n", track->sample_rate_hz);
+        }
+    }
+
+    return retcode;
+}
+
+int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_video()" CLR_RESET);
+    int retcode = SUCCESS;
+    char fcc[5];
+
+    // VisualSampleEntry
+    {
+        if (box_header->boxtype == fcc_avc1)
+        {
+            track->codec = CODEC_H264;
+            TRACE_1(MP4, "> Video track is using H.264 codec");
+        }
+        else if (box_header->boxtype == fcc_hvc1)
+        {
+            track->codec = CODEC_H265;
+            TRACE_1(MP4, "> Video track is using H.265 codec");
+        }
+        else if (box_header->boxtype == fcc_mp4v)
+        {
+            track->codec = CODEC_MPEG4_ASP;
+            TRACE_1(MP4, "> Video track is using XVID codec");
+        }
+        else if (box_header->boxtype == fcc_CFHD)
+        {
+            track->codec = CODEC_VC5;
+            TRACE_1(MP4, "> Video track is using CineForm codec");
+        }
+        else
+        {
+            track->codec = CODEC_UNKNOWN;
+            TRACE_WARNING(MP4, "> Unknown codec in video track (%s)",
+                          getFccString_le(box_header->boxtype, fcc));
+        }
+
+        /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
+        /*const unsigned int reserved =*/ read_bits(bitstr, 16);
+
+        unsigned int pre_defined[3] = {0};
+        pre_defined[0] = read_bits(bitstr, 32);
+        pre_defined[1] = read_bits(bitstr, 32);
+        pre_defined[2] = read_bits(bitstr, 32);
+
+        track->width = read_bits(bitstr, 16);
+        track->height = read_bits(bitstr, 16);
+
+        // 0x00480000; // 72 dpi
+        unsigned int horizresolution = read_bits(bitstr, 32);
+        unsigned int vertresolution = read_bits(bitstr, 32);
+
+        /*const unsigned int reserved =*/ read_bits(bitstr, 32);
+
+        unsigned int frame_count = read_bits(bitstr, 16);
+
+        uint8_t compressorsize = (uint8_t)read_bits(bitstr, 8);
+        for (int i = 0; i < 31; i++)
+        {
+            track->compressorname[i] = (char)read_bits(bitstr, 8);
+        }
+        track->compressorname[compressorsize] = '\0';
+
+        track->color_depth = read_bits(bitstr, 16);
+        /*int pre_defined = */ read_bits(bitstr, 16);
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+        TRACE_1(MP4, "> width  : %u", track->width);
+        TRACE_1(MP4, "> height : %u", track->height);
+        TRACE_1(MP4, "> horizresolution : 0x%X", horizresolution);
+        TRACE_1(MP4, "> vertresolution  : 0x%X", vertresolution);
+        TRACE_1(MP4, "> frame_count     : %u", frame_count);
+        TRACE_1(MP4, "> compressor      : '%s'", track->compressorname);
+        TRACE_1(MP4, "> color depth     : %u", track->color_depth);
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Visual Sample Entry</title>\n");
+            fprintf(mp4->xml, "  <width>%u</width>\n", track->width);
+            fprintf(mp4->xml, "  <height>%u</height>\n", track->height);
+            fprintf(mp4->xml, "  <horizresolution>%u</horizresolution>\n", horizresolution);
+            fprintf(mp4->xml, "  <vertresolution>%u</vertresolution>\n", vertresolution);
+            fprintf(mp4->xml, "  <frame_count>%u</frame_count>\n", frame_count);
+            fprintf(mp4->xml, "  <compressorname>%s</compressorname>\n", track->compressorname);
+            fprintf(mp4->xml, "  <color_depth>%u</color_depth>\n", track->color_depth);
+        }
+    }
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////
+        if (retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
+                case BOX_AVCC:
+                    retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_HVCC:
+                    retcode = parse_hvcC(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_BTRT:
+                    retcode = parse_btrt(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_CLAP:
+                    retcode = parse_clap(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_COLR:
+                    retcode = parse_colr(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_FIEL:
+                    retcode = parse_fiel(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_GAMA:
+                    retcode = parse_gama(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_PASP:
+                    retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
 
     return retcode;
 }
@@ -377,9 +421,6 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_avcC()" CLR_RESET);
     int retcode = SUCCESS;
-
-    // avcC box means H.264 codec
-    track->codec = CODEC_H264;
 
     // Parse box content
     unsigned int i = 0;
@@ -475,19 +516,127 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /*!
  * \brief HEVC Configuration Box.
  *
- * From 'ISO/IEC x' specification:
+ * From 'ISO/IEC 14496-15 (2015)' specification:
+ * 8.3.3.1 Decoder configuration information.
  */
 int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_hvcC()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // hvcC box means H.265 codec
-    track->codec = CODEC_H265;
+    // Parse box content
+    uint8_t configurationVersion = read_bits(bitstr, 8);
+    uint8_t general_profile_space = read_bits(bitstr, 2);
+    bool general_tier_flag = read_bits(bitstr, 1);
+    uint8_t general_profile_idc = read_bits(bitstr, 5);
+    uint32_t general_profile_compatibility_flags = read_bits(bitstr, 32);
+    uint64_t general_constraint_indicator_flags = read_bits(bitstr, 48);
+    uint8_t general_level_idc = read_bits(bitstr, 8);
 
+    /*uint8_t reserved =*/ read_bits(bitstr, 4);
+    uint16_t min_spatial_segmentation_idc = read_bits(bitstr, 12);
+    /*uint8_t reserved =*/ read_bits(bitstr, 6);
+    uint8_t parallelismType = read_bits(bitstr, 2);
+    /*uint8_t reserved =*/ read_bits(bitstr, 6);
+    uint8_t chromaFormat = read_bits(bitstr, 2);
+    /*uint8_t reserved =*/ read_bits(bitstr, 5);
+    uint8_t bitDepthLumaMinus8 = read_bits(bitstr, 3);
+    /*uint8_t reserved =*/ read_bits(bitstr, 5);
+    uint8_t bitDepthChromaMinus8 = read_bits(bitstr, 3);
+
+    uint16_t avgFrameRate = read_bits(bitstr, 16);
+    uint8_t constantFrameRate = read_bits(bitstr, 2);
+    uint8_t numTemporalLayers = read_bits(bitstr, 3);
+    bool temporalIdNested = read_bits(bitstr, 1);
+    uint8_t lengthSizeMinusOne = read_bits(bitstr, 1);
+    uint8_t numOfArrays = read_bits(bitstr, 1);
+
+    bool *array_completeness = NULL;
+    uint8_t *NAL_unit_type = NULL;
+    uint16_t *numNalus = NULL;
+    uint16_t **nalUnitLength = NULL;
+    uint8_t ***nalUnit = NULL;
+
+    if (numOfArrays > 0)
+    {
+        array_completeness = (bool *)malloc(numOfArrays);
+        NAL_unit_type = (uint8_t *)malloc(numOfArrays);
+        numNalus = (uint16_t *)malloc(numOfArrays);
+        nalUnitLength = (uint16_t **)malloc(numOfArrays);
+        nalUnit = (uint8_t ***)malloc(numOfArrays);
+        if (array_completeness && NAL_unit_type && numNalus && nalUnitLength && nalUnit)
+        {
+            for (unsigned j = 0; j < numOfArrays; j++)
+            {
+                array_completeness[j] = read_bits(bitstr, 1);
+                /* bool reserved =*/ read_bits(bitstr, 1);
+                NAL_unit_type[j] = read_bits(bitstr, 6); // can be VPS, SPS, PPS, or SEI NAL unit
+                numNalus[j] = read_bits(bitstr, 16);
+
+                if (numNalus[j] > 0)
+                {
+                    nalUnitLength[j] = (uint16_t *)malloc(numNalus[j]);
+                    nalUnit[j] = (uint8_t **)malloc(numNalus[j]);
+                    if (nalUnitLength[j] && nalUnit[j])
+                    {
+                        for (unsigned i = 0; i < numNalus[j]; i++)
+                        {
+                            nalUnitLength[j][i] = read_bits(bitstr, 16);
+/*
+                            // TODO register SPS & PPS
+                            if (NAL_unit_type[j] == SPS)
+                            {
+                                track->sps_count = read_bits(bitstr, 5); // MAX_SPS = 32
+                                track->sps_sample_offset = (int64_t*)calloc(track->sps_count, sizeof(int64_t));
+                                track->sps_sample_size = (unsigned int*)calloc(track->sps_count, sizeof(unsigned int));
+                                for (i = 0; i < track->sps_count; i++)
+                                {
+                                    track->sps_sample_size[i] = read_bits(bitstr, 16);
+                                    track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+
+                                    skip_bits(bitstr, track->sps_sample_size[i] * 8); // sequenceParameterSetNALUnit
+                                }
+                            }
+*/
+                        }
+                    }
+                    else
+                        retcode = FAILURE;
+                }
+            }
+
+        }
+        else
+            retcode = FAILURE;
+    }
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
+    TRACE_1(MP4, "> configurationVersion : %u", configurationVersion);
+    TRACE_1(MP4, "> general_profile_space: %u", general_profile_space);
+    TRACE_1(MP4, "> general_tier_flag    : %u", general_tier_flag);
+    TRACE_1(MP4, "> general_profile_idc  : %u", general_profile_idc);
+    TRACE_1(MP4, "> general_profile_compatibility_flags: %u", general_profile_compatibility_flags);
+    TRACE_1(MP4, "> general_constraint_indicator_flags : %lu", general_constraint_indicator_flags);
+    TRACE_1(MP4, "> general_level_idc    : %u", general_level_idc);
+
+    TRACE_1(MP4, "> min_spatial_segmentation_idc: %u", min_spatial_segmentation_idc);
+    TRACE_1(MP4, "> parallelismType      : %u", parallelismType);
+    TRACE_1(MP4, "> chromaFormat         : %u", chromaFormat);
+    TRACE_1(MP4, "> bitDepthLumaMinus8   : %u", bitDepthLumaMinus8);
+    TRACE_1(MP4, "> bitDepthChromaMinus8 : %u", bitDepthChromaMinus8);
+
+    TRACE_1(MP4, "> avgFrameRate         : %u", avgFrameRate);
+    TRACE_1(MP4, "> constantFrameRate    : %u", constantFrameRate);
+    TRACE_1(MP4, "> numTemporalLayers    : %u", numTemporalLayers);
+    TRACE_1(MP4, "> temporalIdNested     : %u", temporalIdNested);
+    TRACE_1(MP4, "> lengthSizeMinusOne   : %u", lengthSizeMinusOne);
+    TRACE_1(MP4, "> numOfArrays          : %u", numOfArrays);
+
+    for (unsigned j = 0; j < numOfArrays; j++)
+    {
+        // TODO // NAL unit table
+    }
 #endif // ENABLE_DEBUG
 
     // xmlMapper
@@ -495,7 +644,43 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>HEVC Configuration</title>\n");
+        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
+        fprintf(mp4->xml, "  <general_profile_space>%u</general_profile_space>\n", general_profile_space);
+        fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
+        fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
+        fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
+        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%lu</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
+
+        for (unsigned j = 0; j < numOfArrays; j++)
+        {
+            // TODO // NAL unit table
+        }
+
         fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    if (array_completeness && NAL_unit_type && numNalus && nalUnitLength && nalUnit)
+    {
+        for (unsigned j = 0; j < numOfArrays; j++)
+        {
+            if (nalUnitLength[j] && nalUnit[j])
+            {
+                for (unsigned i = 0; i < numNalus[j]; i++)
+                {
+                    //
+                }
+
+                free(nalUnitLength[j]);
+                free(nalUnit[j]);
+            }
+        }
+
+        free(array_completeness);
+        free(NAL_unit_type);
+        free(numNalus);
+        free(nalUnitLength);
+        free(nalUnit);
     }
 
     return retcode;
@@ -909,8 +1094,6 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->ctts_sample_count = (uint32_t*)calloc(track->ctts_entry_count, sizeof(uint32_t));
     track->ctts_sample_offset = (int64_t*)calloc(track->ctts_entry_count, sizeof(int64_t));
 
-    uint32_t i = 0;
-
     if (track->ctts_sample_count == NULL || track->ctts_sample_offset == NULL)
     {
         TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
@@ -918,7 +1101,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     }
     else
     {
-        for (i = 0; i < track->ctts_entry_count; i++)
+        for (unsigned i = 0; i < track->ctts_entry_count; i++)
         {
             track->ctts_sample_count[i] = read_bits(bitstr, 32);
 
@@ -934,8 +1117,8 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> entry_count   : %u", track->ctts_entry_count);
 /*
     TRACE_1(MP4, "> sample_number : [");
-    for (i = 0; i < track->ctts_entry_count; i++)
-        for (int j = 0; j < track->ctts_sample_count[i]; j++)
+    for (unsigned i = 0; i < track->ctts_entry_count; i++)
+        for (unsigned j = 0; j < track->ctts_sample_count[i]; j++)
             printf("(%u / %li),", track->ctts_sample_count[i], track->ctts_sample_offset[i]);
     printf("]\n");
 */
@@ -948,8 +1131,8 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <title>Composition Time to Sample</title>\n");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->ctts_entry_count);
         fprintf(mp4->xml, "  <ctts_sample_delta>[");
-        for (i = 0; i < track->ctts_entry_count; i++)
-            for (int j = 0; j < track->ctts_sample_count[i]; j++)
+        for (unsigned i = 0; i < track->ctts_entry_count; i++)
+            for (unsigned j = 0; j < track->ctts_sample_count[i]; j++)
                 fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
         fprintf(mp4->xml, "]</ctts_sample_delta>\n");
         fprintf(mp4->xml, "  </atom>\n");
