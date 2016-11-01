@@ -179,7 +179,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>688</width>
+           <width>701</width>
            <height>325</height>
           </rect>
          </property>
@@ -187,13 +187,19 @@
           <property name="leftMargin">
            <number>0</number>
           </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
           <property name="rightMargin">
            <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
           </property>
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_content"/>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -206,8 +212,32 @@
             </property>
            </spacer>
           </item>
-          <item row="2" column="0">
-           <layout class="QGridLayout" name="gridLayout_header"/>
+          <item row="0" column="0">
+           <widget class="QWidget" name="widget" native="true">
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(222, 222, 222);</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>3</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>3</number>
+             </property>
+             <property name="bottomMargin">
+              <number>3</number>
+             </property>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_header"/>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -224,7 +254,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>512</height>
+          <height>256</height>
          </size>
         </property>
        </widget>

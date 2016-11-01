@@ -73,7 +73,7 @@ public slots:
     void loadSamples(int track_id);
     void sampleSelection();
     void sampleSelection(int sample_id);
-    void containerSelection();
+    void containerSelectionEmpty();
     void containerSelectionChanged();
     void containerSelection(QTreeWidgetItem *item, int column);
 
@@ -85,7 +85,6 @@ public slots:
     QTreeWidgetItem *createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset);
     void findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements);
     bool findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement);
-
 };
 
 /* ************************************************************************** */

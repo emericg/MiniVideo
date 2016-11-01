@@ -45,7 +45,7 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
                                        const char *minivideo_builddate, const char*minivideo_buildtime)
 {
     QString text = tr("Using MiniVideo version") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
-    text += "\n" + tr("Builded on") + " " + minivideo_builddate + " at " + minivideo_buildtime;
+    text += "\n" + tr("Builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
 
     ui->textBrowser_version->setText(text);
 }

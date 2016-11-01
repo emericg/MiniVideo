@@ -23,13 +23,15 @@
 #include "ui_explorer.h"
 #include "utils.h"
 
+#include <QLayout>
+#include <QLayoutItem>
 #include <QFontDatabase>
 #include <QByteArray>
+#include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QLabel>
 #include <QDebug>
 
 ContainerExplorer::ContainerExplorer(QWidget *parent) :
@@ -88,7 +90,7 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
         loadXmlFile();
         loadTracks();
         loadSamples(0);
-        containerSelection();
+        //containerSelectionEmpty();
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
         resizeEvent(NULL);
@@ -129,7 +131,7 @@ void ContainerExplorer::tabSwitch(int index)
     }
     else
     {
-        containerSelection();
+        containerSelectionChanged();
     }
 }
 
@@ -248,10 +250,10 @@ void ContainerExplorer::sampleSelection(int sid)
         QLineEdit *ds = new QLineEdit(QString::number(size) + tr(" bytes"));
         ds->setReadOnly(true);
 
-        ui->gridLayout_content->addWidget(ls, 1, 0);
-        ui->gridLayout_content->addWidget(lo, 2, 0);
-        ui->gridLayout_content->addWidget(ds, 1, 1);
-        ui->gridLayout_content->addWidget(doo, 2, 1);
+        ui->gridLayout_header->addWidget(ls, 1, 0);
+        ui->gridLayout_header->addWidget(lo, 2, 0);
+        ui->gridLayout_header->addWidget(ds, 1, 1);
+        ui->gridLayout_header->addWidget(doo, 2, 1);
 
         if (track->sample_pts[sid] >= 0 || track->sample_dts[sid] >= 0)
         {
@@ -260,16 +262,16 @@ void ContainerExplorer::sampleSelection(int sid)
             QLabel *lp = new QLabel(tr("> PTS"));
             QLineEdit *dp = new QLineEdit(pts);
             dp->setReadOnly(true);
-            ui->gridLayout_content->addWidget(lp, 3, 0);
-            ui->gridLayout_content->addWidget(dp, 3, 1);
+            ui->gridLayout_header->addWidget(lp, 3, 0);
+            ui->gridLayout_header->addWidget(dp, 3, 1);
 
             QString dts = QString::number(static_cast<double>(track->sample_dts[sid] / 1000.0), 'f', 3) + " ms";
             dts += "   (" + getTimestampString(track->sample_dts[sid]) + ")";
             QLabel *ld = new QLabel(tr("> DTS"));
             QLineEdit *dd = new QLineEdit(dts);
             dd->setReadOnly(true);
-            ui->gridLayout_content->addWidget(ld, 4, 0);
-            ui->gridLayout_content->addWidget(dd, 4, 1);
+            ui->gridLayout_header->addWidget(ld, 4, 0);
+            ui->gridLayout_header->addWidget(dd, 4, 1);
         }
 
         // HexEditor
@@ -279,7 +281,7 @@ void ContainerExplorer::sampleSelection(int sid)
     }
 }
 
-void ContainerExplorer::containerSelection()
+void ContainerExplorer::containerSelectionEmpty()
 {
     clearContent();
 
@@ -294,10 +296,10 @@ void ContainerExplorer::containerSelection()
     QLineEdit *fs = new QLineEdit(QString::number(media->file_size));
     fs->setReadOnly(true);
 
-    ui->gridLayout_content->addWidget(fpl, 0, 0);
-    ui->gridLayout_content->addWidget(fp, 0, 1);
-    ui->gridLayout_content->addWidget(fsl, 1, 0);
-    ui->gridLayout_content->addWidget(fs, 1, 1);
+    ui->gridLayout_header->addWidget(fpl, 0, 0);
+    ui->gridLayout_header->addWidget(fp, 0, 1);
+    ui->gridLayout_header->addWidget(fsl, 1, 0);
+    ui->gridLayout_header->addWidget(fs, 1, 1);
 
     // HexEditor
     ui->widget_hex->setReadOnly(true);
@@ -320,9 +322,13 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
     {
         QString selected_fcc = eSelected.attributeNode("fcc").value();
         int selected_size = eSelected.attributeNode("size").value().toInt();
+        int selected_version = eSelected.attributeNode("version").value().toInt();
+        int selected_flag = eSelected.attributeNode("flag").value().toInt();
+        QString selected_uuid = eSelected.attributeNode("uuid").value();
         //qDebug() << "Atom fcc:" << selected_fcc << "@" << selected_offset << "clicked";
 
-        // Set title
+        // Set atom title (if it's an attribute of the selected element)
+        ////////////////////////////////////////////////////////////////////////
         if (eSelected.attributeNode("title").isAttr())
         {
             ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
@@ -332,20 +338,77 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
             ui->labelTitle->setText(selected_fcc);
         }
 
-        // Set atom settings
+        // Set atom type
+        ////////////////////////////////////////////////////////////////////////
         int fieldCount = 0;
-        QLabel *lb_offset = new QLabel(tr("<b>> Atom offset:</b>"));
-        QLineEdit *le_offset = new QLineEdit(QString::number(selected_offset));
-        le_offset->setReadOnly(true);
-        QLabel *lb_size = new QLabel("<b>> Atom size:</b>");
-        QLineEdit *le_size = new QLineEdit(QString::number(selected_size));
-        le_size->setReadOnly(true);
-        ui->gridLayout_content->addWidget(lb_offset, fieldCount, 0);
-        ui->gridLayout_content->addWidget(le_offset, fieldCount++, 1);
-        ui->gridLayout_content->addWidget(lb_size, fieldCount, 0);
-        ui->gridLayout_content->addWidget(le_size, fieldCount++, 1);
+        QLabel *atom_title = NULL;
+        if (eSelected.attributeNode("type").value() == "MP4 box")
+        {
+            atom_title = new QLabel(tr("<b>> MP4/MOV Atom</b>"));
+        }
+        else if (eSelected.attributeNode("type").value() == "MP4 fullbox")
+        {
+            atom_title = new QLabel(tr("<b>> MP4/MOV \"full\" Atom</b>"));
+        }
+        else if (eSelected.attributeNode("type").value() == "RIFF header" ||
+                 eSelected.attributeNode("type").value() == "RIFF list")
+        {
+            atom_title = new QLabel(tr("<b>> RIFF List</b>"));
+        }
+        else if (eSelected.attributeNode("type").value() == "RIFF chunk")
+        {
+            atom_title = new QLabel(tr("<b>> RIFF Chunk</b>"));
+        }
+        else
+        {
+            atom_title = new QLabel(tr("<b>>Atom</b>"));
+        }
+
+        // Set atom settings
+        ////////////////////////////////////////////////////////////////////////
+        QLabel *atom_offset_label = new QLabel(tr("Offset"));
+        QLineEdit *atom_offset_data = new QLineEdit(QString::number(selected_offset));
+        atom_offset_data->setReadOnly(true);
+        //atom_offset_data->setMaximumWidth(256);
+        QLabel *atom_size_label = new QLabel("Size");
+        QLineEdit *atom_size_data = new QLineEdit(QString::number(selected_size));
+        atom_size_data->setReadOnly(true);
+        //atom_size_data->setMaximumWidth(256);
+
+        ui->gridLayout_header->addWidget(atom_title, fieldCount++, 0, 1, 4);
+        ui->gridLayout_header->addWidget(atom_offset_label, fieldCount, 0);
+        ui->gridLayout_header->addWidget(atom_offset_data, fieldCount, 1);
+        ui->gridLayout_header->addWidget(atom_size_label, fieldCount, 2);
+        ui->gridLayout_header->addWidget(atom_size_data, fieldCount++, 3);
+
+        if (eSelected.attributeNode("type").value() == "MP4 fullbox")
+        {
+            QLabel *atom_version_label = new QLabel(tr("Version"));
+            QLineEdit *atom_version_data = new QLineEdit(QString::number(selected_version));
+            atom_version_data->setReadOnly(true);
+            //atom_version_data->setMaximumWidth(256);
+            QLabel *atom_flag_label = new QLabel(tr("Flag"));
+            QLineEdit *atom_flag_data = new QLineEdit(QString::number(selected_flag));
+            atom_flag_data->setReadOnly(true);
+            //atom_flag_data->setMaximumWidth(256);
+
+            ui->gridLayout_header->addWidget(atom_version_label, fieldCount, 0);
+            ui->gridLayout_header->addWidget(atom_version_data, fieldCount, 1);
+            ui->gridLayout_header->addWidget(atom_flag_label, fieldCount, 2);
+            ui->gridLayout_header->addWidget(atom_flag_data, fieldCount++, 3);
+        }
+        if (eSelected.attributeNode("uuid").value().isEmpty() == false)
+        {
+            QLabel *atom_uuid_label = new QLabel(tr("UUID"));
+            QLineEdit *atom_uuid_data = new QLineEdit(selected_uuid);
+            atom_uuid_data->setReadOnly(true);
+
+            ui->gridLayout_header->addWidget(atom_uuid_label, fieldCount, 0);
+            ui->gridLayout_header->addWidget(atom_uuid_data, fieldCount++, 1, 1, 4);
+        }
 
         // Parse element and set atom fields
+        ////////////////////////////////////////////////////////////////////////
         QDomNode structure_node = eSelected.firstChild();
         while (structure_node.isNull() == false)
         {
@@ -354,6 +417,7 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
             {
                 if (e.tagName() == "title")
                 {
+                    // Set atom title (if it's a field of the selected element)
                     ui->labelTitle->setText(e.text() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
                 }
                 else if (e.tagName() == "desc")
@@ -389,6 +453,8 @@ void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
         ui->widget_hex->setData(ui->widget_hex->dataAt(selected_offset, selected_size));
     }
 }
+
+/* ************************************************************************** */
 
 /**
  * Helper function. Deletes all child widgets of the given layout @a item.
@@ -456,11 +522,11 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 void ContainerExplorer::clearContent()
 {
     //qDebug() << "CLEARING CONTENT";
-    //ui->labelTitle->setText("");
-    remove(ui->gridLayout_header, 0, 0, true);
-    remove(ui->gridLayout_header, 1, 1, true);
-    remove(ui->gridLayout_content, 0, 0, true);
-    remove(ui->gridLayout_content, 1, 1, true);
+    for (int i = 0; i < 32; i++)
+    {
+        removeRow(ui->gridLayout_header, i, true);
+        removeRow(ui->gridLayout_content, i, true);
+    }
 }
 
 /* ************************************************************************** */
@@ -514,6 +580,9 @@ bool ContainerExplorer::loadXmlFile()
         }
         root_node = root_node.nextSibling();
     }
+
+    // Force initial selection
+    //ui->treeWidget->set
 
     return status;
 }
