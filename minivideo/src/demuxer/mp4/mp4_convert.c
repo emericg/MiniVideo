@@ -65,9 +65,13 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 
     if (retcode == SUCCESS)
     {
+        int sample_count = track->stsz_sample_count;
+        if (sample_count <= 0)
+            sample_count = 1;
+
         if (track->handlerType == HANDLER_AUDIO)
         {
-            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], track->stsz_sample_count);
+            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_audio[media->tracks_audio_count];
@@ -76,7 +80,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         }
         else if (track->handlerType == HANDLER_VIDEO)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->stsz_sample_count + track->sps_count + track->pps_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count + track->sps_count + track->pps_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -87,7 +91,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                  track->handlerType == HANDLER_SBTL ||
                  track->handlerType == HANDLER_TEXT)
         {
-            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], track->stsz_sample_count);
+            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_subt[media->tracks_subtitles_count];
@@ -98,7 +102,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         {
             TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %u)", track->id, track->handlerType);
 
-            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], track->stsz_sample_count);
+            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_others[media->tracks_others_count];

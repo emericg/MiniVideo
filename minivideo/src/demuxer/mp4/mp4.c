@@ -1209,9 +1209,6 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         {
             switch (box_subheader.boxtype)
             {
-                case BOX_UDTA:
-                    retcode = parse_udta(bitstr, &box_subheader, mp4);
-                    break;
                 case BOX_MVHD:
                     retcode = parse_mvhd(bitstr, &box_subheader, mp4);
                     break;
@@ -1220,6 +1217,147 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     break;
                 case BOX_TRAK:
                     retcode = parse_trak(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_META:
+                    retcode = parse_meta(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_UDTA:
+                    retcode = parse_udta(bitstr, &box_subheader, mp4);
+                    break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse the container for individual (fragmented) track or stream.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.8.6 Track Fragment Box.
+ */
+static int parse_traf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_traf()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    fprintf(mp4->xml, "  <title>Track Fragment</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS)
+        {
+            switch (box_subheader.boxtype)
+            {
+                case BOX_TFHD:
+                case BOX_TRUN:
+                case BOX_TFDT:
+                    default:
+                        retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                        break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse the Movie (fragmented) Header Box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.8.5 Movie Fragment Header Box.
+ */
+static int parse_mfhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_mfhd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    uint32_t sequence_number = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> sequence_number     : %u", sequence_number);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Movie Fragment Header</title>\n");
+        fprintf(mp4->xml, "  <sequence_number>%u</sequence_number>\n", sequence_number);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Parse the container for (fragmented) metadatas.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.8.4 Movie Fragment Box.
+ */
+static int parse_moof(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_moof()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    fprintf(mp4->xml, "  <title>Movie Fragment</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (retcode == SUCCESS)
+        {
+            switch (box_subheader.boxtype)
+            {
+                case BOX_MFHD:
+                    retcode = parse_mfhd(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_TRAF:
+                    retcode = parse_traf(bitstr, &box_subheader, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
@@ -1322,7 +1460,7 @@ int mp4_fileParse(MediaFile_t *media)
                         retcode = parse_moov(bitstr, &box_header, &mp4);
                         break;
                     case BOX_MOOF:
-                        retcode = parse_unknown_box(bitstr, &box_header, mp4.xml);
+                        retcode = parse_moof(bitstr, &box_header, &mp4);
                         break;
                     case BOX_MDAT:
                         retcode = parse_mdat(bitstr, &box_header, mp4.xml);

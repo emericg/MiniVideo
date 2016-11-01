@@ -86,7 +86,7 @@ typedef struct Mp4Track_t
         unsigned int par_h;
         unsigned int par_v;
 
-        // AVC specific parameters
+        // AVC/HEVC specific parameters
         unsigned int profile;
         unsigned int level;
 
@@ -225,10 +225,10 @@ typedef enum Mp4BoxType_e
 
     BOX_MOOF = 0x6D6F6F66,                      //!< movie fragment
         BOX_MFHD = 0x6D666864,                  //!< (*) movie fragment header
-            BOX_TRAF = 0x74726166,              //!< track fragment
-                BOX_TFHD = 0x74666866,          //!< (*) track fragment header
-                BOX_TRUN = 0x7472756E,          //!< track fragment run
-                BOX_TFDT = 0x74666474,          //!< track fragment decode time
+        BOX_TRAF = 0x74726166,                  //!< track fragment
+            BOX_TFHD = 0x74666866,              //!< (*) track fragment header
+            BOX_TRUN = 0x7472756E,              //!< track fragment run
+            BOX_TFDT = 0x74666474,              //!< track fragment decode time
 
     BOX_MFRA = 0x6D667261,                      //!< movie fragment random access
         BOX_TFRA = 0x74667261,                  //!< track fragment random access
