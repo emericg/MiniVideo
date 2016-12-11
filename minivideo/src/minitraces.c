@@ -32,7 +32,7 @@
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
-#define MINITRACE_EOL "\n\r"
+#define MINITRACES_EOL "\n\r"
 #else // linux, macOS, and everyone else...
 #define MINITRACES_EOL "\n"
 #endif
