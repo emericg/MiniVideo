@@ -204,7 +204,7 @@ void ContainerExplorer::loadSamples(int tid)
         uint32_t i = 0;
         for (i = 0; i < sample_to_load; i++)
         {
-            if (track->sample_type[i] != sample_OTHER)
+            if (track->sample_type && track->sample_type[i] != sample_OTHER)
                 ui->listWidget->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
             else
                 ui->listWidget->addItem(tr("Sample #") + QString::number(i));
@@ -313,6 +313,9 @@ void ContainerExplorer::containerSelectionChanged()
 
 void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
 {
+    if (!item)
+        return;
+
     clearContent();
 
     int selected_offset = item->data(0, Qt::UserRole).toInt();

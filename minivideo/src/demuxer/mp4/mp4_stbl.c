@@ -158,9 +158,9 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
         // Parse subbox content (> SampleEntry)
         unsigned int reserved[6] = {0};
-        for (int i = 0; i < 6; i++)
+        for (int j = 0; j < 6; j++)
         {
-            reserved[i] = read_bits(bitstr, 8);
+            reserved[j] = read_bits(bitstr, 8);
         }
         unsigned int data_reference_index = read_bits(bitstr, 16);
 

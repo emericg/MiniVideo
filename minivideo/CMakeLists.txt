@@ -76,27 +76,27 @@ set(CMAKE_C_FLAGS "-std=c99 -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(ENABLE_DEBUG 1)
-    message(WARNING" * This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release.")
+    message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
     # Custom cflags? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
     set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wextra -Wshadow")
 else()
     set(ENABLE_DEBUG 0)
-    message(STATUS "* This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug.")
+    message(STATUS "> This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug")
     # Custom cflags? Use "release mode" and "-O2" for maximum speed.
     set(CMAKE_C_FLAGS_RELEASE "-O2 -Wno-sign-compare")
 endif()
 
 # Add per-compiler custom rules
-if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
-    message(STATUS "* Building with Clang compiler")
+if(${CMAKE_C_COMPILER_ID} MATCHES "Clang")
+    message(STATUS "Building with Clang compiler")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
-    message(STATUS "* Building with Intel C compiler")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    message(STATUS "* Building with GCC compiler")
+elseif(${CMAKE_C_COMPILER_ID} STREQUAL "Intel")
+    message(STATUS "Building with Intel C compiler")
+elseif(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+    message(STATUS "Building with GCC compiler")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
-elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-    message(STATUS "* Building with Visual Studio C compiler")
+elseif(${CMAKE_C_COMPILER_ID} STREQUAL "MSVC")
+    message(STATUS "Building with Visual Studio C compiler")
 endif()
 
 
@@ -214,7 +214,7 @@ message("** Building shared library")
 add_library(minivideo_shared SHARED ${minivideo_SRC})
 
 if(WIN32)
-if (CMAKE_VERSION VERSION_GREATER "3.3")
+if(CMAKE_VERSION VERSION_GREATER "3.3")
     message("* Generating symbols export header")
     GENERATE_EXPORT_HEADER(minivideo_shared
                            BASE_NAME minivideo_shared
