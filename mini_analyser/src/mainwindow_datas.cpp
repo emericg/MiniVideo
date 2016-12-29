@@ -1063,10 +1063,10 @@ int MainWindow::printOtherDetails()
 
 void MainWindow::xAxisRangeChanged(const QCPRange &newRange)
 {
-
+    //
 }
 
 void MainWindow::yAxisRangeChanged(const QCPRange &newRange)
 {
-
+    //
 }

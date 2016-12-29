@@ -192,7 +192,8 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
+        if (mp4->run == true &&
+            retcode == SUCCESS &&
             bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)
@@ -237,7 +238,8 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
+        if (mp4->run == true &&
+            retcode == SUCCESS &&
             bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
         {
             switch (box_subheader.boxtype)

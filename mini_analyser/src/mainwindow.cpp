@@ -45,13 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    explorer = NULL;
-    fcchelper = NULL;
-    aboutwindows = NULL;
-
-    emptyFileList = true;
-    exportFormat = EXPORT_TEXT;
-
     ui->statusLabel->hide();
     statusTimer = new QTimer;
     connect(statusTimer, SIGNAL(timeout()), this, SLOT(hideStatus()));

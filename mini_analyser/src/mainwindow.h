@@ -94,18 +94,18 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    ContainerExplorer *explorer;
-    FourccHelper *fcchelper;
-    AboutWindows *aboutwindows;
+    ContainerExplorer *explorer = nullptr;
+    FourccHelper *fcchelper = nullptr;
+    AboutWindows *aboutwindows = nullptr;
 
-    QTimer *statusTimer;
+    QTimer *statusTimer = nullptr;
     QString applicationPath;
 
-    bool emptyFileList;
+    bool emptyFileList = true;
     std::vector <MediaFile_t *> mediaList; // This might need to be smart pointers at some point
 
     // Text export feature
-    int exportFormat;
+    int exportFormat = 0;
     QString exportDatas;
     QFile exportFile;
 
