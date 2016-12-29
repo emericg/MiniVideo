@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     explorer = NULL;
-    hexeditor = NULL;
     fcchelper = NULL;
     aboutwindows = NULL;
 
@@ -584,30 +583,6 @@ void MainWindow::openExplorer()
             explorer = new ContainerExplorer();
             explorer->loadMedia(media);
             explorer->show();
-        }
-    }
-}
-
-void MainWindow::openHexEditor()
-{
-    QString file;
-    MediaFile_t *media = currentMediaFile();
-
-    if (media)
-    {
-        // Open current MediaFile in HexEditor
-        file = QString(media->file_path);
-
-        if (hexeditor)
-        {
-            hexeditor->loadFile(file);
-            hexeditor->show();
-        }
-        else
-        {
-            hexeditor = new HexEditor();
-            hexeditor->loadFile(file);
-            hexeditor->show();
         }
     }
 }

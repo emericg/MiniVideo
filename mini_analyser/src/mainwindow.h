@@ -27,7 +27,6 @@
 #include <minivideo.h>
 
 // minianalyser
-#include "hexeditor.h"
 #include "containerexplorer.h"
 #include "fourcchelper.h"
 #include "about.h"
@@ -82,7 +81,6 @@ private slots:
     void closeFile();
 
     void openExplorer();
-    void openHexEditor();
     void openFourccHelper();
     void openAbout();
     void About();
@@ -97,7 +95,6 @@ private:
     Ui::MainWindow *ui;
 
     ContainerExplorer *explorer;
-    HexEditor *hexeditor;
     FourccHelper *fcchelper;
     AboutWindows *aboutwindows;
 

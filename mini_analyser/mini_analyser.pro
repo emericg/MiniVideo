@@ -22,7 +22,6 @@ SOURCES     += src/main.cpp \
                src/utils.cpp \
                src/about.cpp \
                src/fourcchelper.cpp \
-               src/hexeditor.cpp \
                src/containerexplorer.cpp \
                src/thirdparty/qhexedit2/qhexedit.cpp \
                src/thirdparty/qhexedit2/chunks.cpp \
@@ -34,7 +33,6 @@ HEADERS     += src/main.h \
                src/utils.h \
                src/about.h \
                src/fourcchelper.h \
-               src/hexeditor.h \
                src/containerexplorer.h \
                src/thirdparty/qhexedit2/qhexedit.h \
                src/thirdparty/qhexedit2/chunks.h \
@@ -44,7 +42,6 @@ HEADERS     += src/main.h \
 
 FORMS       += ui/mainwindow.ui \
                ui/explorer.ui \
-               ui/hexeditor.ui \
                ui/fourcchelper.ui \
                ui/about.ui
 
