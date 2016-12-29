@@ -166,7 +166,7 @@ set(minivideo_SRC
     src/export.c
         src/export_utils.c
         src/stb_image_write.h
-    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_box.c src/demuxer/mp4/mp4_stbl.c src/demuxer/mp4/mp4_convert.c src/demuxer/mp4/mp4_struct.h
+    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_box.c src/demuxer/mp4/mp4_spatial.c src/demuxer/mp4/mp4_stbl.c src/demuxer/mp4/mp4_convert.c src/demuxer/mp4/mp4_struct.h
     src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
     src/demuxer/esparser/esparser.c

@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "mp4_stbl.h"
+#include "mp4_spatial.h"
 #include "mp4_box.h"
 #include "mp4_struct.h"
 #include "../xml_mapper.h"
@@ -263,6 +264,35 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         }
     }
 
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////
+        if (retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
+                case BOX_SA3D:
+                    retcode = parse_sa3d(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_SAND:
+                    retcode = parse_sand(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
+
     return retcode;
 }
 
@@ -392,6 +422,12 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                     break;
                 case BOX_PASP:
                     retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_ST3D:
+                    retcode = parse_st3d(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_SV3D:
+                    retcode = parse_sv3d(bitstr, &box_subsubheader, track, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);

@@ -196,14 +196,27 @@ typedef enum Mp4BoxType_e
                         BOX_URN = 0x75726E20,           //!< data entry urn box
                     BOX_STBL = 0x7374626C,              //!< (*) sample table box, container for the time/space map
                         BOX_STSD = 0x73747364,          //!< (*) sample descriptions (codec types, initialization, etc)
-                            BOX_AVCC = 0x61766343,      //!< AVC configuration box
-                            BOX_HVCC = 0x68766343,      //!< HEVC configuration box
+                            BOX_AVCC = 0x61766343,      //!< (v) AVC configuration box
+                            BOX_HVCC = 0x68766343,      //!< (v) HEVC configuration box
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box
                             BOX_FIEL = 0x6669656C,      //!<
                             BOX_GAMA = 0x67616D61,      //!<
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
+
+                            BOX_SA3D = 0x53413344,              //!< (v) Spatial Audio Box
+                            BOX_SAND = 0x53414E44,              //!< (v) Non-Diegetic Audio Box
+                            BOX_ST3D = 0x73743364,              //!< (v) Stereoscopic 3D Video Box
+                            BOX_SV3D = 0x73763364,              //!< (v) Spherical Video Box
+                                BOX_SVHD = 0x73766864,          //!< (v) Spherical Video Header
+                                BOX_PROJ = 0x70726F6A,          //!< (v) Projection Box
+                                    BOX_PRHD = 0x70726864,      //!< (v) Projection Header Box
+                                    BOX_CBMP = 0x63626D70,      //!< (v) Cubemap Projection Box
+                                    BOX_EQUI = 0x65717569,      //!< (v) Equirectangular Projection Box
+                                    BOX_MSPH = 0x6D737068,      //!< (v) Mesh Projection Box
+                                        BOX_MESH = 0x6D657368,  //!< (v) Mesh Box
+
                         BOX_STTS = 0x73747473,          //!< (*) (decoding) time to sample
                         BOX_CTTS = 0x63747473,          //!< (composition / presentation) time to sample
                         BOX_CSLG = 0x63736c67,          //!< composition to decode timeline mapping
