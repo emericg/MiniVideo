@@ -8,10 +8,18 @@
 #include "chunks.h"
 #include "commands.h"
 
+#ifdef QHEXEDIT_EXPORTS
+#define QHEXEDIT_API Q_DECL_EXPORT
+#elif QHEXEDIT_IMPORTS
+#define QHEXEDIT_API Q_DECL_IMPORT
+#else
+#define QHEXEDIT_API
+#endif
+
 /** \mainpage
 QHexEdit is a binary editor widget for Qt.
 
-\version Version 0.7.8
+\version Version 0.8.2
 \image html qhexedit.png
 */
 
@@ -48,7 +56,7 @@ QHexEdit is based on QIODevice, that's why QHexEdit can handle big amounts of
 data. The size of edited data can be more then two gigabytes without any
 restrictions.
 */
-class QHexEdit : public QAbstractScrollArea
+class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
 {
     Q_OBJECT
 
@@ -76,6 +84,9 @@ class QHexEdit : public QAbstractScrollArea
     /*! Switch the ascii area on (true, show it) or off (false, hide it).
     */
     Q_PROPERTY(bool asciiArea READ asciiArea WRITE setAsciiArea)
+
+    /*! Set and get bytes number per line.*/
+    Q_PROPERTY(int bytesPerLine READ bytesPerLine WRITE setBytesPerLine)
 
     /*! Porperty cursorPosition sets or gets the position of the editor cursor
     in QHexEdit. Every byte in data has to cursor positions: the lower and upper
@@ -226,7 +237,7 @@ public:
     /*! Set Font of QHexEdit
      * \param font
      */
-    virtual void setFont(const QFont &font);
+    void setFont(const QFont &font);
 
     /*! Gives back a formatted image of the content of QHexEdit
     */
@@ -278,6 +289,9 @@ public:
 
     bool asciiArea();
     void setAsciiArea(bool asciiArea);
+
+    int bytesPerLine();
+    void setBytesPerLine(int count);
 
     qint64 cursorPosition();
     void setCursorPosition(qint64 position);
@@ -355,6 +369,8 @@ private:
     int _addressWidth;
     bool _asciiArea;
     qint64 _addressOffset;
+    int _bytesPerLine;
+    int _hexCharsInLine;
     bool _highlighting;
     bool _overwriteMode;
     QBrush _brushSelection;
