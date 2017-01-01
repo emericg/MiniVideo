@@ -484,36 +484,30 @@ int MainWindow::printAudioDetails()
 
             ui->label_audio_id->setText(QString::number(t->track_id));
 
-            if (t->track_title)
+            QString track_title = QString::fromLocal8Bit(t->track_title);
+            if (track_title.isEmpty())
             {
-                QString track_title = QString::fromLocal8Bit(t->track_title);
-                if (track_title.isEmpty())
-                {
-                    ui->label_64->hide();
-                    ui->label_audio_title->hide();
-                }
-                else
-                {
-                    ui->label_64->show();
-                    ui->label_audio_title->show();
-                    ui->label_audio_title->setText(track_title);
-                }
+                ui->label_64->hide();
+                ui->label_audio_title->hide();
+            }
+            else
+            {
+                ui->label_64->show();
+                ui->label_audio_title->show();
+                ui->label_audio_title->setText(track_title);
             }
 
-            if (t->stream_encoder)
+            QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+            if (stream_encoder.isEmpty())
             {
-                QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
-                if (stream_encoder.isEmpty())
-                {
-                    ui->label_61->hide();
-                    ui->label_audio_encoder->hide();
-                }
-                else
-                {
-                    ui->label_61->show();
-                    ui->label_audio_encoder->show();
-                    ui->label_audio_encoder->setText(stream_encoder);
-                }
+                ui->label_61->hide();
+                ui->label_audio_encoder->hide();
+            }
+            else
+            {
+                ui->label_61->show();
+                ui->label_audio_encoder->show();
+                ui->label_audio_encoder->setText(stream_encoder);
             }
 
             QString track_language = getLanguageString(t->track_languagecode);
@@ -692,36 +686,30 @@ int MainWindow::printVideoDetails()
 
             ui->label_video_id->setText(QString::number(t->track_id));
 
-            if (t->track_title)
+            QString track_title = QString::fromLocal8Bit(t->track_title);
+            if (track_title.isEmpty())
             {
-                QString track_title = QString::fromLocal8Bit(t->track_title);
-                if (track_title.isEmpty())
-                {
-                    ui->label_63->hide();
-                    ui->label_video_title->hide();
-                }
-                else
-                {
-                    ui->label_63->show();
-                    ui->label_video_title->show();
-                    ui->label_video_title->setText(track_title);
-                }
+                ui->label_63->hide();
+                ui->label_video_title->hide();
+            }
+            else
+            {
+                ui->label_63->show();
+                ui->label_video_title->show();
+                ui->label_video_title->setText(track_title);
             }
 
-            if (t->stream_encoder)
+            QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+            if (stream_encoder.isEmpty())
             {
-                QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
-                if (stream_encoder.isEmpty())
-                {
-                    ui->label_62->hide();
-                    ui->label_video_encoder->hide();
-                }
-                else
-                {
-                    ui->label_62->show();
-                    ui->label_video_encoder->show();
-                    ui->label_video_encoder->setText(stream_encoder);
-                }
+                ui->label_62->hide();
+                ui->label_video_encoder->hide();
+            }
+            else
+            {
+                ui->label_62->show();
+                ui->label_video_encoder->show();
+                ui->label_video_encoder->setText(stream_encoder);
             }
 
             QString track_language = getLanguageString(t->track_languagecode);
@@ -964,20 +952,17 @@ int MainWindow::printSubtitlesDetails()
 
             ui->label_sub_id->setText(QString::number(t->track_id));
 
-            if (t->track_title)
+            QString track_title = QString::fromLocal8Bit(t->track_title);
+            if (track_title.isEmpty())
             {
-                QString track_title = QString::fromLocal8Bit(t->track_title);
-                if (track_title.isEmpty())
-                {
-                    ui->label_67->hide();
-                    ui->label_video_title->hide();
-                }
-                else
-                {
-                    ui->label_67->show();
-                    ui->label_sub_title->show();
-                    ui->label_sub_title->setText(track_title);
-                }
+                ui->label_67->hide();
+                ui->label_video_title->hide();
+            }
+            else
+            {
+                ui->label_67->show();
+                ui->label_sub_title->show();
+                ui->label_sub_title->setText(track_title);
             }
 
             QString track_language = getLanguageString(t->track_languagecode);
