@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      containerexplorer.h
+ * \file      tabcontainer.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2016
+ * \date      2017
  */
 
-#ifndef CONTAINER_EXPLORER_H
-#define CONTAINER_EXPLORER_H
-/* ************************************************************************** */
+#ifndef TABCONTAINER_H
+#define TABCONTAINER_H
 
 // MiniVideo
 #include "mediafile_struct.h"
@@ -31,41 +30,26 @@
 
 #include <QMainWindow>
 #include <QWidget>
+#include <QTreeWidgetItem>
 #include <QResizeEvent>
 #include <QFile>
 #include <QDomDocument>
 
 namespace Ui {
-class ContainerExplorer;
+class tabContainer;
 }
-class QTreeWidgetItem;
 
-class ContainerExplorer : public QMainWindow
+class tabContainer : public QWidget
 {
     Q_OBJECT
 
-    Ui::ContainerExplorer *ui;
-
-    MediaFile_t *media = nullptr;
-    BitstreamMap_t *track = nullptr;
-    BitstreamMap_t *tracks[16] = {0};
-
-    QFile mediaFile;
-    QByteArray mediaDatas;
-
-    QFile xmlFile;
-    QDomDocument xmlDatas;
-
-    void resizeEvent(QResizeEvent *event);
-
 public:
-    explicit ContainerExplorer(QWidget *parent = 0);
-    ~ContainerExplorer();
+    explicit tabContainer(QWidget *parent = 0);
+    ~tabContainer();
 
     void loadMedia(const MediaFile_t *media);
-    void closeMedia();
-
     void loadTracks();
+    void closeMedia();
 
 public slots:
     void clearContent();
@@ -85,7 +69,21 @@ public slots:
     QTreeWidgetItem *createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset);
     void findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements);
     bool findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement);
+
+private:
+    Ui::tabContainer *ui;
+
+    MediaFile_t *media = nullptr;
+    BitstreamMap_t *track = nullptr;
+    BitstreamMap_t *tracks[16] = {0};
+
+    QFile mediaFile;
+    QByteArray mediaDatas;
+
+    QFile xmlFile;
+    QDomDocument xmlDatas;
+
+    void resizeEvent(QResizeEvent *event);
 };
 
-/* ************************************************************************** */
-#endif // CONTAINER_EXPLORER_H
+#endif // TABCONTAINER_H

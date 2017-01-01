@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>680</width>
     <height>800</height>
    </rect>
   </property>
@@ -49,101 +49,6 @@
     <property name="verticalSpacing">
      <number>9</number>
     </property>
-    <item row="1" column="0" colspan="6">
-     <widget class="QLabel" name="statusLabel">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: 1px solid rgb(255, 53, 3);
-background: rgba(255, 170, 0, 128);</string>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QPushButton" name="pushButton_file_exit">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="pushButton_file_detach">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_file_reload">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0" colspan="3">
      <widget class="QComboBox" name="file_comboBox">
       <property name="font">
@@ -171,13 +76,56 @@ background: rgba(255, 170, 0, 128);</string>
       </item>
      </widget>
     </item>
-    <item row="2" column="0" colspan="6">
+    <item row="0" column="3">
+     <widget class="QPushButton" name="pushButton_file_detach">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4">
+     <widget class="QLabel" name="statusLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid rgb(255, 53, 3);
+background: rgba(255, 170, 0, 128);</string>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="4">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -336,8 +284,8 @@ background: rgba(255, 170, 0, 128);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>624</width>
-             <height>622</height>
+             <width>664</width>
+             <height>613</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -3184,7 +3132,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_other">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/emblem-system.svg</normaloff>:/icons/icons/emblem-system.svg</iconset>
+         <normaloff>:/icons/icons/dialog-question.svg</normaloff>:/icons/icons/dialog-question.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Other track(s)</string>
@@ -3303,7 +3251,20 @@ background: rgba(255, 170, 0, 128);</string>
         <string>Export</string>
        </attribute>
       </widget>
+      <widget class="tabContainer" name="tab_container">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/custom-hexeditor.svg</normaloff>:/icons/icons/custom-hexeditor.svg</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Container</string>
+       </attribute>
+      </widget>
       <widget class="tabDev" name="tab_dev">
+       <attribute name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/icons/icons/emblem-important.svg</normaloff>:/icons/icons/emblem-important.svg</iconset>
+       </attribute>
        <attribute name="title">
         <string>DEV</string>
        </attribute>
@@ -3313,14 +3274,17 @@ background: rgba(255, 170, 0, 128);</string>
    </layout>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>40</height>
-    </size>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="movable">
     <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopToolBarArea</set>
    </property>
    <property name="iconSize">
     <size>
@@ -3331,6 +3295,9 @@ background: rgba(255, 170, 0, 128);</string>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -3338,9 +3305,9 @@ background: rgba(255, 170, 0, 128);</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionReload"/>
    <addaction name="actionClose"/>
    <addaction name="separator"/>
-   <addaction name="actionExplorer"/>
    <addaction name="actionFourCC"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
@@ -3418,18 +3385,6 @@ background: rgba(255, 170, 0, 128);</string>
     <string>Open the FourCC helper</string>
    </property>
   </action>
-  <action name="actionExport">
-   <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Export</string>
-   </property>
-   <property name="toolTip">
-    <string>Export file informations on a text file</string>
-   </property>
-  </action>
   <action name="actionReload">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
@@ -3440,18 +3395,6 @@ background: rgba(255, 170, 0, 128);</string>
    </property>
    <property name="toolTip">
     <string>Reload current file</string>
-   </property>
-  </action>
-  <action name="actionExplorer">
-   <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/shotwell.svg</normaloff>:/icons/icons/shotwell.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Explorer</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the container explorer</string>
    </property>
   </action>
  </widget>
@@ -3473,6 +3416,12 @@ background: rgba(255, 170, 0, 128);</string>
    <class>tabExport</class>
    <extends>QWidget</extends>
    <header>../src/tabexport.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>tabContainer</class>
+   <extends>QWidget</extends>
+   <header>../src/tabcontainer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

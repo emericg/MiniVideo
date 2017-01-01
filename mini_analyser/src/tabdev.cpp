@@ -41,7 +41,7 @@ tabDev::tabDev(QWidget *parent) :
     ui->tableWidget_stats->verticalHeader()->setVisible(false);
 
     ui->tableWidget_stats->resizeColumnsToContents();
-    ui->tableWidget_stats->horizontalHeader()->resizeSection(0, 128);
+    ui->tableWidget_stats->horizontalHeader()->resizeSection(0, 200);
 }
 
 tabDev::~tabDev()

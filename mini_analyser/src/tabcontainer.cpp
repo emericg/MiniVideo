@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      containerexplorer.cpp
+ * \file      tabcontainer.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2016
+ * \date      2017
  */
 
-#include "containerexplorer.h"
-#include "ui_explorer.h"
+#include "tabcontainer.h"
+#include "ui_tabcontainer.h"
+
 #include "utils.h"
 
 #include <QLayout>
@@ -34,9 +35,9 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 
-ContainerExplorer::ContainerExplorer(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::ContainerExplorer)
+tabContainer::tabContainer(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::tabContainer)
 {
     ui->setupUi(this);
 
@@ -60,12 +61,12 @@ ContainerExplorer::ContainerExplorer(QWidget *parent) :
 #endif
 }
 
-ContainerExplorer::~ContainerExplorer()
+tabContainer::~tabContainer()
 {
     delete ui;
 }
 
-void ContainerExplorer::resizeEvent(QResizeEvent *event)
+void tabContainer::resizeEvent(QResizeEvent *event)
 {
     // Make sure the scrollAreas don't get wider than our windows
     int width = this->width() - ui->tabWidget->width() - 24;
@@ -73,7 +74,7 @@ void ContainerExplorer::resizeEvent(QResizeEvent *event)
     ui->labelTitle->setMaximumWidth(width);
 }
 
-void ContainerExplorer::loadMedia(const MediaFile_t *media)
+void tabContainer::loadMedia(const MediaFile_t *media)
 {
     if (media)
     {
@@ -89,7 +90,7 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
 
         loadXmlFile();
         loadTracks();
-        loadSamples(0);
+        //loadSamples(0);
         //containerSelectionEmpty();
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
@@ -97,7 +98,7 @@ void ContainerExplorer::loadMedia(const MediaFile_t *media)
     }
 }
 
-void ContainerExplorer::closeMedia()
+void tabContainer::closeMedia()
 {
     // Clean the tabWidget_tracks
     ui->tabWidget_tracks->clear();
@@ -123,7 +124,7 @@ void ContainerExplorer::closeMedia()
     media = NULL;
 }
 
-void ContainerExplorer::tabSwitch(int index)
+void tabContainer::tabSwitch(int index)
 {
     if (index == 1)
     {
@@ -135,7 +136,7 @@ void ContainerExplorer::tabSwitch(int index)
     }
 }
 
-void ContainerExplorer::loadTracks()
+void tabContainer::loadTracks()
 {
     ui->tabWidget_tracks->clear();
 
@@ -186,7 +187,7 @@ void ContainerExplorer::loadTracks()
     }
 }
 
-void ContainerExplorer::loadSamples(int tid)
+void tabContainer::loadSamples(int tid)
 {
     //qDebug() << "loadSamples(track #" << tid << ")";
 
@@ -224,12 +225,12 @@ void ContainerExplorer::loadSamples(int tid)
     ui->listWidget->setCurrentRow(0);
 }
 
-void ContainerExplorer::sampleSelection()
+void tabContainer::sampleSelection()
 {
     sampleSelection(ui->listWidget->currentRow());
 }
 
-void ContainerExplorer::sampleSelection(int sid)
+void tabContainer::sampleSelection(int sid)
 {
     //qDebug() << "sampleSelection(sample #" << sid << ")";
 
@@ -281,7 +282,7 @@ void ContainerExplorer::sampleSelection(int sid)
     }
 }
 
-void ContainerExplorer::containerSelectionEmpty()
+void tabContainer::containerSelectionEmpty()
 {
     clearContent();
 
@@ -306,12 +307,12 @@ void ContainerExplorer::containerSelectionEmpty()
     ui->widget_hex->setData(mediaFile);
 }
 
-void ContainerExplorer::containerSelectionChanged()
+void tabContainer::containerSelectionChanged()
 {
     containerSelection(ui->treeWidget->currentItem(), 0);
 }
 
-void ContainerExplorer::containerSelection(QTreeWidgetItem *item, int column)
+void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 {
     if (!item)
         return;
@@ -522,7 +523,7 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
     layout->setColumnStretch(column, 0);
 }
 
-void ContainerExplorer::clearContent()
+void tabContainer::clearContent()
 {
     //qDebug() << "CLEARING CONTENT";
     for (int i = 0; i < 32; i++)
@@ -534,7 +535,7 @@ void ContainerExplorer::clearContent()
 
 /* ************************************************************************** */
 
-bool ContainerExplorer::loadXmlFile()
+bool tabContainer::loadXmlFile()
 {
     //qDebug() << "loadXmlFile()";
     bool status = true;
@@ -590,7 +591,7 @@ bool ContainerExplorer::loadXmlFile()
     return status;
 }
 
-void ContainerExplorer::xmlHeaderParser(QDomNode &root)
+void tabContainer::xmlHeaderParser(QDomNode &root)
 {
     //qDebug() << "xmlHeaderParser() >>>" << root.toElement().tagName();
 
@@ -606,7 +607,7 @@ void ContainerExplorer::xmlHeaderParser(QDomNode &root)
     }
 }
 
-void ContainerExplorer::xmlStructureParser(QDomNode &root)
+void tabContainer::xmlStructureParser(QDomNode &root)
 {
     //qDebug() << "xmlStructureParser() >>>" << root.toElement().tagName();
 
@@ -629,7 +630,7 @@ void ContainerExplorer::xmlStructureParser(QDomNode &root)
     }
 }
 
-void ContainerExplorer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
+void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
 {
     QString fcc = root.toElement().attributeNode("fcc").value();
     QString offset = root.toElement().attributeNode("offset").value();
@@ -671,7 +672,7 @@ void ContainerExplorer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
     }
 }
 
-QTreeWidgetItem *ContainerExplorer::createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset)
+QTreeWidgetItem *tabContainer::createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset)
 {
     QTreeWidgetItem *childItem;
     if (item)
@@ -688,7 +689,7 @@ QTreeWidgetItem *ContainerExplorer::createChildItem(QTreeWidgetItem *item, QStri
     return childItem;
 }
 
-void ContainerExplorer::findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements)
+void tabContainer::findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements)
 {
     if (elem.attributes().contains(attr))
         foundElements.append(elem);
@@ -701,7 +702,7 @@ void ContainerExplorer::findElementsWithAttribute(const QDomElement &elem, const
     }
 }
 
-bool ContainerExplorer::findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement)
+bool tabContainer::findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement)
 {
     bool status = false;
 

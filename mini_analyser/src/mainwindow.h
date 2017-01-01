@@ -27,11 +27,11 @@
 #include <minivideo.h>
 
 // minianalyser
-#include "containerexplorer.h"
 #include "fourcchelper.h"
 #include "about.h"
 
 #include <QMainWindow>
+#include <QFile>
 #include <vector>
 
 /* ************************************************************************** */
@@ -56,6 +56,7 @@ public:
 private slots:
     void loadFileDialog();
 
+    int printFile();
     int printDatas();
         int printAudioDetails();
         int printVideoDetails();
@@ -66,13 +67,13 @@ private slots:
     void yAxisRangeChanged(const QCPRange &newRange);
 
     void hideStatus();
+
     void detachFile();
     void reloadFile();
     void closeFile(const QString &file);
     void closeFile();
     void closeFiles();
 
-    void openExplorer();
     void openFourccHelper();
     void openAbout();
     void About();
@@ -86,7 +87,6 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    ContainerExplorer *explorer = nullptr;
     FourccHelper *fcchelper = nullptr;
     AboutWindows *aboutwindows = nullptr;
 
@@ -94,12 +94,7 @@ private:
     QString applicationPath;
 
     bool emptyFileList = true;
-    std::vector <MediaFile_t *> mediaList; // This might need to be smart pointers at some point
-
-    // Text export feature
-    int exportFormat = 0;
-    QString exportDatas;
-    QFile exportFile;
+    std::vector <MediaFile_t *> mediaList;
 
     // Bitrate graph
     double xRangeMax;
@@ -120,6 +115,8 @@ private:
     QIcon tabOtherIcon;
     QString tabExportText;
     QIcon tabExportIcon;
+    QString tabContainerText;
+    QIcon tabContainerIcon;
     QString tabDevText;
     QIcon tabDevIcon;
 
@@ -131,15 +128,6 @@ private:
     void handleTabWidget();
     void cleanDatas();
     void cleanGui();
-
-    typedef enum TextExportFormat_e
-    {
-        EXPORT_TEXT  = 0,
-        EXPORT_JSON  = 1,
-        EXPORT_XML   = 2,
-        EXPORT_YAML  = 3
-
-    } TextExportFormat_e;
 };
 
 /* ************************************************************************** */

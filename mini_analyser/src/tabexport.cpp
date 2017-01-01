@@ -146,9 +146,17 @@ void tabExport::saveDatas()
 
 /* ************************************************************************** */
 
-int tabExport::setMedia(MediaFile_t *media)
+int tabExport::loadMedia(const MediaFile_t *media)
 {
-    this->media = media;
+    int retcode = 0;
+
+    if (media)
+    {
+        this->media = (MediaFile_t *)media;
+        retcode = generateExportDatas();
+    }
+
+    return retcode;
 }
 
 int tabExport::generateExportDatas()
@@ -175,17 +183,17 @@ int tabExport::generateExportDatas()
             if (exportFormat == EXPORT_JSON)
             {
                 outputFilePath += ".json";
-                retcode = generateExportDatas_json(media, exportMode);
+                retcode = generateExportDatas_json(exportMode);
             }
             else if (exportFormat == EXPORT_XML)
             {
                 outputFilePath += ".xml";
-                retcode = generateExportDatas_xml(media, exportMode);
+                retcode = generateExportDatas_xml(exportMode);
             }
             else // if (exportFormat == EXPORT_TEXT)
             {
                 outputFilePath += ".txt";
-                retcode = generateExportDatas_text(media, exportMode);
+                retcode = generateExportDatas_text(exportMode);
             }
         }
         else if (exportMode == 2)
@@ -195,7 +203,7 @@ int tabExport::generateExportDatas()
 
             {
                 outputFilePath += ".xml";
-                retcode = generateExportMapping_xml(media);
+                retcode = generateExportMapping_xml();
             }
         }
 
@@ -207,7 +215,7 @@ int tabExport::generateExportDatas()
     return retcode;
 }
 
-int tabExport::generateExportDatas_text(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_text(bool detailed)
 {
     int retcode = 0;
 
@@ -465,7 +473,7 @@ int tabExport::generateExportDatas_text(MediaFile_t *media, bool detailed)
     return retcode;
 }
 
-int tabExport::generateExportDatas_json(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_json(bool detailed)
 {
     int retcode = 0;
 
@@ -477,7 +485,7 @@ int tabExport::generateExportDatas_json(MediaFile_t *media, bool detailed)
     return retcode;
 }
 
-int tabExport::generateExportDatas_xml(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_xml(bool detailed)
 {
     int retcode = 0;
 
@@ -492,7 +500,7 @@ int tabExport::generateExportDatas_xml(MediaFile_t *media, bool detailed)
     return retcode;
 }
 
-int tabExport::generateExportMapping_xml(MediaFile_t *media)
+int tabExport::generateExportMapping_xml()
 {
     int retcode = 0;
 

@@ -50,22 +50,22 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(statusTimer, SIGNAL(timeout()), this, SLOT(hideStatus()));
 
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(loadFileDialog()));
+    connect(ui->actionReload, SIGNAL(triggered()), this, SLOT(reloadFile()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
-    connect(ui->actionExplorer, SIGNAL(triggered()), this, SLOT(openExplorer()));
     connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourccHelper()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAbout()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printDatas()));
+    connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printFile()));
 
     connect(ui->comboBox_video_selector, SIGNAL(activated(int)), this, SLOT(printVideoDetails()));
     connect(ui->comboBox_audio_selector, SIGNAL(activated(int)), this, SLOT(printAudioDetails()));
     connect(ui->comboBox_sub_selector, SIGNAL(activated(int)), this, SLOT(printSubtitlesDetails()));
 
     connect(ui->pushButton_file_detach, SIGNAL(clicked(bool)), this, SLOT(detachFile()));
-    connect(ui->pushButton_file_reload, SIGNAL(clicked(bool)), this, SLOT(reloadFile()));
-    connect(ui->pushButton_file_exit, SIGNAL(clicked(bool)), this, SLOT(closeFile()));
+    //connect(ui->pushButton_file_reload, SIGNAL(clicked(bool)), this, SLOT(reloadFile()));
+    //connect(ui->pushButton_file_exit, SIGNAL(clicked(bool)), this, SLOT(closeFile()));
 
     // Save tabs titles and icons
     tabDropZoneText = ui->tabWidget->tabText(0);
@@ -82,8 +82,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tabOtherIcon = ui->tabWidget->tabIcon(5);
     tabExportText = ui->tabWidget->tabText(6);
     tabExportIcon = ui->tabWidget->tabIcon(6);
-    tabDevText = ui->tabWidget->tabText(7);
-    tabDevIcon = ui->tabWidget->tabIcon(7);
+    tabContainerText = ui->tabWidget->tabText(7);
+    tabContainerIcon = ui->tabWidget->tabIcon(7);
+    tabDevText = ui->tabWidget->tabText(8);
+    tabDevIcon = ui->tabWidget->tabIcon(8);
 
     // "Drop zone" is the default tab when starting up
     handleTabWidget();
@@ -189,7 +191,7 @@ int MainWindow::loadFile(const QString &file)
         {
             handleComboBox(file);
             cleanDatas();
-            printDatas();
+            printFile();
             hideStatus();
 
             end = std::chrono::steady_clock::now();
@@ -202,7 +204,7 @@ int MainWindow::loadFile(const QString &file)
         {
             handleComboBox(file);
             cleanDatas();
-            printDatas();
+            printFile();
             hideStatus();
 
             setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
@@ -403,7 +405,8 @@ void MainWindow::handleComboBox(const QString &file)
     {
         if (mediaList.empty() == true)
         {
-            ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"), "Drag and drop files to analyse them!");
+            ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"),
+                                       "Drag and drop files to analyse them!");
         }
         else
         {
@@ -474,18 +477,20 @@ void MainWindow::handleTabWidget()
             ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
         }
 
-        if (media->tracks_video_count || media->tracks_audio_count)
+        if (media->tracks_video_count || media->tracks_audio_count ||
+            media->tracks_subtitles_count || media->tracks_others_count)
         {
             // Add the export tab
             ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
-        }
+
+            // Add the container tab
+            ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
 
 #if ENABLE_DEBUG
-        {
             // Add the developer tab
             ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
-        }
 #endif  // ENABLE_DEBUG
+        }
 
         // Restore the focus (if the same tab is available)
         for (int i = 0; i < ui->tabWidget->count(); i++)
@@ -531,28 +536,6 @@ void MainWindow::hideStatus()
 }
 
 /* ************************************************************************** */
-
-void MainWindow::openExplorer()
-{
-    const MediaFile_t *media = currentMediaFile();
-
-    if (media)
-    {
-        // Load current MediaFile in ContainerExplorer
-
-        if (explorer)
-        {
-            explorer->loadMedia(media);
-            explorer->show();
-        }
-        else
-        {
-            explorer = new ContainerExplorer();
-            explorer->loadMedia(media);
-            explorer->show();
-        }
-    }
-}
 
 void MainWindow::openFourccHelper()
 {

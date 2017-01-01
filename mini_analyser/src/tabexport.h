@@ -42,16 +42,16 @@ public:
 
 public slots:
     void clean();
-    int setMedia(MediaFile_t *media);
+    int loadMedia(const MediaFile_t *media);
     int generateExportDatas();
 
 private slots:
     void saveFileDialog();
     void saveDatas();
-    int generateExportDatas_text(MediaFile_t *media, bool detailed);
-    int generateExportDatas_json(MediaFile_t *media, bool detailed);
-    int generateExportDatas_xml(MediaFile_t *media, bool detailed);
-    int generateExportMapping_xml(MediaFile_t *media);
+    int generateExportDatas_text(bool detailed);
+    int generateExportDatas_json(bool detailed);
+    int generateExportDatas_xml(bool detailed);
+    int generateExportMapping_xml();
 
 private:
     Ui::tabExport *ui;

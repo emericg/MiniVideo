@@ -141,11 +141,29 @@ void MainWindow::cleanDatas()
     // Others tab
 }
 
-int MainWindow::printDatas()
+int MainWindow::printFile()
 {
     int retcode = 0;
 
-    handleTabWidget();
+    MediaFile_t *media = currentMediaFile();
+
+    if (media)
+    {
+        handleTabWidget();
+
+        printDatas();
+        ui->tab_container->loadMedia(media);
+        ui->tab_export->loadMedia(media);
+
+        retcode = 1;
+    }
+
+    return retcode;
+}
+
+int MainWindow::printDatas()
+{
+    int retcode = 0;
 
     MediaFile_t *media = currentMediaFile();
 
@@ -214,8 +232,8 @@ int MainWindow::printDatas()
                     trackssize += media->tracks_video[i]->stream_size;
                 if (media->tracks_subt[i])
                     trackssize += media->tracks_subt[i]->stream_size;
-                //if (media->tracks_others[i])
-                //    trackssize += media->tracks_others[i]->stream_size;
+                if (media->tracks_others[i])
+                    trackssize += media->tracks_others[i]->stream_size;
             }
 
             uint64_t overhead = media->file_size - trackssize;
@@ -226,12 +244,6 @@ int MainWindow::printDatas()
             else if (overheadpercent <= 100)
                 ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
         }
-
-        // EXPORT
-        ////////////////////////////////////////////////////////////////////////
-
-        ui->tab_export->setMedia(media);
-        ui->tab_export->generateExportDatas();
 
         // AUDIO
         ////////////////////////////////////////////////////////////////////////

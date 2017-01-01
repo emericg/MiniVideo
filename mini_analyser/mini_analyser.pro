@@ -22,25 +22,25 @@ SOURCES     += src/main.cpp \
                src/utils.cpp \
                src/about.cpp \
                src/fourcchelper.cpp \
-               src/containerexplorer.cpp \
                src/tabexport.cpp \
-               src/tabdev.cpp
+               src/tabdev.cpp \
+               src/tabcontainer.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
                src/utils.h \
                src/about.h \
                src/fourcchelper.h \
-               src/containerexplorer.h \
                src/tabexport.h \
-               src/tabdev.h
+               src/tabdev.h \
+               src/tabcontainer.h
 
 FORMS       += ui/mainwindow.ui \
-               ui/explorer.ui \
                ui/fourcchelper.ui \
                ui/about.ui \
                ui/tabexport.ui \
-               ui/tabdev.ui
+               ui/tabdev.ui \
+               ui/tabcontainer.ui
 
 # mini_analyser resources
 RESOURCES   += resources/resources.qrc
