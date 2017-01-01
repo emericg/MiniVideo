@@ -1,13 +1,14 @@
-#-------------------------------------------------
+#-------------------------------------------------------------------------------
 # mini_analyser
 # Project created by QtCreator 2014-03-23T12:56:32
-#-------------------------------------------------
+#-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
 TEMPLATE     = app
-QT          += core svg gui widgets xml printsupport
 CONFIG      += c++11
+QT          += core svg gui widgets xml printsupport
 
+# build artifacts
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
 RCC_DIR      = build/
@@ -18,15 +19,12 @@ DESTDIR      = build/
 SOURCES     += src/main.cpp \
                src/mainwindow.cpp \
                src/mainwindow_datas.cpp \
-               src/mainwindow_export.cpp \
                src/utils.cpp \
                src/about.cpp \
                src/fourcchelper.cpp \
                src/containerexplorer.cpp \
-               src/thirdparty/qhexedit2/qhexedit.cpp \
-               src/thirdparty/qhexedit2/chunks.cpp \
-               src/thirdparty/qhexedit2/commands.cpp \
-               src/thirdparty/qcustomplot/qcustomplot.cpp
+               src/tabexport.cpp \
+               src/tabdev.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
@@ -34,43 +32,62 @@ HEADERS     += src/main.h \
                src/about.h \
                src/fourcchelper.h \
                src/containerexplorer.h \
-               src/thirdparty/qhexedit2/qhexedit.h \
-               src/thirdparty/qhexedit2/chunks.h \
-               src/thirdparty/qhexedit2/commands.h \
-               src/thirdparty/qcustomplot/qcustomplot.h \
-               src/thirdparty/portable_endian.h
+               src/tabexport.h \
+               src/tabdev.h
 
 FORMS       += ui/mainwindow.ui \
                ui/explorer.ui \
                ui/fourcchelper.ui \
-               ui/about.ui
+               ui/about.ui \
+               ui/tabexport.ui \
+               ui/tabdev.ui
 
+# mini_analyser resources
 RESOURCES   += resources/resources.qrc
 
-# OS icons (macOS and Windows)
+# mini_analyser OS icons (macOS and Windows)
 ICON         = resources/app/icon.icns
 RC_ICONS     = resources/app/icon.ico
+
+# third party libraries
+SOURCES     += src/thirdparty/qcustomplot/qcustomplot.cpp \
+               src/thirdparty/qhexedit2/qhexedit.cpp \
+               src/thirdparty/qhexedit2/chunks.cpp \
+               src/thirdparty/qhexedit2/commands.cpp
+
+HEADERS     += src/thirdparty/portable_endian.h \
+               src/thirdparty/qcustomplot/qcustomplot.h \
+               src/thirdparty/qhexedit2/qhexedit.h \
+               src/thirdparty/qhexedit2/chunks.h \
+               src/thirdparty/qhexedit2/commands.h
+
 
 # minivideo library
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo
 
-# macOS target
-macx {
+#-------------------------------------------------------------------------------
+# OS specifics
 
-    # Force Qt to use a particular SDK version (with automatic detection)
+macx {
+    # Force compiler to use available macOS SDK version (with automatic detection)
     XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
     QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
     #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
 
-    # Force RPATH to look into the 'Frameworks' dir? Doesn't really seems to work anyway...
+    # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
     #QMAKE_RPATHDIR += @executable_path/../Frameworks
+}
 
+#-------------------------------------------------------------------------------
+
+# macOS deployment target
+macx {
     # bundle packaging (method 1) (uncomment to enable)
-    #system(macdeployqt build/$${TARGET}.app)
+#   system(macdeployqt build/$${TARGET}.app)
 
-#    # bundle packaging (method 2; debug only) (uncomment to enable)
+    # bundle packaging (method 2; debug only) (uncomment to enable)
 #    QT_FW_DIR = $(QTDIR)/lib/
 #    QT_PG_DIR = $(QTDIR)/plugins/
 #    !isEmpty(QT_FW_DIR) {

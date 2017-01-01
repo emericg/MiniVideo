@@ -26,7 +26,6 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
-#include <QFontDatabase>
 #include <QTimer>
 
 #include <QDropEvent>
@@ -35,6 +34,7 @@
 #include <QMimeData>
 
 #include <iostream>
+#include <chrono>
 #include <cmath>
 
 /* ************************************************************************** */
@@ -52,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(loadFileDialog()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
     connect(ui->actionExplorer, SIGNAL(triggered()), this, SLOT(openExplorer()));
-    connect(ui->actionHexEditor, SIGNAL(triggered()), this, SLOT(openHexEditor()));
     connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourccHelper()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAbout()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
@@ -64,15 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->comboBox_audio_selector, SIGNAL(activated(int)), this, SLOT(printAudioDetails()));
     connect(ui->comboBox_sub_selector, SIGNAL(activated(int)), this, SLOT(printSubtitlesDetails()));
 
-    connect(ui->comboBox_export_details, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
-    connect(ui->comboBox_export_details, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
-
     connect(ui->pushButton_file_detach, SIGNAL(clicked(bool)), this, SLOT(detachFile()));
     connect(ui->pushButton_file_reload, SIGNAL(clicked(bool)), this, SLOT(reloadFile()));
     connect(ui->pushButton_file_exit, SIGNAL(clicked(bool)), this, SLOT(closeFile()));
-
-    connect(ui->pushButton_export_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
-    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
 
     // Save tabs titles and icons
     tabDropZoneText = ui->tabWidget->tabText(0);
@@ -92,19 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
     tabDevText = ui->tabWidget->tabText(7);
     tabDevIcon = ui->tabWidget->tabIcon(7);
 
-    // Monospace fonts for the export tab
-#ifdef Q_OS_LINUX
-    int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
-#endif
-#ifdef Q_OS_OSX
-    ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
-    ui->file_comboBox->setIconSize(QSize(16,16));
-#endif
-#ifdef Q_OS_WIN32
-    ui->textBrowser_export->setFont(QFont("Lucida Console", 12));
-#endif
-
     // "Drop zone" is the default tab when starting up
     handleTabWidget();
 
@@ -114,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    closeFile();
+    closeFiles();
 
     delete statusTimer;
     delete ui;
@@ -183,6 +163,8 @@ int MainWindow::loadFile(const QString &file)
 
     if (file.isEmpty() == false)
     {
+        setStatus("Working...", SUCCESS, 0);
+
         // Check if this is a duplicate
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
@@ -194,16 +176,27 @@ int MainWindow::loadFile(const QString &file)
             }
         }
 
-        // Load file
-        setStatus("Working...", SUCCESS, 0);
+        // Timers
+        std::chrono::time_point<std::chrono::steady_clock> start, end;
+        std::chrono::time_point<std::chrono::steady_clock> start_parsing, end_parsing;
+        start = std::chrono::steady_clock::now();
 
+        // Load file
+        start_parsing = std::chrono::steady_clock::now();
         retcode = analyseFile(file);
+        end_parsing = std::chrono::steady_clock::now();
         if (retcode == 1)
         {
             handleComboBox(file);
             cleanDatas();
             printDatas();
             hideStatus();
+
+            end = std::chrono::steady_clock::now();
+            int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(end_parsing - start_parsing).count();
+            int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() - tp;
+            MediaFile_t *f = currentMediaFile();
+            ui->tab_dev->addFile(file, f->file_name, tt, tp, f->parsingMemory);
         }
         else
         {
@@ -231,7 +224,7 @@ int MainWindow::analyseFile(const QString &file)
 
     if (file.isEmpty() == false)
     {
-        strcpy(input_filepath, file.toLocal8Bit());
+        strncpy(input_filepath, file.toLocal8Bit(), 4095);
 
         // Create and open the media file
         MediaFile_t *input_media = NULL;
@@ -258,6 +251,26 @@ int MainWindow::analyseFile(const QString &file)
 
 /* ************************************************************************** */
 
+void MainWindow::cleanGui()
+{
+    cleanDatas();
+
+    mediaList.clear();
+    ui->file_comboBox->clear();
+}
+
+void MainWindow::closeFiles()
+{
+    if (mediaList.empty() == false)
+    {
+        for (unsigned i = 0; i < mediaList.size(); i++)
+        {
+            ui->tab_dev->removeFile(mediaList.at(i)->file_path);
+            minivideo_close(&mediaList.at(i));
+        }
+    }
+}
+
 void MainWindow::closeFile(const QString &file)
 {
     if (mediaList.empty() == false)
@@ -265,9 +278,11 @@ void MainWindow::closeFile(const QString &file)
         // Find the index of the given file
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
-            QString name = mediaList.at(i)->file_path;
-            if (file == name)
+            QString path = mediaList.at(i)->file_path;
+            if (file == path)
             {
+                ui->tab_dev->removeFile(path);
+
                 minivideo_close(&mediaList.at(i));
 
                 mediaList.erase(mediaList.begin() + i);
@@ -282,15 +297,16 @@ void MainWindow::closeFile(const QString &file)
 
 void MainWindow::closeFile()
 {
-    // First clean the interface
-    cleanDatas();
-
-    // Then try to close the file's context
     int fileIndex = ui->file_comboBox->currentIndex();
+
     if (mediaList.empty() == false)
     {
+        QString path = mediaList.at(fileIndex)->file_path;
+
         if ((int)(mediaList.size()) >= (fileIndex + 1))
         {
+            ui->tab_dev->removeFile(path);
+
             minivideo_close(&mediaList.at(fileIndex));
 
             mediaList.erase(mediaList.begin() + fileIndex);
@@ -310,48 +326,6 @@ void MainWindow::closeFile()
 
                 handleTabWidget();
                 handleComboBox(empty);
-            }
-        }
-    }
-}
-
-void MainWindow::reloadFile(const QString &file)
-{
-    if (file.isEmpty() == false && mediaList.empty() == false)
-    {
-        // Find the index of the given file
-        int fileIndex = -1;
-        for (size_t i = 0; i < mediaList.size(); i++)
-        {
-            QString name = mediaList.at(i)->file_path;
-            if (file == name)
-            {
-                fileIndex = static_cast<int>(i);
-
-                minivideo_close(&mediaList.at(i));
-
-                mediaList.erase(mediaList.begin() + fileIndex);
-
-                // Remove the entry from the comboBox
-                ui->file_comboBox->removeItem(fileIndex);
-
-                // Load file
-                setStatus("Working...", SUCCESS, 0);
-
-                int retcode = analyseFile(file);
-                if (retcode == 1)
-                {
-                    handleComboBox(file);
-                    cleanDatas();
-                    printDatas();
-                    hideStatus();
-                }
-                else
-                {
-                    setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
-                }
-
-                return;
             }
         }
     }
@@ -506,12 +480,12 @@ void MainWindow::handleTabWidget()
             ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
         }
 
-#if 0 // ENABLE_DEBUG
+#if ENABLE_DEBUG
         {
             // Add the developer tab
             ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
         }
-#endif
+#endif  // ENABLE_DEBUG
 
         // Restore the focus (if the same tab is available)
         for (int i = 0; i < ui->tabWidget->count(); i++)

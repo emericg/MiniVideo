@@ -14,24 +14,76 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      mainwindow_export.cpp
+ * \file      tabexport.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "tabexport.h"
+#include "ui_tabexport.h"
+
+// minivideo library
+#include <minivideo.h>
+
+// minianalyser
 #include "utils.h"
 
 #include <QMessageBox>
+#include <QFontDatabase>
 #include <QFileDialog>
 #include <QDateTime>
-
 #include <QFile>
+#include <QDebug>
+
+tabExport::tabExport(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::tabExport)
+{
+    ui->setupUi(this);
+
+    connect(ui->comboBox_export_mode, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
+
+    connect(ui->pushButton_export_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
+    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
+
+    // Monospace fonts for the export tab
+#ifdef Q_OS_LINUX
+    int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
+#endif
+#ifdef Q_OS_OSX
+    ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
+    ui->file_comboBox->setIconSize(QSize(16,16));
+#endif
+#ifdef Q_OS_WIN32
+    ui->textBrowser_export->setFont(QFont("Lucida Console", 12));
+#endif
+}
+
+tabExport::~tabExport()
+{
+    delete ui;
+}
 
 /* ************************************************************************** */
 
-void MainWindow::saveFileDialog()
+void tabExport::clean()
+{
+    media = nullptr;
+
+    exportFormat = EXPORT_TEXT;
+    exportDatas.clear();
+    //exportFile.close(); // ?
+
+    ui->comboBox_export_mode->setCurrentIndex(0);
+    ui->comboBox_export_formats->setCurrentIndex(0);
+    ui->lineEdit_export_filename->clear();
+    ui->textBrowser_export->clear();
+}
+
+/* ************************************************************************** */
+
+void tabExport::saveFileDialog()
 {
     QString fileExtension = ".txt";
     QString fileType = tr("Files (*.txt)");
@@ -48,11 +100,6 @@ void MainWindow::saveFileDialog()
         fileExtension = ".xml";
         fileType = tr("Files (*.xml)");
     }
-    else if (exportFormat == EXPORT_YAML)
-    {
-        fileExtension = ".yml";
-        fileType = tr("Files (*.yml)");
-    }
 
     filePath = QFileDialog::getSaveFileName(this, tr("Save media informations in a text file"),
                                             filePath, fileExtension);
@@ -64,7 +111,7 @@ void MainWindow::saveFileDialog()
     }
 }
 
-void MainWindow::saveDatas()
+void tabExport::saveDatas()
 {
     if (exportDatas.isEmpty() == false)
     {
@@ -99,11 +146,14 @@ void MainWindow::saveDatas()
 
 /* ************************************************************************** */
 
-int MainWindow::generateExportDatas()
+int tabExport::setMedia(MediaFile_t *media)
+{
+    this->media = media;
+}
+
+int tabExport::generateExportDatas()
 {
     int retcode = 0;
-
-    MediaFile_t *media = currentMediaFile();
 
     if (media)
     {
@@ -114,28 +164,39 @@ int MainWindow::generateExportDatas()
         QString outputFilePath = media->file_path;
 
         // Read file extension and details
-        bool exportDetails = ui->comboBox_export_details->currentIndex();
+        int exportMode = ui->comboBox_export_mode->currentIndex();
         int exportFormat = ui->comboBox_export_formats->currentIndex();
 
-        if (exportFormat == EXPORT_JSON)
+        if (exportMode == 0 || exportMode == 1)
         {
-            outputFilePath += ".json";
-            retcode = generateExportDatas_json(media, exportDetails);
+            ui->comboBox_export_formats->setCurrentIndex(EXPORT_TEXT);
+            exportFormat = EXPORT_TEXT;
+
+            if (exportFormat == EXPORT_JSON)
+            {
+                outputFilePath += ".json";
+                retcode = generateExportDatas_json(media, exportMode);
+            }
+            else if (exportFormat == EXPORT_XML)
+            {
+                outputFilePath += ".xml";
+                retcode = generateExportDatas_xml(media, exportMode);
+            }
+            else // if (exportFormat == EXPORT_TEXT)
+            {
+                outputFilePath += ".txt";
+                retcode = generateExportDatas_text(media, exportMode);
+            }
         }
-        else if (exportFormat == EXPORT_XML)
+        else if (exportMode == 2)
         {
-            outputFilePath += ".xml";
-            retcode = generateExportDatas_xml(media, exportDetails);
-        }
-        else if (exportFormat == EXPORT_YAML)
-        {
-            outputFilePath += ".yml";
-            retcode = generateExportDatas_yaml(media, exportDetails);
-        }
-        else // if (exportFormat == EXPORT_TEXT)
-        {
-            outputFilePath += ".txt";
-            retcode = generateExportDatas_text(media, exportDetails);
+            ui->comboBox_export_formats->setCurrentIndex(EXPORT_XML);
+            exportFormat = EXPORT_XML;
+
+            {
+                outputFilePath += ".xml";
+                retcode = generateExportMapping_xml(media);
+            }
         }
 
         // Print it
@@ -146,7 +207,7 @@ int MainWindow::generateExportDatas()
     return retcode;
 }
 
-int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_text(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
@@ -386,13 +447,25 @@ int MainWindow::generateExportDatas_text(MediaFile_t *media, bool detailed)
             exportDatas += QString::fromLocal8Bit(t->track_languagecode);
         }
 
+        // OTHER TRACKS
+        ////////////////////////////////////////////////////////////////////////
+
+        for (unsigned i = 0; i < media->tracks_others_count; i++)
+        {
+            BitstreamMap_t *t = media->tracks_others[i];
+            if (t == NULL)
+                break;
+
+            // TODO
+        }
+
         retcode = 1;
     }
 
     return retcode;
 }
 
-int MainWindow::generateExportDatas_json(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_json(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
@@ -404,24 +477,38 @@ int MainWindow::generateExportDatas_json(MediaFile_t *media, bool detailed)
     return retcode;
 }
 
-int MainWindow::generateExportDatas_xml(MediaFile_t *media, bool detailed)
+int tabExport::generateExportDatas_xml(MediaFile_t *media, bool detailed)
 {
     int retcode = 0;
 
     if (media)
     {
+        // Load XML file and make it a QDomDocument
+        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+
         //retcode = 1;
     }
 
     return retcode;
 }
-int MainWindow::generateExportDatas_yaml(MediaFile_t *media, bool detailed)
+
+int tabExport::generateExportMapping_xml(MediaFile_t *media)
 {
     int retcode = 0;
 
     if (media)
     {
-        //retcode = 1;
+        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+        QFile xmlMapFile(filename);
+        if (!xmlMapFile.open(QIODevice::ReadOnly))
+        {
+            qDebug() << "xmlMapFile.open(" << filename << ") > error";
+        }
+        else
+        {
+            qDebug() << "generateExportMapping_xml(" << filename << ")";
+            exportDatas = xmlMapFile.readAll();
+        }
     }
 
     return retcode;

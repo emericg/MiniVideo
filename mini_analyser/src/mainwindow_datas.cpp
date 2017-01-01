@@ -139,14 +139,6 @@ void MainWindow::cleanDatas()
     ui->textBrowser_sub->clear();
 
     // Others tab
-
-    // Export tab
-    exportDatas.clear();
-    exportFormat = EXPORT_TEXT;
-    ui->comboBox_export_details->setCurrentIndex(0);
-    ui->comboBox_export_formats->setCurrentIndex(0);
-    ui->lineEdit_export_filename->clear();
-    ui->textBrowser_export->clear();
 }
 
 int MainWindow::printDatas()
@@ -238,7 +230,8 @@ int MainWindow::printDatas()
         // EXPORT
         ////////////////////////////////////////////////////////////////////////
 
-        generateExportDatas();
+        ui->tab_export->setMedia(media);
+        ui->tab_export->generateExportDatas();
 
         // AUDIO
         ////////////////////////////////////////////////////////////////////////

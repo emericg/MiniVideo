@@ -55,8 +55,6 @@ public:
 
 private slots:
     void loadFileDialog();
-    void saveFileDialog();
-    void saveDatas();
 
     int printDatas();
         int printAudioDetails();
@@ -64,21 +62,15 @@ private slots:
         int printSubtitlesDetails();
         int printOtherDetails();
 
-    int generateExportDatas();
-        int generateExportDatas_text(MediaFile_t *media, bool detailed);
-        int generateExportDatas_json(MediaFile_t *media, bool detailed);
-        int generateExportDatas_xml(MediaFile_t *media, bool detailed);
-        int generateExportDatas_yaml(MediaFile_t *media, bool detailed);
-
     void xAxisRangeChanged(const QCPRange &newRange);
     void yAxisRangeChanged(const QCPRange &newRange);
 
     void hideStatus();
     void detachFile();
-    void reloadFile(const QString &file);
     void reloadFile();
     void closeFile(const QString &file);
     void closeFile();
+    void closeFiles();
 
     void openExplorer();
     void openFourccHelper();
@@ -138,6 +130,7 @@ private:
     void handleComboBox(const QString &file);
     void handleTabWidget();
     void cleanDatas();
+    void cleanGui();
 
     typedef enum TextExportFormat_e
     {
