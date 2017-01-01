@@ -92,6 +92,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Accept video files "drag & drop"
     setAcceptDrops(true);
+
+#ifdef Q_OS_OSX
+    ui->file_comboBox->setIconSize(QSize(16,16));
+    ui->mainToolBar->setStyleSheet("");
+#endif
 }
 
 MainWindow::~MainWindow()

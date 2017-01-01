@@ -53,7 +53,6 @@ tabExport::tabExport(QWidget *parent) :
 #endif
 #ifdef Q_OS_OSX
     ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
-    ui->file_comboBox->setIconSize(QSize(16,16));
 #endif
 #ifdef Q_OS_WIN32
     ui->textBrowser_export->setFont(QFont("Lucida Console", 12));
