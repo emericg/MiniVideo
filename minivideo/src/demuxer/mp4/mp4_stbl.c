@@ -566,7 +566,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     bool general_tier_flag = read_bits(bitstr, 1);
     uint8_t general_profile_idc = read_bits(bitstr, 5);
     uint32_t general_profile_compatibility_flags = read_bits(bitstr, 32);
-    uint64_t general_constraint_indicator_flags = read_bits(bitstr, 48);
+    uint64_t general_constraint_indicator_flags = read_bits_64(bitstr, 48);
     uint8_t general_level_idc = read_bits(bitstr, 8);
 
     /*uint8_t reserved =*/ read_bits(bitstr, 4);
@@ -593,7 +593,8 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     uint16_t **nalUnitLength = NULL;
     uint8_t ***nalUnit = NULL;
 
-    if (numOfArrays > 0)
+    if (0 && // FIXME
+        numOfArrays > 0)
     {
         array_completeness = (bool *)malloc(numOfArrays);
         NAL_unit_type = (uint8_t *)malloc(numOfArrays);
