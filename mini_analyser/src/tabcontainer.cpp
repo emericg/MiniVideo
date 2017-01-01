@@ -76,9 +76,10 @@ void tabContainer::resizeEvent(QResizeEvent *event)
 
 void tabContainer::loadMedia(const MediaFile_t *media)
 {
+    this->media = (MediaFile_t *)media;
+
     if (media)
     {
-        this->media = (MediaFile_t *)media;
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
         setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
@@ -90,8 +91,8 @@ void tabContainer::loadMedia(const MediaFile_t *media)
 
         loadXmlFile();
         loadTracks();
-        //loadSamples(0);
-        //containerSelectionEmpty();
+        loadSamples(0);
+        containerSelectionEmpty();
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
         resizeEvent(NULL);
@@ -100,6 +101,12 @@ void tabContainer::loadMedia(const MediaFile_t *media)
 
 void tabContainer::closeMedia()
 {
+    //
+    media = nullptr;
+    track = nullptr;
+    for (unsigned i = 0; i < 16; i++)
+        tracks[i] = nullptr;
+
     // Clean the tabWidget_tracks
     ui->tabWidget_tracks->clear();
 
@@ -119,9 +126,6 @@ void tabContainer::closeMedia()
 
     // Clean the hex view
     ui->widget_hex->close();
-
-    //
-    media = NULL;
 }
 
 void tabContainer::tabSwitch(int index)
@@ -215,14 +219,14 @@ void tabContainer::loadSamples(int tid)
         {
             ui->listWidget->addItem(tr("Maximum of 512k samples reached!"));
         }
+
+        // Force initial selection
+        ui->listWidget->setCurrentRow(0);
     }
     else
     {
         track = NULL;
     }
-
-    // Force initial selection
-    ui->listWidget->setCurrentRow(0);
 }
 
 void tabContainer::sampleSelection()
@@ -236,7 +240,8 @@ void tabContainer::sampleSelection(int sid)
 
     clearContent();
 
-    if (media && track && static_cast<uint32_t>(sid) < track->sample_count)
+    if (media && track &&
+        static_cast<uint32_t>(sid) < track->sample_count)
     {
         int64_t offset = track->sample_offset[sid];
         int64_t size = track->sample_size[sid];

@@ -273,6 +273,7 @@ void MainWindow::closeFiles()
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
             ui->tab_dev->removeFile(mediaList.at(i)->file_path);
+            ui->tab_container->closeMedia();
             minivideo_close(&mediaList.at(i));
         }
     }
@@ -289,6 +290,7 @@ void MainWindow::closeFile(const QString &file)
             if (file == path)
             {
                 ui->tab_dev->removeFile(path);
+                ui->tab_container->closeMedia();
 
                 minivideo_close(&mediaList.at(i));
 
@@ -313,6 +315,7 @@ void MainWindow::closeFile()
         if ((int)(mediaList.size()) >= (fileIndex + 1))
         {
             ui->tab_dev->removeFile(path);
+            ui->tab_container->closeMedia();
 
             minivideo_close(&mediaList.at(fileIndex));
 
