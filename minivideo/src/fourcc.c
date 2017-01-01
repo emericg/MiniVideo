@@ -403,6 +403,8 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_ADPCM;
         break;
 
+////////////////////////////////////////////////////////////////////////////////
+
     default:
         codec = CODEC_UNKNOWN;
         break;

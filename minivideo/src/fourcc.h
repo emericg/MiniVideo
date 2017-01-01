@@ -24,6 +24,10 @@
 #ifndef FOURCC_H
 #define FOURCC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 // minivideo headers
 #include "avcodecs.h"
 #include "typedef.h"
@@ -296,4 +300,8 @@ char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
 char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
 
 /* ************************************************************************** */
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #endif // FOURCC_H

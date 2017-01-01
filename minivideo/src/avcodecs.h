@@ -24,6 +24,10 @@
 #ifndef AV_CODECS_H
 #define AV_CODECS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #include "typedef.h"
 #include "avutils.h"
 #include "minivideo_export.h"
@@ -229,4 +233,8 @@ minivideo_EXPORT const char *getCodecString(StreamType_e type, AVCodec_e codec, 
 minivideo_EXPORT const char *getPictureString(PictureFormat_e picture, bool long_description);
 
 /* ************************************************************************** */
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #endif // AV_CODECS_H

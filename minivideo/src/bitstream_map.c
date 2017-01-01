@@ -468,4 +468,65 @@ bool computeSamplesDatas(MediaFile_t *media)
 }
 
 /* ************************************************************************** */
+
+uint64_t computeTrackMemory(BitstreamMap_t *t)
+{
+    uint64_t mem = 0;
+
+    if (t)
+    {
+        mem += sizeof(*t);
+
+        if (t->stream_encoder) mem += strlen(t->stream_encoder);
+        if (t->track_title) mem += strlen(t->track_title);
+        if (t->track_languagecode) mem += strlen(t->track_languagecode);
+        if (t->subtitles_name) mem += strlen(t->subtitles_name);
+
+        mem += t->sample_count * (4 + 4 + 8 + 8 + 8);
+    }
+    TRACE_1(DEMUX, "track(x): %u B\n", mem);
+
+    return mem;
+}
+
+bool computeMediaMemory(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeMediaMemory()" CLR_RESET);
+    bool retcode = SUCCESS;
+
+    uint64_t mem = 0;
+
+    mem += sizeof(*media);
+    if (media->creation_app)
+    {
+        mem += strlen(media->creation_app);
+    }
+
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
+    {
+        mem += computeTrackMemory(media->tracks_video[i]);
+    }
+
+    for (unsigned i = 0; i < media->tracks_audio_count; i++)
+    {
+        mem += computeTrackMemory(media->tracks_audio[i]);
+    }
+
+    for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
+    {
+        mem += computeTrackMemory(media->tracks_subt[i]);
+    }
+
+    for (unsigned i = 0; i < media->tracks_others_count; i++)
+    {
+        mem += computeTrackMemory(media->tracks_others[i]);
+    }
+
+    media->parsingMemory = mem;
+    TRACE_INFO(DEMUX, "media parsing memory: %u B\n", mem);
+
+    return retcode;
+}
+
+/* ************************************************************************** */
 /* ************************************************************************** */

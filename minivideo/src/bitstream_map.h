@@ -42,5 +42,7 @@ bool computeAspectRatios(MediaFile_t *media);
 
 bool computeSamplesDatas(MediaFile_t *media);
 
+bool computeMediaMemory(MediaFile_t *media);
+
 /* ************************************************************************** */
 #endif // BITSTREAM_MAP_H

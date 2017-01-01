@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2010-2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2017 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -249,6 +249,8 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
             computeCodecs(input_media);
             computeAspectRatios(input_media);
             computeSamplesDatas(input_media);
+
+            computeMediaMemory(input_media);
         }
     }
 

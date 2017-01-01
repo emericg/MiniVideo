@@ -71,6 +71,10 @@ typedef struct MediaFile_t
     unsigned int tracks_others_count;
     BitstreamMap_t *tracks_others[16];  //!< Other "unknown" tracks found in the container (metadatas, timecodes, ...)
 
+    // Stats
+    uint64_t parsingTime;               //!< In ms
+    uint64_t parsingMemory;             //!< In bytes
+
 } MediaFile_t;
 
 /*!
