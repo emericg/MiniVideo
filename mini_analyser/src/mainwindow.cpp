@@ -72,18 +72,18 @@ MainWindow::MainWindow(QWidget *parent) :
     tabDropZoneIcon = ui->tabWidget->tabIcon(0);
     tabInfosText = ui->tabWidget->tabText(1);
     tabInfosIcon = ui->tabWidget->tabIcon(1);
-    tabAudioText = ui->tabWidget->tabText(2);
-    tabAudioIcon = ui->tabWidget->tabIcon(2);
-    tabVideoText = ui->tabWidget->tabText(3);
-    tabVideoIcon = ui->tabWidget->tabIcon(3);
+    tabVideoText = ui->tabWidget->tabText(2);
+    tabVideoIcon = ui->tabWidget->tabIcon(2);
+    tabAudioText = ui->tabWidget->tabText(3);
+    tabAudioIcon = ui->tabWidget->tabIcon(3);
     tabSubsText = ui->tabWidget->tabText(4);
     tabSubsIcon = ui->tabWidget->tabIcon(4);
     tabOtherText = ui->tabWidget->tabText(5);
     tabOtherIcon = ui->tabWidget->tabIcon(5);
-    tabExportText = ui->tabWidget->tabText(6);
-    tabExportIcon = ui->tabWidget->tabIcon(6);
-    tabContainerText = ui->tabWidget->tabText(7);
-    tabContainerIcon = ui->tabWidget->tabIcon(7);
+    tabContainerText = ui->tabWidget->tabText(6);
+    tabContainerIcon = ui->tabWidget->tabIcon(6);
+    tabExportText = ui->tabWidget->tabText(7);
+    tabExportIcon = ui->tabWidget->tabIcon(7);
     tabDevText = ui->tabWidget->tabText(8);
     tabDevIcon = ui->tabWidget->tabIcon(8);
 
@@ -195,7 +195,6 @@ int MainWindow::loadFile(const QString &file)
         if (retcode == 1)
         {
             handleComboBox(file);
-            cleanDatas();
             printFile();
             hideStatus();
 
@@ -208,7 +207,6 @@ int MainWindow::loadFile(const QString &file)
         else
         {
             handleComboBox(file);
-            cleanDatas();
             printFile();
             hideStatus();
 
@@ -260,10 +258,9 @@ int MainWindow::analyseFile(const QString &file)
 
 void MainWindow::cleanGui()
 {
+    closeFiles();
     cleanDatas();
-
-    mediaList.clear();
-    ui->file_comboBox->clear();
+    handleTabWidget();
 }
 
 void MainWindow::closeFiles()
@@ -488,11 +485,11 @@ void MainWindow::handleTabWidget()
         if (media->tracks_video_count || media->tracks_audio_count ||
             media->tracks_subtitles_count || media->tracks_others_count)
         {
-            // Add the export tab
-            ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
-
             // Add the container tab
             ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
+
+            // Add the export tab
+            ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
 
 #if ENABLE_DEBUG
             // Add the developer tab
@@ -527,7 +524,7 @@ void MainWindow::setStatus(const QString &text, int status, int duration)
 
     if (duration > 0)
     {
-        statusTimer->setInterval(15000);
+        statusTimer->setInterval(10000);
         statusTimer->start();
     }
 

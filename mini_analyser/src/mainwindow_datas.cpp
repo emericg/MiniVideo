@@ -65,6 +65,17 @@ void MainWindow::cleanDatas()
     ui->label_info_video_framerate_mode->clear();
     ui->label_info_video_size->clear();
 
+    // Infos tab // Other tracks
+    if (ui->verticalLayout_other->layout() != NULL)
+    {
+        QLayoutItem *item;
+        while ((item = ui->verticalLayout_other->layout()->takeAt(0)) != NULL )
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
+
     // Audio tab
     ui->comboBox_audio_selector->clear();
     ui->label_audio_default->clear();
@@ -139,6 +150,33 @@ void MainWindow::cleanDatas()
     ui->textBrowser_sub->clear();
 
     // Others tab
+    if (ui->verticalLayout_other2_track->layout() != NULL)
+    {
+        QLayoutItem *item;
+        while ((item = ui->verticalLayout_other2_track->layout()->takeAt(0)) != NULL )
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
+    if (ui->verticalLayout_other2_chapters->layout() != NULL)
+    {
+        QLayoutItem *item;
+        while ((item = ui->verticalLayout_other2_chapters->layout()->takeAt(0)) != NULL )
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
+    if (ui->verticalLayout_other2_tags->layout() != NULL)
+    {
+        QLayoutItem *item;
+        while ((item = ui->verticalLayout_other2_tags->layout()->takeAt(0)) != NULL )
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
 }
 
 int MainWindow::printFile()
@@ -151,6 +189,7 @@ int MainWindow::printFile()
     {
         handleTabWidget();
 
+        cleanDatas();
         printDatas();
         ui->tab_container->loadMedia(media);
         ui->tab_export->loadMedia(media);
@@ -395,17 +434,6 @@ int MainWindow::printDatas()
         {
             ui->groupBox_infos_other->show();
 
-            // Clean it up
-            if (ui->verticalLayout_other->layout() != NULL)
-            {
-                QLayoutItem *item;
-                while ((item = ui->verticalLayout_other->layout()->takeAt(0)) != NULL )
-                {
-                    delete item->widget();
-                    delete item;
-                }
-            }
-
             // Add new tracks
             for (unsigned i = 1; i < media->tracks_video_count; i++)
             {
@@ -577,7 +605,7 @@ int MainWindow::printAudioDetails()
 
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
             //ui->label_audio_framecount->setText(QString::number(t->frame_count));
-            //ui->label_audio_frameduration->setText(QString::number(t->frame_duration));
+            ui->label_audio_frameduration->setText(QString::number(t->frame_duration) + " ms");
 
             // Audio bitrate graph
             ////////////////////////////////////////////////////////////////////
@@ -998,41 +1026,27 @@ int MainWindow::printOtherDetails()
 
     if (media)
     {
-        // Clean it up
-        if (ui->verticalLayout_other2_track->layout() != NULL)
-        {
-            QLayoutItem *item;
-            while ((item = ui->verticalLayout_other2_track->layout()->takeAt(0)) != NULL )
-            {
-                delete item->widget();
-                delete item;
-            }
-        }
-        if (ui->verticalLayout_other2_chapters->layout() != NULL)
-        {
-            QLayoutItem *item;
-            while ((item = ui->verticalLayout_other2_chapters->layout()->takeAt(0)) != NULL )
-            {
-                delete item->widget();
-                delete item;
-            }
-        }
-        if (ui->verticalLayout_other2_tags->layout() != NULL)
-        {
-            QLayoutItem *item;
-            while ((item = ui->verticalLayout_other2_tags->layout()->takeAt(0)) != NULL )
-            {
-                delete item->widget();
-                delete item;
-            }
-        }
-
         // Add new tracks
         for (unsigned i = 0; i < media->tracks_others_count; i++)
         {
             if (media->tracks_others[i])
-            {
-                QString text = "▸ " + getTrackTypeString(media->tracks_others[i]) + tr(" track (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+            { // ▸
+                QString text = "<b>" + getTrackTypeString(media->tracks_others[i]) + tr(" track</b> (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+
+                if (media->tracks_others[i]->track_title)
+                {
+                    text += tr("<br>- Title: ");
+                    text += media->tracks_others[i]->track_title;
+                }
+
+                text += tr("<br>- Size: ");
+                text += getSizeString(media->tracks_others[i]->stream_size);
+
+                text += tr("<br>- ");
+                text += QString::number(media->tracks_others[i]->sample_count);
+                text += tr(" samples");
+
+                text += tr("<br>");
 
                 QLabel *track = new QLabel(text);
                 ui->verticalLayout_other2_track->addWidget(track);
@@ -1040,11 +1054,11 @@ int MainWindow::printOtherDetails()
         }
 
         // Add new chapters
-        QLabel *chap = new QLabel(tr("No chapters found"));
+        QLabel *chap = new QLabel(tr("No chapters found..."));
         ui->verticalLayout_other2_chapters->addWidget(chap);
 
         // Add new tags
-        QLabel *tag = new QLabel(tr("No tags found"));
+        QLabel *tag = new QLabel(tr("No tags found..."));
         ui->verticalLayout_other2_tags->addWidget(tag);
     }
 

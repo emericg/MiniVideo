@@ -113,10 +113,10 @@ private:
     QIcon tabSubsIcon;
     QString tabOtherText;
     QIcon tabOtherIcon;
-    QString tabExportText;
-    QIcon tabExportIcon;
     QString tabContainerText;
     QIcon tabContainerIcon;
+    QString tabExportText;
+    QIcon tabExportIcon;
     QString tabDevText;
     QIcon tabDevIcon;
 

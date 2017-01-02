@@ -211,9 +211,9 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static void computeSamplesDatasTrack(BitstreamMap_t *t)
+static void computeSamplesDatasTrack(BitstreamMap_t *track)
 {
-    if (t)
+    if (track)
     {
         uint64_t totalbytes = 0;
         bool cbr = true;
@@ -221,85 +221,112 @@ static void computeSamplesDatasTrack(BitstreamMap_t *t)
         bool cfr = true;
         unsigned j = 0;
 
-        if (t->sample_alignment)
+        if (track->sample_alignment)
         {
-            t->frame_count = t->sample_count;
+            track->frame_count = track->sample_count;
         }
-        if (t->stream_intracoded)
+        if (track->stream_intracoded)
         {
-            t->frame_count_idr = t->frame_count;
+            track->frame_count_idr = track->frame_count;
         }
 
-        // Video frame duration
-        if (t->stream_type == stream_VIDEO && t->frame_duration == 0 && t->framerate != 0)
-            t->frame_duration = 1000.0 / t->framerate;
-/*
-        // Video frame interval
-        if (t->sample_pts[0] && t->sample_pts[1])
+        // Audio frame duration
+        if (track->stream_type == stream_AUDIO)
         {
-            frameinterval = t->sample_pts[1] - t->sample_pts[0];
-        }
-        TRACE_ERROR(DEMUX, "pts1: %lli", t->sample_pts[0]);
-        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[1]);
-        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[2]);
-        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[3]);
-        TRACE_ERROR(DEMUX, "pts2: %lli", t->sample_pts[55]);
-        TRACE_ERROR(DEMUX, "frameinterval: %lli", frameinterval);
-*/
-        // Iterate on each sample
-        for (j = 0; j < t->sample_count; j++)
-        {
-            totalbytes += t->sample_size[j];
-
-            if (t->sample_size[0] != t->sample_size[j])
-                cbr = false;
-
-            if (t->sample_alignment == false)
+            if (track->sample_dts && track->sample_count >= 2)
             {
-                if (t->sample_pts[j] || t->sample_dts[j])
-                    t->frame_count++;
+                track->frame_duration = track->sample_dts[1] - track->sample_dts[0];
+                track->frame_duration /= 1000; // ns to  ms
             }
+        }
+        // Video frame duration
+        if (track->stream_type == stream_VIDEO && track->frame_duration == 0 && track->framerate != 0)
+        {
+            track->frame_duration = 1000.0 / track->framerate;
+        }
+
+        // Video frame interval
+        if (track->stream_type == stream_VIDEO)
+        {
+            // FIXME this is not reliable whenever using B frames
+            if (track->sample_dts && track->sample_count >= 2)
+                frameinterval = track->sample_dts[1] - track->sample_dts[0];
+        }
+
+        // Iterate on each sample
+        for (j = 0; j < track->sample_count; j++)
+        {
+            totalbytes += track->sample_size[j];
+
+            if (track->sample_size[j] > (track->sample_size[10] + 1) || track->sample_size[j] < (track->sample_size[10] - 1))
+            {
+                cbr = false; // TODO find a reference // TODO not use TAGS
+            }
+
+            if (track->sample_alignment == false)
+            {
+                if (track->sample_pts[j] || track->sample_dts[j])
+                    track->frame_count++;
+            }
+/*
+            if (j > 0)
+            {
+                // FIXME this is not reliable whenever using B frames
+                if ((t->sample_dts[j] - t->sample_dts[j - 1]) != frameinterval)
+                {
+                    cfr = false;
+                    TRACE_ERROR(DEMUX, "dts F: %lli != %lli (j: %u)", (t->sample_dts[j] - t->sample_dts[j - 1]), frameinterval, j);
+                    TRACE_ERROR(DEMUX, "dts F: %lli !=  %lli ", (t->sample_pts[j] - t->sample_pts[j - 1]), frameinterval);
+                }
+            }
+*/
         }
 
         // Set bitrate mode
-        if (cbr == true)
+        if (track->bitrate_mode == BITRATE_UNKNOWN)
         {
-            t->bitrate_mode = BITRATE_CBR;
-        }
-        else
-        {
-            // TODO check if we have AVBR / CVBR ?
-            t->bitrate_mode = BITRATE_VBR;
+            if (cbr == true)
+            {
+                track->bitrate_mode = BITRATE_CBR;
+            }
+            else
+            {
+                // TODO check if we have AVBR / CVBR ?
+                track->bitrate_mode = BITRATE_VBR;
+            }
         }
 /*
         // Set framerate mode
-        if (cfr == true)
+        if (t->framerate_mode == FRAMERATE_UNKNOWN)
         {
-            t->framerate_mode = FRAMERATE_CFR;
-        }
-        else
-        {
-            t->framerate_mode = FRAMERATE_VFR;
+            if (cfr == true)
+            {
+                t->framerate_mode = FRAMERATE_CFR;
+            }
+            else
+            {
+                t->framerate_mode = FRAMERATE_VFR;
+            }
         }
 */
         // Set stream size
-        if (t->stream_size == 0)
+        if (track->stream_size == 0)
         {
-            t->stream_size = totalbytes;
+            track->stream_size = totalbytes;
         }
 
         // Set stream duration
-        if (t->duration_ms == 0)
+        if (track->duration_ms == 0)
         {
-            t->duration_ms = (double)t->frame_count * t->frame_duration;
+            track->duration_ms = (double)track->frame_count * track->frame_duration;
         }
 
         // Set gross bitrate value (in bps)
-        if (t->bitrate == 0 && t->duration_ms != 0)
+        if (track->bitrate == 0 && track->duration_ms != 0)
         {
-            t->bitrate = (unsigned int)round(((double)t->stream_size / (double)(t->duration_ms)));
-            t->bitrate *= 1000; // ms to s
-            t->bitrate *= 8; // B to b
+            track->bitrate = (unsigned int)round(((double)track->stream_size / (double)(track->duration_ms)));
+            track->bitrate *= 1000; // ms to s
+            track->bitrate *= 8; // B to b
         }
     }
 }
