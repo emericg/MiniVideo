@@ -181,7 +181,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
-    fprintf(mp4->xml, "  <title>Meta</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Meta</title>\n");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -227,7 +227,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
-    fprintf(mp4->xml, "  <title>User Data</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <title>User Data</title>\n");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1196,7 +1196,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
-    fprintf(mp4->xml, "  <title>Movie Box</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Movie Box</title>\n");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1256,7 +1256,7 @@ static int parse_traf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
-    fprintf(mp4->xml, "  <title>Track Fragment</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Track Fragment</title>\n");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1340,7 +1340,7 @@ static int parse_moof(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
-    fprintf(mp4->xml, "  <title>Movie Fragment</title>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Movie Fragment</title>\n");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&

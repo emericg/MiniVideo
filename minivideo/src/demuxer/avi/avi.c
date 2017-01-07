@@ -898,7 +898,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
         // Print INFO list header
         print_list_header(INFO_header);
         write_list_header(INFO_header, avi->xml);
-
+        if (avi->xml) fprintf(avi->xml, "  <title>INFO</title>\n");
 
         // Loop on "INFO" content
         while (avi->run == true &&
