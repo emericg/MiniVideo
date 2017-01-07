@@ -35,6 +35,26 @@ extern "C" {
 
 /* ************************************************************************** */
 
+#define MV_FOURCC_BE(a,b,c,d) ((uint32_t)((((uint32_t)((uint8_t)(a))) << 24) + \
+                                          (((uint32_t)((uint8_t)(b))) << 16) + \
+                                          (((uint32_t)((uint8_t)(c))) <<  8) + \
+                                          (((uint32_t)((uint8_t)(d)))      )))
+
+#define MV_FOURCC_LE(a,b,c,d) ((uint32_t)((((uint32_t)((uint8_t)(d))) << 24) + \
+                                          (((uint32_t)((uint8_t)(c))) << 16) + \
+                                          (((uint32_t)((uint8_t)(b))) <<  8) + \
+                                          (((uint32_t)((uint8_t)(a)))      )))
+
+/* ************************************************************************** */
+
+minivideo_EXPORT AVCodec_e getCodecFromFourCC(const uint32_t fcc);
+
+char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
+
+char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
+
+/* ************************************************************************** */
+
 /*!
  * Good ressources about FourCCs:
  * http://www.fourcc.org/codecs.php
@@ -290,14 +310,6 @@ typedef enum fourcc_list_e
     fcc_ima4 = 0x696D6134, //!< Apple IMA ADPCM
 
 } fourcc_list_e;
-
-/* ************************************************************************** */
-
-minivideo_EXPORT AVCodec_e getCodecFromFourCC(const uint32_t fcc);
-
-char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
-
-char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
 
 /* ************************************************************************** */
 #ifdef __cplusplus
