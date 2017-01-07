@@ -269,9 +269,9 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
     int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
-    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+    if ((int)(dc->idrCounter) >= frame_debug_range[0] && (int)(dc->idrCounter) <= frame_debug_range[1])
     {
-        if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
+        if ((int)(mb->mbAddr) >= mb_debug_range[0] && (int)(mb->mbAddr) <= mb_debug_range[1])
         {
             int a = 0;
             int iYCbCr = 0;
@@ -1634,13 +1634,13 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
         else
 #endif // ENABLE_IPCM
 
-        if ((mbAddrA != dc->CurrMbAddr) &&
+        if ((mbAddrA != (int)(dc->CurrMbAddr)) &&
             (dc->mb_array[mbAddrA]->mb_type != P_Skip && dc->mb_array[mbAddrA]->mb_type != B_Skip) &&
             (((dc->mb_array[mbAddrA]->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1) != 0))
         {
             condTermFlagA = 0;
         }
-        else if ((mbAddrA == dc->CurrMbAddr) &&
+        else if ((mbAddrA == (int)(dc->CurrMbAddr)) &&
                  (decodedSE[luma8x8BlkIdxA] != 0))
         {
             condTermFlagA = 0;
@@ -1662,13 +1662,13 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
         }
         else
 #endif // ENABLE_IPCM
-        if ((mbAddrB != dc->CurrMbAddr) &&
+        if ((mbAddrB != (int)(dc->CurrMbAddr)) &&
             (dc->mb_array[mbAddrB]->mb_type != P_Skip && dc->mb_array[mbAddrB]->mb_type != B_Skip) &&
             (((dc->mb_array[mbAddrB]->CodedBlockPatternLuma >> luma8x8BlkIdxB) & 1) != 0))
         {
             condTermFlagB = 0;
         }
-        else if ((mbAddrB == dc->CurrMbAddr) &&
+        else if ((mbAddrB == (int)(dc->CurrMbAddr)) &&
                  (decodedSE[luma8x8BlkIdxB] != 0))
         {
             condTermFlagB = 0;
@@ -2423,9 +2423,9 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
     int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
     int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
-    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+    if ((int)(dc->idrCounter) >= frame_debug_range[0] &&  (int)(dc->idrCounter) <= frame_debug_range[1])
     {
-        if (dc->CurrMbAddr >= mb_debug_range[0] && dc->CurrMbAddr <= mb_debug_range[1])
+        if ((int)(dc->CurrMbAddr) >= mb_debug_range[0] && (int)(dc->CurrMbAddr) <= mb_debug_range[1])
         {
             // Print decoder status
             printf("[CABAC] DecodeDecision()\n");
@@ -2437,9 +2437,9 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 
     RenormD(cc, dc->bitstr);
 
-    if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+    if ((int)(dc->idrCounter) >= frame_debug_range[0] && (int)(dc->idrCounter) <= frame_debug_range[1])
     {
-        if (dc->CurrMbAddr >= mb_debug_range[0] && dc->CurrMbAddr <= mb_debug_range[1])
+        if ((int)(dc->CurrMbAddr) >= mb_debug_range[0] && (int)(dc->CurrMbAddr) <= mb_debug_range[1])
         {
             // Print decoder status
             printf("[CABAC] RenormD()\n");

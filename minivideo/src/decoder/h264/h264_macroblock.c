@@ -293,9 +293,11 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
             int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
-            if (dc->idrCounter >= frame_debug_range[0] && dc->idrCounter <= frame_debug_range[1])
+            if ((int)dc->idrCounter >= frame_debug_range[0] &&
+                (int)dc->idrCounter <= frame_debug_range[1])
             {
-                if (mb->mbAddr >= mb_debug_range[0] && mb->mbAddr <= mb_debug_range[1])
+                if ((int)mb->mbAddr >= mb_debug_range[0] &&
+                    (int)mb->mbAddr <= mb_debug_range[1])
                 {
                     print_macroblock_layer(dc, mb);
                     print_macroblock_pixel_residual(mb);

@@ -29,13 +29,14 @@
 
 // C standard libraries
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 /* ************************************************************************** */
 
 /*!
  * \brief Initialize a bitstream_map structure with a fixed number of entries.
- * \param bitstream_map: A pointer to the *bitstreamMap_t structure to initialize.
+ * \param bitstream_map: The address of the pointer to the bitstreamMap_t structure to initialize.
  * \param entries: The number of sample to init into the bitstreamMap_t structure.
  * \return 1 if succeed, 0 otherwise.
  *

@@ -44,7 +44,7 @@
  * - If specified, the filter select images spread over the duration of the film.
  */
 int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
-                  int picture_number, const int picture_extraction_mode);
+                  unsigned picture_number, const int picture_extraction_mode);
 
 /* ************************************************************************** */
 #endif // IDR_FILTER_H

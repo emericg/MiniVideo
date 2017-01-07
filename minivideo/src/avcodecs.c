@@ -23,6 +23,9 @@
 
 #include "avcodecs.h"
 
+#pragma GCC diagnostic ignored "-Wswitch"
+#pragma CLANG diagnostic ignored "-Wswitch"
+
 /* ************************************************************************** */
 
 const char *getContainerString(ContainerFormat_e container, bool long_description)

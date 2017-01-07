@@ -136,6 +136,8 @@ void MainWindow::dropEvent(QDropEvent *e)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event);
+
     // Make sure the scrollAreas don't get wider than our windows
     int width = ui->tab_infos->width() - 12;
     ui->groupBox_infos->setMaximumWidth(width);

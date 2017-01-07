@@ -50,7 +50,7 @@ tabContainer::tabContainer(QWidget *parent) :
     // Setup HEX widget
     ui->widget_hex->setReadOnly(true);
 #ifdef Q_OS_LINUX
-    int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    /*int id =*/ QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
     ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 11));
 #endif
 #ifdef Q_OS_OSX
@@ -68,10 +68,12 @@ tabContainer::~tabContainer()
 
 void tabContainer::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event)
+
     // Make sure the scrollAreas don't get wider than our windows
-    int width = this->width() - ui->tabWidget->width() - 24;
-    ui->scrollAreaWidgetContents_2->setMaximumWidth(width);
-    ui->labelTitle->setMaximumWidth(width);
+    int newwidth = this->width() - ui->tabWidget->width() - 24;
+    ui->scrollAreaWidgetContents_2->setMaximumWidth(newwidth);
+    ui->labelTitle->setMaximumWidth(newwidth);
 }
 
 void tabContainer::loadMedia(const MediaFile_t *media)

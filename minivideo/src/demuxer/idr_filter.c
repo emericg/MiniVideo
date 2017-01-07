@@ -36,14 +36,14 @@
 /* ************************************************************************** */
 
 int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
-                  int picture_number, const int picture_extraction_mode)
+                  unsigned picture_number, const int picture_extraction_mode)
 {
     TRACE_INFO(FILTR, BLD_GREEN "idr_filtering()" CLR_RESET);
     int retcode = FAILURE;
 
-    int i = 0;
-    int temporary_totalsamples_idr = 0;
-    int temporary_sample_id[999] = {0};
+    unsigned i = 0;
+    unsigned temporary_totalsamples_idr = 0;
+    unsigned temporary_sample_id[999] = {0};
 
     if (bitstream_map_ptr == NULL || *bitstream_map_ptr == NULL)
     {
@@ -79,8 +79,8 @@ int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
         else
         {
             // Warning: this is not true anymore, must count that manually
-            int spspps = map->sample_count - map->frame_count_idr;
-            int payload = 0;
+            unsigned spspps = map->sample_count - map->frame_count_idr;
+            unsigned payload = 0;
 
             // First cut (remove small frames)
             ////////////////////////////////////////////////////////////////////
@@ -92,11 +92,11 @@ int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
             }
 
             // Used to filter the frames that are below the threshold (33% of the average frame size)
-            int frame_sizethreshold = (int)(((double)payload / (double)map->frame_count_idr) / 1.66);
+            unsigned frame_sizethreshold = (unsigned)(((double)payload / (double)map->frame_count_idr) / 1.66);
 
             // If we have enough frames (let's say 48), filter the frames from the first and last 3%
             // Note: for a movie, cut the last 33% to avoid spoilers & credits?
-            int frame_borders = 0;
+            unsigned frame_borders = 0;
             if (map->frame_count_idr > 48)
             {
                 frame_borders = (int)ceil(map->frame_count_idr * 0.03);

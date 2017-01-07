@@ -70,7 +70,7 @@ elseif(WIN32)
 endif()
 
 # Generic build flags
-set(CMAKE_C_FLAGS "-std=c99 -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
 
 # Detect build type (default is release)
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"

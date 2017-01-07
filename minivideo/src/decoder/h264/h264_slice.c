@@ -620,7 +620,7 @@ static int checkSliceHeader(DecodingContext_t *dc)
             retcode = checkDRPM(dc, slice->drpm);
         }
 
-        if (slice->SliceQPY < -(sps->QpBdOffsetY) || slice->SliceQPY > 51)
+        if (slice->SliceQPY < -((int)sps->QpBdOffsetY) || slice->SliceQPY > 51)
         {
             TRACE_WARNING(SLICE, "  - SliceQPY is %i but should be in range [-QpBdOffsetY=%i,51] %i", slice->SliceQPY, sps->QpBdOffsetY);
             retcode = FAILURE;

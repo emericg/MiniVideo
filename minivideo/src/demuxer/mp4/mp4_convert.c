@@ -121,12 +121,12 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         map->stream_fcc = track->fcc;
         map->stream_codec = (AVCodec_e)track->codec;
 
-        if(strnlen(track->compressorname, 32) > 0)
+        if (strnlen(track->compressorname, 32) > 0)
         {
             map->stream_encoder = (char *)malloc(sizeof(track->compressorname));
             strncpy(map->stream_encoder, track->compressorname, sizeof(track->compressorname));
         }
-        if(strnlen(track->name, 128) > 0)
+        if (strnlen(track->name, 128) > 0)
         {
             map->track_title = (char *)malloc(sizeof(track->name));
             strncpy(map->track_title, track->name, sizeof(track->name));
@@ -321,7 +321,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 for (; j < track->stts_sample_count[i]; j++, k++)
                 {
                     int64_t dts = map->sample_dts[k - 1];
-                    dts = dts + track->stts_sample_delta[i];
+                    dts += (int64_t)track->stts_sample_delta[i];
 
                     map->sample_dts[k] = dts;
                 }
@@ -358,7 +358,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 for (; j < track->stts_sample_count[i]; j++, k++)
                 {
                     int64_t dts = map->sample_dts[k - 1];
-                    int64_t pts = dts + track->stts_sample_delta[i];
+                    int64_t pts = dts + (int64_t)track->stts_sample_delta[i];
 
                     map->sample_dts[k] = map->sample_pts[k] = pts;
                 }

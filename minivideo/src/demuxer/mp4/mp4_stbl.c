@@ -847,8 +847,8 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned int transfer_characteristics;
     unsigned int matrix_coefficients;
 
-    if (colour_type == 'nclc' ||
-        colour_type == 'nclx') // "on-screen colours"
+    if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
+        colour_type == MV_FOURCC_BE('n','c','l','x')) // "on-screen colours"
     {
         // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
 
@@ -871,11 +871,11 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             track->color_matrix = CM_SMPTE240M;
         }
     }
-    else if (colour_type == 'rICC')
+    else if (colour_type == MV_FOURCC_BE('r','I','C','C'))
     {
         // ICC_profile; // restricted ICC profile
     }
-    else if (colour_type == 'prof')
+    else if (colour_type == MV_FOURCC_BE('p','r','o','f'))
     {
         // ICC_profile; // unrestricted ICC profile
     }
@@ -883,7 +883,8 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 #if ENABLE_DEBUG
     print_box_header(box_header);
     TRACE_1(MP4, "> colour_type             : %u", getFccString_le(colour_type, fcc));
-    if (colour_type == 'nclc' || colour_type == 'nclx')
+    if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
+        colour_type == MV_FOURCC_BE('n','c','l','x'))
     {
         TRACE_1(MP4, "> colour_primaries        : %u", colour_primaries);
         TRACE_1(MP4, "> transfer_characteristics: %u", transfer_characteristics);
@@ -898,7 +899,8 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Colour Information</title>\n");
         fprintf(mp4->xml, "  <colour_type>%u</colour_type>\n", colour_type);
-        if (colour_type == 'nclc' || colour_type == 'nclx')
+        if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
+            colour_type == MV_FOURCC_BE('n','c','l','x'))
         {
             fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
             fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);

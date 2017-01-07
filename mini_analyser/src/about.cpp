@@ -52,6 +52,7 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
 
 void AboutWindows::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event);
     // we may want to resize the icon
 }
 
