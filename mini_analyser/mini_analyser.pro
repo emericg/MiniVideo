@@ -70,24 +70,39 @@ LIBS        += -L../minivideo/build -lminivideo
 #-------------------------------------------------------------------------------
 # OS specifics
 
-macx {
-    # Force compiler to use available macOS SDK version (with automatic detection)
-    XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
-    QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
-    #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
+unix {
+    linux {
+        #
+    }
 
-    # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
-    #QMAKE_RPATHDIR += @executable_path/../Frameworks
+    macx {
+        # Force compiler to use available macOS SDK version (with automatic detection)
+        XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
+        QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
+        #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
+
+        # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
+        #QMAKE_RPATHDIR += @executable_path/../Frameworks
+    }
+}
+
+win32 {
+    #
 }
 
 #-------------------------------------------------------------------------------
+# Deployment
 
-# macOS deployment target
+win32 {
+    # 'automatic' bundle packaging
+    system(windeployqt build/)
+}
+
 macx {
-    # bundle packaging (method 1) (uncomment to enable)
-#   system(macdeployqt build/$${TARGET}.app)
+    # 'automatic' bundle packaging (method 1)
+    system(macdeployqt build/$${TARGET}.app)
 
-    # bundle packaging (method 2; debug only) (uncomment to enable)
+    # 'manual' bundle packaging (method 2; debug only) (uncomment to enable)
 #    QT_FW_DIR = $(QTDIR)/lib/
 #    QT_PG_DIR = $(QTDIR)/plugins/
 #    !isEmpty(QT_FW_DIR) {
