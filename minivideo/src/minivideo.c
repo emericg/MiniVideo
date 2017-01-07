@@ -28,7 +28,7 @@
 #include "minitraces.h"
 #include "typedef.h"
 #include "import.h"
-#include "portable_endian.h"
+#include "thirdparty/portable_endian.h"
 
 // Demuxers
 #include "demuxer/avi/avi.h"
