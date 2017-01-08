@@ -345,6 +345,7 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
             container = CONTAINER_MKV;
         }
         else if (strncmp(media->file_extension, "mov", 255) == 0 ||
+                 strncmp(media->file_extension, "qt", 255)  == 0 ||
                  strncmp(media->file_extension, "mp4", 255) == 0 ||
                  strncmp(media->file_extension, "m4v", 255) == 0 ||
                  strncmp(media->file_extension, "m4a", 255) == 0 ||
@@ -355,8 +356,8 @@ static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "3gp", 255) == 0 ||
                  strncmp(media->file_extension, "3g2", 255) == 0 ||
                  strncmp(media->file_extension, "3gpp", 255)== 0 ||
-                 strncmp(media->file_extension, "qt", 255)  == 0 ||
-                 strncmp(media->file_extension, "f4v", 255) == 0)
+                 strncmp(media->file_extension, "f4v", 255) == 0 ||
+                 strncmp(media->file_extension, "jp2", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : MP4 container detected");
             container = CONTAINER_MP4;

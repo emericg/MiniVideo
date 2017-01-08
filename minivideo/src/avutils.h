@@ -124,7 +124,7 @@ typedef enum AudioSpeakers_e
 } AudioSpeakers_e;
 
 /*!
- * \brief Audio speakers from WAVEFORMATEXTENSIBLE, with new fields from RF64.
+ * \brief Additional WAVEFORMATEXTENSIBLE fields from RF64.
  */
 typedef enum AudioSpeakersExtended_e
 {

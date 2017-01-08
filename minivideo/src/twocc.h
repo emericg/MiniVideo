@@ -31,6 +31,10 @@
 
 /* ************************************************************************** */
 
+minivideo_EXPORT AVCodec_e getCodecFromTwoCC(const uint16_t tcc);
+
+/* ************************************************************************** */
+
 /*!
  * Good ressources about TwoCCs:
  * http://wiki.multimedia.cx/index.php?title=Twocc
@@ -75,14 +79,6 @@ typedef enum twocc_list_e
     WAVE_FORMAT_EXTENSIBLE = 0xFFFE
 
 } twocc_list_e;
-
-/* ************************************************************************** */
-
-minivideo_EXPORT AVCodec_e getCodecFromTwoCC(const uint16_t tcc);
-
-char *getTccString_le(const uint16_t tcc_in, char *tcc_out);
-
-char *getTccString_be(const uint16_t tcc_in, char *tcc_out);
 
 /* ************************************************************************** */
 #endif // TWOCC_H

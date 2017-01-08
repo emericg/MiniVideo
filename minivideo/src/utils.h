@@ -33,7 +33,8 @@
    if (_align>1) {\
        int _dec = (_addr%_align);\
        if (_dec != 0) _addr += _align - _dec;\
-   }}
+   }\
+}
 
 #define ALIGN(x, y) (((x) + ((y) - 1)) & ~((y) - 1))
 

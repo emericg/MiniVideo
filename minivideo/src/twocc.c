@@ -33,36 +33,6 @@
 
 /* ************************************************************************** */
 
-char *getTccString_le(const uint16_t tcc_in, char *tcc_out)
-{
-    if (tcc_out)
-    {
-        tcc_out[0] = (char)((tcc_in >>  8) & 0xFF);
-        tcc_out[1] = (char)((tcc_in >>  0) & 0xFF);
-        tcc_out[2] = '\0';
-
-        return tcc_out;
-    }
-
-    return NULL;
-}
-
-char *getTccString_be(const uint16_t tcc_in, char *tcc_out)
-{
-    if (tcc_out)
-    {
-        tcc_out[0] = (char)((tcc_in >>  0) & 0xFF);
-        tcc_out[1] = (char)((tcc_in >>  8) & 0xFF);
-        tcc_out[2] = '\0';
-
-        return tcc_out;
-    }
-
-    return NULL;
-}
-
-/* ************************************************************************** */
-
 AVCodec_e getCodecFromTwoCC(const uint16_t tcc)
 {
     AVCodec_e codec = CODEC_UNKNOWN;

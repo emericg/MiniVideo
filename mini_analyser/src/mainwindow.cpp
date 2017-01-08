@@ -484,8 +484,6 @@ void MainWindow::handleTabWidget()
             ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
         }
 
-        if (media->tracks_video_count || media->tracks_audio_count ||
-            media->tracks_subtitles_count || media->tracks_others_count)
         {
             // Add the container tab
             ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
