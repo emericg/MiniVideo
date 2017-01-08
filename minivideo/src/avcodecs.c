@@ -333,6 +333,13 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
                     return "ATRAC3plus";
                 break;
 
+            case CODEC_AMR:
+                if (long_description)
+                    return "AMR (Adaptive Multi Rate)";
+                else
+                    return "AMR";
+                break;
+
             case CODEC_RA_28:
                 return "RealAudio 28.8";
                 break;

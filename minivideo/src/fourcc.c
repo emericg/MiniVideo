@@ -87,6 +87,7 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_MPEG2;
         break;
 
+    case fcc_h261:
     case fcc_H261:
         codec = CODEC_H261;
         break;
@@ -161,12 +162,15 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
         break;
 
     case fcc_D263:
+    case fcc_h263:
     case fcc_H263:
     case fcc_L263:
     case fcc_M263:
+    case fcc_s263:
     case fcc_S263:
     case fcc_T263:
     case fcc_U263:
+    case fcc_x263:
     case fcc_X263:
         codec = CODEC_H263;
         break;
@@ -349,6 +353,10 @@ AVCodec_e getCodecFromFourCC(const uint32_t fcc)
 
     case fcc_agsm:
         codec = CODEC_GSM;
+        break;
+
+    case fcc_samr:
+        codec = CODEC_AMR;
         break;
 
     case fcc_alac:

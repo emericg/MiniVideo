@@ -108,6 +108,7 @@ typedef enum AVCodec_e
     CODEC_GSM           = 51,   //!< GSM
     CODEC_ATRAC         = 52,   //!< Sony ATRAC
     CODEC_ATRAC3plus    = 53,   //!< Sony ATRAC 3 plus
+    CODEC_AMR           = 54,   //!< AMR, or Adaptive Multi Rate
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 

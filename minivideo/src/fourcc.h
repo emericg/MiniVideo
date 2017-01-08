@@ -80,7 +80,8 @@ typedef enum fourcc_list_e
     fcc_PIM1 = 0x50494D31,
     fcc_PIM2 = 0x50494D32,
 
-    fcc_H261 = 0x48323631, //!< H.261
+    fcc_h261 = 0x68323631, //!< H.261
+    fcc_H261 = 0x48323631,
 
     fcc_DIV1 = 0x44495631, //!< Old MPEG-4 based codecs
     fcc_DIV2 = 0x44495632,
@@ -122,12 +123,15 @@ typedef enum fourcc_list_e
     fcc_mp4v = 0x6D703476,
 
     fcc_D263 = 0x44323633, //!< H.263
+    fcc_h263 = 0x68323633,
     fcc_H263 = 0x48323633,
     fcc_L263 = 0x4C323633,
     fcc_M263 = 0x4D323633,
+    fcc_s263 = 0x73323633,
     fcc_S263 = 0x53323633,
     fcc_T263 = 0x54323633,
     fcc_U263 = 0x55323633,
+    fcc_x263 = 0x78323633,
     fcc_X263 = 0x58323633,
 
     fcc_AVC1 = 0x41564331, //!< H.264 / MPEG-4 part 10 "AVC"
@@ -261,6 +265,8 @@ typedef enum fourcc_list_e
     fcc_ac4  = 0x61632D34, //!< ac-4
 
     fcc_agsm = 0x6167736D, //!< GSM
+
+    fcc_samr = 0x73616D72, //!< AMR
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
