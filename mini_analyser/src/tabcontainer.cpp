@@ -125,9 +125,6 @@ void tabContainer::closeMedia()
         delete item;
     }
     ui->listWidget->clear();
-
-    // Clean the hex view
-    ui->widget_hex->close();
 }
 
 void tabContainer::tabSwitch(int index)

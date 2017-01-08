@@ -65,6 +65,12 @@
        </property>
        <item row="0" column="0">
         <widget class="QTreeWidget" name="treeWidget">
+         <property name="indentation">
+          <number>16</number>
+         </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string/>
