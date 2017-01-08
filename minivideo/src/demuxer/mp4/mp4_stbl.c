@@ -70,9 +70,7 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (mp4->run == true &&
-            retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -243,15 +241,41 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         track->sample_size_bits = read_bits(bitstr, 16);
 
         /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
-        /*const unsigned int(16) reserved =*/ read_bits(bitstr, 16);
+        /*const short reserved =*/ read_bits(bitstr, 16);
 
         track->sample_rate_hz = read_bits(bitstr, 16);
+        /*const short reserved =*/ read_bits(bitstr, 16);
 
+        if (box_header->version == 1)
+        {
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+        }
+        else if (box_header->version == 2)
+        {
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 64);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+            /*const unsigned reserved =*/ read_bits(bitstr, 32);
+        }
 #if ENABLE_DEBUG
         print_box_header(box_header);
         TRACE_1(MP4, "> channel_count   : %u", track->channel_count);
         TRACE_1(MP4, "> sample_size_bits: %u", track->sample_size_bits);
         TRACE_1(MP4, "> sample_rate_hz  : %u", track->sample_rate_hz);
+        if (box_header->version == 1)
+        {
+            //
+        }
+        else if (box_header->version == 2)
+        {
+            //
+        }
 #endif // ENABLE_DEBUG
 
         // xmlMapper
@@ -261,6 +285,14 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             fprintf(mp4->xml, "  <channel_count>%u</channel_count>\n", track->channel_count);
             fprintf(mp4->xml, "  <sample_size_bits>%u</sample_size_bits>\n", track->sample_size_bits);
             fprintf(mp4->xml, "  <sample_rate_hz>%u</sample_rate_hz>\n", track->sample_rate_hz);
+            if (box_header->version == 1)
+            {
+                //
+            }
+            else if (box_header->version == 2)
+            {
+                //
+            }
         }
     }
 
@@ -273,8 +305,8 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         retcode = parse_box_header(bitstr, &box_subsubheader);
 
         // Then parse subbox content
-        ////////////////////////////////////////////////////////////////
-        if (retcode == SUCCESS)
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subsubheader.boxtype)
             {
@@ -394,8 +426,8 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         retcode = parse_box_header(bitstr, &box_subsubheader);
 
         // Then parse subbox content
-        ////////////////////////////////////////////////////////////////
-        if (retcode == SUCCESS)
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subsubheader.boxtype)
             {

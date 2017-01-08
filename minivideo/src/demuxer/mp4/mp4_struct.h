@@ -138,6 +138,8 @@ typedef struct Mp4_t
 {
     bool run;                   //!< A convenient way to stop the parser from any sublevel
 
+    uint32_t variant;           //!< ISO BMF variant
+
     uint32_t timescale;
     uint64_t duration;
     uint64_t creation_time;
@@ -154,7 +156,21 @@ typedef struct Mp4_t
 /* ************************************************************************** */
 
 /*!
- * \enum Mp4BoxType_e
+ * \brief Identifies ISO Base Media File Format variants.
+ */
+typedef enum IsoBmfVariant_e
+{
+    ISOBMF_UNKNOWN  = 0,
+
+    ISOBMF_MOV      = 1,
+    ISOBMF_MP4      = 2,
+    ISOBMF_3GPP     = 3,
+    ISOBMF_JPEG2k   = 4,
+    ISOBMF_MPG21    = 5
+
+} IsoBmfVariant_e;
+
+/*!
  * \brief Identifies the box type.
  *
  * The field 'type' in a box header identifies the box type; standard boxes use
@@ -204,6 +220,7 @@ typedef enum Mp4BoxType_e
                             BOX_FIEL = 0x6669656C,      //!<
                             BOX_GAMA = 0x67616D61,      //!<
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
+                            BOX_ESDS = 0x65736473,      //!< elementary stream descriptor box
 
                             BOX_SA3D = 0x53413344,              //!< (v) Spatial Audio Box
                             BOX_SAND = 0x53414E44,              //!< (v) Non-Diegetic Audio Box

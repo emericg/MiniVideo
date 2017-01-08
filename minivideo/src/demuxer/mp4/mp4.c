@@ -59,6 +59,11 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // Read brand identifier
     unsigned int major_brand = read_bits(bitstr, 32);
 
+    if (major_brand == MV_FOURCC_BE('q','t',' ',' '))
+        mp4->variant = ISOBMF_MOV;
+    else if (major_brand == MV_FOURCC_BE('3','g','p','4'))
+        mp4->variant = ISOBMF_3GPP;
+
     // Read informative integer for the minor version of the major brand
     unsigned int minor_version = read_bits(bitstr, 32);
 
@@ -74,6 +79,19 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     for (i = 0; i < nb_compatible_brands; i++)
     {
         compatible_brands[i] = read_bits(bitstr, 32);
+
+        if (mp4->variant == ISOBMF_UNKNOWN)
+        {
+            if (compatible_brands[i] == MV_FOURCC_BE('m','p','4','1') ||
+                compatible_brands[i] == MV_FOURCC_BE('m','p','4','2'))
+            {
+                mp4->variant = ISOBMF_MP4;
+            }
+            else if (compatible_brands[i] == MV_FOURCC_BE('3','g','p','4'))
+            {
+                mp4->variant = ISOBMF_3GPP;
+            }
+        }
     }
 
 #if ENABLE_DEBUG
@@ -175,9 +193,13 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     TRACE_INFO(MP4, BLD_GREEN "parse_meta()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
-    box_header->version = (uint8_t)read_bits(bitstr, 8);
-    box_header->flags = read_bits(bitstr, 24);
+    if (mp4->variant != ISOBMF_MOV)
+    {
+        // Read FullBox attributs
+        // Well the spec says its a fullbox, but apparently not...
+        box_header->version = (uint8_t)read_bits(bitstr, 8);
+        box_header->flags = read_bits(bitstr, 24);
+    }
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
@@ -192,9 +214,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (mp4->run == true &&
-            retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -238,9 +258,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (mp4->run == true &&
-            retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -578,7 +596,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -628,8 +646,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -680,8 +697,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -744,8 +760,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -861,8 +876,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -1025,7 +1039,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -1207,7 +1221,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -1267,7 +1281,7 @@ static int parse_traf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -1351,7 +1365,7 @@ static int parse_moof(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (retcode == SUCCESS)
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {

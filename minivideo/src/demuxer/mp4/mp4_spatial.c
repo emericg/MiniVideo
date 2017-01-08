@@ -210,9 +210,7 @@ int parse_sv3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (mp4->run == true &&
-            retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -299,9 +297,7 @@ int parse_proj(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         retcode = parse_box_header(bitstr, &box_subheader);
 
         // Then parse subbox content
-        if (mp4->run == true &&
-            retcode == SUCCESS &&
-            bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+        if (mp4->run == true && retcode == SUCCESS)
         {
             switch (box_subheader.boxtype)
             {
@@ -503,9 +499,7 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             retcode = parse_box_header(bitstr, &box_subheader);
 
             // Then parse subbox content
-            if (mp4->run == true &&
-                retcode == SUCCESS &&
-                bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+            if (mp4->run == true && retcode == SUCCESS)
             {
                 switch (box_subheader.boxtype)
                 {
