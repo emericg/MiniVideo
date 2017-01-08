@@ -99,7 +99,10 @@ QString getTimestampString(const uint64_t timestamp)
         {
             timestamp_qstr += QString::number(ms) + " ms ";
         }
-        timestamp_qstr += QString::number(ns) + QObject::tr(" ns");
+        if (ns > 0)
+        {
+            timestamp_qstr += QString::number(ns) + " ns";
+        }
     }
 
     //qDebug() << "getTimestampString(" << timestamp << ") >" << timestamp_qstr;
@@ -365,7 +368,7 @@ QString getAspectRatioString(double ar_d, const bool detailed)
     }
     else
     {
-        aspectratio_qstr = QString::number(ar_d, 'g', 3) + ":1";
+        aspectratio_qstr = QString::number(ar_d, 'g', 4) + ":1";
     }
 
     //qDebug() << "getAspectRatioString(" << x << "," << y << ") >" << aspectratio_qstr;
