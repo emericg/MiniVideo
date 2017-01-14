@@ -316,6 +316,9 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_SAND:
                     retcode = parse_sand(bitstr, &box_subsubheader, track, mp4);
                     break;
+                case BOX_ESDS:
+                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
+                    break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
                     break;
@@ -455,6 +458,9 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_PASP:
                     retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
                     break;
+                case BOX_ESDS:
+                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
+                    break;
                 case BOX_ST3D:
                     retcode = parse_st3d(bitstr, &box_subsubheader, track, mp4);
                     break;
@@ -469,6 +475,194 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             jumpy_mp4(bitstr, box_header, &box_subsubheader);
         }
     }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Elementary Stream Descriptor box - FullBox.
+ *
+ * From 'ISO/IEC 14496-1' specification:
+ * - x.x.x ESDescriptor.
+ * - 8.6.6 decoderConfigDescriptor.
+ * From 'ISO/IEC 14496-3 Subpart 1' specification:
+ * - 1.6.2.1 AudioSpecificConfig.
+ * From 'ISO/IEC 14496-3 Subpart 3' specification:
+ * - x.x.x GASpecificConfig
+ */
+int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_esds()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+#endif // ENABLE_DEBUG
+
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Elementary Stream Descriptor</title>\n");
+    }
+
+    // Parse box content
+    while (bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end))
+    {
+        uint8_t tag = read_bits(bitstr, 8);
+        int64_t tag_offset = bitstream_get_absolute_byte_offset(bitstr);
+        uint8_t tag_delimiters = 0;
+
+        // tag_delimiters
+        while (next_bits(bitstr, 8) == 0x80)
+        {
+            skip_bits(bitstr, 8);
+            tag_delimiters++;
+        }
+
+        uint8_t tag_datasize = (uint8_t)read_bits(bitstr, 8);
+
+        TRACE_2(MP4, "esds NEXT TAG %X @ %lli", tag, tag_offset);
+
+        // datas
+        if (tag == 0x03) // ESDescriptor TAG
+        {
+            uint16_t esId = read_bits(bitstr, 16);
+            bool streamDependenceFlag = read_bit(bitstr);
+            bool urlFlag = read_bit(bitstr);
+            bool oCRstreamFlag = read_bit(bitstr);
+            uint8_t streamPriority = read_bits(bitstr, 5);
+
+            if (mp4->xml)
+            {
+                fprintf(mp4->xml, "  <esId>%u</esId>\n", esId);
+                fprintf(mp4->xml, "  <streamDependenceFlag>%u</streamDependenceFlag>\n", streamDependenceFlag);
+                fprintf(mp4->xml, "  <urlFlag>%u</urlFlag>\n", urlFlag);
+                fprintf(mp4->xml, "  <oCRstreamFlag>%u</oCRstreamFlag>\n", oCRstreamFlag);
+                fprintf(mp4->xml, "  <streamPriority>%u</streamPriority>\n", streamPriority);
+            }
+
+            if (streamDependenceFlag)
+            {
+                uint16_t dependsOnEsId = read_bits(bitstr, 16);
+                if (mp4->xml) fprintf(mp4->xml, "  <dependsOnEsId>%u</dependsOnEsId>\n", dependsOnEsId);
+            }
+            if (urlFlag)
+            {
+                uint8_t URLLength = read_bits(bitstr, 8);
+                if (URLLength)
+                {
+                    uint8_t *URL = malloc(URLLength);
+
+                    // read string
+                    for (unsigned i = 0; i < URLLength; i++)
+                    {
+                        URL[i] = (uint8_t)read_bits(bitstr, 8);
+                    }
+                    if (mp4->xml) fprintf(mp4->xml, "  <URL>%s</URL>\n", URL);
+
+                    free(URL);
+                }
+            }
+            if (oCRstreamFlag)
+            {
+                uint16_t oCREsId = read_bits(bitstr, 16);
+                if (mp4->xml) fprintf(mp4->xml, "  <oCREsId>%u</oCREsId>\n", oCREsId);
+            }
+        }
+        else if (tag == 0x04) // decoderConfigDescriptor TAG
+        {
+            uint8_t objectTypeIndication = read_bits(bitstr, 8);
+            uint8_t streamType = read_bits(bitstr, 6); // FIXME
+            uint8_t upStream = read_bits(bitstr, 2);
+            uint32_t bufferSizeDB = read_bits(bitstr, 24);
+            int32_t maxBitRate = (int)read_bits(bitstr, 32);
+            int32_t avgBitRate = (int)read_bits(bitstr, 32);
+
+            switch (objectTypeIndication)
+            {
+                case 0x20:
+                    track->codec = CODEC_MPEG4_ASP;
+                    break;
+                case 0x40:
+                    track->codec = CODEC_AAC;
+                    break;
+                case 0x60:
+                case 0x61:
+                case 0x62:
+                case 0x63:
+                case 0x64:
+                case 0x65:
+                case 0x66:
+                case 0x67:
+                case 0x68:
+                    track->codec = CODEC_MPEG2;
+                    break;
+                case 0x6A:
+                    track->codec = CODEC_MPEG1;
+                    break;
+                case 0x6B:
+                case 0x69:
+                    track->codec = CODEC_MPEG_L3;
+                    break;
+                case 0x6C:
+                    track->codec = CODEC_UNKNOWN; // JPEG...
+                    break;
+            }
+
+            if (mp4->xml)
+            {
+                fprintf(mp4->xml, "  <objectTypeIndication>0x%X</objectTypeIndication>\n", objectTypeIndication);
+                fprintf(mp4->xml, "  <streamType>%u</streamType>\n", streamType);
+                fprintf(mp4->xml, "  <upStream>%u</upStream>\n", upStream);
+                fprintf(mp4->xml, "  <bufferSizeDB>%u</bufferSizeDB>\n", bufferSizeDB);
+                fprintf(mp4->xml, "  <maxBitRate>%i</maxBitRate>\n", maxBitRate);
+                fprintf(mp4->xml, "  <avgBitRate>%i</avgBitRate>\n", avgBitRate);
+            }
+        }
+        else if (tag == 0x05) // decoderSpecificInfo TAG
+        {
+            uint8_t audioObjectType = read_bits(bitstr, 8);
+            uint8_t samplingFrequencyIndex = read_bits(bitstr, 8);
+            uint32_t samplingFrequency = read_bits(bitstr, 32);
+            uint8_t channelConfiguration = read_bits(bitstr, 8);
+
+            if (mp4->xml)
+            {
+                fprintf(mp4->xml, "  <audioObjectType>%u</audioObjectType>\n", audioObjectType);
+                fprintf(mp4->xml, "  <samplingFrequencyIndex>%u</samplingFrequencyIndex>\n", samplingFrequencyIndex);
+                fprintf(mp4->xml, "  <samplingFrequency>%u</samplingFrequency>\n", samplingFrequency);
+                fprintf(mp4->xml, "  <channelConfiguration>%u</channelConfiguration>\n", channelConfiguration);
+            }
+        }
+        else if (tag == 0x06) // SLConfigDescription TAG
+        {
+            uint8_t predefined = read_bits(bitstr, 8);
+
+            if (mp4->xml)
+            {
+                fprintf(mp4->xml, "  <predefined>%u</predefined>\n", predefined);
+            }
+        }
+        else
+        {
+            TRACE_WARNING(MP4, "esds UNKNOWN TAG %X", tag);
+            if (mp4->xml) fprintf(mp4->xml, "  <UNKNOWN_TAG>0x%X</UNKNOWN_TAG>\n", tag);
+
+            if ((tag_offset + tag_delimiters + tag_datasize) <= box_header->offset_end)
+            {
+                skip_bits(bitstr, tag_datasize * 8);
+            }
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
 
     return retcode;
 }
@@ -1073,6 +1267,7 @@ int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     return retcode;
 }
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!

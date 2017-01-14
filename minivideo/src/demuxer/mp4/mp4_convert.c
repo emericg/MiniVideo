@@ -100,7 +100,8 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         }
         else
         {
-            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %u)", track->id, track->handlerType);
+            char fcc[5];
+            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)", track->id, getFccString_le(track->handlerType, fcc));
 
             retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
             if (retcode == SUCCESS)
