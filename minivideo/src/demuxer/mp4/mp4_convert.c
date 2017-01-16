@@ -144,7 +144,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
         }
 
-        map->sample_alignment = true; // TODO not very true
+        map->sample_alignment = false;
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
 
         map->track_id = track->id;

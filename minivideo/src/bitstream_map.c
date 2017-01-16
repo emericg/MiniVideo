@@ -266,8 +266,11 @@ static void computeSamplesDatasTrack(BitstreamMap_t *track)
 
             if (track->sample_alignment == false)
             {
-                if (track->sample_pts[j] || track->sample_dts[j])
+                if (track->sample_type[j] == sample_VIDEO_SYNC ||
+                    track->sample_pts[j] || track->sample_dts[j])
+                {
                     track->frame_count++;
+                }
             }
 /*
             if (j > 0)
