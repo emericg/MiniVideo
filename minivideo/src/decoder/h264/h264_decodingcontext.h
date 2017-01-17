@@ -39,8 +39,9 @@ typedef struct DecodingContext_t
     // Input
     ////////////////////////////////////////////////////////////////////////////
 
-    MediaFile_t *VideoFile;          //!< H.264 input video
-    Bitstream_t *bitstr;             //!< Bitstream, linked to the input file
+    MediaFile_t *VideoFile;          //!< H.264 input video file
+
+    Bitstream_t *bitstr;             //!< Bitstream reader opened on the input file
 
     // Output
     ////////////////////////////////////////////////////////////////////////////

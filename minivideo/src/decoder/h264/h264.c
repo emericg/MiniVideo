@@ -26,173 +26,14 @@
 #include "h264_parameterset.h"
 #include "h264_slice.h"
 #include "h264_macroblock.h"
+#include "../../depacketizer/depack.h"
+#include "../../bitstream_utils.h"
 #include "../../typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
-/* ************************************************************************** */
-
-static int computeNormAdjust(DecodingContext_t *dc);
-
-/* ************************************************************************** */
-
-int h264_decode(MediaFile_t *input_video,
-                const char *output_directory,
-                const int picture_format,
-                const int picture_quality,
-                const int picture_number,
-                const int picture_extractionmode)
-{
-    TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
-    int retcode = FAILURE;
-
-    // Init decoding context
-    DecodingContext_t *dc = initDecodingContext(input_video);
-
-    if (dc == NULL)
-    {
-        TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder");
-        return retcode;
-    }
-    else
-    {
-        // Init some quantization parameters
-        computeNormAdjust(dc);
-
-        // Init some export parameters
-        //strncpy(dc->output_directory, output_directory, sizeof(output_directory));
-        dc->output_format = picture_format;
-        dc->picture_quality = picture_quality;
-        dc->picture_number = picture_number;
-        dc->picture_extractionmode = picture_extractionmode;
-
-        // Start the decoding process
-        dc->decoderRunning = true;
-    }
-
-    // Loop until end of file
-    while (dc->decoderRunning)
-    {
-        // Load next NAL Unit
-        retcode = buffer_feed_next_sample(dc->bitstr);
-
-        // Check header validity
-        if (nalu_parse_header(dc->bitstr, dc->active_nalu))
-        {
-            // Decode NAL Unit content
-            switch (dc->active_nalu->nal_unit_type)
-            {
-                case NALU_TYPE_SLICE: // 1
-                {
-                    TRACE_1(NALU, "This decoder only support IDR slice decoding!");
-                }
-                break;
-
-                case NALU_TYPE_IDR: // 5
-                {
-                    dc->IdrPicFlag = true;
-                    nalu_clean_sample(dc->bitstr);
-
-                    TRACE_INFO(MAIN, "> " BLD_GREEN "decodeIDR(%i)" CLR_RESET, dc->idrCounter);
-
-                    if (decode_slice(dc))
-                    {
-                        retcode = SUCCESS;
-                        dc->errorCounter = 0;
-                        dc->idrCounter++;
-                        dc->frameCounter++;
-                    }
-                    else
-                        dc->errorCounter++;
-
-                    dc->IdrPicFlag = false;
-                }
-                break;
-
-                case NALU_TYPE_SEI: // 6
-                {
-                    nalu_clean_sample(dc->bitstr);
-
-                    if (decodeSEI(dc))
-                    {
-                        retcode = SUCCESS;
-                        printSEI(dc);
-                    }
-                    else
-                        dc->errorCounter++;
-                }
-                break;
-
-                case NALU_TYPE_SPS: // 7
-                {
-                    nalu_clean_sample(dc->bitstr);
-
-                    if (decodeSPS(dc))
-                    {
-                        retcode = SUCCESS;
-                        printSPS(dc);
-                    }
-                    else
-                        dc->errorCounter++;
-                }
-                break;
-
-                case NALU_TYPE_PPS: // 8
-                {
-                    nalu_clean_sample(dc->bitstr);
-
-                    if (decodePPS(dc))
-                    {
-                        retcode = SUCCESS;
-                        printPPS(dc);
-                    }
-                    else
-                        dc->errorCounter++;
-                }
-                break;
-
-                default:
-                {
-                    dc->errorCounter++;
-                    TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)", dc->active_nalu->nal_unit_type);
-                }
-                break;
-            }
-
-            // Reset NAL Unit structure
-            nalu_reset(dc->active_nalu);
-        }
-        else
-        {
-            dc->errorCounter++;
-            TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)", dc->errorCounter);
-        }
-
-        if (dc->idrCounter == (unsigned)picture_number)
-        {
-            TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
-            TRACE_INFO(H264, "H.264 decoding ended");
-            retcode = SUCCESS;
-            dc->decoderRunning = false;
-        }
-
-        if (dc->errorCounter > 64 || retcode == FAILURE)
-        {
-            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
-            TRACE_ERROR(H264, "H.264 decoding aborted");
-            retcode = FAILURE;
-            dc->decoderRunning = false;
-        }
-    }
-
-    // Destroy decoding context
-    freeDecodingContext(&dc);
-
-    // Exit decoder
-    return retcode;
-}
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -459,7 +300,7 @@ static int computeNormAdjust(DecodingContext_t *dc)
                     else
                         dc->normAdjust4x4[q][i][j] = v4x4[q][2];
 
-                    //TRACE_3(DTRANS, "normAdjust4x4[%i][%i][%i] = %i", q, ii, jj, normAdjust4x4[q][ii][jj]);
+                    //TRACE_3(TRANS, "normAdjust4x4[%i][%i][%i] = %i", q, ii, jj, normAdjust4x4[q][ii][jj]);
                 }
             }
 
@@ -481,7 +322,7 @@ static int computeNormAdjust(DecodingContext_t *dc)
                     else
                         dc->normAdjust8x8[q][i][j] = v8x8[q][5];
 
-                    //TRACE_3(DTRANS, "normAdjust8x8[%i][%i][%i] = %i", q, ii, jj, normAdjust8x8[q][ii][jj]);
+                    //TRACE_3(TRANS, "normAdjust8x8[%i][%i][%i] = %i", q, ii, jj, normAdjust8x8[q][ii][jj]);
                 }
             }
         }
@@ -489,6 +330,228 @@ static int computeNormAdjust(DecodingContext_t *dc)
         retcode = SUCCESS;
     }
 
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int64_t nalu_size)
+{
+    TRACE_1(H264, BLD_GREEN "h264_decode_nalu()" CLR_RESET);
+    int retcode = FAILURE;
+
+    // Goto correct data offset
+    //bitstream_goto_offset(dc->bitstr, nalu_offset);
+
+    // Check header validity
+    if (nalu_parse_header(dc->bitstr, dc->active_nalu))
+    {
+        TRACE_1(H264, "decode: " BLD_GREEN "NALU_TYPE %i (at %lli) " CLR_RESET,
+                dc->active_nalu->nal_unit_type,
+                bitstream_get_absolute_byte_offset(dc->bitstr));
+
+        // Decode NAL Unit content
+        switch (dc->active_nalu->nal_unit_type)
+        {
+            case NALU_TYPE_SLICE: //////////////////////////////////////
+            {
+                TRACE_1(H264, "This decoder only support IDR slice decoding!");
+            }
+            break;
+
+            case NALU_TYPE_IDR: ////////////////////////////////////////
+            {
+                TRACE_INFO(H264, "> " BLD_GREEN "decodeIDR(%i at %lli)" CLR_RESET,
+                           dc->idrCounter, bitstream_get_absolute_byte_offset(dc->bitstr));
+
+                nalu_clean_sample(dc->bitstr);
+                dc->IdrPicFlag = true;
+
+                if (decode_slice(dc))
+                {
+                    retcode = SUCCESS;
+                    dc->errorCounter = 0;
+                    dc->idrCounter++;
+                    dc->frameCounter++;
+                }
+                else
+                    dc->errorCounter++;
+
+                dc->IdrPicFlag = false;
+            }
+            break;
+
+            case NALU_TYPE_AUD: ////////////////////////////////////////
+            {
+                nalu_clean_sample(dc->bitstr);
+
+                if (decodeAUD(dc))
+                {
+                    retcode = SUCCESS;
+                }
+                else
+                    dc->errorCounter++;
+            }
+            break;
+
+            case NALU_TYPE_SEI: ////////////////////////////////////////
+            {
+                nalu_clean_sample(dc->bitstr);
+
+                if (decodeSEI(dc))
+                {
+                    retcode = SUCCESS;
+                    printSEI(dc);
+                }
+                else
+                    dc->errorCounter++;
+            }
+            break;
+
+            case NALU_TYPE_SPS: ////////////////////////////////////////
+            {
+                nalu_clean_sample(dc->bitstr);
+
+                if (decodeSPS(dc))
+                {
+                    retcode = SUCCESS;
+                    printSPS(dc);
+                }
+                else
+                    dc->errorCounter++;
+            }
+            break;
+
+            case NALU_TYPE_PPS: ////////////////////////////////////////
+            {
+                nalu_clean_sample(dc->bitstr);
+
+                if (decodePPS(dc))
+                {
+                    retcode = SUCCESS;
+                    printPPS(dc);
+                }
+                else
+                    dc->errorCounter++;
+            }
+            break;
+
+            default:
+            {
+                TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)", dc->active_nalu->nal_unit_type);
+                dc->errorCounter++;
+            }
+            break;
+        }
+
+        // Reset NAL Unit structure
+        nalu_reset(dc->active_nalu);
+    }
+    else
+    {
+        retcode = false;
+        dc->errorCounter++;
+        TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)", dc->errorCounter);
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+int h264_decode(MediaFile_t *input_video,
+                const char *output_directory,
+                const int picture_format,
+                const int picture_quality,
+                const int picture_number,
+                const int picture_extractionmode)
+{
+    TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
+    int retcode = FAILURE;
+
+    // Init decoding context
+    DecodingContext_t *dc = initDecodingContext(input_video);
+
+    if (dc == NULL)
+    {
+        TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder");
+        return retcode;
+    }
+    else
+    {
+        // Init some quantization parameters
+        computeNormAdjust(dc);
+
+        // Init some export parameters
+        //strncpy(dc->output_directory, output_directory, sizeof(output_directory));
+        dc->output_format = picture_format;
+        dc->picture_quality = picture_quality;
+        dc->picture_number = picture_number;
+        dc->picture_extractionmode = picture_extractionmode;
+
+        // Start the decoding process
+        dc->decoderRunning = true;
+    }
+
+    // Load SPS & PPS
+    retcode = buffer_feed_next_sample(dc->bitstr);
+    int64_t samplesid = dc->bitstr->bitstream_sample_index;
+    int64_t samplesoffset = dc->bitstr->bitstream_map->sample_offset[0];
+    int64_t samplesize = dc->bitstr->bitstream_map->sample_size[0];
+    h264_decode_nalu(dc, samplesoffset, samplesize);
+    retcode = buffer_feed_next_sample(dc->bitstr);
+    samplesid = dc->bitstr->bitstream_sample_index;
+    samplesoffset = dc->bitstr->bitstream_map->sample_offset[1];
+    samplesize = dc->bitstr->bitstream_map->sample_size[1];
+    h264_decode_nalu(dc, samplesoffset, samplesize);
+
+    es_sample_t essample_list[16];
+
+    // Loop until the end of the decoding
+    while (dc->decoderRunning)
+    {
+        // Depacketize
+        int essample_count = depack_sample(dc->bitstr, dc->bitstr->bitstream_map,
+                                           dc->bitstr->bitstream_sample_index,
+                                           essample_list);
+
+        if (essample_count < 1)
+        {
+            retcode = FAILURE;
+            dc->decoderRunning = false;
+            break;
+        }
+
+        for (int iii = 0; iii < essample_count; iii++)
+        {
+            int64_t current_nalu_offset = essample_list[iii].offset;
+            int64_t current_nalu_size = essample_list[iii].size;
+
+            h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
+
+            if (dc->idrCounter == (unsigned)picture_number)
+            {
+                TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
+                TRACE_INFO(H264, "H.264 decoding ended");
+                retcode = SUCCESS;
+                dc->decoderRunning = false;
+            }
+
+            if (dc->errorCounter > 64 /*|| retcode == FAILURE*/)
+            {
+                TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
+                TRACE_ERROR(H264, "H.264 decoding aborted");
+                retcode = FAILURE;
+                dc->decoderRunning = false;
+            }
+        }
+    }
+
+    // Destroy decoding context
+    freeDecodingContext(&dc);
+
+    // Exit decoder
     return retcode;
 }
 

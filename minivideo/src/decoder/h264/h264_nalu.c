@@ -111,68 +111,75 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
     TRACE_INFO(NALU, "> " BLD_GREEN "nalu_parse_header()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Set NAL Unit header offset
-    nalu->nal_offset = bitstream_get_absolute_byte_offset(bitstr);
-
-    // Check forbidden_zero_bit
-    if (read_bit(bitstr) == 0)
+    if (bitstr && nalu)
     {
-        nalu->nal_ref_idc = read_bits(bitstr, 2);
-        nalu->nal_unit_type = read_bits(bitstr, 5);
+        // Set NAL Unit header offset
+        nalu->nal_offset = bitstream_get_absolute_byte_offset(bitstr);
 
-        TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X", nalu->nal_ref_idc);
-        TRACE_1(NALU, "  - nal_unit_type = 0x%02X", nalu->nal_unit_type);
-
-        if (nalu->nal_unit_type == 14 || nalu->nal_unit_type == 20)
+        // Check forbidden_zero_bit
+        if (read_bit(bitstr) == 0)
         {
-            // Check reserved_one_bit
-            if (read_bit(bitstr) == 0)
+            nalu->nal_ref_idc = read_bits(bitstr, 2);
+            nalu->nal_unit_type = read_bits(bitstr, 5);
+
+            TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X", nalu->nal_ref_idc);
+            TRACE_1(NALU, "  - nal_unit_type = 0x%02X", nalu->nal_unit_type);
+
+            if (nalu->nal_unit_type == 14 || nalu->nal_unit_type == 20)
             {
-                nalu->idr_flag = read_bit(bitstr);
-                nalu->priority_id = read_bits(bitstr, 6);
-                nalu->no_inter_layer_pred_flag = read_bit(bitstr);
-                nalu->dependency_id = read_bits(bitstr, 3);
-                nalu->quality_id = read_bits(bitstr, 4);
-                nalu->temporal_id = read_bits(bitstr, 3);
-                nalu->use_ref_base_pic_flag = read_bit(bitstr);
-                nalu->discardable_flag = read_bit(bitstr);
-                nalu->output_flag = read_bit(bitstr);
-
-                TRACE_1(NALU, "  - idr_flag      = %u", nalu->idr_flag);
-                TRACE_1(NALU, "  - priority_id   = %u", nalu->priority_id);
-                TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u", nalu->no_inter_layer_pred_flag);
-                TRACE_1(NALU, "  - dependency_id = %u", nalu->dependency_id);
-                TRACE_1(NALU, "  - quality_id    = %u", nalu->quality_id);
-                TRACE_1(NALU, "  - temporal_id   = %u", nalu->temporal_id);
-                TRACE_1(NALU, "  - use_ref_base_pic_flag    = %u", nalu->use_ref_base_pic_flag);
-                TRACE_1(NALU, "  - discardable_flag = %u", nalu->discardable_flag);
-                TRACE_1(NALU, "  - output_flag      = %u", nalu->output_flag);
-
-                // Check reserved_three_2bits
-                if (read_bits(bitstr, 2) == 3)
+                // Check reserved_one_bit
+                if (read_bit(bitstr) == 0)
                 {
-                    retcode = SUCCESS;
-                    TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
+                    nalu->idr_flag = read_bit(bitstr);
+                    nalu->priority_id = read_bits(bitstr, 6);
+                    nalu->no_inter_layer_pred_flag = read_bit(bitstr);
+                    nalu->dependency_id = read_bits(bitstr, 3);
+                    nalu->quality_id = read_bits(bitstr, 4);
+                    nalu->temporal_id = read_bits(bitstr, 3);
+                    nalu->use_ref_base_pic_flag = read_bit(bitstr);
+                    nalu->discardable_flag = read_bit(bitstr);
+                    nalu->output_flag = read_bit(bitstr);
+
+                    TRACE_1(NALU, "  - idr_flag      = %u", nalu->idr_flag);
+                    TRACE_1(NALU, "  - priority_id   = %u", nalu->priority_id);
+                    TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u", nalu->no_inter_layer_pred_flag);
+                    TRACE_1(NALU, "  - dependency_id = %u", nalu->dependency_id);
+                    TRACE_1(NALU, "  - quality_id    = %u", nalu->quality_id);
+                    TRACE_1(NALU, "  - temporal_id   = %u", nalu->temporal_id);
+                    TRACE_1(NALU, "  - use_ref_base_pic_flag    = %u", nalu->use_ref_base_pic_flag);
+                    TRACE_1(NALU, "  - discardable_flag = %u", nalu->discardable_flag);
+                    TRACE_1(NALU, "  - output_flag      = %u", nalu->output_flag);
+
+                    // Check reserved_three_2bits
+                    if (read_bits(bitstr, 2) == 3)
+                    {
+                        retcode = SUCCESS;
+                        TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
+                    }
+                    else
+                    {
+                        TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_three_2bits value)", nalu->nal_offset);
+                    }
                 }
                 else
                 {
-                    TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_three_2bits value)", nalu->nal_offset);
+                    TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_one_bit value)", nalu->nal_offset);
                 }
             }
             else
             {
-                TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_one_bit value)", nalu->nal_offset);
+                retcode = SUCCESS;
+                TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
             }
         }
         else
         {
-            retcode = SUCCESS;
-            TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
+            TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong forbidden_zero_bit value)", nalu->nal_offset);
         }
     }
     else
     {
-        TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong forbidden_zero_bit value)", nalu->nal_offset);
+        TRACE_ERROR(NALU, "  * Empty NAL Unit or bitstream!");
     }
 
     return retcode;

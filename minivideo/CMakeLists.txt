@@ -182,6 +182,8 @@ set(minivideo_SRC
         src/demuxer/wave/wave.c src/demuxer/wave/wave_convert.c src/demuxer/wave/wave_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
+    src/depacketizer/depack.c src/depacketizer/depack_struct.h
+        src/depacketizer/h264/depack_h264.c
     src/decoder/h264/h264.c
         src/decoder/h264/h264_decodingcontext.h
         src/decoder/h264/h264_expgolomb.c

@@ -60,7 +60,7 @@
 typedef struct nalu_t
 {
     // Nal Unit offset
-    int64_t nal_offset;               //!< Absolute offset of the NAL Unit header (in byte)
+    int64_t nal_offset;             //!< Absolute offset of the NAL Unit header (in byte)
 
     // Nal Unit header
     unsigned int nal_ref_idc;       //!< Define NAL Unit priority (see NALUnit_RefIdc enum)
