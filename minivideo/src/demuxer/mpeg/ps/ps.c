@@ -53,7 +53,6 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
                header->offset_start);
 
     int retcode = SUCCESS;
-    int i = 0;
 
     // Pack Headers do not have lengh field, rewind 2 bytes
     rewind_bits(bitstr, 16);
@@ -80,7 +79,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
     packet->pack_stuffing_length = read_bits(bitstr, 3);
 
     // Stuffing
-    for (i = 0; i < packet->pack_stuffing_length; i++)
+    for (uint8_t i = 0; i < packet->pack_stuffing_length; i++)
     {
         if (read_bits(bitstr, 8) != 0xFF)
         {
@@ -246,7 +245,6 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, PesHeader_t *head
     TRACE_INFO(MPS, BLD_GREEN "parse_program_stream_directory()" CLR_RESET " @ %lli",
                header->offset_start);
     int retcode = SUCCESS;
-    int i = 0;
 
     packet->number_of_access_units = read_bits(bitstr, 15);
     MARKER_BIT
@@ -265,7 +263,7 @@ static int parse_program_stream_directory(Bitstream_t *bitstr, PesHeader_t *head
     packet->next_directory_offset += read_bits(bitstr, 15);
     MARKER_BIT
 
-    for (i = 0; i < packet->number_of_access_units; i++)
+    for (uint16_t i = 0; i < packet->number_of_access_units; i++)
     {
         // TODO stack it?
         packet->packet_stream_id = read_bits(bitstr, 8);
@@ -332,13 +330,13 @@ int ps_fileParse(MediaFile_t *media)
                bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - min_packet_size))
         {
             // Init
-            PackHeader_t pack_header = { 0 };
-            SystemHeader_t system_header = { 0 };
+            PackHeader_t pack_header = {};
+            SystemHeader_t system_header = {};
 
-            PesHeader_t pes_header = { 0 };
-            PesPacket_t pes_packet = { 0 };
-            ProgramStreamMap_t pes_streammap = { 0 };
-            ProgramStreamDirectory_t pes_streamdirectory = { 0 };
+            PesHeader_t pes_header = {};
+            PesPacket_t pes_packet = {};
+            ProgramStreamMap_t pes_streammap = {};
+            ProgramStreamDirectory_t pes_streamdirectory = {};
 
             // Parse packet header
             parse_pes_header(bitstr, &pes_header);

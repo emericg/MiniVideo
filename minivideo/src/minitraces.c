@@ -158,8 +158,6 @@ static const unsigned int trace_module_count = sizeof(trace_modules_table) / siz
 
 void MiniTraces_info(void)
 {
-    unsigned i = 0;
-
     printf(PID BLD_GREEN "\nMiniTraces_infos()" CLR_RESET " version 0.4\n");
 
     printf(PID "\n* TRACE LEVELS ENABLED:\n");
@@ -171,7 +169,7 @@ void MiniTraces_info(void)
     TRACE_3(MAIN, "LVL 3 traces enabled");
 
     printf(PID "\n* TRACE MODULES CONFIGURATION:\n");
-    for (i = 0; i < trace_module_count; i++)
+    for (unsigned i = 0; i < trace_module_count; i++)
     {
         printf(PID "[%02x][%5s] Trace Mask 0x%X: ", i,
                trace_modules_table[i].module_name,

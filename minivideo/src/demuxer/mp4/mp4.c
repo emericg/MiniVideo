@@ -396,8 +396,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
         if (bytes_left > 128) bytes_left = 128;
 
-        int i = 0;
-        for (i = 0; i < bytes_left; i++)
+        for (int i = 0; i < bytes_left; i++)
         {
             track->name[i] = read_bits(bitstr, 8);
         }

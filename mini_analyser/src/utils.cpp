@@ -175,7 +175,7 @@ QString getTrackTypeString(const BitstreamMap_t *track)
             type_qstr = QObject::tr("Menu");
             break;
         case stream_TMCD:
-            type_qstr = QObject::tr("Timecode");
+            type_qstr = QObject::tr("TimeCode Record");
             break;
         case stream_META:
             type_qstr = QObject::tr("Metadatas");

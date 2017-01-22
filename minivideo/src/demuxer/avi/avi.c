@@ -545,8 +545,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         uint32_t dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                         uint8_t SubFormat_GUID[16];
-                        int i = 0;
-                        for (i = 0; i < 16; i++)
+                        for (int i = 0; i < 16; i++)
                         {
                             SubFormat_GUID[i] = read_bits(bitstr, 8);
                         }
@@ -1210,10 +1209,9 @@ int avi_fileParse(MediaFile_t *media)
             if (avi.xml) fprintf(avi.xml, "  </atom>\n");
 
             // Check if we have our super index, or if the tracks have been indexed
-            unsigned int i = 0;
             int track_indexed = 0, track_superindexed = 0;
 
-            for (i = 0; i < avi.tracks_count; i++)
+            for (unsigned i = 0; i < avi.tracks_count; i++)
             {
                 if (avi.tracks[i]->track_indexed == 1)
                     track_indexed++;

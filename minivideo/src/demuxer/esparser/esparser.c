@@ -102,7 +102,6 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
                             else
                             {
                                 media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_PARAM;
-
                                 media->tracks_video[0]->sample_count++;
                                 TRACE_1(DEMUX, "* SPS or PPS nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
                             }
