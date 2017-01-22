@@ -944,6 +944,7 @@ int export_idr(DecodingContext_t *dc)
 
         // Close file
         fclose(PictureFile.file_pointer);
+        PictureFile.file_pointer = NULL;
     }
 
     return retcode;

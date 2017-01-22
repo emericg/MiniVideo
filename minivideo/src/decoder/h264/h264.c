@@ -92,7 +92,7 @@ DecodingContext_t *initDecodingContext(MediaFile_t *media)
                 }
                 else
                 {
-                    // Cleanup array of SPS and PPS
+                    // Cleanup arrays of SPS and PPS
                     int i = 0;
 
                     for (i = 0; i < MAX_SPS; i++)
@@ -509,7 +509,7 @@ int h264_decode(MediaFile_t *input_video,
     es_sample_t essample_list[16];
 
     // Loop until the end of the decoding
-    while (dc->decoderRunning)
+    while (dc->decoderRunning && retcode == SUCCESS)
     {
         // Depacketize
         int essample_count = depack_sample(dc->bitstr, dc->bitstr->bitstream_map,
@@ -523,10 +523,10 @@ int h264_decode(MediaFile_t *input_video,
             break;
         }
 
-        for (int iii = 0; iii < essample_count; iii++)
+        for (int i = 0; i < essample_count && dc->decoderRunning; i++)
         {
-            int64_t current_nalu_offset = essample_list[iii].offset;
-            int64_t current_nalu_size = essample_list[iii].size;
+            int64_t current_nalu_offset = essample_list[i].offset;
+            int64_t current_nalu_size = essample_list[i].size;
 
             h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
 
@@ -538,7 +538,7 @@ int h264_decode(MediaFile_t *input_video,
                 dc->decoderRunning = false;
             }
 
-            if (dc->errorCounter > 64 /*|| retcode == FAILURE*/)
+            if (dc->errorCounter > 64 || retcode == FAILURE)
             {
                 TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
                 TRACE_ERROR(H264, "H.264 decoding aborted");
