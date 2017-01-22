@@ -164,14 +164,11 @@ configure_file(
 # MiniVideo source code
 set(minivideo_SRC
     src/minivideo.c
-        src/minivideo_settings.h
-        src/typedef.h
+        src/minivideo_settings.h src/minivideo_typedef.h
+        src/minivideo_codecs.c src/minivideo_avutils.h
+        src/minivideo_fourcc.c src/minivideo_twocc.c
+        src/minitraces.c src/minitraces_conf.h
         src/utils.c
-        src/avcodecs.c src/avutils.h
-        src/twocc.c
-        src/fourcc.c
-        src/minitraces.c
-        src/minitraces_conf.h
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c

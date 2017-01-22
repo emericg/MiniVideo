@@ -28,11 +28,11 @@
 #include "../riff/riff.h"
 #include "../xml_mapper.h"
 #include "../../utils.h"
-#include "../../twocc.h"
-#include "../../fourcc.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
-#include "../../typedef.h"
+#include "../../minivideo_twocc.h"
+#include "../../minivideo_fourcc.h"
+#include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries

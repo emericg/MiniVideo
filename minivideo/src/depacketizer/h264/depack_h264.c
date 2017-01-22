@@ -26,8 +26,8 @@
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
-#include "../../typedef.h"
-#include "../../fourcc.h"
+#include "../../minivideo_typedef.h"
+#include "../../minivideo_fourcc.h"
 #include "../../minitraces.h"
 
 // C standard libraries

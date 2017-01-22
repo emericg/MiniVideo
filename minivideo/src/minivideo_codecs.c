@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      avcodecs.c
+ * \file      minivideo_avcodecs.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
  */
 
-#include "avcodecs.h"
+#include "minivideo_codecs.h"
 
 #pragma GCC diagnostic ignored "-Wswitch"
-#pragma CLANG diagnostic ignored "-Wswitch"
+#pragma clang diagnostic ignored "-Wswitch"
 
 /* ************************************************************************** */
 

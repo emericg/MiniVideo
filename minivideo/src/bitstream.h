@@ -25,7 +25,7 @@
 #define BITSTREAM_H
 
 // minivideo headers
-#include "typedef.h"
+#include "minivideo_typedef.h"
 #include "import.h"
 #include "bitstream_map.h"
 

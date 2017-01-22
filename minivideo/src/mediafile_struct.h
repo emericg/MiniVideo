@@ -25,7 +25,7 @@
 #define MEDIAFILE_STRUCT_H
 
 // minivideo headers
-#include "avcodecs.h"
+#include "minivideo_codecs.h"
 #include "bitstream_map_struct.h"
 
 // C standard library

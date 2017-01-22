@@ -25,7 +25,7 @@
 #include "h264_intra_prediction.h"
 #include "h264_transform.h"
 #include "h264_spatial.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../utils.h"
 #include "../../minitraces.h"
 

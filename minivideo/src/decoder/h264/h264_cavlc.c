@@ -28,7 +28,7 @@
 
 // minivideo headers
 #include "../../minitraces.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../utils.h"
 #include "h264_spatial.h"
 

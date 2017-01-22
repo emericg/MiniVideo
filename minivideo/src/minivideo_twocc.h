@@ -16,17 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      twocc.h
+ * \file      minivideo_twocc.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#ifndef TWOCC_H
-#define TWOCC_H
+#ifndef MINIVIDEO_TWOCC_H
+#define MINIVIDEO_TWOCC_H
 
 // minivideo headers
-#include "avcodecs.h"
-#include "typedef.h"
+#include "minivideo_codecs.h"
+#include "minivideo_typedef.h"
 #include "minivideo_export.h"
 
 /* ************************************************************************** */
@@ -81,4 +81,4 @@ typedef enum twocc_list_e
 } twocc_list_e;
 
 /* ************************************************************************** */
-#endif // TWOCC_H
+#endif // MINIVIDEO_TWOCC_H

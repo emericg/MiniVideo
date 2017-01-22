@@ -26,7 +26,7 @@
 #include "ps_struct.h"
 #include "../pes/pes.h"
 #include "../pes/pes_struct.h"
-#include "../../../typedef.h"
+#include "../../../minivideo_typedef.h"
 #include "../../../minitraces.h"
 #include "../../../bitstream_utils.h"
 

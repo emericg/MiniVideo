@@ -25,7 +25,7 @@
 #define UTILS_H
 
 // minivideo headers
-#include "typedef.h"
+#include "minivideo_typedef.h"
 
 /* ************************************************************************** */
 

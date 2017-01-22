@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      fourcc.c
+ * \file      minivideo_fourcc.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
 // minivideo headers
-#include "fourcc.h"
+#include "minivideo_fourcc.h"
 #include "minitraces.h"
 
 // C standard libraries

@@ -24,7 +24,7 @@
 #ifndef H264_CABAC_TABLES_H
 #define H264_CABAC_TABLES_H
 
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 
 /* ************************************************************************** */
 

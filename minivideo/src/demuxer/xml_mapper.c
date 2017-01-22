@@ -23,7 +23,7 @@
 
 // minivideo headers
 #include "xml_mapper.h"
-#include "../typedef.h"
+#include "../minivideo_typedef.h"
 #include "../minitraces.h"
 
 // C standard library

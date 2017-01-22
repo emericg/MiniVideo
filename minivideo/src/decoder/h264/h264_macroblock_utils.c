@@ -25,7 +25,7 @@
 #include "h264_macroblock_utils.h"
 #include "../../minitraces.h"
 #include "../../utils.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 
 // C standard libraries
 #include <stdio.h>

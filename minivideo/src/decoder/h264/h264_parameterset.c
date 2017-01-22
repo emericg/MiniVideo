@@ -26,7 +26,7 @@
 #include "h264_expgolomb.h"
 #include "h264_transform.h"
 #include "../../minitraces.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../utils.h"
 #include "../../bitstream_utils.h"
 

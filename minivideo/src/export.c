@@ -24,7 +24,7 @@
 // minivideo headers
 #include "export.h"
 #include "utils.h"
-#include "typedef.h"
+#include "minivideo_typedef.h"
 #include "import.h"
 #include "export_utils.h"
 #include "decoder/h264/h264_decodingcontext.h"

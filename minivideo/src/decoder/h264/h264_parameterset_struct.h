@@ -25,7 +25,7 @@
 #define H264_PARAMETER_SET_STRUCT_H
 
 // minivideo headers
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 
 /* ************************************************************************** */
 

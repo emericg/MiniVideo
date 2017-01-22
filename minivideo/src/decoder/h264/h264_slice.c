@@ -28,7 +28,7 @@
 #include "h264_cabac.h"
 #include "h264_macroblock.h"
 #include "h264.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../export.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"

@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      avutils.h
+ * \file      minivideo_avutils.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#ifndef AV_UTILS_H
-#define AV_UTILS_H
+#ifndef MINIVIDEO_AVUTILS_H
+#define MINIVIDEO_AVUTILS_H
 
-#include "typedef.h"
+#include "minivideo_typedef.h"
 
 /* ************************************************************************** */
 
@@ -222,4 +222,4 @@ typedef enum SubSampling_e
 } SubSampling_e;
 
 /* ************************************************************************** */
-#endif // AV_UTILS_H
+#endif // MINIVIDEO_AVUTILS_H

@@ -16,22 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      fourcc.h
+ * \file      minivideo_fourcc.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
-#ifndef FOURCC_H
-#define FOURCC_H
+#ifndef MINIVIDEO_FOURCC_H
+#define MINIVIDEO_FOURCC_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
 // minivideo headers
-#include "avcodecs.h"
-#include "typedef.h"
 #include "minivideo_export.h"
+#include "minivideo_typedef.h"
+#include "minivideo_codecs.h"
 
 /* ************************************************************************** */
 
@@ -322,4 +322,4 @@ typedef enum fourcc_list_e
 }
 #endif // __cplusplus
 
-#endif // FOURCC_H
+#endif // MINIVIDEO_FOURCC_H

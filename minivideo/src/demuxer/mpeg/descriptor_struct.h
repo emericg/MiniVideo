@@ -25,7 +25,7 @@
 #define PROGRAM_ELEMENT_DESCRIPTORS_STRUCT_H
 
 // minivideo
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 
 /* ************************************************************************** */
 

@@ -25,7 +25,7 @@
 #define PARSER_AVI_STRUCT_H
 
 // minivideo headers
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include <stdio.h>
 
 /* ************************************************************************** */

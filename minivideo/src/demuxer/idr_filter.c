@@ -25,7 +25,7 @@
 #include "idr_filter.h"
 #include "../import.h"
 #include "../bitstream_map.h"
-#include "../typedef.h"
+#include "../minivideo_typedef.h"
 #include "../minitraces.h"
 
 // C standard library

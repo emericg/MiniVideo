@@ -25,7 +25,7 @@
 #define PARSER_MPEG_PES_STRUCT_H
 
 // minivideo headers
-#include "../../../typedef.h"
+#include "../../../minivideo_typedef.h"
 
 /* ************************************************************************** */
 

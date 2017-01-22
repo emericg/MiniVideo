@@ -24,7 +24,7 @@
 // minivideo headers
 #include "export_utils.h"
 #include "utils.h"
-#include "typedef.h"
+#include "minivideo_typedef.h"
 #include "minitraces.h"
 
 #ifndef _WIN32

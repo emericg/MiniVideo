@@ -25,7 +25,7 @@
 #define H264_CABAC_H
 
 // minivideo headers
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 
 #include "h264_decodingcontext.h"
 

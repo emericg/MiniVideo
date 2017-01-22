@@ -29,10 +29,10 @@
 extern "C" {
 #endif // __cplusplus
 
-#include "avcodecs.h"
-#include "fourcc.h"
-#include "mediafile_struct.h"
 #include "minivideo_export.h"
+#include "minivideo_codecs.h"
+#include "minivideo_fourcc.h"
+#include "mediafile_struct.h"
 
 /* ************************************************************************** */
 

@@ -26,7 +26,7 @@
 #include "mp3_struct.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries

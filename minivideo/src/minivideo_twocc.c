@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      twocc.c
+ * \file      minivideo_twocc.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
 
 // minivideo headers
-#include "twocc.h"
+#include "minivideo_twocc.h"
 #include "minitraces.h"
 
 // C standard libraries

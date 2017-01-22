@@ -16,21 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      avcodecs.h
+ * \file      minivideo_avcodecs.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2012
  */
 
-#ifndef AV_CODECS_H
-#define AV_CODECS_H
+#ifndef MINIVIDEO_CODECS_H
+#define MINIVIDEO_CODECS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-#include "typedef.h"
-#include "avutils.h"
+#include "minivideo_typedef.h"
+#include "minivideo_avutils.h"
 #include "minivideo_export.h"
+
 /* ************************************************************************** */
 
 //! Container file formats
@@ -238,4 +239,4 @@ minivideo_EXPORT const char *getPictureString(PictureFormat_e picture, bool long
 }
 #endif // __cplusplus
 
-#endif // AV_CODECS_H
+#endif // MINIVIDEO_CODECS_H

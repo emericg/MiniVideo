@@ -22,9 +22,9 @@
  */
 
 // minivideo headers
-#include "bitstream.h"
-#include "avcodecs.h"
-#include "fourcc.h"
+#include "bitstream_map.h"
+#include "minivideo_codecs.h"
+#include "minivideo_fourcc.h"
 #include "minitraces.h"
 
 // C standard libraries

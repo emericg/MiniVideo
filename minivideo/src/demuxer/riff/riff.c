@@ -23,10 +23,10 @@
 
 // minivideo headers
 #include "riff.h"
-#include "../../fourcc.h"
+#include "../../minivideo_typedef.h"
+#include "../../minivideo_fourcc.h"
 #include "../../utils.h"
 #include "../../bitstream_utils.h"
-#include "../../typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries

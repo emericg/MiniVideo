@@ -24,7 +24,7 @@
 // minivideo headers
 #include "ebml.h"
 #include "mkv_struct.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries

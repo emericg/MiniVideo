@@ -25,8 +25,8 @@
 #define BITSTREAM_MAP_STRUCT_H
 
 // minivideo headers
-#include "typedef.h"
-#include "avcodecs.h"
+#include "minivideo_typedef.h"
+#include "minivideo_codecs.h"
 
 /* ************************************************************************** */
 

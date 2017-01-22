@@ -24,8 +24,8 @@
 // minivideo headers
 #include "mp4.h"
 #include "mp4_struct.h"
-#include "../../fourcc.h"
-#include "../../typedef.h"
+#include "../../minivideo_fourcc.h"
+#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"

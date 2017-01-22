@@ -29,8 +29,8 @@
 #include "mp4_convert.h"
 
 #include "../xml_mapper.h"
-#include "../../fourcc.h"
-#include "../../typedef.h"
+#include "../../minivideo_fourcc.h"
+#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"

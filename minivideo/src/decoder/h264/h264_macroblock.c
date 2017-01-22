@@ -31,7 +31,7 @@
 #include "h264_intra_prediction.h"
 #include "h264_inter_prediction.h"
 #include "../../utils.h"
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 #include "../../minitraces.h"
 

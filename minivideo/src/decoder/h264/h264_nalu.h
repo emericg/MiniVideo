@@ -25,7 +25,7 @@
 #define H264_NALU_H
 
 // minivideo headers
-#include "../../typedef.h"
+#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 
 /* ************************************************************************** */

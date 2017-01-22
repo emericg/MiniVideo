@@ -26,7 +26,7 @@
 
 // Library privates headers
 #include "minitraces.h"
-#include "typedef.h"
+#include "minivideo_typedef.h"
 #include "import.h"
 #include "thirdparty/portable_endian.h"
 
