@@ -41,6 +41,7 @@
 #define ENABLE_C11_STDALIGN @ENABLE_C11_STDALIGN@  //!< Toggle C11 <stdalign.h> usage
 
 #define ENABLE_STBIMWRITE   @ENABLE_STBIMWRITE@  //!< Toggle bundled stb_image_write support
+#define ENABLE_WEBP         @ENABLE_WEBP@  //!< Toggle external libwebp support
 #define ENABLE_JPEG         @ENABLE_JPEG@  //!< Toggle external libjpeg support
 #define ENABLE_PNG          @ENABLE_PNG@  //!< Toggle external libpng support
 

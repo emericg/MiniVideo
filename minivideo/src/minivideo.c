@@ -103,6 +103,12 @@ void minivideo_print_infos(void)
     printf("> Memory alignement support will be emulated\n");
 #endif
 
+#if ENABLE_WEBP
+    printf("* EXTERNAL WEBP support is " BLD_GREEN "ON\n" CLR_RESET);
+#else
+    printf("* EXTERNAL WEBP support is " BLD_RED "OFF\n" CLR_RESET);
+#endif
+
 #if ENABLE_JPEG
     printf("* EXTERNAL JPEG support is " BLD_GREEN "ON\n" CLR_RESET);
 #else

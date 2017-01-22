@@ -30,6 +30,11 @@
 #include "decoder/h264/h264_decodingcontext.h"
 #include "minitraces.h"
 
+#if ENABLE_WEBP
+    // libwebp
+    #include <webp/encode.h>
+#endif
+
 #if ENABLE_JPEG
     // libjpeg
     #include <jpeglib.h>
@@ -333,6 +338,155 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
  * \param *PictureFile The file pointer to write to.
  * \return 1 if success, 0 otherwise.
  *
+ * Using https://developers.google.com/speed/webp/docs/api#simple_encoding_api
+ */
+static int export_idr_webp(DecodingContext_t *dc, FILE *PictureFile)
+{
+    int retcode = FAILURE;
+
+#if ENABLE_WEBP
+    TRACE_INFO(IO, BLD_GREEN "export_idr_webp()" CLR_RESET);
+
+    sps_t *sps = dc->sps_array[dc->active_sps];
+    const unsigned int img_width = sps->PicWidthInMbs * 16;
+    const unsigned int img_height = sps->PicHeightInMapUnits * 16;
+    const unsigned int img_stride = img_width * 3;
+
+    unsigned char *buffer_rgb = (unsigned char *)calloc(img_width*img_height*3, sizeof(unsigned char));
+    if (buffer_rgb)
+    {
+        mb_to_rgb(dc, buffer_rgb);
+
+        uint8_t *output = NULL;
+
+        float quality_factor = 80.0f;
+        size_t output_size = WebPEncodeRGB(buffer_rgb, img_width, img_height, img_stride,
+                                           quality_factor, &output);
+
+        if (output_size > 0)
+        {
+            TRACE_WARNING(IO, "WEBP > output size: %d", output_size);
+            fwrite(output, sizeof(uint8_t), output_size, PictureFile);
+
+            retcode = SUCCESS;
+        }
+        else
+        {
+            TRACE_ERROR(IO, "WEBP > encoding error...");
+        }
+
+        WebPFree(output);
+
+        free(buffer_rgb);
+    }
+#endif // ENABLE_WEBP
+
+    return  retcode;
+}
+
+/*!
+ * \param *dc The current DecodingContext.
+ * \param *PictureFile The file pointer to write to.
+ * \return 1 if success, 0 otherwise.
+ *
+ * Using https://developers.google.com/speed/webp/docs/api#advanced_encoding_api
+ */
+static int export_idr_webp_advanced(DecodingContext_t *dc, FILE *PictureFile)
+{
+    int retcode = FAILURE;
+
+#if ENABLE_WEBP
+    TRACE_INFO(IO, BLD_GREEN "export_idr_webp()" CLR_RESET);
+
+    sps_t *sps = dc->sps_array[dc->active_sps];
+    const unsigned int img_width = sps->PicWidthInMbs * 16;
+    const unsigned int img_height = sps->PicHeightInMapUnits * 16;
+
+    // convert macroblocks to ycbcr buffer
+    unsigned char *buffer_ycbcr = (unsigned char *)calloc((img_width*img_height/2)*3, sizeof(unsigned char));
+    mb_to_ycbcr(dc, buffer_ycbcr);
+
+    float quality_factor = 80.0;
+    WebPConfig config;
+    if (!WebPConfigPreset(&config, WEBP_PRESET_PHOTO, quality_factor))
+    {
+        TRACE_ERROR(IO, "WEBP > config error");
+        return 0;
+    }
+
+    // Add additional tuning:
+    config.sns_strength = 90;
+    config.filter_sharpness = 6;
+    config.alpha_quality = 90;
+    if (!WebPValidateConfig(&config))
+    {
+        TRACE_ERROR(IO, "WEBP > config error");
+        return 0;
+    }
+
+    // Setup the input data, allocating a picture of width x height dimension
+    WebPPicture pic;
+    if (!WebPPictureInit(&pic))
+    {
+        TRACE_ERROR(IO, "WEBP > init error");
+        return 0;
+    }
+
+    {
+        pic.use_argb = 0;
+        pic.colorspace = WEBP_YUV420;
+
+        pic.width = img_width;
+        pic.height = img_height;
+        pic.y_stride = img_width;
+        pic.uv_stride = img_width / 2;
+
+        pic.y = buffer_ycbcr;
+        pic.u = buffer_ycbcr + (img_width * img_height);
+        pic.v = buffer_ycbcr + (img_width * img_height) + ((img_width * img_height) / 4) ;
+    }
+
+    if (!WebPPictureAlloc(&pic))
+    {
+        TRACE_ERROR(IO, "WEBP > memory error");
+        return 0;
+    }
+
+    // Set up a byte-writing method (write-to-memory, in this case):
+    WebPMemoryWriter writer;
+    WebPMemoryWriterInit(&writer);
+    pic.writer = WebPMemoryWrite;
+    pic.custom_ptr = &writer;
+
+    int ok = WebPEncode(&config, &pic);
+    if (!ok)
+    {
+        TRACE_ERROR(IO, "WEBP > encoding error: %d", pic.error_code);
+        retcode = FAILURE;
+    }
+    else
+    {
+        TRACE_1(IO, "WEBP > output size: %d", writer.size);
+        fwrite(writer.mem, sizeof(uint8_t), writer.size, PictureFile);
+        retcode = SUCCESS;
+    }
+
+    WebPPictureFree(&pic);   // Always free the memory associated with the input.
+
+    free(buffer_ycbcr);
+
+#endif // ENABLE_WEBP
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \param *dc The current DecodingContext.
+ * \param *PictureFile The file pointer to write to.
+ * \return 1 if success, 0 otherwise.
+ *
  * From http://www.ijg.org/files/README:
  * jpegaltui.vN.tar.gz contains source code for an alternate user interface for
  * cjpeg/djpeg in Unix format.
@@ -341,15 +495,14 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Shortcut
+#if ENABLE_JPEG
+    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()" CLR_RESET);
+
     sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
-
-#if ENABLE_JPEG
 
     // 0. we will be using this uninitialized pointer later to store raw, uncompressd image
 
@@ -446,15 +599,15 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
  */
 static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_png()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
 #if ENABLE_PNG
+
+    TRACE_INFO(IO, BLD_GREEN "export_idr_png(libpng)" CLR_RESET);
 
     // 4.1 Setup
 
@@ -531,12 +684,19 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
 #elif ENABLE_STBIMWRITE
 
+    TRACE_INFO(IO, BLD_GREEN "export_idr_png(STBIMWRITE)" CLR_RESET);
+
     // convert macroblocks to rgb buffer
     unsigned char *buffer_rgb = (unsigned char *)calloc(img_width*img_height*3, sizeof(unsigned char));
-    mb_to_rgb(dc, buffer_rgb);
+    if (buffer_rgb)
+    {
+        mb_to_rgb(dc, buffer_rgb);
 
-    // export to png
-    retcode = stbi_write_png(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
+        // export to png
+        retcode = stbi_write_png(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
+
+        free(buffer_rgb);
+    }
 
 #endif // ENABLE_PNG or ENABLE_STBIMWRITE
 
@@ -552,22 +712,25 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Shortcut
+#if ENABLE_STBIMWRITE
+    TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()" CLR_RESET);
+
     sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
-#if ENABLE_STBIMWRITE
-
     // convert macroblocks to rgb buffer
     unsigned char *buffer_rgb = (unsigned char *)calloc(img_width*img_height*3, sizeof(unsigned char));
-    mb_to_rgb(dc, buffer_rgb);
+    if (buffer_rgb)
+    {
+        mb_to_rgb(dc, buffer_rgb);
 
-    // export to bmp
-    retcode = stbi_write_bmp(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
+        retcode = stbi_write_bmp(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
+
+        free(buffer_rgb);
+    }
 
 #endif // ENABLE_STBIMWRITE
 
@@ -583,23 +746,25 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
  */
 static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr_tga()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Shortcut
+#if ENABLE_STBIMWRITE
+    TRACE_INFO(IO, BLD_GREEN "export_idr_tga()" CLR_RESET);
+
     sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
-#if ENABLE_STBIMWRITE
-
     // convert macroblocks to rgb buffer
     unsigned char *buffer_rgb = (unsigned char *)calloc(img_width*img_height*3, sizeof(unsigned char));
-    mb_to_rgb(dc, buffer_rgb);
+    if (buffer_rgb)
+    {
+        mb_to_rgb(dc, buffer_rgb);
 
-    // export to bmp
-    retcode = stbi_write_tga(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
+        retcode = stbi_write_tga(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
 
+        free(buffer_rgb);
+    }
 #endif // ENABLE_STBIMWRITE
 
     return retcode;
@@ -642,40 +807,54 @@ int export_idr(DecodingContext_t *dc)
     }
 
     // Check export format availability
-#if ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
+#if ENABLE_WEBP == 0 && ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
     if (dc->output_format < PICTURE_YUV420)
     {
         TRACE_WARNING(IO, "No export library available, forcing YCbCr 4:2:0");
         dc->output_format = PICTURE_YUV420;
     }
 #else
+
+    #if ENABLE_WEBP == 0
+    if (dc->output_format == PICTURE_WEBP)
+    {
+        TRACE_WARNING(IO, "No webp export library available, trying jpg");
+        dc->output_format = PICTURE_JPG;
+    }
+    #endif // ENABLE_WEBP
+
     #if ENABLE_JPEG == 0
-        if (dc->output_format == PICTURE_JPG)
-        {
-            TRACE_WARNING(IO, "No jpg export library available, trying png");
-            dc->output_format++; // to png
-        }
+    if (dc->output_format == PICTURE_JPG)
+    {
+        TRACE_WARNING(IO, "No jpg export library available, trying png");
+        dc->output_format = PICTURE_PNG;
+    }
     #endif // ENABLE_JPEG
 
     #if ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
-        if (dc->output_format == PICTURE_PNG)
-        {
-            TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0");
-            dc->output_format = PICTURE_YUV420;
-        }
+    if (dc->output_format == PICTURE_PNG)
+    {
+        TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0");
+        dc->output_format = PICTURE_YUV420;
+    }
     #endif // ENABLE_PNG
 
     #if ENABLE_STBIMWRITE == 0
-        if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
-        {
-            TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0");
-            dc->output_format = PICTURE_YUV420;
-        }
+    if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
+    {
+        TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0");
+        dc->output_format = PICTURE_YUV420;
+    }
     #endif // ENABLE_STBIMWRITE
 #endif
 
     // Picture file extension checker
-    if (dc->output_format == PICTURE_JPG)
+    if (dc->output_format == PICTURE_WEBP)
+    {
+        TRACE_1(IO, "* Picture file format : WEBP");
+        strncpy(PictureFile.file_extension, "webp", 8);
+    }
+    else if (dc->output_format == PICTURE_JPG)
     {
         TRACE_1(IO, "* Picture file format : JPG");
         strncpy(PictureFile.file_extension, "jpg", 8);
@@ -723,7 +902,11 @@ int export_idr(DecodingContext_t *dc)
         TRACE_1(IO, "* Picture file successfully created");
 
         // Start export
-        if (dc->output_format == PICTURE_JPG)
+        if (dc->output_format == PICTURE_WEBP)
+        {
+            retcode = export_idr_webp(dc, PictureFile.file_pointer);
+        }
+        else if (dc->output_format == PICTURE_JPG)
         {
             retcode = export_idr_jpg(dc, PictureFile.file_pointer);
         }

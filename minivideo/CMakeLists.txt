@@ -14,18 +14,32 @@ set(minivideo_VERSION_PATCH 2)
 # Build settings
 ###############################################################################
 
-set(ENABLE_COLORS 1) # Toggle colored terminal output
-set(ENABLE_C99_STDINT 1) # Toggle C99 <stdint.h> usage
-set(ENABLE_C99_STDBOOL 1) # Toggle C99 <stdbool.h> usage
-set(ENABLE_C11_STDALIGN 0) # Toggle C11 <stdalign.h> usage
+set(ENABLE_COLORS 1)        # Toggle colored terminal output
+set(ENABLE_C99_STDINT 1)    # Toggle C99 <stdint.h> usage
+set(ENABLE_C99_STDBOOL 1)   # Toggle C99 <stdbool.h> usage
+set(ENABLE_C11_STDALIGN 0)  # Toggle C11 <stdalign.h> usage
 
-set(ENABLE_JPEG 0) # Toggle external libjpeg support
-set(ENABLE_PNG 0) # Toggle external libpng support
-set(ENABLE_STBIMWRITE 1) # Toggle internal stb_image_write library for bmp/png/tga support
+set(ENABLE_WEBP 0)          # Toggle external libwebp support
+set(ENABLE_JPEG 0)          # Toggle external libjpeg support
+set(ENABLE_PNG 0)           # Toggle external libpng support
+set(ENABLE_STBIMWRITE 1)    # Toggle internal stb_image_write library for bmp/png/tga support
 
 
 # Build dependencies
 ###############################################################################
+
+# custom libwebp module
+if(ENABLE_WEBP)
+    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    find_package(WebP) # FindWebP.cmake
+
+    if(WEBP_FOUND)
+        message(STATUS "* libwebp enabled")
+    else()
+        message(WARNING "> libwebp not found! Disabling WEBP support.")
+        set(ENABLE_WEBP 0)
+    endif()
+endif()
 
 # libjpeg module
 if(ENABLE_JPEG)
@@ -210,7 +224,7 @@ set(minivideo_SRC
 ###############################################################################
 
 # Third party libraries
-#include_directories(${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
+include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
 # Build library
 message("** Building shared library")
@@ -227,14 +241,14 @@ if(CMAKE_VERSION VERSION_GREATER "3.3")
 endif()
 endif()
 
-#target_link_libraries(minivideo_shared ${JPEG_LIBRARY} ${PNG_LIBRARY})
+target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
 target_link_libraries(minivideo_shared)
 set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
 
 if(CMAKE_BUILD_MODE STREQUAL "Static")
     message("** Building static library")
     add_library(minivideo_static STATIC ${minivideo_SRC})
-    #target_link_libraries(minivideo_static ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    target_link_libraries(minivideo_static ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
     target_link_libraries(minivideo_static)
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
 endif(CMAKE_BUILD_MODE STREQUAL "Static")
