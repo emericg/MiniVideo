@@ -113,7 +113,12 @@ int main(int argc, char *argv[])
         {
             if (argv[i+1] != NULL)
             {
-                if (strcmp(argv[i+1], "jpg") == 0)
+                if (strcmp(argv[i+1], "webp") == 0)
+                {
+                    picture_format = PICTURE_WEBP;
+                    std::cout << "* picture_format: webp" << std::endl;
+                }
+                else if (strcmp(argv[i+1], "jpg") == 0 || strcmp(argv[i+1], "jpeg") == 0)
                 {
                     picture_format = PICTURE_JPG;
                     std::cout << "* picture_format: jpg" << std::endl;
@@ -246,7 +251,7 @@ int main(int argc, char *argv[])
         std::cout << GREEN " -h" RESET " : print help" << std::endl;
         std::cout << GREEN " -i" RESET " : filepath of the input video" << std::endl;
         std::cout << GREEN " -o" RESET " : directory where picture(s) will be saved" << std::endl;
-        std::cout << GREEN " -f" RESET " : picture export format (can be 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')" << std::endl;
+        std::cout << GREEN " -f" RESET " : picture export format (can be 'webp' 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')" << std::endl;
         std::cout << GREEN " -q" RESET " : picture export quality (between 1 and 100)" << std::endl;
         std::cout << GREEN " -n" RESET " : picture export number (between 1 and 100)" << std::endl;
         std::cout << GREEN " -e" RESET " : picture extraction mode (can be 'unfiltered', 'ordered' or 'distributed')" << std::endl;
