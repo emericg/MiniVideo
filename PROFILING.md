@@ -1,16 +1,16 @@
 Profiling "mini manual"
 =======================
 
-Valgrind is a free software very useful for debugging massive software.
+Valgrind is a free software, very useful for debugging massive software.
 We are going to use it to perform code profiling and highlight memory leaks.
-The code must always be builded with debug directive (-g) and unstripped for optimal results.
+The code must be builded with debug directive (-g) and unstripped for optimal results.
 
 http://valgrind.org/
 http://valgrind.org/docs/manual/manual.html
 
 It is available on many platforms:
 X86/Linux, AMD64/Linux, ARM/Linux, PPC32/Linux, PPC64/Linux, S390X/Linux, MIPS32/Linux, MIPS64/Linux,
-ARM/Android (2.3.x and later), X86/Android (4.0 and later), X86/Darwin and AMD64/Darwin (Mac OS X 10.7, with limited support for 10.8).
+ARM/Android (2.3.x and later), X86/Android (4.0 and later), X86/Darwin and AMD64/Darwin (macOS 10.10+).
 
 
 Memcheck - Leak detection and misuse of memory related functions:
@@ -29,19 +29,21 @@ http://valgrind.org/docs/manual/mc-manual.html
 > "--verbose" show extra debugging info  
 
 
-Callgrind - Function call analyser:
------------------------------------
+Callgrind - Function calls analyser:
+------------------------------------
 
 > $ valgrind --tool=callgrind ./mysoftware
 
-Account for each function called during execution of the program and generate a massive call graph that shows:
+Account for each function called during execution of the program and generate a
+massive call graph that shows:
 - which function is called by which function
 - the CPU time spent in each function
 
 http://valgrind.org/docs/manual/cl-manual.html
 
 ### GUIs
-- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
+- qtcreator (https://www.qt.io/ide/) Good integration of valgrind / cachegrind
+- kcachegrind (https://kcachegrind.github.io/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
 - qcachegrind (Qt 'only' version of kcachegrind)
 
 
@@ -58,9 +60,9 @@ Account for each function called during execution of the program and show:
 http://valgrind.org/docs/manual/cg-manual.html
 
 ### GUIs
-- kcachegrind (http://kcachegrind.sourceforge.net/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
+- qtcreator (https://www.qt.io/ide/) Good integration of valgrind / cachegrind
+- kcachegrind (https://kcachegrind.github.io/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.
 - qcachegrind (Qt 'only' version of kcachegrind)
-- qtcreator (http://qt-project.org/wiki/Category:Tools::QtCreator) Good integration of valgrind / cachegrind
 
 
 Massif - Heap profiler:
@@ -69,11 +71,11 @@ Massif - Heap profiler:
 Generate report:
 > $ valgrind --tool=massif [--time-unit=B] [--stacks=yes] ./mysoftware
 
-Print restults:
+Print results:
 > $ ms_print massif.out.xxxxx --x=128 --y=128
 
-Massif produces snapshots of the memory heap state at regular intervals (so it may not 
-necessarily catch the peaks uses). For each snapshot we have:
+Massif produces snapshots of the memory heap state at regular intervals (so it
+may not necessarily catch the peaks uses). For each snapshot we have:
 - Its number.
 - The time it was taken. In this case, the time unit is bytes, due to the use of --time-unit=B.
 - The total memory consumption at that point.

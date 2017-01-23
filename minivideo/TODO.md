@@ -1,22 +1,8 @@
-MiniVideo TODO list
-===================
+MiniVideo library TODO list
+===========================
 
-TODO build system
------------------
-
-- doxygen hook?
-- cppcheck hook?
-
-TODO test softwares
--------------------
-
-- error when an invalid path is passed as argument with the -i option
-- error when an invalid path is passed as argument with the -o option
-- add a non-regression/performance test suit
-- a "mini_player" would definitely be an interesting thing to do
-
-TODO video library
-------------------
+TODOs
+-----
 
 // Error codes handling
 - replace remaining exit(EXIT_FAILURE) by callbacks
