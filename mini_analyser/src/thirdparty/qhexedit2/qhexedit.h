@@ -19,7 +19,7 @@
 /** \mainpage
 QHexEdit is a binary editor widget for Qt.
 
-\version Version 0.8.2
+\version Version 0.8.3
 \image html qhexedit.png
 */
 
@@ -100,6 +100,15 @@ class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
     If you want to edit big files please use setData(), based on QIODevice.
     */
     Q_PROPERTY(QByteArray data READ data WRITE setData NOTIFY dataChanged)
+
+    /*! That property defines if the hex values looks as a-f if the value is false(default)
+    or A-F if value is true.
+    */
+    Q_PROPERTY(bool hexCaps READ hexCaps WRITE setHexCaps)
+
+    /*! Property defines the dynamic calculation of bytesPerLine parameter depends of width of widget. 
+    set this property true to avoid horizontal scrollbars and show the maximal possible data. defalut value is false*/
+    Q_PROPERTY(bool dynamicBytesPerLine READ dynamicBytesPerLine WRITE setDynamicBytesPerLine)
 
     /*! Switch the highlighting feature on or of: true (show it), false (hide it).
     */
@@ -299,6 +308,12 @@ public:
     QByteArray data();
     void setData(const QByteArray &ba);
 
+    void setHexCaps(const bool isCaps);
+    bool hexCaps();
+
+    void setDynamicBytesPerLine(const bool isDynamic);
+    bool dynamicBytesPerLine();
+
     bool highlighting();
     void setHighlighting(bool mode);
 
@@ -321,7 +336,7 @@ protected:
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *);
-
+    virtual bool focusNextPrevChild(bool next);
 private:
     // Handle selections
     void resetSelection(qint64 pos);            // set selectionStart and selectionEnd to pos
@@ -378,8 +393,11 @@ private:
     QBrush _brushHighlighted;
     QPen _penHighlighted;
     bool _readOnly;
+    bool _hexCaps;
+    bool _dynamicBytesPerLine;
 
     // other variables
+    bool _editAreaIsAscii;                      // flag about the ascii mode edited
     int _addrDigits;                            // real no of addressdigits, may be > addressWidth
     bool _blink;                                // help get cursor blinking
     QBuffer _bData;                             // buffer, when setup with QByteArray
