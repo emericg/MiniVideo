@@ -89,15 +89,14 @@ set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_B
 # Detect build type (default is release)
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(ENABLE_DEBUG 1)
     message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
-    # Custom cflags? Use "debug mode" and "-O0 -g" if you want better support for GDB and Valgrind.
-    set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wextra -Wshadow")
+    set(ENABLE_DEBUG 1)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -Wextra -Wshadow")
+    set(CMAKE_VERBOSE_MAKEFILE off)
 else()
-    set(ENABLE_DEBUG 0)
     message(STATUS "> This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug")
-    # Custom cflags? Use "release mode" and "-O2" for maximum speed.
-    set(CMAKE_C_FLAGS_RELEASE "-O2 -Wno-sign-compare")
+    set(CMAKE_C_FLAGS_RELEASE "-O3")
+    set(ENABLE_DEBUG 0)
 endif()
 
 # Add per-compiler custom rules

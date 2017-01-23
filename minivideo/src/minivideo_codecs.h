@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      minivideo_avcodecs.h
+ * \file      minivideo_codecs.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2012
  */

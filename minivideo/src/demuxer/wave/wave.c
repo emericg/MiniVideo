@@ -480,11 +480,11 @@ static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *bext_header, wave_t *wav
         {
             wave->bwf.OriginatorReference[i] = read_bits(bitstr, 8);
         }
-        for (uint32_t i = 0; i < 32; i++)
+        for (uint32_t i = 0; i < 10; i++)
         {
             wave->bwf.OriginatorDate[i] = read_bits(bitstr, 8);
         }
-        for (uint32_t i = 0; i < 10; i++)
+        for (uint32_t i = 0; i < 8; i++)
         {
             wave->bwf.OriginationTime[i] = read_bits(bitstr, 8);
         }
