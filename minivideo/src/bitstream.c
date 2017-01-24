@@ -58,8 +58,6 @@
  * \param *bitstream_map A pointer to a bitstreamMap_t structure, containing informations about video payload datas.
  * \return *bitstr A pointer to our newly allocated bitstream structure.
  *
- * Warning: this implementation only support file size up to 2GiB.
- *
  * If no bitstream_map is available, it mean we have continuous video data,
  * starting at byte offset 0 and until the end of file.
  * Otherwise, an available bitstream_map structure mean that we have encapsulated
