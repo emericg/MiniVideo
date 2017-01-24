@@ -28,7 +28,7 @@
 
 /* ************************************************************************** */
 
-const char *getContainerString(ContainerFormat_e container, bool long_description)
+const char *getContainerString(Containers_e container, bool long_description)
 {
     if (long_description)
     {
@@ -168,7 +168,7 @@ const char *getContainerString(ContainerFormat_e container, bool long_descriptio
 
 /* ************************************************************************** */
 
-const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description)
+const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_description)
 {
     if (type == stream_AUDIO || type == stream_UNKNOWN)
     {
@@ -627,7 +627,7 @@ const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_descrip
 
 /* ************************************************************************** */
 
-const char *getPictureString(PictureFormat_e picture, bool long_description)
+const char *getPictureString(Pictures_e picture, bool long_description)
 {
     switch (picture)
     {

@@ -54,16 +54,16 @@
 
 /*!
  * \brief Init a new bitstream.
- * \param *media A pointer to a MediaFile_t structure, containing every informations available about the current media file.
- * \param *bitstream_map A pointer to a bitstreamMap_t structure, containing informations about video payload datas.
- * \return *bitstr A pointer to our newly allocated bitstream structure.
+ * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param *stream: A pointer to a MediaStream_t structure, containing informations about video payload datas.
+ * \return *bitstr: A pointer to our newly allocated bitstream structure.
  *
- * If no bitstream_map is available, it mean we have continuous video data,
+ * If no MediaStream_t is available, it mean we have continuous video data,
  * starting at byte offset 0 and until the end of file.
- * Otherwise, an available bitstream_map structure mean that we have encapsulated
+ * Otherwise, an available MediaStream_t structure mean that we have encapsulated
  * video data, and we must bufferize data sample by sample.
  */
-Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
+Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream)
 {
     TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()" CLR_RESET);
     Bitstream_t *bitstr = NULL;
@@ -88,8 +88,8 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
             bitstr->bitstream_file = media->file_pointer;
 
             // Use a bitstream_map if available
-            if (bitstream_map != NULL)
-                bitstr->bitstream_map = bitstream_map;
+            if (stream != NULL)
+                bitstr->bitstream_map = stream;
             else
                 bitstr->bitstream_map = NULL;
 
@@ -113,7 +113,7 @@ Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map)
             else
             {
                 // Initial buffer filling, only if we do not use a bitstream_map
-                if (bitstream_map == NULL)
+                if (stream == NULL)
                 {
                     // Rewind file pointer
                     rewind(bitstr->bitstream_file);

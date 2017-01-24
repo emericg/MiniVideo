@@ -35,7 +35,7 @@
 
 /* ************************************************************************** */
 
-int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
+int idr_filtering(MediaStream_t **stream_ptr,
                   unsigned picture_number, const int picture_extraction_mode)
 {
     TRACE_INFO(FILTR, BLD_GREEN "idr_filtering()" CLR_RESET);
@@ -45,18 +45,18 @@ int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
     unsigned temporary_totalsamples_idr = 0;
     unsigned temporary_sample_id[999] = {0};
 
-    if (bitstream_map_ptr == NULL || *bitstream_map_ptr == NULL)
+    if (stream_ptr == NULL || *stream_ptr == NULL)
     {
-        TRACE_ERROR(FILTR, "Invalid bitstream_map structure!");
+        TRACE_ERROR(FILTR, "Invalid MediaStream_t structure!");
     }
     else
     {
-        BitstreamMap_t *map = *bitstream_map_ptr;
+        MediaStream_t *map = *stream_ptr;
 
-        // Check if the bitstream_map is containing video data
+        // Check if the MediaStream_t is containing video data
         if (map->stream_type != stream_VIDEO)
         {
-            TRACE_WARNING(FILTR, "This is not an video bitstream_map!");
+            TRACE_WARNING(FILTR, "This is not an video MediaStream_t!");
         }
 
         // Check if we have enough IDR samples inside the video
@@ -73,7 +73,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
 
         if (picture_extraction_mode == PICTURE_UNFILTERED)
         {
-            TRACE_1(FILTR, "PICTURE_UNFILTERED is specified: no need to process bitstream_map.");
+            TRACE_1(FILTR, "PICTURE_UNFILTERED is specified: no need to process MediaStream_t.");
             retcode = picture_number;
         }
         else
@@ -127,7 +127,7 @@ int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
             TRACE_1(FILTR, "frame_jump is %i", frame_jump);
 
             // Init bitstream_map_filtered
-            BitstreamMap_t *map_filtered = NULL;
+            MediaStream_t *map_filtered = NULL;
             retcode = init_bitstream_map(&map_filtered, spspps + temporary_totalsamples_idr);
 
             // Write bitstream_map_filtered

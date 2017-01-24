@@ -33,9 +33,9 @@
 
 /* ************************************************************************** */
 
-AVCodec_e getCodecFromTwoCC(const uint16_t tcc)
+Codecs_e getCodecFromTwoCC(const uint16_t tcc)
 {
-    AVCodec_e codec = CODEC_UNKNOWN;
+    Codecs_e codec = CODEC_UNKNOWN;
 
     switch (tcc)
     {

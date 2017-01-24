@@ -23,7 +23,7 @@
 #define TABEXPORT_H
 
 // minivideo library
-#include "mediafile_struct.h"
+#include "minivideo_mediafile.h"
 
 #include <QWidget>
 #include <QFile>

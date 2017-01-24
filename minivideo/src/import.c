@@ -183,12 +183,12 @@ static void getSize(MediaFile_t *media)
  * This function check the first 16 bytes of a media file in order to find
  * evidence of a known file container format.
  */
-static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
+static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
 {
     TRACE_2(IO, "getContainerUsingStartcodes()");
 
     // Set container to unknown
-    ContainerFormat_e container = CONTAINER_UNKNOWN;
+    Containers_e container = CONTAINER_UNKNOWN;
 
     // Read the first bytes of the file
     rewind(media->file_pointer);
@@ -320,12 +320,12 @@ static ContainerFormat_e getContainerUsingStartcodes(MediaFile_t *media)
  * make mistakes) this code is here mostly for fun. And to list extensions for
  * whoever is interested.
  */
-static ContainerFormat_e getContainerUsingExtension(MediaFile_t *media)
+static Containers_e getContainerUsingExtension(MediaFile_t *media)
 {
     TRACE_2(IO, "getContainerUsingExtension()");
 
     // Set container to unknown
-    ContainerFormat_e container = CONTAINER_UNKNOWN;
+    Containers_e container = CONTAINER_UNKNOWN;
 
     if (strlen(media->file_extension) > 0 && strlen(media->file_extension) < 255)
     {

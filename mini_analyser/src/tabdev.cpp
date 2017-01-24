@@ -22,10 +22,10 @@
 #include "tabdev.h"
 #include "ui_tabdev.h"
 
+#include <cstdint>
+
 #include <QTableWidget>
 #include <QDebug>
-
-#include <iostream>
 
 tabDev::tabDev(QWidget *parent) :
     QWidget(parent),

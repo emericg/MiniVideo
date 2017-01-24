@@ -324,9 +324,9 @@ int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, avi_t *avi,  AviTr
 
 int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_entry_count)
 {
-    // Init a bitstreamMap_t for each avi track
+    // Init a MediaStream_t for each avi track
     int retcode = SUCCESS;
-    BitstreamMap_t *mytrack = NULL;
+    MediaStream_t *mytrack = NULL;
 
     if (index_entry_count <= 0)
         index_entry_count = 1;
@@ -348,9 +348,9 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
             // but we should have extracted the correct codec infos from strh
             mytrack->stream_codec = track->strh.fccHandler;
 
-            mytrack->sample_alignment = true;
+            mytrack->stream_packetized = true;
 
-            mytrack->bitrate = track->strf.wBitsPerSample;
+            mytrack->bitrate_avg = track->strf.wBitsPerSample;
             mytrack->sampling_rate = track->strf.nSamplesPerSec;
             mytrack->channel_count = track->strf.nChannels;
 
@@ -383,7 +383,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
             else
                 mytrack->stream_codec = CODEC_UNKNOWN;
 
-            mytrack->sample_alignment = true;
+            mytrack->stream_packetized = true;
 
             mytrack->width = track->strf.biWidth;
             mytrack->height = track->strf.biHeight;
@@ -407,7 +407,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
             mytrack->stream_fcc   = track->strh.fccHandler;
             mytrack->stream_codec = CODEC_SRT;
 
-            mytrack->sample_alignment = true;
+            mytrack->stream_packetized = true;
 
             mytrack->subtitles_encoding = 0;
             //strncpy(mytrack->language_code, "UND", 3);

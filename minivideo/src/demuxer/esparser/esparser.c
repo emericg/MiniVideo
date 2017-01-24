@@ -37,7 +37,7 @@
 
 /* ************************************************************************** */
 
-int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
+int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "es_fileParse()" CLR_RESET);
 
@@ -55,7 +55,7 @@ int es_fileParse(MediaFile_t *media, AVCodec_e video_codec)
     {
         media->tracks_video[0]->stream_type = stream_VIDEO;
         media->tracks_video[0]->stream_codec = video_codec;
-        media->tracks_video[0]->sample_alignment = true;
+        media->tracks_video[0]->stream_packetized = false;
 
         // Force alignment, because start_code_prefix are always byte-aligned
         if (bitstream_force_alignment(bitstr) == true)

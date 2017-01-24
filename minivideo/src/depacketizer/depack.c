@@ -48,7 +48,7 @@ unsigned depack_file(MediaFile_t *media,
     return samplefound;
 }
 
-unsigned depack_sample(Bitstream_t *bitstr, BitstreamMap_t *track, unsigned sample_index,
+unsigned depack_sample(Bitstream_t *bitstr, MediaStream_t *track, unsigned sample_index,
                        es_sample_t *essample_list)
 {
     TRACE_1(DEPAK, "depack_sample(dispatch)");
@@ -56,7 +56,7 @@ unsigned depack_sample(Bitstream_t *bitstr, BitstreamMap_t *track, unsigned samp
     unsigned samplefound = 0;
 
     // Choose a depacketizer
-    if (track->sample_alignment == true)
+    if (track->stream_packetized == false)
     {
         // passthrough
         essample_list[0].offset = track->sample_offset[sample_index];

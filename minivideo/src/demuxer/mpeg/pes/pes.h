@@ -52,8 +52,8 @@ int parse_pes_header(Bitstream_t *bitstr, PesHeader_t *header);
 int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet);
 void print_pes(PesHeader_t *header, PesPacket_t *packet);
 
-int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, BitstreamMap_t *map);
-int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, BitstreamMap_t *map);
+int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, MediaStream_t *map);
+int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet, MediaStream_t *map);
 
 int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet);
 

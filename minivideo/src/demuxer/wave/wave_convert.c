@@ -47,7 +47,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
     int retcode = SUCCESS;
     uint64_t pcm_samples_count = 0;
 
-    // Init a bitstreamMap_t for each wave track
+    // Init a MediaStream_t for each wave track
     if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM ||
         wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
@@ -64,7 +64,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
     if (retcode == SUCCESS)
     {
-        BitstreamMap_t *track = media->tracks_audio[media->tracks_audio_count];
+        MediaStream_t *track = media->tracks_audio[media->tracks_audio_count];
 
         track->stream_type  = stream_AUDIO;
         track->stream_codec = getCodecFromTwoCC(wave->fmt.wFormatTag);
@@ -83,7 +83,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
                                   track->stream_size, wave->data.datasSize);
 
                 if (wave->fmt.nSamplesPerSec)
-                    track->duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
+                    track->stream_duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
             }
             else
             {
@@ -91,25 +91,20 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
                 if (wave->fmt.wBitsPerSample)
                 {
-                    track->duration_ms = wave->fmt.nSamplesPerSec * (wave->fmt.wBitsPerSample/8) * wave->fmt.nChannels;
+                    track->stream_duration_ms = wave->fmt.nSamplesPerSec * (wave->fmt.wBitsPerSample/8) * wave->fmt.nChannels;
                     //track->duration = wave->fmt.nSamplesPerSec / (wave->fmt.nSamplesPerSec * wave->fmt.nChannels * (wave->fmt.wBitsPerSample/8));
                 }
             }
 
-            track->bitrate = wave->fmt.nSamplesPerSec * wave->fmt.wBitsPerSample * wave->fmt.nChannels;
+            track->bitrate_avg = wave->fmt.nSamplesPerSec * wave->fmt.wBitsPerSample * wave->fmt.nChannels;
             track->bitrate_mode = BITRATE_CBR;
-
-            // PCM specific metadatas
-            track->pcm_sample_format = 0;
-            track->pcm_sample_size = 0;
-            track->pcm_sample_endianness = 0;
         }
 
         // backup computations
         {
-            if (track->duration_ms == 0 && wave->fmt.nAvgBytesPerSec)
+            if (track->stream_duration_ms == 0 && wave->fmt.nAvgBytesPerSec)
             {
-                track->duration_ms = ((double)wave->data.datasSize / (double)wave->fmt.nAvgBytesPerSec) * 1000.0;
+                track->stream_duration_ms = ((double)wave->data.datasSize / (double)wave->fmt.nAvgBytesPerSec) * 1000.0;
             }
 
             if (track->stream_size == 0)
@@ -125,7 +120,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         // SAMPLES
         if (track->stream_codec == CODEC_LPCM)
         {
-            track->sample_alignment = true;
+            track->stream_packetized = false;
 
             uint64_t sid = 0;
             uint32_t pcm_frame_size = media->tracks_audio[0]->channel_count * (media->tracks_audio[0]->bit_per_sample / 8);
@@ -133,7 +128,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
             for (int64_t i = 0; i < wave->data.datasSize; i += pcm_frame_size)
             {
-                // Set PCM frame into the bitstream_map
+                // Set PCM frame into the MediaStream_t
                 sid = media->tracks_audio[0]->sample_count;
                 if (sid < pcm_samples_count)
                 {
@@ -146,11 +141,11 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
                 }
             }
 
-            track->duration_ms = (int64_t)((double)media->tracks_audio[0]->sample_count * (1000.0 / (double)track->sampling_rate));
+            track->stream_duration_ms = (int64_t)((double)media->tracks_audio[0]->sample_count * (1000.0 / (double)track->sampling_rate));
         }
         else
         {
-            track->sample_alignment = false;
+            track->stream_packetized = true;
             track->sample_count = track->frame_count_idr = 1;
             track->bitrate_mode = BITRATE_UNKNOWN;
 
@@ -178,7 +173,7 @@ int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
     if (retcode == SUCCESS && media->tracks_audio[0])
     {
         media->tracks_audio_count = 1;
-        media->duration = media->tracks_audio[0]->duration_ms;
+        media->duration = media->tracks_audio[0]->stream_duration_ms;
     }
 
     return retcode;

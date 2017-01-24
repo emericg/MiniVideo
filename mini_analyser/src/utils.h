@@ -23,7 +23,10 @@
 #define UTILS_H
 /* ************************************************************************** */
 
-#include "bitstream_map_struct.h"
+#include "minivideo_mediastream.h"
+
+#include <cstdint>
+
 #include <QString>
 #include <QVector>
 
@@ -61,7 +64,7 @@ QString getSizeString(const int64_t size);
  * \param track: Track structure (from StreamType_e).
  * \return Track type QString.
  */
-QString getTrackTypeString(const BitstreamMap_t *track);
+QString getTrackTypeString(const MediaStream_t *track);
 
 /*!
  * \brief Compute a track size string from a track structure.
@@ -70,7 +73,7 @@ QString getTrackTypeString(const BitstreamMap_t *track);
  * \param detailed: More precise sizes.
  * \return Track size QString.
  */
-QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size, const bool detailed = false);
+QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, const bool detailed = false);
 
 /*!
  * \brief Get an aspect ratio string from a video definition.

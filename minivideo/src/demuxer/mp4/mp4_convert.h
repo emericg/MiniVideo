@@ -26,7 +26,7 @@
 
 // minivideo headers
 #include "mp4_struct.h"
-#include "../../mediafile_struct.h"
+#include "../../minivideo_mediafile.h"
 
 /* ************************************************************************** */
 

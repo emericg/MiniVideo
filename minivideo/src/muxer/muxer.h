@@ -31,7 +31,7 @@
 /* ************************************************************************** */
 
 int muxer_export_samples(MediaFile_t *media,
-                         BitstreamMap_t *bitstream_map,
+                         MediaStream_t *stream,
                          const int output_format);
 
 /* ************************************************************************** */

@@ -45,7 +45,7 @@ static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
     // Write track metadatas (samples have been written already)
     if (media && media->tracks_audio[0])
     {
-        BitstreamMap_t *track = media->tracks_audio[0];
+        MediaStream_t *track = media->tracks_audio[0];
         track->stream_type = stream_AUDIO;
 
         if (mp3->mpeg_layer == 1)
@@ -80,7 +80,7 @@ static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
         track->bit_per_sample = 16;
 
         // SAMPLES
-        track->sample_alignment = true;
+        track->stream_packetized = false;
         track->frame_count = mp3->sample_count;
         track->stream_size = mp3->sample_size_total;
 
@@ -133,7 +133,7 @@ static int mp3_indexer(MediaFile_t *media, mp3_t *mp3)
 
         media->tracks_audio_count = 1;
         media->duration = mp3->media_duration_s * 1000.0;
-        media->tracks_audio[0]->duration_ms = mp3->media_duration_s * 1000.0;
+        media->tracks_audio[0]->stream_duration_ms = mp3->media_duration_s * 1000.0;
 
         retcode = SUCCESS;
     }
@@ -410,7 +410,7 @@ int mp3_fileParse(MediaFile_t *media)
 
     if (bitstr != NULL)
     {
-        // Init one bitstream_map to store samples
+        // Init a MediaStream_t to store samples
         retcode = init_bitstream_map(&media->tracks_audio[0], 999999);
 
         // Init an MP3 structure
@@ -463,7 +463,7 @@ int mp3_fileParse(MediaFile_t *media)
                 TRACE_INFO(MP3, "> ID3v1 tag @ %lli", frame_offset);
                 mp3.run = false;
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {
@@ -491,7 +491,7 @@ int mp3_fileParse(MediaFile_t *media)
                 id3tag_size += read_bits(bitstr, 8) & 0x0000007F;
                 id3tag_size += 10; // bytes already read
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {
@@ -511,7 +511,7 @@ int mp3_fileParse(MediaFile_t *media)
                 TRACE_INFO(MP3, "> Lyrics3 tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {
@@ -528,7 +528,7 @@ int mp3_fileParse(MediaFile_t *media)
                 TRACE_INFO(MP3, "> XING tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {
@@ -545,7 +545,7 @@ int mp3_fileParse(MediaFile_t *media)
                 TRACE_INFO(MP3, "> VBRI tag @ %lli", frame_offset);
                 frame_offset += 32; // just restart MP3 frame detection 32 bytes later...
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {
@@ -565,7 +565,7 @@ int mp3_fileParse(MediaFile_t *media)
                 /*uint32_t apetag_version =*/ read_bits(bitstr, 32);
                 uint32_t apetag_size = 8 + read_bits(bitstr, 32); //  APE header size (8 bytes) + tag content size
 
-                // Set TAG the bitstream_map
+                // Add the TAG to the track
                 int sid = media->tracks_audio[0]->sample_count;
                 if (sid < 999999)
                 {

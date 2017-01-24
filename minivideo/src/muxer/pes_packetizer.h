@@ -30,7 +30,7 @@
 
 /* ************************************************************************** */
 
-int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map);
+int pes_packetizer(FILE *f_src, FILE *f_dst, MediaStream_t *stream);
 
 /* ************************************************************************** */
 #endif // PES_PACKETIZER_H

@@ -25,16 +25,16 @@
 #define BITSTREAM_MAP_H
 
 // minivideo headers
-#include "mediafile_struct.h"
-#include "bitstream_map_struct.h"
+#include "minivideo_mediafile.h"
+#include "minivideo_mediastream.h"
 
 /* ************************************************************************** */
 
-int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries);
+int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t entries);
 
-void free_bitstream_map(BitstreamMap_t **bitstream_map);
+void free_bitstream_map(MediaStream_t **stream_ptr);
 
-void print_bitstream_map(BitstreamMap_t *bitstream_map);
+void print_bitstream_map(MediaStream_t *stream);
 
 bool computeCodecs(MediaFile_t *media);
 

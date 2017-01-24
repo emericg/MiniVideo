@@ -47,7 +47,7 @@ extern "C" {
 
 /* ************************************************************************** */
 
-minivideo_EXPORT AVCodec_e getCodecFromFourCC(const uint32_t fcc);
+minivideo_EXPORT Codecs_e getCodecFromFourCC(const uint32_t fcc);
 
 char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
 

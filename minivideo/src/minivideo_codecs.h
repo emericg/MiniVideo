@@ -35,7 +35,7 @@ extern "C" {
 /* ************************************************************************** */
 
 //! Container file formats
-typedef enum ContainerFormat_e
+typedef enum Containers_e
 {
     CONTAINER_UNKNOWN = 0,
 
@@ -66,10 +66,10 @@ typedef enum ContainerFormat_e
     CONTAINER_ES_AC3    = 130,  //!< AC3 "Elementary Stream"
     CONTAINER_ES_MP3    = 131   //!< MP3 "Elementary Stream"
 
-} ContainerFormat_e;
+} Containers_e;
 
 //! Audio and Video compression standards (codecs)
-typedef enum AVCodec_e
+typedef enum Codecs_e
 {
     CODEC_UNKNOWN       = 0,
 
@@ -210,29 +210,29 @@ typedef enum AVCodec_e
 
     // Uncompressed video //////////////////////////////////////////////////////
 
-} AVCodec_e;
+} Codecs_e;
 
 //! Picture file formats
-typedef enum PictureFormat_e
+typedef enum Pictures_e
 {
     PICTURE_UNKNOWN   = 0,
 
-    PICTURE_BMP       = 1,
-    PICTURE_JPG       = 2,
+    PICTURE_JPG       = 1,
+    PICTURE_WEBP      = 2,
     PICTURE_PNG       = 3,
-    PICTURE_WEBP      = 4,
-    PICTURE_TGA       = 5,
+    PICTURE_TGA       = 4,
+    PICTURE_BMP       = 5,
 
-    PICTURE_YUV444    = 16,     //!< Planar YCbCr file without subsampling
-    PICTURE_YUV420    = 17      //!< Planar YCbCr file with 4:2:0 subsampling
+    PICTURE_YUV444    = 16,     //!< 4:4:4 YCbCr planar
+    PICTURE_YUV420    = 17      //!< 4:2:0 YCbCr planar
 
-} PictureFormat_e;
+} Pictures_e;
 
 /* ************************************************************************** */
 
-minivideo_EXPORT const char *getContainerString(ContainerFormat_e container, bool long_description);
-minivideo_EXPORT const char *getCodecString(StreamType_e type, AVCodec_e codec, bool long_description);
-minivideo_EXPORT const char *getPictureString(PictureFormat_e picture, bool long_description);
+minivideo_EXPORT const char *getContainerString(Containers_e container, bool long_description);
+minivideo_EXPORT const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_description);
+minivideo_EXPORT const char *getPictureString(Pictures_e picture, bool long_description);
 
 /* ************************************************************************** */
 #ifdef __cplusplus

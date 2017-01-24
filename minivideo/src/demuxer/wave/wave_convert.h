@@ -27,7 +27,7 @@
 // minivideo headers
 #include "wave_struct.h"
 #include "../../bitstream.h"
-#include "../../mediafile_struct.h"
+#include "../../minivideo_mediafile.h"
 
 /* ************************************************************************** */
 

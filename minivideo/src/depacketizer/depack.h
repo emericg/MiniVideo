@@ -34,7 +34,7 @@
 unsigned depack_file(MediaFile_t *media,
                      es_sample_t *essample_list);
 
-unsigned depack_sample(Bitstream_t *bitstr, BitstreamMap_t *track, unsigned sample_index,
+unsigned depack_sample(Bitstream_t *bitstr, MediaStream_t *track, unsigned sample_index,
                        es_sample_t *essample_list);
 
 /* ************************************************************************** */

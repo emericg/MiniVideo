@@ -28,7 +28,7 @@
 #include "avi_struct.h"
 #include "../riff/riff_struct.h"
 #include "../../bitstream.h"
-#include "../../mediafile_struct.h"
+#include "../../minivideo_mediafile.h"
 
 /* ************************************************************************** */
 

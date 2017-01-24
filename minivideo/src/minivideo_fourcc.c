@@ -67,9 +67,9 @@ char *getFccString_be(const uint32_t fcc_in, char *fcc_out)
 
 /* ************************************************************************** */
 
-AVCodec_e getCodecFromFourCC(const uint32_t fcc)
+Codecs_e getCodecFromFourCC(const uint32_t fcc)
 {
-    AVCodec_e codec = CODEC_UNKNOWN;
+    Codecs_e codec = CODEC_UNKNOWN;
 
     switch (fcc)
     {

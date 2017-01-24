@@ -30,9 +30,11 @@
 #include "fourcchelper.h"
 #include "about.h"
 
-#include <QMainWindow>
-#include <QFile>
 #include <vector>
+
+#include <QMainWindow>
+#include <QString>
+#include <QFile>
 
 /* ************************************************************************** */
 

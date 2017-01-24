@@ -643,7 +643,7 @@ int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *pac
  * \return
  */
 int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
-                BitstreamMap_t *map)
+                MediaStream_t *map)
 {
     TRACE_2(MPS, "> parse_pes_a()");
     int retcode = SUCCESS;
@@ -683,79 +683,79 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             {
             case 0:
             case 1:
-                map->bitrate = 32;
+                map->bitrate_avg = 32;
                 break;
             case 2:
             case 3:
-                map->bitrate = 40;
+                map->bitrate_avg = 40;
                 break;
             case 4:
             case 5:
-                map->bitrate = 48;
+                map->bitrate_avg = 48;
                 break;
             case 6:
             case 7:
-                map->bitrate = 56;
+                map->bitrate_avg = 56;
                 break;
             case 8:
             case 9:
-                map->bitrate = 64;
+                map->bitrate_avg = 64;
                 break;
             case 10:
             case 11:
-                map->bitrate = 80;
+                map->bitrate_avg = 80;
                 break;
             case 12:
             case 13:
-                map->bitrate = 96;
+                map->bitrate_avg = 96;
                 break;
             case 14:
             case 15:
-                map->bitrate = 112;
+                map->bitrate_avg = 112;
                 break;
             case 16:
             case 17:
-                map->bitrate = 128;
+                map->bitrate_avg = 128;
                 break;
             case 18:
             case 19:
-                map->bitrate = 160;
+                map->bitrate_avg = 160;
                 break;
             case 20:
             case 21:
-                map->bitrate = 192;
+                map->bitrate_avg = 192;
                 break;
             case 22:
             case 23:
-                map->bitrate = 224;
+                map->bitrate_avg = 224;
                 break;
             case 24:
             case 25:
-                map->bitrate = 256;
+                map->bitrate_avg = 256;
                 break;
             case 26:
             case 27:
-                map->bitrate = 320;
+                map->bitrate_avg = 320;
                 break;
             case 28:
             case 29:
-                map->bitrate = 384;
+                map->bitrate_avg = 384;
                 break;
             case 30:
             case 31:
-                map->bitrate = 448;
+                map->bitrate_avg = 448;
                 break;
             case 32:
             case 33:
-                map->bitrate = 512;
+                map->bitrate_avg = 512;
                 break;
             case 34:
             case 35:
-                map->bitrate = 576;
+                map->bitrate_avg = 576;
                 break;
             case 36:
             case 37:
-                map->bitrate = 640;
+                map->bitrate_avg = 640;
                 break;
             default:
                 TRACE_WARNING(MPS, "Unsupported AC3 frmsizcod %u", frmsizcod);
@@ -815,82 +815,82 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             switch (RATE)
             {
             case 0:
-                map->bitrate = 32000;
+                map->bitrate_avg = 32000;
                 break;
             case 1:
-                map->bitrate = 56000;
+                map->bitrate_avg = 56000;
                 break;
             case 2:
-                map->bitrate = 64000;
+                map->bitrate_avg = 64000;
                 break;
             case 3:
-                map->bitrate = 96000;
+                map->bitrate_avg = 96000;
                 break;
             case 4:
-                map->bitrate = 112000;
+                map->bitrate_avg = 112000;
                 break;
             case 5:
-                map->bitrate = 128000;
+                map->bitrate_avg = 128000;
                 break;
             case 6:
-                map->bitrate = 192000;
+                map->bitrate_avg = 192000;
                 break;
             case 7:
-                map->bitrate = 224000;
+                map->bitrate_avg = 224000;
                 break;
             case 8:
-                map->bitrate = 256000;
+                map->bitrate_avg = 256000;
                 break;
             case 9:
-                map->bitrate = 320000;
+                map->bitrate_avg = 320000;
                 break;
             case 10:
-                map->bitrate = 384000;
+                map->bitrate_avg = 384000;
                 break;
             case 11:
-                map->bitrate = 448000;
+                map->bitrate_avg = 448000;
                 break;
             case 12:
-                map->bitrate = 512000;
+                map->bitrate_avg = 512000;
                 break;
             case 13:
-                map->bitrate = 576000;
+                map->bitrate_avg = 576000;
                 break;
             case 14:
-                map->bitrate = 640000;
+                map->bitrate_avg = 640000;
                 break;
             case 15:
-                map->bitrate = 768000;
+                map->bitrate_avg = 768000;
                 break;
             case 16:
-                map->bitrate = 960000;
+                map->bitrate_avg = 960000;
                 break;
             case 17:
-                map->bitrate = 1024000;
+                map->bitrate_avg = 1024000;
                 break;
             case 18:
-                map->bitrate = 1152000;
+                map->bitrate_avg = 1152000;
                 break;
             case 19:
-                map->bitrate = 1280000;
+                map->bitrate_avg = 1280000;
                 break;
             case 20:
-                map->bitrate = 1344000;
+                map->bitrate_avg = 1344000;
                 break;
             case 21:
-                map->bitrate = 1408000;
+                map->bitrate_avg = 1408000;
                 break;
             case 22:
-                map->bitrate = 1411000;
+                map->bitrate_avg = 1411000;
                 break;
             case 23:
-                map->bitrate = 1472000;
+                map->bitrate_avg = 1472000;
                 break;
             case 24:
-                map->bitrate = 1536000;
+                map->bitrate_avg = 1536000;
                 break;
             case 29:
-                map->bitrate = 2048000; // Speficifation says "open"
+                map->bitrate_avg = 2048000; // Speficifation says "open"
                 break;
             default:
                 TRACE_WARNING(MPS, "Unsupported DTS RATE %u", RATE);
@@ -983,7 +983,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
  * \return
  */
 int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
-                BitstreamMap_t *map)
+                MediaStream_t *map)
 {
     TRACE_2(MPS, "> parse_pes_v()");
     int retcode = SUCCESS;

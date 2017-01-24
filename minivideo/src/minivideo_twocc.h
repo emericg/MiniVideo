@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-minivideo_EXPORT AVCodec_e getCodecFromTwoCC(const uint16_t tcc);
+minivideo_EXPORT Codecs_e getCodecFromTwoCC(const uint16_t tcc);
 
 /* ************************************************************************** */
 

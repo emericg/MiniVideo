@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 // minivideo headers
-#include "mediafile_struct.h"
+#include "minivideo_mediafile.h"
 
 /* ************************************************************************** */
 

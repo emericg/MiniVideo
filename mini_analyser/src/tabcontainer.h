@@ -23,7 +23,7 @@
 #define TABCONTAINER_H
 
 // MiniVideo
-#include "mediafile_struct.h"
+#include "minivideo_mediafile.h"
 
 // QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
@@ -74,8 +74,8 @@ private:
     Ui::tabContainer *ui;
 
     MediaFile_t *media = nullptr;
-    BitstreamMap_t *track = nullptr;
-    BitstreamMap_t *tracks[16] = {0};
+    MediaStream_t *track = nullptr;
+    MediaStream_t *tracks[16] = {0};
 
     QFile mediaFile;
     QByteArray mediaDatas;

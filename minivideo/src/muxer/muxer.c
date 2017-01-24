@@ -35,19 +35,19 @@
 
 /* ************************************************************************** */
 
-static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
+static int write_pes(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> write_pes()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Write packets
-    for (unsigned i = 0; i < bitstream_map->sample_count; i++)
+    for (unsigned i = 0; i < stream->sample_count; i++)
     {
-        size_t size   = (size_t)bitstream_map->sample_size[i];
-        size_t offset = (size_t)bitstream_map->sample_offset[i];
+        size_t size   = (size_t)stream->sample_size[i];
+        size_t offset = (size_t)stream->sample_offset[i];
 
         TRACE_2(MUXER, " > Sample id     : %i", i);
-        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample type   : %i", stream->sample_type[i]);
         TRACE_2(MUXER, " | sample size   : %i", size);
         TRACE_2(MUXER, " | sample offset : %i", offset);
 
@@ -96,18 +96,18 @@ static int write_pes(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
 /* ************************************************************************** */
 
-static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
+static int write_es(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> write_es()" CLR_RESET);
     int retcode = SUCCESS;
 
-    for (unsigned i = 0; i < bitstream_map->sample_count; i++)
+    for (unsigned i = 0; i < stream->sample_count; i++)
     {
-        size_t size   = (size_t)bitstream_map->sample_size[i];
-        size_t offset = (size_t)bitstream_map->sample_offset[i];
+        size_t size   = (size_t)stream->sample_size[i];
+        size_t offset = (size_t)stream->sample_offset[i];
 
         TRACE_2(MUXER, " > Sample id     : %i", i);
-        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample type   : %i", stream->sample_type[i]);
         TRACE_2(MUXER, " | sample size   : %i", size);
         TRACE_2(MUXER, " | sample offset : %i", offset);
 
@@ -138,7 +138,7 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
                 else
                 {
                     // Add 'Annex B' start code
-                    if (bitstream_map->stream_codec == CODEC_H264)
+                    if (stream->stream_codec == CODEC_H264)
                     {
                         uint8_t startcode[4] = { 0x00, 0x00, 0x00, 0x01 };
                         write = fwrite(startcode, sizeof(uint8_t), 4, f_dst);
@@ -165,26 +165,26 @@ static int write_es(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 /* ************************************************************************** */
 
 /*!
- * \brief Check media and bitstream_map structures, then track infos.
+ * \brief Check MediaFile_t and MediaStream_t structures, then track infos.
  * \return SUCCESS if so.
  */
-static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
+static int stream_infos(MediaFile_t *media, MediaStream_t *stream)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_infos()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Check structures
-    if (media && bitstream_map)
+    if (media && stream)
     {
-        if (bitstream_map->stream_type == stream_AUDIO)
+        if (stream->stream_type == stream_AUDIO)
         {
             TRACE_1(MUXER, " > stream type : AUDIO");
         }
-        else if (bitstream_map->stream_type == stream_VIDEO)
+        else if (stream->stream_type == stream_VIDEO)
         {
             TRACE_1(MUXER, " > stream type : VIDEO");
         }
-        else if (bitstream_map->stream_type == stream_TEXT)
+        else if (stream->stream_type == stream_TEXT)
         {
             TRACE_1(MUXER, " > stream type : VIDEO");
         }
@@ -194,9 +194,9 @@ static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
             retcode = FAILURE;
         }
 
-        if (bitstream_map->sample_count > 0)
+        if (stream->sample_count > 0)
         {
-            TRACE_1(MUXER, " > number of samples: %i", bitstream_map->sample_count);
+            TRACE_1(MUXER, " > number of samples: %i", stream->sample_count);
         }
         else
         {
@@ -219,7 +219,7 @@ static int stream_infos(MediaFile_t *media, BitstreamMap_t *bitstream_map)
  * \brief Export a PES packet into a file.
  * \return SUCCESS if so.
  */
-static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_map, char output_filename[255], const int output_format)
+static int stream_output_filename(MediaFile_t *media, MediaStream_t *stream, char output_filename[255], const int output_format)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> stream_output_filename()" CLR_RESET);
     int retcode = SUCCESS;
@@ -232,17 +232,17 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
     //strncat(output_filename, "_track1", 254);
 
     // File extension
-    if (bitstream_map->stream_type == stream_AUDIO)
+    if (stream->stream_type == stream_AUDIO)
     {
-        if (bitstream_map->stream_codec == CODEC_MPEG_L3)
+        if (stream->stream_codec == CODEC_MPEG_L3)
         {
             strncat(output_filename, ".mp3", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_AC3)
+        else if (stream->stream_codec == CODEC_AC3)
         {
             strncat(output_filename, ".ac3", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_AAC)
+        else if (stream->stream_codec == CODEC_AAC)
         {
             strncat(output_filename, ".aac", 254);
         }
@@ -252,22 +252,22 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
             TRACE_WARNING(MUXER, " > Unknown AUDIO codec, using generic file extension");
         }
     }
-    else // if (bitstream_map->stream_type == stream_VIDEO)
+    else // if (stream->stream_type == stream_VIDEO)
     {
 
-        if (bitstream_map->stream_codec == CODEC_MPEG1 ||
-            bitstream_map->stream_codec == CODEC_MPEG2)
+        if (stream->stream_codec == CODEC_MPEG1 ||
+            stream->stream_codec == CODEC_MPEG2)
         {
             strncat(output_filename, ".mpegv", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_H264)
+        else if (stream->stream_codec == CODEC_H264)
         {
             if (output_format == 0)
                 strncat(output_filename, ".h264", 254);
             else
                 strncat(output_filename, ".h264", 254);
         }
-        else if (bitstream_map->stream_codec == CODEC_MPEG4_ASP)
+        else if (stream->stream_codec == CODEC_MPEG4_ASP)
         {
             if (output_format == 0)
                 strncat(output_filename, ".mpgv", 254);
@@ -295,19 +295,19 @@ static int stream_output_filename(MediaFile_t *media, BitstreamMap_t *bitstream_
  * \return SUCCESS if so.
  */
 int muxer_export_samples(MediaFile_t *media,
-                         BitstreamMap_t *bitstream_map,
+                         MediaStream_t *stream,
                          const int output_format)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> muxer_export_sample()" CLR_RESET);
 
     // Check stream
-    int retcode = stream_infos(media, bitstream_map);
+    int retcode = stream_infos(media, stream);
 
     if (retcode == SUCCESS)
     {
         // Stream output file name
         char output_filename[255];
-        stream_output_filename(media, bitstream_map, output_filename, output_format);
+        stream_output_filename(media, stream, output_filename, output_format);
 
         // Create & open media files
         FILE *f_src = media->file_pointer;
@@ -321,23 +321,23 @@ int muxer_export_samples(MediaFile_t *media,
         else
         {
 /*
-            if (bitstream_map->stream_level == stream_level_PES)
+            if (stream->stream_level == stream_level_PES)
             {
                 // Write PES packets
-                retcode = write_pes(f_src, f_dst, bitstream_map);
+                retcode = write_pes(f_src, f_dst, stream);
             }
-            else if (bitstream_map->stream_level == stream_level_ES)
+            else if (stream->stream_level == stream_level_ES)
 */
             {
                 if (output_format == 0)
                 {
                     // Just write ES
-                    retcode = write_es(f_src, f_dst, bitstream_map);
+                    retcode = write_es(f_src, f_dst, stream);
                 }
                 else // if (output_format == 1)
                 {
                     // Packetize ES into PES
-                    retcode = pes_packetizer(f_src, f_dst, bitstream_map);
+                    retcode = pes_packetizer(f_src, f_dst, stream);
                 }
             }
 

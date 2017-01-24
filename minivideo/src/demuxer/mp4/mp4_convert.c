@@ -40,7 +40,7 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Convert a videoTrack_t structure into a bitstreamMap_t.
+ * \brief Convert a Mp4Track_t structure into a generic MediaStream_t.
  * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
  * \param *track: A pointer to the mp4 track structure we want to extract data from.
  * \param idr_only Set to true if we only want to extract IDR samples.
@@ -52,7 +52,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 {
     TRACE_INFO(MP4, BLD_GREEN "convertTrack()" CLR_RESET);
     bool retcode = SUCCESS;
-    BitstreamMap_t *map = NULL;
+    MediaStream_t *map = NULL;
 
     if (media == NULL || track == NULL)
     {
@@ -120,7 +120,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         unsigned int i = 0, j = 0;
 
         map->stream_fcc = track->fcc;
-        map->stream_codec = (AVCodec_e)track->codec;
+        map->stream_codec = (Codecs_e)track->codec;
 
         if (strnlen(track->compressorname, 32) > 0)
         {
@@ -139,12 +139,12 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 
         if (track->timescale)
         {
-            map->duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
+            map->stream_duration_ms = ((double)track->duration / (double)track->timescale * 1000.0);
             map->creation_time = ((double)track->creation_time / (double)track->timescale * 1000.0);
             map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
         }
 
-        map->sample_alignment = false;
+        map->stream_packetized = true;
         map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
 
         map->track_id = track->id;

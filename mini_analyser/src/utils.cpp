@@ -21,8 +21,9 @@
 
 #include "utils.h"
 
-#include <cmath>
 #include <QDebug>
+
+#include <cmath>
 
 QString getDurationString(const uint32_t duration)
 {
@@ -149,7 +150,7 @@ QString getSizeString(const int64_t size)
     return size_qstr;
 }
 
-QString getTrackTypeString(const BitstreamMap_t *track)
+QString getTrackTypeString(const MediaStream_t *track)
 {
     QString type_qstr;
 
@@ -193,7 +194,7 @@ QString getTrackTypeString(const BitstreamMap_t *track)
     return type_qstr;
 }
 
-QString getTrackSizeString(const BitstreamMap_t *track, const int64_t file_size, const bool detailed)
+QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, const bool detailed)
 {
     QString size_qstr;
 

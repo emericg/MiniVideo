@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-unsigned depack_h264_sample(Bitstream_t *bitstr, BitstreamMap_t *track,
+unsigned depack_h264_sample(Bitstream_t *bitstr, MediaStream_t *track,
                             unsigned sample_index, es_sample_t *essample_list);
 
 /* ************************************************************************** */

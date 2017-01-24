@@ -25,13 +25,13 @@
 #define IDR_FILTER_H
 
 // minivideo headers
-#include "../bitstream_map_struct.h"
+#include "../minivideo_mediastream.h"
 
 /* ************************************************************************** */
 
 /*!
- * \brief Depending on picture_extractionmode parameter, choose some IDR from the bitstreamMap_t structure and delete the others.
- * \param **bitstream_map_ptr: docme.
+ * \brief Depending on picture_extractionmode parameter, choose some IDR from the MediaStream_t structure and delete the others.
+ * \param stream_ptr: The address of the pointer to the MediaStream_t structure to initialize.
  * \param picture_number: The number of thumbnail(s) we want to extract.
  * \param picture_extraction_mode: The method of distribution for thumbnails extraction.
  * \return The number of picture available in the bitstream map (0 means error).
@@ -43,7 +43,7 @@
  * - Images carrying less visual informations than the average.
  * - If specified, the filter select images spread over the duration of the film.
  */
-int idr_filtering(BitstreamMap_t **bitstream_map_ptr,
+int idr_filtering(MediaStream_t **stream_ptr,
                   unsigned picture_number, const int picture_extraction_mode);
 
 /* ************************************************************************** */

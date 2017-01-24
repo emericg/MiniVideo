@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 2.6)
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 7)
-set(minivideo_VERSION_PATCH 2)
+set(minivideo_VERSION_MINOR 8)
+set(minivideo_VERSION_PATCH 0)
 
 
 # Build settings
@@ -164,14 +164,14 @@ configure_file(
 set(minivideo_SRC
     src/minivideo.c
         src/minivideo_settings.h src/minivideo_typedef.h
+        src/minivideo_mediafile.h src/minivideo_mediastream.h
         src/minivideo_codecs.c src/minivideo_avutils.h
         src/minivideo_fourcc.c src/minivideo_twocc.c
-        src/minitraces.c src/minitraces_conf.h
         src/utils.c
+    src/minitraces.c src/minitraces_conf.h
     src/bitstream.c
         src/bitstream_utils.c
         src/bitstream_map.c
-        src/bitstream_map_struct.h
     src/import.c
     src/export.c
         src/export_utils.c

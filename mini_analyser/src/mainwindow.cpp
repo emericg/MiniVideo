@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QWidget>
 #include <QTimer>
 
 #include <QDropEvent>

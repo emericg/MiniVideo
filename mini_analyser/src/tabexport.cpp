@@ -251,7 +251,7 @@ int tabExport::generateExportDatas_text(bool detailed)
 
         for (unsigned i = 0; i < media->tracks_video_count; i++)
         {
-            BitstreamMap_t *t = media->tracks_video[i];
+            MediaStream_t *t = media->tracks_video[i];
             if (t == NULL)
                 break;
 
@@ -288,7 +288,7 @@ int tabExport::generateExportDatas_text(bool detailed)
             exportDatas += "\nSize          : ";
             exportDatas += getTrackSizeString(t, media->file_size, detailed);
             exportDatas += "\nDuration      : ";
-            exportDatas += getDurationString(t->duration_ms);
+            exportDatas += getDurationString(t->stream_duration_ms);
             exportDatas += "\nWidth         : ";
             exportDatas += QString::number(t->width);
             exportDatas += "\nHeight        : ";
@@ -323,7 +323,7 @@ int tabExport::generateExportDatas_text(bool detailed)
                 exportDatas += getFramerateModeString(t->framerate_mode);
 
                 exportDatas += "\nBitrate       : ";
-                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += getBitrateString(t->bitrate_avg);
                 exportDatas += "\nBitrate mode  : ";
                 exportDatas += getBitrateModeString(t->bitrate_mode);
                 if (t->bitrate_mode != BITRATE_CBR)
@@ -341,7 +341,7 @@ int tabExport::generateExportDatas_text(bool detailed)
                 exportDatas += getFramerateModeString(t->framerate_mode) + ")";
 
                 exportDatas += "\nBitrate       : ";
-                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += getBitrateString(t->bitrate_avg);
                 exportDatas += " (" + getBitrateModeString(t->bitrate_mode) + ")";
             }
 
@@ -361,7 +361,7 @@ int tabExport::generateExportDatas_text(bool detailed)
 
         for (unsigned i = 0; i < media->tracks_audio_count; i++)
         {
-            BitstreamMap_t *t = media->tracks_audio[i];
+            MediaStream_t *t = media->tracks_audio[i];
             if (t == NULL)
                 break;
 
@@ -391,7 +391,7 @@ int tabExport::generateExportDatas_text(bool detailed)
             exportDatas += "\nSize          : ";
             exportDatas += getTrackSizeString(t, media->file_size, detailed);
             exportDatas += "\nDuration      : ";
-            exportDatas += getDurationString(t->duration_ms);
+            exportDatas += getDurationString(t->stream_duration_ms);
             if (t->track_title)
             {
                 exportDatas += "\nTitle         : ";
@@ -411,7 +411,7 @@ int tabExport::generateExportDatas_text(bool detailed)
             if (detailed == true)
             {
                 exportDatas += "\nBitrate       : ";
-                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += getBitrateString(t->bitrate_avg);
                 exportDatas += "\nBitrate mode  : ";
                 exportDatas += getBitrateModeString(t->bitrate_mode);
                 if (t->bitrate_mode != BITRATE_CBR)
@@ -425,7 +425,7 @@ int tabExport::generateExportDatas_text(bool detailed)
             else
             {
                 exportDatas += "\nBitrate       : ";
-                exportDatas += getBitrateString(t->bitrate);
+                exportDatas += getBitrateString(t->bitrate_avg);
                 exportDatas += " (" + getBitrateModeString(t->bitrate_mode) + ")";
             }
         }
@@ -435,7 +435,7 @@ int tabExport::generateExportDatas_text(bool detailed)
 
         for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
         {
-            BitstreamMap_t *t = media->tracks_subt[i];
+            MediaStream_t *t = media->tracks_subt[i];
             if (t == NULL)
                 break;
 
@@ -459,7 +459,7 @@ int tabExport::generateExportDatas_text(bool detailed)
 
         for (unsigned i = 0; i < media->tracks_others_count; i++)
         {
-            BitstreamMap_t *t = media->tracks_others[i];
+            MediaStream_t *t = media->tracks_others[i];
             if (t == NULL)
                 break;
 

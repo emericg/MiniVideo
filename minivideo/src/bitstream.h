@@ -49,7 +49,7 @@
  * is enabled during compilation with -D_LARGEFILE64_SOURCE. Overwise only files
  * of 2 GiB will work.
  *
- * During a bitstream initialization, a bitstream_map structure can be used. It
+ * During a bitstream initialization, a MediaStream_t structure can be used. It
  * allows the bitstream to easily move the current bitstream offset from the end
  * of a frame directly to the start of the next frame one.
  */
@@ -57,7 +57,7 @@ typedef struct Bitstream_t
 {
     FILE *bitstream_file;                //!< File pointer
 
-    BitstreamMap_t *bitstream_map;       //!< Bitstream map of existing A/V samples inside the file
+    MediaStream_t *bitstream_map;        //!< Bitstream map of existing A/V samples inside the file
     uint32_t bitstream_sample_index;     //!< Id of the A/V sample currently in use
 
     int64_t bitstream_size;              //!< Total bitstream size (in byte)
@@ -73,7 +73,7 @@ typedef struct Bitstream_t
 
 /* ************************************************************************** */
 
-Bitstream_t *init_bitstream(MediaFile_t *media, BitstreamMap_t *bitstream_map);
+Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream);
 void free_bitstream(Bitstream_t **bitstr_ptr);
 
 int buffer_feed_next_sample(Bitstream_t *bitstr);

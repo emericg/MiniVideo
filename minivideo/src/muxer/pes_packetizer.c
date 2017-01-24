@@ -37,12 +37,12 @@
 
 /*!
  * \brief Form a PES packet header for each sample from a track.
- * \param f_src The input file, where to read samples.
- * \param f_dst The output file, where we write PES header + data.
- * \param bitstream_map Informations about the track.
+ * \param f_src: The input file, where to read samples.
+ * \param f_dst: The output file, where we write PES header + data.
+ * \param stream: Informations about the track.
  * \return SUCCESS if so.
  */
-int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
+int pes_packetizer(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
 {
     TRACE_INFO(MUXER, BLD_GREEN "> pes_packetizer()" CLR_RESET);
     int retcode = SUCCESS;
@@ -53,24 +53,24 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
     uint64_t pts_tick = 3750;
     uint64_t pts = 1;
 
-    if (bitstream_map->framerate > 0)
+    if (stream->framerate > 0)
     {
-        pts_tick = (uint64_t)((1000.0 / bitstream_map->framerate) * 90);
-        TRACE_1(MUXER, "frame rate : %f", bitstream_map->framerate);
+        pts_tick = (uint64_t)((1000.0 / stream->framerate) * 90);
+        TRACE_1(MUXER, "frame rate : %f", stream->framerate);
         TRACE_1(MUXER, "pts_tick   : %llu", pts_tick);
     }
     else
     {
-        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.", bitstream_map->framerate);
+        TRACE_WARNING(MUXER, "Unknown frame rate (%f). Forcing 24 fps.", stream->framerate);
     }
 
-    for (unsigned i = 0; i < bitstream_map->sample_count; i++)
+    for (unsigned i = 0; i < stream->sample_count; i++)
     {
-        size_t size   = (size_t)bitstream_map->sample_size[i];
-        size_t offset = (size_t)bitstream_map->sample_offset[i];
+        size_t size   = (size_t)stream->sample_size[i];
+        size_t offset = (size_t)stream->sample_offset[i];
 
         TRACE_2(MUXER, " > Sample id     : %i", i);
-        TRACE_2(MUXER, " | sample type   : %i", bitstream_map->sample_type[i]);
+        TRACE_2(MUXER, " | sample type   : %i", stream->sample_type[i]);
         TRACE_2(MUXER, " | sample size   : %i", size);
         TRACE_2(MUXER, " | sample offset : %i", offset);
 
@@ -84,7 +84,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
         bool dts_enable = true;
 
         {
-            if (bitstream_map->sample_type[i] == sample_VIDEO_PARAM)
+            if (stream->sample_type[i] == sample_VIDEO_PARAM)
             {
                 pts_enable = false;
                 dts_enable = false;
@@ -95,13 +95,13 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             {
                 pes_header_size += 5;
 
-                if (bitstream_map->sample_pts[i] >= 0)
+                if (stream->sample_pts[i] >= 0)
                 {
-                    pes_header[9] += (uint8_t)(bitstream_map->sample_pts[i] >> 30) & 0x0E;
-                    pes_header[10] = (uint8_t)(bitstream_map->sample_pts[i] >> 22);
-                    pes_header[11] += (uint8_t)(bitstream_map->sample_pts[i] >> 14) & 0xFE;
-                    pes_header[12] = (uint8_t)(bitstream_map->sample_pts[i] >> 7);
-                    pes_header[13] += (uint8_t)(bitstream_map->sample_pts[i] << 1) & 0xFE;
+                    pes_header[9] += (uint8_t)(stream->sample_pts[i] >> 30) & 0x0E;
+                    pes_header[10] = (uint8_t)(stream->sample_pts[i] >> 22);
+                    pes_header[11] += (uint8_t)(stream->sample_pts[i] >> 14) & 0xFE;
+                    pes_header[12] = (uint8_t)(stream->sample_pts[i] >> 7);
+                    pes_header[13] += (uint8_t)(stream->sample_pts[i] << 1) & 0xFE;
                 }
                 else
                 {
@@ -118,15 +118,15 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
             // [14-18] DTS
             if (dts_enable == true)
             {
-                if (bitstream_map->sample_dts[i] >= 0)
+                if (stream->sample_dts[i] >= 0)
                 {
                     pes_header_size += 5;
 
-                    pes_header[14] += (uint8_t)(bitstream_map->sample_dts[i] >> 30) & 0x0E;
-                    pes_header[15] = (uint8_t)(bitstream_map->sample_dts[i] >> 22);
-                    pes_header[16] += (uint8_t)(bitstream_map->sample_dts[i] >> 14) & 0xFE;
-                    pes_header[17] = (uint8_t)(bitstream_map->sample_dts[i] >> 7);
-                    pes_header[18] += (uint8_t)(bitstream_map->sample_dts[i] << 1) & 0xFE;
+                    pes_header[14] += (uint8_t)(stream->sample_dts[i] >> 30) & 0x0E;
+                    pes_header[15] = (uint8_t)(stream->sample_dts[i] >> 22);
+                    pes_header[16] += (uint8_t)(stream->sample_dts[i] >> 14) & 0xFE;
+                    pes_header[17] = (uint8_t)(stream->sample_dts[i] >> 7);
+                    pes_header[18] += (uint8_t)(stream->sample_dts[i] << 1) & 0xFE;
                 }
                 else
                 {
@@ -136,7 +136,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
 
             // [4-5] pes packet length
             uint16_t packetlength = (uint16_t)size + 3 + (pes_header_size - 9);
-            if (bitstream_map->stream_codec == CODEC_H264)
+            if (stream->stream_codec == CODEC_H264)
                 packetlength += 4; // because of the additionnal 4 bytes start code
 
             pes_header[4] = (uint8_t)(packetlength >> 8);
@@ -206,7 +206,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, BitstreamMap_t *bitstream_map)
                     write = fwrite(pes_header, sizeof(uint8_t), pes_header_size, f_dst);
 
                     // Add 'Annex B' start code
-                    if (bitstream_map->stream_codec == CODEC_H264)
+                    if (stream->stream_codec == CODEC_H264)
                     {
                         uint8_t startcode[4] = { 0x00, 0x00, 0x00, 0x01 };
                         write = fwrite(startcode, sizeof(uint8_t), 4, f_dst);

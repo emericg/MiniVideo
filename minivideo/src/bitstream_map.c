@@ -35,20 +35,20 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Initialize a bitstream_map structure with a fixed number of entries.
- * \param bitstream_map: The address of the pointer to the bitstreamMap_t structure to initialize.
- * \param entries: The number of sample to init into the bitstreamMap_t structure.
+ * \brief Initialize a MediaStream_t structure with a fixed number of entries.
+ * \param stream_ptr: The address of the pointer to the MediaStream_t structure to initialize.
+ * \param entries: The number of sample to init into the MediaStream_t structure.
  * \return 1 if succeed, 0 otherwise.
  *
- * Everything inside the bitstreamMap_t structure is set to 0, even the number
+ * Everything inside the MediaStream_t structure is set to 0, even the number
  * of entries (sample_count).
  */
-int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
+int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t entries)
 {
     TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()" CLR_RESET);
     int retcode = SUCCESS;
 
-    if (*bitstream_map != NULL)
+    if (*stream_ptr != NULL)
     {
         TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map: not null!");
         retcode = FAILURE;
@@ -62,42 +62,42 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
         }
         else
         {
-            *bitstream_map = (BitstreamMap_t*)calloc(1, sizeof(BitstreamMap_t));
+            *stream_ptr = (MediaStream_t*)calloc(1, sizeof(MediaStream_t));
 
-            if (*bitstream_map == NULL)
+            if (*stream_ptr == NULL)
             {
                 TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!");
                 retcode = FAILURE;
             }
             else
             {
-                (*bitstream_map)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
-                (*bitstream_map)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
-                (*bitstream_map)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
-                (*bitstream_map)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
-                (*bitstream_map)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*stream_ptr)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
+                (*stream_ptr)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
+                (*stream_ptr)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*stream_ptr)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*stream_ptr)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
 
-                if ((*bitstream_map)->sample_type == NULL ||
-                    (*bitstream_map)->sample_size == NULL ||
-                    (*bitstream_map)->sample_offset == NULL ||
-                    (*bitstream_map)->sample_pts == NULL ||
-                    (*bitstream_map)->sample_dts == NULL)
+                if ((*stream_ptr)->sample_type == NULL ||
+                    (*stream_ptr)->sample_size == NULL ||
+                    (*stream_ptr)->sample_offset == NULL ||
+                    (*stream_ptr)->sample_pts == NULL ||
+                    (*stream_ptr)->sample_dts == NULL)
                 {
                     TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!");
 
-                    if ((*bitstream_map)->sample_type != NULL)
-                        free((*bitstream_map)->sample_type);
-                    if ((*bitstream_map)->sample_size != NULL)
-                        free((*bitstream_map)->sample_size);
-                    if ((*bitstream_map)->sample_offset != NULL)
-                        free((*bitstream_map)->sample_offset);
-                    if ((*bitstream_map)->sample_pts != NULL)
-                        free((*bitstream_map)->sample_pts);
-                    if ((*bitstream_map)->sample_dts != NULL)
-                        free((*bitstream_map)->sample_dts);
+                    if ((*stream_ptr)->sample_type != NULL)
+                        free((*stream_ptr)->sample_type);
+                    if ((*stream_ptr)->sample_size != NULL)
+                        free((*stream_ptr)->sample_size);
+                    if ((*stream_ptr)->sample_offset != NULL)
+                        free((*stream_ptr)->sample_offset);
+                    if ((*stream_ptr)->sample_pts != NULL)
+                        free((*stream_ptr)->sample_pts);
+                    if ((*stream_ptr)->sample_dts != NULL)
+                        free((*stream_ptr)->sample_dts);
 
-                    free(*bitstream_map);
-                    *bitstream_map = NULL;
+                    free(*stream_ptr);
+                    *stream_ptr = NULL;
                     retcode = FAILURE;
                 }
             }
@@ -111,45 +111,55 @@ int init_bitstream_map(BitstreamMap_t **bitstream_map, uint32_t entries)
 
 /*!
  * \brief Destroy a bitstream_map structure.
- * \param *bitstream_map A pointer to a *bitstreamMap_t structure.
+ * \param stream_ptr: The address of the pointer to the MediaStream_t structure to initialize.
  */
-void free_bitstream_map(BitstreamMap_t **bitstream_map)
+void free_bitstream_map(MediaStream_t **stream_ptr)
 {
-    if ((*bitstream_map) != NULL)
+    if ((*stream_ptr) != NULL)
     {
         TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()" CLR_RESET);
 
-        // Textual metadatas
-        free((*bitstream_map)->stream_encoder);
-        (*bitstream_map)->stream_encoder = NULL;
-        free((*bitstream_map)->track_title);
-        (*bitstream_map)->track_title = NULL;
-        free((*bitstream_map)->track_languagecode);
-        (*bitstream_map)->track_languagecode = NULL;
-        free((*bitstream_map)->subtitles_name);
-        (*bitstream_map)->subtitles_name = NULL;
+        // Strings
+        free((*stream_ptr)->stream_encoder);
+        (*stream_ptr)->stream_encoder = NULL;
+        free((*stream_ptr)->track_title);
+        (*stream_ptr)->track_title = NULL;
+        free((*stream_ptr)->track_languagecode);
+        (*stream_ptr)->track_languagecode = NULL;
+        free((*stream_ptr)->subtitles_name);
+        (*stream_ptr)->subtitles_name = NULL;
 
-        // Sample tables
-        free((*bitstream_map)->sample_type);
-        (*bitstream_map)->sample_type = NULL;
+        // Parameter set arrays
+        free((*stream_ptr)->parameter_type);
+        (*stream_ptr)->parameter_type = NULL;
 
-        free((*bitstream_map)->sample_size);
-        (*bitstream_map)->sample_size = NULL;
+        free((*stream_ptr)->parameter_size);
+        (*stream_ptr)->parameter_size = NULL;
 
-        free((*bitstream_map)->sample_offset);
-        (*bitstream_map)->sample_offset = NULL;
+        free((*stream_ptr)->parameter_offset);
+        (*stream_ptr)->parameter_offset = NULL;
 
-        free((*bitstream_map)->sample_pts);
-        (*bitstream_map)->sample_pts = NULL;
+        // Samples arrays
+        free((*stream_ptr)->sample_type);
+        (*stream_ptr)->sample_type = NULL;
 
-        free((*bitstream_map)->sample_dts);
-        (*bitstream_map)->sample_dts = NULL;
+        free((*stream_ptr)->sample_size);
+        (*stream_ptr)->sample_size = NULL;
 
+        free((*stream_ptr)->sample_offset);
+        (*stream_ptr)->sample_offset = NULL;
 
-        free(*bitstream_map);
-        *bitstream_map = NULL;
+        free((*stream_ptr)->sample_pts);
+        (*stream_ptr)->sample_pts = NULL;
 
-        TRACE_1(DEMUX, "<b> Bitstream_map freed");
+        free((*stream_ptr)->sample_dts);
+        (*stream_ptr)->sample_dts = NULL;
+
+        // The MediaStream_t itself
+        free(*stream_ptr);
+        *stream_ptr = NULL;
+
+        TRACE_1(DEMUX, "<b> MediaStream_t freed");
     }
 }
 
@@ -157,14 +167,14 @@ void free_bitstream_map(BitstreamMap_t **bitstream_map)
 /* ************************************************************************** */
 
 /*!
- * \brief Print the content of a bitstreamMap_t structure.
- * \param bitstream_map docme.
+ * \brief Print the content of a MediaStream_t structure.
+ * \param *stream: A pointer to a MediaStream_t structure.
  */
-void print_bitstream_map(BitstreamMap_t *bitstream_map)
+void print_bitstream_map(MediaStream_t *stream)
 {
 #if ENABLE_DEBUG
 
-    if (bitstream_map == NULL)
+    if (stream == NULL)
     {
         TRACE_ERROR(DEMUX, "Invalid bitstream_map structure!");
     }
@@ -172,13 +182,13 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
     {
         TRACE_INFO(DEMUX, BLD_GREEN "print_bitstream_map()" CLR_RESET);
 
-        if (bitstream_map->stream_type == stream_VIDEO &&
-            bitstream_map->sample_count > 0)
+        if (stream->stream_type == stream_VIDEO &&
+            stream->sample_count > 0)
         {
             TRACE_INFO(DEMUX, "Elementary stream type > VIDEO");
         }
-        else if (bitstream_map->stream_type == stream_AUDIO &&
-                 bitstream_map->sample_count > 0)
+        else if (stream->stream_type == stream_AUDIO &&
+                 stream->sample_count > 0)
         {
             TRACE_INFO(DEMUX, "Elementary stream type > AUDIO");
         }
@@ -187,21 +197,22 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
             TRACE_WARNING(DEMUX, "Unknown elementary stream type!");
         }
 
-        TRACE_1(DEMUX, "Track codec:     '%s'", getCodecString(bitstream_map->stream_type, bitstream_map->stream_codec, true));
+        TRACE_1(DEMUX, "Track codec:     '%s'", getCodecString(stream->stream_type, stream->stream_codec, true));
 
-        TRACE_INFO(DEMUX, "> samples alignment: %i", bitstream_map->sample_alignment);
-        TRACE_INFO(DEMUX, "> samples count    : %i", bitstream_map->sample_count);
-        TRACE_INFO(DEMUX, "> IDR samples count: %i", bitstream_map->frame_count_idr);
+        TRACE_INFO(DEMUX, "> stream packetized  : %i", stream->stream_packetized);
+        TRACE_INFO(DEMUX, "> samples count      : %i", stream->sample_count);
+        TRACE_INFO(DEMUX, "> frames count       : %i", stream->frame_count);
+        TRACE_INFO(DEMUX, "> IDR frames count   : %i", stream->frame_count_idr);
 
-        if (bitstream_map->sample_count > 0)
+        if (stream->sample_count > 0)
         {
             TRACE_1(DEMUX, "SAMPLES");
-            for (unsigned  i = 0; i < bitstream_map->sample_count; i++)
+            for (unsigned  i = 0; i < stream->sample_count; i++)
             {
-                TRACE_1(DEMUX, "> sample_type      : %i", bitstream_map->sample_type[i]);
-                TRACE_1(DEMUX, "  | sample_offset  : %i", bitstream_map->sample_offset[i]);
-                TRACE_1(DEMUX, "  | sample_size    : %i", bitstream_map->sample_size[i]);
-                TRACE_1(DEMUX, "  | sample_timecode: %i", bitstream_map->sample_pts[i]);
+                TRACE_1(DEMUX, "> sample_type      : %i", stream->sample_type[i]);
+                TRACE_1(DEMUX, "  | sample_offset  : %i", stream->sample_offset[i]);
+                TRACE_1(DEMUX, "  | sample_size    : %i", stream->sample_size[i]);
+                TRACE_1(DEMUX, "  | sample_timecode: %i", stream->sample_pts[i]);
             }
         }
     }
@@ -212,7 +223,7 @@ void print_bitstream_map(BitstreamMap_t *bitstream_map)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static void computeSamplesDatasTrack(BitstreamMap_t *track)
+static void computeSamplesDatasTrack(MediaStream_t *track)
 {
     if (track)
     {
@@ -222,7 +233,7 @@ static void computeSamplesDatasTrack(BitstreamMap_t *track)
         bool cfr = true;
         unsigned j = 0;
 
-        if (track->sample_alignment)
+        if (track->stream_packetized == false)
         {
             track->frame_count = track->sample_count;
         }
@@ -264,7 +275,7 @@ static void computeSamplesDatasTrack(BitstreamMap_t *track)
                 cbr = false; // TODO find a reference // TODO not use TAGS
             }
 
-            if (track->sample_alignment == false)
+            if (track->stream_packetized == true)
             {
                 if (track->sample_type[j] == sample_VIDEO_SYNC ||
                     track->sample_pts[j] || track->sample_dts[j])
@@ -320,17 +331,17 @@ static void computeSamplesDatasTrack(BitstreamMap_t *track)
         }
 
         // Set stream duration
-        if (track->duration_ms == 0)
+        if (track->stream_duration_ms == 0)
         {
-            track->duration_ms = (double)track->frame_count * track->frame_duration;
+            track->stream_duration_ms = (double)track->frame_count * track->frame_duration;
         }
 
         // Set gross bitrate value (in bps)
-        if (track->bitrate == 0 && track->duration_ms != 0)
+        if (track->bitrate_avg == 0 && track->stream_duration_ms != 0)
         {
-            track->bitrate = (unsigned int)round(((double)track->stream_size / (double)(track->duration_ms)));
-            track->bitrate *= 1000; // ms to s
-            track->bitrate *= 8; // B to b
+            track->bitrate_avg = (unsigned int)round(((double)track->stream_size / (double)(track->stream_duration_ms)));
+            track->bitrate_avg *= 1000; // ms to s
+            track->bitrate_avg *= 8; // B to b
         }
     }
 }
@@ -345,7 +356,7 @@ static void computeSamplesDatasTrack(BitstreamMap_t *track)
  * containers seems wrong (like the sample size). This will also trigger a new
  * bitrate computation.
  */
-bool computePCMSettings(BitstreamMap_t *track)
+bool computePCMSettings(MediaStream_t *track)
 {
     bool retcode = SUCCESS;
     uint32_t sample_size_cbr = track->channel_count * (track->bit_per_sample / 8);
@@ -357,7 +368,7 @@ bool computePCMSettings(BitstreamMap_t *track)
 
         track->sample_per_frames = 1;
         track->stream_size = track->sample_count * sample_size_cbr;
-        track->bitrate = 0; // reset bitrate
+        track->bitrate_avg = 0; // reset bitrate
 
         for (unsigned i = 0; i < track->sample_count; i++)
         {
@@ -410,7 +421,7 @@ bool computeAspectRatios(MediaFile_t *media)
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)
     {
-        BitstreamMap_t *t = media->tracks_video[i];
+        MediaStream_t *t = media->tracks_video[i];
         if (t)
         {
             // First pass on PAR (if set by the container)
@@ -500,20 +511,20 @@ bool computeSamplesDatas(MediaFile_t *media)
 
 /* ************************************************************************** */
 
-uint64_t computeTrackMemory(BitstreamMap_t *t)
+uint64_t computeStreamMemory(MediaStream_t *stream)
 {
     uint64_t mem = 0;
 
-    if (t)
+    if (stream)
     {
-        mem += sizeof(*t);
+        mem += sizeof(*stream);
 
-        if (t->stream_encoder) mem += strlen(t->stream_encoder);
-        if (t->track_title) mem += strlen(t->track_title);
-        if (t->track_languagecode) mem += strlen(t->track_languagecode);
-        if (t->subtitles_name) mem += strlen(t->subtitles_name);
+        if (stream->stream_encoder) mem += strlen(stream->stream_encoder);
+        if (stream->track_title) mem += strlen(stream->track_title);
+        if (stream->track_languagecode) mem += strlen(stream->track_languagecode);
+        if (stream->subtitles_name) mem += strlen(stream->subtitles_name);
 
-        mem += t->sample_count * (4 + 4 + 8 + 8 + 8);
+        mem += stream->sample_count * (4 + 4 + 8 + 8 + 8);
     }
     TRACE_1(DEMUX, "track(x): %u B\n", mem);
 
@@ -535,22 +546,22 @@ bool computeMediaMemory(MediaFile_t *media)
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)
     {
-        mem += computeTrackMemory(media->tracks_video[i]);
+        mem += computeStreamMemory(media->tracks_video[i]);
     }
 
     for (unsigned i = 0; i < media->tracks_audio_count; i++)
     {
-        mem += computeTrackMemory(media->tracks_audio[i]);
+        mem += computeStreamMemory(media->tracks_audio[i]);
     }
 
     for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
     {
-        mem += computeTrackMemory(media->tracks_subt[i]);
+        mem += computeStreamMemory(media->tracks_subt[i]);
     }
 
     for (unsigned i = 0; i < media->tracks_others_count; i++)
     {
-        mem += computeTrackMemory(media->tracks_others[i]);
+        mem += computeStreamMemory(media->tracks_others[i]);
     }
 
     media->parsingMemory = mem;

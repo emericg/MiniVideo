@@ -27,7 +27,9 @@
 #include "thirdparty/qcustomplot/qcustomplot.h"
 
 #include <QDateTime>
+#include <QVector>
 
+#include <cstdint>
 #include <cmath>
 
 /* ************************************************************************** */
@@ -295,11 +297,11 @@ int MainWindow::printDatas()
         {
             ui->groupBox_infos_audio->show();
 
-            const BitstreamMap_t *t = media->tracks_audio[0];
+            const MediaStream_t *t = media->tracks_audio[0];
 
             ui->label_info_audio_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_audio_codec->setText(getCodecString(stream_AUDIO, t->stream_codec, true));
-            ui->label_info_audio_duration->setText(getDurationString(t->duration_ms));
+            ui->label_info_audio_duration->setText(getDurationString(t->stream_duration_ms));
 
             QString lng = getLanguageString(t->track_languagecode);
             if (lng.isEmpty())
@@ -314,7 +316,7 @@ int MainWindow::printDatas()
                 ui->label_info_audio_lng->setText(lng);
             }
 
-            ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate));
+            ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate_avg));
             ui->label_info_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_info_audio_channels->setText(QString::number(t->channel_count));
 
@@ -359,11 +361,11 @@ int MainWindow::printDatas()
         {
             ui->groupBox_infos_video->show();
 
-            const BitstreamMap_t *t = media->tracks_video[0];
+            const MediaStream_t *t = media->tracks_video[0];
 
             ui->label_info_video_codec->setText(getCodecString(stream_VIDEO, t->stream_codec, true));
-            ui->label_info_video_duration->setText(getDurationString(t->duration_ms));
-            ui->label_info_video_bitrate->setText(getBitrateString(t->bitrate));
+            ui->label_info_video_duration->setText(getDurationString(t->stream_duration_ms));
+            ui->label_info_video_bitrate->setText(getBitrateString(t->bitrate_avg));
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
             ui->label_info_video_dar->setText(getAspectRatioString(t->display_aspect_ratio));
             ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
@@ -504,7 +506,7 @@ int MainWindow::printAudioDetails()
         int atid = ui->comboBox_audio_selector->currentIndex();
         if (atid < 0) atid = 0;
 
-        BitstreamMap_t *t = media->tracks_audio[atid];
+        MediaStream_t *t = media->tracks_audio[atid];
 
         if (t != NULL)
         {
@@ -583,9 +585,9 @@ int MainWindow::printAudioDetails()
             }
             ui->label_audio_fcc->setText(QString::fromLatin1(fcc_str, 4));
 
-            ui->label_audio_duration->setText(getDurationString(t->duration_ms));
+            ui->label_audio_duration->setText(getDurationString(t->stream_duration_ms));
 
-            ui->label_audio_bitrate_gross->setText(getBitrateString(t->bitrate));
+            ui->label_audio_bitrate_gross->setText(getBitrateString(t->bitrate_avg));
             ui->label_audio_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
@@ -597,7 +599,7 @@ int MainWindow::printAudioDetails()
             }
 
             uint64_t rawsize = t->sampling_rate * t->channel_count * (t->bit_per_sample / 8);
-            rawsize *= t->duration_ms;
+            rawsize *= t->stream_duration_ms;
             rawsize /= 1024.0;
 
             uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
@@ -626,7 +628,7 @@ int MainWindow::printAudioDetails()
                 ui->label_74->show();
                 ui->label_audio_bitrate_lowest->show();
 
-                bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->duration_ms/1000.0)));
+                bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->stream_duration_ms/1000.0)));
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
                 // Generate datas (bitrate) from A/V samples
@@ -650,7 +652,7 @@ int MainWindow::printAudioDetails()
                 QVector<double> xx(2), yy(2);
                 xx[0] = 0;
                 xx[1] = entries;
-                yy[0] = yy[1] = static_cast<double>(t->bitrate) / 8.0 / (static_cast<double>(entries) / (t->duration_ms/1000.0));
+                yy[0] = yy[1] = static_cast<double>(t->bitrate_avg) / 8.0 / (static_cast<double>(entries) / (t->stream_duration_ms/1000.0));
 
                 // MinMax
                 btc.getMinMax(bitratemin, bitratemax);
@@ -706,7 +708,7 @@ int MainWindow::printVideoDetails()
         int vtid = ui->comboBox_video_selector->currentIndex();
         if (vtid < 0) vtid = 0;
 
-        BitstreamMap_t *t = media->tracks_video[vtid];
+        MediaStream_t *t = media->tracks_video[vtid];
 
         if (t != NULL)
         {
@@ -765,9 +767,9 @@ int MainWindow::printVideoDetails()
             }
             ui->label_video_fcc->setText(QString::fromLatin1(fcc_str, 4));
 
-            ui->label_video_duration->setText(getDurationString(t->duration_ms));
+            ui->label_video_duration->setText(getDurationString(t->stream_duration_ms));
 
-            ui->label_video_bitrate_gross->setText(getBitrateString(t->bitrate));
+            ui->label_video_bitrate_gross->setText(getBitrateString(t->bitrate_avg));
             ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
@@ -828,9 +830,9 @@ int MainWindow::printVideoDetails()
             double framerate = t->framerate;
             if (framerate < 1.0)
             {
-                if (t->duration_ms && t->sample_count)
+                if (t->stream_duration_ms && t->sample_count)
                 {
-                    framerate = static_cast<double>(t->sample_count / (static_cast<double>(t->duration_ms) / 1000.0));
+                    framerate = static_cast<double>(t->sample_count / (static_cast<double>(t->stream_duration_ms) / 1000.0));
                 }
             }
             double frameduration = 1000.0 / framerate; // in ms
@@ -906,7 +908,7 @@ int MainWindow::printVideoDetails()
                 QVector<double> xx(2), yy(2);
                 xx[0] = 0;
                 xx[1] = entries;
-                yy[0] = yy[1] = static_cast<double>(t->bitrate) / 8.0 / framerate;
+                yy[0] = yy[1] = static_cast<double>(t->bitrate_avg) / 8.0 / framerate;
 
                 // MinMax
                 btc.getMinMax(bitratemin, bitratemax);
@@ -972,7 +974,7 @@ int MainWindow::printSubtitlesDetails()
         int subid = ui->comboBox_sub_selector->currentIndex();
         if (subid < 0) subid = 0;
 
-        BitstreamMap_t *t = media->tracks_subt[subid];
+        MediaStream_t *t = media->tracks_subt[subid];
 
         if (t != NULL)
         {

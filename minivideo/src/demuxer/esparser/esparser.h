@@ -54,7 +54,7 @@ typedef enum StartCodes_e
  * It will only successfuly parse "ES" files containing only one audio or video
  * track.
  */
-int es_fileParse(MediaFile_t *media, AVCodec_e video_codec);
+int es_fileParse(MediaFile_t *media, Codecs_e video_codec);
 
 /* ************************************************************************** */
 #endif // PARSER_ES_H

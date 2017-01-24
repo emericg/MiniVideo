@@ -597,7 +597,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
  * \param *PictureFile A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
+static int export_idr_png(DecodingContext_t *dc, BasicFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -710,7 +710,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
  * \param *PictureFile A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
+static int export_idr_bmp(DecodingContext_t *dc, BasicFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -744,7 +744,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
  * \param *PictureFile A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
+static int export_idr_tga(DecodingContext_t *dc, BasicFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -786,7 +786,7 @@ int export_idr(DecodingContext_t *dc)
     int retcode = FAILURE;
 
     // Picture file
-    OutputFile_t PictureFile; //!< Output file
+    BasicFile_t PictureFile; //!< Output file
 
     // Picture name
     strncpy(PictureFile.file_name, dc->VideoFile->file_name, 254);
