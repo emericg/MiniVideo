@@ -95,8 +95,6 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_xvid:
     case fcc_XVID:
     case fcc_FMP4:
-    case fcc_MP4V:
-    case fcc_mp4v:
     case fcc_mpg3:
     case fcc_div3:
     case fcc_divx:
@@ -107,6 +105,10 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_DIV2:
     case fcc_DIV4:
     case fcc_DIV5:
+        codec = CODEC_MPEG4_ASP;
+        break;
+    case fcc_MP4V:
+    case fcc_mp4v:
         codec = CODEC_MPEG4_ASP;
         break;
 
@@ -323,17 +325,36 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_FFV1:
         codec = CODEC_FFV1;
         break;
-    case fcc_PNG1:
-        codec = CODEC_CorePNG;
-        break;
     case fcc_CLLC:
         codec = CODEC_CanopusLL;
         break;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+    case fcc_PNG1:
+        codec = CODEC_CorePNG;
+        break;
+    case fcc_JPEG:
+    case fcc_jpeg:
+        codec = CODEC_JPEG;
+        break;
+    case fcc_MJPG:
+    case fcc_mjpg:
+        codec = CODEC_MJPEG;
+        break;
+    case fcc_MJ2:
+    case fcc_MJP2:
+        codec = CODEC_MJPEG2K;
+        break;
+
+////////////////////////////////////////////////////////////////////////////////
+
+    case fcc_AAC:
+    case fcc_AACP:
     case fcc_MP4A:
     case fcc_mp4a:
+        codec = CODEC_AAC;
+        break;
     case fcc_raac: // AAC LC
         codec = CODEC_AAC;
         break;

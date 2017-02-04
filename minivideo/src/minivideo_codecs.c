@@ -594,11 +594,33 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
                 return "Bink2 Video!";
                 break;
 
+            case CODEC_CorePNG:
+                if (long_description)
+                    return "CorePNG (image)";
+                else
+                    return "PNG";
+                break;
+            case CODEC_JPEG:
+                if (long_description)
+                    return "JPEG (image)";
+                else
+                    return "JPEG";
+                break;
+            case CODEC_MJPEG:
+                if (long_description)
+                    return "Motion JPEG (image)";
+                else
+                    return "Motion JPEG";
+                break;
+            case CODEC_MJPEG2K:
+                if (long_description)
+                    return "Motion JPEG 2000 (image)";
+                else
+                    return "Motion JPEG 2000";
+                break;
+
             case CODEC_FFV1:
                 return "FFV1";
-                break;
-            case CODEC_CorePNG:
-                return "CorePNG";
                 break;
             case CODEC_CanopusLL:
                 return "Canopus Lossless";

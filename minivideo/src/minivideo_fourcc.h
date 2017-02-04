@@ -119,7 +119,7 @@ typedef enum fourcc_list_e
     fcc_xvid = 0x78766964, //!< MPEG-4 part 2 "ASP"
     fcc_XVID = 0x58564944,
     fcc_FMP4 = 0x464D5034,
-    fcc_MP4V = 0x4D503456,
+    fcc_MP4V = 0x4D503456, //!< default MP4 video handler; often ASP but ESDS should be use
     fcc_mp4v = 0x6D703476,
 
     fcc_D263 = 0x44323633, //!< H.263
@@ -243,10 +243,19 @@ typedef enum fourcc_list_e
     fcc_BIKh = 0x42494B68,
     fcc_BIKi = 0x42494B69,
 
+    // Image codecs ////////////////////////////////////////////////////////////
+
+    fcc_JPEG = 0x4A504547, //!< JPEG
+    fcc_jpeg = 0x6A706567,
+    fcc_MJPG = 0x4D4A5047, //!< Motion JPEG
+    fcc_mjpg = 0x6D6A7067,
+    fcc_MJ2  = 0x4D4A3220, //!< Motion JPEG 2000
+    fcc_MJP2 = 0x4D4A5032,
+    fcc_PNG1 = 0x504E4731, //!< CorePNG
+
     // Lossless video codecs ///////////////////////////////////////////////////
 
     fcc_FFV1 = 0x46465631, //!< FFV1
-    fcc_PNG1 = 0x504E4731, //!< CorePNG
     fcc_CLLC = 0x434C4C43, //!< Canopus LossLess
 
     // Uncompressed video //////////////////////////////////////////////////////
@@ -256,7 +265,9 @@ typedef enum fourcc_list_e
 
     // Audio codecs ////////////////////////////////////////////////////////////
 
-    fcc_MP4A = 0x4D503441, //!< AAC
+    fcc_AAC  = 0x41414320, //!< AAC
+    fcc_AACP = 0x41414350,
+    fcc_MP4A = 0x4D503441, //!< default MP4 audio handler; often AAC but ESDS should be use
     fcc_mp4a = 0x6D703461,
 
     fcc_AC3  = 0x41432D33, //!< Ac-3

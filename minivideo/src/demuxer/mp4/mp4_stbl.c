@@ -205,13 +205,8 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
 
     // AudioSampleEntry
     {
-        if (box_header->boxtype == fcc_mp4a)
-        {
-            track->codec = CODEC_AAC;
-            TRACE_1(MP4, "> Audio track is using AAC codec");
-        }
-        else if (box_header->boxtype == fcc_AC3 ||
-                 box_header->boxtype == fcc_ac3)
+        if (box_header->boxtype == fcc_AC3 ||
+            box_header->boxtype == fcc_ac3)
         {
             track->codec = CODEC_AC3;
             TRACE_1(MP4, "> Audio track is using AC3 codec");
@@ -348,11 +343,6 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         {
             track->codec = CODEC_H265;
             TRACE_1(MP4, "> Video track is using H.265 codec");
-        }
-        else if (box_header->boxtype == fcc_mp4v)
-        {
-            track->codec = CODEC_MPEG4_ASP;
-            TRACE_1(MP4, "> Video track is using XVID codec");
         }
         else if (box_header->boxtype == fcc_CFHD)
         {

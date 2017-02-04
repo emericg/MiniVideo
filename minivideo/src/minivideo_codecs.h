@@ -188,11 +188,17 @@ typedef enum Codecs_e
     CODEC_BINK          = 314,  //!< Bink Video!
     CODEC_BINK2         = 315,  //!< Bink2
 
+    // Images codecs ///////////////////////////////////////////////////////////
+
+    CODEC_JPEG          = 350,  //!< JPEG
+    CODEC_MJPEG         = 351,  //!< Motion JPEG
+    CODEC_MJPEG2K       = 352,  //!< Motion JPEG 2000
+    CODEC_CorePNG       = 399,  //!< CorePNG
+
     // Lossless video codecs ///////////////////////////////////////////////////
 
-    CODEC_FFV1          = 330,  //!< FFV1
-    CODEC_CorePNG       = 331,  //!< CorePNG
-    CODEC_CanopusLL     = 332,  //!< Canopus Lossless
+    CODEC_FFV1          = 400,  //!< FFV1
+    CODEC_CanopusLL     = 401,  //!< Canopus Lossless
 
     // Subtitles codecs ////////////////////////////////////////////////////////
 

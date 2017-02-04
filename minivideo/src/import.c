@@ -276,7 +276,7 @@ static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
         {
             // MP4: 00 00 xx xx 66 74 79 70 // (size) f t y p
 
-            TRACE_1(IO, "* File type      : MP4 container detected");
+            TRACE_1(IO, "* File type      : ISO BMF (MOV,MP4, ...) container detected");
             container = CONTAINER_MP4;
         }
     }
@@ -344,22 +344,23 @@ static Containers_e getContainerUsingExtension(MediaFile_t *media)
             TRACE_1(IO, "* File extension  : MKV container detected");
             container = CONTAINER_MKV;
         }
-        else if (strncmp(media->file_extension, "mov", 255) == 0 ||
+        else if (strncmp(media->file_extension, "mov", 255) == 0 || // QuickTime file format
                  strncmp(media->file_extension, "qt", 255)  == 0 ||
-                 strncmp(media->file_extension, "mp4", 255) == 0 ||
+                 strncmp(media->file_extension, "mp4", 255) == 0 || // ISO Base Media file format
                  strncmp(media->file_extension, "m4v", 255) == 0 ||
                  strncmp(media->file_extension, "m4a", 255) == 0 ||
                  strncmp(media->file_extension, "m4p", 255) == 0 ||
                  strncmp(media->file_extension, "m4b", 255) == 0 ||
                  strncmp(media->file_extension, "mp4v", 255)== 0 ||
                  strncmp(media->file_extension, "mp4a", 255)== 0 ||
-                 strncmp(media->file_extension, "3gp", 255) == 0 ||
+                 strncmp(media->file_extension, "3gp", 255) == 0 || // ISO BMF / 3GP profile
                  strncmp(media->file_extension, "3g2", 255) == 0 ||
                  strncmp(media->file_extension, "3gpp", 255)== 0 ||
-                 strncmp(media->file_extension, "f4v", 255) == 0 ||
-                 strncmp(media->file_extension, "jp2", 255) == 0)
+                 strncmp(media->file_extension, "f4v", 255) == 0 || // ISO BMF / Flash Video
+                 strncmp(media->file_extension, "mj2", 255) == 0 || // ISO BMF / Motion JPEG2000 profile
+                 strncmp(media->file_extension, "mjp2", 255)== 0)
         {
-            TRACE_1(IO, "* File extension  : MP4 container detected");
+            TRACE_1(IO, "* File extension  : ISO BMF (MOV,MP4, ...) container detected");
             container = CONTAINER_MP4;
         }
         else if (strncmp(media->file_extension, "ps", 255) == 0  ||
@@ -404,11 +405,6 @@ static Containers_e getContainerUsingExtension(MediaFile_t *media)
             TRACE_1(IO, "* File extension  : MXF container detected");
             container = CONTAINER_MXF;
         }
-        else if (strncmp(media->file_extension, "flv", 255) == 0)
-        {
-            TRACE_1(IO, "* File extension  : SWF container detected");
-            container = CONTAINER_FLV;
-        }
         else if (strncmp(media->file_extension, "flac", 255) == 0)
         {
             TRACE_1(IO, "* File extension  : FLAC container detected");
@@ -420,6 +416,15 @@ static Containers_e getContainerUsingExtension(MediaFile_t *media)
         {
             TRACE_1(IO, "* File extension  : WAVE container detected");
             container = CONTAINER_WAVE;
+        }
+        else if (strncmp(media->file_extension, "flv", 255) == 0 ||
+                 strncmp(media->file_extension, "f4v", 255) == 0 ||
+                 strncmp(media->file_extension, "f4p", 255) == 0 ||
+                 strncmp(media->file_extension, "f4a", 255) == 0 ||
+                 strncmp(media->file_extension, "f4b", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : FLV container detected");
+            container = CONTAINER_FLV;
         }
         else if (strncmp(media->file_extension, "rm", 255) == 0 ||
                  strncmp(media->file_extension, "rmvb", 255) == 0)
