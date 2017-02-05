@@ -442,7 +442,7 @@ int tabExport::generateExportDatas_text(bool detailed)
             // Section title
             exportDatas += "\n\nSUBTITLES TRACK #";
             exportDatas += QString::number(i);
-            exportDatas += "\n--------------";
+            exportDatas += "\n------------------";
 
             // Datas
             exportDatas += "\nFormat        : sub";
@@ -463,7 +463,28 @@ int tabExport::generateExportDatas_text(bool detailed)
             if (t == NULL)
                 break;
 
-            // TODO
+            // Section title
+            if (stream_TEXT)
+                exportDatas += "\n\nTEXT TRACK #";
+            else if (stream_MENU)
+                exportDatas += "\n\nMENU TRACK #";
+            else if (stream_TMCD)
+                exportDatas += "\n\nTMCD TRACK #";
+            else if (stream_META)
+                exportDatas += "\n\nMETA TRACK #";
+            else if (stream_HINT)
+                exportDatas += "\n\nHINT TRACK #";
+
+            exportDatas += QString::number(i);
+            exportDatas += "\n-------------";
+
+            // Datas
+            exportDatas += "\nSize          : ";
+            exportDatas += getTrackSizeString(t, media->file_size, detailed);
+            exportDatas += "\nTitle         : ";
+            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += "\nLanguage      : ";
+            exportDatas += QString::fromLocal8Bit(t->track_languagecode);
         }
 
         retcode = 1;
