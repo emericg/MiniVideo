@@ -208,6 +208,7 @@ typedef enum Mp4BoxType_e
                     BOX_NMHD = 0x6E6D6864,      //!< null media header
                     BOX_DINF = 0x64696E66,              //!< (*) data information box, container
                         BOX_DREF = 0x64726566,          //!< (*) data reference box, declares source(s) of media data in track
+                        BOX_ALIS = 0x616C6973,          //!< data entry file alias
                         BOX_URL = 0x75726C20,           //!< data entry url box
                         BOX_URN = 0x75726E20,           //!< data entry urn box
                     BOX_STBL = 0x7374626C,              //!< (*) sample table box, container for the time/space map
@@ -222,10 +223,10 @@ typedef enum Mp4BoxType_e
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
                             BOX_ESDS = 0x65736473,      //!< elementary stream descriptor box
 
-                            BOX_SA3D = 0x53413344,              //!< (v) Spatial Audio Box
+                            BOX_SA3D = 0x53413344,              //!< (v) Google Spatial Audio Box
                             BOX_SAND = 0x53414E44,              //!< (v) Non-Diegetic Audio Box
-                            BOX_ST3D = 0x73743364,              //!< (v) Stereoscopic 3D Video Box
-                            BOX_SV3D = 0x73763364,              //!< (v) Spherical Video Box
+                            BOX_ST3D = 0x73743364,              //!< (v) Google Stereoscopic 3D Video Box
+                            BOX_SV3D = 0x73763364,              //!< (v) Google Spherical Video Box
                                 BOX_SVHD = 0x73766864,          //!< (v) Spherical Video Header
                                 BOX_PROJ = 0x70726F6A,          //!< (v) Projection Box
                                     BOX_PRHD = 0x70726864,      //!< (v) Projection Header Box
@@ -267,7 +268,7 @@ typedef enum Mp4BoxType_e
     BOX_MDAT = 0x6D646174,                      //!< media data container
 
     BOX_META = 0x6D657461,                      //!< metadata
-        // TODO
+        BOX_ILST = 0x696C7374,                  //!< (v) Apple item list box
 
     BOX_MECO = 0x6D65636F,                      //!< additional metadata container
         BOX_MERE = 0x6D657265,                  //!< metabox relation

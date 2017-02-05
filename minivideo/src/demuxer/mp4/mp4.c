@@ -181,6 +181,130 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /* ************************************************************************** */
 
 /*!
+ * \brief Handler Reference Box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.4.3 Handler Reference Box.
+ *
+ * This box within a Media Box declares the process by which the media-data in the
+ * track is presented, and thus, the nature of the media in a track.
+ * With MOV files, a secondary 'hdlr' box can be found inside the 'minf' box.
+ */
+static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_hdlr()" CLR_RESET);
+    int retcode = SUCCESS;
+    char fcc[5];
+    char name[128];
+    char *pname = name;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Read box content
+    unsigned int pre_defined = read_bits(bitstr, 32);
+    unsigned int handlerType = read_bits(bitstr, 32);
+
+    // If we have a track structure, this hdlr describe the track
+    if (track && track->handlerType == 0)
+    {
+        track->handlerType = handlerType;
+        pname = track->name;
+    }
+
+    unsigned int reserved[3];
+    reserved[0] = read_bits(bitstr, 32);
+    reserved[1] = read_bits(bitstr, 32);
+    reserved[2] = read_bits(bitstr, 32);
+
+    int bytes_left = box_header->size - 32;
+    if (bytes_left > 0)
+    {
+        // check if the bytes_left is also coded in the first byte (MOV style)
+        // and make sure we store no more than 128 characters
+        int namesize = next_bits(bitstr, 8);
+        if (bytes_left == namesize + 1)
+        {
+            skip_bits(bitstr, 8);
+            bytes_left = namesize;
+        }
+        if (bytes_left > 128) bytes_left = 128;
+
+        for (int i = 0; i < bytes_left; i++)
+        {
+            pname[i] = read_bits(bitstr, 8);
+        }
+    }
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> pre_defined  : %u", pre_defined);
+    TRACE_1(MP4, "> handler_type : 0x%X (%s)", handlerType,
+            getFccString_le(handlerType, fcc));
+    TRACE_1(MP4, "> name         : '%s'", pname);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Handler Reference</title>\n");
+        fprintf(mp4->xml, "  <pre_defined>%u</pre_defined>\n", pre_defined);
+        fprintf(mp4->xml, "  <handler_type>%s</handler_type>\n",
+                getFccString_le(handlerType, fcc));
+        fprintf(mp4->xml, "  <name>%s</name>\n", pname);
+        fprintf(mp4->xml, "  </atom>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Apple item list box.
+ */
+static int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_ilst()" CLR_RESET);
+    int retcode = SUCCESS;
+    char fcc[5];
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>Apple item list</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subheader.boxtype)
+            {
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief Meta Box - FullBox.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -218,6 +342,12 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         {
             switch (box_subheader.boxtype)
             {
+                case BOX_HDLR:
+                    retcode = parse_hdlr(bitstr, &box_subheader, NULL, mp4);
+                    break;
+                case BOX_ILST:
+                    retcode = parse_ilst(bitstr, &box_subheader, NULL, mp4);
+                break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;
@@ -347,77 +477,6 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <duration>%lu</duration>\n", track->duration);
         fprintf(mp4->xml, "  <language>%c%c%c</language>\n",
                 track->language[0], track->language[1], track->language[2]);
-        fprintf(mp4->xml, "  </atom>\n");
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Handler Reference Box - FullBox.
- *
- * From 'ISO/IEC 14496-12' specification:
- * 8.4.3 Handler Reference Box.
- *
- * This box within a Media Box declares the process by which the media-data in the
- * track is presented, and thus, the nature of the media in a track.
- */
-static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
-{
-    TRACE_INFO(MP4, BLD_GREEN "parse_hdlr()" CLR_RESET);
-    int retcode = SUCCESS;
-    char fcc[5];
-
-    // Read FullBox attributs
-    box_header->version = (uint8_t)read_bits(bitstr, 8);
-    box_header->flags = read_bits(bitstr, 24);
-
-    // Read box content
-    unsigned int pre_defined = read_bits(bitstr, 32);
-    track->handlerType = read_bits(bitstr, 32);
-
-    unsigned int reserved[3];
-    reserved[0] = read_bits(bitstr, 32);
-    reserved[1] = read_bits(bitstr, 32);
-    reserved[2] = read_bits(bitstr, 32);
-
-    int bytes_left = box_header->size - 32;
-    if (bytes_left > 0)
-    {
-        // check if the bytes_left is also coded in the first byte (MOV style)
-        // and make sure we store no more than 128 characters
-        int namesize = next_bits(bitstr, 8);
-        if (bytes_left == namesize + 1)
-        {
-            skip_bits(bitstr, 8);
-            bytes_left = namesize;
-        }
-        if (bytes_left > 128) bytes_left = 128;
-
-        for (int i = 0; i < bytes_left; i++)
-        {
-            track->name[i] = read_bits(bitstr, 8);
-        }
-    }
-
-#if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> pre_defined  : %u", pre_defined);
-    TRACE_1(MP4, "> handler_type : 0x%X (%s)", track->handlerType,
-            getFccString_le(track->handlerType, fcc));
-    TRACE_1(MP4, "> name         : '%s'", track->name);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Handler Reference</title>\n");
-        fprintf(mp4->xml, "  <pre_defined>%u</pre_defined>\n", pre_defined);
-        fprintf(mp4->xml, "  <handler_type>%s</handler_type>\n", getFccString_le(track->handlerType, fcc));
-        fprintf(mp4->xml, "  <name>%s</name>\n", track->name);
         fprintf(mp4->xml, "  </atom>\n");
     }
 
@@ -599,6 +658,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         {
             switch (box_subheader.boxtype)
             {
+                case BOX_ALIS:
                 case BOX_URL:
                 case BOX_URN:
                 default:
@@ -708,6 +768,9 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
                 case BOX_HMHD:
                     retcode = parse_hmhd(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_HDLR:
+                    retcode = parse_hdlr(bitstr, &box_subheader, NULL, mp4);
                     break;
                 case BOX_DINF:
                     retcode = parse_dinf(bitstr, &box_subheader, track, mp4);
