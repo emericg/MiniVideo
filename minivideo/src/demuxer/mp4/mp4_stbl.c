@@ -128,8 +128,6 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
  *
  * The SampleDescriptionBox contains information about codec types and some
  * initialization parameters needed to start decoding.
- * If an AVC box (AVCDecoderConfigurationRecord) is present, it also contains the
- * diferents SPS and PPS of the video.
  */
 int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -177,13 +175,16 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                 parse_stsd_video(bitstr, &box_subheader, track, mp4);
                 break;
 
-            case HANDLER_TEXT:
-            case HANDLER_META:
             case HANDLER_TMCD:
-            case HANDLER_HINT:
-                TRACE_1(MP4, "Unhandled track type, skipped...");
+                parse_stsd_tmcd(bitstr, &box_subheader, track, mp4);
                 break;
 
+            case HANDLER_TEXT:
+                parse_stsd_text(bitstr, &box_subheader, track, mp4);
+                break;
+
+            case HANDLER_META:
+            case HANDLER_HINT:
             default:
                 TRACE_1(MP4, "Unknown track type, skipped...");
                 break;
@@ -196,6 +197,8 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     return retcode;
 }
+
+/* ************************************************************************** */
 
 int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -326,6 +329,17 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
     return retcode;
 }
 
+/* ************************************************************************** */
+
+/*!
+ * \brief Visual Sample Entry.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.5.2.2 Syntax
+ *
+ * If an AVC box (AVCDecoderConfigurationRecord) is present, it also contains the
+ * diferents SPS and PPS of the video.
+ */
 int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsd_video()" CLR_RESET);
@@ -424,6 +438,9 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         {
             switch (box_subsubheader.boxtype)
             {
+                case BOX_ESDS:
+                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
+                    break;
                 case BOX_AVCC:
                     retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
                     break;
@@ -448,15 +465,273 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_PASP:
                     retcode = parse_pasp(bitstr, &box_subsubheader, track, mp4);
                     break;
-                case BOX_ESDS:
-                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
-                    break;
                 case BOX_ST3D:
                     retcode = parse_st3d(bitstr, &box_subsubheader, track, mp4);
                     break;
                 case BOX_SV3D:
                     retcode = parse_sv3d(bitstr, &box_subsubheader, track, mp4);
                     break;
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Timecode Sample Description
+ *
+ * From 'QuickTime File Format' specification:
+ * - "Timecode Sample Description"
+ * - https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-6983
+ */
+int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_tmcd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    {
+        /*unsigned int reserved =*/ read_bits(bitstr, 32);
+        unsigned int flags = read_bits(bitstr, 32);
+        unsigned int time_scale = read_bits(bitstr, 32);
+        unsigned int frame_duration = read_bits(bitstr, 32);
+        uint8_t number_of_frames = read_bits(bitstr, 8);
+        /*uint8_t reserved =*/ read_bits(bitstr, 8);
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+        TRACE_1(MP4, "> flags  : %u", flags);
+        TRACE_1(MP4, "> time_scale : %u", time_scale);
+        TRACE_1(MP4, "> frame_duration : %u", frame_duration);
+        TRACE_1(MP4, "> number_of_frames  : %u", number_of_frames);
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Timecode Sample Description</title>\n");
+            fprintf(mp4->xml, "  <flags>%u</flags>\n", flags);
+            fprintf(mp4->xml, "  <time_scale>%u</time_scale>\n", time_scale);
+            fprintf(mp4->xml, "  <frame_duration>%u</frame_duration>\n", frame_duration);
+            fprintf(mp4->xml, "  <number_of_frames>%u</number_of_frames>\n", number_of_frames);
+        }
+    }
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Text Sample Description
+ *
+ * From 'QuickTime File Format' specification:
+ * - "Text Sample Description"
+ * - https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-69835
+ */
+int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_text()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    {
+        unsigned int display_flags = read_bits(bitstr, 32);
+        unsigned int text_justification = read_bits(bitstr, 32);
+        unsigned int backgroundcolor_r = read_bits(bitstr, 16);
+        unsigned int backgroundcolor_g = read_bits(bitstr, 16);
+        unsigned int backgroundcolor_b = read_bits(bitstr, 16);
+        uint64_t default_text_box = read_bits_64(bitstr, 64);
+        /*uint64_t reserved =*/ read_bits_64(bitstr, 64);
+        unsigned int font_number = read_bits(bitstr, 16);
+        unsigned int font_face = read_bits(bitstr, 16);
+        /*unsigned int reserved =*/ read_bits(bitstr, 8);
+        /*unsigned int reserved =*/ read_bits(bitstr, 16);
+        unsigned int foregroundcolor_r = read_bits(bitstr, 16);
+        unsigned int foregroundcolor_g = read_bits(bitstr, 16);
+        unsigned int foregroundcolor_b = read_bits(bitstr, 16);
+        //char text_name[128]; // TODO
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+        TRACE_1(MP4, "> display_flags  : %u", display_flags);
+        TRACE_1(MP4, "> text_justification  : %u", text_justification);
+        TRACE_1(MP4, "> background_color  : 0x%X%X%X",
+                backgroundcolor_r, backgroundcolor_g, backgroundcolor_b);
+        TRACE_1(MP4, "> default_text_box  : %llu", default_text_box);
+        TRACE_1(MP4, "> font_number  : %u", font_number);
+        TRACE_1(MP4, "> font_face  : %u", font_face);
+        TRACE_1(MP4, "> foreground_color  : 0x%X%X%X",
+                foregroundcolor_r, foregroundcolor_g, foregroundcolor_b);
+        TRACE_1(MP4, "> text_name  : '%s'", 0);
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Text Sample Description</title>\n");
+            fprintf(mp4->xml, "  <display_flags>%u</display_flags>\n", display_flags);
+            fprintf(mp4->xml, "  <text_justification>%u</text_justification>\n", text_justification);
+            fprintf(mp4->xml, "  <background_color>0x%X%X%X</background_color>\n",
+                    backgroundcolor_r, backgroundcolor_g, backgroundcolor_b);
+            fprintf(mp4->xml, "  <default_text_box>%lu</default_text_box>\n", default_text_box);
+            fprintf(mp4->xml, "  <font_number>%u</font_number>\n", font_number);
+            fprintf(mp4->xml, "  <font_face>%u</font_face>\n", font_face);
+            fprintf(mp4->xml, "  <foreground_color>0x%X%X%X</foreground_color>\n",
+                    foregroundcolor_r, foregroundcolor_g, foregroundcolor_b);
+            fprintf(mp4->xml, "  <text_name>%s</text_name>\n", 0);
+        }
+    }
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Timed Metadata Sample Description
+ *
+ * From 'QuickTime File Format' specification:
+ * - "Timed Metadata Sample Description"
+ * - https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-SW130
+ */
+int parse_stsd_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_meta()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    {
+        /*unsigned int reserved =*/ read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Timed Metadata Sample Description</title>\n");
+        }
+    }
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
+                    break;
+            }
+
+            jumpy_mp4(bitstr, box_header, &box_subsubheader);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Hint
+ */
+int parse_stsd_hint(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_stsd_hint()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    {
+        /*unsigned int reserved =*/ read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+        print_box_header(box_header);
+
+#endif // ENABLE_DEBUG
+
+        // xmlMapper
+        if (mp4->xml)
+        {
+            fprintf(mp4->xml, "  <title>Hint</title>\n");
+        }
+    }
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subsubheader;
+        retcode = parse_box_header(bitstr, &box_subsubheader);
+
+        // Then parse subbox content
+        ////////////////////////////////////////////////////////////////////////
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subsubheader.boxtype)
+            {
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
                     break;
@@ -602,7 +877,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     track->codec = CODEC_MPEG_L3;
                     break;
                 case 0x6C:
-                    track->codec = CODEC_UNKNOWN; // JPEG...
+                    track->codec = CODEC_JPEG;
                     break;
             }
 

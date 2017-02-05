@@ -98,6 +98,15 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 media->tracks_subtitles_count++;
             }
         }
+        else if (track->handlerType == HANDLER_TMCD)
+        {
+            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
+            if (retcode == SUCCESS)
+            {
+                map = media->tracks_others[media->tracks_others_count];
+                media->tracks_others_count++;
+            }
+        }
         else
         {
             char fcc[5];
