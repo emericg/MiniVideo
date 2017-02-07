@@ -353,13 +353,9 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_AACP:
     case fcc_MP4A:
     case fcc_mp4a:
-        codec = CODEC_AAC;
-        break;
-    case fcc_raac: // AAC LC
-        codec = CODEC_AAC;
-        break;
+    case fcc_raac:
     case fcc_racp:
-        codec = CODEC_AAC_HE;
+        codec = CODEC_AAC;
         break;
 
     case fcc_AC3:

@@ -59,7 +59,7 @@ const char *getContainerString(Containers_e container, bool long_description)
             return "MXF Material eXchange Format [.mxf]";
             break;
         case CONTAINER_FLV:
-            return "SWF Small Web Format [.flv]";
+            return "SWF Small Web Format [.swf, .flv]";
             break;
         case CONTAINER_OGG:
             return "OGG [.ogg, .ogv, ...]";
@@ -228,18 +228,6 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
                     return "AAC (Advance Audio Coding)";
                 else
                     return "AAC";
-                break;
-            case CODEC_AAC_HE:
-                if (long_description)
-                    return "HE-AAC ('High Efficiency' Advance Audio Coding)";
-                else
-                    return "HE-AAC";
-                break;
-            case CODEC_AAC_LD:
-                if (long_description)
-                    return "LD-AAC ('Low Delay' Advance Audio Coding)";
-                else
-                    return "LD-AAC";
                 break;
             case CODEC_MPEG4_ALS:
                 return "MPEG-4 ALS";
@@ -434,36 +422,17 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
                     return "WMP";
                 break;
 
-            case CODEC_VP3:
-                if (long_description)
-                    return "VP3 (Ogg Theora)";
-                else
-                    return "VP3";
+            case CODEC_RV10:
+                return "RealVideo";
                 break;
-            case CODEC_VP4:
-                return "VP4";
+            case CODEC_RV20:
+                return "RealVideo G2";
                 break;
-            case CODEC_VP5:
-                return "VP5";
+            case CODEC_RV30:
+                return "RealVideo 3";
                 break;
-            case CODEC_VP6:
-                return "VP6";
-                break;
-            case CODEC_VP7:
-                return "VP7";
-                break;
-            case CODEC_VP8:
-                return "VP8";
-                break;
-            case CODEC_VP9:
-                return "VP9";
-                break;
-            case CODEC_VP10:
-                return "VP10";
-                break;
-
-            case CODEC_DAALA:
-                return "Daala";
+            case CODEC_RV40:
+                return "RealVideo 4";
                 break;
 
             case CODEC_VC1:
@@ -514,17 +483,39 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
                 return "REDCode";
                 break;
 
-            case CODEC_RV10:
-                return "RealVideo";
+            case CODEC_VP3:
+                if (long_description)
+                    return "VP3 (Ogg Theora)";
+                else
+                    return "VP3";
                 break;
-            case CODEC_RV20:
-                return "RealVideo G2";
+            case CODEC_VP4:
+                return "VP4";
                 break;
-            case CODEC_RV30:
-                return "RealVideo 3";
+            case CODEC_VP5:
+                return "VP5";
                 break;
-            case CODEC_RV40:
-                return "RealVideo 4";
+            case CODEC_VP6:
+                return "VP6";
+                break;
+            case CODEC_VP7:
+                return "VP7";
+                break;
+            case CODEC_VP8:
+                return "VP8";
+                break;
+            case CODEC_VP9:
+                return "VP9";
+                break;
+
+            case CODEC_DAALA:
+                return "Daala";
+                break;
+            case CODEC_THOR:
+                return "Thor";
+                break;
+            case CODEC_AV1:
+                return "AV1";
                 break;
 
             case CODEC_CINEPAK:
@@ -675,6 +666,248 @@ const char *getPictureString(Pictures_e picture, bool long_description)
             return "YCbCr 4:2:0";
             break;
         case PICTURE_UNKNOWN:
+        default:
+            return "UNKNOWN";
+            break;
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+const char *getContainerProfileString(ContainerProfiles_e profile, bool long_description)
+{
+    switch (profile)
+    {
+        case PROF_AVI:
+            return "AVI v1";
+            break;
+        case PROF_AVI_OpenDML:
+            return "AVI v2 \"OpenDML\"";
+            break;
+
+        case PROF_MPEG_PS_1:
+            return "MPEG-PS v1";
+            break;
+        case PROF_MPEG_PS_2:
+            return "MPEG-PS v2";
+            break;
+
+        case PROF_ISOBMF_MOV:
+            return "QuickTime File Format";
+            break;
+        case PROF_ISOBMF_MP4:
+            return "ISO BMF MP4";
+            break;
+        case PROF_ISOBMF_3GP:
+            return "ISO BMF 3GP";
+            break;
+        case PROF_ISOBMF_MJP:
+            return "ISO BMF Motion Jpeg 2000";
+            break;
+
+        case PROF_WAVE:
+            return "WAVE";
+            break;
+        case PROF_WAVE_AMB:
+            return "WAVE AMB";
+            break;
+        case PROF_WAVE_RF64:
+            return "RF64";
+            break;
+        case PROF_WAVE_BWF:
+            return "Broadcast Wave Format";
+            break;
+        case PROF_WAVE_BWF64:
+            return "Broadcast Wave Format 64";
+            break;
+
+        case PROF_UNKNOWN:
+        default:
+            return "UNKNOWN";
+            break;
+    }
+}
+
+/* ************************************************************************** */
+
+const char *getCodecProfileString(CodecProfiles_e profile, bool long_description)
+{
+    switch (profile)
+    {
+        case PROF_H262_SP:
+            return "Simple Profile";
+            break;
+        case PROF_H262_MP:
+            return "Main Profile";
+            break;
+        case PROF_H262_SNR:
+            return "SNR Scalable Profile";
+            break;
+        case PROF_H262_Spatial:
+            return "Spatially Scalable Profile";
+            break;
+        case PROF_H262_HP:
+            return "High Profile";
+            break;
+        case PROF_H262_422:
+            return "4:2:2 Profile";
+            break;
+        case PROF_H262_MVP:
+            return "Multiview Profile";
+            break;
+
+        case PROF_MPEG4_SP:
+            return "Simple Profile";
+            break;
+        case PROF_MPEG4_ASP:
+            return "Advanced Simple Profile";
+            break;
+        case PROF_MPEG4_SStP:
+            return "Simple Studio Profile";
+            break;
+
+        case PROF_H264_CBP:
+            return "Constrained Baseline Profile";
+            break;
+        case PROF_H264_BP:
+            return "Baseline Profile";
+            break;
+        case PROF_H264_XP:
+            return "Extended Profile";
+            break;
+        case PROF_H264_MP:
+            return "Main Profile";
+            break;
+        case PROF_H264_HiP:
+            return "High Profile";
+            break;
+        case PROF_H264_PHiP:
+            return "Progressive High Profile";
+            break;
+        case PROF_H264_CHiP:
+            return "Constrained High Profile";
+            break;
+        case PROF_H264_Hi10P:
+            return "High 10 Profile";
+            break;
+        case PROF_H264_Hi422P:
+            return "High 4:2:2 Profile";
+            break;
+        case PROF_H264_Hi444PP:
+            return "High 4:4:4 Predictive Profile";
+            break;
+        case PROF_H264_Hi10It:
+            return "High 10 Intra Profile";
+            break;
+        case PROF_H264_Hi422It:
+            return "High 4:2:2 Intra Profile";
+            break;
+        case PROF_H264_Hi444It:
+            return "High 4:4:4 Intra Profile";
+            break;
+        case PROF_H264_M444It:
+            return "CAVLC 4:4:4 Intra Profile";
+            break;
+        case PROF_H264_ScBP:
+            return "Scalable Baseline Profile";
+            break;
+        case PROF_H264_ScCBP:
+            return "Scalable Constrained Baseline Profile";
+            break;
+        case PROF_H264_ScHiP:
+            return "Scalable High Profile";
+            break;
+        case PROF_H264_ScCHiP:
+            return "Scalable Constrained High Profile";
+            break;
+        case PROF_H264_ScHiItP:
+            return "Scalable High Intra Profile";
+            break;
+        case PROF_H264_StHiP:
+            return "Stereo High Profile";
+            break;
+        case PROF_H264_MvHiP:
+            return "Multiview High Profile";
+            break;
+        case PROF_H264_MvDHiP:
+            return "Multiview Depth High Profile";
+            break;
+        case PROF_H264_:
+            return "Other...";
+            break;
+
+        case PROF_H265_Main:
+            return "Main";
+            break;
+        case PROF_H265_Main10:
+            return "Main 10";
+            break;
+        case PROF_H265_MainStill:
+            return "Main Still Picture";
+            break;
+        case PROF_H265_:
+            return "Other...";
+            break;
+
+        case PROF_VP8_0:
+            return "Profile 0";
+            break;
+        case PROF_VP8_1:
+            return "Profile 1";
+            break;
+
+        case PROF_VP9_0:
+            return "Profile 0";
+            break;
+        case PROF_VP9_1:
+            return "Profile 1";
+            break;
+        case PROF_VP9_2:
+            return "Profile 2";
+            break;
+        case PROF_VP9_3:
+            return "Profile 3";
+            break;
+
+        case PROF_AAC_LC:
+            return "Low Complexity";
+            break;
+        case PROF_AAC_Main:
+            return "Main Profile";
+            break;
+        case PROF_AAC_SSR:
+            return "Scalable Sample Rate";
+            break;
+        case PROF_AAC_MainAudio:
+            return "Main Audio Profile";
+            break;
+        case PROF_AAC_Scalable:
+            return "Scalable Audio Profile";
+            break;
+        case PROF_AAC_HQ:
+            return "High Quality Audio Profile";
+            break;
+        case PROF_AAC_LD:
+            return "Low Delay Audio Profile";
+            break;
+        case PROF_AAC_LDv2:
+            return "Low Delay AAC v2";
+            break;
+        case PROF_AAC_Mobile:
+            return "Mobile Audio Internetworking Profile";
+            break;
+        case PROF_AAC_AAC:
+            return "AAC Profile";
+            break;
+        case PROF_AAC_HE:
+            return "High Efficiency AAC Profile";
+            break;
+        case PROF_AAC_HEv2:
+            return "High Efficiency AAC Profile v2";
+            break;
+
+        case PROF_UNKNOWN:
         default:
             return "UNKNOWN";
             break;
