@@ -679,9 +679,6 @@ const char *getContainerProfileString(ContainerProfiles_e profile, bool long_des
 {
     switch (profile)
     {
-        case PROF_AVI:
-            return "AVI v1";
-            break;
         case PROF_AVI_OpenDML:
             return "AVI v2 \"OpenDML\"";
             break;
@@ -706,17 +703,17 @@ const char *getContainerProfileString(ContainerProfiles_e profile, bool long_des
             return "ISO BMF Motion Jpeg 2000";
             break;
 
-        case PROF_WAVE:
-            return "WAVE";
-            break;
         case PROF_WAVE_AMB:
-            return "WAVE AMB";
+            return "WAVE ambisonic";
             break;
         case PROF_WAVE_RF64:
             return "RF64";
             break;
-        case PROF_WAVE_BWF:
-            return "Broadcast Wave Format";
+        case PROF_WAVE_BWFv1:
+            return "Broadcast Wave Format v1";
+            break;
+        case PROF_WAVE_BWFv2:
+            return "Broadcast Wave Format v2";
             break;
         case PROF_WAVE_BWF64:
             return "Broadcast Wave Format 64";
@@ -834,7 +831,7 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             return "Multiview Depth High Profile";
             break;
         case PROF_H264_:
-            return "Other...";
+            return "Unknown profile...";
             break;
 
         case PROF_H265_Main:
@@ -847,7 +844,7 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             return "Main Still Picture";
             break;
         case PROF_H265_:
-            return "Other...";
+            return "Unknown profile...";
             break;
 
         case PROF_VP8_0:

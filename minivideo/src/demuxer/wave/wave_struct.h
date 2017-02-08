@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "../../minivideo_typedef.h"
+#include "../../minivideo_codecs.h"
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -178,6 +179,8 @@ typedef struct wave_t
 {
     bool run;           //!< A convenient way to stop the parser from any sublevel
 
+    ContainerProfiles_e profile;
+
     fmtChunk_t fmt;
     factChunk_t fact;
     dataChunk_t data;
@@ -192,10 +195,10 @@ typedef struct wave_t
 /* ************************************************************************** */
 /*
 // GUID SubFormat IDs
-ATRAC3P                         {0xE923AABF, 0xCB58, 0x4471, {0xA1, 0x19, 0xFF, 0xFA, 0x01, 0xE4, 0xCE, 0x62}}
 GUIDBASE                        {0x00000000, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}}
 AMBISONIC_SUBTYPE_PCM           {0x00000001, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
 AMBISONIC_SUBTYPE_IEEE_FLOAT    {0x00000003, 0x0721, 0x11D3, {0x86, 0x44, 0xC8, 0xC1, 0xCA, 0x00, 0x00, 0x00}}
+ATRAC3P                         {0xE923AABF, 0xCB58, 0x4471, {0xA1, 0x19, 0xFF, 0xFA, 0x01, 0xE4, 0xCE, 0x62}}
 */
 /* ************************************************************************** */
 

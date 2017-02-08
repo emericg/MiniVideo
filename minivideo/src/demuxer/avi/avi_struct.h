@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "../../minivideo_typedef.h"
+#include "../../minivideo_codecs.h"
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -124,6 +125,8 @@ typedef struct AviTrack_t
 typedef struct avi_t
 {
     bool run;                   //!< A convenient way to stop the parser from any sublevel
+
+    ContainerProfiles_e profile;
 
     AviHeader_t avih;
 

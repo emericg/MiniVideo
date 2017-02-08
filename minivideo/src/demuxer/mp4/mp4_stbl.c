@@ -984,6 +984,49 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
        skip_bits(bitstr, track->pps_sample_size[i] * 8); // pictureParameterSetNALUnit
     }
 
+    // Handle H.264 profiles
+    switch (AVCProfileIndication)
+    {
+    case 66:
+        track->codec_profile = PROF_H264_CBP;
+        break;
+    case 77:
+        track->codec_profile = PROF_H264_MP;
+        break;
+    case 88:
+        track->codec_profile = PROF_H264_XP;
+        break;
+    case 100:
+        track->codec_profile = PROF_H264_HiP;
+        break;
+    case 110:
+        track->codec_profile = PROF_H264_Hi10P;
+        break;
+    case 122:
+        track->codec_profile = PROF_H264_Hi422P;
+        break;
+    case 244:
+        track->codec_profile = PROF_H264_Hi444PP;
+        break;
+
+    case 44:
+        track->codec_profile = PROF_H264_M444It;
+        break;
+    case 86:
+        track->codec_profile = PROF_H264_ScHiP;
+        break;
+    case 118:
+        track->codec_profile = PROF_H264_MvHiP;
+        break;
+    case 128:
+        track->codec_profile = PROF_H264_StHiP;
+        break;
+
+    default:
+        track->codec_profile = PROF_H264_;
+        break;
+    }
+
 #if ENABLE_DEBUG
     print_box_header(box_header);
     TRACE_1(MP4, "> configurationVersion  : %u", configurationVersion);
@@ -1136,6 +1179,24 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else
             retcode = FAILURE;
+    }
+
+    // Handle H.265 profiles
+    switch (general_profile_idc)
+    {
+    case 1:
+        track->codec_profile = PROF_H265_Main;
+        break;
+    case 2:
+        track->codec_profile = PROF_H265_Main10;
+        break;
+    case 3:
+        track->codec_profile = PROF_H265_MainStill;
+        break;
+
+    default:
+        track->codec_profile = PROF_H265_;
+        break;
     }
 
 #if ENABLE_DEBUG

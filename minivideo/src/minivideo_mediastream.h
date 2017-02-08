@@ -45,7 +45,8 @@ typedef struct MediaStream_t
 {
     StreamType_e stream_type;       //!< Is this an audio / video / subtitles stream?
     uint32_t stream_fcc;            //!< FourCC
-    Codecs_e stream_codec;         //!< Codec used by this stream
+    Codecs_e stream_codec;          //!< Codec used by this stream
+    CodecProfiles_e stream_codec_profile; //!< Codec profile (if applicable)
 
     unsigned int stream_duration_ms;//!< Stream duration (rounded in milliseconds)
     unsigned int stream_duration_ns;//!< Stream duration (in nanoseconds)
@@ -74,6 +75,7 @@ typedef struct MediaStream_t
     unsigned int height;            //!< Vertical size (in pixels)
     unsigned int visible_width;     //!< Horizontal size (in pixels, without alignment)
     unsigned int visible_height;    //!< Vertical size (in pixels, without alignment)
+    unsigned int max_ref_frames;    //!< Maximum reference frames
     unsigned int color_depth;       //!< Color resolution per channel
     unsigned int color_subsampling; //!< Chroma sub-sampling
     unsigned int color_encoding;    //!< Internal color encoding

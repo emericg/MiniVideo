@@ -226,13 +226,24 @@ int MainWindow::printDatas()
         ui->label_info_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
         ui->label_info_fullpath->setText(QString::fromLocal8Bit(media->file_path));
         ui->label_info_fullpath->setToolTip(QString::fromLocal8Bit(media->file_path));
-        ui->label_info_container->setText(getContainerString(media->container, 1));
+        ui->label_info_container->setText(getContainerString(media->container, true));
+        if (media->container_profile)
+        {
+            ui->label_83->setVisible(true);
+            ui->label_info_container_profile->setVisible(true);
+            ui->label_info_container_profile->setText(getContainerProfileString(media->container_profile, true));
+        }
+        else
+        {
+            ui->label_83->setVisible(false);
+            ui->label_info_container_profile->setVisible(false);
+        }
         ui->label_info_filesize->setText(getSizeString(media->file_size));
         ui->label_info_duration->setText(getDurationString(media->duration));
 
         if (media->creation_app)
         {
-            ui->label_6->setVisible(false);
+            ui->label_6->setVisible(true);
             ui->label_info_creationapp->setVisible(true);
             ui->label_info_creationapp->setText(QString::fromLocal8Bit(media->creation_app));
         }
@@ -576,6 +587,18 @@ int MainWindow::printAudioDetails()
             ui->label_audio_size->setText(getTrackSizeString(t, media->file_size, true));
             ui->label_audio_codec->setText(getCodecString(stream_AUDIO, t->stream_codec, true));
 
+            if (t->stream_codec_profile)
+            {
+                ui->label_82->setVisible(true);
+                ui->label_audio_codec_profile->setVisible(true);
+                ui->label_audio_codec_profile->setText(getCodecProfileString(t->stream_codec_profile, true));
+            }
+            else
+            {
+                ui->label_82->setVisible(false);
+                ui->label_audio_codec_profile->setVisible(false);
+            }
+
             char fcc_str[4];
             {
                 fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
@@ -757,6 +780,18 @@ int MainWindow::printVideoDetails()
 
             ui->label_video_size->setText(getTrackSizeString(t, media->file_size, true));
             ui->label_video_codec->setText(getCodecString(stream_VIDEO, t->stream_codec, true));
+
+            if (t->stream_codec_profile)
+            {
+                ui->label_71->setVisible(true);
+                ui->label_video_codec_profile->setVisible(true);
+                ui->label_video_codec_profile->setText(getCodecProfileString(t->stream_codec_profile, true));
+            }
+            else
+            {
+                ui->label_71->setVisible(false);
+                ui->label_video_codec_profile->setVisible(false);
+            }
 
             char fcc_str[4];
             {

@@ -72,7 +72,6 @@ typedef enum ContainerProfiles_e
 {
     PROF_UNKNOWN        = 0,
 
-    PROF_AVI            = 1,
     PROF_AVI_OpenDML    = 2,
 
     PROF_MPEG_PS_1      = 3,
@@ -83,11 +82,11 @@ typedef enum ContainerProfiles_e
     PROF_ISOBMF_3GP     = 10,
     PROF_ISOBMF_MJP     = 11,
 
-    PROF_WAVE           = 16,
+    PROF_WAVE_AMB       = 16,
     PROF_WAVE_RF64      = 17,
-    PROF_WAVE_BWF       = 18,
-    PROF_WAVE_BWF64     = 19,
-    PROF_WAVE_AMB       = 20
+    PROF_WAVE_BWFv1     = 18,
+    PROF_WAVE_BWFv2     = 19,
+    PROF_WAVE_BWF64     = 20,
 
 } ContainerProfiles_e;
 

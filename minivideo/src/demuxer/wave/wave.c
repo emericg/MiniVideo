@@ -493,6 +493,18 @@ static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *bext_header, wave_t *wav
         wave->bwf.TimeReferenceHigh = endian_flip_32(read_bits(bitstr, 32));
         wave->bwf.Version = endian_flip_16(read_bits(bitstr, 16));
 
+        if (wave->profile == 0)
+        {
+            if (wave->bwf.Version == 1)
+                wave->profile = PROF_WAVE_BWFv1;
+            else
+                wave->profile = PROF_WAVE_BWFv2;
+        }
+        else if (wave->profile == PROF_WAVE_RF64)
+        {
+            wave->profile = PROF_WAVE_BWF64;
+        }
+
         if (wave->bwf.Version >= 1 && bext_header->dwSize >= 412)
         {
             for (uint32_t i = 0; i < 64; i++)
@@ -612,7 +624,6 @@ int wave_fileParse(MediaFile_t *media)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_fileParse()" CLR_RESET);
     int retcode = SUCCESS;
-    char fcc[5];
 
     // Init bitstream to parse container infos
     Bitstream_t *bitstr = init_bitstream(media, NULL);
@@ -639,6 +650,14 @@ int wave_fileParse(MediaFile_t *media)
             retcode = parse_list_header(bitstr, &RIFF_header);
             print_list_header(&RIFF_header);
             write_list_header(&RIFF_header, wave.xml);
+
+            if (wave.profile == 0)
+            {
+                if (RIFF_header.dwList == fcc_RF64)
+                    wave.profile = PROF_WAVE_RF64;
+                if (RIFF_header.dwList == fcc_BW64)
+                    wave.profile = PROF_WAVE_BWF64;
+            }
 
             if (RIFF_header.dwList == fcc_RIFF &&
                 RIFF_header.dwFourCC == fcc_WAVE)
@@ -807,6 +826,7 @@ int wave_fileParse(MediaFile_t *media)
 
         // Go for the indexation
         retcode = wave_indexer(bitstr, media, &wave),
+        media->container_profile = wave.profile;
 
         // Free wave_t structure content
         wave_clean(&wave);

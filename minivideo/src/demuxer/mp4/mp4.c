@@ -60,9 +60,9 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     unsigned int major_brand = read_bits(bitstr, 32);
 
     if (major_brand == MV_FOURCC_BE('q','t',' ',' '))
-        mp4->variant = ISOBMF_MOV;
+        mp4->profile = PROF_ISOBMF_MOV;
     else if (major_brand == MV_FOURCC_BE('3','g','p','4'))
-        mp4->variant = ISOBMF_3GPP;
+        mp4->profile = PROF_ISOBMF_3GP;
 
     // Read informative integer for the minor version of the major brand
     unsigned int minor_version = read_bits(bitstr, 32);
@@ -80,16 +80,16 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     {
         compatible_brands[i] = read_bits(bitstr, 32);
 
-        if (mp4->variant == ISOBMF_UNKNOWN)
+        if (mp4->profile == 0)
         {
             if (compatible_brands[i] == MV_FOURCC_BE('m','p','4','1') ||
                 compatible_brands[i] == MV_FOURCC_BE('m','p','4','2'))
             {
-                mp4->variant = ISOBMF_MP4;
+                mp4->profile = PROF_ISOBMF_MP4;
             }
             else if (compatible_brands[i] == MV_FOURCC_BE('3','g','p','4'))
             {
-                mp4->variant = ISOBMF_3GPP;
+                mp4->profile = PROF_ISOBMF_3GP;
             }
         }
     }
@@ -317,7 +317,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     TRACE_INFO(MP4, BLD_GREEN "parse_meta()" CLR_RESET);
     int retcode = SUCCESS;
 
-    if (mp4->variant != ISOBMF_MOV)
+    if (mp4->profile != PROF_ISOBMF_MOV)
     {
         // Read FullBox attributs
         // Well the spec says its a fullbox, but apparently not...
@@ -1565,6 +1565,8 @@ int mp4_fileParse(MediaFile_t *media)
         media->duration = (double)mp4.duration / (double)mp4.timescale * 1000.0;
         media->creation_time = (double)mp4.creation_time ;
         media->modification_time = (double)mp4.modification_time ;
+
+        media->container_profile = mp4.profile;
 
         // Tracks metadatas
         // Check if we have extracted tracks

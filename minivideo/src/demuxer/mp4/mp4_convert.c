@@ -130,6 +130,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 
         map->stream_fcc = track->fcc;
         map->stream_codec = (Codecs_e)track->codec;
+        map->stream_codec_profile = (CodecProfiles_e)track->codec_profile;
 
         if (strnlen(track->compressorname, 32) > 0)
         {

@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "../../minivideo_typedef.h"
+#include "../../minivideo_codecs.h"
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -87,8 +88,9 @@ typedef struct Mp4Track_t
         unsigned int par_v;
 
         // AVC/HEVC specific parameters
-        unsigned int profile;
-        unsigned int level;
+        unsigned int codec_profile;
+        unsigned int codec_level;
+        unsigned int ref_frames;
 
         unsigned int sps_count;
         unsigned int *sps_sample_size;
@@ -138,7 +140,7 @@ typedef struct Mp4_t
 {
     bool run;                   //!< A convenient way to stop the parser from any sublevel
 
-    uint32_t variant;           //!< ISO BMF variant
+    ContainerProfiles_e profile;//!< ISO BMF variant
 
     uint32_t timescale;
     uint64_t duration;

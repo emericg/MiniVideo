@@ -740,6 +740,9 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
     if (odml_header != NULL &&
         odml_header->dwFourCC == fcc_odml)
     {
+        // Set OpenDML profile
+        avi->profile = PROF_AVI_OpenDML;
+
         // Print list header
         print_list_header(odml_header);
         write_list_header(odml_header, avi->xml);
@@ -1231,6 +1234,7 @@ int avi_fileParse(MediaFile_t *media)
 
         // Go for the indexation
         retcode = avi_indexer(bitstr, media, &avi),
+        media->container_profile = avi.profile;
 
         // Free avi_t structure content
         avi_clean(&avi);
