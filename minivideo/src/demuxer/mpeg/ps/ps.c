@@ -330,13 +330,19 @@ int ps_fileParse(MediaFile_t *media)
                bitstream_get_absolute_byte_offset(bitstr) < (media->file_size - min_packet_size))
         {
             // Init
-            PackHeader_t pack_header = {};
-            SystemHeader_t system_header = {};
+            PackHeader_t pack_header;
+            memset(&pack_header, 0, sizeof(PackHeader_t));
+            SystemHeader_t system_header;
+            memset(&system_header, 0, sizeof(SystemHeader_t));
 
-            PesHeader_t pes_header = {};
-            PesPacket_t pes_packet = {};
-            ProgramStreamMap_t pes_streammap = {};
-            ProgramStreamDirectory_t pes_streamdirectory = {};
+            PesHeader_t pes_header;
+            memset(&pes_header, 0, sizeof(PesHeader_t));
+            PesPacket_t pes_packet;
+            memset(&pes_packet, 0, sizeof(PesPacket_t));
+            ProgramStreamMap_t pes_streammap;
+            memset(&pes_streammap, 0, sizeof(ProgramStreamMap_t));
+            ProgramStreamDirectory_t pes_streamdirectory;
+            memset(&pes_streamdirectory, 0, sizeof(ProgramStreamDirectory_t));
 
             // Parse packet header
             parse_pes_header(bitstr, &pes_header);
