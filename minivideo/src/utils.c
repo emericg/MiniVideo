@@ -395,7 +395,7 @@ double dClip3(double low, double high, double x)
 
 /* ************************************************************************** */
 
-int iClip1_YCbCr(const int x, const int BitDepth)
+inline int iClip1_YCbCr(const int x, const int BitDepth)
 {
     return iClip3(0, (1 << BitDepth) - 1, x);
 }
@@ -405,8 +405,8 @@ inline int iClip1_YCbCr_8(const int x)
     return MIN(MAX(x, 0), 255);
 }
 
-uint8_t Clip1_YCbCr_8(const int x)
+inline uint8_t Clip1_YCbCr_8(const int x)
 {
-    return MIN(MAX(x, 0), 255);
+    return (uint8_t)MIN(MAX(x, 0), 255);
 }
 /* ************************************************************************** */

@@ -2129,7 +2129,7 @@ static int Intra_16x16_Plane(uint8_t predL[16][16], intrapred16x16_t *ip)
 
         for (x = 0; x < 16; x++)
             for (y = 0; y < 16; y++)
-                predL[x][y] = (uint8_t)iClip1_YCbCr_8((a + b * (x - 7) + c * (y - 7) + 16) >> 5);
+                predL[x][y] = Clip1_YCbCr_8((a + b * (x - 7) + c * (y - 7) + 16) >> 5);
     }
     else
     {
@@ -2552,7 +2552,7 @@ static int Intra_Chroma_Plane(uint8_t predC[8][8], intrapredChroma_t *ip)
 
         for (x = 0; x < ip->MbWidthC; x++)
             for (y = 0; y < ip->MbHeightC; y++)
-                predC[x][y] = (uint8_t)iClip1_YCbCr_8((a + b * (x - 3 - xCF) + c * (y - 3 - yCF) + 16) >> 5);
+                predC[x][y] = Clip1_YCbCr_8((a + b * (x - 3 - xCF) + c * (y - 3 - yCF) + 16) >> 5);
     }
     else
     {

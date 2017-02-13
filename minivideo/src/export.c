@@ -798,10 +798,10 @@ int export_idr(DecodingContext_t *dc)
         strncat(PictureFile.file_name, "_", 254);
 
         // idr_pic_id is periodically reseted so it is not a good way for counting idr
-        //sprintf(framenum, "%d", dc->active_slice->idr_pic_id);
+        //snprintf(framenum, 7, "%d", dc->active_slice->idr_pic_id);
 
         // picture_exported is only used by this function (incrementation is only done when picture is successfully exported)
-        sprintf(framenum, "%d", dc->picture_exported);
+        snprintf(framenum, 7, "%d", dc->picture_exported);
 
         strncat(PictureFile.file_name, framenum, 254);
     }
