@@ -26,6 +26,11 @@
 #include "../minivideo_typedef.h"
 #include "../minitraces.h"
 
+// C POSIX library
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
 // C standard library
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +48,12 @@
 
 #define xmlMapper_VERSION_MAJOR 0
 #define xmlMapper_VERSION_MINOR 1
+
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
+#define MAX_PATH_SIZE 256
+#else
+#define MAX_PATH_SIZE 4096
+#endif
 
 /* ************************************************************************** */
 

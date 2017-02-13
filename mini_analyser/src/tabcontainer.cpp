@@ -57,7 +57,7 @@ tabContainer::tabContainer(QWidget *parent) :
     ui->widget_hex->setFont(QFont("Andale Mono", 14));
 #endif
 #ifdef Q_OS_WIN32
-    ui->widget_hex->setFont(QFont("Lucida Console", 12));
+    ui->widget_hex->setFont(QFont("Lucida Console", 11));
 #endif
 }
 
@@ -551,7 +551,7 @@ bool tabContainer::loadXmlFile()
     xmlMapFile.close();
 
     // Load XML file (from given file descriptor)
-    if (media->container_mapper_fd == false ||
+    if (media->container_mapper_fd == NULL ||
         xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
     {
         status = false;

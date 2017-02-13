@@ -62,6 +62,8 @@ void minivideo_print_infos(void)
 
 #if defined(__ICC) || defined(__INTEL_COMPILER)
     printf("* Library built with ICC '%d / %s'\n", __INTEL_COMPILER, __INTEL_COMPILER_BUILD_DATE);
+#elif defined(_MSC_VER)
+    printf("* Library built with MSVC '%d'\n", _MSC_VER);
 #elif defined(__clang__)
     printf("* Library built with CLANG '%d.%d'\n", __clang_major__, __clang_minor__);
 #elif defined(__GNUC__) || defined(__GNUG__)

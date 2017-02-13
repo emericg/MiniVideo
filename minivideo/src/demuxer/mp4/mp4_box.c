@@ -195,14 +195,14 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml)
 
             if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 box\" offset=\"%li\" size=\"%li\">\n",
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 box\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
                         getFccString_le(box_header->boxtype, fcc),
                         box_header->offset_start,
                         box_header->size);
             }
             else
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 fullbox\" offset=\"%li\" size=\"%li\">\n",
+                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 fullbox\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
                         getFccString_le(box_header->boxtype, fcc),
                         box_header->offset_start,
                         box_header->size);

@@ -41,6 +41,7 @@
 // Custom types
 
 #if ENABLE_C99_STDINT
+    #include <inttypes.h>
     #include <stdint.h>
 #else
     // Defines custom types (if C99 <stdint.h> is not available)

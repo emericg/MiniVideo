@@ -527,7 +527,7 @@ int tabExport::generateExportMapping_xml()
         QString filename;
 
         // Load XML file (from given file descriptor)
-        if (media->container_mapper_fd == false ||
+        if (media->container_mapper_fd == NULL ||
             xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
         {
             status = 0;
@@ -555,7 +555,6 @@ int tabExport::generateExportMapping_xml()
 
         if (status == true)
         {
-            qDebug() << "generateExportMapping_xml(" << filename << ")";
             xmlMapFile.seek(0);
             exportDatas = xmlMapFile.readAll();
         }

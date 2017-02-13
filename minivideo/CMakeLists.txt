@@ -76,15 +76,6 @@ endif(DOXYGEN_FOUND)
 # Build configuration
 ###############################################################################
 
-# Link flags
-if(UNIX)
-    set(CMAKE_SHARED_LINKER_FLAGS "-lm")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,now -Wl,-z,relro")
-elseif(WIN32)
-    set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,dynamicbase -Wl,dynamicbase")
-endif()
-
 # Generic build flags
 set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
 
@@ -123,12 +114,16 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     message(STATUS "Building on Linux plateform")
 
+    set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-z,now -Wl,-z,relro")
+
 endif()
 
 # macOS specific stuff
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     message(STATUS "Building on macOS plateform")
+
+    set(CMAKE_SHARED_LINKER_FLAGS "-lm")
 
 endif()
 
@@ -150,6 +145,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         include(GenerateExportHeader)
     endif()
 
+    set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
+
 endif()
 
 
@@ -157,10 +154,8 @@ endif()
 ###############################################################################
 
 # Generate "minivideo_settings.h" file from a template
-configure_file(
-    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
-    "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h"
-)
+configure_file("${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
+               "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h")
 
 # MiniVideo source code
 set(minivideo_SRC

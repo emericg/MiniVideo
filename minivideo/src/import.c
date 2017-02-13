@@ -27,8 +27,8 @@
 #include "bitstream_map.h"
 #include "minitraces.h"
 
-#ifndef _WIN32
-// C POSIX libraries
+// C POSIX library
+#ifndef _MSC_VER
 #include <unistd.h>
 #endif
 
