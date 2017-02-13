@@ -79,8 +79,10 @@ endif(DOXYGEN_FOUND)
 # Link flags
 if(UNIX)
     set(CMAKE_SHARED_LINKER_FLAGS "-lm")
+    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-z,now -Wl,-z,relro")
 elseif(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
+    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,dynamicbase -Wl,dynamicbase")
 endif()
 
 # Generic build flags
@@ -95,7 +97,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_VERBOSE_MAKEFILE off)
 else()
     message(STATUS "> This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug")
-    set(CMAKE_C_FLAGS_RELEASE "-O3")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -fPIE -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     set(ENABLE_DEBUG 0)
 endif()
 
