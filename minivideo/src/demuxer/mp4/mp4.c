@@ -1559,7 +1559,8 @@ int mp4_fileParse(MediaFile_t *media)
         }
 
         // xmlMapper
-        xmlMapperClose(&mp4.xml);
+        if (xmlMapperFinalize(mp4.xml) == SUCCESS)
+            media->container_mapper_fd = mp4.xml;
 
         // File metadatas
         media->duration = (double)mp4.duration / (double)mp4.timescale * 1000.0;

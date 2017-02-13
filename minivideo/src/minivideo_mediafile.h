@@ -54,6 +54,7 @@ typedef struct MediaFile_t
     Containers_e container;             //!< File format / container used by this video file
     ContainerProfiles_e container_profile; //!< Container profile (if applicable)
     bool container_mapper;              //!< Enables the xml container mapper
+    FILE *container_mapper_fd;          //!< Direct access to xml map without the need of an actual file
 
     // Container generic metadatas
     char *creation_app;                 //!< Container creation application (C string) (if available)

@@ -31,6 +31,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_MSC_VER)
+#include <windows.h>
+#include <Lmcons.h>
+#elif !defined(__MINGW32__) || !defined(__MINGW64__)
+#include <sys/stat.h>
+#include <errno.h>
+#endif
+
 /* ************************************************************************** */
 
 #define xmlMapper_VERSION_MAJOR 0
@@ -41,19 +49,60 @@
 int xmlMapperOpen(MediaFile_t *media, FILE **xml)
 {
     TRACE_INFO(MAPPR, BLD_GREEN "xmlMapperOpen()" CLR_RESET);
-    int retcode = SUCCESS;
+    int retcode = FAILURE;
 
     if (media && media->container_mapper)
     {
-        char xmlPath[4096];
-        memset(xmlPath, 0, 4096);
-        sprintf(xmlPath, "/tmp/%s_mapped.xml", media->file_name);
+        char xmlPath[4096] = {0};
 
-        *xml = fopen(xmlPath, "w+");
+        // File directory
+#if defined(_MSC_VER)
+        char tempdir[UNLEN + 1] = {0};
+        if (GetTempPath(UNLEN, tempdir) != 0)
+        {
+            snprintf(xmlPath, UNLEN, "/%s/%s_mapped.xml", tempdir, media->file_name);
+        }
+#else
+        char *tempdir = getenv("TMPDIR");
+        char tempdir_mv[4096] = {0};
+
+        if (tempdir)
+        {
+            snprintf(tempdir_mv, 4095, "/%s/minivideo", tempdir);
+            snprintf(xmlPath, 4095, "/%s/minivideo/%s_mapped.xml", tempdir, media->file_name);
+        }
+        else
+        {
+            snprintf(tempdir_mv, 4095, "/tmp/minivideo");
+            snprintf(xmlPath, 4095, "/tmp/minivideo/%s_mapped.xml", media->file_name);
+        }
+#endif
+
+        // File opening
+        if (strlen(xmlPath) > 0)
+        {
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
+            *xml = fopen(xmlPath, "w+");
+#else
+            int err = 0;
+            if (strlen(tempdir_mv) > 0)
+                err = mkdir(tempdir_mv, 0775);
+
+            if (err == 0 || errno == EEXIST)
+            {
+                *xml = fopen(xmlPath, "w+");
+                unlink(xmlPath);
+            }
+#endif
+        }
+
+        // Header creation
         if (*xml)
         {
+            retcode = SUCCESS;
+
             char fileLine[255];
-            sprintf(fileLine, "<file xmlMapper=\"%d.%d\" minivideo=\"%d.%d-%d\">\n",
+            snprintf(fileLine, 254, "<file xmlMapper=\"%d.%d\" minivideo=\"%d.%d-%d\">\n",
                     xmlMapper_VERSION_MAJOR, xmlMapper_VERSION_MINOR,
                     minivideo_VERSION_MAJOR, minivideo_VERSION_MINOR, minivideo_VERSION_PATCH);
 
@@ -68,8 +117,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
         }
         else
         {
-            TRACE_ERROR(MAPPR, "xmlMapper could not create file '%s'", xmlPath);
-            retcode = FAILURE;
+            TRACE_ERROR(MAPPR, "xmlMapper could not create the file '%s'", xmlPath);
         }
     }
 
@@ -78,16 +126,33 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
 
 /* ************************************************************************** */
 
+int xmlMapperFinalize(FILE *xml)
+{
+    TRACE_INFO(MAPPR, BLD_GREEN "xmlMapperFinalize()" CLR_RESET);
+    int retcode = FAILURE;
+
+    if (xml)
+    {
+        retcode = SUCCESS;
+
+        if (fprintf(xml, "</structure>\n") < 0) retcode = FAILURE;
+        if (fprintf(xml, "</file>\n") < 0) retcode = FAILURE;
+        rewind(xml);
+    }
+
+    return retcode;
+}
+
 int xmlMapperClose(FILE **xml)
 {
     TRACE_INFO(MAPPR, BLD_GREEN "xmlMapperClose()" CLR_RESET);
-    int retcode = SUCCESS;
+    int retcode = FAILURE;
 
     if (*xml)
     {
-        if (fprintf(*xml, "</structure>\n") < 0) retcode = FAILURE;
-        if (fprintf(*xml, "</file>\n") < 0) retcode = FAILURE;
-        if (fclose(*xml) != 0) retcode = FAILURE;
+        if (fclose(*xml) == 0)
+            retcode = SUCCESS;
+
         *xml = NULL;
     }
 

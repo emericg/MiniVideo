@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "import.h"
+#include "demuxer/xml_mapper.h"
 #include "bitstream_map.h"
 #include "minitraces.h"
 
@@ -594,6 +595,8 @@ int import_fileClose(MediaFile_t **media_ptr)
                 retcode = FAILURE;
             }
         }
+
+        xmlMapperClose(&(*media_ptr)->container_mapper_fd);
 
         for (i = 0; i < 16 /*(*media_ptr)->tracks_audio_count*/; i++)
         {

@@ -326,7 +326,7 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
     int selected_offset = item->data(0, Qt::UserRole).toInt();
 
     QDomElement eSelected;
-    if (findElement(xmlDatas.documentElement(), "offset", selected_offset, eSelected) == true)
+    if (findElement(xmlMapDatas.documentElement(), "offset", selected_offset, eSelected) == true)
     {
         QString selected_fcc = eSelected.attributeNode("fcc").value();
         int selected_size = eSelected.attributeNode("size").value().toInt();
@@ -544,53 +544,74 @@ bool tabContainer::loadXmlFile()
     //qDebug() << "loadXmlFile()";
     bool status = true;
 
-    ui->treeWidget->clear();
-
     if (!media)
         return false;
 
-    // Load XML file and make it a QDomDocument
-    QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
-    xmlFile.close();
-    xmlFile.setFileName(filename);
-    if (!xmlFile.open(QIODevice::ReadOnly))
-    {
-        qDebug() << "xmlFile.open(" << filename << ") > error";
-        return false;
-    }
-    if (!xmlDatas.setContent(&xmlFile))
-    {
-        qDebug() << "xmlDoc.setContent() > error";
-        xmlFile.close();
-        return false;
-    }
-    xmlFile.close();
+    ui->treeWidget->clear();
+    xmlMapFile.close();
 
-    // Actual XML data parsing
-    QDomNode root_node = xmlDatas.documentElement().firstChild();
-    while (root_node.isNull() == false)
+    // Load XML file (from given file descriptor)
+    if (media->container_mapper_fd == false ||
+        xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
     {
-        QDomElement e = root_node.toElement(); // try to convert the node to an element
-        if (e.isNull() == false)
+        status = false;
+        qDebug() << "xmlFile.open(FILE*) > error";
+    }
+
+    // Load XML file (fallback from file path)
+    if (status == false)
+    {
+        QString filename = "/tmp/minivideo/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+        xmlMapFile.setFileName(filename);
+        if (xmlMapFile.exists() == false)
         {
-            if (e.tagName() == "header")
-            {
-                xmlHeaderParser(e);
-            }
-            else if (e.tagName() == "structure")
-            {
-                xmlStructureParser(e);
-            }
-            else
-            {
-                // qDebug() << "[0]" << qPrintable(e.tagName()); // Unknown element...
-            }
+            filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+            xmlMapFile.setFileName(filename);
         }
-        root_node = root_node.nextSibling();
+
+        if (xmlMapFile.exists() == false ||
+            xmlMapFile.open(QIODevice::ReadOnly) == false)
+        {
+            qDebug() << "xmlFile.open(" << filename << ") > error";
+            status = false;
+        }
     }
 
-    // Force initial selection
-    //ui->treeWidget->set
+    if (status == true)
+    {
+        // Make it a QDomDocument
+        xmlMapFile.seek(0);
+        if (!xmlMapDatas.setContent(&xmlMapFile))
+        {
+            qDebug() << "xmlDoc.setContent() > error";
+            xmlMapFile.close();
+            return false;
+        }
+        xmlMapFile.close();
+
+        // Actual XML data parsing
+        QDomNode root_node = xmlMapDatas.documentElement().firstChild();
+        while (root_node.isNull() == false)
+        {
+            QDomElement e = root_node.toElement(); // try to convert the node to an element
+            if (e.isNull() == false)
+            {
+                if (e.tagName() == "header")
+                {
+                    xmlHeaderParser(e);
+                }
+                else if (e.tagName() == "structure")
+                {
+                    xmlStructureParser(e);
+                }
+                else
+                {
+                    // qDebug() << "[0]" << qPrintable(e.tagName()); // Unknown element...
+                }
+            }
+            root_node = root_node.nextSibling();
+        }
+    }
 
     return status;
 }
@@ -711,7 +732,7 @@ bool tabContainer::findElement(const QDomElement &elem, const QString &attr, int
     bool status = false;
 
     QList<QDomElement> eCandidates;
-    findElementsWithAttribute(xmlDatas.documentElement(), attr, eCandidates);
+    findElementsWithAttribute(xmlMapDatas.documentElement(), attr, eCandidates);
 
     for (QDomElement e: eCandidates)
     {

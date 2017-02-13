@@ -499,7 +499,7 @@ int tabExport::generateExportDatas_json(bool detailed)
 
     if (media)
     {
-        //retcode = 1;
+        // TODO
     }
 
     return retcode;
@@ -511,10 +511,7 @@ int tabExport::generateExportDatas_xml(bool detailed)
 
     if (media)
     {
-        // Load XML file and make it a QDomDocument
-        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
-
-        //retcode = 1;
+        // TODO
     }
 
     return retcode;
@@ -522,22 +519,47 @@ int tabExport::generateExportDatas_xml(bool detailed)
 
 int tabExport::generateExportMapping_xml()
 {
-    int retcode = 0;
+    int status = 1;
 
     if (media)
     {
-        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
-        QFile xmlMapFile(filename);
-        if (!xmlMapFile.open(QIODevice::ReadOnly))
+        QFile xmlMapFile;
+        QString filename;
+
+        // Load XML file (from given file descriptor)
+        if (media->container_mapper_fd == false ||
+            xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
         {
-            qDebug() << "xmlMapFile.open(" << filename << ") > error";
+            status = 0;
+            qDebug() << "xmlFile.open(FILE*) > error";
         }
-        else
+
+        // Load XML file (fallback from file path)
+        if (status == 0)
+        {
+            filename = "/tmp/minivideo/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+            xmlMapFile.setFileName(filename);
+            if (xmlMapFile.exists() == false)
+            {
+                filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+                xmlMapFile.setFileName(filename);
+            }
+
+            if (xmlMapFile.exists() == false ||
+                xmlMapFile.open(QIODevice::ReadOnly) == false)
+            {
+                qDebug() << "xmlFile.open(" << filename << ") > error";
+                status = 0;
+            }
+        }
+
+        if (status == true)
         {
             qDebug() << "generateExportMapping_xml(" << filename << ")";
+            xmlMapFile.seek(0);
             exportDatas = xmlMapFile.readAll();
         }
     }
 
-    return retcode;
+    return status;
 }

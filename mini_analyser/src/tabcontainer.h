@@ -80,8 +80,8 @@ private:
     QFile mediaFile;
     QByteArray mediaDatas;
 
-    QFile xmlFile;
-    QDomDocument xmlDatas;
+    QFile xmlMapFile;
+    QDomDocument xmlMapDatas;
 
     void resizeEvent(QResizeEvent *event);
 };

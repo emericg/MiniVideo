@@ -30,15 +30,21 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Open the xmlMapper.
+ * \brief Open the xmlMapper file and write header content.
  * \param *media[in]: A pointer to a MediaFile_t structure.
  * \param **xml[in,out]: Mapping file.
  */
 int xmlMapperOpen(MediaFile_t *media, FILE **xml);
 
 /*!
+ * \brief Finalize the xmlMapper file and write footer content.
+ * \param *xml[in]: Mapping file.
+ */
+int xmlMapperFinalize(FILE *xml);
+
+/*!
  * \brief Close the xmlMapper.
- * \param **xml[in]: Mapping file.
+ * \param **xml[in,out]: Mapping file.
  */
 int xmlMapperClose(FILE **xml);
 

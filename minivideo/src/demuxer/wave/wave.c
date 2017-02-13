@@ -822,7 +822,8 @@ int wave_fileParse(MediaFile_t *media)
         }
 
         // xmlMapper
-        xmlMapperClose(&wave.xml);
+        if (xmlMapperFinalize(wave.xml) == SUCCESS)
+            media->container_mapper_fd = wave.xml;
 
         // Go for the indexation
         retcode = wave_indexer(bitstr, media, &wave),

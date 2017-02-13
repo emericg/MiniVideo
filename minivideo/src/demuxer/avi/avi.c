@@ -1230,7 +1230,8 @@ int avi_fileParse(MediaFile_t *media)
         }
 
         // xmlMapper
-        xmlMapperClose(&avi.xml);
+        if (xmlMapperFinalize(avi.xml) == SUCCESS)
+            media->container_mapper_fd = avi.xml;
 
         // Go for the indexation
         retcode = avi_indexer(bitstr, media, &avi),
