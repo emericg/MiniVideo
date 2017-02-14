@@ -3,6 +3,7 @@ MiniVideo library
 
 [![Build Status](https://travis-ci.org/emericg/MiniVideo.svg?branch=master)](https://travis-ci.org/emericg/MiniVideo)
 [![Build status](https://ci.appveyor.com/api/projects/status/bt94ewnmw7bv8yab?svg=true)](https://ci.appveyor.com/project/emericg/minivideo)
+[![License: LGPL v3](https://img.shields.io/badge/license-LGPL%20v3-brightgreen.svg)](http://www.gnu.org/licenses/lgpl-3.0)
 
 Introduction
 ------------
