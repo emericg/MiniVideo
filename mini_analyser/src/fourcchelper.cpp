@@ -45,27 +45,20 @@ FourccHelper::FourccHelper(QWidget *parent) :
     ui->setupUi(this);
     setMaximumSize(480, 320);
 
-    // Detect system endianness and use it as default for the GUI
+    // Set system endianness the default for the GUI
+    endianness_system = BYTE_ORDER;
+    endianness_gui = BYTE_ORDER;
     if (BYTE_ORDER == LITTLE_ENDIAN)
-    {
-        endianness_gui = LITTLE_ENDIAN;
-        endianness_system = LITTLE_ENDIAN;
         ui->radioButton_le->toggle();
-    }
     else
-    {
-        endianness_gui = LITTLE_ENDIAN;
-        endianness_system = LITTLE_ENDIAN;
         ui->radioButton_be->toggle();
-    }
+    // But endianness feature is disabled...
+    ui->frame_endianness->hide();
+    connect(ui->radioButton_le, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
+    connect(ui->radioButton_be, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
 
     // Codec finder is hidden when starting
     ui->label_fourcc_string->hide();
-
-    // Endianness feature is disabled
-    ui->frame_endianness->hide();
-    //connect(ui->radioButton_le, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
-    //connect(ui->radioButton_be, SIGNAL(toggled(bool)), this, SLOT(endiannessSwitch()));
 
     connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(ui->pushButton_endianness, SIGNAL(clicked(bool)), this, SLOT(endiannessInfo()));

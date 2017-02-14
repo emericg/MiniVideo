@@ -125,7 +125,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -290,7 +290,7 @@ background: rgba(255, 170, 0, 128);</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <property name="spacing">
-             <number>4</number>
+             <number>8</number>
             </property>
             <property name="sizeConstraint">
              <enum>QLayout::SetMaximumSize</enum>
@@ -317,19 +317,19 @@ background: rgba(255, 170, 0, 128);</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_2">
                <property name="leftMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="topMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="rightMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="horizontalSpacing">
-                <number>6</number>
+                <number>4</number>
                </property>
                <item row="0" column="0" colspan="2">
                 <layout class="QGridLayout" name="gridLayout_8">
@@ -617,16 +617,16 @@ background: rgba(255, 170, 0, 128);</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_16">
                <property name="leftMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="topMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="rightMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <item row="0" column="0">
                 <layout class="QGridLayout" name="gridLayout_15">
@@ -903,16 +903,16 @@ background: rgba(255, 170, 0, 128);</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_17">
                <property name="leftMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="topMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="rightMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <item row="0" column="0" colspan="3">
                 <layout class="QGridLayout" name="gridLayout_4">
@@ -1189,21 +1189,21 @@ background: rgba(255, 170, 0, 128);</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <property name="leftMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="topMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="rightMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <property name="bottomMargin">
-                <number>3</number>
+                <number>4</number>
                </property>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_other">
                  <property name="spacing">
-                  <number>4</number>
+                  <number>12</number>
                  </property>
                 </layout>
                </item>
@@ -1245,7 +1245,7 @@ background: rgba(255, 170, 0, 128);</string>
          <number>4</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="rightMargin">
          <number>4</number>
@@ -1269,16 +1269,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item>
             <layout class="QGridLayout" name="gridLayout_12">
@@ -2198,7 +2198,7 @@ background: rgba(255, 170, 0, 128);</string>
          <number>4</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="rightMargin">
          <number>4</number>
@@ -2222,16 +2222,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_7">
@@ -3038,16 +3038,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_20">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_19">
@@ -3260,16 +3260,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_other2_track">
@@ -3288,16 +3288,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_other2_chapters"/>
@@ -3312,16 +3312,16 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <property name="leftMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="topMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="rightMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <property name="bottomMargin">
-            <number>3</number>
+            <number>4</number>
            </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_other2_tags">
