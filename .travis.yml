@@ -1,14 +1,16 @@
-language: c
+os:
+  - linux
+  - osx
+
+dist: trusty
 sudo: false
+
+language: c
 
 compiler:
   - clang
   - gcc
 
-os:
-  - linux
-  - osx
-  
 addons:
   apt:
     packages:
