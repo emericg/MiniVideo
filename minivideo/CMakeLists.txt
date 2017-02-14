@@ -24,6 +24,8 @@ set(ENABLE_JPEG 0)          # Toggle external libjpeg support
 set(ENABLE_PNG 0)           # Toggle external libpng support
 set(ENABLE_STBIMWRITE 1)    # Toggle internal stb_image_write library for bmp/png/tga support
 
+set(ENABLE_MEMFD 1)         # Enable memfd support for Linux
+
 
 # Build dependencies
 ###############################################################################

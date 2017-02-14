@@ -39,9 +39,10 @@
 #if defined(_MSC_VER)
 #include <windows.h>
 #include <Lmcons.h>
-#elif !defined(__MINGW32__) || !defined(__MINGW64__)
-#include <sys/stat.h>
-#include <errno.h>
+#endif
+
+#if defined(ENABLE_MEMFD) && defined(__linux__)
+#include "../thirdparty/memfd_wrapper.h"
 #endif
 
 /* ************************************************************************** */
@@ -101,10 +102,12 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
         // File creation
         if (strlen(xmlMapPath) > 0)
         {
-            TRACE_ERROR(MAPPR, "xmlMapPath: '%s'", xmlMapPath);
+            TRACE_1(MAPPR, "xmlMapPath: '%s'", xmlMapPath);
 
+#if defined(ENABLE_MEMFD) && defined(__linux__)
+            *xml = memfd_fopen(xmlMapPath, "w+");
+#else
             *xml = fopen(xmlMapPath, "w+");
-#ifndef _MSC_VER
             unlink(xmlMapPath);
 #endif
         }

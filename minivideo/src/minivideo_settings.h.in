@@ -45,5 +45,7 @@
 #define ENABLE_JPEG         @ENABLE_JPEG@  //!< Toggle external libjpeg support
 #define ENABLE_PNG          @ENABLE_PNG@  //!< Toggle external libpng support
 
+#define ENABLE_MEMFD        @ENABLE_MEMFD@  //!< Enable memfd support for Linux
+
 /* ************************************************************************** */
 #endif // MINIVIDEO_SETTINGS_H
