@@ -534,16 +534,11 @@ int tabExport::generateExportMapping_xml()
             qDebug() << "xmlFile.open(FILE*) > error";
         }
 
-        // Load XML file (fallback from file path)
+        // Load XML file (fallback from file path / DEPRECATED)
         if (status == 0)
         {
-            filename = "/tmp/minivideo/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+            filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
             xmlMapFile.setFileName(filename);
-            if (xmlMapFile.exists() == false)
-            {
-                filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
-                xmlMapFile.setFileName(filename);
-            }
 
             if (xmlMapFile.exists() == false ||
                 xmlMapFile.open(QIODevice::ReadOnly) == false)

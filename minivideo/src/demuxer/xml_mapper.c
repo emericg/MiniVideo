@@ -64,71 +64,70 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
 
     if (media && media->container_mapper)
     {
-        char xmlPath[4096] = {0};
+        // File path selection
+        char xmlMapPath[MAX_PATH_SIZE] = {0};
 
-        // File directory
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 #if defined(_MSC_VER)
-        char tempdir[UNLEN + 1] = {0};
-        if (GetTempPath(UNLEN, tempdir) != 0)
+        char tempdir_mv[MAX_PATH_SIZE] = {0};
+        if (GetTempPath(MAX_PATH_SIZE, tempdir_mv) != 0)
         {
-            snprintf(xmlPath, UNLEN, "/%s/%s_mapped.xml", tempdir, media->file_name);
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s\\%s_mapped.xml", tempdir_mv, media->file_name);
         }
-#else
-        char *tempdir = getenv("TMPDIR");
-        char tempdir_mv[4096] = {0};
-
+#elif defined(__MINGW32__) || defined(__MINGW64__)
+        char *tempdir = getenv("TEMP");
         if (tempdir)
         {
-            snprintf(tempdir_mv, 4095, "/%s/minivideo", tempdir);
-            snprintf(xmlPath, 4095, "/%s/minivideo/%s_mapped.xml", tempdir, media->file_name);
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s\\%s", tempdir, media->file_name);
+        }
+#endif // _MSC_VER
+#else
+        char *tempdir = getenv("TMPDIR");
+        if (tempdir && strnlen(tempdir, MAX_PATH_SIZE) < MAX_PATH_SIZE)
+        {
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s/%s_mapped.xml", tempdir, media->file_name);
         }
         else
         {
-            snprintf(tempdir_mv, 4095, "/tmp/minivideo");
-            snprintf(xmlPath, 4095, "/tmp/minivideo/%s_mapped.xml", media->file_name);
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "/tmp/%s_mapped.xml", media->file_name);
         }
 #endif
-
-        // File opening
-        if (strlen(xmlPath) > 0)
+        // File path fallback: put the xmlMap next to its media file
+        if (strlen(xmlMapPath) == 0)
         {
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
-            *xml = fopen(xmlPath, "w+");
-#else
-            int err = 0;
-            if (strlen(tempdir_mv) > 0)
-                err = mkdir(tempdir_mv, 0775);
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s\%s_mapped.xml", media->file_directory, media->file_name);
+        }
 
-            if (err == 0 || errno == EEXIST)
-            {
-                *xml = fopen(xmlPath, "w+");
-                unlink(xmlPath);
-            }
+        // File creation
+        if (strlen(xmlMapPath) > 0)
+        {
+            TRACE_ERROR(MAPPR, "xmlMapPath: '%s'", xmlMapPath);
+
+            *xml = fopen(xmlMapPath, "w+");
+#ifndef _MSC_VER
+            unlink(xmlMapPath);
 #endif
         }
 
-        // Header creation
+        // File header creation
         if (*xml)
         {
             retcode = SUCCESS;
 
-            char fileLine[255];
-            snprintf(fileLine, 254, "<file xmlMapper=\"%d.%d\" minivideo=\"%d.%d-%d\">\n",
-                    xmlMapper_VERSION_MAJOR, xmlMapper_VERSION_MINOR,
-                    minivideo_VERSION_MAJOR, minivideo_VERSION_MINOR, minivideo_VERSION_PATCH);
-
             if (fprintf(*xml, "<?xml version=\"1.0\"?>\n") < 0) retcode = FAILURE;
-            if (fprintf(*xml, "%s", fileLine) < 0) retcode = FAILURE;
+            if (fprintf(*xml, "<file xmlMapper=\"%d.%d\" minivideo=\"%d.%d-%d\">\n",
+                        xmlMapper_VERSION_MAJOR, xmlMapper_VERSION_MINOR,
+                        minivideo_VERSION_MAJOR, minivideo_VERSION_MINOR, minivideo_VERSION_PATCH) < 0) retcode = FAILURE;
             if (fprintf(*xml, "<header>\n") < 0) retcode = FAILURE;
             if (fprintf(*xml, "  <format>%s</format>\n", getContainerString(media->container, false)) < 0) retcode = FAILURE;
-            if (fprintf(*xml, "  <size>%li</size>\n", media->file_size) < 0) retcode = FAILURE;
+            if (fprintf(*xml, "  <size>%"PRId64"</size>\n", media->file_size) < 0) retcode = FAILURE;
             if (fprintf(*xml, "  <path>%s</path>\n", media->file_path) < 0) retcode = FAILURE;
             if (fprintf(*xml, "</header>\n") < 0) retcode = FAILURE;
             if (fprintf(*xml, "<structure>\n") < 0) retcode = FAILURE;
         }
         else
         {
-            TRACE_ERROR(MAPPR, "xmlMapper could not create the file '%s'", xmlPath);
+            TRACE_ERROR(MAPPR, "xmlMapper could not create the file '%s'", xmlMapPath);
         }
     }
 

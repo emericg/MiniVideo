@@ -558,16 +558,11 @@ bool tabContainer::loadXmlFile()
         qDebug() << "xmlFile.open(FILE*) > error";
     }
 
-    // Load XML file (fallback from file path)
+    // Load XML file (fallback from file path / DEPRECATED)
     if (status == false)
     {
-        QString filename = "/tmp/minivideo/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
         xmlMapFile.setFileName(filename);
-        if (xmlMapFile.exists() == false)
-        {
-            filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
-            xmlMapFile.setFileName(filename);
-        }
 
         if (xmlMapFile.exists() == false ||
             xmlMapFile.open(QIODevice::ReadOnly) == false)
