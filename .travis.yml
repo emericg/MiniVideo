@@ -8,6 +8,11 @@ compiler:
 os:
   - linux
   - osx
+  
+addons:
+  apt:
+    packages:
+      - linux-headers-generic
 
 before_script:
   - cd minivideo/build
