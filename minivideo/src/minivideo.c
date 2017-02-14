@@ -167,27 +167,16 @@ int minivideo_endianness(void)
     int i = 1;
     char *p = (char *)&i;
 
-#if ENABLE_DEBUG
     if (p[0] == 1)
     {
-        printf("* System is using LITTLE_ENDIAN\n");
+        printf("* System is using " BLD_BLUE "LITTLE_ENDIAN" CLR_RESET "\n");
         endianness = __LITTLE_ENDIAN; // 1234
     }
     else
     {
-        printf("* System is using BIG_ENDIAN\n");
+        printf("* System is using " BLD_BLUE "BIG_ENDIAN" CLR_RESET "\n");
         endianness = __BIG_ENDIAN; // 4321
     }
-#else
-    if (p[0] == 1)
-    {
-        endianness = __LITTLE_ENDIAN; // 1234
-    }
-    else
-    {
-        endianness = __BIG_ENDIAN; // 4321
-    }
-#endif // ENABLE_DEBUG
 
     return endianness;
 }

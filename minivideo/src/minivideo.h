@@ -70,14 +70,12 @@ minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
                                           const char **minivideo_buildtime);
 
 /*!
- * \brief Determine endianness of the current system.
+ * \brief Print endianness of the current system.
  * \return 4321 for big endian, 1234 for little endian, -1 if unable to determine endianness.
  *
  * To determine endianness, we use a character pointer to the bytes of an int,
  * and then check its first byte to see if it is 0 (meaning big endianness)
  * or 1 (meaning little endianness).
- *
- * See also: https://sourceforge.net/p/predef/wiki/Endianness/
  */
 minivideo_EXPORT int minivideo_endianness(void);
 
