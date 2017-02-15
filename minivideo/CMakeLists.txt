@@ -8,7 +8,7 @@ project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 8)
-set(minivideo_VERSION_PATCH 0)
+set(minivideo_VERSION_PATCH 1)
 
 
 # Build settings

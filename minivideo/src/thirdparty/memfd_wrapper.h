@@ -1,6 +1,6 @@
 /*!
  * \file      memfd_wrapper.h
- * \date      2017
+ * \license   https://creativecommons.org/publicdomain/zero/1.0/
  *
  * Original wrapper:
  * - Ahmed S. Darwish (https://github.com/a-darwish/memfd-examples)
