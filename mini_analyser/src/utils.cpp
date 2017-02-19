@@ -74,7 +74,7 @@ QString getTimestampString(const uint64_t timestamp)
 
     if (timestamp == 0)
     {
-        timestamp_qstr = "0 ns";
+        timestamp_qstr = "0 µs";
     }
     else
     {
@@ -82,7 +82,7 @@ QString getTimestampString(const uint64_t timestamp)
         uint64_t minutes = (timestamp - (hours * 3600000000)) / 60000000;
         uint64_t seconds = (timestamp - (hours * 3600000000) - (minutes * 60000000)) / 1000000;
         uint64_t ms = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000)) / 1000;
-        uint64_t ns = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000) - (ms * 1000));
+        uint64_t us = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000) - (ms * 1000));
 
         if (hours > 0)
         {
@@ -100,9 +100,9 @@ QString getTimestampString(const uint64_t timestamp)
         {
             timestamp_qstr += QString::number(ms) + " ms ";
         }
-        if (ns > 0)
+        if (us > 0)
         {
-            timestamp_qstr += QString::number(ns) + " ns";
+            timestamp_qstr += QString::number(us) + " µs";
         }
     }
 

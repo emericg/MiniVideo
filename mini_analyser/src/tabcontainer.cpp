@@ -71,7 +71,7 @@ void tabContainer::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
 
     // Make sure the scrollAreas don't get wider than our windows
-    int newwidth = this->width() - ui->tabWidget->width() - 24;
+    int newwidth = this->width() - ui->tabWidget->width() - 12;
     ui->scrollAreaWidgetContents_2->setMaximumWidth(newwidth);
     ui->labelTitle->setMaximumWidth(newwidth);
 }
@@ -318,6 +318,8 @@ void tabContainer::containerSelectionChanged()
 
 void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 {
+    Q_UNUSED(column);
+
     if (!item)
         return;
 
@@ -725,6 +727,7 @@ void tabContainer::findElementsWithAttribute(const QDomElement &elem, const QStr
 bool tabContainer::findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement)
 {
     bool status = false;
+    Q_UNUSED(elem);
 
     QList<QDomElement> eCandidates;
     findElementsWithAttribute(xmlMapDatas.documentElement(), attr, eCandidates);

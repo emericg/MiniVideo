@@ -129,19 +129,26 @@ void MainWindow::dropEvent(QDropEvent *e)
     foreach (const QUrl &url, e->mimeData()->urls())
     {
         const QString &fileName = url.toLocalFile();
-        std::cout << "Dropped file: "<< fileName.toStdString() << std::endl;
+        qDebug() << "File dropped:"<< fileName;
 
         loadFile(fileName);
     }
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(e);
 
-    // Make sure the scrollAreas don't get wider than our windows
-    int width = ui->tab_infos->width() - 12;
-    ui->groupBox_infos->setMaximumWidth(width);
+    // Make sure the info tab scrollArea don't get wider than our main window
+    ui->groupBox_infos->setMaximumWidth(ui->tab_infos->width() - 8);
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    Q_UNUSED(index);
+
+    // Make sure the info tab scrollArea don't get wider than our main window
+    ui->groupBox_infos->setMaximumWidth(ui->tab_infos->width() - 8);
 }
 
 /* ************************************************************************** */

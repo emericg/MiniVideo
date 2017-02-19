@@ -43,7 +43,7 @@ QString getDurationString(const uint32_t duration);
 
 /*!
  * \brief Get a timestamp string from a duration in milliseconds.
- * \param duration: Timestamp in nanoseconds.
+ * \param duration: Timestamp in microseconds.
  * \return Timestamp QString.
  *
  * Prints timestamp hours/min/sec/ms

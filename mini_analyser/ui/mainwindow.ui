@@ -125,7 +125,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -523,7 +523,7 @@ background: rgba(255, 170, 0, 128);</string>
                  <item row="4" column="0">
                   <widget class="QLabel" name="label_6">
                    <property name="text">
-                    <string>Creation app</string>
+                    <string>Creation app.</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1562,7 +1562,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="10" column="0">
               <widget class="QLabel" name="label_21">
                <property name="text">
-                <string>Compression ratio</string>
+                <string>Compress. ratio</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1638,7 +1638,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="9" column="2">
               <widget class="QLabel" name="label_72">
                <property name="text">
-                <string>(highest)</string>
+                <string>Bitrate (highest)</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2500,7 +2500,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="5" column="2">
               <widget class="QLabel" name="label_74">
                <property name="text">
-                <string>(highest)</string>
+                <string>Bitrate (highest)</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2658,7 +2658,7 @@ background: rgba(255, 170, 0, 128);</string>
              <item row="6" column="0">
               <widget class="QLabel" name="label_16">
                <property name="text">
-                <string>Compression ratio</string>
+                <string>Compress. ratio</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -3014,7 +3014,7 @@ background: rgba(255, 170, 0, 128);</string>
          <number>4</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="rightMargin">
          <number>4</number>
@@ -3239,13 +3239,13 @@ background: rgba(255, 170, 0, 128);</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <property name="spacing">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="leftMargin">
          <number>4</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>8</number>
         </property>
         <property name="rightMargin">
          <number>4</number>

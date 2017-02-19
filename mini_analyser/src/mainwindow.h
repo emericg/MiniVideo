@@ -65,6 +65,7 @@ private slots:
         int printSubtitlesDetails();
         int printOtherDetails();
 
+    void on_tabWidget_currentChanged(int index);
     void xAxisRangeChanged(const QCPRange &newRange);
     void yAxisRangeChanged(const QCPRange &newRange);
 
