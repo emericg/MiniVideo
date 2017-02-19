@@ -99,8 +99,11 @@ typedef struct Mp4Track_t
         unsigned int *pps_sample_size;
         int64_t *pps_sample_offset;
 
+        // TimeCode Record specific parameters
+        uint8_t number_of_frames;
+
     // stss
-    unsigned int stss_entry_count;                //!< IDR frame count
+    unsigned int stss_entry_count;                //!< IDR sample count
     unsigned int *stss_sample_number;
 
     // stts
@@ -120,7 +123,7 @@ typedef struct Mp4Track_t
     unsigned int *stsc_sample_description_index;
 
     // stsz / stz2
-    unsigned int stsz_sample_count;               //!< Frame count
+    unsigned int stsz_sample_count;               //!< Sample count
     unsigned int stsz_sample_size;
     unsigned int *stsz_entry_size;
 

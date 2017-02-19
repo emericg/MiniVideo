@@ -502,7 +502,7 @@ int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
         unsigned int flags = read_bits(bitstr, 32);
         unsigned int time_scale = read_bits(bitstr, 32);
         unsigned int frame_duration = read_bits(bitstr, 32);
-        uint8_t number_of_frames = read_bits(bitstr, 8);
+        track->number_of_frames = read_bits(bitstr, 8);
         /*uint8_t reserved =*/ read_bits(bitstr, 8);
 
 #if ENABLE_DEBUG
@@ -510,7 +510,7 @@ int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
         TRACE_1(MP4, "> flags  : %u", flags);
         TRACE_1(MP4, "> time_scale : %u", time_scale);
         TRACE_1(MP4, "> frame_duration : %u", frame_duration);
-        TRACE_1(MP4, "> number_of_frames  : %u", number_of_frames);
+        TRACE_1(MP4, "> number_of_frames  : %u", track->number_of_frames);
 #endif // ENABLE_DEBUG
 
         // xmlMapper
@@ -520,7 +520,7 @@ int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
             fprintf(mp4->xml, "  <flags>%u</flags>\n", flags);
             fprintf(mp4->xml, "  <time_scale>%u</time_scale>\n", time_scale);
             fprintf(mp4->xml, "  <frame_duration>%u</frame_duration>\n", frame_duration);
-            fprintf(mp4->xml, "  <number_of_frames>%u</number_of_frames>\n", number_of_frames);
+            fprintf(mp4->xml, "  <number_of_frames>%u</number_of_frames>\n", track->number_of_frames);
         }
     }
 

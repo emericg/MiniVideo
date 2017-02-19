@@ -488,7 +488,18 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_others[i])
                 {
-                    QString text = "▸ " + getTrackTypeString(media->tracks_others[i]) + tr(" track (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+                    const MediaStream_t *t = media->tracks_others[i];
+
+                    QString text = "▸ " + getTrackTypeString(t) + tr(" track (internal id  #") + QString::number(t->track_id) + ")";
+
+                    if (t->stream_type == stream_TMCD)
+                    {
+                        text += QString("\n   SMPTE TimeCode '%1:%2:%3-%4'")\
+                                .arg(t->time_reference[0], 2, 'u', 0, '0')\
+                                .arg(t->time_reference[1], 2, 'u', 0, '0')\
+                                .arg(t->time_reference[2], 2, 'u', 0, '0')\
+                                .arg(t->time_reference[3], 2, 'u', 0, '0');
+                    }
 
                     QLabel *track = new QLabel(text);
                     ui->verticalLayout_other->addWidget(track);
@@ -1068,19 +1079,31 @@ int MainWindow::printOtherDetails()
         {
             if (media->tracks_others[i])
             { // ▸
-                QString text = "<b>" + getTrackTypeString(media->tracks_others[i]) + tr(" track</b> (internal id  #") + QString::number(media->tracks_others[i]->track_id) + ")";
+                const MediaStream_t *t = media->tracks_others[i];
 
-                if (media->tracks_others[i]->track_title)
+                QString text = "<b>" + getTrackTypeString(t) + tr(" track</b> (internal id  #") + QString::number(t->track_id) + ")";
+
+                if (t->track_title)
                 {
                     text += tr("<br>- Title: ");
-                    text += media->tracks_others[i]->track_title;
+                    text += t->track_title;
+                }
+
+                if (media->tracks_others[i]->stream_type == stream_TMCD &&
+                    media->tracks_others[i]->sample_count == 1)
+                {
+                    text += QString("<br>- SMPTE TimeCode '%1:%2:%3-%4'")\
+                            .arg(t->time_reference[0], 2, 'u', 0, '0')\
+                            .arg(t->time_reference[1], 2, 'u', 0, '0')\
+                            .arg(t->time_reference[2], 2, 'u', 0, '0')\
+                            .arg(t->time_reference[3], 2, 'u', 0, '0');
                 }
 
                 text += tr("<br>- Size: ");
-                text += getSizeString(media->tracks_others[i]->stream_size);
+                text += getSizeString(t->stream_size);
 
                 text += tr("<br>- ");
-                text += QString::number(media->tracks_others[i]->sample_count);
+                text += QString::number(t->sample_count);
                 text += tr(" samples");
 
                 text += tr("<br>");

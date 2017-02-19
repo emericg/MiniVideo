@@ -56,6 +56,7 @@ typedef struct MediaStream_t
     char *stream_encoder;           //!< Encoder used to generate the stream's datas
     unsigned int creation_time;     //!< Stream creation time (ms?)
     unsigned int modification_time; //!< Stream modification time (ms?)
+    uint8_t time_reference[4];      //!< SMPTE timecode reference (hh:mm:ss-fff)
 
     // Track metadatas (if the container supports them)
     unsigned int track_id;          //!< Id of the track (as set by the container)

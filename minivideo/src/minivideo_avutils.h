@@ -61,6 +61,8 @@ typedef enum SampleType_e
     sample_TEXT,
     sample_TEXT_FILE,
 
+    sample_TMCD,
+
     sample_OTHER
 
 } SampleType_e;

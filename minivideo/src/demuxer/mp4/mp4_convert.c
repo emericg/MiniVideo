@@ -98,19 +98,10 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 media->tracks_subtitles_count++;
             }
         }
-        else if (track->handlerType == HANDLER_TMCD)
-        {
-            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
-            if (retcode == SUCCESS)
-            {
-                map = media->tracks_others[media->tracks_others_count];
-                media->tracks_others_count++;
-            }
-        }
         else
         {
             char fcc[5];
-            TRACE_WARNING(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)", track->id, getFccString_le(track->handlerType, fcc));
+            TRACE_1(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)", track->id, getFccString_le(track->handlerType, fcc));
 
             retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
             if (retcode == SUCCESS)
@@ -289,6 +280,10 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             {
                 map->sample_type[sid] = sample_TEXT;
             }
+            else if (track->handlerType == HANDLER_TMCD)
+            {
+                map->sample_type[sid] = sample_TMCD;
+            }
             else
             {
                 map->sample_type[sid] = sample_OTHER;
@@ -438,6 +433,34 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 }
 
                 chunkOffset++; // Increase chunk offset
+            }
+        }
+
+        if (map->stream_type == stream_TMCD)
+        {
+            if (map->sample_count == 1)
+            {
+                // Read the TMCD sample
+                uint32_t tmcd_value = 0;
+                fseek(media->file_pointer, map->sample_offset[0], SEEK_SET);
+                fread(&tmcd_value, 1, 4, media->file_pointer);
+                tmcd_value = endian_flip_32(tmcd_value);
+
+                // Convert TMCD sample into SMTPE timecode
+                map->time_reference[0] = tmcd_value / (track->number_of_frames * 60 * 60);
+                tmcd_value -= map->time_reference[0] * (track->number_of_frames * 60 * 60);
+
+                map->time_reference[1] = tmcd_value / (track->number_of_frames * 60);
+                tmcd_value -= map->time_reference[1] * (track->number_of_frames * 60);
+
+                map->time_reference[2] = tmcd_value / (track->number_of_frames);
+                tmcd_value -= map->time_reference[2] * track->number_of_frames;
+
+                map->time_reference[3] = tmcd_value;
+
+                TRACE_1(MP4, "SMTPE TimeCode: '%02u:%02u:%02u-%03u'",
+                        map->time_reference[0], map->time_reference[1],
+                        map->time_reference[2], map->time_reference[3]);
             }
         }
 
