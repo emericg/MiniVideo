@@ -24,11 +24,24 @@ set(ENABLE_JPEG 0)          # Toggle external libjpeg support
 set(ENABLE_PNG 0)           # Toggle external libpng support
 set(ENABLE_STBIMWRITE 1)    # Toggle internal stb_image_write library for bmp/png/tga support
 
-set(ENABLE_MEMFD 0)         # Enable memfd support for Linux
+set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
 
 
 # Build dependencies
 ###############################################################################
+
+# custom memfd module
+if(ENABLE_MEMFD)
+    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    find_package(MemFD) # FindMemFD.cmake
+
+    if(MEMFD_FOUND)
+        message(STATUS "* memfd enabled")
+    else()
+        message(WARNING "> memfd not found! Disabling MEMFD support.")
+        set(ENABLE_MEMFD 0)
+    endif()
+endif()
 
 # custom libwebp module
 if(ENABLE_WEBP)
