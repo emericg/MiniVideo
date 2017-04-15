@@ -49,8 +49,7 @@ typedef struct MediaStream_t
     CodecProfiles_e stream_codec_profile; //!< Codec profile (if applicable)
 
     unsigned int stream_duration_ms;//!< Stream duration (rounded in milliseconds)
-    unsigned int stream_duration_ns;//!< Stream duration (in nanoseconds)
-    int stream_delay;               //!< Stream initial delay (in nanoseconds)
+    int stream_delay;               //!< Stream initial delay (in microseconds)
 
     // Generic metadatas
     char *stream_encoder;           //!< Encoder used to generate the stream's datas
@@ -125,8 +124,8 @@ typedef struct MediaStream_t
     uint32_t *sample_type;          //!< Sample type
     uint32_t *sample_size;          //!< Size (in byte)
     int64_t *sample_offset;         //!< Offset (in byte)
-    int64_t *sample_pts;            //!< Presentation timestamp (in nanosecond)
-    int64_t *sample_dts;            //!< Decoding timestamp (in nanosecond)
+    int64_t *sample_pts;            //!< Presentation timestamp (in microseconds)
+    int64_t *sample_dts;            //!< Decoding timestamp (in microseconds)
 
     // FIXME (frame stats)
     uint32_t frame_count;           //!< Number of audio/video frames

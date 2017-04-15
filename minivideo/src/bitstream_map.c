@@ -248,7 +248,7 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
             if (track->sample_dts && track->sample_count >= 2)
             {
                 track->frame_duration = track->sample_dts[1] - track->sample_dts[0];
-                track->frame_duration /= 1000; // ns to  ms
+                track->frame_duration /= 1000; // µs to  ms
             }
         }
         // Video frame duration
