@@ -61,11 +61,13 @@ HEADERS     += src/thirdparty/portable_endian.h \
                src/thirdparty/qhexedit2/chunks.h \
                src/thirdparty/qhexedit2/commands.h
 
-
 # minivideo library
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
+# dynamic linking
 LIBS        += -L../minivideo/build -lminivideo
+# static linking
+#LIBS        += ../minivideo/build/libminivideo.a
 
 #-------------------------------------------------------------------------------
 # OS specifics

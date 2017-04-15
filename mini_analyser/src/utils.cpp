@@ -21,9 +21,10 @@
 
 #include "utils.h"
 
-#include <QDebug>
-
+#include <cstdint>
 #include <cmath>
+
+#include <QDebug>
 
 QString getDurationString(const uint32_t duration)
 {

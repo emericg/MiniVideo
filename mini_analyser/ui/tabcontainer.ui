@@ -46,9 +46,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tabContainer_2">
+     <widget class="QWidget" name="tabStructure">
       <attribute name="title">
-       <string>Container</string>
+       <string>Structure</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
@@ -70,6 +70,12 @@
         <widget class="QTreeWidget" name="treeWidget">
          <property name="indentation">
           <number>16</number>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>false</bool>
+         </property>
+         <property name="animated">
+          <bool>true</bool>
          </property>
          <attribute name="headerVisible">
           <bool>false</bool>

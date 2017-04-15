@@ -212,7 +212,8 @@ int MainWindow::loadFile(const QString &file)
             int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(end_parsing - start_parsing).count();
             int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() - tp;
             MediaFile_t *f = currentMediaFile();
-            ui->tab_dev->addFile(file, f->file_name, tt, tp, f->parsingMemory);
+            QString name = QString::fromLocal8Bit(f->file_name) + "." + QString::fromLocal8Bit(f->file_extension);
+            ui->tab_dev->addFile(file, name, tt, tp, f->parsingMemory);
         }
         else
         {
