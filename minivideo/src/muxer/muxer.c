@@ -142,14 +142,18 @@ static int write_es(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
                     {
                         uint8_t startcode[4] = { 0x00, 0x00, 0x00, 0x01 };
                         write = fwrite(startcode, sizeof(uint8_t), 4, f_dst);
+                        if (write != 4)
+                        {
+                            TRACE_ERROR(MUXER, "fwrite != size (%i / %i)", write, 4);
+                            retcode = FAILURE;
+                        }
                     }
 
                     // Write ES
                     write = fwrite(pes_buffer, sizeof(uint8_t), size, f_dst);
-
                     if (write != size)
                     {
-                        TRACE_ERROR(MUXER, "write != size (%i / %i)", write, size);
+                        TRACE_ERROR(MUXER, "fwrite != size (%i / %i)", write, size);
                         retcode = FAILURE;
                     }
                 }

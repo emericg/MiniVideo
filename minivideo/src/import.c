@@ -194,7 +194,9 @@ static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
     // Read the first bytes of the file
     rewind(media->file_pointer);
     uint8_t buffer[16];
-    fread(buffer, sizeof(uint8_t), sizeof(buffer), media->file_pointer);
+    size_t bytes_read = fread(buffer, sizeof(uint8_t), sizeof(buffer), media->file_pointer);
+    if (bytes_read != sizeof(buffer))
+        return container;
 
     // Parse the file to find evidence of a container format
     if (buffer[0] == 0x47)

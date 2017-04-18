@@ -368,7 +368,7 @@ int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml)
                 RiffList_t list_header;
                 retcode = parse_list_header(bitstr, &list_header);
 
-                parse_unkn_list(bitstr, &list_header, xml);
+                retcode = parse_unkn_list(bitstr, &list_header, xml);
 
                 jumpy_riff(bitstr, unkn_header, list_header.offset_end);
             }
