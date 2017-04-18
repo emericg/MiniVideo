@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,8 +18,8 @@
  *
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2016
- * \version   0.50
+ * \date      2017
+ * \version   0.51
  */
 
 #ifndef MINITRACES_H
@@ -28,7 +28,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
 /* ************************************************************************** */
 
 /*!
@@ -182,7 +181,6 @@ typedef struct TraceModule_t
 #endif // MINITRACES_COLORS
 
 /* ************************************************************************** */
-
 #ifdef __cplusplus
 }
 #endif // __cplusplus

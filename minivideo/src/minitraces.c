@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,18 +18,18 @@
  *
  * \file      minitraces.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2016
- * \version   0.50
+ * \date      2017
+ * \version   0.51
  */
 
 // MiniTraces header
 #include "minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 #define MINITRACES_EOL "\n\r"

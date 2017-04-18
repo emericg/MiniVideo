@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -18,20 +18,24 @@
  *
  * \file      minitraces_conf.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2016
- * \version   0.50
+ * \date      2017
+ * \version   0.51
  */
 
 #ifndef MINITRACES_CONF_H
 #define MINITRACES_CONF_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
+
+// Import setting macros from minivideo, and map them to the ones from MiniTraces.
+#include "minivideo_settings.h"
 
 // =============================================================================
 // GENERAL SETTINGS
 // =============================================================================
-
-// Import setting macros from minivideo, and map them to the ones from MiniTraces.
-#include "minivideo_settings.h"
 
 #if ENABLE_DEBUG == 1
 #define MINITRACES_LEVEL    2   // Enables all traces levels
@@ -61,7 +65,7 @@
 
 /*!
  * This string will be used to easily identify from which program a trace comes
- * from if multiple program are outputting traces with MiniTraces at the same time. *
+ * from if multiple program are outputting traces with MiniTraces at the same time.
  * You can use bracket, spaces, colors...
  * Example: #define PID OUT_BLUE "[MINITRACE]" CLR_RESET " "
  *
@@ -77,8 +81,9 @@
  * \brief This is the list of module you can use when creating a trace with a TRACE_xxx macro.
  * \note The content of this enum must ALWAYS be in sync with the trace_modules_table[] below.
  *
- * When a TRACE_xxx macro is called with a given module, it will try to match it with a
- * TraceModule_t entry inside the trace_modules_table[] to get access to the module parameters.
+ * When a TRACE_xxx macro is called with a given module, it will try to match it
+ * with a TraceModule_t entry inside the trace_modules_table[] to get access to
+ * the module parameters.
  */
 enum TraceModule_e
 {
@@ -155,4 +160,8 @@ static TraceModule_t trace_modules_table[] =
 };
 
 /* ************************************************************************** */
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #endif // MINITRACES_CONF_H
