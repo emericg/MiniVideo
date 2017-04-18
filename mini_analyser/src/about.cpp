@@ -22,6 +22,9 @@
 #include "about.h"
 #include "ui_about.h"
 
+#include <QFile>
+#include <QTextStream>
+
 AboutWindows::AboutWindows(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::About)
@@ -78,4 +81,16 @@ void AboutWindows::tabLicense()
     ui->textBrowser_version->hide();
     ui->textBrowser_license->show();
     ui->textBrowser_copyright->hide();
+
+    if (licenseLoaded == false)
+    {
+        QFile file(":/licenses/LICENSE");
+        if (file.open(QFile::ReadOnly | QFile::Text))
+        {
+            QTextStream ReadFile(&file);
+            ui->textBrowser_license->setText(ReadFile.readAll());
+
+            licenseLoaded = true;
+        }
+    }
 }

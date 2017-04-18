@@ -40,4 +40,7 @@
     <qresource prefix="/fonts">
         <file>fonts/DejaVuSansMono.ttf</file>
     </qresource>
+    <qresource prefix="/licenses">
+        <file>../LICENSE</file>
+    </qresource>
 </RCC>

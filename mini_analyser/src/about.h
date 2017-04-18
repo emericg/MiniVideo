@@ -49,6 +49,8 @@ protected:
 
 private:
     Ui::About *ui;
+
+    bool licenseLoaded = false;
 };
 
 #endif // ABOUT_H

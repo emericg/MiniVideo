@@ -500,6 +500,7 @@ int tabExport::generateExportDatas_json(bool detailed)
     if (media)
     {
         // TODO
+        Q_UNUSED(detailed);
     }
 
     return retcode;
@@ -512,6 +513,7 @@ int tabExport::generateExportDatas_xml(bool detailed)
     if (media)
     {
         // TODO
+        Q_UNUSED(detailed);
     }
 
     return retcode;
