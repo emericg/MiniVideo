@@ -63,7 +63,7 @@ Note: You can also change several build options directly into the "minivideo/CMa
 
 Installation into the system, available for root user:
 >  $ su  
->  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+>  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Building MiniVideo's testing softwares
@@ -87,7 +87,7 @@ In case of problem, it may be necessary to manually indicate the paths of these 
 
 Installation into the system, available for root user with both testing softwares:
 >  $ su  
->  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+>  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Using mini_analyser
