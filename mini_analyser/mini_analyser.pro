@@ -76,7 +76,11 @@ LIBS        += -L../minivideo/build -lminivideo
 
 unix {
     linux {
-        #
+        # Using RPATH
+        QMAKE_RPATHDIR += $${PWD}/../minivideo/build
+
+        # Using https://nixos.org/patchelf.html
+        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/build/mini_analyser)
     }
 
     macx {
@@ -106,7 +110,7 @@ macx {
     # 'automatic' bundle packaging (method 1)
     system(macdeployqt build/$${TARGET}.app)
 
-    # 'manual' bundle packaging (method 2; debug only) (uncomment to enable)
+#    # 'manual' bundle packaging (method 2; debug only) (uncomment to enable)
 #    QT_FW_DIR = $(QTDIR)/lib/
 #    QT_PG_DIR = $(QTDIR)/plugins/
 #    !isEmpty(QT_FW_DIR) {
