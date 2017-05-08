@@ -7,6 +7,7 @@ TARGET       = mini_analyser
 TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets xml printsupport
+VERSION     = r39
 
 # build artifacts
 OBJECTS_DIR  = build/
@@ -48,6 +49,7 @@ RESOURCES   += resources/resources.qrc
 # mini_analyser OS icons (macOS and Windows)
 ICON         = resources/app/icon.icns
 RC_ICONS     = resources/app/icon.ico
+QMAKE_INFO_PLIST = resources/app/Info.plist
 
 # third party libraries
 SOURCES     += src/thirdparty/qcustomplot/qcustomplot.cpp \
