@@ -29,14 +29,11 @@ The minivideo library can:
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MP3 "elementary stream" (.mp3)
 - H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
-- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
-
-### Supported container formats (export modules)
-- Elementary Streams
-- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 ### Supported picture formats (output modules)
+- webp (when libwebp support available)
 - jpeg (when libjpeg support is available)
 - png (internal OR when libpng support available)
 - bmp
@@ -64,6 +61,24 @@ Note: You can also change several build options directly into the "minivideo/CMa
 Installation into the system, available for root user:
 >  $ su  
 >  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+
+
+Generating online documentation with Doxygen
+--------------------------------------------
+
+> $ cd minivideo/doc/  
+> $ ./generate_doxygen.sh  
+
+Open "minivideo/doc/doxygen.html" with your favorite browser.
+
+
+Generating error report with cppcheck
+-------------------------------------
+
+> $ cd minivideo/doc/  
+> $ ./generate_cppcheck.sh  
+
+Open "minivideo/doc/cppcheck.html" with your favorite browser.
 
 
 Building MiniVideo's testing softwares
@@ -128,21 +143,3 @@ Command line arguments:
 > -q : thumbnail quality (1 to 100 range)  
 > -n : number of thumbnail to generate (1 to 999 range)  
 > -m : extraction mode for the thumbnails (can be 'unfiltered', 'ordered' or 'distributed')  
-
-
-Generating online documentation with Doxygen
---------------------------------------------
-
-> $ cd minivideo/doc/  
-> $ ./generate_doxygen.sh  
-
-Open "minivideo/doc/doxygen.html" with your favorite browser.
-
-
-Generating error report with cppcheck
--------------------------------------
-
-> $ cd minivideo/doc/  
-> $ ./generate_cppcheck.sh  
-
-Open "minivideo/doc/cppcheck.html" with your favorite browser.
