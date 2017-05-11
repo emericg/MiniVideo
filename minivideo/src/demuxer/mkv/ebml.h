@@ -55,15 +55,16 @@ void write_ebml_element_title(EbmlElement_t *ebml_element, FILE *xml, const char
 /* ************************************************************************** */
 
 uint64_t read_ebml_data_uint(Bitstream_t *bitstr, int size);
-int64_t read_ebml_data_int(Bitstream_t *bitstr);
-double read_ebml_data_float(Bitstream_t *bitstr);
+int64_t read_ebml_data_int(Bitstream_t *bitstr, int size);
+double read_ebml_data_float(Bitstream_t *bitstr, int size);
 
 uint8_t *read_ebml_data_string(Bitstream_t *bitstr, int size);
-uint8_t *read_ebml_data_binary(Bitstream_t *bitstr);
-int read_ebml_data_date(Bitstream_t *bitstr);
+uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size);
+int64_t read_ebml_data_date(Bitstream_t *bitstr, int size);
 
 /* ************************************************************************** */
 
+int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml);
 int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml);
 
 /* ************************************************************************** */
