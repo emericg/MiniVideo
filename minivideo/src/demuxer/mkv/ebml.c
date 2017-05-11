@@ -24,105 +24,29 @@
 // minivideo headers
 #include "ebml.h"
 #include "mkv_struct.h"
+
+#include "../xml_mapper.h"
+#include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
 #include "../../minitraces.h"
 
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <math.h>
 
 /* ************************************************************************** */
 
-int ebml_parse_header(Bitstream_t *bitstr)
-{
-    TRACE_INFO(MKV, BLD_GREEN "ebml_parse_header()" CLR_RESET);
-    int retcode = FAILURE;
-
-    uint64_t headerSize = 0;
-    uint64_t headerOffset = 0;
-
-    uint64_t EBMLVersion = 1;
-    uint64_t EBMLReadVersion = 1;
-    uint64_t EBMLMaxIDLength = 4;
-    uint64_t EBMLMaxSizeLength = 8;
-    uint64_t DocType = 0;
-    uint64_t DocTypeVersion = 1;
-    uint64_t DocTypeReadVersion = 1;
-
-    const uint8_t DocType_mkv[8] = {'m', 'a', 't', 'r', 'o', 's', 'k', 'a'};
-    const uint8_t DocType_webm[4] = {'w', 'e', 'b', 'm'};
-
-    if (read_bits(bitstr, 32) == element_EBML)
-    {
-        headerSize = read_ebml_size(bitstr);
-        headerOffset = bitstream_get_absolute_byte_offset(bitstr);
-
-        while ((uint64_t)bitstream_get_absolute_byte_offset(bitstr) < (headerSize + headerOffset))
-        {
-            //switch (read_ebml_eid(bitstr))
-            switch (read_bits(bitstr, 16))
-            {
-                case element_EBMLVersion:
-                    EBMLVersion = read_ebml_data_uint(bitstr);
-                    break;
-                case element_EBMLReadVersion:
-                    EBMLReadVersion = read_ebml_data_uint(bitstr);
-                    break;
-                case element_EBMLMaxIDLength:
-                    EBMLMaxIDLength = read_ebml_data_uint(bitstr);
-                    break;
-                case element_EBMLMaxSizeLength:
-                    EBMLMaxSizeLength = read_ebml_data_uint(bitstr);
-                    break;
-                case element_DocType:
-                    DocType = doctype_matroska;
-                    read_bits(bitstr, 8);
-                    read_bits_64(bitstr, 64);
-                    retcode = SUCCESS;
-                    break;
-                case element_DocTypeVersion:
-                    DocTypeVersion = read_ebml_data_uint(bitstr);
-                    break;
-                case element_DocTypeReadVersion:
-                    DocTypeReadVersion = read_ebml_data_uint(bitstr);
-                    break;
-                default:
-                    TRACE_WARNING(MKV, "Unknown ebml element inside header");
-                    bitstream_force_alignment(bitstr);
-                    break;
-            }
-        }
-
-        // Goto the end of the element
-
-        TRACE_2(MKV, "header size        = %llu", headerSize);
-        TRACE_2(MKV, "header offset      = %llu", headerOffset);
-        TRACE_1(MKV, "EBMLVersion        = %llu", EBMLVersion);
-        TRACE_1(MKV, "EBMLReadVersion    = %llu", EBMLReadVersion);
-        TRACE_1(MKV, "EBMLMaxIDLength    = %llu", EBMLMaxIDLength);
-        TRACE_1(MKV, "EBMLMaxSizeLength  = %llu", EBMLMaxSizeLength);
-        TRACE_1(MKV, "DocType            = %llu", DocType);
-        TRACE_1(MKV, "DocTypeVersion     = %llu", DocTypeVersion);
-        TRACE_1(MKV, "DocTypeReadVersion = %llu", DocTypeReadVersion);
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
 /*!
- * \brief Read an EBML element.
+ * \brief Read an EBML element ID.
  * \param *bitstr The bitstream to read.
- * \return The value of the next element.
+ * \return The element ID.
  */
 uint32_t read_ebml_eid(Bitstream_t *bitstr)
 {
-    TRACE_2(MKV, "read_ebml_eid()");
-    bitstream_print_absolute_bit_offset(bitstr);
-
     uint32_t leadingZeroBits = 0;
     uint32_t elementSize = 0;
     uint32_t elementValue = 0;
@@ -133,6 +57,8 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
     elementSize = (leadingZeroBits + 1) * 7;
     elementValue = read_bits_64(bitstr, elementSize) + pow(2, elementSize);
 /*
+    TRACE_2(MKV, "read_ebml_eid()");
+    bitstream_print_absolute_bit_offset(bitstr);
     TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
     TRACE_2(MKV, "- elementSize     = %u", elementSize);
     TRACE_2(MKV, "- elementValue    = 0x%0X", elementValue);
@@ -143,29 +69,159 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
 /* ************************************************************************** */
 
 /*!
- * \brief Read an EBML element.
+ * \brief Read an EBML element size.
  * \param *bitstr The bitstream to read.
- * \return The value of the next element.
+ * \return The element size.
  */
-uint64_t read_ebml_size(Bitstream_t *bitstr)
+int64_t read_ebml_size(Bitstream_t *bitstr)
 {
-    TRACE_2(MKV, "read_ebml_size()");
-
-    uint32_t leadingZeroBits = 0;
-    uint32_t sizeSize = 0;
-    uint64_t sizeValue = 0;
+    int32_t leadingZeroBits = 0;
+    int32_t sizeSize = 0;
+    int64_t sizeValue = 0;
 
     while (read_bit(bitstr) == 0 && leadingZeroBits < 8)
         leadingZeroBits++;
 
     sizeSize = (leadingZeroBits + 1) * 7;
     sizeValue = read_bits_64(bitstr, sizeSize);
-/*
-    TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
-    TRACE_2(MKV, "- sizeSize        = %u", sizeSize);
-    TRACE_2(MKV, "- sizeValue       = %llu", sizeValue);
-*/
+
+    TRACE_2(MKV, "read_ebml_size()");
+    TRACE_3(MKV, "- leadingZeroBits = %i", leadingZeroBits);
+    TRACE_2(MKV, "- sizeSize        = %i", sizeSize);
+    TRACE_2(MKV, "- sizeValue       = %lli", sizeValue);
+
     return sizeValue;
+}
+
+/*!
+ * \brief parse_ebml_element
+ * \note 'bitstr' pointer is not checked for performance reasons.
+ *
+ * https://matroska.org/technical/specs/index.html
+ * https://matroska.org/technical/specs/rfc/index.html
+ */
+int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
+{
+    TRACE_3(MKV, "parse_ebml_element()");
+    int retcode = SUCCESS;
+
+    if (ebml_element == NULL)
+    {
+        TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        // Set element offset
+        ebml_element->offset_start = bitstream_get_absolute_byte_offset(bitstr);
+
+        // Read element ID
+        {
+            uint32_t ebml_leadingZeroBits = 0;
+            uint32_t ebml_size = 0;
+
+            while (read_bit(bitstr) == 0 && ebml_leadingZeroBits < 4)
+                ebml_leadingZeroBits++;
+
+            ebml_size = (ebml_leadingZeroBits + 1) * 7;
+            ebml_element->eid_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
+            ebml_element->eid = read_bits_64(bitstr, ebml_size) + pow(2, ebml_size);
+        }
+
+        // Read element size
+        {
+            uint32_t ebml_leadingZeroBits = 0;
+            uint32_t ebml_size = 0;
+
+            while (read_bit(bitstr) == 0 && ebml_leadingZeroBits < 8)
+                ebml_leadingZeroBits++;
+
+            ebml_size = (ebml_leadingZeroBits + 1) * 7;
+            ebml_element->size_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
+            ebml_element->size = read_bits_64(bitstr, ebml_size);
+        }
+
+        // Set end offset
+        ebml_element->offset_end = ebml_element->offset_start + ebml_element->eid_size + ebml_element->size;
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Print an element header.
+ */
+void print_ebml_element(EbmlElement_t *ebml_element)
+{
+#if ENABLE_DEBUG
+    if (ebml_element == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid EbmlElement_t structure!");
+    }
+    else
+    {
+        TRACE_2(MKV, "* start offset  : %lli", ebml_element->offset_start);
+        TRACE_2(MKV, "* end offset    : %lli", ebml_element->offset_end);
+
+        // Print ebml element header
+        TRACE_2(MKV, "* element ID    : 0x%X", ebml_element->eid);
+        TRACE_2(MKV, "* element size  : %lli", ebml_element->size);
+    }
+#endif // ENABLE_DEBUG
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Write element header to a file for the xmlMapper.
+ */
+void write_ebml_element(EbmlElement_t *ebml_element, FILE *xml)
+{
+    if (xml)
+    {
+        if (ebml_element == NULL)
+        {
+            TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
+        }
+        else
+        {
+            fprintf(xml, "  <atom fcc=\"%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                    ebml_element->eid,
+                    ebml_element->offset_start,
+                    ebml_element->size);
+        }
+    }
+}
+
+/*!
+ * \brief Write element header and title to a file for the xmlMapper.
+ */
+void write_ebml_element_title(EbmlElement_t *ebml_element, FILE *xml, const char *title)
+{
+    if (xml)
+    {
+        write_ebml_element(ebml_element, xml);
+        fprintf(xml, "  <title>%s</title>\n", title);
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Read an EBML element.
+ * \param *bitstr The bitstream to read.
+ * \return The value of the next element.
+ */
+uint64_t read_ebml_data_uint(Bitstream_t *bitstr, int size)
+{
+    TRACE_2(MKV, "read_ebml_data_uint()");
+
+    uint64_t elementValue = read_bits_64(bitstr, size);
+
+    return elementValue;
 }
 
 /* ************************************************************************** */
@@ -175,26 +231,26 @@ uint64_t read_ebml_size(Bitstream_t *bitstr)
  * \param *bitstr The bitstream to read.
  * \return The value of the next element.
  */
-uint64_t read_ebml_data_uint(Bitstream_t *bitstr)
+int64_t read_ebml_data_int(Bitstream_t *bitstr)
 {
-    TRACE_2(MKV, "read_ebml_data_uint()");
+    TRACE_2(MKV, "read_ebml_data_int()");
 
     uint32_t leadingZeroBits = 0;
     uint32_t elementSizeSize = 0;
     uint32_t elementSize = 0;
-    uint64_t elementValue = 0;
+    int64_t elementValue = 0;
 
     while (read_bit(bitstr) == 0 && leadingZeroBits < 8)
         leadingZeroBits++;
 
     elementSizeSize = (leadingZeroBits + 1) * 7;
     elementSize = read_bits(bitstr, elementSizeSize) * 8;
-    elementValue = read_bits_64(bitstr, elementSize);
+    elementValue = (int64_t)read_bits_64(bitstr, elementSize);
 /*
     TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
     TRACE_3(MKV, "- elementSizeSize = %u", elementSizeSize);
     TRACE_3(MKV, "- elementSize     = %u", elementSize);
-    TRACE_2(MKV, "- elementValue    = %u", elementValue);
+    TRACE_2(MKV, "- elementValue    = %lli", elementValue);
 */
     return elementValue;
 }
@@ -206,25 +262,171 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr)
  * \param *bitstr The bitstream to read.
  * \return The value of the next element.
  */
-uint64_t read_ebml_data_binary(Bitstream_t *bitstr)
+double read_ebml_data_float(Bitstream_t *bitstr)
+{
+    TRACE_2(MKV, "read_ebml_data_float()");
+
+    uint32_t leadingZeroBits = 0;
+    uint32_t elementSizeSize = 0;
+    uint32_t elementSize = 0;
+    float elementValue = 0;
+
+    while (read_bit(bitstr) == 0 && leadingZeroBits < 8)
+        leadingZeroBits++;
+
+    elementSizeSize = (leadingZeroBits + 1) * 7;
+    elementSize = read_bits(bitstr, elementSizeSize) * 8;
+    elementValue = (int64_t)read_bits_64(bitstr, elementSize);
+/*
+    TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
+    TRACE_3(MKV, "- elementSizeSize = %u", elementSizeSize);
+    TRACE_3(MKV, "- elementSize     = %u", elementSize);
+    TRACE_2(MKV, "- elementValue    = %lli", elementValue);
+*/
+    return elementValue;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Read an EBML element.
+ * \param *bitstr The bitstream to read.
+ * \return The value of the next element.
+ */
+uint8_t *read_ebml_data_string(Bitstream_t *bitstr, int size)
+{
+    TRACE_1(MKV, "read_ebml_data_string(%i)", size);
+
+    uint8_t *elementValue = NULL;
+
+    elementValue = malloc(size+1);
+    if (elementValue)
+        for (int i = 0; i < size; i++)
+            elementValue[i] = read_bits(bitstr, 8);
+    elementValue[size] = '\0';
+/*
+    TRACE_1(MKV, "- elementSize     = %u", size);
+    TRACE_1(MKV, "- elementValue    = ");
+    if (elementValue)
+        for (int i = 0; i < size; i++)
+            printf("0x%X ", elementValue[i]);
+*/
+    return elementValue;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Read an EBML element.
+ * \param *bitstr The bitstream to read.
+ * \return The value of the next element.
+ */
+uint8_t *read_ebml_data_binary(Bitstream_t *bitstr)
 {
     TRACE_2(MKV, "read_ebml_data_binary()");
 
     uint32_t leadingZeroBits = 0;
     uint32_t elementSize = 0;
-    uint64_t elementValue = 0;
+    uint8_t *elementValue = NULL;
 
     while (read_bit(bitstr) == 0 && leadingZeroBits < 8)
         leadingZeroBits++;
 
     elementSize = (leadingZeroBits + 1) * 7;
-    elementValue = read_bits_64(bitstr, elementSize);
+    elementValue = malloc(elementSize);
+    if (elementValue)
+        for (uint32_t i = 0; i < elementSize; i++)
+            elementValue[i] = read_bits(bitstr, 8);
+
+    TRACE_1(MKV, "- leadingZeroBits = %u", leadingZeroBits);
+    TRACE_1(MKV, "- elementSize     = %u", elementSize);
 /*
-    TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
-    TRACE_3(MKV, "- elementSize     = %u", elementSize);
-    TRACE_2(MKV, "- elementValue    = %u", elementValue);
+    TRACE_1(MKV, "- elementValue    = ");
+    if (elementValue)
+        for (uint32_t i = 0; i < elementSize; i++)
+            printf("0x%X ", elementValue[i]);
 */
     return elementValue;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml)
+{
+    TRACE_WARNING(MKV, "ebml_parse_unknown()");
+    TRACE_WARNING(MKV, "- offset: %lli", bitstream_get_absolute_byte_offset(bitstr));
+    TRACE_WARNING(MKV, "- size: %lli", ebml_element->size);
+
+    return FAILURE; // FIXME
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current)
+{
+    return SUCCESS; // FIXME
+
+    int retcode = FAILURE;
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+
+    if (current_pos != current->offset_end)
+    {
+        int64_t file_size = bitstream_get_full_size(bitstr);
+        int64_t offset_end = current->offset_end;
+
+        // If the current element have a parent, and its offset_end is 'valid' (not past file size)
+        if (parent && parent->offset_end < file_size)
+        {
+            // If the current offset_end is past its parent offset_end, its probably
+            // broken, and so we will use the one from its parent
+            if (offset_end > parent->offset_end)
+            {
+                offset_end = parent->offset_end;
+            }
+        }
+        else // no parent (or parent with broken offset_end)
+        {
+            // If the current offset_end is past file size
+            if (offset_end > file_size)
+                offset_end = file_size;
+        }
+
+        // If the offset_end is past the last byte of the file, we do not need to jump
+        // The parser will pick that fact and finish up
+        if (offset_end >= file_size)
+        {
+            bitstr->bitstream_offset = file_size;
+            return SUCCESS;
+        }
+
+        // Now, do we need to go forward or backward to reach our goal?
+        // Then, can we move in our current buffer or do we need to reload a new one?
+        if (current_pos < offset_end)
+        {
+            int64_t jump = offset_end - current_pos;
+
+            if (jump < (UINT_MAX/8))
+                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+            else
+                retcode = bitstream_goto_offset(bitstr, offset_end);
+        }
+        else
+        {
+            int64_t rewind = current_pos - offset_end;
+
+            if (rewind > 0)
+            {
+                if (rewind > (UINT_MAX/8))
+                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                else
+                    retcode = bitstream_goto_offset(bitstr, offset_end);
+            }
+        }
+    }
+
+    return retcode;
 }
 
 /* ************************************************************************** */

@@ -25,6 +25,8 @@
 #include "mkv.h"
 #include "mkv_struct.h"
 #include "ebml.h"
+
+#include "../xml_mapper.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
@@ -33,165 +35,315 @@
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* ************************************************************************** */
 
-static int mkv_parse_info(Bitstream_t *bitstr)
+static int mkv_parse_info(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_info()" CLR_RESET);
-    int retcode = FAILURE;
-    uint64_t elementSize = read_ebml_size(bitstr);
-    uint64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
+    int retcode = SUCCESS;
 
-    TRACE_1(MKV, "* info size   = %llu", elementSize);
-    TRACE_1(MKV, "* info offset = %llu", elementOffset);
+    write_ebml_element(element, mkv->xml);
+    if (mkv->xml) fprintf(mkv->xml, "  <title>Info</title>\n");
 
-    while ((uint64_t)bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (element->offset_end))
     {
-        switch (read_ebml_eid(bitstr))
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse sub element content
+        if (mkv->run == true && retcode == SUCCESS)
         {
+            switch (element_sub.eid)
+            {
+            case eid_SegmentUID: {
+                char *SegmentUID = read_ebml_data_binary(bitstr);
+                TRACE_1(MKV, "* SegmentUID   = '%s'", SegmentUID);
+            } break;
+            case eid_SegmentFilename: {
+                char *SegmentFilename = read_ebml_data_binary(bitstr);
+                TRACE_1(MKV, "* Segment Filename   = %lu", SegmentFilename);
+            } break;
+
             default:
-                retcode = FAILURE;
+                retcode = ebml_parse_unknown(bitstr, element, mkv->xml);
                 break;
+            }
         }
+
+        jumpy_mkv(bitstr, NULL, element);
     }
 
-    // TODO finish this
+    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+
     return retcode;
 }
 
 /* ************************************************************************** */
 
-static int mkv_parse_seekhead_seek(Bitstream_t *bitstr)
+static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead_seek()" CLR_RESET);
-    int retcode = FAILURE;
-    int64_t elementSize = (int64_t)read_ebml_size(bitstr);
-    int64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
-    uint64_t subelementSize = 0;
-    uint64_t subelementOffset = 0;
-    uint64_t subelementValue = 0;
+    int retcode = SUCCESS;
 
-    TRACE_1(MKV, "  seekhead_seek size   = %llu", elementSize);
-    TRACE_1(MKV, "  seekhead_seek offset = %llu", elementOffset);
+    uint8_t *SeekID = NULL;
+    uint64_t SeekPosition = 0;
 
-    while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
     {
-        switch (read_ebml_eid(bitstr))
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
         {
-            case element_SeekId:
-                subelementSize = read_ebml_size(bitstr);
-                subelementOffset = bitstream_get_absolute_byte_offset(bitstr);
-                subelementValue = read_bits_64(bitstr, subelementSize*8);
-                TRACE_1(MKV, "    seek_id size   = %llu", subelementSize);
-                TRACE_1(MKV, "    seek_id offset = %llu", elementOffset);
-                TRACE_1(MKV, "    seek_id value  = %llu", subelementValue);
+            switch (element_sub.eid)
+            {
+            case eid_SeekId:
+                SeekID = read_ebml_data_string(bitstr, element_sub.size);
                 break;
-            case element_SeekPosition:
-                subelementSize = read_ebml_size(bitstr);
-                subelementOffset = bitstream_get_absolute_byte_offset(bitstr);
-                subelementValue = read_ebml_data_uint(bitstr);
-                TRACE_1(MKV, "    seek_position size   = %llu", subelementSize);
-                TRACE_1(MKV, "    seek_position offset = %llu", subelementOffset);
-                TRACE_1(MKV, "    seek_position value  = %llu", subelementValue);
+            case eid_SeekPosition:
+                SeekPosition = read_bits_64(bitstr, element_sub.size*8);
                 break;
+
             default:
-                retcode = FAILURE;
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
+            }
         }
+
+        jumpy_mkv(bitstr, element, &element_sub);
     }
+
+#if ENABLE_DEBUG
+    print_ebml_element(element);
+    TRACE_1(MKV, "SeekID        = '%s'", SeekID);
+    TRACE_1(MKV, "SeekPosition    = %llu", SeekPosition);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mkv->xml)
+    {
+        write_ebml_element(element, mkv->xml);
+        fprintf(mkv->xml, "  <title>Seek</title>\n");
+        fprintf(mkv->xml, "  <SeekID>%s</SeekID>\n", SeekID);
+        fprintf(mkv->xml, "  <SeekPosition>%lu</SeekPosition>\n", SeekPosition);
+        fprintf(mkv->xml, "  </atom>\n");
+    }
+
+    free(SeekID);
 
     return retcode;
 }
 
 /* ************************************************************************** */
 
-static int mkv_parse_seekhead(Bitstream_t *bitstr)
+static int mkv_parse_seekhead(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead()" CLR_RESET);
-    int retcode = FAILURE;
-    int64_t elementSize = (int64_t)read_ebml_size(bitstr);
-    int64_t elementOffset = bitstream_get_absolute_byte_offset(bitstr);
+    int retcode = SUCCESS;
+    char fcc[5];
 
-    TRACE_1(MKV, "* seekhead size   = %llu", elementSize);
-    TRACE_1(MKV, "* seekhead offset = %llu", elementOffset);
+    write_ebml_element(element, mkv->xml);
+    if (mkv->xml) fprintf(mkv->xml, "  <title>SeekHead</title>\n");
 
-    while (bitstream_get_absolute_byte_offset(bitstr) < (elementOffset + elementSize))
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
     {
-        switch (read_ebml_eid(bitstr))
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
         {
-            case element_Seek:
-                retcode = mkv_parse_seekhead_seek(bitstr);
+            switch (element_sub.eid)
+            {
+            case eid_Seek:
+                retcode = mkv_parse_seekhead_seek(bitstr, &element_sub, mkv);
                 break;
+
             default:
-                retcode = FAILURE;
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
+            }
+
+            jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
-    // TODO finish this
+    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_segment()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    write_ebml_element(element, mkv->xml);
+    if (mkv->xml) fprintf(mkv->xml, "  <title>Segment</title>\n");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_SeekHead:
+                retcode = mkv_parse_seekhead(bitstr, &element_sub, mkv);
+                break;
+            case eid_Info:
+                retcode = mkv_parse_info(bitstr, &element_sub, mkv);
+                break;
+            case eid_Cluster:
+                TRACE_INFO(MKV, "element_Cluster");
+                retcode = FAILURE;
+                break;
+            case eid_Tracks:
+                TRACE_INFO(MKV, "element_Tracks");
+                retcode = FAILURE;
+                break;
+            case eid_Cues:
+                TRACE_INFO(MKV, "element_Cues");
+                retcode = FAILURE;
+                break;
+            case eid_Attachments:
+                TRACE_INFO(MKV, "element_Attachments");
+                retcode = FAILURE;
+                break;
+            case eid_Chapters:
+                TRACE_INFO(MKV, "element_Chapters");
+                retcode = FAILURE;
+                break;
+            case eid_Tags:
+                TRACE_INFO(MKV, "element_Tags");
+                retcode = FAILURE;
+                break;
+            case eid_void:
+                TRACE_INFO(MKV, "element_Void");
+                retcode = FAILURE;
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+        }
+
+        //jumpy_mkv(bitstr, element, &element_sub);
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+
     return retcode;
 }
 
 /* ************************************************************************** */
 
-static int mkv_parse_segment(Bitstream_t *bitstr)
+int ebml_parse_header(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "ebml_parse_segment()" CLR_RESET);
-    int retcode = FAILURE;
-    int64_t segmentSize = 0;
-    int64_t segmentOffset = 0;
+    TRACE_INFO(MKV, BLD_GREEN "ebml_parse_header()" CLR_RESET);
+    int retcode = SUCCESS;
 
-    if (read_bits(bitstr, 32) == element_Segment)
+    uint64_t EBMLVersion = 1;
+    uint64_t EBMLReadVersion = 1;
+    uint64_t EBMLMaxIDLength = 4;
+    uint64_t EBMLMaxSizeLength = 8;
+    uint8_t *DocType = NULL;
+    uint64_t DocTypeVersion = 1;
+    uint64_t DocTypeReadVersion = 1;
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
     {
-        segmentSize = (int64_t)read_ebml_size(bitstr);
-        segmentOffset = bitstream_get_absolute_byte_offset(bitstr);
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
 
-        TRACE_1(MKV, "* segment size   = %llu", segmentSize);
-        TRACE_1(MKV, "* segment offset = %llu", segmentOffset);
-
-        while (bitstream_get_absolute_byte_offset(bitstr) < (segmentOffset + segmentSize))
+        // Then parse sub element content
+        if (mkv->run == true && retcode == SUCCESS)
         {
-            switch (read_ebml_eid(bitstr))
+            switch (element_sub.eid)
             {
-                case element_SeekHead:
-                    mkv_parse_seekhead(bitstr);
-                    retcode = SUCCESS;
+                case eid_EBMLVersion:
+                    EBMLVersion = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Info:
-                    mkv_parse_info(bitstr);
-                    retcode = SUCCESS;
+                case eid_EBMLReadVersion:
+                    EBMLReadVersion = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Cluster:
-                    TRACE_1(MKV, "element_Cluster");
-                    retcode = SUCCESS;
+                case eid_EBMLMaxIDLength:
+                    EBMLMaxIDLength = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Tracks:
-                    TRACE_1(MKV, "element_Tracks");
-                    retcode = SUCCESS;
+                case eid_EBMLMaxSizeLength:
+                    EBMLMaxSizeLength = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Cues:
-                    TRACE_1(MKV, "element_Cues");
-                    retcode = SUCCESS;
+                case eid_DocType:
+                    DocType = read_ebml_data_string(bitstr, element_sub.size);
                     break;
-                case element_Attachments:
-                    TRACE_1(MKV, "element_Attachments");
-                    retcode = SUCCESS;
+                case eid_DocTypeVersion:
+                    DocTypeVersion = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Chapters:
-                    TRACE_1(MKV, "element_Chapters");
-                    retcode = SUCCESS;
+                case eid_DocTypeReadVersion:
+                    DocTypeReadVersion = read_bits_64(bitstr, element_sub.size*8);
                     break;
-                case element_Tags:
-                    TRACE_1(MKV, "element_Tags");
-                    retcode = SUCCESS;
-                    break;
+
                 default:
-                    retcode = FAILURE;
+                    retcode = ebml_parse_unknown(bitstr, element, mkv->xml);
                     break;
             }
         }
+
+        jumpy_mkv(bitstr, NULL, &element_sub);
     }
+
+#if ENABLE_DEBUG
+    print_ebml_element(element);
+    TRACE_1(MKV, "EBMLVersion        = %llu", EBMLVersion);
+    TRACE_1(MKV, "EBMLReadVersion    = %llu", EBMLReadVersion);
+    TRACE_1(MKV, "EBMLMaxIDLength    = %llu", EBMLMaxIDLength);
+    TRACE_1(MKV, "EBMLMaxSizeLength  = %llu", EBMLMaxSizeLength);
+    TRACE_1(MKV, "DocType            = '%s'", DocType);
+    TRACE_1(MKV, "DocTypeVersion     = %llu", DocTypeVersion);
+    TRACE_1(MKV, "DocTypeReadVersion = %llu", DocTypeReadVersion);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mkv->xml)
+    {
+        write_ebml_element(element, mkv->xml);
+        fprintf(mkv->xml, "  <title>EBML Header</title>\n");
+        fprintf(mkv->xml, "  <EBMLVersion>%llu</EBMLVersion>\n", EBMLVersion);
+        fprintf(mkv->xml, "  <EBMLReadVersion>%llu</EBMLReadVersion>\n", EBMLReadVersion);
+        fprintf(mkv->xml, "  <EBMLMaxIDLength>%llu</EBMLMaxIDLength>\n", EBMLMaxIDLength);
+        fprintf(mkv->xml, "  <EBMLMaxSizeLength>%llu</EBMLMaxSizeLength>\n", EBMLMaxSizeLength);
+        fprintf(mkv->xml, "  <DocType>%s</DocType>\n", DocType);
+        fprintf(mkv->xml, "  <DocTypeVersion>%llu</DocTypeVersion>\n", DocTypeVersion);
+        fprintf(mkv->xml, "  <DocTypeReadVersion>%llu</DocTypeReadVersion>\n", DocTypeReadVersion);
+        fprintf(mkv->xml, "  </atom>\n");
+    }
+
+    free(DocType);
 
     return retcode;
 }
@@ -209,12 +361,51 @@ int mkv_fileParse(MediaFile_t *media)
 
     if (bitstr != NULL)
     {
-        // Parse the EBML header
-        retcode = ebml_parse_header(bitstr);
+        // Init an MKV structure
+        mkv_t mkv;
+        memset(&mkv, 0, sizeof(mkv_t));
 
-        // Parste the segment content
-        if (retcode == SUCCESS)
-            retcode = mkv_parse_segment(bitstr);
+        // A convenient way to stop the parser
+        mkv.run = true;
+
+        // xmlMapper
+        xmlMapperOpen(media, &mkv.xml);
+
+        // Loop on 1st level boxes
+        while (mkv.run == true &&
+               retcode == SUCCESS &&
+               bitstream_get_absolute_byte_offset(bitstr) < media->file_size)
+        {
+            // Read element
+            EbmlElement_t element;
+            retcode = parse_ebml_element(bitstr, &element);
+
+            // Then parse element content
+            if (mkv.run == true &&
+                retcode == SUCCESS &&
+                bitstream_get_absolute_byte_offset(bitstr) < element.offset_end)
+            {
+                switch (element.eid)
+                {
+                case eid_EBML:
+                    retcode = ebml_parse_header(bitstr, &element, &mkv);
+                    break;
+                case eid_Segment:
+                    retcode = mkv_parse_segment(bitstr, &element, &mkv);
+                    break;
+
+                default:
+                    retcode = ebml_parse_unknown(bitstr, &element, mkv.xml);
+                    break;
+                }
+
+                jumpy_mkv(bitstr, NULL, &element);
+            }
+        }
+
+        // xmlMapper
+        if (xmlMapperFinalize(mkv.xml) == SUCCESS)
+            media->container_mapper_fd = mkv.xml;
 
         // Free bitstream
         free_bitstream(&bitstr);

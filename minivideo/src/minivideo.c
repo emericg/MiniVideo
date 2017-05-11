@@ -222,6 +222,9 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
             case CONTAINER_MP4:
                 retcode = mp4_fileParse(input_media);
                 break;
+            case CONTAINER_MKV:
+                retcode = mkv_fileParse(input_media);
+                break;
             case CONTAINER_WAVE:
                 retcode = wave_fileParse(input_media);
                 break;
