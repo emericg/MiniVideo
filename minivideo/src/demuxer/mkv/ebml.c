@@ -100,12 +100,12 @@ int64_t read_ebml_size(Bitstream_t *bitstr)
  * https://matroska.org/technical/specs/index.html
  * https://matroska.org/technical/specs/rfc/index.html
  */
-int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
+int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
 {
     TRACE_3(MKV, "parse_ebml_element()");
     int retcode = SUCCESS;
 
-    if (ebml_element == NULL)
+    if (element == NULL)
     {
         TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
         retcode = FAILURE;
@@ -113,7 +113,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
     else
     {
         // Set element offset
-        ebml_element->offset_start = bitstream_get_absolute_byte_offset(bitstr);
+        element->offset_start = bitstream_get_absolute_byte_offset(bitstr);
 
         // Read element ID
         {
@@ -124,8 +124,8 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
                 ebml_leadingZeroBits++;
 
             ebml_size = (ebml_leadingZeroBits + 1) * 7;
-            ebml_element->eid_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
-            ebml_element->eid = read_bits_64(bitstr, ebml_size) + pow(2, ebml_size);
+            element->eid_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
+            element->eid = read_bits_64(bitstr, ebml_size) + pow(2, ebml_size);
         }
 
         // Read element size
@@ -137,12 +137,12 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
                 ebml_leadingZeroBits++;
 
             ebml_size = (ebml_leadingZeroBits + 1) * 7;
-            ebml_element->size_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
-            ebml_element->size = read_bits_64(bitstr, ebml_size);
+            element->size_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
+            element->size = read_bits_64(bitstr, ebml_size);
         }
 
         // Set end offset
-        ebml_element->offset_end = ebml_element->offset_start + ebml_element->eid_size + ebml_element->size;
+        element->offset_end = element->offset_start + element->eid_size + element->size;
     }
 
     return retcode;
@@ -153,21 +153,21 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element)
 /*!
  * \brief Print an element header.
  */
-void print_ebml_element(EbmlElement_t *ebml_element)
+void print_ebml_element(EbmlElement_t *element)
 {
 #if ENABLE_DEBUG
-    if (ebml_element == NULL)
+    if (element == NULL)
     {
         TRACE_ERROR(RIF, "Invalid EbmlElement_t structure!");
     }
     else
     {
-        TRACE_2(MKV, "* start offset  : %lli", ebml_element->offset_start);
-        TRACE_2(MKV, "* end offset    : %lli", ebml_element->offset_end);
+        TRACE_2(MKV, "* start offset  : %lli", element->offset_start);
+        TRACE_2(MKV, "* end offset    : %lli", element->offset_end);
 
         // Print ebml element header
-        TRACE_2(MKV, "* element ID    : 0x%X", ebml_element->eid);
-        TRACE_2(MKV, "* element size  : %lli", ebml_element->size);
+        TRACE_2(MKV, "* element ID    : 0x%X", element->eid);
+        TRACE_2(MKV, "* element size  : %lli", element->size);
     }
 #endif // ENABLE_DEBUG
 }
@@ -177,33 +177,28 @@ void print_ebml_element(EbmlElement_t *ebml_element)
 /*!
  * \brief Write element header to a file for the xmlMapper.
  */
-void write_ebml_element(EbmlElement_t *ebml_element, FILE *xml)
+void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
 {
     if (xml)
     {
-        if (ebml_element == NULL)
+        if (element == NULL)
         {
             TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
         }
         else
         {
-            fprintf(xml, "  <atom fcc=\"%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
-                    ebml_element->eid,
-                    ebml_element->offset_start,
-                    ebml_element->size);
+            if (title != NULL)
+                fprintf(xml, "  <atom title=\"%s\" id=\"0x%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                        title,
+                        element->eid,
+                        element->offset_start,
+                        element->size);
+            else
+                fprintf(xml, "  <atom title=\"Unknown\" id=\"0x%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                        element->eid,
+                        element->offset_start,
+                        element->size);
         }
-    }
-}
-
-/*!
- * \brief Write element header and title to a file for the xmlMapper.
- */
-void write_ebml_element_title(EbmlElement_t *ebml_element, FILE *xml, const char *title)
-{
-    if (xml)
-    {
-        write_ebml_element(ebml_element, xml);
-        fprintf(xml, "  <title>%s</title>\n", title);
     }
 }
 
@@ -216,12 +211,48 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr, int size)
     return read_bits_64(bitstr, size*8);
 }
 
+uint64_t read_ebml_data_uint2(Bitstream_t *bitstr, EbmlElement_t *element,
+                              FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_uint()");
+    uint64_t value = read_bits_64(bitstr, element->size * 8);
+
+    if (name)
+    {
+        TRACE_1(MKV, "* %s  = %llu", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
 /* ************************************************************************** */
 
 int64_t read_ebml_data_int(Bitstream_t *bitstr, int size)
 {
     TRACE_2(MKV, "read_ebml_data_int()");
     return (int64_t)read_bits_64(bitstr, size*8);
+}
+
+int64_t read_ebml_data_int2(Bitstream_t *bitstr, EbmlElement_t *element,
+                            FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_int2()");
+    int64_t value = (int64_t)read_bits_64(bitstr, element->size * 8);
+
+    if (name)
+    {
+        TRACE_1(MKV, "* %s  = %lli", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
 }
 
 /* ************************************************************************** */
@@ -242,7 +273,7 @@ double read_ebml_data_float(Bitstream_t *bitstr, int size)
 
 /* ************************************************************************** */
 
-uint8_t *read_ebml_data_string(Bitstream_t *bitstr, int size)
+char *read_ebml_data_string(Bitstream_t *bitstr, int size)
 {
     TRACE_1(MKV, "read_ebml_data_string(%i)", size);
 
@@ -289,44 +320,82 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml)
+int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 {
     TRACE_INFO(MKV, "ebml_parse_void()");
 
 #if ENABLE_DEBUG
-    print_ebml_element(ebml_element);
+    print_ebml_element(element);
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (xml)
     {
-        write_ebml_element(ebml_element, xml);
-        fprintf(xml, "  <title>Void</title>\n");
+        write_ebml_element(element, xml, "Void");
         fprintf(xml, "  </atom>\n");
     }
 
-    return skip_bits(bitstr, ebml_element->size*8);
+    return skip_bits(bitstr, element->size*8);
 }
 
 /* ************************************************************************** */
 
-int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml)
+int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 {
     TRACE_WARNING(MKV, "ebml_parse_unknown()");
+    int retcode = SUCCESS;
+
+
+
+
+
+
 
 #if ENABLE_DEBUG
-    print_ebml_element(ebml_element);
+    print_ebml_element(element);
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (xml)
     {
-        write_ebml_element(ebml_element, xml);
-        fprintf(xml, "  <title>UNKNOWN</title>\n");
+        write_ebml_element(element, xml, NULL);
         fprintf(xml, "  </atom>\n");
     }
 
     return FAILURE; // FIXME needs to be recursive
+
+
+
+
+    ///////////////////////////////////////////
+
+    write_ebml_element(element, xml, NULL);
+
+    while (/*mkv->run == true &&*/
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (/*mkv->run == true &&*/ retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, xml);
+                break;
+            }
+
+            jumpy_mkv(bitstr, element, &element_sub);
+        }
+    }
+
+    if (xml) fprintf(xml, "  </atom>\n");
+
+    return retcode;
 }
 
 /* ************************************************************************** */

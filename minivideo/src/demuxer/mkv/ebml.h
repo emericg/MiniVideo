@@ -46,26 +46,33 @@ typedef struct EbmlElement_t
 
 /* ************************************************************************** */
 
-int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *ebml_element);
-void print_ebml_element(EbmlElement_t *ebml_element);
-
-void write_ebml_element(EbmlElement_t *ebml_element, FILE *xml);
-void write_ebml_element_title(EbmlElement_t *ebml_element, FILE *xml, const char *title);
+int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element);
+void print_ebml_element(EbmlElement_t *element);
+void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title);
 
 /* ************************************************************************** */
 
 uint64_t read_ebml_data_uint(Bitstream_t *bitstr, int size);
-int64_t read_ebml_data_int(Bitstream_t *bitstr, int size);
-double read_ebml_data_float(Bitstream_t *bitstr, int size);
+uint64_t read_ebml_data_uint2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-uint8_t *read_ebml_data_string(Bitstream_t *bitstr, int size);
+int64_t read_ebml_data_int(Bitstream_t *bitstr, int size);
+int64_t read_ebml_data_int2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+
+double read_ebml_data_float(Bitstream_t *bitstr, int size);
+double read_ebml_data_float2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+
+char *read_ebml_data_string(Bitstream_t *bitstr, int size);
+char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+
 uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size);
+uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+
 int64_t read_ebml_data_date(Bitstream_t *bitstr, int size);
 
 /* ************************************************************************** */
 
-int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml);
-int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *ebml_element, FILE *xml);
+int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml);
+int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml);
 
 /* ************************************************************************** */
 

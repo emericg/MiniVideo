@@ -330,7 +330,9 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
     QDomElement eSelected;
     if (findElement(xmlMapDatas.documentElement(), "offset", selected_offset, eSelected) == true)
     {
+        QString selected_title = eSelected.attributeNode("title").value();
         QString selected_fcc = eSelected.attributeNode("fcc").value();
+        QString selected_id = eSelected.attributeNode("id").value();
         int selected_size = eSelected.attributeNode("size").value().toInt();
         int selected_version = eSelected.attributeNode("version").value().toInt();
         int selected_flag = eSelected.attributeNode("flag").value().toInt();
@@ -341,7 +343,12 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
         ////////////////////////////////////////////////////////////////////////
         if (eSelected.attributeNode("title").isAttr())
         {
-            ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
+            if (selected_fcc.isEmpty() == false)
+                ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
+            else if (selected_id.isEmpty() == false)
+                ui->labelTitle->setText(eSelected.attributeNode("title").value() + "  <font color=\"black\">(" + selected_id + ")</font>");
+            else
+                ui->labelTitle->setText(eSelected.attributeNode("title").value() + "</font>");
         }
         else
         {
@@ -369,9 +376,13 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
         {
             atom_title = new QLabel(tr("<b>> RIFF Chunk</b>"));
         }
+        else if (eSelected.attributeNode("type").value() == "EBML element")
+        {
+            atom_title = new QLabel(tr("<b>> EBML element</b>"));
+        }
         else
         {
-            atom_title = new QLabel(tr("<b>>Atom</b>"));
+            atom_title = new QLabel(tr("<b>> Atom</b>"));
         }
 
         // Set atom settings
@@ -655,10 +666,18 @@ void tabContainer::xmlStructureParser(QDomNode &root)
 void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
 {
     QString fcc = root.toElement().attributeNode("fcc").value();
+    QString id = root.toElement().attributeNode("id").value();
+    QString title = root.toElement().attributeNode("title").value();
     QString offset = root.toElement().attributeNode("offset").value();
+
     //qDebug() << "> xmlAtomParser() >" << fcc;
 
-    QTreeWidgetItem *child_item = createChildItem(item, fcc, offset);
+    QTreeWidgetItem *child_item;
+    if (fcc.isEmpty() == false)
+        child_item = createChildItem(item, fcc, offset);
+    else if (id.isEmpty() == false)
+        child_item = createChildItem(item, title, offset);
+
     child_item->setIcon(0, QIcon(":/img/img/C.png"));
     if (fcc != "trak" && fcc != "moof") // don't expand tracks && moof
     {

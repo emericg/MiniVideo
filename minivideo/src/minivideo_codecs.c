@@ -719,6 +719,13 @@ const char *getContainerProfileString(ContainerProfiles_e profile, bool long_des
             return "Broadcast Wave Format 64";
             break;
 
+        case PROF_MKV_MATROSKA:
+            return "Matroska";
+            break;
+        case PROF_MKV_WEBM:
+            return "WebM";
+            break;
+
         case PROF_UNKNOWN:
         default:
             return "UNKNOWN";

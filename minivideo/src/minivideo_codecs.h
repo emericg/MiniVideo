@@ -88,6 +88,9 @@ typedef enum ContainerProfiles_e
     PROF_WAVE_BWFv2     = 19,
     PROF_WAVE_BWF64     = 20,
 
+    PROF_MKV_MATROSKA   = 24,
+    PROF_MKV_WEBM       = 25
+
 } ContainerProfiles_e;
 
 //! Audio and Video compression standards (codecs)
