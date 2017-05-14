@@ -253,7 +253,19 @@ typedef enum EbmlElement_e
             eid_TrackJoinUID = 0xED,
     eid_ContentEncodings = 0x6D80,
         eid_ContentEncoding = 0x6240,
-            // TODO
+            eid_ContentEncodingOrder = 0x5031,
+            eid_ContentEncodingScope = 0x5032,
+            eid_ContentEncodingType = 0x5033,
+            eid_ContentCompression = 0x5034,
+                eid_ContentCompAlgo = 0x4254,
+                eid_ContentCompSettings = 0x4255,
+            eid_ContentEncryption = 0x5035,
+                eid_ContentEncAlgo = 0x47E1,
+                eid_ContentEncKeyID = 0x47E2,
+                eid_ContentSignature = 0x47E3,
+                eid_ContentSigKeyID = 0x47E4,
+                eid_ContentSigAlgo = 0x47E5,
+                eid_ContentSigHashAlgo = 0x47E6,
 
     eid_Cues = 0x1C53BB6B,              //!< (level 1) Cueing Data
         eid_CuePoint = 0xBB,            //!< Contains all information relative to a seek point in the Segment
@@ -277,10 +289,18 @@ typedef enum EbmlElement_e
             eid_FileUID = 0x46AE,
 
     eid_Chapters = 0x1043A770,          //!< (level 1) Chapter
-        // TODO
+        eid_EditionEntry = 0x45B9,
+            eid_EditionUID = 0x45BC,
+            eid_EditionFlagHidden = 0x45BD,
+            eid_EditionFlagDefault = 0x45DB,
+            eid_EditionFlagOrdered = 0x45DD,
+            eid_ChapterAtom = 0xB6,
+                // TODO
 
     eid_Tags = 0x1254C367,              //!< (level 1) Tagging
-        // TODO
+        eid_Tag = 0x7373,
+            eid_Targets = 0x63C0,
+                // TODO
 
     eid_void = 0xEC,                    //!< (global)
     eid_crc32 = 0xBF                    //!< (global)

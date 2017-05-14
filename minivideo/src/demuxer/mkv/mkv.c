@@ -122,9 +122,7 @@ static int mkv_parse_info(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
             switch (element_sub.eid)
             {
             case eid_SegmentUID:
-                mkv->info.SegmentUID = read_ebml_data_binary(bitstr, element_sub.size);
-                TRACE_1(MKV, "* SegmentUID   = '%s'", mkv->info.SegmentUID);
-                if (mkv->xml) fprintf(mkv->xml, "  <SegmentUID>%s</SegmentUID>\n", mkv->info.SegmentUID);
+                mkv->info.SegmentUID = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "SegmentUID");
                 break;
             case eid_SegmentFilename:
                 mkv->info.SegmentFilename = read_ebml_data_string(bitstr, element_sub.size);
@@ -218,6 +216,9 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead_seek()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Seek");
+
     uint8_t *SeekID = NULL;
     uint64_t SeekPosition = 0;
 
@@ -235,10 +236,11 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
             switch (element_sub.eid)
             {
             case eid_SeekId:
-                SeekID = read_ebml_data_string(bitstr, element_sub.size);
+                SeekID = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "SeekID");
+                free(SeekID);
                 break;
             case eid_SeekPosition:
-                SeekPosition = read_bits_64(bitstr, element_sub.size*8);
+                SeekPosition = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "SeekPosition");
                 break;
 
             default:
@@ -250,22 +252,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
         jumpy_mkv(bitstr, element, &element_sub);
     }
 
-#if ENABLE_DEBUG
-    print_ebml_element(element);
-    TRACE_1(MKV, "SeekID        = '%s'", SeekID);
-    TRACE_1(MKV, "SeekPosition    = %llu", SeekPosition);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mkv->xml)
-    {
-        write_ebml_element(element, mkv->xml, "Seek");
-        fprintf(mkv->xml, "  <SeekID>%s</SeekID>\n", SeekID);
-        fprintf(mkv->xml, "  <SeekPosition>%lu</SeekPosition>\n", SeekPosition);
-        fprintf(mkv->xml, "  </atom>\n");
-    }
-
-    free(SeekID);
+    fprintf(mkv->xml, "  </atom>\n");
 
     return retcode;
 }
@@ -277,6 +264,7 @@ static int mkv_parse_seekhead(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_seekhead()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "SeekHead");
 
     while (mkv->run == true &&
@@ -318,6 +306,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_segment()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Segment");
 
     while (mkv->run == true &&

@@ -175,7 +175,7 @@ static int mkv_parse_track_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t
                 break;
 
             case eid_MasteringMetadata:
-                retcode = mkv_parse_track_entry_video_colour_mastering(bitstr, element, mkv->xml);
+                retcode = mkv_parse_track_entry_video_colour_mastering(bitstr, element, mkv);
                 break;
 
             default:
@@ -299,7 +299,7 @@ static int mkv_parse_track_entry_video(Bitstream_t *bitstr, EbmlElement_t *eleme
                 if (mkv->xml) fprintf(mkv->xml, "  <AspectRatioType>%lu</AspectRatioType>\n", AspectRatioType);
                 break;
             case eid_ColourSpace:
-                ColourSpace = read_ebml_data_string(bitstr, element_sub.size);
+                ColourSpace = read_ebml_data_binary(bitstr, element_sub.size);
                 TRACE_1(MKV, "ColourSpace      = '%s'", ColourSpace);
                 fprintf(mkv->xml, "  <ColourSpace>%s</ColourSpace>\n", ColourSpace);
                 break;
@@ -656,7 +656,7 @@ static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mk
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int mkv_parse_track(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track()" CLR_RESET);
     int retcode = SUCCESS;

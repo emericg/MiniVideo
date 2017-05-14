@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-int mkv_parse_track(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv);
+int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv);
 
 /* ************************************************************************** */
 #endif // PARSER_MKV_TRACKS_H

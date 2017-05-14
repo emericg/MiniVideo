@@ -142,7 +142,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
         }
 
         // Set end offset
-        element->offset_end = element->offset_start + element->eid_size + element->size;
+        element->offset_end = element->offset_start + element->eid_size + element->size_size +  element->size;
     }
 
     return retcode;
@@ -192,12 +192,13 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
                         title,
                         element->eid,
                         element->offset_start,
-                        element->size);
+                        (element->eid_size + element->size_size +  element->size));
+
             else
                 fprintf(xml, "  <atom title=\"Unknown\" id=\"0x%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
                         element->eid,
                         element->offset_start,
-                        element->size);
+                        (element->eid_size + element->size_size +  element->size));
         }
     }
 }
@@ -275,46 +276,104 @@ double read_ebml_data_float(Bitstream_t *bitstr, int size)
 
 char *read_ebml_data_string(Bitstream_t *bitstr, int size)
 {
-    TRACE_1(MKV, "read_ebml_data_string(%i)", size);
+    TRACE_2(MKV, "read_ebml_data_string(%i)", size);
 
-    uint8_t *elementValue = NULL;
+    char *value = NULL;
 
-    elementValue = malloc(size+1);
-    if (elementValue)
-        for (int i = 0; i < size; i++)
-            elementValue[i] = read_bits(bitstr, 8);
-    elementValue[size] = '\0';
-/*
-    TRACE_1(MKV, "- elementSize     = %u", size);
-    TRACE_1(MKV, "- elementValue    = ");
-    if (elementValue)
-        for (int i = 0; i < size; i++)
-            printf("0x%X ", elementValue[i]);
-*/
-    return elementValue;
+    value = malloc(size+1);
+    if (value)
+    {
+        if (value)
+            for (int i = 0; i < size; i++)
+                value[i] = read_bits(bitstr, 8);
+        value[size] = '\0';
+    }
+
+    return value;
+}
+
+char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element,
+                             FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_string(%i)", element->size);
+
+    char *value = NULL;
+
+    value = malloc(element->size+1);
+    if (value)
+    {
+        for (int i = 0; i < element->size; i++)
+            value[i] = read_bits(bitstr, 8);
+        value[element->size] = '\0';
+
+        if (name)
+        {
+            TRACE_1(MKV, "* %s  = '%s'", name, value);
+
+            if (xml)
+            {
+                fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+                fprintf(xml, "<%s>\n", name);
+            }
+        }
+    }
+
+    return value;
 }
 
 /* ************************************************************************** */
 
 uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size)
 {
-    TRACE_1(MKV, "read_ebml_data_binary(%i)", size);
+    TRACE_2(MKV, "read_ebml_data_binary(%i)", size);
 
-    uint8_t *elementValue = NULL;
+    uint8_t *value = NULL;
 
-    elementValue = malloc(size+1);
-    if (elementValue)
-        for (int i = 0; i < size; i++)
-            elementValue[i] = read_bits(bitstr, 8);
-    elementValue[size] = '\0';
-/*
-    TRACE_1(MKV, "- elementSize     = %u", size);
-    TRACE_1(MKV, "- elementValue    = ");
-    if (elementValue)
-        for (int i = 0; i < size; i++)
-            printf("0x%X ", elementValue[i]);
-*/
-    return elementValue;
+    value = malloc(size+1);
+    if (value)
+    {
+        if (value)
+            for (int i = 0; i < size; i++)
+                value[i] = read_bits(bitstr, 8);
+        value[size] = '\0';
+    }
+
+    return value;
+}
+
+uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element,
+                                FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_binary2(%i)", element->size);
+
+    uint8_t *value = NULL;
+
+    value = malloc(element->size+1);
+    if (value)
+    {
+        for (int i = 0; i < element->size; i++)
+            value[i] = read_bits(bitstr, 8);
+        value[element->size] = '\0';
+
+        if (name)
+        {
+#if ENABLE_DEBUG
+            TRACE_1(MKV, "* %s  = 0x", name);
+            for (int i = 0; i < element->size; i++)
+                printf("%X", value[i]);
+#endif // ENABLE_DEBUG
+
+            if (xml)
+            {
+                fprintf(xml, "  <%s>0x", name);
+                for (int i = 0; i < element->size; i++)
+                    fprintf(xml, "%X", value[i]);
+                fprintf(xml, "</%s>\n", name);
+            }
+        }
+    }
+
+    return value;
 }
 
 /* ************************************************************************** */
@@ -326,7 +385,7 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
 #if ENABLE_DEBUG
     print_ebml_element(element);
-#endif // ENABLE_DEBUG
+#endif
 
     // xmlMapper
     if (xml)
@@ -345,31 +404,13 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
     TRACE_WARNING(MKV, "ebml_parse_unknown()");
     int retcode = SUCCESS;
 
-
-
-
-
-
-
-#if ENABLE_DEBUG
     print_ebml_element(element);
-#endif // ENABLE_DEBUG
+    write_ebml_element(element, xml, NULL);
 
-    // xmlMapper
-    if (xml)
-    {
-        write_ebml_element(element, xml, NULL);
-        fprintf(xml, "  </atom>\n");
-    }
-
+    if (xml) fprintf(xml, "  </atom>\n");
     return FAILURE; // FIXME needs to be recursive
 
-
-
-
     ///////////////////////////////////////////
-
-    write_ebml_element(element, xml, NULL);
 
     while (/*mkv->run == true &&*/
            retcode == SUCCESS &&
