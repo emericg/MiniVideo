@@ -40,9 +40,9 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_translate(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_translate()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_translate()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Translate");
@@ -75,7 +75,7 @@ static int mkv_parse_track_entry_translate(Bitstream_t *bitstr, EbmlElement_t *e
                 if (mkv->xml) fprintf(mkv->xml, "  <TrackTranslateCodec>%lu</TrackTranslateCodec>\n", TrackTranslateCodec);
                 break;
             case eid_TrackTranslateTrackID:
-                TrackTranslateTrackID = read_ebml_data_string(bitstr, element_sub.size);
+                TrackTranslateTrackID = read_ebml_data_binary(bitstr, element_sub.size);
                 TRACE_1(MKV, "TrackTranslateTrackID      = '%s'", TrackTranslateTrackID);
                 fprintf(mkv->xml, "  <TrackTranslateTrackID>%s</TrackTranslateTrackID>\n", TrackTranslateTrackID);
                 break;
@@ -98,9 +98,9 @@ static int mkv_parse_track_entry_translate(Bitstream_t *bitstr, EbmlElement_t *e
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_video_colour_mastering(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_video_colour_mastering()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_colour_mastering()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Mastering Metadata");
@@ -134,9 +134,9 @@ static int mkv_parse_track_entry_video_colour_mastering(Bitstream_t *bitstr, Ebm
 
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_video_colour()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_colour()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Colour");
@@ -175,7 +175,7 @@ static int mkv_parse_track_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t
                 break;
 
             case eid_MasteringMetadata:
-                retcode = mkv_parse_track_entry_video_colour_mastering(bitstr, element, mkv);
+                retcode = mkv_parse_tracks_entry_video_colour_mastering(bitstr, element, mkv);
                 break;
 
             default:
@@ -192,9 +192,9 @@ static int mkv_parse_track_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t
     return retcode;
 }
 
-static int mkv_parse_track_entry_video(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_video()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Video");
@@ -305,7 +305,7 @@ static int mkv_parse_track_entry_video(Bitstream_t *bitstr, EbmlElement_t *eleme
                 break;
 
             case eid_Colour:
-                retcode = mkv_parse_track_entry_video_colour(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_video_colour(bitstr, &element_sub, mkv);
                 break;
 
             default:
@@ -327,9 +327,9 @@ static int mkv_parse_track_entry_video(Bitstream_t *bitstr, EbmlElement_t *eleme
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_audio(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_audio()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_audio()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Audio");
@@ -390,9 +390,9 @@ static int mkv_parse_track_entry_audio(Bitstream_t *bitstr, EbmlElement_t *eleme
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_operation(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_operation()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_operation()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Entry Operation");
@@ -427,9 +427,9 @@ static int mkv_parse_track_entry_operation(Bitstream_t *bitstr, EbmlElement_t *e
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry_contentencoding(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry_contentencoding()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_contentencoding()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Content Encoding");
@@ -463,9 +463,9 @@ static int mkv_parse_track_entry_contentencoding(Bitstream_t *bitstr, EbmlElemen
 
 /* ************************************************************************** */
 
-static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track_entry()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry()" CLR_RESET);
     int retcode = SUCCESS;
 
     write_ebml_element(element, mkv->xml, "Track Entry");
@@ -482,11 +482,11 @@ static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mk
     uint64_t DefaultDuration = 0;
     uint64_t DefaultDecodedFieldDuration = 0;
     uint64_t MaxBlockAdditionID = 0;
-    uint8_t *Name = NULL;
-    uint8_t *Language = NULL;
-    uint8_t *CodecID = NULL;
+    char *Name = NULL;
+    char *Language = NULL;
+    char *CodecID = NULL;
     uint8_t *CodecPrivate = NULL;
-    uint8_t *CodecName = NULL;
+    char *CodecName = NULL;
     uint64_t AttachmentLink = 0;
     uint64_t CodecDecodeAll = 0;
     uint64_t TrackOverlay = 0;
@@ -582,7 +582,7 @@ static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mk
                 fprintf(mkv->xml, "  <CodecID>%s</CodecID>\n", CodecID);
                 break;
             case eid_CodecPrivate:
-                CodecPrivate = read_ebml_data_string(bitstr, element_sub.size);
+                CodecPrivate = read_ebml_data_binary(bitstr, element_sub.size);
                 TRACE_1(MKV, "CodecPrivate        = '%s'", CodecPrivate);
                 fprintf(mkv->xml, "  <CodecPrivate>%s</CodecPrivate>\n", CodecPrivate);
                 break;
@@ -618,19 +618,19 @@ static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mk
                 break;
 
             case eid_TrackTranslate:
-                retcode = mkv_parse_track_entry_translate(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_translate(bitstr, &element_sub, mkv);
                 break;
             case eid_Video:
-                retcode = mkv_parse_track_entry_video(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_video(bitstr, &element_sub, mkv);
                 break;
             case eid_Audio:
-                retcode = mkv_parse_track_entry_audio(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_audio(bitstr, &element_sub, mkv);
                 break;
             case eid_TrackOperation:
-                retcode = mkv_parse_track_entry_operation(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_operation(bitstr, &element_sub, mkv);
                 break;
             case eid_ContentEncodings:
-                retcode = mkv_parse_track_entry_contentencoding(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_contentencoding(bitstr, &element_sub, mkv);
                 break;
 
             default:
@@ -658,10 +658,10 @@ static int mkv_parse_track_entry(Bitstream_t *bitstr, EbmlElement_t *element, mk
 
 int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
-    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_track()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks()" CLR_RESET);
     int retcode = SUCCESS;
 
-    write_ebml_element(element, mkv->xml, "Track");
+    write_ebml_element(element, mkv->xml, "Tracks");
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -677,7 +677,7 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             switch (element_sub.eid)
             {
             case eid_TrackEntry:
-                retcode = mkv_parse_track_entry(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry(bitstr, &element_sub, mkv);
                 break;
 
             default:

@@ -333,7 +333,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
                 retcode = FAILURE;
                 break;
             case eid_Tracks:
-                retcode = mkv_parse_track(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks(bitstr, &element_sub, mkv);
                 break;
             case eid_Cues:
                 TRACE_INFO(MKV, "element_Cues");
