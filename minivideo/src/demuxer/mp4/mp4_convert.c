@@ -22,7 +22,7 @@
  */
 
 // minivideo headers
-#include "mp4.h"
+#include "mp4_convert.h"
 #include "mp4_struct.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
@@ -40,6 +40,46 @@
 /* ************************************************************************** */
 
 /*!
+ * \brief mp4_convert
+ * \param media
+ * \param mp4
+ * \return
+ */
+int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
+{
+    int status = SUCCESS;
+
+    // File metadatas
+    media->duration = (double)mp4->duration / (double)mp4->timescale * 1000.0;
+    media->creation_time = (double)mp4->creation_time ;
+    media->modification_time = (double)mp4->modification_time ;
+
+    media->container_profile = mp4->profile;
+
+    // Tracks metadatas
+    if (mp4->tracks_count == 0) // Check if we have extracted tracks
+    {
+        TRACE_WARNING(MP4, "No tracks extracted from MP4 file!");
+    }
+    else // Convert tracks
+    {
+        unsigned int i = 0;
+        for (i = 0; i < mp4->tracks_count; i++)
+        {
+            status = mp4_convert_track(media, mp4->tracks[i]);
+            mp4_clean_track(&(mp4->tracks[i]));
+        }
+
+        if (media->tracks_video_count == 0 && media->tracks_audio_count == 0)
+        {
+            TRACE_WARNING(MP4, "No tracks converted successfully!");
+        }
+    }
+
+    return status;
+}
+
+/*!
  * \brief Convert a Mp4Track_t structure into a generic MediaStream_t.
  * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
  * \param *track: A pointer to the mp4 track structure we want to extract data from.
@@ -48,10 +88,10 @@
  * - Use STSZ box content to get back all samples.
  * - Use STSS box content to get back IDR samples only.
  */
-bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
+int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 {
-    TRACE_INFO(MP4, BLD_GREEN "convertTrack()" CLR_RESET);
-    bool retcode = SUCCESS;
+    TRACE_INFO(MP4, BLD_GREEN "mp4_convert_track()" CLR_RESET);
+    int retcode = SUCCESS;
     MediaStream_t *map = NULL;
 
     if (media == NULL || track == NULL)
@@ -69,7 +109,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         if (sample_count <= 0)
             sample_count = 1;
 
-        if (track->handlerType == HANDLER_AUDIO)
+        if (track->handlerType == MP4_HANDLER_AUDIO)
         {
             retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
             if (retcode == SUCCESS)
@@ -78,7 +118,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 media->tracks_audio_count++;
             }
         }
-        else if (track->handlerType == HANDLER_VIDEO)
+        else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
             retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count + track->sps_count + track->pps_count);
             if (retcode == SUCCESS)
@@ -87,9 +127,9 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 media->tracks_video_count++;
             }
         }
-        else if (track->handlerType == HANDLER_SUBT ||
-                 track->handlerType == HANDLER_SBTL ||
-                 track->handlerType == HANDLER_TEXT)
+        else if (track->handlerType == MP4_HANDLER_SUBT ||
+                 track->handlerType == MP4_HANDLER_SBTL ||
+                 track->handlerType == MP4_HANDLER_TEXT)
         {
             retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], sample_count);
             if (retcode == SUCCESS)
@@ -101,7 +141,8 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
         else
         {
             char fcc[5];
-            TRACE_1(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)", track->id, getFccString_le(track->handlerType, fcc));
+            TRACE_1(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)",
+                    track->id, getFccString_le(track->handlerType, fcc));
 
             retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
             if (retcode == SUCCESS)
@@ -150,14 +191,14 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
 
         map->track_id = track->id;
 
-        if (track->handlerType == HANDLER_AUDIO)
+        if (track->handlerType == MP4_HANDLER_AUDIO)
         {
             map->stream_type = stream_AUDIO;
             map->sampling_rate = track->sample_rate_hz;
             map->channel_count = track->channel_count;
             map->bit_per_sample = track->sample_size_bits;
         }
-        else if (track->handlerType == HANDLER_VIDEO)
+        else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
             map->stream_type = stream_VIDEO;
             map->width = track->width;
@@ -219,21 +260,21 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                 }
             }
         }
-        else if (track->handlerType == HANDLER_SUBT ||
-                 track->handlerType == HANDLER_SBTL ||
-                 track->handlerType == HANDLER_TEXT)
+        else if (track->handlerType == MP4_HANDLER_SUBT ||
+                 track->handlerType == MP4_HANDLER_SBTL ||
+                 track->handlerType == MP4_HANDLER_TEXT)
         {
             map->stream_type = stream_TEXT;
         }
-        else if (track->handlerType == HANDLER_TMCD)
+        else if (track->handlerType == MP4_HANDLER_TMCD)
         {
             map->stream_type = stream_TMCD;
         }
-        else if (track->handlerType == HANDLER_META)
+        else if (track->handlerType == MP4_HANDLER_META)
         {
             map->stream_type = stream_META;
         }
-        else if (track->handlerType == HANDLER_HINT)
+        else if (track->handlerType == MP4_HANDLER_HINT)
         {
             map->stream_type = stream_HINT;
         }
@@ -260,7 +301,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
             unsigned sid = i + track->sps_count + track->pps_count; // Sample id
 
             // Set sample type
-            if (track->handlerType == HANDLER_VIDEO)
+            if (track->handlerType == MP4_HANDLER_VIDEO)
             {
                 map->sample_type[sid] = sample_VIDEO;
 
@@ -270,17 +311,17 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
                         map->sample_type[sid] = sample_VIDEO_SYNC;
                 }
             }
-            else if (track->handlerType == HANDLER_AUDIO)
+            else if (track->handlerType == MP4_HANDLER_AUDIO)
             {
                 map->sample_type[sid] = sample_AUDIO;
             }
-            else if (track->handlerType == HANDLER_SUBT ||
-                     track->handlerType == HANDLER_SBTL ||
-                     track->handlerType == HANDLER_TEXT)
+            else if (track->handlerType == MP4_HANDLER_SUBT ||
+                     track->handlerType == MP4_HANDLER_SBTL ||
+                     track->handlerType == MP4_HANDLER_TEXT)
             {
                 map->sample_type[sid] = sample_TEXT;
             }
-            else if (track->handlerType == HANDLER_TMCD)
+            else if (track->handlerType == MP4_HANDLER_TMCD)
             {
                 map->sample_type[sid] = sample_TMCD;
             }
@@ -500,7 +541,7 @@ bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track)
  * \brief Free an Mp4Track_t structure.
  * \param **track_ptr A pointer to the Mp4Track_t structure we want to freed.
  */
-void freeTrack(Mp4Track_t **track_ptr)
+void mp4_clean_track(Mp4Track_t **track_ptr)
 {
     if (*track_ptr != NULL)
     {

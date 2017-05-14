@@ -30,9 +30,11 @@
 
 /* ************************************************************************** */
 
-bool convertTrack(MediaFile_t *media, Mp4_t *mp4, Mp4Track_t *track);
+int mp4_convert(MediaFile_t *media, Mp4_t *mp4);
 
-void freeTrack(Mp4Track_t **track_ptr);
+int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track);
+
+void mp4_clean_track(Mp4Track_t **track_ptr);
 
 /* ************************************************************************** */
 #endif // PARSER_MP4_CONVERT_H

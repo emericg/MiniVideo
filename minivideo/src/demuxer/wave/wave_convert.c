@@ -22,14 +22,12 @@
  */
 
 // minivideo headers
-#include "wave.h"
+#include "wave_convert.h"
 #include "wave_struct.h"
 #include "../riff/riff.h"
 #include "../riff/riff_struct.h"
-#include "../xml_mapper.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
-#include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
@@ -162,7 +160,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
 
 /* ************************************************************************** */
 
-int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave)
+int wave_indexer(MediaFile_t *media, wave_t *wave)
 {
     TRACE_INFO(WAV, BLD_GREEN "wave_indexer()" CLR_RESET);
     int retcode = SUCCESS;

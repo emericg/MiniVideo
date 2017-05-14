@@ -298,15 +298,15 @@ typedef enum Mp4BoxType_e
  */
 typedef enum Mp4HandlerType_e
 {
-    HANDLER_AUDIO = 0x736F756E, //!< 'soun'
-    HANDLER_VIDEO = 0x76696465, //!< 'vide'
-    HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
-    HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
-    HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
+    MP4_HANDLER_AUDIO = 0x736F756E, //!< 'soun'
+    MP4_HANDLER_VIDEO = 0x76696465, //!< 'vide'
+    MP4_HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
+    MP4_HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
+    MP4_HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
 
-    HANDLER_SUBT  = 0x73756274, //!< 'subt'
-    HANDLER_SBTL  = 0x7362746c, //!< 'sbtl' // QuickTime Subtitle track
-    HANDLER_TEXT  = 0x74657874  //!< 'text'
+    MP4_HANDLER_SUBT  = 0x73756274, //!< 'subt'
+    MP4_HANDLER_SBTL  = 0x7362746c, //!< 'sbtl' // QuickTime Subtitle track
+    MP4_HANDLER_TEXT  = 0x74657874  //!< 'text'
 
     // sdsm // SceneDescriptionStream
     // odsm // ObjectDescriptorStream

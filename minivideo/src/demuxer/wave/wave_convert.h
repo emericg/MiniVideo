@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-int wave_indexer(Bitstream_t *bitstr, MediaFile_t *media, wave_t *wave);
+int wave_indexer(MediaFile_t *media, wave_t *wave);
 
 int wave_indexer_initmap(MediaFile_t *media, wave_t *wave);
 

@@ -283,7 +283,7 @@ int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, avi_t *avi,  AviTr
 
             // Parse index entries
             int64_t qwOffset_base = endian_flip_64(read_bits_64(bitstr, 64));
-            uint32_t dwReserved3 = endian_flip_32(read_bits(bitstr, 32));
+            /*uint32_t dwReserved3 =*/ endian_flip_32(read_bits(bitstr, 32));
 
             TRACE_1(AVI, " > qwOffset_base  : %lli", qwOffset_base);
 

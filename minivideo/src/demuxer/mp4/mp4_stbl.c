@@ -167,24 +167,24 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         // Then parse subbox content (> SampleEntry extensions)
         switch (track->handlerType)
         {
-            case HANDLER_AUDIO:
+            case MP4_HANDLER_AUDIO:
                 parse_stsd_audio(bitstr, &box_subheader, track, mp4);
                 break;
 
-            case HANDLER_VIDEO:
+            case MP4_HANDLER_VIDEO:
                 parse_stsd_video(bitstr, &box_subheader, track, mp4);
                 break;
 
-            case HANDLER_TMCD:
+            case MP4_HANDLER_TMCD:
                 parse_stsd_tmcd(bitstr, &box_subheader, track, mp4);
                 break;
 
-            case HANDLER_TEXT:
+            case MP4_HANDLER_TEXT:
                 parse_stsd_text(bitstr, &box_subheader, track, mp4);
                 break;
 
-            case HANDLER_META:
-            case HANDLER_HINT:
+            case MP4_HANDLER_META:
+            case MP4_HANDLER_HINT:
             default:
                 TRACE_1(MP4, "Unknown track type, skipped...");
                 break;

@@ -269,7 +269,6 @@ static int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_ilst()" CLR_RESET);
     int retcode = SUCCESS;
-    char fcc[5];
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
@@ -1562,41 +1561,8 @@ int mp4_fileParse(MediaFile_t *media)
         if (xmlMapperFinalize(mp4.xml) == SUCCESS)
             media->container_mapper_fd = mp4.xml;
 
-        // File metadatas
-        media->duration = (double)mp4.duration / (double)mp4.timescale * 1000.0;
-        media->creation_time = (double)mp4.creation_time ;
-        media->modification_time = (double)mp4.modification_time ;
-
-        media->container_profile = mp4.profile;
-
-        // Tracks metadatas
-        // Check if we have extracted tracks
-        if (mp4.tracks_count == 0)
-        {
-            TRACE_WARNING(MP4, "No tracks extracted!");
-            retcode = FAILURE;
-        }
-        else // Convert tracks
-        {
-            unsigned int i = 0;
-            for (i = 0; i < mp4.tracks_count; i++)
-            {
-                convertTrack(media, &mp4, mp4.tracks[i]);
-
-                // Free track structure
-                freeTrack(&(mp4.tracks[i]));
-            }
-
-            if (media->tracks_video_count == 0 &&  media->tracks_audio_count == 0)
-            {
-                TRACE_WARNING(MP4, "No tracks extracted!");
-                retcode = FAILURE;
-            }
-            else
-            {
-                retcode = SUCCESS;
-            }
-        }
+        // Convert internal MP4 representation into a MediaFile_t
+        mp4_convert(media, &mp4);
 
         // Free bitstream
         free_bitstream(&bitstr);

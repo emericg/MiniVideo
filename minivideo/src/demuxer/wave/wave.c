@@ -825,8 +825,8 @@ int wave_fileParse(MediaFile_t *media)
         if (xmlMapperFinalize(wave.xml) == SUCCESS)
             media->container_mapper_fd = wave.xml;
 
-        // Go for the indexation
-        retcode = wave_indexer(bitstr, media, &wave),
+        // Convert internal WAVE representation into a MediaFile_t
+        retcode = wave_indexer(media, &wave),
         media->container_profile = wave.profile;
 
         // Free wave_t structure content

@@ -40,7 +40,6 @@
  * available at https://developer.apple.com/library/mac/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html
  *
  * \todo Stop parsing if we are after the end of the 'moov' box.
- * \todo Fix convertTrack() algorithms complexity.
  */
 int mp4_fileParse(MediaFile_t *media);
 
