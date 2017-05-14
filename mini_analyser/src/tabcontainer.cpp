@@ -330,7 +330,7 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
     QDomElement eSelected;
     if (findElement(xmlMapDatas.documentElement(), "offset", selected_offset, eSelected) == true)
     {
-        QString selected_title = eSelected.attributeNode("title").value();
+        //QString selected_title = eSelected.attributeNode("title").value();
         QString selected_fcc = eSelected.attributeNode("fcc").value();
         QString selected_id = eSelected.attributeNode("id").value();
         int selected_size = eSelected.attributeNode("size").value().toInt();
@@ -679,7 +679,9 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
         child_item = createChildItem(item, title, offset);
 
     child_item->setIcon(0, QIcon(":/img/img/C.png"));
-    if (fcc != "trak" && fcc != "moof") // don't expand tracks && moof
+
+    // Don't expand everything
+    if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues")
     {
         ui->treeWidget->setItemExpanded(child_item, true);
     }
@@ -693,7 +695,7 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
             if (e.tagName() == "atom")
             {
                 xmlAtomParser(e, child_item);
-                if (fcc == "trak" || fcc == "strl")
+                if (fcc == "trak" || fcc == "strl" || title == "Track Entry")
                     child_item->setIcon(0, QIcon(":/img/img/T.png"));
                 else
                     child_item->setIcon(0, QIcon(":/img/img/L.png"));
