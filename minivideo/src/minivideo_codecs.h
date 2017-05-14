@@ -136,8 +136,10 @@ typedef enum Codecs_e
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
-    CODEC_RA_28         = 64,   //!< Real Audio 28.8
-    CODEC_RA_cook       = 65,   //!< Real Audio cook
+    CODEC_RA_14         = 64,   //!< Real Audio 14.4
+    CODEC_RA_28         = 65,   //!< Real Audio 28.8
+    CODEC_RA_cook       = 66,   //!< Real Audio cook
+    CODEC_RA_ralf       = 67,   //!< Real Audio Lossless Format
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 
@@ -254,6 +256,7 @@ typedef enum CodecProfiles_e
 
     PROF_MPEG4_SP,
     PROF_MPEG4_ASP,
+    PROF_MPEG4_AP,
     PROF_MPEG4_SStP,
 
     PROF_H264_CBP,

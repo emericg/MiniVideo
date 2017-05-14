@@ -328,11 +328,17 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
                     return "AMR";
                 break;
 
+            case CODEC_RA_14:
+                return "RealAudio 14.4";
+                break;
             case CODEC_RA_28:
                 return "RealAudio 28.8";
                 break;
             case CODEC_RA_cook:
                 return "RealAudio cook";
+                break;
+            case CODEC_RA_ralf:
+                return "RealAudio Lossless Format";
                 break;
 
             case CODEC_APE:
@@ -766,6 +772,9 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             break;
         case PROF_MPEG4_ASP:
             return "Advanced Simple Profile";
+            break;
+        case PROF_MPEG4_AP:
+            return "Advanced Profile";
             break;
         case PROF_MPEG4_SStP:
             return "Simple Studio Profile";
