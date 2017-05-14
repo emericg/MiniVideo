@@ -16,28 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      mkv_convert.h
+ * \file      mkv_cluster.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2017
  */
 
-#ifndef PARSER_MKV_CONVERT_H
-#define PARSER_MKV_CONVERT_H
+#ifndef PARSER_MKV_CLUSTER_H
+#define PARSER_MKV_CLUSTER_H
 
 // minivideo headers
-#include "mkv_struct.h"
 #include "../../bitstream.h"
-#include "../../minivideo_mediafile.h"
+#include "ebml.h"
+#include "mkv.h"
 
 /* ************************************************************************** */
 
-void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile);
-
-int mkv_convert(MediaFile_t *media, mkv_t *mkv);
-
-int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track);
-
-void mkv_clean(mkv_t *mkv);
+int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv);
 
 /* ************************************************************************** */
-#endif // PARSER_MKV_CONVERT_H
+#endif // PARSER_MKV_CLUSTER_H

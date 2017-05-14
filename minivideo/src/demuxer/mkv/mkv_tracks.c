@@ -40,11 +40,12 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_translate()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Translate");
 
     uint64_t TrackTranslateEditionUID = 0;
@@ -103,6 +104,7 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_colour_mastering()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Mastering Metadata");
 
     while (mkv->run == true &&
@@ -134,11 +136,12 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
 
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_colour()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Colour");
 
     uint64_t MatrixCoefficients = 0;
@@ -192,28 +195,17 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
     return retcode;
 }
 
-static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Video");
 
-    uint64_t FlagInterlaced = 0;
-    uint64_t FieldOrder = 0;
-    uint64_t StereoMode = 0;
-    uint64_t AlphaMode = 0;
-    uint64_t PixelWidth = 0;
-    uint64_t PixelHeight = 0;
-    uint64_t PixelCropBottom = 0;
-    uint64_t PixelCropTop = 0;
-    uint64_t PixelCropLeft = 0;
-    uint64_t PixelCropRight = 0;
-    uint64_t DisplayWidth = 0;
-    uint64_t DisplayHeight = 0;
-    uint64_t DisplayUnit = 0;
-    uint64_t AspectRatioType = 0;
-    uint8_t *ColourSpace = NULL;
+    track->video = calloc(1, sizeof(mkv_track_video_t));
+    if (track->video == NULL)
+        retcode = FAILURE;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -229,83 +221,54 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
             switch (element_sub.eid)
             {
             case eid_FlagInterlaced:
-                FlagInterlaced = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FlagInterlaced = %llu", FlagInterlaced);
-                if (mkv->xml) fprintf(mkv->xml, "  <FlagInterlaced>%lu</FlagInterlaced>\n", FlagInterlaced);
+                track->video->FlagInterlaced = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagInterlaced");
                 break;
             case eid_FieldOrder:
-                FieldOrder = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FieldOrder      = %llu", FieldOrder);
-                if (mkv->xml) fprintf(mkv->xml, "  <FieldOrder>%lu</FieldOrder>\n", FieldOrder);
+                track->video->FieldOrder = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FieldOrder");
                 break;
             case eid_StereoMode:
-                StereoMode = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* StereoMode = %llu", StereoMode);
-                if (mkv->xml) fprintf(mkv->xml, "  <StereoMode>%lu</StereoMode>\n", StereoMode);
+                track->video->StereoMode = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "StereoMode");
                 break;
             case eid_AlphaMode:
-                AlphaMode = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* AlphaMode      = %llu", AlphaMode);
-                if (mkv->xml) fprintf(mkv->xml, "  <AlphaMode>%lu</AlphaMode>\n", AlphaMode);
+                track->video->AlphaMode = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AlphaMode");
                 break;
             case eid_PixelWidth:
-                PixelWidth = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelWidth = %llu", PixelWidth);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelWidth>%lu</PixelWidth>\n", PixelWidth);
+                track->video->PixelWidth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelWidth");
                 break;
             case eid_PixelHeight:
-                PixelHeight = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelHeight      = %llu", PixelHeight);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelHeight>%lu</PixelHeight>\n", PixelHeight);
+                track->video->PixelHeight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelHeight");
                 break;
             case eid_PixelCropBottom:
-                PixelCropBottom = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelCropBottom = %llu", PixelCropBottom);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelCropBottom>%lu</PixelCropBottom>\n", PixelCropBottom);
+                track->video->PixelCropBottom = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropBottom");
                 break;
             case eid_PixelCropTop:
-                PixelCropTop = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelCropTop      = %llu", PixelCropTop);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelCropTop>%lu</PixelCropTop>\n", PixelCropTop);
+                track->video->PixelCropTop = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropTop");
                 break;
             case eid_PixelCropLeft:
-                PixelCropLeft = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelCropLeft = %llu", PixelCropLeft);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelCropLeft>%lu</PixelCropLeft>\n", PixelCropLeft);
+                track->video->PixelCropLeft = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropLeft");
                 break;
             case eid_PixelCropRight:
-                PixelCropRight = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* PixelCropRight      = %llu", PixelCropRight);
-                if (mkv->xml) fprintf(mkv->xml, "  <PixelCropRight>%lu</PixelCropRight>\n", PixelCropRight);
+                track->video->PixelCropRight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropRight");
                 break;
             case eid_DisplayWidth:
-                DisplayWidth = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* DisplayWidth      = %llu", DisplayWidth);
-                if (mkv->xml) fprintf(mkv->xml, "  <DisplayWidth>%lu</DisplayWidth>\n", DisplayWidth);
+                track->video->DisplayWidth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayWidth");
                 break;
             case eid_DisplayHeight:
-                DisplayHeight = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* DisplayHeight      = %llu", DisplayHeight);
-                if (mkv->xml) fprintf(mkv->xml, "  <DisplayHeight>%lu</DisplayHeight>\n", DisplayHeight);
+                track->video->DisplayHeight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayHeight");
                 break;
             case eid_DisplayUnit:
-                DisplayUnit = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* DisplayUnit      = %llu", DisplayUnit);
-                if (mkv->xml) fprintf(mkv->xml, "  <DisplayUnit>%lu</DisplayUnit>\n", DisplayUnit);
+                track->video->DisplayUnit = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayUnit");
                 break;
             case eid_AspectRatioType:
-                AspectRatioType = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* AspectRatioType      = %llu", AspectRatioType);
-                if (mkv->xml) fprintf(mkv->xml, "  <AspectRatioType>%lu</AspectRatioType>\n", AspectRatioType);
+                track->video->AspectRatioType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AspectRatioType");
                 break;
             case eid_ColourSpace:
-                ColourSpace = read_ebml_data_binary(bitstr, element_sub.size);
-                TRACE_1(MKV, "ColourSpace      = '%s'", ColourSpace);
-                fprintf(mkv->xml, "  <ColourSpace>%s</ColourSpace>\n", ColourSpace);
+                track->video->ColourSpace = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "ColourSpace");
+                if (track->video->ColourSpace) track->video->ColourSpace_size = element_sub.size;
                 break;
 
             case eid_Colour:
-                retcode = mkv_parse_tracks_entry_video_colour(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_video_colour(bitstr, &element_sub, mkv, track);
                 break;
 
             default:
@@ -319,25 +282,23 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
 
     if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
 
-    free(ColourSpace);
-
     return retcode;
 }
 
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_audio()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Audio");
 
-    double SamplingFrequency = 0;
-    double OutputSamplingFrequency = 0;
-    uint64_t Channels = 0;
-    uint64_t BitDepth = 0;
+    track->audio = calloc(1, sizeof(mkv_track_audio_t));
+    if (track->audio == NULL)
+        retcode = FAILURE;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -353,24 +314,16 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
             switch (element_sub.eid)
             {
             case eid_SamplingFrequency:
-                SamplingFrequency = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* SamplingFrequency = %f", SamplingFrequency);
-                if (mkv->xml) fprintf(mkv->xml, "  <SamplingFrequency>%f</SamplingFrequency>\n", SamplingFrequency);
+                track->audio->SamplingFrequency = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "SamplingFrequency");
                 break;
             case eid_OutputSamplingFrequency:
-                OutputSamplingFrequency = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* OutputSamplingFrequency = %f", OutputSamplingFrequency);
-                if (mkv->xml) fprintf(mkv->xml, "  <OutputSamplingFrequency>%f</OutputSamplingFrequency>\n", OutputSamplingFrequency);
+                track->audio->OutputSamplingFrequency = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "OutputSamplingFrequency");
                 break;
             case eid_Channels:
-                Channels = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* Channels = %llu", Channels);
-                if (mkv->xml) fprintf(mkv->xml, "  <Channels>%lu</Channels>\n", Channels);
+                track->audio->Channels = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "Channels");
                 break;
             case eid_BitDepth:
-                BitDepth = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* BitDepth = %llu", BitDepth);
-                if (mkv->xml) fprintf(mkv->xml, "  <BitDepth>%lu</BitDepth>\n", BitDepth);
+                track->audio->BitDepth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "BitDepth");
                 break;
 
             default:
@@ -390,11 +343,12 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_operation()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Entry Operation");
 
     while (mkv->run == true &&
@@ -427,11 +381,12 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_contentencoding()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Content Encoding");
 
     while (mkv->run == true &&
@@ -463,35 +418,13 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
 
 /* ************************************************************************** */
 
-static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *mkv_track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Track Entry");
-
-    uint64_t TrackNumber = 0;
-    uint64_t TrackUID = 0;
-    uint64_t TrackType = 0;
-    uint64_t FlagEnabled = 0;
-    uint64_t FlagDefault = 0;
-    uint64_t FlagForced = 0;
-    uint64_t FlagLacing = 0;
-    uint64_t MinCache = 0;
-    uint64_t MaxCache = 0;
-    uint64_t DefaultDuration = 0;
-    uint64_t DefaultDecodedFieldDuration = 0;
-    uint64_t MaxBlockAdditionID = 0;
-    char *Name = NULL;
-    char *Language = NULL;
-    char *CodecID = NULL;
-    uint8_t *CodecPrivate = NULL;
-    char *CodecName = NULL;
-    uint64_t AttachmentLink = 0;
-    uint64_t CodecDecodeAll = 0;
-    uint64_t TrackOverlay = 0;
-    uint64_t CodecDelay = 0;
-    uint64_t SeekPreRoll = 0;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -507,130 +440,87 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
             switch (element_sub.eid)
             {
             case eid_TrackNumber:
-                TrackNumber = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackNumber   = %llu", TrackNumber);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackNumber>%lu</TrackNumber>\n", TrackNumber);
+                mkv_track->TrackNumber = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackNumber");
                 break;
             case eid_TrackUID:
-                TrackUID = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackUID   = %llu", TrackUID);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackUID>%lu</TrackUID>\n", TrackUID);
+                mkv_track->TrackUID = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackUID");
                 break;
             case eid_TrackType:
-                TrackType = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackType   = %llu", TrackType);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackType>%lu</TrackType>\n", TrackType);
+                mkv_track->TrackType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackType");
                 break;
             case eid_FlagEnabled:
-                FlagEnabled = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FlagEnabled   = %llu", FlagEnabled);
-                if (mkv->xml) fprintf(mkv->xml, "  <FlagEnabled>%lu</FlagEnabled>\n", FlagEnabled);
+                mkv_track->FlagEnabled = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagEnabled");
                 break;
             case eid_FlagDefault:
-                FlagDefault = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FlagDefault   = %llu", FlagDefault);
-                if (mkv->xml) fprintf(mkv->xml, "  <FlagDefault>%lu</FlagDefault>\n", FlagDefault);
+                mkv_track->FlagDefault = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagDefault");
                 break;
             case eid_FlagForced:
-                FlagForced = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FlagForced   = %llu", FlagForced);
-                if (mkv->xml) fprintf(mkv->xml, "  <FlagForced>%lu</FlagForced>\n", FlagForced);
+                mkv_track->FlagForced = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagForced");
                 break;
             case eid_FlagLacing:
-                FlagLacing = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* FlagLacing   = %llu", FlagLacing);
-                if (mkv->xml) fprintf(mkv->xml, "  <FlagLacing>%lu</FlagLacing>\n", FlagLacing);
+                mkv_track->FlagLacing = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagLacing");
                 break;
             case eid_MinCache:
-                MinCache = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* MinCache   = %llu", MinCache);
-                if (mkv->xml) fprintf(mkv->xml, "  <MinCache>%lu</MinCache>\n", MinCache);
+                mkv_track->MinCache = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MinCache");
                 break;
             case eid_MaxCache:
-                MaxCache = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* MaxCache   = %llu", MaxCache);
-                if (mkv->xml) fprintf(mkv->xml, "  <MaxCache>%lu</MaxCache>\n", MaxCache);
+                mkv_track->MaxCache = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxCache");
                 break;
             case eid_DefaultDuration:
-                DefaultDuration = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* DefaultDuration   = %llu", DefaultDuration);
-                if (mkv->xml) fprintf(mkv->xml, "  <DefaultDuration>%lu</DefaultDuration>\n", DefaultDuration);
+                mkv_track->DefaultDuration = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DefaultDuration");
                 break;
             case eid_DefaultDecodedFieldDuration:
-                DefaultDecodedFieldDuration = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* DefaultDecodedFieldDuration   = %llu", DefaultDecodedFieldDuration);
-                if (mkv->xml) fprintf(mkv->xml, "  <DefaultDecodedFieldDuration>%lu</DefaultDecodedFieldDuration>\n", DefaultDecodedFieldDuration);
+                mkv_track->DefaultDecodedFieldDuration = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DefaultDecodedFieldDuration");
                 break;
             case eid_MaxBlockAdditionID:
-                MaxBlockAdditionID = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* MaxBlockAdditionID   = %llu", MaxBlockAdditionID);
-                if (mkv->xml) fprintf(mkv->xml, "  <MaxBlockAdditionID>%lu</MaxBlockAdditionID>\n", MaxBlockAdditionID);
+                mkv_track->MaxBlockAdditionID = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxBlockAdditionID");
                 break;
             case eid_Name:
-                Name = read_ebml_data_string(bitstr, element_sub.size);
-                TRACE_1(MKV, "Name        = '%s'", Name);
-                fprintf(mkv->xml, "  <Name>%s</Name>\n", Name);
+                mkv_track->Name = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "Name");
                 break;
             case eid_Language:
-                Language = read_ebml_data_string(bitstr, element_sub.size);
-                TRACE_1(MKV, "Language        = '%s'", Language);
-                fprintf(mkv->xml, "  <Language>%s</Language>\n", Language);
+                mkv_track->Language = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "Language");
                 break;
             case eid_CodecID:
-                CodecID = read_ebml_data_string(bitstr, element_sub.size);
-                TRACE_1(MKV, "CodecID        = '%s'", CodecID);
-                fprintf(mkv->xml, "  <CodecID>%s</CodecID>\n", CodecID);
+                mkv_track->CodecID = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "CodecID");
                 break;
             case eid_CodecPrivate:
-                CodecPrivate = read_ebml_data_binary(bitstr, element_sub.size);
-                TRACE_1(MKV, "CodecPrivate        = '%s'", CodecPrivate);
-                fprintf(mkv->xml, "  <CodecPrivate>%s</CodecPrivate>\n", CodecPrivate);
+                mkv_track->CodecPrivate = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "CodecPrivate");
+                if (mkv_track->CodecPrivate) mkv_track->CodecPrivate_size = element_sub.size;
                 break;
             case eid_CodecName:
-                CodecName = read_ebml_data_string(bitstr, element_sub.size);
-                TRACE_1(MKV, "CodecName        = '%s'", CodecName);
-                fprintf(mkv->xml, "  <CodecName>%s</CodecName>\n", CodecName);
+                mkv_track->CodecName = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "CodecName");
                 break;
             case eid_CodecDecodeAll:
-                CodecDecodeAll = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* CodecDecodeAll   = %llu", CodecDecodeAll);
-                if (mkv->xml) fprintf(mkv->xml, "  <CodecDecodeAll>%lu</CodecDecodeAll>\n", CodecDecodeAll);
+                mkv_track->CodecDecodeAll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CodecDecodeAll");
                 break;
             case eid_TrackOverlay:
-                TrackOverlay = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackOverlay   = %llu", TrackOverlay);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackOverlay>%lu</TrackOverlay>\n", TrackOverlay);
+                mkv_track->TrackOverlay = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackOverlay");
                 break;
             case eid_AttachmentLink:
-                AttachmentLink = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* AttachmentLink   = %llu", AttachmentLink);
-                if (mkv->xml) fprintf(mkv->xml, "  <AttachmentLink>%lu</AttachmentLink>\n", AttachmentLink);
+                mkv_track->AttachmentLink = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AttachmentLink");
                 break;
             case eid_CodecDelay:
-                CodecDelay = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* CodecDelay   = %llu", CodecDelay);
-                if (mkv->xml) fprintf(mkv->xml, "  <CodecDelay>%lu</CodecDelay>\n", CodecDelay);
+                mkv_track->CodecDelay = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CodecDelay");
                 break;
             case eid_SeekPreRoll:
-                SeekPreRoll = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* SeekPreRoll   = %llu", SeekPreRoll);
-                if (mkv->xml) fprintf(mkv->xml, "  <SeekPreRoll>%lu</SeekPreRoll>\n", SeekPreRoll);
+                mkv_track->SeekPreRoll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "SeekPreRoll");
                 break;
 
             case eid_TrackTranslate:
-                retcode = mkv_parse_tracks_entry_translate(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_translate(bitstr, &element_sub, mkv, mkv_track);
                 break;
             case eid_Video:
-                retcode = mkv_parse_tracks_entry_video(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_video(bitstr, &element_sub, mkv, mkv_track);
                 break;
             case eid_Audio:
-                retcode = mkv_parse_tracks_entry_audio(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_audio(bitstr, &element_sub, mkv, mkv_track);
                 break;
             case eid_TrackOperation:
-                retcode = mkv_parse_tracks_entry_operation(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_operation(bitstr, &element_sub, mkv, mkv_track);
                 break;
             case eid_ContentEncodings:
-                retcode = mkv_parse_tracks_entry_contentencoding(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_tracks_entry_contentencoding(bitstr, &element_sub, mkv, mkv_track);
                 break;
 
             default:
@@ -644,12 +534,6 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
 
     if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
 
-    free(Name);
-    free(Language);
-    free(CodecID);
-    free(CodecPrivate);
-    free(CodecName);
-
     return retcode;
 }
 
@@ -661,6 +545,7 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks()" CLR_RESET);
     int retcode = SUCCESS;
 
+    print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Tracks");
 
     while (mkv->run == true &&
@@ -677,7 +562,12 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             switch (element_sub.eid)
             {
             case eid_TrackEntry:
-                retcode = mkv_parse_tracks_entry(bitstr, &element_sub, mkv);
+                mkv->tracks[mkv->tracks_count] = (mkv_track_t*)calloc(1, sizeof(mkv_track_t));
+                if (mkv->tracks[mkv->tracks_count])
+                    retcode = mkv_parse_tracks_entry(bitstr, &element_sub, mkv, mkv->tracks[mkv->tracks_count]);
+                else
+                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                mkv->tracks_count++;
                 break;
 
             default:

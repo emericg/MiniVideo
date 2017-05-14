@@ -260,8 +260,15 @@ int64_t read_ebml_data_int2(Bitstream_t *bitstr, EbmlElement_t *element,
 
 int64_t read_ebml_data_date(Bitstream_t *bitstr, int size)
 {
-    TRACE_2(MKV, "read_ebml_data_int()");
+    TRACE_2(MKV, "read_ebml_data_date()");
     return (int64_t)read_bits_64(bitstr, size*8);
+}
+
+int64_t read_ebml_data_date2(Bitstream_t *bitstr, EbmlElement_t *element,
+                             FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_date2()");
+    return 0;
 }
 
 /* ************************************************************************** */
@@ -269,6 +276,13 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, int size)
 double read_ebml_data_float(Bitstream_t *bitstr, int size)
 {
     TRACE_2(MKV, "read_ebml_data_float()");
+    return 0;
+}
+
+double read_ebml_data_float2(Bitstream_t *bitstr, EbmlElement_t *element,
+                             FILE *xml, const char *name)
+{
+    TRACE_2(MKV, "read_ebml_data_float2()");
     return 0;
 }
 
@@ -313,7 +327,6 @@ char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element,
             if (xml)
             {
                 fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
-                fprintf(xml, "<%s>\n", name);
             }
         }
     }
@@ -383,16 +396,9 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 {
     TRACE_INFO(MKV, "ebml_parse_void()");
 
-#if ENABLE_DEBUG
     print_ebml_element(element);
-#endif
-
-    // xmlMapper
-    if (xml)
-    {
-        write_ebml_element(element, xml, "Void");
-        fprintf(xml, "  </atom>\n");
-    }
+    write_ebml_element(element, xml, "Void");
+    if (xml) fprintf(xml, "  </atom>\n");
 
     return skip_bits(bitstr, element->size*8);
 }
@@ -401,42 +407,13 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
 int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 {
-    TRACE_WARNING(MKV, "ebml_parse_unknown()");
-    int retcode = SUCCESS;
+    TRACE_WARNING(MKV, "ebml_parse_unknown(0x%X)", element->eid);
 
     print_ebml_element(element);
     write_ebml_element(element, xml, NULL);
-
-    if (xml) fprintf(xml, "  </atom>\n");
-    return FAILURE; // FIXME needs to be recursive
-
-    ///////////////////////////////////////////
-
-    while (/*mkv->run == true &&*/
-           retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
-    {
-        // Parse sub element
-        EbmlElement_t element_sub;
-        retcode = parse_ebml_element(bitstr, &element_sub);
-
-        // Then parse subbox content
-        if (/*mkv->run == true &&*/ retcode == SUCCESS)
-        {
-            switch (element_sub.eid)
-            {
-            default:
-                retcode = ebml_parse_unknown(bitstr, &element_sub, xml);
-                break;
-            }
-
-            jumpy_mkv(bitstr, element, &element_sub);
-        }
-    }
-
     if (xml) fprintf(xml, "  </atom>\n");
 
-    return retcode;
+    return skip_bits(bitstr, element->size*8);
 }
 
 /* ************************************************************************** */
@@ -458,8 +435,6 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
  */
 int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current)
 {
-    return SUCCESS; // FIXME
-
     int retcode = FAILURE;
     int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
 

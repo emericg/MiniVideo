@@ -68,6 +68,7 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size);
 uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
 int64_t read_ebml_data_date(Bitstream_t *bitstr, int size);
+int64_t read_ebml_data_date2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
 /* ************************************************************************** */
 

@@ -73,6 +73,135 @@ typedef struct mkv_info_t
 
 } mkv_info_t;
 
+typedef struct mkv_cluster_t
+{
+    uint64_t Timecode;
+    //SilentTracks
+    //SilentTrackNumber
+    uint64_t Position;
+    uint64_t PrevSize;
+    //uint8_t *SimpleBlock;
+    //BlockGroup;
+    //Block;
+
+} mkv_cluster_t;
+
+typedef struct mkv_cuetrackpos_t
+{
+    uint64_t CueTrack;
+    uint64_t CueClusterPosition;
+    uint64_t CueRelativePosition;
+    uint64_t CueDuration;
+    uint64_t CueBlockNumber;
+    uint64_t CueCodecState;
+
+} mkv_cuetrackpos_t;
+
+typedef struct mkv_cuepoint_t
+{
+    uint64_t CueTime;
+
+} mkv_cuepoint_t;
+
+typedef struct mkv_attachedfile_t
+{
+    char *FileDescription;
+    char *FileName;
+    char *FileMimeType;
+    uint64_t FileData_size;
+    uint8_t *FileData;
+    uint64_t FileUID;
+
+} mkv_attachedfile_t;
+
+typedef struct mkv_attachments_t
+{
+    //
+} mkv_attachments_t;
+
+/* ************************************************************************** */
+
+typedef struct mkv_track_audio_t
+{
+    double SamplingFrequency;
+    double OutputSamplingFrequency;
+    uint64_t Channels;
+    uint64_t BitDepth;
+
+} mkv_track_audio_t;
+
+typedef struct mkv_track_video_t
+{
+    uint64_t FlagInterlaced;
+    uint64_t FieldOrder;
+    uint64_t StereoMode;
+    uint64_t AlphaMode;
+    uint64_t PixelWidth;
+    uint64_t PixelHeight;
+    uint64_t PixelCropBottom;
+    uint64_t PixelCropTop;
+    uint64_t PixelCropLeft;
+    uint64_t PixelCropRight;
+    uint64_t DisplayWidth;
+    uint64_t DisplayHeight;
+    uint64_t DisplayUnit;
+    uint64_t AspectRatioType;
+    int ColourSpace_size;
+    uint8_t *ColourSpace;
+
+} mkv_track_video_t;
+
+typedef struct mkv_track_translate_t
+{
+
+} mkv_track_translate_t;
+
+typedef struct mkv_track_operation_t
+{
+    // TODO
+
+} mkv_track_operation_t;
+
+typedef struct mkv_track_encoding_t
+{
+    // TODO
+
+} mkv_track_encoding_t;
+
+typedef struct mkv_track_t
+{
+    uint64_t TrackNumber;
+    uint64_t TrackUID;
+    uint64_t TrackType;
+    uint64_t FlagEnabled;
+    uint64_t FlagDefault;
+    uint64_t FlagForced;
+    uint64_t FlagLacing;
+    uint64_t MinCache;
+    uint64_t MaxCache;
+    uint64_t DefaultDuration;
+    uint64_t DefaultDecodedFieldDuration;
+    uint64_t MaxBlockAdditionID;
+    char *Name;
+    char *Language;
+    char *CodecID;
+    int CodecPrivate_size;
+    uint8_t *CodecPrivate;
+    char *CodecName;
+    uint64_t AttachmentLink;
+    uint64_t CodecDecodeAll;
+    uint64_t TrackOverlay;
+    uint64_t CodecDelay;
+    uint64_t SeekPreRoll;
+
+    mkv_track_audio_t *audio;
+    mkv_track_video_t *video;
+    mkv_track_translate_t *translate;
+    mkv_track_operation_t *operation;
+    mkv_track_encoding_t *encoding;
+
+} mkv_track_t;
+
 /* ************************************************************************** */
 
 //! Structure for MKV video infos
@@ -85,11 +214,30 @@ typedef struct mkv_t
     ebml_header_t ebml;
     mkv_info_t info;
 
+    int tracks_count;
+    mkv_track_t *tracks[16];
+
     FILE *xml;                  //!< Temporary file used by the xmlMapper
 
 } mkv_t;
 
 /* ************************************************************************** */
+
+/*!
+ * \enum MkvTrackType_e
+ * \brief Identifies the content of a track.
+ */
+typedef enum MkvTrackType_e
+{
+    MKV_TRACK_VIDEO     = 1,
+    MKV_TRACK_AUDIO     = 2,
+    MKV_TRACK_COMPLEX   = 3,
+    MKV_TRACK_LOGO      = 0x10,
+    MKV_TRACK_SUBTITLES = 0x11,
+    MKV_TRACK_BUTTONS   = 0x12,
+    MKV_TRACK_CONTROL   = 0x20,
+
+} Mp4HandlerType_e;
 
 /*!
  * \enum EbmlDocType_e
@@ -213,7 +361,7 @@ typedef enum EbmlElement_e
         eid_DisplayUnit = 0x54B2,
         eid_AspectRatioType = 0x54B3,
         eid_ColourSpace = 0x2EB524,
-        eid_Colour = 0x55B0,
+        eid_Colour = 0x55B0,        //!<
             eid_MatrixCoefficients = 0x55B1,
             eid_BitsPerChannel = 0x55B2,
             eid_ChromaSubsamplingHorz = 0x55B3,
@@ -251,7 +399,7 @@ typedef enum EbmlElement_e
         eid_TrackPlaneType = 0xE6,
         eid_TrackJoinBlocks = 0xE9,
             eid_TrackJoinUID = 0xED,
-    eid_ContentEncodings = 0x6D80,
+    eid_ContentEncodings = 0x6D80,      //!<
         eid_ContentEncoding = 0x6240,
             eid_ContentEncodingOrder = 0x5031,
             eid_ContentEncodingScope = 0x5032,
@@ -295,17 +443,46 @@ typedef enum EbmlElement_e
             eid_EditionFlagDefault = 0x45DB,
             eid_EditionFlagOrdered = 0x45DD,
             eid_ChapterAtom = 0xB6,
-                // TODO
+                eid_ChapterUID = 0x73C4,
+                eid_ChapterStringUID = 0x5654,
+                eid_ChapterTimeStart = 0x91,
+                eid_ChapterTimeEnd = 0x92,
+                eid_ChapterFlagHidden = 0x98,
+                eid_ChapterFlagEnabled = 0x4598,
+                eid_ChapterSegmentUID = 0x6E67,
+                eid_ChapterSegmentEditionUID = 0x6EBC,
+                eid_ChapterPhysicalEquiv = 0x63C3,
+                eid_ChapterTrack = 0x8F,
+                    eid_ChapterTrackNumber = 0x89,
+                eid_ChapterDisplay = 0x80,
+                    eid_ChapString = 0x85,
+                    eid_ChapLanguage = 0x437C,
+                    eid_ChapCountry = 0x437E,
+                eid_ChapProcess = 0x6944,
+                    eid_ChapProcessCodecID = 0x6955,
+                    eid_ChapProcessPrivate = 0x450D,
+                    eid_ChapProcessCommand = 0x6911,
+                        eid_ChapProcessTime = 0x6922,
+                        eid_ChapProcessData = 0x6933,
 
     eid_Tags = 0x1254C367,              //!< (level 1) Tagging
         eid_Tag = 0x7373,
             eid_Targets = 0x63C0,
-                // TODO
+                eid_TargetTypeValue = 0x68CA,
+                eid_TargetType = 0x63CA,
+                eid_TagTrackUID = 0x63C5,
+                eid_TagEditionUID = 0x63C9,
+                eid_TagChapterUID = 0x63C4,
+                eid_TagAttachmentUID = 0x63C6,
+            eid_SimpleTag = 0x67C8,
+                eid_TagName = 0x45A3,
+                eid_TagLanguage = 0x447A,
+                eid_TagDefault = 0x4484,
+                eid_TagString = 0x4487,
+                eid_TagBinary = 0x4485,
 
     eid_void = 0xEC,                    //!< (global)
     eid_crc32 = 0xBF                    //!< (global)
-
-    //eid_ = 0x, //!<
 
 } EbmlElement_e;
 
