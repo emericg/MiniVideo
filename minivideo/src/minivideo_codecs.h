@@ -231,6 +231,13 @@ typedef enum Codecs_e
     CODEC_SRT           = 512,  //!< SubRip (.srt)
     CODEC_SSA           = 513,  //!< SubStation Alpha (.ssa)
     CODEC_ASS           = 514,  //!< Advanced SubStation Alpha (.ass)
+    CODEC_USF           = 515,  //!< Universal Subtitle Format (.usf)
+    CODEC_VobSub        = 516,  //!< VobSub (.sub/.idx)
+    CODEC_MicroDVD      = 517,  //!< MicroDVD (.sub)
+    CODEC_SAMI          = 518,  //!< Synchronized Accessible Media Interchange (.smi, .sami)
+    CODEC_MPEG4_TTXT    = 519,  //!< MPEG-4 Timed Text (.ttxt)
+    CODEC_TTML          = 520,  //!< Timed Text Markup Language (.ttml, .dfxp)
+    CODEC_WebVTT        = 521,  //!< Web Video Text Tracks (.vtt)
 
     // Uncompressed audio //////////////////////////////////////////////////////
 

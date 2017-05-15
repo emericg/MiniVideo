@@ -638,6 +638,27 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
             case CODEC_ASS:
                 return "Advanced SubStation Alpha";
                 break;
+            case CODEC_USF:
+                return "Universal Subtitle Format";
+                break;
+            case CODEC_VobSub:
+                return "VobSub";
+                break;
+            case CODEC_MicroDVD:
+                return "MicroDVD";
+                break;
+            case CODEC_SAMI:
+                return "Synchronized Accessible Media Interchange";
+                break;
+            case CODEC_MPEG4_TTXT:
+                return "MPEG-4 Timed Text";
+                break;
+            case CODEC_TTML:
+                return "Timed Text Markup Language";
+                break;
+            case CODEC_WebVTT:
+                return "Web Video Text Tracks";
+                break;
         }
     }
 

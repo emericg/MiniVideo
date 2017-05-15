@@ -262,11 +262,20 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
         {
             *codec = CODEC_ASS;
         }
+        else if (strcmp(codec_str, "S_TEXT/USF") == 0)
+        {
+            *codec = CODEC_USF;
+        }
+        else if (strcmp(codec_str, "S_TEXT/WEBVTT") == 0)
+        {
+            *codec = CODEC_WebVTT;
+        }
+        else if (strcmp(codec_str, "S_TEXT/S_VOBSUB") == 0)
+        {
+            *codec = CODEC_VobSub;
+        }
 /*
-        S_TEXT/USF
-        S_TEXT/WEBVTT
         S_IMAGE/BMP
-        S_VOBSUB
         S_KATE
 */
     }
@@ -400,6 +409,10 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->sampling_rate = track->audio->SamplingFrequency;
             map->channel_count = track->audio->Channels;
             map->bit_per_sample = track->audio->BitDepth;
+        }
+        else if (track->TrackType == MKV_TRACK_SUBTITLES)
+        {
+            map->stream_type = stream_TEXT;
         }
         else
         {
