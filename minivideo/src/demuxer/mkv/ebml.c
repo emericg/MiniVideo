@@ -55,7 +55,7 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
         leadingZeroBits++;
 
     elementSize = (leadingZeroBits + 1) * 7;
-    elementValue = read_bits_64(bitstr, elementSize) + pow(2, elementSize);
+    elementValue = read_bits(bitstr, elementSize) + pow(2, elementSize);
 /*
     TRACE_2(MKV, "read_ebml_eid()");
     bitstream_print_absolute_bit_offset(bitstr);

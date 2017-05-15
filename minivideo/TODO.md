@@ -26,7 +26,6 @@ TODOs
   - IDR detection
   - tag_descriptors
 - MPEG TS parser
-- MKV parser
 - MXF parser (maybe)
 - ASF parser (maybe)
 

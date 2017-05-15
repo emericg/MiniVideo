@@ -776,11 +776,9 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
                 break;
             case eid_Attachments:
                 retcode = mkv_parse_attachments(bitstr, &element_sub, mkv);
-                retcode = FAILURE;
                 break;
             case eid_Chapters:
                 retcode = mkv_parse_chapters(bitstr, &element_sub, mkv);
-                retcode = FAILURE;
                 break;
             case eid_Tags:
                 retcode = mkv_parse_tags(bitstr, &element_sub, mkv);

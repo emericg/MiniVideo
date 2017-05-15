@@ -21,17 +21,19 @@ The minivideo library can:
 ### Supported container formats (import modules)
 - AVI [.avi]
 - WAVE [.wav]
+- MKV [.mkv, .webm, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
-- MP3 "elementary stream" (.mp3)
-- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
-- MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
+- MPEG-1/2 "elementary stream" [.mpg, .mpeg]
+- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- MP3 "elementary stream" (.mp3)
 
 ### Supported container formats (export modules)
 - Elementary Streams
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 ### Supported picture formats (output modules)
+- webp (when libwebp support available)
 - jpeg (when libjpeg support is available)
 - png (internal OR when libpng support available)
 - bmp
@@ -59,7 +61,7 @@ Note: You can also change several build options directly into the "minivideo/CMa
 
 Installation into the system, available for root user:
 >  $ su  
->  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+>  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Generating online documentation with Doxygen

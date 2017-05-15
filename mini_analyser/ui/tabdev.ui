@@ -109,7 +109,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Processing time</string>
+          <string>Parsing memory</string>
          </property>
         </column>
         <column>
@@ -119,7 +119,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Parsing memory</string>
+          <string>Processing time</string>
          </property>
         </column>
        </widget>
