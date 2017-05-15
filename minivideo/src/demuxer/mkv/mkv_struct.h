@@ -86,6 +86,23 @@ typedef struct mkv_cluster_t
 
 } mkv_cluster_t;
 
+typedef struct mkv_tag_t
+{
+    uint64_t CueTrack;
+    uint64_t CueClusterPosition;
+    uint64_t CueRelativePosition;
+    uint64_t CueDuration;
+    uint64_t CueBlockNumber;
+    uint64_t CueCodecState;
+
+} mkv_tag_t;
+
+typedef struct mkv_tags_t
+{
+    mkv_tag_t *Tags;
+
+} mkv_tags_t;
+
 typedef struct mkv_cuetrackpos_t
 {
     uint64_t CueTrack;
@@ -100,6 +117,7 @@ typedef struct mkv_cuetrackpos_t
 typedef struct mkv_cuepoint_t
 {
     uint64_t CueTime;
+    mkv_cuetrackpos_t *CueTrackPos;
 
 } mkv_cuepoint_t;
 
@@ -116,7 +134,8 @@ typedef struct mkv_attachedfile_t
 
 typedef struct mkv_attachments_t
 {
-    //
+    mkv_attachedfile_t *file;
+
 } mkv_attachments_t;
 
 /* ************************************************************************** */
@@ -129,6 +148,40 @@ typedef struct mkv_track_audio_t
     uint64_t BitDepth;
 
 } mkv_track_audio_t;
+
+typedef struct mkv_track_video_colour_mastering_t
+{
+    double PrimaryRChromaticityX;
+    double PrimaryRChromaticityY;
+    double PrimaryGChromaticityX;
+    double PrimaryGChromaticityY;
+    double PrimaryBChromaticityX;
+    double PrimaryBChromaticityY;
+    double WhitePointChromaticityX;
+    double WhitePointChromaticityY;
+    double LuminanceMax;
+    double LuminanceMin;
+
+} mkv_track_video_colour_mastering_t;
+
+typedef struct mkv_track_video_colour_t
+{
+    uint64_t MatrixCoefficients;
+    uint64_t BitsPerChannel;
+    uint64_t ChromaSubsamplingHorz;
+    uint64_t ChromaSubsamplingVert;
+    uint64_t CbSubsamplingHorz;
+    uint64_t CbSubsamplingVert;
+    uint64_t ChromaSitingHorz;
+    uint64_t ChromaSitingVert;
+    uint64_t Range;
+    uint64_t TransferCharacteristics;
+    uint64_t Primaries;
+    uint64_t MaxCLL;
+    uint64_t MaxFALL;
+    mkv_track_video_colour_mastering_t *MasteringMetadata;
+
+} mkv_track_video_colour_t;
 
 typedef struct mkv_track_video_t
 {
@@ -148,25 +201,49 @@ typedef struct mkv_track_video_t
     uint64_t AspectRatioType;
     int ColourSpace_size;
     uint8_t *ColourSpace;
+    mkv_track_video_colour_t *Colour;
 
 } mkv_track_video_t;
 
 typedef struct mkv_track_translate_t
 {
+    uint64_t todo; // TODO
 
 } mkv_track_translate_t;
 
 typedef struct mkv_track_operation_t
 {
-    // TODO
+    uint64_t todo; // TODO
 
 } mkv_track_operation_t;
 
 typedef struct mkv_track_encoding_t
 {
-    // TODO
+    uint64_t ContentEncodingOrder;
+    uint64_t ContentEncodingScope;
+    uint64_t ContentEncodingType;
+
+        uint64_t ContentCompAlgo;
+        int ContentCompSettings_size;
+        uint8_t *ContentCompSettings;
+
+        uint64_t ContentEncAlgo;
+        int ContentEncKeyID_size;
+        uint8_t *ContentEncKeyID;
+        int ContentSignature_size;
+        uint8_t *ContentSignature;
+        int ContentSigKeyID_size;
+        uint8_t *ContentSigKeyID;
+        uint64_t ContentSigAlgo;
+        uint64_t ContentSigHashAlgo;
 
 } mkv_track_encoding_t;
+
+typedef struct mkv_track_encodings_t
+{
+    mkv_track_encoding_t *encoding;
+
+} mkv_track_encodings_t;
 
 typedef struct mkv_track_t
 {
@@ -181,6 +258,7 @@ typedef struct mkv_track_t
     uint64_t MaxCache;
     uint64_t DefaultDuration;
     uint64_t DefaultDecodedFieldDuration;
+    uint64_t TrackTimecodeScale;    //!< DEPRECATED
     uint64_t MaxBlockAdditionID;
     char *Name;
     char *Language;
@@ -198,7 +276,7 @@ typedef struct mkv_track_t
     mkv_track_video_t *video;
     mkv_track_translate_t *translate;
     mkv_track_operation_t *operation;
-    mkv_track_encoding_t *encoding;
+    mkv_track_encodings_t *encodings;
 
 } mkv_track_t;
 
@@ -330,6 +408,7 @@ typedef enum EbmlElement_e
         eid_MaxCache = 0x6DF8,
         eid_DefaultDuration = 0x23E383,
         eid_DefaultDecodedFieldDuration = 0x234E7A,
+        eid_TrackTimecodeScale = 0x23314F,  //!< DEPRECATED
         eid_MaxBlockAdditionID = 0x55EE,
         eid_Name = 0x536E,
         eid_Language = 0x22B59C,

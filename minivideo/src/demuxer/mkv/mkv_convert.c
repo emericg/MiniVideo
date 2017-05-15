@@ -270,7 +270,7 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
         {
             *codec = CODEC_WebVTT;
         }
-        else if (strcmp(codec_str, "S_TEXT/S_VOBSUB") == 0)
+        else if (strcmp(codec_str, "S_VOBSUB") == 0)
         {
             *codec = CODEC_VobSub;
         }
@@ -281,6 +281,7 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
     }
 }
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 int mkv_convert(MediaFile_t *media, mkv_t *mkv)
@@ -295,7 +296,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
         strcpy(media->creation_app, mkv->info.WritingApp);
     }
 
-    //media->duration = mkv->info.Duration;
+    media->duration = (uint64_t)(mkv->info.Duration / ((double)mkv->info.TimecodeScale / 1000000.0));
     //mkv->info.DateUTC
 
     // Tracks metadatas
@@ -385,15 +386,25 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
     if (retcode == SUCCESS && map)
     {
-         mkv_codec(track->CodecID, &map->stream_codec, &map->stream_codec_profile);
-/*
-        if (strnlen(track->Name, 128) > 0)
+        mkv_codec(track->CodecID, &map->stream_codec, &map->stream_codec_profile);
+
+        if (track->Name && strnlen(track->Name, 256) > 0)
         {
-            map->track_title = (char *)malloc(sizeof(track->Name));
-            strncpy(map->track_title, track->Name, sizeof(track->Name));
+                map->track_title = (char *)malloc(sizeof(track->Name));
+                strcpy(map->track_title, track->Name);
         }
-*/
+
+        if (track->Language && strlen(track->Language) > 0)
+        {
+           map->track_languagecode = (char *)malloc(4);
+           strncpy(map->track_languagecode, track->Language, 3);
+           map->track_languagecode[3] = '\0';
+        }
+
         map->track_id = track->TrackNumber;
+
+        if (track->DefaultDuration > 0)
+            map->frame_duration = (double)(track->DefaultDuration) / 1000000.0;
 
         if (track->TrackType == MKV_TRACK_VIDEO)
         {
@@ -402,6 +413,8 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->height = track->video->PixelHeight;
             map->visible_width = track->video->DisplayWidth;
             map->visible_height = track->video->DisplayHeight;
+
+            map->framerate = 1000000000.0 / track->DefaultDuration;
         }
         else if (track->TrackType == MKV_TRACK_AUDIO)
         {
@@ -460,12 +473,13 @@ void mkv_clean(mkv_t *mkv)
                 free(mkv->tracks[i]->CodecPrivate);
                 free(mkv->tracks[i]->CodecName);
 
-                if (mkv->tracks[i]->audio)
-                {
-                    //
-                }
                 if (mkv->tracks[i]->video)
                 {
+                    if (mkv->tracks[i]->video->Colour)
+                    {
+                        free(mkv->tracks[i]->video->Colour->MasteringMetadata);
+                        free(mkv->tracks[i]->video->Colour);
+                    }
                     free(mkv->tracks[i]->video->ColourSpace);
                 }
                 if (mkv->tracks[i]->translate)
@@ -476,7 +490,7 @@ void mkv_clean(mkv_t *mkv)
                 {
                     //
                 }
-                if (mkv->tracks[i]->encoding)
+                if (mkv->tracks[i]->encodings)
                 {
                     //
                 }
