@@ -603,6 +603,9 @@ background: rgba(255, 170, 0, 128);</string>
                    <property name="text">
                     <string>Unknown</string>
                    </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -1882,6 +1885,9 @@ background: rgba(255, 170, 0, 128);</string>
                <property name="text">
                 <string>Unknown</string>
                </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
               </widget>
              </item>
             </layout>
@@ -2717,6 +2723,9 @@ background: rgba(255, 170, 0, 128);</string>
                </property>
                <property name="text">
                 <string>Unknown</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>

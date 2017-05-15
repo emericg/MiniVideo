@@ -670,54 +670,63 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
     QString title = root.toElement().attributeNode("title").value();
     QString offset = root.toElement().attributeNode("offset").value();
 
-    //qDebug() << "> xmlAtomParser() >" << fcc;
+    //qDebug() << "> xmlAtomParser() >" << fcc << id;
 
     QTreeWidgetItem *child_item;
     if (fcc.isEmpty() == false)
         child_item = createChildItem(item, fcc, offset);
     else if (id.isEmpty() == false)
         child_item = createChildItem(item, title, offset);
-
-    child_item->setIcon(0, QIcon(":/img/img/C.png"));
-
-    // Don't expand everything
-    if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues")
+    else
     {
-        ui->treeWidget->setItemExpanded(child_item, true);
+        QString error = "{error}";
+        child_item = createChildItem(item, error, offset);
     }
 
-    QDomNode structure_node = root.firstChild();
-    while (structure_node.isNull() == false)
+    if (child_item)
     {
-        QDomElement e = structure_node.toElement();
-        if (e.isNull() == false)
+        child_item->setIcon(0, QIcon(":/img/img/C.png"));
+
+        // Don't expand everything
+        if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues")
         {
-            if (e.tagName() == "atom")
-            {
-                xmlAtomParser(e, child_item);
-                if (fcc == "trak" || fcc == "strl" || title == "Track Entry")
-                    child_item->setIcon(0, QIcon(":/img/img/T.png"));
-                else
-                    child_item->setIcon(0, QIcon(":/img/img/L.png"));
-            }
-/*
-            else if (e.tagName() == "title")
-            {
-                child_item->setText(0, child_item->text(0) + " (" + e.text() + ")");
-            }
-*/
-            else
-            {
-                //qDebug() << "a " << qPrintable(e.tagName()); // ATOM fields parsing
-            }
+            ui->treeWidget->setItemExpanded(child_item, true);
         }
-        structure_node = structure_node.nextSibling();
+
+        QDomNode structure_node = root.firstChild();
+        while (structure_node.isNull() == false)
+        {
+            QDomElement e = structure_node.toElement();
+            if (e.isNull() == false)
+            {
+                if (e.tagName() == "atom")
+                {
+                    xmlAtomParser(e, child_item);
+                    if (fcc == "trak" || fcc == "strl" || title == "Track Entry")
+                        child_item->setIcon(0, QIcon(":/img/img/T.png"));
+                    else
+                        child_item->setIcon(0, QIcon(":/img/img/L.png"));
+                }
+/*
+                else if (e.tagName() == "title")
+                {
+                    child_item->setText(0, child_item->text(0) + " (" + e.text() + ")");
+                }
+*/
+                else
+                {
+                    //qDebug() << "a " << qPrintable(e.tagName()); // ATOM fields parsing
+                }
+            }
+
+            structure_node = structure_node.nextSibling();
+        }
     }
 }
 
-QTreeWidgetItem *tabContainer::createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset)
+QTreeWidgetItem *tabContainer::createChildItem(QTreeWidgetItem *item, QString &txt, QString &offset)
 {
-    QTreeWidgetItem *childItem;
+    QTreeWidgetItem *childItem = nullptr;
     if (item)
     {
         childItem = new QTreeWidgetItem(item);
@@ -726,8 +735,11 @@ QTreeWidgetItem *tabContainer::createChildItem(QTreeWidgetItem *item, QString &f
     {
         childItem = new QTreeWidgetItem(ui->treeWidget);
     }
-    childItem->setData(0, Qt::UserRole, offset);
-    childItem->setText(0, fcc);
+    if (childItem)
+    {
+        childItem->setData(0, Qt::UserRole, offset);
+        childItem->setText(0, txt);
+    }
 
     return childItem;
 }

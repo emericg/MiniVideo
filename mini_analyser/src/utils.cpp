@@ -22,6 +22,7 @@
 #include "utils.h"
 
 #include <cstdint>
+#include <cstring>
 #include <cmath>
 
 #include <QDebug>
@@ -452,8 +453,18 @@ QString getLanguageString(const char *languageCode)
             langage_qstr = "";
         else if (strncmp(languageCode, "eng", lng_size) == 0)
             langage_qstr = QObject::tr("English");
-        else if (strncmp(languageCode, "fre", lng_size) == 0)
+        else if (strncmp(languageCode, "fre", lng_size) == 0 ||
+                 strncmp(languageCode, "fra", lng_size) == 0)
             langage_qstr = QObject::tr("French");
+        else if (strncmp(languageCode, "spa", lng_size) == 0)
+            langage_qstr = QObject::tr("Spanish");
+        else if (strncmp(languageCode, "ita", lng_size) == 0)
+            langage_qstr = QObject::tr("Italian");
+        else if (strncmp(languageCode, "ger", lng_size) == 0 ||
+                 strncmp(languageCode, "deu", lng_size) == 0)
+            langage_qstr = QObject::tr("German");
+        else if (strncmp(languageCode, "jpn", lng_size) == 0)
+            langage_qstr = QObject::tr("Japanese");
         else
             langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));
     }
