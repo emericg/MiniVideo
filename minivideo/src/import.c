@@ -600,6 +600,8 @@ int import_fileClose(MediaFile_t **media_ptr)
 
         xmlMapperClose(&(*media_ptr)->container_mapper_fd);
 
+        free((*media_ptr)->creation_app);
+
         for (i = 0; i < 16 /*(*media_ptr)->tracks_audio_count*/; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_audio[i]);

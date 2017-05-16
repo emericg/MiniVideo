@@ -292,8 +292,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
     media->container_profile = mkv->profile;
     if (mkv->info.WritingApp)
     {
-        media->creation_app = malloc(strlen(mkv->info.WritingApp));
-        strcpy(media->creation_app, mkv->info.WritingApp);
+        media->creation_app = strdup(mkv->info.WritingApp);
     }
 
     media->duration = (uint64_t)(mkv->info.Duration / ((double)mkv->info.TimecodeScale / 1000000.0));
@@ -481,18 +480,23 @@ void mkv_clean(mkv_t *mkv)
                         free(mkv->tracks[i]->video->Colour);
                     }
                     free(mkv->tracks[i]->video->ColourSpace);
+                    free(mkv->tracks[i]->video);
+                }
+                if (mkv->tracks[i]->audio)
+                {
+                    free(mkv->tracks[i]->audio);
                 }
                 if (mkv->tracks[i]->translate)
                 {
-                    //
+                    free(mkv->tracks[i]->translate);
                 }
                 if (mkv->tracks[i]->operation)
                 {
-                    //
+                    free(mkv->tracks[i]->operation);
                 }
                 if (mkv->tracks[i]->encodings)
                 {
-                    //
+                    free(mkv->tracks[i]->encodings);
                 }
 
                 free(mkv->tracks[i]);
