@@ -767,6 +767,7 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             {
             case eid_TrackEntry:
                 mkv->tracks[mkv->tracks_count] = (mkv_track_t*)calloc(1, sizeof(mkv_track_t));
+                vector_init(&(mkv->tracks[mkv->tracks_count]->sample_vector));
                 if (mkv->tracks[mkv->tracks_count])
                     retcode = mkv_parse_tracks_entry(bitstr, &element_sub, mkv, mkv->tracks[mkv->tracks_count]);
                 else

@@ -343,7 +343,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
     if (retcode == SUCCESS)
     {
-        int sample_count = 0; // FIXME
+        int sample_count = vector_count(&track->sample_vector);
         if (sample_count <= 0)
             sample_count = 1;
 
@@ -385,6 +385,8 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
     if (retcode == SUCCESS && map)
     {
+        // Track parameters
+
         mkv_codec(track->CodecID, &map->stream_codec, &map->stream_codec_profile);
 
         if (track->Name && strnlen(track->Name, 256) > 0)
@@ -429,6 +431,27 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         else
         {
             map->stream_type = stream_UNKNOWN;
+        }
+
+        // Track samples
+
+        map->sample_count = vector_count(&track->sample_vector);
+        //TRACE_1(MKV, "sample_count: %i", sample_count);
+
+        for (unsigned sid = 0; sid < map->sample_count; sid++)
+        {
+            mkv_sample_t *s = vector_get(&track->sample_vector, sid);
+
+            if (track->TrackType == MKV_TRACK_VIDEO)
+                map->sample_type[sid] = sample_VIDEO;
+            else if (track->TrackType == MKV_TRACK_AUDIO)
+                map->sample_type[sid] = sample_AUDIO;
+            else if (track->TrackType == MKV_TRACK_SUBTITLES)
+                map->sample_type[sid] = sample_TEXT;
+
+            map->sample_offset[sid] = s->offset;
+            map->sample_size[sid] = s->size;
+            map->sample_pts[sid] = s->timecode;
         }
     }
 
@@ -498,6 +521,14 @@ void mkv_clean(mkv_t *mkv)
                 {
                     free(mkv->tracks[i]->encodings);
                 }
+
+                int samplecount = vector_count(&mkv->tracks[i]->sample_vector);
+                for (int j = 0; j < samplecount; j++)
+                {
+                    mkv_sample_t *s = vector_get(&mkv->tracks[i]->sample_vector, j);
+                    free(s);
+                }
+                vector_free(&mkv->tracks[i]->sample_vector);
 
                 free(mkv->tracks[i]);
             }

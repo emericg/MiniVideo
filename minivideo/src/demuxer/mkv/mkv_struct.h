@@ -27,6 +27,8 @@
 // minivideo headers
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_codecs.h"
+#include "../../thirdparty/simple_vector.h"
+
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -137,6 +139,16 @@ typedef struct mkv_attachments_t
     mkv_attachedfile_t *file;
 
 } mkv_attachments_t;
+
+/* ************************************************************************** */
+
+typedef struct mkv_sample_t
+{
+    int64_t offset;
+    int64_t size;
+    int64_t timecode;
+
+} mkv_sample_t;
 
 /* ************************************************************************** */
 
@@ -277,6 +289,8 @@ typedef struct mkv_track_t
     mkv_track_translate_t *translate;
     mkv_track_operation_t *operation;
     mkv_track_encodings_t *encodings;
+
+    vector sample_vector;
 
 } mkv_track_t;
 

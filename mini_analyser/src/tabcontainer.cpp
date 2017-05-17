@@ -688,7 +688,7 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
         child_item->setIcon(0, QIcon(":/img/img/C.png"));
 
         // Don't expand everything
-        if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues")
+        if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues" && title != "Tags")
         {
             ui->treeWidget->setItemExpanded(child_item, true);
         }
