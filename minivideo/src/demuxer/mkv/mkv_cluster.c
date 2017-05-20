@@ -85,7 +85,7 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             {
             case eid_Block:
                 write_ebml_element(&element_sub, mkv->xml, "Block");
-                if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+                if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
                 break;
             case eid_BlockDuration:
                 /*BlockDuration =*/ read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "BlockDuration");
@@ -109,7 +109,7 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -147,7 +147,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             case eid_SimpleBlock:
             {
                 write_ebml_element(&element_sub, mkv->xml, "SimpleBlock");
-                if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+                if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
                 uint32_t stn = read_ebmllike_value(bitstr) - 1;
                 int16_t stc = (int)read_bits(bitstr, 16);
@@ -187,7 +187,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }

@@ -62,7 +62,7 @@ int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml)
         {
             write_chunk_header(JUNK_header, xml);
             fprintf(xml, "  <title>JUNK (filler datas)</title>\n");
-            fprintf(xml, "  </atom>\n");
+            fprintf(xml, "  </a>\n");
         }
     }
 
@@ -95,7 +95,7 @@ int parse_PAD(Bitstream_t *bitstr, RiffChunk_t *PAD_header, FILE *xml)
         {
             write_chunk_header(PAD_header, xml);
             fprintf(xml, "  <title>PAD (padding datas)</title>\n");
-            fprintf(xml, "  </atom>\n");
+            fprintf(xml, "  </a>\n");
         }
     }
 
@@ -141,7 +141,7 @@ int parse_CSET(Bitstream_t *bitstr, RiffChunk_t *CSET_header, CsetChunk_t *cset,
             fprintf(xml, "  <wCountryCode>%u</wCountryCode>\n", cset->wCountryCode);
             fprintf(xml, "  <wLanguage>%u</wLanguage>\n", cset->wLanguage);
             fprintf(xml, "  <wDialect>%u</wDialect>\n", cset->wDialect);
-            fprintf(xml, "  </atom>\n");
+            fprintf(xml, "  </a>\n");
         }
     }
 

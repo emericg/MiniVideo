@@ -104,7 +104,7 @@ int parse_sa3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             fprintf(mp4->xml, "%u ", channel_map[i]);
         }
         fprintf(mp4->xml, "  </channel_map>");
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     free(channel_map);
@@ -138,7 +138,7 @@ int parse_sand(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Non-Diegetic Audio</title>\n");
         fprintf(mp4->xml, "  <version>%u</version>\n", version);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -176,7 +176,7 @@ int parse_st3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Stereoscopic 3D Video</title>\n");
         fprintf(mp4->xml, "  <stereo_mode>%u</stereo_mode>\n", stereo_mode);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -229,7 +229,7 @@ int parse_sv3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -265,7 +265,7 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Spherical Video Header</title>\n");
         fprintf(mp4->xml, "  <metadata_source>%s</metadata_source>\n", metadata_source);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -322,7 +322,7 @@ int parse_proj(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -363,7 +363,7 @@ int parse_prhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <pose_yaw_degrees>%i</pose_yaw_degrees>\n", pose_yaw_degrees);
         fprintf(mp4->xml, "  <pose_pitch_degrees>%i</pose_pitch_degrees>\n", pose_pitch_degrees);
         fprintf(mp4->xml, "  <pose_roll_degrees>%i</pose_roll_degrees>\n", pose_roll_degrees);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -402,7 +402,7 @@ int parse_cbmp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <title>Projection Header</title>\n");
         fprintf(mp4->xml, "  <layout>%u</layout>\n", layout);
         fprintf(mp4->xml, "  <padding>%u</padding>\n", padding);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -447,7 +447,7 @@ int parse_equi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <projection_bounds_bottom>%u</projection_bounds_bottom>\n", projection_bounds_bottom);
         fprintf(mp4->xml, "  <projection_bounds_left>%u</projection_bounds_left>\n", projection_bounds_left);
         fprintf(mp4->xml, "  <projection_bounds_right>%u</projection_bounds_right>\n", projection_bounds_right);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -513,7 +513,7 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }

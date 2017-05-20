@@ -48,7 +48,7 @@
 /* ************************************************************************** */
 
 #define xmlMapper_VERSION_MAJOR 0
-#define xmlMapper_VERSION_MINOR 1
+#define xmlMapper_VERSION_MINOR 2
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 #define MAX_PATH_SIZE 256

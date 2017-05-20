@@ -99,7 +99,7 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
                 if (chunk_header->dwFourCC == fcc_strn) fprintf(avi->xml, "  <title>Stream Name</title>\n");
                 if (chunk_header->dwFourCC == fcc_ISFT) fprintf(avi->xml, "  <title>Encoder Name</title>\n");
                 fprintf(avi->xml, "  <string>%s</string>\n", string);
-                fprintf(avi->xml, "  </atom>\n");
+                fprintf(avi->xml, "  </a>\n");
             }
 
             free(string);
@@ -169,7 +169,7 @@ static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
             fprintf(avi->xml, "  <dwSuggestedBufferSize>%u</dwSuggestedBufferSize>\n", avi->avih.dwSuggestedBufferSize);
             fprintf(avi->xml, "  <dwWidth>%u</dwWidth>\n", avi->avih.dwWidth);
             fprintf(avi->xml, "  <dwHeight>%u</dwHeight>\n", avi->avih.dwHeight);
-            fprintf(avi->xml, "  </atom>\n");
+            fprintf(avi->xml, "  </a>\n");
         }
     }
 
@@ -204,7 +204,7 @@ static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
             write_chunk_header(dmlh_header, avi->xml);
             fprintf(avi->xml, "  <title>Extended AVI Header</title>\n");
             fprintf(avi->xml, "  <dwTotalFrames>%u</dwTotalFrames>\n", avi->avih.dwTotalFrames);
-            fprintf(avi->xml, "  </atom>\n");
+            fprintf(avi->xml, "  </a>\n");
         }
     }
 
@@ -262,7 +262,7 @@ static int parse_vprp(Bitstream_t *bitstr, RiffChunk_t *vprp_header, avi_t *avi)
             fprintf(avi->xml, "  <_dwFrameWidthInPixels>%u</_dwFrameWidthInPixels>\n", _dwFrameWidthInPixels);
             fprintf(avi->xml, "  <_dwFrameHeightInLines>%u</_dwFrameHeightInLines>\n", _dwFrameHeightInLines);
             fprintf(avi->xml, "  <_dwFieldPerFrame>%u</_dwFieldPerFrame>\n", _dwFieldPerFrame);
-            fprintf(avi->xml, "  </atom>\n");
+            fprintf(avi->xml, "  </a>\n");
         }
     }
 
@@ -347,7 +347,7 @@ static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, avi_t *avi,
             fprintf(avi->xml, "  <rcFrame_y>%u</rcFrame_y>\n", track->strh.rcFrame_y);
             fprintf(avi->xml, "  <rcFrame_w>%u</rcFrame_w>\n", track->strh.rcFrame_w);
             fprintf(avi->xml, "  <rcFrame_h>%u</rcFrame_h>\n", track->strh.rcFrame_h);
-            fprintf(avi->xml, "  </atom>\n");
+            fprintf(avi->xml, "  </a>\n");
         }
     }
 
@@ -604,7 +604,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
             }
         }
 
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
     }
 
     bitstream_print_absolute_byte_offset(bitstr);
@@ -711,7 +711,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
             }
         }
 
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
     }
     else
     {
@@ -789,7 +789,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
             }
         }
 
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
     }
     else
     {
@@ -833,7 +833,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
         print_list_header(movi_header);
         write_list_header(movi_header, avi->xml);
         if (avi->xml) fprintf(avi->xml, "  <title>Movie Datas</title>\n");
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
 
         // Skip "movi" content
         avi->movi_offset = movi_header->offset_start + 12; // +12 to skip movi header fields
@@ -947,7 +947,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
             }
         }
 
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
     }
     else
     {
@@ -1023,7 +1023,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
             }
         }
 
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
     }
     else
     {
@@ -1209,7 +1209,7 @@ int avi_fileParse(MediaFile_t *media)
                 }
             }
 
-            if (avi.xml) fprintf(avi.xml, "  </atom>\n");
+            if (avi.xml) fprintf(avi.xml, "  </a>\n");
 
             // Check if we have our super index, or if the tracks have been indexed
             int track_indexed = 0, track_superindexed = 0;

@@ -144,14 +144,14 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
 
             if (list_header->dwList == fcc_RIFF)
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF header\" offset=\"%li\" size=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%li\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
             }
             else
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF list\" offset=\"%li\" size=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%li\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
@@ -278,7 +278,7 @@ void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
         else
         {
             char fcc[5];
-            fprintf(xml, "  <atom fcc=\"%s\" type=\"RIFF chunk\" offset=\"%li\" size=\"%u\">\n",
+            fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF chunk\" off=\"%li\" sz=\"%u\">\n",
                     getFccString_le(chunk_header->dwFourCC, fcc),
                     chunk_header->offset_start,
                     chunk_header->dwSize + 8);
@@ -386,7 +386,7 @@ int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml)
             byte_left = unkn_header->offset_end - bitstream_get_absolute_byte_offset(bitstr);
         }
 
-        if (xml) fprintf(xml, "  </atom>\n");
+        if (xml) fprintf(xml, "  </a>\n");
     }
 
     return retcode;
@@ -419,7 +419,7 @@ int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml)
         if (xml)
         {
             write_chunk_header(unkn_header, xml);
-            fprintf(xml, "  </atom>\n");
+            fprintf(xml, "  </a>\n");
         }
     }
 

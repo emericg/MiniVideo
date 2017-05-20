@@ -195,14 +195,14 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml)
 
             if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 box\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"MP4 box\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         getFccString_le(box_header->boxtype, fcc),
                         box_header->offset_start,
                         box_header->size);
             }
             else
             {
-                fprintf(xml, "  <atom fcc=\"%s\" type=\"MP4 fullbox\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"MP4 fullbox\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         getFccString_le(box_header->boxtype, fcc),
                         box_header->offset_start,
                         box_header->size);
@@ -236,7 +236,7 @@ int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     if (xml)
     {
         write_box_header(box_header, xml);
-        fprintf(xml, "  </atom>\n");
+        fprintf(xml, "  </a>\n");
     }
 
     return SUCCESS;

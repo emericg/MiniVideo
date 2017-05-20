@@ -69,7 +69,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
         TRACE_1(AVI, "> index_entry : %u", index_entry_count);
 
         if (avi->xml) fprintf(avi->xml, "  <index_entry_count>%u</index_entry_count>\n", index_entry_count);
-        if (avi->xml) fprintf(avi->xml, "  </atom>\n");
+        if (avi->xml) fprintf(avi->xml, "  </a>\n");
 
         // Check if the tracks have already been indexed
         int track_left = 0;
@@ -233,7 +233,7 @@ int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, avi_t *avi,  AviTr
             fprintf(avi->xml, "  <bIndexType>%u</bIndexType>\n", bIndexType);
             fprintf(avi->xml, "  <nEntriesInUse>%u</nEntriesInUse>\n", nEntriesInUse);
             fprintf(avi->xml, "  <dwChunkId>%s</dwChunkId>\n", getFccString_le(dwChunkId, fcc));
-            fprintf(avi->xml, "  </atom>\n");
+            fprintf(avi->xml, "  </a>\n");
         }
 
         // Index specifics code

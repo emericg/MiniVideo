@@ -113,7 +113,7 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -190,10 +190,10 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                 break;
         }
 
-        if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+        if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -927,7 +927,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1075,7 +1075,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }
 
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1246,7 +1246,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             // TODO // NAL unit table
         }
 
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     if (array_completeness && NAL_unit_type && numNalus && nalUnitLength && nalUnit)
@@ -1310,7 +1310,7 @@ int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <bufferSizeDB>%u</bufferSizeDB>\n", bufferSizeDB);
         fprintf(mp4->xml, "  <bitrate_max>%u</bitrate_max>\n", track->bitrate_max);
         fprintf(mp4->xml, "  <bitrate_avg>%u</bitrate_avg>\n", track->bitrate_avg);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1371,7 +1371,7 @@ int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <horizOffD>%u</horizOffD>\n", horizOffD);
         fprintf(mp4->xml, "  <vertOffN>%u</vertOffN>\n", vertOffN);
         fprintf(mp4->xml, "  <vertOffD>%u</vertOffD>\n", vertOffD);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1459,7 +1459,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
             fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
         }
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1481,7 +1481,7 @@ int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1503,7 +1503,7 @@ int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1549,7 +1549,7 @@ int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Padding Bits</title>\n");
         fprintf(mp4->xml, "  <sample_count>%u</sample_count>\n", sample_count);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1587,7 +1587,7 @@ int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <title>Pixel Aspect Ratio</title>\n");
         fprintf(mp4->xml, "  <hSpacing>%u</hSpacing>\n", track->par_h);
         fprintf(mp4->xml, "  <vSpacing>%u</vSpacing>\n", track->par_v);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1656,7 +1656,7 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             for (unsigned j = 0; j < track->stts_sample_count[i]; j++)
                 fprintf(mp4->xml, "%u, ", track->stts_sample_delta[i]);
         fprintf(mp4->xml, "]</stts_sample_delta>\n");
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1727,7 +1727,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             for (unsigned j = 0; j < track->ctts_sample_count[i]; j++)
                 fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
         fprintf(mp4->xml, "]</ctts_sample_delta>\n");
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1792,7 +1792,7 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             for (i = 0; i < track->stss_entry_count; i++)
                 fprintf(mp4->xml, "%u, ", track->stss_sample_number[i]);
             fprintf(mp4->xml, "]</stss_sample_number>\n");
-            fprintf(mp4->xml, "  </atom>\n");
+            fprintf(mp4->xml, "  </a>\n");
         }
     }
 
@@ -1895,7 +1895,7 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                 fprintf(mp4->xml, "%u, ", track->stsc_sample_description_index[i]);
             fprintf(mp4->xml, "]</stsc_sample_description_index>\n");
 
-            fprintf(mp4->xml, "  </atom>\n");
+            fprintf(mp4->xml, "  </a>\n");
         }
     }
 
@@ -1989,7 +1989,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             for (i = 0; i < track->stsz_sample_count; i++)
                 fprintf(mp4->xml, "%u, ", track->stsz_entry_size[i]);
         fprintf(mp4->xml, "]</entry_size>\n");
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -2067,7 +2067,7 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             for (i = 0; i < track->stco_entry_count; i++)
                 fprintf(mp4->xml, "%li, ", track->stco_chunk_offset[i]);
             fprintf(mp4->xml, "]</chunk_offset>\n");
-            fprintf(mp4->xml, "  </atom>\n");
+            fprintf(mp4->xml, "  </a>\n");
         }
     }
 
@@ -2176,7 +2176,7 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     fprintf(mp4->xml, "%u, ", track->sdtp_sample_has_redundancy[i]);
                 fprintf(mp4->xml, "]</sdtp_sample_has_redundancy>\n");
 
-                fprintf(mp4->xml, "  </atom>\n");
+                fprintf(mp4->xml, "  </a>\n");
             }
         }
     }

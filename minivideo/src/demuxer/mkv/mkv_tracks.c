@@ -89,7 +89,7 @@ static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     free(TrackTranslateTrackID);
 
@@ -165,7 +165,7 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -251,7 +251,7 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -341,7 +341,7 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -396,7 +396,7 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -438,7 +438,7 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -571,7 +571,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -616,7 +616,7 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -740,7 +740,7 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -789,7 +789,7 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }

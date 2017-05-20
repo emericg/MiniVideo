@@ -94,7 +94,7 @@ static int mkv_parse_attachments_attachedfile(Bitstream_t *bitstr, EbmlElement_t
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     free(file.FileDescription);
     free(file.FileName);
@@ -139,7 +139,7 @@ static int mkv_parse_attachments(Bitstream_t *bitstr, EbmlElement_t *element, mk
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -177,7 +177,7 @@ static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element,
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -216,7 +216,7 @@ static int mkv_parse_chapters(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -256,7 +256,7 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -297,7 +297,7 @@ static int mkv_parse_tags(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -341,7 +341,7 @@ static int mkv_parse_cues_cuepoint_pos_ref(Bitstream_t *bitstr, EbmlElement_t *e
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -402,7 +402,7 @@ static int mkv_parse_cues_cuepoint_pos(Bitstream_t *bitstr, EbmlElement_t *eleme
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -449,7 +449,7 @@ static int mkv_parse_cues_cuepoint(Bitstream_t *bitstr, EbmlElement_t *element, 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -490,7 +490,7 @@ static int mkv_parse_cues(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -549,7 +549,7 @@ static int mkv_parse_info_chapter(Bitstream_t *bitstr, EbmlElement_t *element, m
         fprintf(mkv->xml, "  <ChapterTranslateEditionUID>%lu</ChapterTranslateEditionUID>\n", chap->ChapterTranslateEditionUID);
         fprintf(mkv->xml, "  <ChapterTranslateCodec>%lu</ChapterTranslateCodec>\n", chap->ChapterTranslateCodec);
         fprintf(mkv->xml, "  <ChapterTranslateID>%s</ChapterTranslateID>\n", chap->ChapterTranslateID);
-        fprintf(mkv->xml, "  </atom>\n");
+        fprintf(mkv->xml, "  </a>\n");
     }
 
     return retcode;
@@ -640,7 +640,7 @@ static int mkv_parse_info(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -689,7 +689,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    fprintf(mkv->xml, "  </atom>\n");
+    fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -730,7 +730,7 @@ static int mkv_parse_seekhead(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
         }
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -796,7 +796,7 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }
@@ -859,7 +859,7 @@ int ebml_parse_header(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    if (mkv->xml) fprintf(mkv->xml, "  </atom>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }

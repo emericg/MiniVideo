@@ -188,14 +188,14 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
         else
         {
             if (title != NULL)
-                fprintf(xml, "  <atom title=\"%s\" id=\"0x%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a tt=\"%s\" id=\"0x%X\" tp=\"EBML\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         title,
                         element->eid,
                         element->offset_start,
                         (element->eid_size + element->size_size +  element->size));
 
             else
-                fprintf(xml, "  <atom title=\"Unknown\" id=\"0x%X\" type=\"EBML element\" offset=\"%"PRId64"\" size=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a tt=\"Unknown\" id=\"0x%X\" tp=\"EBML\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         element->eid,
                         element->offset_start,
                         (element->eid_size + element->size_size +  element->size));
@@ -449,7 +449,7 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
     print_ebml_element(element);
     write_ebml_element(element, xml, "Void");
-    if (xml) fprintf(xml, "  </atom>\n");
+    if (xml) fprintf(xml, "  </a>\n");
 
     return skip_bits(bitstr, element->size*8);
 }
@@ -462,7 +462,7 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
     print_ebml_element(element);
     write_ebml_element(element, xml, NULL);
-    if (xml) fprintf(xml, "  </atom>\n");
+    if (xml) fprintf(xml, "  </a>\n");
 
     return skip_bits(bitstr, element->size*8);
 }

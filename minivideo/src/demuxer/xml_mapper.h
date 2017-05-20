@@ -47,7 +47,35 @@ int xmlMapperFinalize(FILE *xml);
  * \param **xml[in,out]: Mapping file.
  */
 int xmlMapperClose(FILE **xml);
+/* ************************************************************************** */
+/*
+// xmlMapper format v2
 
+<?xml version="1.0"?>
+<file xmlMapper="0.2" minivideo="0.8-1">
+<header>
+  <format>WAVE</format>
+  <size>3211820</size>
+  <path>/path/to/this/file.wav</path>
+</header>
+<structure>
+  <a fcc="WAVE" tp="RIFF header" off="0" sz="3211812">
+    <a fcc="fmt " tp="RIFF chunk" off="12" sz="16">
+          <wFormatTag>1</wFormatTag>
+          <nChannels>4</nChannels>
+          <nSamplesPerSec>48000</nSamplesPerSec>
+          <nAvgBytesPerSec note="unreliable">384000</nAvgBytesPerSec>
+          <nBlockAlign>8</nBlockAlign>
+          <wBitsPerSample unit="bit">16</wBitsPerSample>
+    </a>
+    <a fcc="data" tp="RIFF chunk" off="36" sz="3211776">
+      <datasOffset>44</datasOffset>
+      <datasSize>3211776</datasSize>
+    </a>
+  </a>
+</structure>
+</file>
+*/
 /* ************************************************************************** */
 /*
 // xmlMapper format v1

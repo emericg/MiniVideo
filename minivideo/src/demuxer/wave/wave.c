@@ -230,7 +230,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                             wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
                 }
             }
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -265,7 +265,7 @@ static int parse_fact(Bitstream_t *bitstr, RiffChunk_t *fact_header, wave_t *wav
         {
             write_chunk_header(fact_header, wave->xml);
             fprintf(wave->xml, "  <dwSampleLength>%u</dwSampleLength>\n", wave->fact.dwSampleLength);
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -361,7 +361,7 @@ static int parse_cue(Bitstream_t *bitstr, RiffChunk_t *cue_header, wave_t *wave)
                     fprintf(wave->xml, "    <dwSampleOffset index=\"%u\">%u</dwSampleOffset>\n", i, wave->cue.dwSampleOffset[i]);
                 }
             }
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -441,7 +441,7 @@ static int parse_plst(Bitstream_t *bitstr, RiffChunk_t *plst_header, wave_t *wav
                     fprintf(wave->xml, "    <dwLoops index=\"%u\">%u</dwLoops>\n", i, wave->plst.dwLoops[i]);
                 }
             }
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -572,7 +572,7 @@ static int parse_bext(Bitstream_t *bitstr, RiffChunk_t *bext_header, wave_t *wav
                 fprintf(wave->xml, "  <MaxShortTermLoudness>%u</MaxShortTermLoudness>\n", wave->bwf.MaxShortTermLoudness);
             }
 
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -610,7 +610,7 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
             write_chunk_header(data_header, wave->xml);
             fprintf(wave->xml, "  <datasOffset>%li</datasOffset>\n", wave->data.datasOffset);
             fprintf(wave->xml, "  <datasSize>%li</datasSize>\n", wave->data.datasSize);
-            fprintf(wave->xml, "  </atom>\n");
+            fprintf(wave->xml, "  </a>\n");
         }
     }
 
@@ -818,7 +818,7 @@ int wave_fileParse(MediaFile_t *media)
                 }
             }
 
-            if (wave.xml) fprintf(wave.xml, "  </atom>\n");
+            if (wave.xml) fprintf(wave.xml, "  </a>\n");
         }
 
         // xmlMapper

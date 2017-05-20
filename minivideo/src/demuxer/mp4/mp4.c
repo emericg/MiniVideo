@@ -117,7 +117,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
             fprintf(mp4->xml, "  <compatible_brands index=\"%i\">%s</compatible_brands>\n",
                     i, getFccString_le(compatible_brands[i], fcc));
         }
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -172,7 +172,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -254,7 +254,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <handler_type>%s</handler_type>\n",
                 getFccString_le(handlerType, fcc));
         fprintf(mp4->xml, "  <name>%s</name>\n", pname);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -296,7 +296,7 @@ static int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -356,7 +356,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -403,7 +403,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -476,7 +476,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <duration>%lu</duration>\n", track->duration);
         fprintf(mp4->xml, "  <language>%c%c%c</language>\n",
                 track->language[0], track->language[1], track->language[2]);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -521,7 +521,7 @@ static int parse_vmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <title>Video Media Header</title>\n");
         fprintf(mp4->xml, "  <graphicsmode>%u</graphicsmode>\n", graphicsmode);
         fprintf(mp4->xml, "  <opcolor>[%u, %u, %u]</opcolor>\n", opcolor[0], opcolor[1], opcolor[2]);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -561,7 +561,7 @@ static int parse_smhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <title>Sound Media Header</title>\n");
         fprintf(mp4->xml, "  <balance>%u</balance>\n", balance);
         fprintf(mp4->xml, "  <reserved>%u</reserved>\n", reserved);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -610,7 +610,7 @@ static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         fprintf(mp4->xml, "  <maxbitrate>%u</maxbitrate>\n", maxbitrate);
         fprintf(mp4->xml, "  <avgbitrate>%u</avgbitrate>\n", avgbitrate);
         fprintf(mp4->xml, "  <reserved>%u</reserved>\n", reserved);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -669,7 +669,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -720,7 +720,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -786,7 +786,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -843,7 +843,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -906,7 +906,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -953,7 +953,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1047,7 +1047,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                 matrix[5], matrix[6], matrix[7], matrix[8]);
         //for (i = 0; i < 9; i++)
         //    fprintf(mp4->xml, "  <matrix index=\"%i\">%i</matrix>\n", i, matrix[i]);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1122,7 +1122,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1155,7 +1155,7 @@ static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     {
         write_box_header(box_header, xml);
         fprintf(xml, "  <title>object descriptor</title>\n");
-        fprintf(xml, "  </atom>\n");
+        fprintf(xml, "  </a>\n");
     }
 
     return retcode;
@@ -1250,7 +1250,7 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                 matrix[5], matrix[6], matrix[7], matrix[8]);
         //for (i = 0; i < 9; i++)
         //    fprintf(mp4->xml, "  <matrix index=\"%i\">%i</matrix>\n", i, matrix[i]);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1310,7 +1310,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1358,7 +1358,7 @@ static int parse_traf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1394,7 +1394,7 @@ static int parse_mfhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Movie Fragment Header</title>\n");
         fprintf(mp4->xml, "  <sequence_number>%u</sequence_number>\n", sequence_number);
-        fprintf(mp4->xml, "  </atom>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1445,7 +1445,7 @@ static int parse_moof(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         }
     }
 
-    if (mp4->xml) fprintf(mp4->xml, "  </atom>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -1476,7 +1476,7 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     {
         write_box_header(box_header, xml);
         fprintf(xml, "  <title>Media Data</title>\n");
-        fprintf(xml, "  </atom>\n");
+        fprintf(xml, "  </a>\n");
     }
 
     return retcode;
