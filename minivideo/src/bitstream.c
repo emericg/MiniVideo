@@ -39,16 +39,17 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Size used for the bitstream data buffer.
+ * \brief Size used for the bitstream data buffer memory cache.
  *
  * Other buffer sizes possible:
+ *   4096   //   4 KiB
+ *   8192   //   8 KiB
+ *  16384   //  16 KiB
  *  32768   //  32 KiB
  *  65536   //  64 KiB
  * 131072   // 128 KiB
- * 262144   // 256 KiB
- * 524288   // 512 KiB
  */
-#define BITSTREAM_BUFFER_SIZE 131072
+#define BITSTREAM_BUFFER_SIZE 1024
 
 /* ************************************************************************** */
 
@@ -264,7 +265,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
     //bitstream_print_stats(bitstr);
 
     // Update current offset into the bitstream
-    if (new_bitstream_offset >= 0)
+    if (new_bitstream_offset > -1)
     {
         bitstr->bitstream_offset = new_bitstream_offset;
         bitstr->buffer_offset = 0;
@@ -288,7 +289,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
         bitstr->buffer_size = BITSTREAM_BUFFER_SIZE;
         bitstr->buffer_discarded_bytes = 0;
 
-        // Resize buffer if end of file is almost reached
+        // Cut buffer size if the end of file is almost reached
         if ((bitstr->bitstream_offset + bitstr->buffer_size) > bitstr->bitstream_size)
         {
             unsigned int buffer_size_saved = bitstr->buffer_size;
@@ -478,7 +479,7 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
             return FAILURE;
         }
 
-        fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
+        fp = bitstr->buffer_offset % 8; // front padding, in bit
         byte_current = (uint32_t)floor(bitstr->buffer_offset / 8.0);
         tbr = (uint32_t)ceil((n + fp) / 8.0);
         tbr_current = tbr;
@@ -1077,6 +1078,10 @@ int bitstream_goto_offset(Bitstream_t *bitstr, const int64_t n)
     if (retcode == SUCCESS)
     {
         TRACE_2(BITS, "<b> " BLD_BLUE "bitstream_goto_offset(%lli)" CLR_RESET " Success", n);
+    }
+    else if (bitstream_get_absolute_byte_offset(bitstr) != n)
+    {
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "bitstream_goto_offset() at %lli instead of %lli" CLR_RESET, bitstream_get_absolute_byte_offset(bitstr), n);
     }
     else
     {
