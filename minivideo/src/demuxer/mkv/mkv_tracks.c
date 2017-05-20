@@ -503,6 +503,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                         case eid_ContentCompSettings:
                             encoding->ContentCompSettings = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentCompSettings");
                             if (encoding->ContentCompSettings) encoding->ContentCompSettings_size = element_subsub.size;
+                            break;
 
                         default:
                             retcode = ebml_parse_unknown(bitstr, &element_subsub, mkv->xml);
@@ -535,12 +536,15 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                         case eid_ContentEncKeyID:
                             encoding->ContentEncKeyID = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentEncKeyID");
                             if (encoding->ContentEncKeyID) encoding->ContentEncKeyID_size = element_subsub.size;
+                            break;
                         case eid_ContentSignature:
                             encoding->ContentSignature = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentSignature");
                             if (encoding->ContentSignature) encoding->ContentSignature_size = element_subsub.size;
+                            break;
                         case eid_ContentSigKeyID:
                             encoding->ContentSigKeyID = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentSigKeyID");
                             if (encoding->ContentSigKeyID) encoding->ContentSigKeyID_size = element_subsub.size;
+                            break;
                         case eid_ContentSigAlgo:
                             encoding->ContentSigAlgo = read_ebml_data_uint2(bitstr, &element_subsub, mkv->xml, "ContentSigAlgo");
                             break;

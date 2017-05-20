@@ -592,7 +592,7 @@ int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
         TRACE_1(MP4, "> font_face  : %u", font_face);
         TRACE_1(MP4, "> foreground_color  : 0x%X%X%X",
                 foregroundcolor_r, foregroundcolor_g, foregroundcolor_b);
-        TRACE_1(MP4, "> text_name  : '%s'", 0);
+        //TRACE_1(MP4, "> text_name  : '%s'", text_name); // TODO
 #endif // ENABLE_DEBUG
 
         // xmlMapper
@@ -608,7 +608,7 @@ int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
             fprintf(mp4->xml, "  <font_face>%u</font_face>\n", font_face);
             fprintf(mp4->xml, "  <foreground_color>0x%X%X%X</foreground_color>\n",
                     foregroundcolor_r, foregroundcolor_g, foregroundcolor_b);
-            fprintf(mp4->xml, "  <text_name>%s</text_name>\n", 0);
+            //fprintf(mp4->xml, "  <text_name>%s</text_name>\n", text_name); // TODO
         }
     }
 

@@ -464,15 +464,15 @@ int tabExport::generateExportDatas_text(bool detailed)
                 break;
 
             // Section title
-            if (stream_TEXT)
+            if (t->stream_type == stream_TEXT)
                 exportDatas += "\n\nTEXT TRACK #";
-            else if (stream_MENU)
+            else if (t->stream_type == stream_MENU)
                 exportDatas += "\n\nMENU TRACK #";
-            else if (stream_TMCD)
+            else if (t->stream_type == stream_TMCD)
                 exportDatas += "\n\nTMCD TRACK #";
-            else if (stream_META)
+            else if (t->stream_type == stream_META)
                 exportDatas += "\n\nMETA TRACK #";
-            else if (stream_HINT)
+            else if (t->stream_type == stream_HINT)
                 exportDatas += "\n\nHINT TRACK #";
 
             exportDatas += QString::number(i);
