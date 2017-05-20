@@ -46,10 +46,15 @@
  */
 int main(int argc, char *argv[])
 {
-    std::cout << GREEN "main()" RESET << std::endl;
-    std::cout << "* This is DEBUG from mini_analyser()" << std::endl;
-    std::cout << "* mini_analyser version " << VERSION_MAJOR << "." << VERSION_MINOR << std::endl;
-    std::cout << GREEN "main() arguments" RESET << std::endl;
+    std::cout << GREEN "mini_analyser(" BLUE << VERSION_STR << GREEN ")" RESET << std::endl;
+#ifdef QT_DEBUG
+    std::cout << "* DEBUG build" << std::endl;
+#else
+    std::cout << "* RELEASE build" << std::endl;
+#endif
+    std::cout << "* Qt version " << QT_VERSION_STR << std::endl;
+
+    std::cout << GREEN "mini_analyser() arguments" RESET << std::endl;
     for (int i = 0; i < argc; i++)
     {
         std::cout << "> " << argv[i] << std::endl;
@@ -59,7 +64,7 @@ int main(int argc, char *argv[])
     minivideo_print_infos();
     minivideo_endianness();
 
-    // MiniAnalyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
+    // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
     MiniAnalyser app(argc, argv);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)

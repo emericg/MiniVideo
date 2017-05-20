@@ -44,34 +44,15 @@ public:
 
 /* ************************************************************************** */
 
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 1
-
-#define ENABLE_DEBUG  1
-#define ENABLE_COLORS 1
-
-/* ************************************************************************** */
-
 // Colors for console output
-#if ENABLE_COLORS
-    #define RESET  "\e[0;m" //!< Reset colored output to default terminal color
-    #define RED    "\e[1;31m"
-    #define GREEN  "\e[1;32m"
-    #define YELLOW "\e[1;33m"
-    #define BLUE   "\e[1;34m"
-    #define PURPLE "\e[1;35m"
-    #define CYAN   "\e[1;36m"
-    #define WHITE  "\e[1;37m"
-#else
-    #define RESET
-    #define RED
-    #define GREEN
-    #define YELLOW
-    #define BLUE
-    #define PURPLE
-    #define CYAN
-    #define WHITE
-#endif // ENABLE_COLORS
+#define RESET  "\e[0;m" //!< Reset colored output to default terminal color
+#define RED    "\e[1;31m"
+#define GREEN  "\e[1;32m"
+#define YELLOW "\e[1;33m"
+#define BLUE   "\e[1;34m"
+#define PURPLE "\e[1;35m"
+#define CYAN   "\e[1;36m"
+#define WHITE  "\e[1;37m"
 
 /* ************************************************************************** */
 #endif // MINI_ANALYSER_H

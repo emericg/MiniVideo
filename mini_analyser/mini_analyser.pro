@@ -7,7 +7,9 @@ TARGET       = mini_analyser
 TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets xml printsupport
-VERSION     = r39
+
+VERSION      = r40
+DEFINES     += VERSION_STR=\\\"$${VERSION}\\\"
 
 # build artifacts
 OBJECTS_DIR  = build/

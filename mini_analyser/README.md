@@ -6,16 +6,17 @@ mini_analyser
 Introduction
 ------------
 
-mini_analyser is a software designed to help you extract the maximum of informations and meta-datas from multimedia files, using the minivideo library.
+mini_analyser is a software designed to help you extract a maximum of informations and metadatas from multimedia files. It can also map container's internal structure and let you visualize it.
 
-### Supported container formats (import modules)
+### Supported container formats
 - AVI [.avi]
 - WAVE [.wav]
+- MKV [.mkv, .webm, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
-- MP3 "elementary stream" (.mp3)
-- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
-- MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
+- MPEG-1/2 "elementary stream" [.mpg, .mpeg]
+- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- MP3 "elementary stream" (.mp3)
 
 
 Building mini_analyser
@@ -33,7 +34,7 @@ minivideo library must have been built first.
 
 Installation into the system, available for root user with both testing softwares:
 >  $ su  
->  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+>  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Using mini_analyser
