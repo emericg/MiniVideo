@@ -451,7 +451,7 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
     write_ebml_element(element, xml, "Void");
     if (xml) fprintf(xml, "  </a>\n");
 
-    return skip_bits(bitstr, element->size*8);
+    return SUCCESS;
 }
 
 /* ************************************************************************** */
@@ -464,7 +464,7 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
     write_ebml_element(element, xml, NULL);
     if (xml) fprintf(xml, "  </a>\n");
 
-    return skip_bits(bitstr, element->size*8);
+    return SUCCESS;
 }
 
 /* ************************************************************************** */
@@ -515,6 +515,8 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
+
+        return bitstream_goto_offset(bitstr, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

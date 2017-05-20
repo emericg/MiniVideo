@@ -43,11 +43,11 @@
 
 void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
 {
+    if (!codec_str || !codec || !profile)
+        return;
+
     *codec = CODEC_UNKNOWN;
     *profile = PROF_UNKNOWN;
-
-    if (codec == NULL)
-        return;
 
     if (strncmp(codec_str, "A_", 2) == 0)
     {

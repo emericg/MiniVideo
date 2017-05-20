@@ -126,6 +126,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
     write_ebml_element(element, mkv->xml, "Cluster");
 
     mkv_cluster_t cluster;
+    cluster.Timecode = 0;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
