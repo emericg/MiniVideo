@@ -33,6 +33,7 @@
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <math.h>
 
 /* ************************************************************************** */
@@ -911,9 +912,11 @@ int decodePPS(DecodingContext_t *dc)
                     if (pps->pic_scaling_list_present_flag[i])
                     {
                         if (i < 6)
-                            scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList4x4[i], 16, dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix4x4Flag[i]);
+                            scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList4x4[i], 16,
+                                         dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix4x4Flag[i]);
                         else
-                            scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList8x8[i-6], 64, dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix8x8Flag[i-6]);
+                            scaling_list(dc->sps_array[pps->seq_parameter_set_id]->ScalingList8x8[i-6], 64,
+                                         dc->sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix8x8Flag[i-6]);
                     }
                 }
 #else // ENABLE_FMO
@@ -1535,20 +1538,23 @@ static int checkVUI(DecodingContext_t *dc, vui_t *vui)
 
             if (vui->log2_max_mv_length_vertical > 16)
             {
-                TRACE_WARNING(PARAM, "    - log2_max_mv_length_vertical is %i but should be in range [0,16]", vui->log2_max_mv_length_vertical);
+                TRACE_WARNING(PARAM, "    - log2_max_mv_length_vertical is %i but should be in range [0,16]",
+                              vui->log2_max_mv_length_vertical);
                 retcode = FAILURE;
             }
 
             if (vui->num_reorder_frames > vui->max_dec_frame_buffering)
             {
-                TRACE_WARNING(PARAM, "    - num_reorder_frames is %i but should be in range [0,max_dec_frame_buffering=%i]", vui->num_reorder_frames, vui->max_dec_frame_buffering);
+                TRACE_WARNING(PARAM, "    - num_reorder_frames is %i but should be in range [0,max_dec_frame_buffering=%i]",
+                              vui->num_reorder_frames, vui->max_dec_frame_buffering);
                 retcode = FAILURE;
             }
 
             if (vui->max_dec_frame_buffering < vui->num_reorder_frames)
             {
                 //FIXME max level: specified in subclauses A.3.1, A.3.2, G.10.2.1, and H.10.2.
-                TRACE_WARNING(PARAM, "    - max_dec_frame_buffering is %i but should be greater than num_reorder_frames=%i", vui->max_dec_frame_buffering, vui->num_reorder_frames);
+                TRACE_WARNING(PARAM, "    - max_dec_frame_buffering is %i but should be greater than num_reorder_frames=%i",
+                              vui->max_dec_frame_buffering, vui->num_reorder_frames);
                 retcode = FAILURE;
             }
         }
@@ -1749,7 +1755,8 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
         {
             if (hrd->bit_rate_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
             {
-                TRACE_WARNING(PARAM, "      - bit_rate_value_minus1[%i] is %i, but should in range [0,2^32-2]", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
+                TRACE_WARNING(PARAM, "      - bit_rate_value_minus1[%i] is %i, but should in range [0,2^32-2]",
+                              SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
                 retcode = FAILURE;
             }
             else if (SchedSelIdx > 0 && hrd->bit_rate_value_minus1[SchedSelIdx] <= hrd->bit_rate_value_minus1[SchedSelIdx-1])
@@ -1761,7 +1768,8 @@ static int checkHRD(DecodingContext_t *dc, hrd_t *hrd)
 
             if (hrd->cpb_size_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
             {
-                TRACE_WARNING(PARAM, "      - cpb_size_value_minus1[%i] is %i, but should in range [0,2^32-2]", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx]);
+                TRACE_WARNING(PARAM, "      - cpb_size_value_minus1[%i] is %i, but should in range [0,2^32-2]",
+                              SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx]);
                 retcode = FAILURE;
             }
             else if (SchedSelIdx > 0 && hrd->cpb_size_value_minus1[SchedSelIdx] > hrd->cpb_size_value_minus1[SchedSelIdx-1])
