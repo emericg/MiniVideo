@@ -85,7 +85,7 @@ static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -161,7 +161,7 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -247,7 +247,7 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -337,7 +337,7 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -392,7 +392,7 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -434,7 +434,7 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -509,7 +509,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                             break;
                         }
 
-                        jumpy_mkv(bitstr, &element_sub, &element_subsub);
+                        retcode = jumpy_mkv(bitstr, &element_sub, &element_subsub);
                     }
                 }
             } break;
@@ -553,7 +553,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                             break;
                         }
 
-                        jumpy_mkv(bitstr, &element_sub, &element_subsub);
+                        retcode = jumpy_mkv(bitstr, &element_sub, &element_subsub);
                     }
                 }
             } break;
@@ -563,7 +563,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -608,7 +608,7 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -732,7 +732,7 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -766,6 +766,7 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             switch (element_sub.eid)
             {
             case eid_TrackEntry:
+            {
                 mkv->tracks[mkv->tracks_count] = (mkv_track_t*)calloc(1, sizeof(mkv_track_t));
                 vector_init(&(mkv->tracks[mkv->tracks_count]->sample_vector));
                 if (mkv->tracks[mkv->tracks_count])
@@ -773,14 +774,14 @@ int mkv_parse_tracks(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
                 else
                     retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 mkv->tracks_count++;
-                break;
+            } break;
 
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 

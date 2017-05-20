@@ -142,7 +142,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
         }
 
         // Set end offset
-        element->offset_end = element->offset_start + element->eid_size + element->size_size +  element->size;
+        element->offset_end = element->offset_start + (element->eid_size + element->size_size + element->size);
     }
 
     return retcode;
@@ -486,7 +486,7 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
  */
 int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current)
 {
-    int retcode = FAILURE;
+    int retcode = SUCCESS;
     int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
 
     if (current_pos != current->offset_end)
@@ -494,19 +494,16 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
         int64_t file_size = bitstream_get_full_size(bitstr);
         int64_t offset_end = current->offset_end;
 
-        // If the current element have a parent, and its offset_end is 'valid' (not past file size)
-        if (parent && parent->offset_end < file_size)
+        // Check offset_end
+        if (parent && parent->offset_end < file_size) // current element has valid parent
         {
-            // If the current offset_end is past its parent offset_end, its probably
-            // broken, and so we will use the one from its parent
+            // Validate offset_end against parent's (parent win)
             if (offset_end > parent->offset_end)
-            {
                 offset_end = parent->offset_end;
-            }
         }
-        else // no parent (or parent with broken offset_end)
+        else // current element has no parent (or parent with invalid offset_end)
         {
-            // If the current offset_end is past file size
+            // Validate offset_end against file's (file win)
             if (offset_end > file_size)
                 offset_end = file_size;
         }

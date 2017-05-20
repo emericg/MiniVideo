@@ -451,7 +451,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
             map->sample_offset[sid] = s->offset;
             map->sample_size[sid] = s->size;
-            map->sample_pts[sid] = s->timecode;
+            map->sample_pts[sid] = s->timecode * 1000;
         }
     }
 

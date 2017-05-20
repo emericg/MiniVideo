@@ -105,7 +105,7 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
@@ -183,7 +183,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
                 break;
             }
 
-            jumpy_mkv(bitstr, element, &element_sub);
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
         }
     }
 
