@@ -22,7 +22,13 @@
 #include "tabcontainer.h"
 #include "ui_tabcontainer.h"
 
+// minianalyser
 #include "utils.h"
+
+// minivideo library
+#include <minivideo.h>
+#include <bitstream.h>
+#include <depacketizer/depack.h>
 
 #include <QLayout>
 #include <QLayoutItem>
@@ -240,12 +246,13 @@ void tabContainer::sampleSelection(int sid)
     clearContent();
 
     if (media && track &&
-        static_cast<uint32_t>(sid) < track->sample_count)
+        sid >= 0 && static_cast<uint32_t>(sid) < track->sample_count)
     {
         int64_t offset = track->sample_offset[sid];
         int64_t size = track->sample_size[sid];
 
-        // Infos
+        // Header infos
+        ui->widgetHeader->show();
         ui->labelTitle->setText(getSampleTypeString(track->sample_type[sid]) + " #" + QString::number(sid));
         QLabel *lo = new QLabel(tr("> Offset"));
         QLabel *ls = new QLabel(tr("> Size"));
@@ -279,6 +286,34 @@ void tabContainer::sampleSelection(int sid)
             ui->gridLayout_header->addWidget(dd, 4, 1);
         }
 
+        // Content infos
+        ui->widgetSamples->show();
+
+        es_sample_t essample_list[16];
+        int essample_count = depack_sample(media, track, sid, essample_list);
+
+        if (essample_count)
+        {
+            for (int i = 0; i < essample_count; i++)
+            {
+                QLabel *a = new QLabel("Sample #" + QString::number(i) + " @ " + QString::number(essample_list[i].offset - track->sample_offset[sid]) + " / " + QString::number(essample_list[i].size) + " bytes");
+                QLineEdit *b = new QLineEdit(QString::fromLocal8Bit(essample_list[i].type_str));
+                b->setReadOnly(true);
+
+                ui->gridLayout_samples->addWidget(a, i, 0);
+                ui->gridLayout_samples->addWidget(b, i, 1);
+            }
+        }
+        else
+        {
+            QLabel *a = new QLabel("Sample #0 @ 0 / " + QString::number(track->sample_size[sid]) + " bytes");
+            QLineEdit *b = new QLineEdit(tr("Unknown..."));
+            b->setReadOnly(true);
+
+            ui->gridLayout_samples->addWidget(a, 0, 0);
+            ui->gridLayout_samples->addWidget(b, 0, 1);
+        }
+
         // HexEditor
         ui->widget_hex->setReadOnly(true);
         ui->widget_hex->setData(mediaFile);
@@ -293,7 +328,7 @@ void tabContainer::containerSelectionEmpty()
     if (!media)
         return;
 
-    // Infos
+    // Header infos
     ui->labelTitle->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
     QLabel *fpl = new QLabel(tr("File path:"));
     QLabel *fp = new QLabel(QString::fromLocal8Bit(media->file_path));
@@ -305,6 +340,9 @@ void tabContainer::containerSelectionEmpty()
     ui->gridLayout_header->addWidget(fp, 0, 1);
     ui->gridLayout_header->addWidget(fsl, 1, 0);
     ui->gridLayout_header->addWidget(fs, 1, 1);
+
+    // Sample infos
+    ui->widgetSamples->hide();
 
     // HexEditor
     ui->widget_hex->setReadOnly(true);
@@ -428,6 +466,11 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
             ui->gridLayout_header->addWidget(atom_uuid_data, fieldCount++, 1, 1, 4);
         }
 
+        // Set sample settings
+        ////////////////////////////////////////////////////////////////////////
+
+        ui->widgetSamples->hide();
+
         // Parse element and set atom fields
         ////////////////////////////////////////////////////////////////////////
         QDomNode structure_node = eSelected.firstChild();
@@ -546,6 +589,7 @@ void tabContainer::clearContent()
     for (int i = 0; i < 32; i++)
     {
         removeRow(ui->gridLayout_header, i, true);
+        removeRow(ui->gridLayout_samples, i, true);
         removeRow(ui->gridLayout_content, i, true);
     }
 }
@@ -708,7 +752,7 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
                         child_item->setIcon(0, QIcon(":/img/img/L.png"));
                 }
 /*
-                else if (e.tagName() == "tt")
+                else if (e.tagName() == "title")
                 {
                     child_item->setText(0, child_item->text(0) + " (" + e.text() + ")");
                 }
