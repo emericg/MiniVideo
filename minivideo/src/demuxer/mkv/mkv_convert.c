@@ -106,6 +106,10 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
             //A_AC3/BSID10
             *codec = CODEC_AC3;
         }
+        else if (strcmp(codec_str, "A_EAC3") == 0)
+        {
+            *codec = CODEC_EAC3;
+        }
         else if (strcmp(codec_str, "A_AC4") == 0)
         {
             *codec = CODEC_AC4;
@@ -347,7 +351,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         if (sample_count <= 0)
             sample_count = 1;
 
-        if (track->audio)
+        if (track->TrackType == MKV_TRACK_AUDIO || track->audio)
         {
             retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
             if (retcode == SUCCESS)
@@ -356,13 +360,22 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
                 media->tracks_audio_count++;
             }
         }
-        else if (track->video)
+        else if (track->TrackType == MKV_TRACK_VIDEO || track->video)
         {
             retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
                 media->tracks_video_count++;
+            }
+        }
+        else if (track->TrackType == MKV_TRACK_SUBTITLES)
+        {
+            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], sample_count);
+            if (retcode == SUCCESS)
+            {
+                map = media->tracks_subt[media->tracks_subtitles_count];
+                media->tracks_subtitles_count++;
             }
         }
         else
