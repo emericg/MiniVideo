@@ -64,16 +64,16 @@ typedef struct MediaFile_t
 
     // A/V track(s) datas and infos
     unsigned int tracks_audio_count;
-    MediaStream_t *tracks_audio[16];   //!< A list of parsed audio tracks
+    MediaStream_t *tracks_audio[16];    //!< A list of parsed audio tracks
 
     unsigned int tracks_video_count;
-    MediaStream_t *tracks_video[16];   //!< A list of parsed video tracks
+    MediaStream_t *tracks_video[16];    //!< A list of parsed video tracks
 
     unsigned int tracks_subtitles_count;
-    MediaStream_t *tracks_subt[16];    //!< A list of parsed subtitles tracks
+    MediaStream_t *tracks_subt[16];     //!< A list of parsed subtitles tracks
 
     unsigned int tracks_others_count;
-    MediaStream_t *tracks_others[16];  //!< Other "unknown" tracks found in the container (metadatas, timecodes, ...)
+    MediaStream_t *tracks_others[16];   //!< Other "unknown" tracks found in the container (metadatas, timecodes, ...)
 
     // Parsing statistics
     uint64_t parsingTime;               //!< Parsing time (in milliseconds) (only available in debug mode)
