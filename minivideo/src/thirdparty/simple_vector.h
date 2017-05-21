@@ -29,6 +29,10 @@
 
 #ifndef SIMPLE_VECTOR_H
 #define SIMPLE_VECTOR_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
 
 /*!
@@ -43,10 +47,6 @@ typedef struct simple_vector_t
 } vector;
 
 /* ************************************************************************** */
-
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 
 /*!
  * \brief vector_init
@@ -97,9 +97,9 @@ void vector_delete(vector *v, int index);
  */
 void vector_free(vector *v);
 
+/* ************************************************************************** */
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-/* ************************************************************************** */
 #endif // SIMPLE_VECTOR_H

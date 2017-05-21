@@ -24,14 +24,13 @@
 #ifndef MINIVIDEO_CODECS_H
 #define MINIVIDEO_CODECS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 #include "minivideo_typedef.h"
 #include "minivideo_avutils.h"
 #include "minivideo_export.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
 
 //! Container file formats

@@ -24,16 +24,15 @@
 #ifndef MINIVIDEO_H
 #define MINIVIDEO_H
 
-// Needed in order to use this library from a C++ software without problems.
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 #include "minivideo_export.h"
 #include "minivideo_codecs.h"
 #include "minivideo_fourcc.h"
 #include "minivideo_mediafile.h"
 
+// Needed in order to use this library from a C++ software without problems.
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
 
 /*!
