@@ -118,5 +118,8 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu);
 
 int nalu_clean_sample(Bitstream_t *bitstr);
 
+const char *nalu_get_string_type0(nalu_t *nalu);
+const char *nalu_get_string_type1(unsigned type);
+
 /* ************************************************************************** */
 #endif // H264_NALU_H

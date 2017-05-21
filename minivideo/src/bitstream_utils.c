@@ -203,7 +203,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
     TRACE_2(BITS, "<b> " BLD_BLUE "more_bitstream_data()" CLR_RESET);
     bool retcode = true;
 
-    if (bitstr->bitstream_map == NULL)
+    if (bitstr->sample_map == NULL)
     {
         if ((bitstr->bitstream_offset + (bitstr->buffer_offset / 8)) >= bitstr->bitstream_size)
         {
@@ -213,7 +213,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
     }
     else
     {
-        if ((uint32_t)bitstr->bitstream_sample_index == bitstr->bitstream_map->sample_count)
+        if ((uint32_t)bitstr->sample_index == bitstr->sample_map->sample_count)
         {
             if ((bitstr->buffer_size - bitstr->buffer_offset) < 8)
             {
@@ -278,7 +278,7 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
     TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_data()" CLR_RESET);
     bool retcode = true;
 
-    if (bitstr->bitstream_map == NULL)
+    if (bitstr->sample_map == NULL)
     {
         if (more_bitstream_data(bitstr))
         {
@@ -405,7 +405,7 @@ bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
     TRACE_3(BITS, "<b> " BLD_BLUE "h264_more_rbsp_trailing_data()" CLR_RESET);
     bool retcode = true;
 
-    if (bitstr->bitstream_map == NULL)
+    if (bitstr->sample_map == NULL)
     {
         if (bitstream_check_alignment(bitstr))
         {

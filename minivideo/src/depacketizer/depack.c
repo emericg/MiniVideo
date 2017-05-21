@@ -48,27 +48,55 @@ unsigned depack_file(MediaFile_t *media,
     return samplefound;
 }
 
-unsigned depack_sample(Bitstream_t *bitstr, MediaStream_t *track,
+unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
                        unsigned sample_index, es_sample_t *essample_list)
 {
-    TRACE_1(DEPAK, "depack_sample(dispatch)");
+    TRACE_1(DEPAK, "depack_sample(dispatcher)");
+    Bitstream_t *bitstr = NULL;
 
+    // Check if the stream is indeed packetized
+    if (track->stream_packetized == true)
+    {
+        // Start a reader
+        bitstr = init_bitstream0(media,
+                                 track->sample_offset[sample_index],
+                                 track->sample_size[sample_index]);
+    }
+
+    unsigned samplefound = depack_loaded_sample(bitstr, media, track,
+                                                sample_index, essample_list);
+
+    free_bitstream(&bitstr);
+
+    return samplefound;
+}
+
+unsigned depack_loaded_sample(Bitstream_t *bitstr,
+                              MediaFile_t *media, MediaStream_t *track,
+                              unsigned sample_index, es_sample_t *essample_list)
+{
+    TRACE_1(DEPAK, "depack_loaded_sample(dispatcher)");
     unsigned samplefound = 0;
 
-    // Select a depacketizer
-    if (track->stream_packetized == false) // passthrough
+    // Check if the stream is indeed packetized
+    if (track->stream_packetized == false)
     {
         essample_list[0].offset = track->sample_offset[sample_index];
         essample_list[0].size = track->sample_size[sample_index];
+        essample_list[0].type_str = NULL;
         samplefound = 1;
     }
-    else if (track->stream_codec == CODEC_H264)
+    else
     {
-        samplefound = depack_h264_sample(bitstr, track, sample_index, essample_list);
+        // Select a depacketizer and depack sample
+        if (media->container == CONTAINER_MP4 && track->stream_codec == CODEC_H264)
+        {
+            samplefound = depack_h264_sample(bitstr, track, sample_index, essample_list);
+        }
     }
 
 #if ENABLE_DEBUG
-    // Sanity check
+    // Sanity checks
     if (samplefound > 0)
     {
         int64_t samplefoundsize = 0;

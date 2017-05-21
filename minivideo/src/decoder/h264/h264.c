@@ -343,6 +343,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
     // Goto correct data offset
     //bitstream_goto_offset(dc->bitstr, nalu_offset);
+    buffer_feed_manual(dc->bitstr, nalu_offset, nalu_size);
 
     // Check header validity
     if (nalu_parse_header(dc->bitstr, dc->active_nalu))
@@ -494,27 +495,35 @@ int h264_decode(MediaFile_t *input_video,
         dc->decoderRunning = true;
     }
 
-    // Load SPS & PPS
-    retcode = buffer_feed_next_sample(dc->bitstr);
-    int64_t samplesid = dc->bitstr->bitstream_sample_index;
-    int64_t samplesoffset = dc->bitstr->bitstream_map->sample_offset[0];
-    int64_t samplesize = dc->bitstr->bitstream_map->sample_size[0];
-    h264_decode_nalu(dc, samplesoffset, samplesize);
-    retcode = buffer_feed_next_sample(dc->bitstr);
-    samplesid = dc->bitstr->bitstream_sample_index;
-    samplesoffset = dc->bitstr->bitstream_map->sample_offset[1];
-    samplesize = dc->bitstr->bitstream_map->sample_size[1];
-    h264_decode_nalu(dc, samplesoffset, samplesize);
+    int tid = 0;
+    int sid = 0;
 
-    es_sample_t essample_list[16];
+    // Load SPS
+    int64_t samplesoffset = dc->VideoFile->tracks_video[tid]->sample_offset[sid];
+    int64_t samplesize = dc->VideoFile->tracks_video[tid]->sample_size[sid];
+    retcode = buffer_feed_manual(dc->bitstr, samplesoffset, samplesize);
+    retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
+    sid++;
+
+    // Load PPS
+    samplesoffset = dc->VideoFile->tracks_video[tid]->sample_offset[sid];
+    samplesize = dc->VideoFile->tracks_video[tid]->sample_size[sid];
+    retcode = buffer_feed_manual(dc->bitstr, samplesoffset, samplesize);
+    retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
+    sid++;
 
     // Loop until the end of the decoding
     while (dc->decoderRunning && retcode == SUCCESS)
     {
+        buffer_feed_manual(dc->bitstr,
+                           dc->VideoFile->tracks_video[tid]->sample_offset[sid],
+                           dc->VideoFile->tracks_video[tid]->sample_size[sid]);
+
         // Depacketize
-        int essample_count = depack_sample(dc->bitstr, dc->bitstr->bitstream_map,
-                                           dc->bitstr->bitstream_sample_index,
-                                           essample_list);
+        es_sample_t essample_list[16];
+        int essample_count = depack_loaded_sample(dc->bitstr, dc->VideoFile,
+                                                  dc->VideoFile->tracks_video[tid],
+                                                  sid, essample_list);
 
         if (essample_count < 1)
         {
@@ -527,7 +536,6 @@ int h264_decode(MediaFile_t *input_video,
         {
             int64_t current_nalu_offset = essample_list[i].offset;
             int64_t current_nalu_size = essample_list[i].size;
-
             h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
 
             if (dc->idrCounter == (unsigned)picture_number)

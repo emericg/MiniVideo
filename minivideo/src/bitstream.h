@@ -55,28 +55,30 @@
  */
 typedef struct Bitstream_t
 {
-    FILE *bitstream_file;                //!< File pointer
+    FILE *bitstream_file;               //!< File pointer
+    int64_t bitstream_size;             //!< Bitstream size (in byte)
+    int64_t bitstream_offset;           //!< Current offset into the bitstream (in byte)
 
-    MediaStream_t *bitstream_map;        //!< Bitstream map of existing A/V samples inside the file
-    uint32_t bitstream_sample_index;     //!< Id of the A/V sample currently in use
+    uint32_t buffer_size_saved;         //!< Data buffer size (in byte)
 
-    int64_t bitstream_size;              //!< Total bitstream size (in byte)
-    int64_t bitstream_offset;            //!< Current offset into the bitstream (in byte)
+    uint8_t *buffer;                    //!< Current data buffer
+    uint32_t buffer_size;               //!< Current data buffer size (in byte)
+    uint32_t buffer_offset;             //!< Current offset into the buffer (in bit)
+    uint32_t buffer_discarded_bytes;    //!< Current number of byte(s) removed during NAL Unit read ahead
 
-    uint8_t *buffer;                     //!< Data buffer pointer
-    uint32_t buffer_size;                //!< Data buffer size (in byte)
-
-    uint32_t buffer_offset;              //!< Current offset into the buffer (in bit)
-    uint32_t buffer_discarded_bytes;     //!< Current number of byte removed during read ahead
+    // (if used with a sample track)
+    MediaStream_t *sample_map;          //!< Bitstream map of existing A/V samples inside the file
+    uint32_t sample_index;              //!< ID of the A/V sample currently in use
 
 } Bitstream_t;
 
 /* ************************************************************************** */
 
+Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint32_t buffer_size);
 Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream);
 void free_bitstream(Bitstream_t **bitstr_ptr);
 
-int buffer_feed_next_sample(Bitstream_t *bitstr);
+int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t size);
 int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset);
 
 // Bits operations

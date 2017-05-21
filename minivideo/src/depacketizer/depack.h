@@ -29,13 +29,24 @@
 #include "../import.h"
 #include "../bitstream.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
 
 unsigned depack_file(MediaFile_t *media,
                      es_sample_t *essample_list);
 
-unsigned depack_sample(Bitstream_t *bitstr, MediaStream_t *track,
+unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
                        unsigned sample_index, es_sample_t *essample_list);
 
+unsigned depack_loaded_sample(Bitstream_t *bitstr,
+                              MediaFile_t *media, MediaStream_t *track,
+                              unsigned sample_index, es_sample_t *essample_list);
+
 /* ************************************************************************** */
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #endif // DEPACKETIZER_H

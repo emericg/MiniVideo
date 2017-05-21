@@ -39,17 +39,82 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Size used for the bitstream data buffer memory cache.
- *
- * Other buffer sizes possible:
- *   4096   //   4 KiB
- *   8192   //   8 KiB
- *  16384   //  16 KiB
- *  32768   //  32 KiB
- *  65536   //  64 KiB
- * 131072   // 128 KiB
+ * \brief Default size for the bitstream data buffer memory cache.
  */
-#define BITSTREAM_BUFFER_SIZE 1024
+#define DEFAULT_BUFFER_SIZE 1024
+
+/* ************************************************************************** */
+
+/*!
+ * \brief init_bitstream0
+ * \param media
+ * \param bitstream_offset
+ * \param buffer_size
+ * \return
+ */
+Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint32_t buffer_size)
+{
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "init_bitstream()" CLR_RESET);
+    Bitstream_t *bitstr = NULL;
+
+    if (media == NULL ||
+        media->file_pointer == NULL)
+    {
+        TRACE_ERROR(BITS, "<b> Unable to use MediaFile_t structure!");
+    }
+    else
+    {
+        // Bitstream structure allocation
+        bitstr = (Bitstream_t*)calloc(1, sizeof(Bitstream_t));
+
+        if (bitstr == NULL)
+        {
+            TRACE_ERROR(BITS, "<b> Unable to allocate bitstream structure!");
+        }
+        else
+        {
+            // Bitstream structure initialization
+            bitstr->bitstream_file = media->file_pointer;
+            bitstr->bitstream_size = media->file_size;
+            bitstr->bitstream_offset = 0;
+            if (bitstream_offset > 0)
+                bitstr->bitstream_offset = bitstream_offset;
+
+            bitstr->buffer = NULL;
+            bitstr->buffer_offset = 0;
+            if (buffer_size > 0)
+            {
+                bitstr->buffer_size_saved = buffer_size;
+                bitstr->buffer_size = buffer_size;
+            }
+            else
+            {
+                bitstr->buffer_size_saved = DEFAULT_BUFFER_SIZE;
+                bitstr->buffer_size = DEFAULT_BUFFER_SIZE;
+            }
+
+            // Bitstream buffer allocation
+            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 4) to prevent some cases of invalid 32 bits reads near the end of the buffer
+            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 8) to prevent some cases of invalid 64 bits reads near the end of the buffer
+            bitstr->buffer = (uint8_t*)calloc(bitstr->buffer_size_saved, sizeof(uint8_t));
+
+            if (bitstr->buffer == NULL)
+            {
+                TRACE_ERROR(BITS, "<b> Unable to allocate the bitstream buffer!");
+                free(bitstr);
+                bitstr = NULL;
+            }
+            else
+            {
+                // Initial buffer filling
+                buffer_feed_dynamic(bitstr, bitstr->bitstream_offset);
+            }
+        }
+    }
+
+    // Return the bitstream structure pointer
+    return bitstr;
+}
 
 /* ************************************************************************** */
 
@@ -87,20 +152,17 @@ Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream)
         {
             // Bitstream structure initialization
             bitstr->bitstream_file = media->file_pointer;
-
-            // Use a bitstream_map if available
-            if (stream != NULL)
-                bitstr->bitstream_map = stream;
-            else
-                bitstr->bitstream_map = NULL;
-
             bitstr->bitstream_size = media->file_size;
             bitstr->bitstream_offset = 0;
-            bitstr->bitstream_sample_index = 0;
 
             bitstr->buffer = NULL;
-            bitstr->buffer_size = BITSTREAM_BUFFER_SIZE;
+            bitstr->buffer_size = DEFAULT_BUFFER_SIZE;
+            bitstr->buffer_size_saved = DEFAULT_BUFFER_SIZE;
             bitstr->buffer_offset = 0;
+
+            // Use a bitstream_map if available
+            bitstr->sample_map = stream;
+            bitstr->sample_index = 0;
 
             // Bitstream buffer allocation
             //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 4) to prevent some cases of invalid 32 bits reads near the end of the buffer
@@ -154,90 +216,56 @@ Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream)
  *
  * This function is only used by the H.264 video decoder.
  */
-int buffer_feed_next_sample(Bitstream_t *bitstr)
+int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t size)
 {
-    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_next_sample()" CLR_RESET);
+    TRACE_INFO(BITS, "<b> " BLD_BLUE "buffer_feed_manual()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Print stats?
     //TRACE_1(BITS, "<b> Status before reallocation:");
     //bitstream_print_stats(bitstr);
 
-    // Check for premature end of file
-    if (bitstr->bitstream_sample_index == bitstr->bitstream_map->sample_count)
+    // Reset parameters
+    bitstr->buffer_offset = 0;
+    bitstr->buffer_discarded_bytes = 0;
+    //
+    bitstr->bitstream_offset = bitstream_offset;
+    bitstr->buffer_size = size;
+    //
+    //free(bitstr->buffer);
+    bitstr->buffer = malloc(bitstr->buffer_size);
+
+    if (bitstr->buffer == NULL)
     {
-        if ((bitstr->buffer_size - bitstr->buffer_offset) < 8)
-        {
-            TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!");
-            retcode = FAILURE;
-        }
-        else
-        {
-            retcode = SUCCESS;
-        }
+        TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!");
+        retcode = FAILURE;
     }
-
-    if (retcode == SUCCESS)
+    else
     {
-        // Reset parameters
-        bitstr->buffer_offset = 0;
-        bitstr->buffer_discarded_bytes = 0;
-
-        // Read sample parameters
-        bitstr->bitstream_offset = bitstr->bitstream_map->sample_offset[bitstr->bitstream_sample_index];
-        bitstr->buffer_size = bitstr->bitstream_map->sample_size[bitstr->bitstream_sample_index];
-
-        // Check bitstream_map->sample validity
-        if (bitstr->bitstream_sample_index > bitstr->bitstream_map->sample_count ||
-            bitstr->bitstream_offset <= 0 ||
-            bitstr->buffer_size == 0)
+        // Move file pointer
+        if (fseek(bitstr->bitstream_file, bitstr->bitstream_offset, SEEK_SET) != 0)
         {
-            TRACE_ERROR(BITS, "<b> Corrupted bitstream_map->sample[i] values!");
+            TRACE_ERROR(BITS, "<b> Unable to seek through the input file!");
             retcode = FAILURE;
         }
         else
         {
-            // Realloc buffer
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 4) to prevent some cases of invalid 32 bits reads near the end of the buffer
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 8) to prevent some cases of invalid 64 bits reads near the end of the buffer
-            bitstr->buffer = realloc(bitstr->buffer, bitstr->buffer_size);
-
-            if (bitstr->buffer == NULL)
+            // Feed buffer
+            if (fread(bitstr->buffer, sizeof(uint8_t), bitstr->buffer_size, bitstr->bitstream_file) != bitstr->buffer_size)
             {
-                TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!");
+                TRACE_ERROR(BITS, "<b> Unable to read from the input file!");
                 retcode = FAILURE;
             }
             else
             {
-                // Move file pointer
-                if (fseek(bitstr->bitstream_file, bitstr->bitstream_offset, SEEK_SET) != 0)
-                {
-                    TRACE_ERROR(BITS, "<b> Unable to seek through the input file!");
-                    retcode = FAILURE;
-                }
-                else
-                {
-                    // Feed buffer
-                    if (fread(bitstr->buffer, sizeof(uint8_t), bitstr->buffer_size, bitstr->bitstream_file) != bitstr->buffer_size)
-                    {
-                        TRACE_ERROR(BITS, "<b> Unable to read from the input file!");
-                        retcode = FAILURE;
-                    }
-                    else
-                    {
-                        TRACE_1(BITS, "<b> Bitstream buffer reallocation succeed!");
-                        retcode = SUCCESS;
-                    }
-                }
-
-                // Print stats?
-                //TRACE_1(BITS, "<b> Status after reallocation:");
-                //bitstream_print_stats(bitstr);
-
-                // Update sample position
-                bitstr->bitstream_sample_index++;
+                TRACE_1(BITS, "<b> Bitstream buffer reallocation succeed!");
+                retcode = SUCCESS;
             }
         }
+
+        // Print stats?
+        //TRACE_1(BITS, "<b> Status after reallocation:");
+        //bitstream_print_stats(bitstr);
     }
 
     return retcode;
@@ -281,12 +309,11 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
     {
         TRACE_ERROR(BITS, "<b> Fatal error: premature end of file reached!");
         retcode = FAILURE;
-        exit(EXIT_FAILURE);
     }
     else
     {
         // Reset buffer size (necessary if some data have been dynamically removed from previous buffer)
-        bitstr->buffer_size = BITSTREAM_BUFFER_SIZE;
+        bitstr->buffer_size = bitstr->buffer_size_saved;
         bitstr->buffer_discarded_bytes = 0;
 
         // Cut buffer size if the end of file is almost reached

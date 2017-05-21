@@ -32,7 +32,8 @@
 typedef struct es_sample_t
 {
     int64_t offset;
-    int64_t size;
+    uint32_t size;
+    char *type_str;
 
 } es_sample_t;
 

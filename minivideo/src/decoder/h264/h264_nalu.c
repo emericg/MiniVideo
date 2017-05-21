@@ -52,7 +52,6 @@ nalu_t *initNALU(void)
         TRACE_1(NALU, "* NAL Unit allocation success");
     }
 
-    // Return the NALU
     return nalu;
 }
 
@@ -253,6 +252,52 @@ int nalu_clean_sample(Bitstream_t *bitstr)
     bitstr->buffer_offset = buffer_offset_saved;
 
     return bitstr->buffer_discarded_bytes;
+}
+
+/* ************************************************************************** */
+
+const char *nalu_get_string_type0(nalu_t *nalu)
+{
+    return nalu_get_string_type1(nalu->nal_unit_type);
+}
+
+const char *nalu_get_string_type1(unsigned nal_unit_type)
+{
+    switch (nal_unit_type)
+    {
+        case NALU_TYPE_SLICE:
+            return "SLICE (coded slice)";
+        case NALU_TYPE_DPA:
+            return "DPA (data partition, type A)";
+        case NALU_TYPE_DPB:
+            return "DPB (data partition, type B)";
+        case NALU_TYPE_DPC:
+            return "DPC (data partition, type C)";
+        case NALU_TYPE_IDR:
+            return "IDR (Instantaneous Decode Refresh frame)";
+        case NALU_TYPE_SEI:
+            return "SEI (Supplemental Enhancement Information)";
+        case NALU_TYPE_SPS:
+            return "SPS (Sequence Parameter Set)";
+        case NALU_TYPE_PPS:
+            return "PPS (Picture Parameter Set)";
+        case NALU_TYPE_AUD:
+            return "AUD (Access Unit Delimiter)";
+        case NALU_TYPE_END_SEQUENCE:
+            return "END_SEQUENCE (end of sequence)";
+        case NALU_TYPE_END_STREAM:
+            return "END_STREAM (end of stream)";
+        case NALU_TYPE_FILL:
+            return "FILL (filler data)";
+/*
+            NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+            NALU_TYPE_15           = 15,    //!< Reserved for future extensions
+            NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+*/
+        case NALU_TYPE_UNKNOWN:
+        default:
+            return "Unknown";
+    }
 }
 
 /* ************************************************************************** */

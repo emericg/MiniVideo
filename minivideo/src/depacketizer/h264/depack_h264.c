@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "depack_h264.h"
+#include "../../decoder/h264/h264_nalu.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -39,25 +40,21 @@
 unsigned depack_h264_sample(Bitstream_t *bitstr, MediaStream_t *track,
                             unsigned sample_index, es_sample_t *essample_list)
 {
+    int status = SUCCESS;
     unsigned samplefound = 0;
 
     // Load sample from the parser
     uint32_t sampleindex = sample_index;
     int64_t samplesoffset = track->sample_offset[sampleindex];
-    int64_t samplesize = track->sample_size[sampleindex];
+    uint32_t samplesize = track->sample_size[sampleindex];
 
-    TRACE_INFO(DEPAK, "> " BLD_BLUE "READING CONTAINER SAMPLE %u (offset: %lli / size: %lli)" ,
-               sampleindex, samplesoffset, samplesize);
-
-    // load these datas
-    int status = SUCCESS;
-    status = buffer_feed_next_sample(bitstr);
-    //status = bitstream_goto_offset(bitstr, samplesoffset);
+    TRACE_1(DEPAK, "> " BLD_BLUE "READING CONTAINER SAMPLE %u (offset: %lli / size: %lli)",
+            sampleindex, samplesoffset, samplesize);
 
     while (status == SUCCESS || samplefound > 16)
     {
         //
-        int64_t current_nalu_size = read_bits(bitstr, 32);
+        uint32_t current_nalu_size = read_bits(bitstr, 32);
         int64_t current_nalu_offset = bitstream_get_absolute_byte_offset(bitstr);
 
         //
@@ -65,23 +62,28 @@ unsigned depack_h264_sample(Bitstream_t *bitstr, MediaStream_t *track,
         {
             essample_list[samplefound].offset = current_nalu_offset;
             essample_list[samplefound].size = current_nalu_size;
+
+            nalu_t n;
+            nalu_parse_header(bitstr, &n);
+            essample_list[samplefound].type_str = (char *)nalu_get_string_type0(&n);
             samplefound++;
 
-            TRACE_1(DEPAK, "> SAMPLE %i (offset: %lli / size: %lli)",
+            TRACE_1(DEPAK, "> SAMPLE %i (offset: %lli / size: %u)",
                     samplefound, current_nalu_offset, current_nalu_size);
 
+            // Next jump should not be to the last byte of our buffer
             if (current_nalu_offset + current_nalu_size < samplesoffset + samplesize)
             {
-                skip_bits(bitstr, current_nalu_size*8);
-                //bitstream_goto_offset(bitstr, current_nalu_offset + current_nalu_size); // FIXME
+                //skip_bits(bitstr, current_nalu_size*8); // FIXME
+                bitstream_goto_offset(bitstr, current_nalu_offset + current_nalu_size); // FIXME
             }
             else
                 break;
         }
         else
         {
-            TRACE_ERROR(DEPAK, "DEPACK > SAMPLE %i (offset: %lli / size: %lli) doesn't fit in its buffer",
-                        samplefound + 1, current_nalu_offset, current_nalu_size);
+            TRACE_WARNING(DEPAK, "DEPACK > SAMPLE %u (offset: %lli / size: %u) doesn't fit in its buffer (%u)",
+                          samplefound + 1, current_nalu_offset, current_nalu_size, samplesize);
             status = FAILURE;
         }
     }
