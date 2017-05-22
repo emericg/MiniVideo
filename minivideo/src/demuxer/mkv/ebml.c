@@ -472,10 +472,10 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
 /*!
  * \brief Jumpy protect your parsing - MKV edition.
- * \param bitstr
+ * \param bitstr: Our bitstream reader.
  * \param parent: The element containing the current element we're in.
  * \param current: The current element we're in.
- * \return
+ * \return SUCCESS or FAILURE if the jump could not be done.
  *
  * 'Jumpy' is in charge of checking your position into the stream after your
  * parser finish parsing a box / list / chunk / element, never leaving you
@@ -487,8 +487,14 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current)
 {
     int retcode = SUCCESS;
-    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
 
+    // Done as a precaution, because the parsing of some boxes (like ESDS...)
+    // can leave us in the middle of a byte and that will never be caught by
+    // offset checks (cause they works on the assumption that we are byte aligned)
+    bitstream_force_alignment(bitstr);
+
+    // Check if we need a jump
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
     if (current_pos != current->offset_end)
     {
         int64_t file_size = bitstream_get_full_size(bitstr);
@@ -509,14 +515,16 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
         }
 
         // If the offset_end is past the last byte of the file, we do not need to jump
-        // The parser will pick that fact and finish up
+        // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
 
-        return bitstream_goto_offset(bitstr, offset_end);
+        //TRACE_WARNING(MKV, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+
+        return bitstream_goto_offset(bitstr, offset_end); // FIXME
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

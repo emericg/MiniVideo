@@ -431,8 +431,10 @@ int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml)
 
 /*!
  * \brief Jumpy protect your parsing - RIFF edition.
+ * \param bitstr: Our bitstream reader.
  * \param parent: The RiffList_t containing the current list / chunk we're in.
  * \param offset_end: The end offset of the current list / chunk we're in.
+ * \return SUCCESS or FAILURE if the jump could not be done.
  *
  * 'Jumpy' is in charge of checking your position into the stream after your
  * parser finish parsing a box / list / chunk / element, never leaving you
@@ -443,37 +445,42 @@ int parse_unkn_chunk(Bitstream_t *bitstr, RiffChunk_t *unkn_header, FILE *xml)
  */
 int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
 {
-    int retcode = FAILURE;
-    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+    int retcode = SUCCESS;
 
+    // Done as a precaution, because the parsing of some boxes (like ESDS...)
+    // can leave us in the middle of a byte and that will never be caught by
+    // offset checks (cause they works on the assumption that we are byte aligned)
+    bitstream_force_alignment(bitstr);
+
+    // Check if we need a jump
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
     if (current_pos != offset_end)
     {
         int64_t file_size = bitstream_get_full_size(bitstr);
 
-        // If the current list/chunk has a parent, and its offset_end is 'valid' (not past file size)
-        if (parent && parent->offset_end < file_size)
+        // Check offset_end
+        if (parent && parent->offset_end < file_size) // current list/chunk has valid parent
         {
-            // If the current offset_end is past its parent offset_end, its probably
-            // broken, and so we will use the one from its parent
+            // Validate offset_end against parent's (parent win)
             if (offset_end > parent->offset_end)
-            {
                 offset_end = parent->offset_end;
-            }
         }
-        else // no parent (or parent with broken offset_end)
+        else // current list/chunk has no parent (or parent with invalid offset_end)
         {
-            // If the current offset_end is past file size
+            // Validate offset_end against file's (file win)
             if (offset_end > file_size)
                 offset_end = file_size;
         }
 
         // If the offset_end is past the last byte of the file, we do not need to jump
-        // The parser will pick that fact and finish up
+        // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
+
+        //TRACE_WARNING(RIF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?
