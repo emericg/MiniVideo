@@ -679,7 +679,7 @@ int wave_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -714,7 +714,7 @@ int wave_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
                 }
             }
@@ -733,7 +733,7 @@ int wave_fileParse(MediaFile_t *media)
                         break;
                     }
 
-                    jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                    retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                 }
                 else
                 {
@@ -771,7 +771,7 @@ int wave_fileParse(MediaFile_t *media)
                         break;
                     }
 
-                    jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                    retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                 }
             }
             else // unknown list, we still want to map it
@@ -793,7 +793,7 @@ int wave_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -813,7 +813,7 @@ int wave_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
                 }
             }

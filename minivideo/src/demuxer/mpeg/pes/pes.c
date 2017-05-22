@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "pes.h"
+#include "../../../bitstream_utils.h"
 #include "../../../minivideo_typedef.h"
 #include "../../../minitraces.h"
 
@@ -36,9 +37,9 @@
 
 /*!
  * \brief Jumpy protect your parsing - PES edition.
- * \param *bitstr: The bitstream to use.
- * \param *header: A pointer to a PES header structure.
- * \return 1 if succeed, 0 otherwise.
+ * \param bitstr: Our bitstream reader.
+ * \param header: A pointer to a PES header structure.
+ * \return SUCCESS or FAILURE if the jump could not be done.
  *
  * 'Jumpy' is in charge of checking your position into the stream after your
  * parser finish parsing a box / list / chunk / element, never leaving you
@@ -49,15 +50,21 @@
  */
 int jumpy_pes(Bitstream_t *bitstr, PesHeader_t *header)
 {
-    int retcode = FAILURE;
-    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+    int retcode = SUCCESS;
 
+    // Done as a precaution, because the parsing of some boxes (like ESDS...)
+    // can leave us in the middle of a byte and that will never be caught by
+    // offset checks (cause they works on the assumption that we are byte aligned)
+    bitstream_force_alignment(bitstr);
+
+    // Check if we need a jump
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
     if (current_pos != header->offset_end)
     {
         int64_t file_size = bitstream_get_full_size(bitstr);
 
         // If the offset_end is past the last byte of the file, we do not need to jump
-        // The parser will pick that fact and finish up
+        // The parser will pick that fact and finish up...
         if (header->offset_end >= file_size)
         {
             bitstr->bitstream_offset = file_size;

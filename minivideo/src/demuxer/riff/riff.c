@@ -366,20 +366,20 @@ int parse_unkn_list(Bitstream_t *bitstr, RiffList_t *unkn_header, FILE *xml)
             if (next_bits(bitstr, 32) == fcc_LIST)
             {
                 RiffList_t list_header;
-                retcode = parse_list_header(bitstr, &list_header);
+                retcode |= parse_list_header(bitstr, &list_header);
 
-                retcode = parse_unkn_list(bitstr, &list_header, xml);
+                retcode |= parse_unkn_list(bitstr, &list_header, xml);
 
-                jumpy_riff(bitstr, unkn_header, list_header.offset_end);
+                retcode |= jumpy_riff(bitstr, unkn_header, list_header.offset_end);
             }
             else
             {
                 RiffChunk_t chunk_header;
-                retcode = parse_chunk_header(bitstr, &chunk_header);
+                retcode |= parse_chunk_header(bitstr, &chunk_header);
 
-                retcode = parse_unkn_chunk(bitstr, &chunk_header, xml);
+                retcode |= parse_unkn_chunk(bitstr, &chunk_header, xml);
 
-                jumpy_riff(bitstr, unkn_header, chunk_header.offset_end);
+                retcode |= jumpy_riff(bitstr, unkn_header, chunk_header.offset_end);
             }
 
             // Byte left in the odml list?

@@ -463,7 +463,7 @@ int ps_fileParse(MediaFile_t *media)
                 break;
             }
 
-            jumpy_pes(bitstr, &pes_header);
+            retcode = jumpy_pes(bitstr, &pes_header);
         }
 
         // Free bitstream

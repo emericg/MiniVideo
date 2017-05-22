@@ -675,7 +675,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, strl_header, list_header.offset_end);
+                retcode = jumpy_riff(bitstr, strl_header, list_header.offset_end);
             }
             else
             {
@@ -707,7 +707,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, strl_header, chunk_header.offset_end);
+                retcode = jumpy_riff(bitstr, strl_header, chunk_header.offset_end);
             }
         }
 
@@ -765,7 +765,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, odml_header, list_header.offset_end);
+                retcode = jumpy_riff(bitstr, odml_header, list_header.offset_end);
             }
             else
             {
@@ -785,7 +785,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, odml_header, chunk_header.offset_end);
+                retcode = jumpy_riff(bitstr, odml_header, chunk_header.offset_end);
             }
         }
 
@@ -860,7 +860,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, movi_header, list_header.offset_end);
+                retcode = jumpy_riff(bitstr, movi_header, list_header.offset_end);
             }
             else
             {
@@ -874,7 +874,7 @@ static int parse_movi(Bitstream_t *bitstr, RiffList_t *movi_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, movi_header, chunk_header.offset_end);
+                retcode = jumpy_riff(bitstr, movi_header, chunk_header.offset_end);
             }
         }
     }
@@ -919,7 +919,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, INFO_header, list_header.offset_end);
+                retcode = jumpy_riff(bitstr, INFO_header, list_header.offset_end);
             }
             else
             {
@@ -943,7 +943,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, INFO_header, chunk_header.offset_end);
+                retcode = jumpy_riff(bitstr, INFO_header, chunk_header.offset_end);
             }
         }
 
@@ -996,7 +996,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, hdrl_header, list_header.offset_end);
+                retcode = jumpy_riff(bitstr, hdrl_header, list_header.offset_end);
             }
             else
             {
@@ -1019,7 +1019,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
                     break;
                 }
 
-                jumpy_riff(bitstr, hdrl_header, chunk_header.offset_end);
+                retcode = jumpy_riff(bitstr, hdrl_header, chunk_header.offset_end);
             }
         }
 
@@ -1097,7 +1097,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -1117,7 +1117,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
                 }
             }
@@ -1144,7 +1144,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -1164,7 +1164,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
                 }
             }
@@ -1187,7 +1187,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, list_header.offset_end);
                     }
                     else
                     {
@@ -1204,7 +1204,7 @@ int avi_fileParse(MediaFile_t *media)
                             break;
                         }
 
-                        jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
+                        retcode = jumpy_riff(bitstr, &RIFF_header, chunk_header.offset_end);
                     }
                 }
             }
