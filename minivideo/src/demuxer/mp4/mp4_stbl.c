@@ -225,6 +225,11 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             track->codec = CODEC_LPCM;
             TRACE_1(MP4, "> Audio track is using PCM audio");
         }
+        else if (box_header->boxtype == BOX_ESDS)
+        {
+            track->codec = CODEC_UNKNOWN;
+            TRACE_1(MP4, "> Audio track codec is driven by ESDS box content");
+        }
         else
         {
             track->codec = CODEC_UNKNOWN;
@@ -750,6 +755,8 @@ int parse_stsd_hint(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
 /*!
  * \brief Elementary Stream Descriptor box - FullBox.
  *
+ * Probably the worst part of ISO BMF...
+ *
  * From 'ISO/IEC 14496-1' specification:
  * - x.x.x ESDescriptor.
  * - 8.6.6 decoderConfigDescriptor.
@@ -893,16 +900,155 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x05) // decoderSpecificInfo TAG
         {
-            uint8_t audioObjectType = read_bits(bitstr, 8);
-            uint8_t samplingFrequencyIndex = read_bits(bitstr, 8);
-            uint32_t samplingFrequency = read_bits(bitstr, 32);
-            uint8_t channelConfiguration = read_bits(bitstr, 8);
+            uint8_t audioObjectType = read_bits(bitstr, 5);
+            uint8_t audioObjectTypeExt = 0;
+            if (audioObjectType == 31)
+            {
+                audioObjectTypeExt = read_bits(bitstr, 6);
+                audioObjectType = 32 + audioObjectTypeExt;
+            }
+
+            uint8_t samplingFrequencyIndex = read_bits(bitstr, 4);
+            uint32_t samplingFrequency = 0;
+            if (samplingFrequencyIndex == 0xF)
+            {
+                samplingFrequency = read_bits(bitstr, 4);
+            }
+            uint8_t channelConfiguration = read_bits(bitstr, 4);
+
+            // FIXME we may have some bits left unread so we play it safe...
+            bitstream_force_alignment(bitstr);
+
+            switch (audioObjectType)
+            {
+                case 1:
+                    track->codec_profile = PROF_AAC_Main;
+                    break;
+                case 2:
+                    track->codec_profile = PROF_AAC_LC;
+                    break;
+                case 3:
+                    track->codec_profile = PROF_AAC_SSR;
+                    break;
+                case 4:
+                    //track->codec_profile = PROF_AAC_LTP;
+                    break;
+                case 5:
+                    track->codec_profile = PROF_AAC_HE; // SBR (Spectral Band Replication)
+                    break;
+                case 6:
+                    track->codec_profile = PROF_AAC_Scalable;
+                    break;
+                case 7:
+                    //track->codec = CODEC_MPEG4_TwinVQ;
+                    break;
+                case 8:
+                    track->codec = CODEC_MPEG4_CELP;
+                    break;
+                case 9:
+                    track->codec = CODEC_MPEG4_HVXC;
+                    break;
+                case 29:
+                    track->codec_profile = PROF_AAC_HEv2; // PS (Parametric Stereo)
+                    break;
+                case 32:
+                    //track->codec_profile = Layer 1;
+                    break;
+                case 33:
+                    //track->codec_profile = Layer 2;
+                    break;
+                case 34:
+                    //track->codec_profile = Layer 3;
+                    break;
+                case 35:
+                    track->codec = CODEC_MPEG4_DST;
+                    break;
+                case 36:
+                    track->codec = CODEC_MPEG4_ALS;
+                    break;
+                case 37:
+                case 38:
+                    track->codec = CODEC_MPEG4_SLS;
+                    break;
+            }
+
+            switch (samplingFrequencyIndex)
+            {
+                case 0:
+                    track->sample_rate_hz = 96000;
+                    break;
+                case 1:
+                    track->sample_rate_hz = 88200;
+                    break;
+                case 2:
+                    track->sample_rate_hz = 64000;
+                    break;
+                case 3:
+                    track->sample_rate_hz = 48000;
+                    break;
+                case 4:
+                    track->sample_rate_hz = 44100;
+                    break;
+                case 5:
+                    track->sample_rate_hz = 32000;
+                    break;
+                case 6:
+                    track->sample_rate_hz = 24000;
+                    break;
+                case 7:
+                    track->sample_rate_hz = 22050;
+                    break;
+                case 8:
+                    track->sample_rate_hz = 16000;
+                    break;
+                case 9:
+                    track->sample_rate_hz = 12000;
+                    break;
+                 case 10:
+                     track->sample_rate_hz = 11025;
+                     break;
+                case 11:
+                    track->sample_rate_hz = 8000;
+                    break;
+                case 12:
+                    track->sample_rate_hz = 7350;
+                    break;
+                case 13:
+                case 14:
+                    track->sample_rate_hz = 0; // 'reserved'
+                    break;
+                case 15:
+                    track->sample_rate_hz = samplingFrequency;
+                    break;
+            }
+
+            switch (channelConfiguration)
+            {
+                case 0:
+                    //track->channel_count = x; // 'AOT Specifc Config'
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    track->channel_count = channelConfiguration;
+                    break;
+                case 7:
+                    track->channel_count = 8;
+                    break;
+                default:
+                    //track->channel_count = x; // 'reserved'
+                    break;
+            }
 
             if (mp4->xml)
             {
                 fprintf(mp4->xml, "  <audioObjectType>%u</audioObjectType>\n", audioObjectType);
+                if (audioObjectTypeExt > 0) fprintf(mp4->xml, "  <audioObjectTypeExt>%u</audioObjectTypeExt>\n", audioObjectTypeExt);
                 fprintf(mp4->xml, "  <samplingFrequencyIndex>%u</samplingFrequencyIndex>\n", samplingFrequencyIndex);
-                fprintf(mp4->xml, "  <samplingFrequency>%u</samplingFrequency>\n", samplingFrequency);
+                if (samplingFrequency > 0) fprintf(mp4->xml, "  <samplingFrequency>%u</samplingFrequency>\n", samplingFrequency);
                 fprintf(mp4->xml, "  <channelConfiguration>%u</channelConfiguration>\n", channelConfiguration);
             }
         }
@@ -1532,10 +1678,10 @@ int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     for (i = 0; i < ((sample_count + 1)/2); i++)
     {
-        const int reserved1 = read_bit(bitstr);
-        int pad1 = read_bits(bitstr, 3);
-        const int reserved2 = read_bit(bitstr);
-        int pad2 = read_bits(bitstr, 3);
+        /*const int reserved1 =*/ read_bit(bitstr);
+        /*int pad1 =*/ read_bits(bitstr, 3);
+        /*const int reserved2 =*/ read_bit(bitstr);
+        /*int pad2 =*/ read_bits(bitstr, 3);
     }
 
 #if ENABLE_DEBUG
