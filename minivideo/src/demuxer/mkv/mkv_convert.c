@@ -427,7 +427,13 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->height = track->video->PixelHeight;
             map->visible_width = track->video->DisplayWidth;
             map->visible_height = track->video->DisplayHeight;
-
+            map->color_depth = 8; // default
+            if (track->video->Colour)
+            {
+                if (track->video->Colour->BitsPerChannel != 0)
+                    map->color_depth = track->video->Colour->BitsPerChannel;
+                map->color_range = track->video->Colour->Range;
+            }
             map->framerate = 1000000000.0 / track->DefaultDuration;
         }
         else if (track->TrackType == MKV_TRACK_AUDIO)
