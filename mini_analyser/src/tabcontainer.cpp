@@ -30,6 +30,12 @@
 #include <bitstream.h>
 #include <depacketizer/depack.h>
 
+#ifdef _MSC_VER
+#include <windows.h>
+#include <Lmcons.h>
+#pragma comment(lib, "User32.lib")
+#endif
+
 #include <QLayout>
 #include <QLayoutItem>
 #include <QFontDatabase>
@@ -607,6 +613,40 @@ bool tabContainer::loadXmlFile()
     ui->treeWidget->clear();
     xmlMapFile.close();
 
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
+    QString filename;
+    wchar_t xmlMapPath[256] = {0};
+#if defined(_MSC_VER)
+    wchar_t tempdir_mv[256] = {0};
+    if (GetTempPath(256, tempdir_mv) != 0)
+    {
+        wsprintf(xmlMapPath, L"%s\\%s_mapped.xml", tempdir_mv, media->file_name);
+    }
+
+    filename = QString::fromWCharArray(tempdir_mv) ;
+    filename += "\\";
+    filename += media->file_name;
+    filename += "_mapped.xml";
+#elif defined(__MINGW32__) || defined(__MINGW64__)
+    char *tempdir = getenv("TEMP");
+    if (tempdir)
+    {
+        snprintf(xmlMapPath, 256, "%s\%s", tempdir, media->file_name);
+    }
+#endif // _MSC_VER
+
+    // Load XML file (fallback from windows file path)
+    xmlMapFile.setFileName(filename);
+
+    if (xmlMapFile.exists() == false ||
+        xmlMapFile.open(QIODevice::ReadOnly) == false)
+    {
+        qDebug() << "xmlFile.open(" << filename << ") > error";
+        status = false;
+    }
+
+#else
+
     // Load XML file (from given file descriptor)
     if (media->container_mapper_fd == NULL ||
         xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
@@ -628,6 +668,7 @@ bool tabContainer::loadXmlFile()
             status = false;
         }
     }
+#endif
 
     if (status == true)
     {
