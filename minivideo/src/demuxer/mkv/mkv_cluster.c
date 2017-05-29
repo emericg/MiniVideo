@@ -163,7 +163,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
                         s->idr = read_bit(bitstr);
                         skip_bits(bitstr, 3);
                         s->visible = read_bit(bitstr);
-                        u_int8_t lacing = read_bits(bitstr, 2);
+                        uint8_t lacing = read_bits(bitstr, 2);
                         s->discardable = read_bit(bitstr);
 
                         s->offset = bitstream_get_absolute_byte_offset(bitstr);
