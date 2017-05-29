@@ -434,6 +434,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
                     map->color_depth = track->video->Colour->BitsPerChannel;
                 map->color_range = track->video->Colour->Range;
             }
+            map->color_depth *= 3;
             map->framerate = 1000000000.0 / track->DefaultDuration;
         }
         else if (track->TrackType == MKV_TRACK_AUDIO)
