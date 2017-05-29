@@ -63,10 +63,13 @@ unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
                                  track->sample_size[sample_index]);
     }
 
-    unsigned samplefound = depack_loaded_sample(bitstr, media, track,
-                                                sample_index, essample_list);
+    unsigned samplefound = 0;
 
-    free_bitstream(&bitstr);
+    if (bitstr)
+    {
+        samplefound = depack_loaded_sample(bitstr, media, track, sample_index, essample_list);
+        free_bitstream(&bitstr);
+    }
 
     return samplefound;
 }
@@ -89,7 +92,7 @@ unsigned depack_loaded_sample(Bitstream_t *bitstr,
     else
     {
         // Select a depacketizer and depack sample
-        if (media->container == CONTAINER_MP4 && track->stream_codec == CODEC_H264)
+        if (track->stream_codec == CODEC_H264)
         {
             samplefound = depack_h264_sample(bitstr, track, sample_index, essample_list);
         }

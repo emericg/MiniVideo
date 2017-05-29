@@ -148,6 +148,10 @@ typedef struct mkv_sample_t
     int64_t size;
     int64_t timecode;
 
+    bool idr;
+    bool visible;
+    bool discardable;
+
 } mkv_sample_t;
 
 /* ************************************************************************** */

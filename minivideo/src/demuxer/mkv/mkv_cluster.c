@@ -152,17 +152,20 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 
                 uint32_t stn = read_ebmllike_value(bitstr) - 1;
                 int16_t stc = (int)read_bits(bitstr, 16);
-                uint32_t flags = read_bits(bitstr, 8);
-
                 //TRACE_1(MKV, "simpleblock track number: %u", stn);
                 //TRACE_1(MKV, "simpleblock timecode: %u", stc + cluster.Timecode);
-                //TRACE_1(MKV, "simpleblock flags: %u", flags);
 
                 if ((unsigned)mkv->tracks_count >= stn && mkv->tracks[stn])
                 {
                     mkv_sample_t *s = malloc(sizeof(mkv_sample_t));
                     if (s)
                     {
+                        s->idr = read_bit(bitstr);
+                        skip_bits(bitstr, 3);
+                        s->visible = read_bit(bitstr);
+                        u_int8_t lacing = read_bits(bitstr, 2);
+                        s->discardable = read_bit(bitstr);
+
                         s->offset = bitstream_get_absolute_byte_offset(bitstr);
                         s->size = element_sub.size;
                         s->timecode = stc + cluster.Timecode;

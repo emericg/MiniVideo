@@ -420,9 +420,11 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         if (track->DefaultDuration > 0)
             map->frame_duration = (double)(track->DefaultDuration) / 1000000.0;
 
-        if (track->TrackType == MKV_TRACK_VIDEO)
+        if (track->TrackType == MKV_TRACK_VIDEO && track->video)
         {
             map->stream_type = stream_VIDEO;
+            map->stream_packetized = true;
+
             map->width = track->video->PixelWidth;
             map->height = track->video->PixelHeight;
             map->visible_width = track->video->DisplayWidth;
@@ -437,7 +439,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->color_depth *= 3;
             map->framerate = 1000000000.0 / track->DefaultDuration;
         }
-        else if (track->TrackType == MKV_TRACK_AUDIO)
+        else if (track->TrackType == MKV_TRACK_AUDIO && track->audio)
         {
             map->stream_type = stream_AUDIO;
             map->sampling_rate = track->audio->SamplingFrequency;
@@ -463,7 +465,12 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             mkv_sample_t *s = vector_get(&track->sample_vector, sid);
 
             if (track->TrackType == MKV_TRACK_VIDEO)
-                map->sample_type[sid] = sample_VIDEO;
+            {
+                if (s->idr)
+                    map->sample_type[sid] = sample_VIDEO_SYNC;
+                else
+                    map->sample_type[sid] = sample_VIDEO;
+            }
             else if (track->TrackType == MKV_TRACK_AUDIO)
                 map->sample_type[sid] = sample_AUDIO;
             else if (track->TrackType == MKV_TRACK_SUBTITLES)
