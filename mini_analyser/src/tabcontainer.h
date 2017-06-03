@@ -28,12 +28,12 @@
 // QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
-#include <QMainWindow>
 #include <QWidget>
 #include <QTreeWidgetItem>
 #include <QResizeEvent>
 #include <QFile>
 #include <QDomDocument>
+#include <QIcon>
 
 namespace Ui {
 class tabContainer;
@@ -82,6 +82,10 @@ private:
 
     QFile xmlMapFile;
     QDomDocument xmlMapDatas;
+
+    QIcon icon_atom;
+    QIcon icon_plus;
+    QIcon icon_track;
 
     void resizeEvent(QResizeEvent *event);
 };

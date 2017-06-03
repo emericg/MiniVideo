@@ -59,6 +59,11 @@ tabContainer::tabContainer(QWidget *parent) :
     connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
     connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
 
+    // Preload icons
+    icon_atom.addFile(":/img/img/C.png");
+    icon_plus.addFile(":/img/img/L.png");
+    icon_track.addFile(":/img/img/T.png");
+
     // Setup HEX widget
     ui->widget_hex->setReadOnly(true);
 #ifdef Q_OS_LINUX
@@ -770,7 +775,7 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
 
     if (child_item)
     {
-        child_item->setIcon(0, QIcon(":/img/img/C.png"));
+        child_item->setIcon(0, icon_atom);
 
         // Don't expand everything
         if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues" && title != "Tags")
@@ -788,9 +793,9 @@ void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
                 {
                     xmlAtomParser(e, child_item);
                     if (fcc == "trak" || fcc == "strl" || title == "Track Entry")
-                        child_item->setIcon(0, QIcon(":/img/img/T.png"));
+                        child_item->setIcon(0, icon_track);
                     else
-                        child_item->setIcon(0, QIcon(":/img/img/L.png"));
+                        child_item->setIcon(0, icon_plus);
                 }
 /*
                 else if (e.tagName() == "title")
