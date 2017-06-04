@@ -117,7 +117,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
         {
             retcode = SUCCESS;
 
-            if (fprintf(*xml, "<?xml version=\"1.0\"?>\n") < 0) retcode = FAILURE;
+            if (fprintf(*xml, "<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"yes\"?>\n") < 0) retcode = FAILURE;
             if (fprintf(*xml, "<file xmlMapper=\"%d.%d\" minivideo=\"%d.%d-%d\">\n",
                         xmlMapper_VERSION_MAJOR, xmlMapper_VERSION_MINOR,
                         minivideo_VERSION_MAJOR, minivideo_VERSION_MINOR, minivideo_VERSION_PATCH) < 0) retcode = FAILURE;

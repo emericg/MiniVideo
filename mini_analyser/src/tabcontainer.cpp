@@ -60,8 +60,8 @@ tabContainer::tabContainer(QWidget *parent) :
     connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
 
     // Preload icons
-    icon_atom.addFile(":/img/img/C.png");
-    icon_plus.addFile(":/img/img/L.png");
+    icon_atom.addFile(":/img/img/A.png");
+    icon_ext.addFile(":/img/img/E.png");
     icon_track.addFile(":/img/img/T.png");
 
     // Setup HEX widget
@@ -376,28 +376,33 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 
     int selected_offset = item->data(0, Qt::UserRole).toInt();
 
-    QDomElement eSelected;
-    if (findElement(xmlMapDatas.documentElement(), "off", selected_offset, eSelected) == true)
+    // we need to find the atom with given offset
+    pugi::xml_node eSelected;
+    pugi::xml_node root = xmlMapDatas.document_element();
+
+    if (findAtom(root.child("structure"), "off", selected_offset, eSelected) == true)
     {
         //QString selected_title = eSelected.attributeNode("tt").value();
-        QString selected_fcc = eSelected.attributeNode("fcc").value();
-        QString selected_id = eSelected.attributeNode("id").value();
-        int selected_size = eSelected.attributeNode("sz").value().toInt();
-        int selected_version = eSelected.attributeNode("version").value().toInt();
-        int selected_flag = eSelected.attributeNode("flag").value().toInt();
-        QString selected_uuid = eSelected.attributeNode("uuid").value();
-        //qDebug() << "Atom fcc:" << selected_fcc << "@" << selected_offset << "clicked";
+        QString selected_fcc = QString::fromLatin1(eSelected.attribute("fcc").value());
+        QString selected_id = QString::fromLatin1(eSelected.attribute("id").value());
+        QString selected_title = QString::fromLatin1(eSelected.attribute("tt").value());
+        int selected_size = eSelected.attribute("sz").as_int();
+        int selected_version = eSelected.attribute("version").as_int();
+        int selected_flag = eSelected.attribute("flag").as_int();
+        QString selected_uuid = QString::fromLatin1(eSelected.attribute("uuid").value());
+
+        //qDebug() << "Atom :" << selected_title << "@" << selected_offset << "clicked";
 
         // Set atom title (if it's an attribute of the selected element)
         ////////////////////////////////////////////////////////////////////////
-        if (eSelected.attributeNode("tt").isAttr())
+        if (eSelected.attribute("tt"))
         {
             if (selected_fcc.isEmpty() == false)
-                ui->labelTitle->setText(eSelected.attributeNode("tt").value() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
+                ui->labelTitle->setText(selected_title + "  <font color=\"black\">(" + selected_fcc + ")</font>");
             else if (selected_id.isEmpty() == false)
-                ui->labelTitle->setText(eSelected.attributeNode("tt").value() + "  <font color=\"black\">(" + selected_id + ")</font>");
+                ui->labelTitle->setText(selected_title + "  <font color=\"black\">(" + selected_id + ")</font>");
             else
-                ui->labelTitle->setText(eSelected.attributeNode("tt").value() + "</font>");
+                ui->labelTitle->setText(selected_title + "</font>");
         }
         else
         {
@@ -408,24 +413,24 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
         ////////////////////////////////////////////////////////////////////////
         int fieldCount = 0;
         QLabel *atom_title = NULL;
-        if (eSelected.attributeNode("tp").value() == "MP4 box")
+        QString type = QString::fromLatin1(eSelected.attribute("tp").value());
+        if (type == "MP4 box")
         {
             atom_title = new QLabel(tr("<b>> MP4/MOV Atom</b>"));
         }
-        else if (eSelected.attributeNode("tp").value() == "MP4 fullbox")
+        else if (type == "MP4 fullbox")
         {
             atom_title = new QLabel(tr("<b>> MP4/MOV \"full\" Atom</b>"));
         }
-        else if (eSelected.attributeNode("tp").value() == "RIFF header" ||
-                 eSelected.attributeNode("tp").value() == "RIFF list")
+        else if (type == "RIFF header" || type == "RIFF list")
         {
             atom_title = new QLabel(tr("<b>> RIFF List</b>"));
         }
-        else if (eSelected.attributeNode("tp").value() == "RIFF chunk")
+        else if (type == "RIFF chunk")
         {
             atom_title = new QLabel(tr("<b>> RIFF Chunk</b>"));
         }
-        else if (eSelected.attributeNode("tp").value() == "EBML")
+        else if (type == "EBML")
         {
             atom_title = new QLabel(tr("<b>> EBML element</b>"));
         }
@@ -451,7 +456,7 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
         ui->gridLayout_header->addWidget(atom_size_label, fieldCount, 2);
         ui->gridLayout_header->addWidget(atom_size_data, fieldCount++, 3);
 
-        if (eSelected.attributeNode("tp").value() == "MP4 fullbox")
+        if (type == "MP4 fullbox")
         {
             QLabel *atom_version_label = new QLabel(tr("Version"));
             QLineEdit *atom_version_data = new QLineEdit(QString::number(selected_version));
@@ -467,7 +472,7 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
             ui->gridLayout_header->addWidget(atom_flag_label, fieldCount, 2);
             ui->gridLayout_header->addWidget(atom_flag_data, fieldCount++, 3);
         }
-        if (eSelected.attributeNode("uuid").value().isEmpty() == false)
+        if (selected_uuid.isEmpty() == false)
         {
             QLabel *atom_uuid_label = new QLabel(tr("UUID"));
             QLineEdit *atom_uuid_data = new QLineEdit(selected_uuid);
@@ -484,42 +489,37 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 
         // Parse element and set atom fields
         ////////////////////////////////////////////////////////////////////////
-        QDomNode structure_node = eSelected.firstChild();
-        while (structure_node.isNull() == false)
+
+        for (pugi::xml_node e = eSelected.first_child(); e; e = e.next_sibling())
         {
-            QDomElement e = structure_node.toElement();
-            if (e.isNull() == false)
+            if (strncmp(e.name(), "title", 5) == 0)
             {
-                if (e.tagName() == "title")
-                {
-                    // Set atom title (if it's a field of the selected element)
-                    ui->labelTitle->setText(e.text() + "  <font color=\"black\">(" + selected_fcc + ")</font>");
-                }
-                else if (e.tagName() == "desc")
-                {
-                    QLabel *fl = new QLabel(e.tagName());
-                    ui->gridLayout_content->addWidget(fl, fieldCount++, 1);
-                }
-                else if (e.tagName() != "a")
-                {
-                    QLabel *fl = new QLabel(e.tagName());
-                    if (e.attributeNode("index").isAttr())
-                        fl->setText(fl->text() + " #" + e.attributeNode("index").value());
-
-                    QLineEdit *fv = new QLineEdit(e.text());
-                    if (e.attributeNode("unit").isAttr())
-                        fv->setText(fv->text() + "  (unit: " + e.attributeNode("unit").value() + ")");
-                    if (e.attributeNode("note").isAttr())
-                        fv->setText(fv->text() + "  (note: " + e.attributeNode("note").value() + ")");
-
-                    fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-                    fv->setReadOnly(true);
-
-                    ui->gridLayout_content->addWidget(fl, fieldCount, 0);
-                    ui->gridLayout_content->addWidget(fv, fieldCount++, 1);
-                }
+                // Set atom title (if it's a field of the selected element)
+                ui->labelTitle->setText(QString::fromLatin1(e.child_value()) + "  <font color=\"black\">(" + selected_fcc + ")</font>");
             }
-            structure_node = structure_node.nextSibling();
+            else if (strncmp(e.name(), "desc", 4) == 0)
+            {
+                QLabel *fl = new QLabel(QString::fromLatin1(e.child_value()));
+                ui->gridLayout_content->addWidget(fl, fieldCount++, 1);
+            }
+            else if (strcmp(e.name(), "a"))
+            {
+                QLabel *fl = new QLabel(QString::fromLatin1(e.name()));
+                if (e.attribute("index"))
+                    fl->setText(fl->text() + " #" + QString::fromLatin1(e.attribute("index").value()));
+
+                QLineEdit *fv = new QLineEdit(QString::fromLatin1(e.child_value()));
+                if (e.attribute("unit"))
+                    fv->setText(fv->text() + "  (unit: " + QString::fromLatin1(e.attribute("unit").value()) + ")");
+                if (e.attribute("note"))
+                    fv->setText(fv->text() + "  (note: " + QString::fromLatin1(e.attribute("note").value()) + ")");
+
+                fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                fv->setReadOnly(true);
+
+                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_content->addWidget(fv, fieldCount++, 1);
+            }
         }
 
         // HexEditor
@@ -677,193 +677,166 @@ bool tabContainer::loadXmlFile()
 
     if (status == true)
     {
-        // Make it a QDomDocument
         xmlMapFile.seek(0);
-        if (!xmlMapDatas.setContent(&xmlMapFile))
+        char *b = new char[xmlMapFile.size()];
+        xmlMapFile.read(b, xmlMapFile.size());
+
+        pugi::xml_parse_result result = xmlMapDatas.load_buffer_inplace_own(b, xmlMapFile.size());
+        if (!result)
         {
-            qDebug() << "xmlDoc.setContent() > error";
-            xmlMapFile.close();
-            return false;
+            qDebug() << "xmlFile parsed with errors";
+            qDebug() << "Error description: " << result.description() << "(error at [..." << (result.offset) << "]";
         }
-        xmlMapFile.close();
 
         // Actual XML data parsing
-        QDomNode root_node = xmlMapDatas.documentElement().firstChild();
-        while (root_node.isNull() == false)
+        pugi::xml_node root = xmlMapDatas.document_element();
+
+        pugi::xml_node fileNode = xmlMapDatas.child("file");
+        xmlFileParser(fileNode);
+
+        pugi::xml_node headerNode = root.child("header");
+        xmlHeaderParser(headerNode);
+
+        pugi::xml_node structureNode = root.child("structure");
+        xmlStructureParser(structureNode);
+    }
+
+    return status;
+}
+
+bool tabContainer::xmlFileParser(pugi::xml_node &root)
+{
+    bool status = false;
+
+    if (root.empty() == false)
+    {
+        //qDebug() << "xmlFileParser()";
+
+        if (root.attribute("xmlMapper"))
         {
-            QDomElement e = root_node.toElement(); // try to convert the node to an element
-            if (e.isNull() == false)
-            {
-                if (e.tagName() == "header")
-                {
-                    xmlHeaderParser(e);
-                }
-                else if (e.tagName() == "structure")
-                {
-                    xmlStructureParser(e);
-                }
-                else
-                {
-                    // qDebug() << "[0]" << qPrintable(e.tagName()); // Unknown element...
-                }
-            }
-            root_node = root_node.nextSibling();
+            qDebug() << " - xmlMapper:" << root.attribute("xmlMapper").value();
+            if (strcmp(root.attribute("xmlMapper").value(), "0.2") == 0)
+                status = true;
+        }
+
+        if (root.attribute("minivideo"))
+        {
+            qDebug() << " - minivideo:" << root.attribute("minivideo").value();
         }
     }
 
     return status;
 }
 
-void tabContainer::xmlHeaderParser(QDomNode &root)
+void tabContainer::xmlHeaderParser(pugi::xml_node &root)
 {
-    //qDebug() << "xmlHeaderParser() >>>" << root.toElement().tagName();
-
-    QDomNode header_node = root.firstChild();
-    while (header_node.isNull() == false)
+    if (root.empty() == false)
     {
-        QDomElement e = header_node.toElement();
-        if (e.isNull() == false)
+        //qDebug() << "xmlHeaderParser()";
+
+        for (pugi::xml_node e = root.first_child(); e; e = e.next_sibling())
         {
-            //qDebug() << "h " << qPrintable(e.tagName()); // structure fields parsing
+            qDebug() << " -" << e.name() << ":" << e.child_value();
         }
-        header_node = header_node.nextSibling();
     }
 }
 
-void tabContainer::xmlStructureParser(QDomNode &root)
+void tabContainer::xmlStructureParser(pugi::xml_node &root)
 {
-    //qDebug() << "xmlStructureParser() >>>" << root.toElement().tagName();
-
-    QDomNode structure_node = root.firstChild();
-    while (structure_node.isNull() == false)
+    if (root.empty() == false)
     {
-        QDomElement e = structure_node.toElement();
-        if (e.isNull() == false)
+        //qDebug() << "xmlStructureParser()";
+
+        for (pugi::xml_node e = root.first_child(); e; e = e.next_sibling())
         {
-            if (e.tagName() == "a")
+            if (e)
             {
-                xmlAtomParser(e, nullptr);
-            }
-            else
-            {
-                //qDebug() << "s " << qPrintable(e.tagName()); // structure fields parsing
+                if (strcmp(e.name(), "a") == 0)
+                {
+                    xmlAtomParser(e, nullptr);
+                }
+                else
+                {
+                    qDebug() << "not an atom? " << e.name(); // structure fields parsing
+                }
             }
         }
-        structure_node = structure_node.nextSibling();
     }
 }
 
-void tabContainer::xmlAtomParser(QDomNode &root, QTreeWidgetItem *item)
+void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
 {
-    QString fcc = root.toElement().attributeNode("fcc").value();
-    QString id = root.toElement().attributeNode("id").value();
-    QString title = root.toElement().attributeNode("tt").value();
-    QString offset = root.toElement().attributeNode("off").value();
+    QString fcc = QString::fromLatin1(a.attribute("fcc").value());
+    QString id = QString::fromLatin1(a.attribute("id").value());
+    QString title = QString::fromLatin1(a.attribute("tt").value()); // TODO not qstring
+    QString offset = QString::fromLatin1(a.attribute("off").value()); // TODO not qstring
 
     //qDebug() << "> xmlAtomParser() >" << fcc << id;
 
     QTreeWidgetItem *child_item;
-    if (fcc.isEmpty() == false)
-        child_item = createChildItem(item, fcc, offset);
-    else if (id.isEmpty() == false)
-        child_item = createChildItem(item, title, offset);
+    if (item)
+        child_item = new QTreeWidgetItem(item);
     else
-    {
-        QString error = "{error}";
-        child_item = createChildItem(item, error, offset);
-    }
+        child_item = new QTreeWidgetItem(ui->treeWidget);
 
     if (child_item)
     {
+        child_item->setData(0, Qt::UserRole, offset);
         child_item->setIcon(0, icon_atom);
 
-        // Don't expand everything
-        if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues" && title != "Tags")
-        {
-            ui->treeWidget->setItemExpanded(child_item, true);
-        }
+        if (fcc.isEmpty())
+            child_item->setText(0, title);
+        else if (id.isEmpty())
+            child_item->setText(0, fcc);
+        else
+            child_item->setText(0, "{error}");
 
-        QDomNode structure_node = root.firstChild();
-        while (structure_node.isNull() == false)
+        for (pugi::xml_node e = a.first_child(); e; e = e.next_sibling())
         {
-            QDomElement e = structure_node.toElement();
-            if (e.isNull() == false)
+            if (e)
             {
-                if (e.tagName() == "a")
+                if (strcmp(e.name(), "a") == 0)
                 {
-                    xmlAtomParser(e, child_item);
+                    // Don't expand everything
+                    if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues" && title != "Tags")
+                    {
+                        ui->treeWidget->setItemExpanded(child_item, true);
+                    }
+
                     if (fcc == "trak" || fcc == "strl" || title == "Track Entry")
                         child_item->setIcon(0, icon_track);
                     else
-                        child_item->setIcon(0, icon_plus);
+                        child_item->setIcon(0, icon_ext);
+
+                    xmlAtomParser(e, child_item);
                 }
-/*
-                else if (e.tagName() == "title")
-                {
-                    child_item->setText(0, child_item->text(0) + " (" + e.text() + ")");
-                }
-*/
                 else
                 {
-                    //qDebug() << "a " << qPrintable(e.tagName()); // ATOM fields parsing
+                    //qDebug() << "s " << e.name(); // structure fields parsing
                 }
             }
-
-            structure_node = structure_node.nextSibling();
         }
     }
 }
 
-QTreeWidgetItem *tabContainer::createChildItem(QTreeWidgetItem *item, QString &txt, QString &offset)
-{
-    QTreeWidgetItem *childItem = nullptr;
-    if (item)
-    {
-        childItem = new QTreeWidgetItem(item);
-    }
-    else
-    {
-        childItem = new QTreeWidgetItem(ui->treeWidget);
-    }
-    if (childItem)
-    {
-        childItem->setData(0, Qt::UserRole, offset);
-        childItem->setText(0, txt);
-    }
-
-    return childItem;
-}
-
-void tabContainer::findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements)
-{
-    if (elem.attributes().contains(attr))
-        foundElements.append(elem);
-
-    QDomElement child = elem.firstChildElement();
-    while (!child.isNull())
-    {
-        findElementsWithAttribute(child, attr, foundElements);
-        child = child.nextSiblingElement();
-    }
-}
-
-bool tabContainer::findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement)
+bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int value, pugi::xml_node &foundElement)
 {
     bool status = false;
-    Q_UNUSED(elem);
 
-    QList<QDomElement> eCandidates;
-    findElementsWithAttribute(xmlMapDatas.documentElement(), attr, eCandidates);
-
-    for (QDomElement e: eCandidates)
+    for (pugi::xml_node atom: elem.children("a"))
     {
-        if (value == e.attributeNode(attr).value().toInt())
+        if (atom)
         {
-            foundElement = e;
-            status = true;
-            break;
+            if (atom.attribute("off").as_int() == value)
+            {
+                foundElement = atom;
+                return true;
+            }
+
+            if (findAtom(atom, attr, value, foundElement) == true)
+                return true;
         }
     }
 
-    return status;
+    return  status;
 }

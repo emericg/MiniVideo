@@ -6,7 +6,7 @@
 TARGET       = mini_analyser
 TEMPLATE     = app
 CONFIG      += c++11
-QT          += core svg gui widgets xml printsupport
+QT          += core svg gui widgets printsupport
 
 VERSION      = 40
 DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
@@ -57,13 +57,16 @@ QMAKE_INFO_PLIST = resources/app/Info.plist
 SOURCES     += src/thirdparty/qcustomplot/qcustomplot.cpp \
                src/thirdparty/qhexedit2/qhexedit.cpp \
                src/thirdparty/qhexedit2/chunks.cpp \
-               src/thirdparty/qhexedit2/commands.cpp
+               src/thirdparty/qhexedit2/commands.cpp \
+               src/thirdparty/pugixml/pugixml.cpp
 
 HEADERS     += src/thirdparty/portable_endian.h \
                src/thirdparty/qcustomplot/qcustomplot.h \
                src/thirdparty/qhexedit2/qhexedit.h \
                src/thirdparty/qhexedit2/chunks.h \
-               src/thirdparty/qhexedit2/commands.h
+               src/thirdparty/qhexedit2/commands.h \
+               src/thirdparty/pugixml/pugixml.hpp \
+               src/thirdparty/pugixml/pugiconfig.hpp
 
 # minivideo library
 INCLUDEPATH += ../minivideo/src

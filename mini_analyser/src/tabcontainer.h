@@ -28,11 +28,13 @@
 // QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
+// pugixml
+#include "thirdparty/pugixml/pugixml.hpp"
+
 #include <QWidget>
 #include <QTreeWidgetItem>
 #include <QResizeEvent>
 #include <QFile>
-#include <QDomDocument>
 #include <QIcon>
 
 namespace Ui {
@@ -62,13 +64,12 @@ public slots:
     void containerSelection(QTreeWidgetItem *item, int column);
 
     bool loadXmlFile();
-        void xmlHeaderParser(QDomNode &n);
-        void xmlStructureParser(QDomNode &n);
-        void xmlAtomParser(QDomNode &n, QTreeWidgetItem *item);
+        bool xmlFileParser(pugi::xml_node &root);
+        void xmlHeaderParser(pugi::xml_node &root);
+        void xmlStructureParser(pugi::xml_node &root);
+        void xmlAtomParser(pugi::xml_node &root, QTreeWidgetItem *item);
 
-    QTreeWidgetItem *createChildItem(QTreeWidgetItem *item, QString &fcc, QString &offset);
-    void findElementsWithAttribute(const QDomElement &elem, const QString &attr, QList<QDomElement> &foundElements);
-    bool findElement(const QDomElement &elem, const QString &attr, int value, QDomElement &foundElement);
+    bool findAtom(const pugi::xml_node &elem, const QString &attr, int value, pugi::xml_node &foundElement);
 
 private:
     Ui::tabContainer *ui;
@@ -81,10 +82,10 @@ private:
     QByteArray mediaDatas;
 
     QFile xmlMapFile;
-    QDomDocument xmlMapDatas;
+    pugi::xml_document xmlMapDatas;
 
     QIcon icon_atom;
-    QIcon icon_plus;
+    QIcon icon_ext;
     QIcon icon_track;
 
     void resizeEvent(QResizeEvent *event);
