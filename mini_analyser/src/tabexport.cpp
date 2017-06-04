@@ -236,6 +236,11 @@ int tabExport::generateExportDatas_text(bool detailed)
             exportDatas += "\nCreation app  : ";
             exportDatas += media->creation_app;
         }
+        if (media->creation_lib)
+        {
+            exportDatas += "\nCreation lib  : ";
+            exportDatas += media->creation_lib;
+        }
         if (media->creation_time)
         {
             QDate date(1904, 1, 1);

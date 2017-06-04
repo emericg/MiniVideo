@@ -45,8 +45,9 @@ void MainWindow::cleanDatas()
     ui->label_info_container->clear();
     ui->label_info_filesize->clear();
     ui->label_info_duration->clear();
-    ui->label_info_creationapp->clear();
-    ui->label_info_creationdate->clear();
+    ui->label_info_creation_date->clear();
+    ui->label_info_creation_app->clear();
+    ui->label_info_creation_lib->clear();
     ui->label_info_container_overhead->clear();
     ui->label_info_audio_bitpersample->clear();
     ui->label_info_audio_bitrate->clear();
@@ -243,20 +244,32 @@ int MainWindow::printDatas()
 
         if (media->creation_app)
         {
-            ui->label_6->setVisible(true);
-            ui->label_info_creationapp->setVisible(true);
-            ui->label_info_creationapp->setText(QString::fromLocal8Bit(media->creation_app));
+            ui->label_ca->setVisible(true);
+            ui->label_info_creation_app->setVisible(true);
+            ui->label_info_creation_app->setText(QString::fromLocal8Bit(media->creation_app));
         }
         else
         {
-            ui->label_6->setVisible(false);
-            ui->label_info_creationapp->setVisible(false);
+            ui->label_ca->setVisible(false);
+            ui->label_info_creation_app->setVisible(false);
+        }
+
+        if (media->creation_lib)
+        {
+            ui->label_cl->setVisible(true);
+            ui->label_info_creation_lib->setVisible(true);
+            ui->label_info_creation_lib->setText(QString::fromLocal8Bit(media->creation_lib));
+        }
+        else
+        {
+            ui->label_cl->setVisible(false);
+            ui->label_info_creation_lib->setVisible(false);
         }
 
         if (media->creation_time)
         {
-            ui->label_5->setVisible(true);
-            ui->label_info_creationdate->setVisible(true);
+            ui->label_cd->setVisible(true);
+            ui->label_info_creation_date->setVisible(true);
 
             if (media->container == CONTAINER_MP4)
             {
@@ -264,13 +277,13 @@ int MainWindow::printDatas()
                 QTime time(0, 0, 0, 0);
                 QDateTime datetime(date, time);
                 datetime = datetime.addSecs(media->creation_time);
-                ui->label_info_creationdate->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
+                ui->label_info_creation_date->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
             }
         }
         else
         {
-            ui->label_5->setVisible(false);
-            ui->label_info_creationdate->setVisible(false);
+            ui->label_cd->setVisible(false);
+            ui->label_info_creation_date->setVisible(false);
         }
 
         // Container efficiency

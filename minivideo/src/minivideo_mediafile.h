@@ -58,6 +58,7 @@ typedef struct MediaFile_t
 
     // Container generic metadatas
     char *creation_app;                 //!< Container creation application (C string) (if available)
+    char *creation_lib;                 //!< Container creation library (C string) (if available)
     uint64_t creation_time;             //!< Container creation time (Unix time) (if available)
     uint64_t modification_time;         //!< Container modification time (Unix time) (if available)
     uint64_t duration;                  //!< Content global duration (in milliseconds)

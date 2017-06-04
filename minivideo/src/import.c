@@ -601,6 +601,7 @@ int import_fileClose(MediaFile_t **media_ptr)
         xmlMapperClose(&(*media_ptr)->container_mapper_fd);
 
         free((*media_ptr)->creation_app);
+        free((*media_ptr)->creation_lib);
 
         for (i = 0; i < 16 /*(*media_ptr)->tracks_audio_count*/; i++)
         {

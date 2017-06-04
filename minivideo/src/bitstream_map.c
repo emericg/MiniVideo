@@ -539,9 +539,14 @@ bool computeMediaMemory(MediaFile_t *media)
     uint64_t mem = 0;
 
     mem += sizeof(*media);
+
     if (media->creation_app)
     {
         mem += strlen(media->creation_app);
+    }
+    if (media->creation_lib)
+    {
+        mem += strlen(media->creation_lib);
     }
 
     for (unsigned i = 0; i < media->tracks_video_count; i++)

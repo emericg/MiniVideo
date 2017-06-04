@@ -298,6 +298,10 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
     {
         media->creation_app = strdup(mkv->info.WritingApp);
     }
+    if (mkv->info.MuxingApp)
+    {
+        media->creation_lib = strdup(mkv->info.MuxingApp);
+    }
 
     media->duration = (uint64_t)(mkv->info.Duration / ((double)mkv->info.TimecodeScale / 1000000.0));
     //mkv->info.DateUTC
@@ -444,7 +448,10 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->stream_type = stream_AUDIO;
             map->sampling_rate = track->audio->SamplingFrequency;
             map->channel_count = track->audio->Channels;
-            map->bit_per_sample = track->audio->BitDepth;
+            if (track->audio->BitDepth)
+                map->bit_per_sample = track->audio->BitDepth;
+            else
+                map->bit_per_sample = 16; // default
         }
         else if (track->TrackType == MKV_TRACK_SUBTITLES)
         {
