@@ -2,37 +2,48 @@
     <qresource prefix="/icons">
         <file>icons/application-exit.svg</file>
         <file>icons/applications-fonts.svg</file>
-        <file>icons/audio-x-wav.svg</file>
-        <file>icons/custom-detach.svg</file>
-        <file>icons/custom-hexeditor.svg</file>
         <file>icons/custom-info.svg</file>
         <file>icons/custom-switch.svg</file>
         <file>icons/dialog-error.svg</file>
         <file>icons/dialog-information.svg</file>
         <file>icons/dialog-question.svg</file>
         <file>icons/dialog-warning.svg</file>
-        <file>icons/emblem-default.svg</file>
-        <file>icons/emblem-downloads.svg</file>
         <file>icons/emblem-important.svg</file>
         <file>icons/emblem-new.svg</file>
-        <file>icons/emblem-readonly.svg</file>
-        <file>icons/emblem-system.svg</file>
-        <file>icons/emblem-ubuntuone-synchronized.svg</file>
-        <file>icons/emblem-ubuntuone-unsynchronized.svg</file>
         <file>icons/emblem-ubuntuone-updating.svg</file>
         <file>icons/emblem-unreadable.svg</file>
-        <file>icons/folder-download.svg</file>
         <file>icons/help-contents.svg</file>
         <file>icons/package-install.svg</file>
         <file>icons/package-remove.svg</file>
         <file>icons/package-upgrade.svg</file>
-        <file>icons/shotwell.svg</file>
-        <file>icons/video-x-generic.svg</file>
+        <file>icons/sysprof-icon.svg</file>
+        </qresource>
+    <qresource prefix="/icons_material">
+        <file>icons_material/ic_bug_report_48px.svg</file>
+        <file>icons_material/ic_closed_caption_48px.svg</file>
+        <file>icons_material/ic_compare_arrows_48px.svg</file>
+        <file>icons_material/ic_content_copy_48px.svg</file>
+        <file>icons_material/ic_developer_board_48px.svg</file>
+        <file>icons_material/ic_error_48px.svg</file>
+        <file>icons_material/ic_error_outline_48px.svg</file>
+        <file>icons_material/ic_file_download_48px.svg</file>
+        <file>icons_material/ic_folder_48px.svg</file>
+        <file>icons_material/ic_highlight_off_48px.svg</file>
+        <file>icons_material/ic_info_48px.svg</file>
+        <file>icons_material/ic_info_outline_48px.svg</file>
+        <file>icons_material/ic_movie_48px.svg</file>
+        <file>icons_material/ic_music_video_48px.svg</file>
+        <file>icons_material/ic_open_in_new_48px.svg</file>
+        <file>icons_material/ic_speaker_48px.svg</file>
+        <file>icons_material/ic_style_48px.svg</file>
+        <file>icons_material/ic_theaters_48px.svg</file>
+        <file>icons_material/ic_volume_up_48px.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>app/icon.svg</file>
         <file>app/icon.png</file>
-        <file>img/dropzone.png</file>
+        <file>img/dragNdrop.svg</file>
+        <file>img/loading.svg</file>
         <file>img/A.png</file>
         <file>img/E.png</file>
         <file>img/T.png</file>

@@ -71,25 +71,31 @@ MainWindow::MainWindow(QWidget *parent) :
     // Save tabs titles and icons
     tabDropZoneText = ui->tabWidget->tabText(0);
     tabDropZoneIcon = ui->tabWidget->tabIcon(0);
-    tabInfosText = ui->tabWidget->tabText(1);
-    tabInfosIcon = ui->tabWidget->tabIcon(1);
-    tabVideoText = ui->tabWidget->tabText(2);
-    tabVideoIcon = ui->tabWidget->tabIcon(2);
-    tabAudioText = ui->tabWidget->tabText(3);
-    tabAudioIcon = ui->tabWidget->tabIcon(3);
-    tabSubsText = ui->tabWidget->tabText(4);
-    tabSubsIcon = ui->tabWidget->tabIcon(4);
-    tabOtherText = ui->tabWidget->tabText(5);
-    tabOtherIcon = ui->tabWidget->tabIcon(5);
-    tabContainerText = ui->tabWidget->tabText(6);
-    tabContainerIcon = ui->tabWidget->tabIcon(6);
-    tabExportText = ui->tabWidget->tabText(7);
-    tabExportIcon = ui->tabWidget->tabIcon(7);
-    tabDevText = ui->tabWidget->tabText(8);
-    tabDevIcon = ui->tabWidget->tabIcon(8);
+    tabLoadingText = ui->tabWidget->tabText(1);
+    tabLoadingIcon = ui->tabWidget->tabIcon(1);
+    tabInfosText = ui->tabWidget->tabText(2);
+    tabInfosIcon = ui->tabWidget->tabIcon(2);
+    tabVideoText = ui->tabWidget->tabText(3);
+    tabVideoIcon = ui->tabWidget->tabIcon(3);
+    tabAudioText = ui->tabWidget->tabText(4);
+    tabAudioIcon = ui->tabWidget->tabIcon(4);
+    tabSubsText = ui->tabWidget->tabText(5);
+    tabSubsIcon = ui->tabWidget->tabIcon(5);
+    tabOtherText = ui->tabWidget->tabText(6);
+    tabOtherIcon = ui->tabWidget->tabIcon(6);
+    tabContainerText = ui->tabWidget->tabText(7);
+    tabContainerIcon = ui->tabWidget->tabIcon(7);
+    tabExportText = ui->tabWidget->tabText(8);
+    tabExportIcon = ui->tabWidget->tabIcon(8);
+    tabDevText = ui->tabWidget->tabText(9);
+    tabDevIcon = ui->tabWidget->tabIcon(9);
 
     // "Drop zone" is the default tab when starting up
     handleTabWidget();
+
+    // Loading animation
+    //QString anim = ":/img/img/loading.svg";
+    //ui->widget_animation->load(anim);
 
     // Accept video files "drag & drop"
     setAcceptDrops(true);
@@ -421,7 +427,7 @@ void MainWindow::handleComboBox(const QString &file)
     {
         if (mediaList.empty() == true)
         {
-            ui->file_comboBox->addItem(QIcon(":/icons/icons/dialog-information.svg"),
+            ui->file_comboBox->addItem(QIcon(":/icons_material/icons_material/ic_info_48px.svg"),
                                        "Drag and drop files to analyse them!");
         }
         else
@@ -435,9 +441,6 @@ void MainWindow::handleComboBox(const QString &file)
     {
         ui->file_comboBox->addItem(file);
         ui->file_comboBox->setCurrentIndex(ui->file_comboBox->count() - 1);
-
-        //QIcon(":/icons/icons/audio-x-wav.svg")
-        //QIcon(":/icons/icons/video-x-generic.svg")
     }
 }
 

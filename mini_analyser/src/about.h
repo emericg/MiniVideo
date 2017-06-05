@@ -43,6 +43,7 @@ private slots:
     void tabAbout();
     void tabAuthors();
     void tabLicense();
+    void tabThirdParties();
 
 protected:
     void resizeEvent(QResizeEvent *);

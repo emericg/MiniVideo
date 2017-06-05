@@ -57,7 +57,13 @@
         </property>
         <property name="icon">
          <iconset resource="../resources/resources.qrc">
-          <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+          <normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -126,12 +132,12 @@
           </property>
           <property name="icon">
            <iconset resource="../resources/resources.qrc">
-            <normaloff>:/icons/icons/folder-download.svg</normaloff>:/icons/icons/folder-download.svg</iconset>
+            <normaloff>:/icons_material/icons_material/ic_folder_48px.svg</normaloff>:/icons_material/icons_material/ic_folder_48px.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>24</width>
+            <height>24</height>
            </size>
           </property>
           <property name="autoDefault">

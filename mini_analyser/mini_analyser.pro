@@ -8,7 +8,7 @@ TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport
 
-VERSION      = 40
+VERSION      = 41
 DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 # build artifacts

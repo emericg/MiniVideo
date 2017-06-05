@@ -36,6 +36,7 @@ AboutWindows::AboutWindows(QWidget *parent) :
     connect(ui->pushButton_about, SIGNAL(clicked(bool)), this, SLOT(tabAbout()));
     connect(ui->pushButton_license, SIGNAL(clicked(bool)), this, SLOT(tabLicense()));
     connect(ui->pushButton_authors, SIGNAL(clicked(bool)), this, SLOT(tabAuthors()));
+    connect(ui->pushButton_thirdparties, SIGNAL(clicked(bool)), this, SLOT(tabThirdParties()));
     //connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
@@ -48,8 +49,11 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
                                        const char *minivideo_builddate, const char*minivideo_buildtime)
 {
     QString title = "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Cantarell'; font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-family:'Cantarell'; font-size:16pt; font-weight:600;\"> (" + QString::fromLocal8Bit(VERSION_STR) + ")</span></p></body></html>";
-    QString text = "\n" + tr("Using MiniVideo library version") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
-    text += "\n" + tr("Builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
+
+    QString text = tr("MiniAnalyser") + " " + QString::fromLocal8Bit(VERSION_STR);
+    text += " / " + tr("builded on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
+    text += "\n" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
+    text += " / " + tr("builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
 
     ui->textBrowser_title->setText(title);
     ui->textBrowser_version->setText(text);
@@ -58,7 +62,8 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
 void AboutWindows::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
-    // we may want to resize the icon
+
+    // we may want to resize the app icon?
 }
 
 void AboutWindows::tabAbout()
@@ -67,6 +72,7 @@ void AboutWindows::tabAbout()
     ui->textBrowser_version->show();
     ui->textBrowser_license->hide();
     ui->textBrowser_copyright->hide();
+    ui->textBrowser_thirdparties->hide();
 }
 
 void AboutWindows::tabAuthors()
@@ -75,6 +81,7 @@ void AboutWindows::tabAuthors()
     ui->textBrowser_version->hide();
     ui->textBrowser_license->hide();
     ui->textBrowser_copyright->show();
+    ui->textBrowser_thirdparties->hide();
 }
 
 void AboutWindows::tabLicense()
@@ -83,6 +90,7 @@ void AboutWindows::tabLicense()
     ui->textBrowser_version->hide();
     ui->textBrowser_license->show();
     ui->textBrowser_copyright->hide();
+    ui->textBrowser_thirdparties->hide();
 
     if (licenseLoaded == false)
     {
@@ -95,4 +103,13 @@ void AboutWindows::tabLicense()
             licenseLoaded = true;
         }
     }
+}
+
+void AboutWindows::tabThirdParties()
+{
+    ui->textBrowser_desc->hide();
+    ui->textBrowser_version->hide();
+    ui->textBrowser_license->hide();
+    ui->textBrowser_copyright->hide();
+    ui->textBrowser_thirdparties->show();
 }

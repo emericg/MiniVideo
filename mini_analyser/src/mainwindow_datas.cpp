@@ -214,13 +214,13 @@ int MainWindow::printDatas()
         // Combobox icon
         if (media->tracks_video_count > 0)
             ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons/icons/video-x-generic.svg"));
+                                           QIcon(":/icons_material/icons_material/ic_movie_48px.svg"));
         else if (media->tracks_audio_count > 0)
             ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons/icons/audio-x-wav.svg"));
+                                           QIcon(":/icons_material/icons_material/ic_music_video_48px.svg"));
         else
             ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons/icons/dialog-error.svg"));
+                                           QIcon(":/icons_material/icons_material/ic_highlight_off_48px.svg"));
 
         // General infos
         ui->label_info_filename->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));

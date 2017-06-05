@@ -51,14 +51,6 @@
     </property>
     <item row="0" column="0" colspan="3">
      <widget class="QComboBox" name="file_comboBox">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
       <property name="iconSize">
        <size>
         <width>24</width>
@@ -71,7 +63,7 @@
        </property>
        <property name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/dialog-information.svg</normaloff>:/icons/icons/dialog-information.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_info_48px.svg</normaloff>:/icons_material/icons_material/ic_info_48px.svg</iconset>
        </property>
       </item>
      </widget>
@@ -84,12 +76,15 @@
         <height>32</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>Open current file in a new windows.</string>
+      </property>
       <property name="text">
        <string/>
       </property>
       <property name="icon">
        <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons/icons/custom-detach.svg</normaloff>:/icons/icons/custom-detach.svg</iconset>
+        <normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -98,7 +93,7 @@
        </size>
       </property>
       <property name="flat">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -129,7 +124,7 @@ background: rgba(255, 170, 0, 128);</string>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
-        <string>Drop Zone</string>
+        <string notr="true">DropZone</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_9">
         <item row="0" column="1">
@@ -139,21 +134,8 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>20</width>
-            <height>156</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>168</width>
-            <height>20</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -170,15 +152,18 @@ background: rgba(255, 170, 0, 128);</string>
            <widget class="QLabel" name="label_drop_icon">
             <property name="maximumSize">
              <size>
-              <width>300</width>
-              <height>300</height>
+              <width>350</width>
+              <height>350</height>
              </size>
             </property>
             <property name="text">
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../resources/resources.qrc">:/img/img/dropzone.png</pixmap>
+             <pixmap resource="../resources/resources.qrc">:/img/img/dragNdrop.svg</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -195,10 +180,10 @@ background: rgba(255, 170, 0, 128);</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(76, 76, 76);</string>
+             <string notr="true">color: rgb(100, 100, 100);</string>
             </property>
             <property name="text">
-             <string>Drop files here!</string>
+             <string>drag &amp; drop files</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -207,19 +192,6 @@ background: rgba(255, 170, 0, 128);</string>
           </item>
          </layout>
         </item>
-        <item row="2" column="2">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>168</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="3" column="1">
          <spacer name="verticalSpacer_4">
           <property name="orientation">
@@ -227,8 +199,96 @@ background: rgba(255, 170, 0, 128);</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" rowspan="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_loading">
+       <attribute name="title">
+        <string notr="true">Loading</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_21">
+        <item row="0" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>17</width>
+            <height>239</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>236</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSvgWidget" name="widget_animation" native="true"/>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>236</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <spacer name="verticalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
             <width>20</width>
-            <height>156</height>
+            <height>238</height>
            </size>
           </property>
          </spacer>
@@ -238,7 +298,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_infos">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/package-install.svg</normaloff>:/icons/icons/package-install.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_info_outline_48px.svg</normaloff>:/icons_material/icons_material/ic_info_outline_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Infos</string>
@@ -284,8 +344,8 @@ background: rgba(255, 170, 0, 128);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>636</width>
-             <height>641</height>
+             <width>622</width>
+             <height>663</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1261,7 +1321,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_video">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/video-x-generic.svg</normaloff>:/icons/icons/video-x-generic.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_theaters_48px.svg</normaloff>:/icons_material/icons_material/ic_theaters_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Video track(s)</string>
@@ -2217,7 +2277,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_audio">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/audio-x-wav.svg</normaloff>:/icons/icons/audio-x-wav.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_volume_up_48px.svg</normaloff>:/icons_material/icons_material/ic_volume_up_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Audio track(s)</string>
@@ -3036,7 +3096,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_subtitles">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_closed_caption_48px.svg</normaloff>:/icons_material/icons_material/ic_closed_caption_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Subtitles track(s)</string>
@@ -3267,7 +3327,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="QWidget" name="tab_other">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/dialog-question.svg</normaloff>:/icons/icons/dialog-question.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_style_48px.svg</normaloff>:/icons_material/icons_material/ic_style_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Other track(s)</string>
@@ -3386,7 +3446,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="tabContainer" name="tab_container">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/custom-hexeditor.svg</normaloff>:/icons/icons/custom-hexeditor.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_developer_board_48px.svg</normaloff>:/icons_material/icons_material/ic_developer_board_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Container</string>
@@ -3395,7 +3455,7 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="tabExport" name="tab_export">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/emblem-downloads.svg</normaloff>:/icons/icons/emblem-downloads.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Export</string>
@@ -3404,10 +3464,10 @@ background: rgba(255, 170, 0, 128);</string>
       <widget class="tabDev" name="tab_dev">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/icons/emblem-important.svg</normaloff>:/icons/icons/emblem-important.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_bug_report_48px.svg</normaloff>:/icons_material/icons_material/ic_bug_report_48px.svg</iconset>
        </attribute>
        <attribute name="title">
-        <string>DEV</string>
+        <string notr="true">DEV</string>
        </attribute>
       </widget>
      </widget>
@@ -3538,6 +3598,18 @@ background: rgba(255, 170, 0, 128);</string>
     <string>Reload current file</string>
    </property>
   </action>
+  <action name="actionVideoBackends">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/icons/icons/sysprof-icon.svg</normaloff>:/icons/icons/sysprof-icon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Backends</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -3563,6 +3635,12 @@ background: rgba(255, 170, 0, 128);</string>
    <class>tabContainer</class>
    <extends>QWidget</extends>
    <header>../src/tabcontainer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QSvgWidget</class>
+   <extends>QWidget</extends>
+   <header>qsvgwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

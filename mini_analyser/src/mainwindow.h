@@ -103,9 +103,11 @@ private:
     double xRangeMax;
     double yRangeMax;
 
-    // Save tabs
+    // Saved tabs infos
     QString tabDropZoneText;
     QIcon tabDropZoneIcon;
+    QString tabLoadingText;
+    QIcon tabLoadingIcon;
     QString tabInfosText;
     QIcon tabInfosIcon;
     QString tabVideoText;

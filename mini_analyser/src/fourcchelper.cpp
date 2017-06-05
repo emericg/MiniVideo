@@ -238,6 +238,7 @@ void FourccHelper::findCodec()
     if (fcc)
     {
         ui->label_fourcc_string->show();
+        ui->label_fourcc_string->setStyleSheet("QLabel { background: rgb(201, 255, 143);\nborder-color: rgb(85, 255, 0); }");
 
         // Try to find a match
         codec = QString::fromLocal8Bit(getCodecString(stream_UNKNOWN, getCodecFromFourCC(fcc), true));
@@ -262,6 +263,7 @@ void FourccHelper::findCodec()
 
         // We didn't find a match...
         ui->label_fourcc_string->setText(tr(">> This FourCC is unknown..."));
+        ui->label_fourcc_string->setStyleSheet("QLabel { border: 1px solid rgb(255, 53, 3);\nbackground: rgba(255, 170, 0, 128); }");
     }
     else
     {

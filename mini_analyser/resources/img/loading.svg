@@ -1,0 +1,33 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="250" height="60">
+
+<circle style="fill:#838383;" cx="0" cy="0" r="30" transform="translate(30 30)">
+  <animateTransform attributeName="transform" type="scale"
+    begin="0s" dur="1s"
+    values="1;0.3;1" calcMode="linear"
+    additive="sum" repeatCount="indefinite" />
+  <animateColor attributeName="fill"
+    begin="0s" dur="1s"
+    values="#838383;#bababa;#838383" calcMode="linear"
+    repeatCount="indefinite" />
+</circle>
+<circle style="fill:#bababa;" cx="0" cy="0" r="18" transform="translate(120 30)">
+  <animateTransform attributeName="transform" type="scale"
+    begin="0s" dur="1s"
+    values="1;2;1" calcMode="linear"
+    additive="sum" repeatCount="indefinite" />
+  <animateColor attributeName="fill"
+    begin="0s" dur="1s"
+    values="#bababa;#838383;#bababa" calcMode="linear"
+    repeatCount="indefinite" />
+</circle>
+<circle style="fill:#838383;" cx="0" cy="0" r="30" transform="translate(220 30)">
+  <animateTransform attributeName="transform" type="scale"
+    begin="0s" dur="1s"
+    values="1;0.3;1" calcMode="linear"
+    additive="sum" repeatCount="indefinite" />
+  <animateColor attributeName="fill"
+    begin="0s" dur="1s"
+    values="#838383;#bababa;#838383" calcMode="linear"
+    repeatCount="indefinite" />
+</circle>
+</svg>
