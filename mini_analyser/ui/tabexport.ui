@@ -59,11 +59,8 @@
          <iconset resource="../resources/resources.qrc">
           <normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</iconset>
         </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -113,6 +110,9 @@
       </item>
       <item row="2" column="0" colspan="3">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>4</number>
+        </property>
         <item>
          <widget class="QLineEdit" name="lineEdit_export_filename"/>
         </item>
@@ -123,8 +123,8 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>24</width>
+            <height>24</height>
            </size>
           </property>
           <property name="text">
