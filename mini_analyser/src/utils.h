@@ -114,8 +114,8 @@ QString getFramerateModeString(const unsigned framerateMode);
 
 /*!
  * \brief Get a readable language string.
- * \param languageCode[in]: ISO 639-2 language code.
- * \return Readable language.
+ * \param languageCode[in]: ISO 639-2 or ISO 639-3 language code.
+ * \return Readable language (Qt translatable).
  *
  * http://www.loc.gov/standards/iso639-2/php/English_list.php
  */
