@@ -112,33 +112,6 @@ win32 {
 }
 
 macx {
-    # 'automatic' bundle packaging (method 1)
+    # 'automatic' bundle packaging
     system(macdeployqt build/$${TARGET}.app)
-
-#    # 'manual' bundle packaging (method 2; debug only) (uncomment to enable)
-#    QT_FW_DIR = $(QTDIR)/lib/
-#    QT_PG_DIR = $(QTDIR)/plugins/
-#    !isEmpty(QT_FW_DIR) {
-#        FW_DIR = build/$${TARGET}.app/Contents/Frameworks
-#        QMAKE_POST_LINK += (mkdir -p $${FW_DIR})
-#        QMAKE_POST_LINK += && (cp ../minivideo/build/libminivideo.dylib $${FW_DIR})
-#        QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtCore.framework/ ]; then cp -R $${QT_FW_DIR}/QtCore.framework $${FW_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtGui.framework/ ]; then cp -R $${QT_FW_DIR}/QtGui.framework $${FW_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtSvg.framework/ ]; then cp -R $${QT_FW_DIR}/QtSvg.framework $${FW_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtWidgets.framework/ ]; then cp -R $${QT_FW_DIR}/QtWidgets.framework $${FW_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${FW_DIR}/QtPrintSupport.framework/ ]; then cp -R $${QT_FW_DIR}/QtPrintSupport.framework $${FW_DIR}; fi)
-
-#        PG_DIR = build/$${TARGET}.app/Contents/PlugIns
-#        QMAKE_POST_LINK += && (if [ ! -d $${PG_DIR}/imageformats/ ]; then cp -R $${QT_PG_DIR}/imageformats $${PG_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${PG_DIR}/platforms/ ]; then cp -R $${QT_PG_DIR}/platforms $${PG_DIR}; fi)
-#        QMAKE_POST_LINK += && (if [ ! -d $${PG_DIR}/printsupport/ ]; then cp -R $${QT_PG_DIR}/printsupport $${PG_DIR}; fi)
-
-#        # Use bundled libraries (rewrite rpaths)
-#        APP = build/$${TARGET}.app/Contents/MacOS/$${TARGET}
-#        QMAKE_POST_LINK += && (install_name_tool -change $${PWD}/build/libminivideo.dylib @executable_path/../Frameworks/libminivideo.dylib $${APP})
-#        QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtCore.framework/Versions/5/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore $${APP})
-#        QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtSvg.framework/Versions/5/QtSvg @executable_path/../Frameworks/QtSvg.framework/Versions/5/QtSvg $${APP})
-#        QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtGui.framework/Versions/5/QtGui @executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui $${APP})
-#        QMAKE_POST_LINK += && (install_name_tool -change @rpath/QtWidgets.framework/Versions/5/QtWidgets @executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets $${APP})
-#    }
 }
