@@ -578,17 +578,23 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
             case CODEC_CanopusHQX:
                 return "Canopus HQX";
                 break;
+            case CODEC_BINK:
+                return "Bink Video!";
+                break;
+            case CODEC_BINK2:
+                return "Bink2 Video!";
+                break;
             case CODEC_icod:
                 return "Apple Intermediate Codec";
                 break;
             case CODEC_rpza:
                 return "Apple Video";
                 break;
-            case CODEC_BINK:
-                return "Bink Video!";
+            case CODEC_QtAnimation:
+                return "Apple QuickTime Animation";
                 break;
-            case CODEC_BINK2:
-                return "Bink2 Video!";
+            case CODEC_QtGraphics:
+                return "Apple QuickTime Graphics";
                 break;
 
             case CODEC_CorePNG:

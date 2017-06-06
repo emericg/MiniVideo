@@ -72,8 +72,10 @@ typedef enum fourcc_list_e
 
     fcc_MPEG = 0x4D504547, //!< MPEG-1/2
     fcc_mpeg = 0x6D706567,
+    fcc_mp1v = 0x6D703176,
     fcc_MPG1 = 0x4D504731,
     fcc_mpg1 = 0x6D706731,
+    fcc_mp2v = 0x6D703276,
     fcc_MPG2 = 0x4D504732,
     fcc_mpg2 = 0x6D706732,
     fcc_DVR  = 0x44565220,
@@ -218,19 +220,27 @@ typedef enum fourcc_list_e
     fcc_iV50 = 0x69563530,
     fcc_CHQX = 0x43485158, //!< Canopus HQ
     fcc_icod = 0x69636F64, //!< Apple Intermediate Codec
-    fcc_rpza = 0x72707A61, //!< Apple Video
+    fcc_rpza = 0x72707A61, //!< Apple Video "Road Pizza"
     fcc_azpr = 0x617A7072,
+    fcc_rle  = 0x726C6520, //!< Apple QuickTime Animation
+    fcc_smc  = 0x736D6320, //!< Apple QuickTime Graphics
 
     fcc_dvsd = 0x64767364, //!< DV
     fcc_DVSD = 0x44565344,
     fcc_CDVC = 0x43564443, //!< Canopus DV
     fcc_CDVH = 0x43555648,
     fcc_CUV5 = 0x43555635,
-    fcc_dv5n = 0x6476356E, //!< Apple DVCPRO50 - NTSC
-    fcc_dv5p = 0x64763570, //!< Apple DVCPRO50 - PAL
-    fcc_dvc  = 0x64766320, //!< Apple DV/DVCPRO - NTSC
+    fcc_dvc  = 0x64766320, //!< Apple DV - NTSC
     fcc_dvcp = 0x64766370, //!< Apple DV - PAL
-    fcc_dvpp = 0x64767070, //!< Apple DVCPRO - PAL
+    fcc_dvh2 = 0x64766832, //!< Panasonic DVCPro-HD 1080p25 format
+    fcc_dvh3 = 0x64766833, //!< Panasonic DVCPro-HD 1080p30 format
+    fcc_dvh5 = 0x64766835, //!< Panasonic DVCPro-HD 1080i60 format
+    fcc_dvh6 = 0x64766836, //!< Panasonic DVCPro-HD 1080i60 format
+    fcc_dvhq = 0x64766870, //!< Panasonic DVCPro-HD 720p50 format
+    fcc_dvhp = 0x64766870, //!< Panasonic DVCPro-HD 720p60 format
+    fcc_dv5p = 0x64763570, //!< Panasonic DVCPro-50 PAL format
+    fcc_dv5n = 0x6476356E, //!< Panasonic DVCPro-50 NTSC format
+    fcc_dvpp = 0x64767070, //!< Panasonic DVCPro PAL format
 
     fcc_AI55 = 0x41493535, //!< AVC Intra  50 / 1080 interlaced
     fcc_AI5q = 0x41493571, //!< AVC Intra  50 /  720
@@ -249,6 +259,7 @@ typedef enum fourcc_list_e
     fcc_jpeg = 0x6A706567,
     fcc_MJPG = 0x4D4A5047, //!< Motion JPEG
     fcc_mjpg = 0x6D6A7067,
+    fcc_dmb1 = 0x646D6231, //!< "JPEG OpenDML"
     fcc_MJ2  = 0x4D4A3220, //!< Motion JPEG 2000
     fcc_MJP2 = 0x4D4A5032,
     fcc_PNG1 = 0x504E4731, //!< CorePNG
@@ -309,14 +320,14 @@ typedef enum fourcc_list_e
     fcc_tows = 0x74647773, //!< 16-bit signed linear PCM (big endian)
     fcc_in24 = 0x696E3234, //!< 24-bit signed linear PCM (big endian)
     fcc_in32 = 0x696E3332, //!< 32-bit signed linear PCM (big endian)
-    fcc_s8   = 0x73382020, //!< 8-bit signed linear PCM
+    fcc_s8   = 0x73382020, //!<  8-bit signed linear PCM
     fcc_s16l = 0x7331366C, //!< 16-bit signed linear PCM (little endian)
     fcc_s16b = 0x73313662, //!< 16-bit signed linear PCM (big endian)
     fcc_s24l = 0x7332346C, //!< 24-bit signed linear PCM (little endian)
     fcc_s24b = 0x73323462, //!< 24-bit signed linear PCM (big endian)
     fcc_s32l = 0x7333326C, //!< 32-bit signed linear PCM (little endian)
     fcc_s32b = 0x73333262, //!< 32-bit signed linear PCM (big endian)
-    fcc_u8   = 0x75382020, //!< 8-bit unsigned linear PCM
+    fcc_u8   = 0x75382020, //!<  8-bit unsigned linear PCM
     fcc_u16l = 0x7531366C, //!< 16-bit unsigned linear PCM (little endian)
     fcc_u16b = 0x75313662, //!< 16-bit unsigned linear PCM (big endian)
     fcc_u24l = 0x7532346C, //!< 24-bit unsigned linear PCM (little endian)

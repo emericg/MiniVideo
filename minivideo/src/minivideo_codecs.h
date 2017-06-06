@@ -208,10 +208,12 @@ typedef enum Codecs_e
     CODEC_CanopusHQ     = 309,  //!< Canopus HQ
     CODEC_CanopusHQA    = 310,  //!< Canopus HQ Alpha
     CODEC_CanopusHQX    = 311,  //!< Canopus HQX
-    CODEC_icod          = 312,  //!< Apple Intermediate Codec
-    CODEC_rpza          = 313,  //!< Apple Video / "road pizza"
-    CODEC_BINK          = 314,  //!< Bink Video!
-    CODEC_BINK2         = 315,  //!< Bink2
+    CODEC_BINK          = 312,  //!< Bink Video!
+    CODEC_BINK2         = 313,  //!< Bink2
+    CODEC_icod          = 314,  //!< Apple Intermediate Codec
+    CODEC_rpza          = 315,  //!< Apple Video / "road pizza"
+    CODEC_QtAnimation   = 316,  //!< Apple QuickTime Animation
+    CODEC_QtGraphics    = 317,  //!< Apple QuickTime Graphics
 
     // Images codecs ///////////////////////////////////////////////////////////
 

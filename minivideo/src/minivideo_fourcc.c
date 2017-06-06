@@ -73,11 +73,13 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
 
     switch (fcc)
     {
+    case fcc_mp1v:
     case fcc_MPG1:
     case fcc_mpg1:
     case fcc_PIM1:
         codec = CODEC_MPEG1;
         break;
+    case fcc_mp2v:
     case fcc_MPEG:
     case fcc_mpeg:
     case fcc_MPG2:
@@ -314,6 +316,12 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_azpr:
         codec = CODEC_rpza;
         break;
+    case fcc_rle:
+        codec = CODEC_QtAnimation;
+        break;
+    case fcc_smc:
+        codec = CODEC_QtGraphics;
+        break;
 
     case fcc_BIKf:
     case fcc_BIKg:
@@ -340,6 +348,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         break;
     case fcc_MJPG:
     case fcc_mjpg:
+    case fcc_dmb1:
         codec = CODEC_MJPEG;
         break;
     case fcc_MJ2:
