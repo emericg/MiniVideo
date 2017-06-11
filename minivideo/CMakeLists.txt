@@ -2,7 +2,9 @@
 # This file allows you to build a shared library of MiniVideo
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0012 NEW)
 
 project(minivideo)
 
@@ -235,10 +237,6 @@ set(minivideo_SRC
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
-# Build library
-message("** Building shared library")
-add_library(minivideo_shared SHARED ${minivideo_SRC})
-
 if(WIN32)
 if(CMAKE_VERSION VERSION_GREATER "3.3")
     message("* Generating symbols export header")
@@ -250,6 +248,9 @@ if(CMAKE_VERSION VERSION_GREATER "3.3")
 endif()
 endif()
 
+# Build shared library
+message("** Building shared library")
+add_library(minivideo_shared SHARED ${minivideo_SRC})
 target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
 target_link_libraries(minivideo_shared)
 set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
