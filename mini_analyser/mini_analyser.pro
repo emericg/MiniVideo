@@ -71,10 +71,8 @@ HEADERS     += src/thirdparty/portable_endian.h \
 # minivideo library
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
-# dynamic linking
-LIBS        += -L../minivideo/build -lminivideo
-# static linking
-#LIBS        += ../minivideo/build/libminivideo.a
+LIBS        += -L../minivideo/build -lminivideo # dynamic linking
+#LIBS        += ../minivideo/build/libminivideo.a # static linking
 
 #-------------------------------------------------------------------------------
 # OS specifics
@@ -107,11 +105,31 @@ win32 {
 # Deployment
 
 win32 {
-    # 'automatic' bundle packaging
+    # 'automatic' application packaging
     system(windeployqt build/)
 }
 
 macx {
     # 'automatic' bundle packaging
     system(macdeployqt build/$${TARGET}.app)
+}
+
+linux {
+    # 'manual' application packaging (uncomment to enable)
+
+#    isEmpty(PREFIX) {
+#        PREFIX = /usr
+#    }
+#    BINDIR = $${PREFIX}/bin
+#    DATADIR =$${PREFIX}/share
+
+#    INSTALLS += target desktop icon
+
+#    target.path = $${BINDIR}
+
+#    desktop.path = $${DATADIR}/applications
+#    desktop.files += resources/app/$${TARGET}.desktop
+
+#    icon.path = $${DATADIR}/icons/hicolor/scalable/apps
+#    icon.files += resources/app/$${TARGET}.svg
 }
