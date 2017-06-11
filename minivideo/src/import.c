@@ -26,6 +26,7 @@
 #include "demuxer/xml_mapper.h"
 #include "bitstream_map.h"
 #include "minitraces.h"
+#include "minivideo_typedef.h"
 
 // C POSIX library
 #ifndef _MSC_VER

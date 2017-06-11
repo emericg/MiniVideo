@@ -104,4 +104,25 @@
 #endif // ENABLE_C11_STDALIGN
 
 /* ************************************************************************** */
+// Windows large file support
+
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
+#if defined(_MSC_VER) || defined(__MINGW32__)
+    #include <stdio.h>
+
+    #undef stat64
+    #define stat64 _stat64
+
+    #undef lseek
+    #define lseek(x, y, z) _lseeki64(x, y, z)
+
+    #undef fseek
+    #define fseek(x, y, z) _fseeki64(x, y, z)
+
+    #undef ftell
+    #define ftell(x)       _ftelli64(x)
+#endif // defined(_MSC_VER) || defined(__MINGW32__)
+#endif // defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
+
+/* ************************************************************************** */
 #endif // MINIVIDEO_TYPEDEF_H
