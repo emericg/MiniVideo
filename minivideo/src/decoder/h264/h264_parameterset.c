@@ -519,32 +519,16 @@ static int checkSPS(DecodingContext_t *dc, sps_t *sps)
         }
         else if (sps->pic_order_cnt_type == 1)
         {
-            if (sps->offset_for_non_ref_pic < (pow(-2, 31) + 1) ||  sps->offset_for_non_ref_pic < (pow(2, 31) - 1))
-            {
-                TRACE_WARNING(PARAM, "  - offset_for_non_ref_pic is %i but should be in range [-2147483647,2147483647]", sps->offset_for_non_ref_pic);
-                retcode = FAILURE;
-            }
-
-            if (sps->offset_for_top_to_bottom_field < (pow(-2, 31) + 1) ||  sps->offset_for_top_to_bottom_field < (pow(2, 31) - 1))
-            {
-                TRACE_WARNING(PARAM, "  - offset_for_top_to_bottom_field is %i but should be in range [-2147483647,2147483647]", sps->offset_for_top_to_bottom_field);
-                retcode = FAILURE;
-            }
+            // always true if sps->offset_for_non_ref_pic is an int32
 
             if (sps->num_ref_frames_in_pic_order_cnt_cycle > 255)
             {
                 TRACE_WARNING(PARAM, "  - num_ref_frames_in_pic_order_cnt_cycle is %i but should be in range [0,255]", sps->num_ref_frames_in_pic_order_cnt_cycle);
                 retcode = FAILURE;
             }
-
-            unsigned int i = 0;
-            for (i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
+            for (unsigned i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
             {
-                if (sps->offset_for_ref_frame[i] < (pow(-2, 31) + 1) ||  sps->offset_for_ref_frame[i] < (pow(2, 31) - 1))
-                {
-                    TRACE_WARNING(PARAM, "  - offset_for_ref_frame[i] is %i but should be in range [-2147483647,2147483647]", sps->offset_for_top_to_bottom_field);
-                    retcode = FAILURE;
-                }
+                // always true if sps->offset_for_ref_frame[i] is an int32
             }
         }
         else if (sps->pic_order_cnt_type > 2)

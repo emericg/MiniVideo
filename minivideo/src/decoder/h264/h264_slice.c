@@ -580,20 +580,10 @@ static int checkSliceHeader(DecodingContext_t *dc)
         else if (sps->pic_order_cnt_type == 1 && sps->delta_pic_order_always_zero_flag == false)
         {
             // always true if delta_pic[0]_order_cnt is an int32
-            if (slice->delta_pic_order_cnt[0] < -2147483647 || slice->delta_pic_order_cnt[0] > 2147483647)
-            {
-                TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[0] is %i but should be in range [-2147483647,2147483647]", slice->delta_pic_order_cnt[0]);
-                retcode = FAILURE;
-            }
 
             if (pps->bottom_field_pic_order_in_frame_present_flag == true && slice->field_pic_flag == false)
             {
                 // always true if delta_pic_order_cnt[1] is an int32
-                if (slice->delta_pic_order_cnt[1] < -2147483647 || slice->delta_pic_order_cnt[1] > 2147483647)
-                {
-                    TRACE_WARNING(SLICE, "  - delta_pic_order_cnt[1] is %i but should be in range [-2147483647,2147483647]", slice->delta_pic_order_cnt[1]);
-                    retcode = FAILURE;
-                }
             }
         }
 
