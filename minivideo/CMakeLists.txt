@@ -237,6 +237,19 @@ set(minivideo_SRC
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
+# Build shared library
+message("** Building shared library")
+add_library(minivideo_shared SHARED ${minivideo_SRC})
+target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
+
+if(CMAKE_BUILD_MODE STREQUAL "Static")
+    message("** Building static library")
+    add_library(minivideo_static STATIC ${minivideo_SRC})
+    target_link_libraries(minivideo_static ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
+endif(CMAKE_BUILD_MODE STREQUAL "Static")
+
 if(WIN32)
 if(CMAKE_VERSION VERSION_GREATER "3.3")
     message("* Generating symbols export header")
@@ -247,21 +260,6 @@ if(CMAKE_VERSION VERSION_GREATER "3.3")
                            STATIC_DEFINE minivideo_BUILT_AS_STATIC)
 endif()
 endif()
-
-# Build shared library
-message("** Building shared library")
-add_library(minivideo_shared SHARED ${minivideo_SRC})
-target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
-target_link_libraries(minivideo_shared)
-set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
-
-if(CMAKE_BUILD_MODE STREQUAL "Static")
-    message("** Building static library")
-    add_library(minivideo_static STATIC ${minivideo_SRC})
-    target_link_libraries(minivideo_static ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
-    target_link_libraries(minivideo_static)
-    set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
-endif(CMAKE_BUILD_MODE STREQUAL "Static")
 
 
 # Install the shared library and its header into the system (optional step, requires root credentials)
