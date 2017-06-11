@@ -451,12 +451,16 @@ QString getLanguageString(const char *languageCode)
 
         if (strncmp(languageCode, "und", lng_size) == 0)
             langage_qstr = "";
+        else if (strncmp(languageCode, "mis", lng_size) == 0)
+            langage_qstr = "mis"; // the language has no code
+        else if (strncmp(languageCode, "mul", lng_size) == 0)
+            langage_qstr = QObject::tr("Multilingual content");
         else if (strncmp(languageCode, "chi", lng_size) == 0 ||
                  strncmp(languageCode, "zho", lng_size) == 0 ||
                  strncmp(languageCode, "zh", lng_size) == 0)
-            langage_qstr = "Chinese";
+            langage_qstr = QObject::tr("Chinese");
         else if (strncmp(languageCode, "cnm", lng_size) == 0)
-            langage_qstr = "Mandarin";
+            langage_qstr = QObject::tr("Mandarin");
         else if (strncmp(languageCode, "es", lng_size) == 0||
                  strncmp(languageCode, "spa", lng_size) == 0)
             langage_qstr = QObject::tr("Spanish");

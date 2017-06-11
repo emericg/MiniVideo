@@ -117,6 +117,7 @@ QString getFramerateModeString(const unsigned framerateMode);
  * \param languageCode[in]: ISO 639-2 or ISO 639-3 language code.
  * \return Readable language (Qt translatable).
  *
+ * https://en.wikipedia.org/wiki/ISO_639
  * http://www.loc.gov/standards/iso639-2/php/English_list.php
  */
 QString getLanguageString(const char *languageCode);
