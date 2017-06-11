@@ -807,6 +807,16 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             return "Simple Studio Profile";
             break;
 
+        case PROF_VC1_SIMPLE:
+            return "Simple Profile";
+            break;
+        case PROF_VC1_MAIN:
+            return "Main Profile";
+            break;
+        case PROF_VC1_ADVANCED:
+            return "Advanced Profile";
+            break;
+
         case PROF_H264_CBP:
             return "Constrained Baseline Profile";
             break;
@@ -878,13 +888,19 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             break;
 
         case PROF_H265_Main:
-            return "Main";
+            return "Main Profile";
             break;
         case PROF_H265_Main10:
-            return "Main 10";
+            return "Main 10 Profile";
             break;
         case PROF_H265_MainStill:
-            return "Main Still Picture";
+            return "Main Still Picture Profile";
+            break;
+        case PROF_H265_Main12:
+            return "Main 12 Profile";
+            break;
+        case PROF_H265_Main444:
+            return "Main 444 Profile";
             break;
         case PROF_H265_:
             return "Unknown profile...";
@@ -911,13 +927,13 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             break;
 
         case PROF_AAC_LC:
-            return "Low Complexity";
+            return "Low Complexity Profile";
             break;
         case PROF_AAC_Main:
             return "Main Profile";
             break;
         case PROF_AAC_SSR:
-            return "Scalable Sample Rate";
+            return "Scalable Sample Rate Profile";
             break;
         case PROF_AAC_MainAudio:
             return "Main Audio Profile";
@@ -932,7 +948,7 @@ const char *getCodecProfileString(CodecProfiles_e profile, bool long_description
             return "Low Delay Audio Profile";
             break;
         case PROF_AAC_LDv2:
-            return "Low Delay AAC v2";
+            return "Low Delay AAC v2 Profile";
             break;
         case PROF_AAC_Mobile:
             return "Mobile Audio Internetworking Profile";

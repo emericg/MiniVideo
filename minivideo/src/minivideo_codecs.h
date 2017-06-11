@@ -267,6 +267,10 @@ typedef enum CodecProfiles_e
     PROF_MPEG4_AP,
     PROF_MPEG4_SStP,
 
+    PROF_VC1_SIMPLE,
+    PROF_VC1_MAIN,
+    PROF_VC1_ADVANCED,
+
     PROF_H264_CBP,
     PROF_H264_BP,
     PROF_H264_XP,
@@ -294,6 +298,8 @@ typedef enum CodecProfiles_e
     PROF_H265_Main,
     PROF_H265_Main10,
     PROF_H265_MainStill,
+    PROF_H265_Main12,
+    PROF_H265_Main444,
     PROF_H265_,
 
     PROF_VP8_0,
