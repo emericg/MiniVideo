@@ -28,6 +28,7 @@
 
 // minianalyser
 #include "fourcchelper.h"
+#include "videobackends_ui.h"
 #include "about.h"
 
 #include <vector>
@@ -78,6 +79,7 @@ private slots:
     void closeFiles();
 
     void openFourccHelper();
+    void openVideoBackends();
     void openAbout();
     void About();
     void AboutQt();
@@ -92,6 +94,7 @@ private:
 
     FourccHelper *fcchelper = nullptr;
     AboutWindows *aboutwindows = nullptr;
+    VideoBackendsUI *videobackends = nullptr;
 
     QTimer *statusTimer = nullptr;
     QString applicationPath;

@@ -27,7 +27,9 @@ SOURCES     += src/main.cpp \
                src/fourcchelper.cpp \
                src/tabexport.cpp \
                src/tabdev.cpp \
-               src/tabcontainer.cpp
+               src/tabcontainer.cpp \
+               src/videobackends.cpp \
+               src/videobackends_ui.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
@@ -36,10 +38,13 @@ HEADERS     += src/main.h \
                src/fourcchelper.h \
                src/tabexport.h \
                src/tabdev.h \
-               src/tabcontainer.h
+               src/tabcontainer.h \
+               src/videobackends.h \
+               src/videobackends_ui.h
 
 FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \
+               ui/videobackends.ui \
                ui/about.ui \
                ui/tabexport.ui \
                ui/tabdev.ui \
@@ -79,6 +84,17 @@ LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 
 unix {
     linux {
+        # Add videobackends
+        SOURCES += src/videobackends_vdpau.cpp \
+                   src/videobackends_vaapi.cpp
+        HEADERS += src/videobackends_vdpau.h \
+                   src/vdpau/VDPDeviceImpl.h \
+                   src/videobackends_vaapi.h
+
+        # Link with video decoding APIs
+        LIBS += -lvdpau -lX11
+        LIBS += -lva -lva-drm -lva-x11 -lX11
+
         # Using RPATH
         QMAKE_RPATHDIR += $${PWD}/../minivideo/build
 
@@ -87,6 +103,9 @@ unix {
     }
 
     macx {
+        # Link with video decoding APIs
+        #LIBS += -Wl,-framework,Foundation -Wl,-framework,VideoToolbox -Wl,-framework,CoreMedia -Wl,-framework,CoreVideo
+
         # Force compiler to use available macOS SDK version (with automatic detection)
         XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
         QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"

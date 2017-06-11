@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionReload, SIGNAL(triggered()), this, SLOT(reloadFile()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
     connect(ui->actionFourCC, SIGNAL(triggered()), this, SLOT(openFourccHelper()));
+    connect(ui->actionVideoBackends, SIGNAL(triggered()), this, SLOT(openVideoBackends()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openAbout()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -564,6 +565,19 @@ void MainWindow::openFourccHelper()
     {
         fcchelper = new FourccHelper();
         fcchelper->show();
+    }
+}
+
+void MainWindow::openVideoBackends()
+{
+    if (videobackends)
+    {
+        videobackends->show();
+    }
+    else
+    {
+        videobackends = new VideoBackendsUI();
+        videobackends->show();
     }
 }
 
