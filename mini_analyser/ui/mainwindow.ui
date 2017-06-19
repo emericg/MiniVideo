@@ -115,7 +115,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">
@@ -339,8 +339,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>634</width>
-             <height>651</height>
+             <width>622</width>
+             <height>663</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1298,6 +1298,12 @@
              <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
              </spacer>
             </item>
@@ -3444,7 +3450,7 @@
       <widget class="tabExport" name="tab_export">
        <attribute name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</iconset>
+         <normaloff>:/icons_material/icons_material/ic_next_week_48px.svg</normaloff>:/icons_material/icons_material/ic_next_week_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Export</string>
@@ -3516,6 +3522,7 @@ background: rgba(255, 170, 0, 128);</string>
    <addaction name="actionClose"/>
    <addaction name="separator"/>
    <addaction name="actionFourCC"/>
+   <addaction name="actionVideoBackends"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
    <addaction name="actionExit"/>
