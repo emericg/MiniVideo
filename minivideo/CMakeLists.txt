@@ -2,9 +2,11 @@
 # This file allows you to build a shared library of MiniVideo
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(SET CMP0012 OLD)
-cmake_policy(SET CMP0054 OLD)
+cmake_minimum_required(VERSION 2.6)
+if(CMAKE_VERSION VERSION_GREATER 3.1)
+    cmake_policy(SET CMP0012 NEW)
+    cmake_policy(SET CMP0054 NEW)
+endif()
 
 project(minivideo)
 
