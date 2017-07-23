@@ -2,11 +2,9 @@
 # This file allows you to build a shared library of MiniVideo
 ###############################################################################
 
-cmake_minimum_required(VERSION 2.6)
-if(CMAKE_VERSION VERSION_GREATER 3.1)
-    cmake_policy(SET CMP0012 NEW)
-    cmake_policy(SET CMP0054 NEW)
-endif()
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(SET CMP0012 NEW)
+cmake_policy(SET CMP0054 NEW)
 
 project(minivideo)
 
@@ -36,8 +34,10 @@ set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
 
 # custom memfd module
 if(ENABLE_MEMFD)
-    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-    find_package(MemFD) # FindMemFD.cmake
+    if(CMAKE_VERSION VERSION_GREATER "3.0")
+        SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+        find_package(MemFD) # FindMemFD.cmake
+    endif()
 
     if(MEMFD_FOUND)
         message(STATUS "* memfd enabled")
@@ -155,10 +155,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     # It creates "CMakePredefinedTargets" folder by default and adds CMake
     # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-    # Set policy for interpretation of if() arguments as variables or keywords
-    # when unquoted to NEW to avoid warnings.
-    cmake_policy(SET CMP0054 NEW)
 
     if(CMAKE_VERSION VERSION_GREATER "3.3")
         include(GenerateExportHeader)
