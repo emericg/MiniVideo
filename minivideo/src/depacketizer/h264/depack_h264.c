@@ -51,7 +51,7 @@ unsigned depack_h264_sample(Bitstream_t *bitstr, MediaStream_t *track,
     TRACE_1(DEPAK, "> " BLD_BLUE "READING CONTAINER SAMPLE %u (offset: %lli / size: %lli)",
             sampleindex, samplesoffset, samplesize);
 
-    while (status == SUCCESS || samplefound > 16)
+    while (status == SUCCESS && samplefound < 16)
     {
         //
         uint32_t current_nalu_size = read_bits(bitstr, 32);
