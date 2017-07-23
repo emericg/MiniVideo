@@ -34,10 +34,8 @@ set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
 
 # custom memfd module
 if(ENABLE_MEMFD)
-    if(CMAKE_VERSION VERSION_GREATER "3.0")
-        SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-        find_package(MemFD) # FindMemFD.cmake
-    endif()
+    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    find_package(MemFD) # FindMemFD.cmake
 
     if(MEMFD_FOUND)
         message(STATUS "* memfd enabled")
