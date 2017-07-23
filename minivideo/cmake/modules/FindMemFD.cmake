@@ -30,10 +30,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
                     OUTPUT_VARIABLE KERNEL_VERSION_MAJOR
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    if(${KERNEL_VERSION})
-        if("${KERNEL_VERSION}" GREATER_EQUAL "317")
-            set(MEMFD_FOUND TRUE)
-        endif()
+    if(${KERNEL_VERSION} GREATER_EQUAL 317)
+        set(MEMFD_FOUND TRUE)
     endif()
 
 endif()
