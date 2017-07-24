@@ -28,6 +28,7 @@
 #include <QDateTime>
 #include <QWidget>
 #include <QTimer>
+#include <QSvgWidget>
 
 #include <QDropEvent>
 #include <QFile>
@@ -59,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->file_comboBox, SIGNAL(activated(int)), this, SLOT(printFile()));
+    connect(ui->comboBox_file, SIGNAL(activated(int)), this, SLOT(printFile()));
 
     connect(ui->comboBox_video_selector, SIGNAL(activated(int)), this, SLOT(printVideoDetails()));
     connect(ui->comboBox_audio_selector, SIGNAL(activated(int)), this, SLOT(printAudioDetails()));
@@ -91,18 +92,21 @@ MainWindow::MainWindow(QWidget *parent) :
     tabDevText = ui->tabWidget->tabText(9);
     tabDevIcon = ui->tabWidget->tabIcon(9);
 
-    // "Drop zone" is the default tab when starting up
-    handleTabWidget();
-
-    // Loading animation
-    //QString anim = ":/img/img/loading.svg";
-    //ui->widget_animation->load(anim);
-
     // Accept video files "drag & drop"
     setAcceptDrops(true);
 
+    // "Drop zone" is the default tab when starting up
+    handleTabWidget();
+
+    // Preload icons
+    icon_empty.addFile(":/icons_material/icons_material/ic_info_48px.svg");
+    icon_load.addFile(":/icons_material/icons_material/ic_query_builder_48px.svg");
+    icon_movie.addFile(":/icons_material/icons_material/ic_movie_48px.svg");
+    icon_music.addFile(":/icons_material/icons_material/ic_music_video_48px.svg");
+    icon_error.addFile(":/icons_material/icons_material/ic_error_outline_48px.svg");
+
 #ifdef Q_OS_OSX
-    ui->file_comboBox->setIconSize(QSize(16,16));
+    ui->comboBox_file->setIconSize(QSize(16,16));
     ui->mainToolBar->setStyleSheet("");
 #endif
 }
@@ -156,6 +160,43 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     // Make sure the info tab scrollArea don't get wider than our main window
     ui->groupBox_infos->setMaximumWidth(ui->tab_infos->width() - 8);
+
+    // Save index for this tab
+    MediaWrapper *wrap = currentMediaWrapper();
+    if (wrap)
+    {
+        wrap->currentTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    }
+}
+
+void MainWindow::on_comboBox_audio_selector_currentIndexChanged(int index)
+{
+    // Save current track
+    MediaWrapper *wrap = currentMediaWrapper();
+    if (wrap)
+    {
+        wrap->currentAudioTrack = index;
+    }
+}
+
+void MainWindow::on_comboBox_video_selector_currentIndexChanged(int index)
+{
+    // Save current track
+    MediaWrapper *wrap = currentMediaWrapper();
+    if (wrap)
+    {
+        wrap->currentVideoTrack = index;
+    }
+}
+
+void MainWindow::on_comboBox_subtitles_selector_currentIndexChanged(int index)
+{
+    // Save current track
+    MediaWrapper *wrap = currentMediaWrapper();
+    if (wrap)
+    {
+        wrap->currentSubtitlesTrack = index;
+    }
 }
 
 /* ************************************************************************** */
@@ -187,52 +228,44 @@ int MainWindow::loadFile(const QString &file)
 
     if (file.isEmpty() == false)
     {
-        setStatus("Working...", SUCCESS, 0);
-
         // Check if this is a duplicate
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
-            QString name = mediaList.at(i)->file_path;
-            if (file == name)
+            if (mediaList.at(i)->media)
             {
-                closeFile(file);
-                break;
+                if (file == mediaList.at(i)->media->file_path)
+                {
+                    closeFile(file);
+                    break;
+                }
             }
         }
 
-        // Timers
-        std::chrono::time_point<std::chrono::steady_clock> start, end;
-        std::chrono::time_point<std::chrono::steady_clock> start_parsing, end_parsing;
-        start = std::chrono::steady_clock::now();
-
         // Load file
-        start_parsing = std::chrono::steady_clock::now();
-        retcode = analyseFile(file);
-        end_parsing = std::chrono::steady_clock::now();
-        if (retcode == 1)
+        QThread *thread = new QThread();
+        MediaWrapper *media = new MediaWrapper();
+
+        if (thread && media)
         {
+            retcode = SUCCESS;
+
+            mediaList.push_back(media);
+            media->mediaPath = file;
+
             handleComboBox(file);
-            printFile();
-            hideStatus();
+            //handleTabWidget();
+            loadingTab();
 
-            end = std::chrono::steady_clock::now();
-            int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(end_parsing - start_parsing).count();
-            int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() - tp;
-            MediaFile_t *f = currentMediaFile();
-            QString name = QString::fromLocal8Bit(f->file_name) + "." + QString::fromLocal8Bit(f->file_extension);
-            ui->tab_dev->addFile(file, name, tt, tp, f->parsingMemory);
+            media->moveToThread(thread);
+
+            connect(thread, SIGNAL(started()), media, SLOT(parsing()));
+            connect(media, SIGNAL(parsingFinished(QString)), thread, SLOT(quit()));
+            connect(media, SIGNAL(parsingFinished(QString)), this, SLOT(mediaReady(QString)));
+            // automatically delete thread when work is done
+            connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+            thread->start();
         }
-        else
-        {
-            handleComboBox(file);
-            printFile();
-            hideStatus();
-
-            setStatus("The following file cannot be opened (UNKNOWN ERROR):\n'" + file + "'", FAILURE, 7500);
-        }
-
-        // Force a resize event, so the scrollAreas don't get wider than our windows
-        resizeEvent(NULL);
     }
 
     return retcode;
@@ -240,36 +273,47 @@ int MainWindow::loadFile(const QString &file)
 
 /* ************************************************************************** */
 
-int MainWindow::analyseFile(const QString &file)
+void MainWindow::mediaReady(QString mediaPath)
 {
-    int retcode = FAILURE;
-    char input_filepath[4096];
+    //qDebug() << "A media is ready:" << mediaPath;
 
-    if (file.isEmpty() == false)
+    // Only load infos if it's about the currently selected file
+    if (mediaPath == ui->comboBox_file->currentText())
     {
-        strncpy(input_filepath, file.toLocal8Bit(), 4095);
-
-        // Create and open the media file
-        MediaFile_t *input_media = NULL;
-        retcode = minivideo_open(input_filepath, &input_media);
-
-        if (retcode == SUCCESS)
+        printFile();
+    }
+    else
+    {
+        MediaWrapper *wrap = namedMediaWrapper(mediaPath);
+        if (wrap)
         {
-            retcode = minivideo_parse(input_media, true);
-            mediaList.push_back(input_media);
+            MediaFile_t *f = wrap->media;
 
-            if (retcode != SUCCESS)
+            // Change its combobox icon (no more loading)
+            for (int i = 0; i < ui->comboBox_file->count(); i++)
             {
-                std::cerr << "minivideo_parse() failed with retcode: " << retcode << std::endl;
+                if (mediaPath == ui->comboBox_file->itemText(i))
+                {
+                    if (f->tracks_video_count > 0)
+                        ui->comboBox_file->setItemIcon(i, icon_movie);
+                    else if (f->tracks_audio_count > 0)
+                        ui->comboBox_file->setItemIcon(i, icon_music);
+                    else
+                        ui->comboBox_file->setItemIcon(i, icon_error);
+
+                    break;
+                }
             }
-        }
-        else
-        {
-            std::cerr << "minivideo_open() failed with retcode: " << retcode << std::endl;
+
+            // Add it to the "dev" tab
+            int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_parsing - wrap->start_parsing).count();
+
+            QString name = QString::fromLocal8Bit(f->file_name) + "." + QString::fromLocal8Bit(f->file_extension);
+            QString file = QString::fromLocal8Bit(f->file_path);
+
+            ui->tab_dev->addFile(file, name, 0, tp, f->parsingMemory);
         }
     }
-
-    return retcode;
 }
 
 /* ************************************************************************** */
@@ -287,9 +331,9 @@ void MainWindow::closeFiles()
     {
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
-            ui->tab_dev->removeFile(mediaList.at(i)->file_path);
+            ui->tab_dev->removeFile(mediaList.at(i)->media->file_path);
             ui->tab_container->closeMedia();
-            minivideo_close(&mediaList.at(i));
+            minivideo_close(&mediaList.at(i)->media);
         }
     }
 }
@@ -301,18 +345,18 @@ void MainWindow::closeFile(const QString &file)
         // Find the index of the given file
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
-            QString path = mediaList.at(i)->file_path;
+            QString path = mediaList.at(i)->media->file_path;
             if (file == path)
             {
                 ui->tab_dev->removeFile(path);
                 ui->tab_container->closeMedia();
 
-                minivideo_close(&mediaList.at(i));
+                minivideo_close(&mediaList.at(i)->media);
 
                 mediaList.erase(mediaList.begin() + i);
 
                 // Remove the entry from the comboBox
-                ui->file_comboBox->removeItem(i);
+                ui->comboBox_file->removeItem(i);
                 return;
             }
         }
@@ -321,28 +365,28 @@ void MainWindow::closeFile(const QString &file)
 
 void MainWindow::closeFile()
 {
-    int fileIndex = ui->file_comboBox->currentIndex();
+    int fileIndex = ui->comboBox_file->currentIndex();
 
     if (mediaList.empty() == false)
     {
-        QString path = mediaList.at(fileIndex)->file_path;
+        QString path = mediaList.at(fileIndex)->media->file_path;
 
         if ((int)(mediaList.size()) >= (fileIndex + 1))
         {
             ui->tab_dev->removeFile(path);
             ui->tab_container->closeMedia();
 
-            minivideo_close(&mediaList.at(fileIndex));
+            minivideo_close(&mediaList.at(fileIndex)->media);
 
             mediaList.erase(mediaList.begin() + fileIndex);
 
             // Remove the entry from the comboBox
-            ui->file_comboBox->removeItem(fileIndex);
+            ui->comboBox_file->removeItem(fileIndex);
 
             // Update comboBox index
-            if (ui->file_comboBox->count() > 0)
+            if (ui->comboBox_file->count() > 0)
             {
-                ui->file_comboBox->activated(fileIndex-1);
+                ui->comboBox_file->activated(fileIndex-1);
             }
             else // No more file opened?
             {
@@ -386,7 +430,7 @@ void MainWindow::detachFile()
     if (applicationPath.isEmpty() == false)
     {
         MediaFile_t *media = currentMediaFile();
-        int fileCount = ui->file_comboBox->count();
+        int fileCount = ui->comboBox_file->count();
 
         if (media && fileCount > 1)
         {
@@ -403,11 +447,11 @@ void MainWindow::detachFile()
 
 /* ************************************************************************** */
 
-MediaFile_t *MainWindow::currentMediaFile()
+MediaWrapper *MainWindow::currentMediaWrapper()
 {
-    MediaFile_t *media = NULL;
+    MediaWrapper *media = nullptr;
 
-    size_t fileIndex = ui->file_comboBox->currentIndex();
+    size_t fileIndex = ui->comboBox_file->currentIndex();
 
     if (mediaList.size() == 1)
     {
@@ -421,6 +465,58 @@ MediaFile_t *MainWindow::currentMediaFile()
     return media;
 }
 
+MediaFile_t *MainWindow::currentMediaFile()
+{
+    MediaFile_t *media = nullptr;
+
+    size_t fileIndex = ui->comboBox_file->currentIndex();
+
+    if (mediaList.size() == 1)
+    {
+        media = mediaList.at(0)->media;
+    }
+    else if (fileIndex < mediaList.size())
+    {
+        media = mediaList.at(fileIndex)->media;
+    }
+
+    return media;
+}
+
+MediaWrapper *MainWindow::namedMediaWrapper(QString &filePath)
+{
+    MediaWrapper *media = nullptr;
+
+    for (int i = 0; i < mediaList.size(); i++)
+    {
+        if (mediaList.at(i)->mediaPath == filePath)
+        {
+            media = mediaList.at(i);
+            break;
+        }
+    }
+
+    return media;
+}
+
+MediaFile_t *MainWindow::namedMediaFile(QString &filePath)
+{
+    MediaFile_t *media = nullptr;
+
+    for (int i = 0; i < mediaList.size(); i++)
+    {
+        if (mediaList.at(i)->mediaPath == filePath)
+        {
+            media = mediaList.at(i)->media;
+            break;
+        }
+    }
+
+    return media;
+}
+
+/* ************************************************************************** */
+
 void MainWindow::handleComboBox(const QString &file)
 {
     // Is this the first file added?
@@ -428,20 +524,19 @@ void MainWindow::handleComboBox(const QString &file)
     {
         if (mediaList.empty() == true)
         {
-            ui->file_comboBox->addItem(QIcon(":/icons_material/icons_material/ic_info_48px.svg"),
-                                       "Drag and drop files to analyse them!");
+            ui->comboBox_file->addItem(icon_empty, "Drag and drop files to analyse them!");
         }
         else
         {
-            ui->file_comboBox->removeItem(0);
+            ui->comboBox_file->removeItem(0);
             emptyFileList = false;
         }
     }
 
     if (file.isEmpty() == false)
     {
-        ui->file_comboBox->addItem(file);
-        ui->file_comboBox->setCurrentIndex(ui->file_comboBox->count() - 1);
+        ui->comboBox_file->addItem(icon_load, file);
+        ui->comboBox_file->setCurrentIndex(ui->comboBox_file->count() - 1);
     }
 }
 
@@ -458,68 +553,105 @@ void MainWindow::handleTabWidget()
         ui->tabWidget->removeTab(0);
     }
 
+    // No media ? Re-add only the "drop zone" tab
     if (mediaList.empty())
     {
-        // No media ? Re-add only the "drop zone" tab
         ui->tabWidget->addTab(ui->tab_dropzone, tabDropZoneIcon, tabDropZoneText);
         ui->tabWidget->tabBar()->hide();
         ui->tabWidget->setCurrentIndex(0);
     }
-    else
+    else // Otherwise, adapt tabs to selected media file content
     {
-        // Otherwise, adapt tabs to selected media file content
         MediaFile_t *media = currentMediaFile();
+        MediaWrapper *wrap = currentMediaWrapper();
 
-        ui->tabWidget->tabBar()->show();
-        ui->tabWidget->addTab(ui->tab_infos, tabInfosIcon, tabInfosText);
-
-        if (media->tracks_video_count)
+        if (!media)
         {
-            // Add the "video" tab
-            ui->tabWidget->addTab(ui->tab_video, tabVideoIcon, tabVideoText);
+            // No media ? Re-add only the "loading" tab
+            ui->tabWidget->addTab(ui->tab_dropzone, tabDropZoneIcon, tabDropZoneText);
+            ui->tabWidget->tabBar()->hide();
+            ui->tabWidget->setCurrentIndex(0);
         }
-
-        if (media->tracks_audio_count)
+        else if (media && !wrap->ready)
         {
-            // Add the "audio" tab
-            ui->tabWidget->addTab(ui->tab_audio, tabAudioIcon, tabAudioText);
+            // Media not ready ? Re-add only the "loading" tab
+            ui->tabWidget->addTab(ui->tab_loading, tabLoadingIcon, tabLoadingText);
+            ui->tabWidget->tabBar()->hide();
+            ui->tabWidget->setCurrentIndex(0);
         }
-
-        if (media->tracks_subtitles_count)
+        else
         {
-            // Add the "subtitles" tab
-            ui->tabWidget->addTab(ui->tab_subtitles, tabSubsIcon, tabSubsText);
-        }
+            ui->tabWidget->tabBar()->show();
+            ui->tabWidget->addTab(ui->tab_infos, tabInfosIcon, tabInfosText);
 
-        if (media->tracks_others_count)
-        {
-            // Add the "others" tab
-            ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
-        }
+            if (media->tracks_video_count)
+            {
+                // Add the "video" tab
+                ui->tabWidget->addTab(ui->tab_video, tabVideoIcon, tabVideoText);
+            }
 
-        {
-            // Add the container tab
-            ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
+            if (media->tracks_audio_count)
+            {
+                // Add the "audio" tab
+                ui->tabWidget->addTab(ui->tab_audio, tabAudioIcon, tabAudioText);
+            }
 
-            // Add the export tab
-            ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
+            if (media->tracks_subtitles_count)
+            {
+                // Add the "subtitles" tab
+                ui->tabWidget->addTab(ui->tab_subtitles, tabSubsIcon, tabSubsText);
+            }
+
+            if (media->tracks_others_count)
+            {
+                // Add the "others" tab
+                ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
+            }
+
+            {
+                // Add the container tab
+                ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
+
+                // Add the export tab
+                ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
 
 #if ENABLE_DEBUG
-            // Add the developer tab
-            ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
+                // Add the developer tab
+                ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
 #endif  // ENABLE_DEBUG
-        }
+            }
 
-        // Restore the focus (if the same tab is available)
-        for (int i = 0; i < ui->tabWidget->count(); i++)
-        {
-            if (ui->tabWidget->widget(i) == tab_widget_saved)
+            // Restore the focus (if the same tab is available)
+            for (int i = 0; i < ui->tabWidget->count(); i++)
             {
-                ui->tabWidget->setCurrentIndex(i);
-                break;
+                if (ui->tabWidget->widget(i) == tab_widget_saved)
+                {
+                    ui->tabWidget->setCurrentIndex(i);
+                    break;
+                }
             }
         }
     }
+}
+
+void MainWindow::loadingTab()
+{
+    ui->tabWidget->setEnabled(true);
+
+    // Remove all tabs
+    while (ui->tabWidget->count() > 0)
+    {
+        ui->tabWidget->removeTab(0);
+    }
+
+    // Add only the loading tab
+    ui->tabWidget->addTab(ui->tab_loading, tabLoadingIcon, tabLoadingText);
+    ui->tabWidget->tabBar()->hide();
+    ui->tabWidget->setCurrentIndex(0);
+
+    // Loading animation
+    QString anim = ":/img/img/loading.svg";
+    ui->widget_animation->load(anim);
 }
 
 /* ************************************************************************** */

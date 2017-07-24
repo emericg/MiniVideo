@@ -157,10 +157,10 @@ bool VideoBackendsVDPAU::load(VideoBackendInfos &infos)
 
     VdpDevice device;
     VDPDeviceImpl *deviceI;
-    char *display_name = XDisplayName(NULL);
+    char *display_name = XDisplayName(nullptr);
 
     // Create an X Display
-    Display *display = XOpenDisplay(NULL);
+    Display *display = XOpenDisplay(nullptr);
     if (!display)
     {
         qDebug() << "vdpau: Cannot connect to X server" << display_name;

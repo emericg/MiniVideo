@@ -8,7 +8,7 @@ TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport
 
-VERSION      = 41
+VERSION      = 42
 DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 # build artifacts
@@ -33,6 +33,7 @@ SOURCES     += src/main.cpp \
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
+               src/mediawrapper.h \
                src/utils.h \
                src/about.h \
                src/fourcchelper.h \

@@ -25,6 +25,8 @@
 // MiniVideo
 #include "minivideo_mediafile.h"
 
+#include "mediawrapper.h"
+
 // QHexEdit widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
@@ -50,6 +52,7 @@ public:
     ~tabContainer();
 
     void loadMedia(const MediaFile_t *media);
+    void loadMedia(const MediaWrapper *wrapper);
     void loadTracks();
     void closeMedia();
 
@@ -71,10 +74,16 @@ public slots:
 
     bool findAtom(const pugi::xml_node &elem, const QString &attr, int value, pugi::xml_node &foundElement);
 
+private slots:
+    void on_tabWidget_currentChanged(int index);
+    void on_tabWidget_tracks_currentChanged(int index);
+
 private:
     Ui::tabContainer *ui;
 
     MediaFile_t *media = nullptr;
+    MediaWrapper *wrapper = nullptr;
+
     MediaStream_t *track = nullptr;
     MediaStream_t *tracks[16] = {0};
 

@@ -156,7 +156,7 @@ QString getTrackTypeString(const MediaStream_t *track)
 {
     QString type_qstr;
 
-    if (track != NULL)
+    if (track)
     {
         switch (track->stream_type)
         {
@@ -200,7 +200,7 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
 {
     QString size_qstr;
 
-    if (track != NULL)
+    if (track)
     {
         quint64 size_int = track->stream_size;
 

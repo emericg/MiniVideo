@@ -66,23 +66,55 @@ bool tabDev::addFile(const QString &path, const QString &name,
 {
     bool status = true;
 
-    fileCount++;
-    ui->label_stats_filecount->setText(QString::number(fileCount) + tr(" media file(s) loaded."));
-
-    // Table
     int row = ui->tableWidget_stats->rowCount();
-    ui->tableWidget_stats->insertRow(row);
 
-    // Table item
-    QTableWidgetItem *itemName = new QTableWidgetItem(name);
-    itemName->setToolTip(path);
-    QTableWidgetItem *itemMem = new QTableWidgetItem(QString::number(parsingMemory / 1024) + " KiB");
-    QTableWidgetItem *itemPars = new QTableWidgetItem(QString::number(parsingTime) + " ms");
-    QTableWidgetItem *itemProc = new QTableWidgetItem(QString::number(processingTime) + " ms");
-    ui->tableWidget_stats->setItem(row, 0, itemName);
-    ui->tableWidget_stats->setItem(row, 1, itemMem);
-    ui->tableWidget_stats->setItem(row, 2, itemPars);
-    ui->tableWidget_stats->setItem(row, 3, itemProc);
+    //qDebug() << "addFile(" << name << ") at"<< row << "rows";
+
+    QTableWidgetItem *itemName = nullptr;
+    QTableWidgetItem *itemMem = nullptr;
+    QTableWidgetItem *itemPars = nullptr;
+    QTableWidgetItem *itemProc = nullptr;
+
+    // Modify
+    for (int i = 0; i < ui->tableWidget_stats->rowCount(); i++)
+    {
+        if (ui->tableWidget_stats->item(i, 0)->toolTip() == path)
+        {
+            row = i;
+
+            // Table item
+            //itemName didn't changed
+            itemMem = ui->tableWidget_stats->item(i, 1);
+            itemMem->setText(QString::number(parsingMemory / 1024) + " KiB");
+            itemPars = ui->tableWidget_stats->item(i, 2);
+            itemPars->setText(QString::number(parsingTime) + " ms");
+            itemProc = ui->tableWidget_stats->item(i, 3);
+            itemProc->setText(QString::number(processingTime) + " ms");
+        }
+    }
+
+    // Or add
+    if (row == ui->tableWidget_stats->rowCount())
+    {
+        // File count
+        fileCount++;
+        ui->label_stats_filecount->setText(QString::number(fileCount) + tr(" media file(s) loaded."));
+
+        // Table
+        ui->tableWidget_stats->insertRow(row);
+
+        // Table item
+        itemName = new QTableWidgetItem(name);
+        itemName->setToolTip(path);
+        itemMem = new QTableWidgetItem(QString::number(parsingMemory / 1024) + " KiB");
+        itemPars = new QTableWidgetItem(QString::number(parsingTime) + " ms");
+        itemProc = new QTableWidgetItem(QString::number(processingTime) + " ms");
+
+        ui->tableWidget_stats->setItem(row, 0, itemName);
+        ui->tableWidget_stats->setItem(row, 1, itemMem);
+        ui->tableWidget_stats->setItem(row, 2, itemPars);
+        ui->tableWidget_stats->setItem(row, 3, itemProc);
+    }
 
     return status;
 }
@@ -95,9 +127,11 @@ bool tabDev::removeFile(const QString &path)
     {
         if (ui->tableWidget_stats->item(i, 0)->toolTip() == path)
         {
+            // File count
             fileCount--;
             ui->label_stats_filecount->setText(QString::number(fileCount) + tr(" media file(s) loaded."));
 
+            // Table
             ui->tableWidget_stats->removeRow(i);
             status = true;
 

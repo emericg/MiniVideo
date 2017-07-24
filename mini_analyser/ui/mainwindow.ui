@@ -50,7 +50,7 @@
      <number>4</number>
     </property>
     <item row="0" column="0" colspan="3">
-     <widget class="QComboBox" name="file_comboBox">
+     <widget class="QComboBox" name="comboBox_file">
       <property name="minimumSize">
        <size>
         <width>32</width>
@@ -106,6 +106,23 @@
       </property>
       <property name="flat">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="4">
+     <widget class="QLabel" name="statusLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid rgb(255, 53, 3);
+background: rgba(255, 170, 0, 128);</string>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
       </property>
      </widget>
     </item>
@@ -260,7 +277,44 @@
          </spacer>
         </item>
         <item row="1" column="1">
-         <widget class="QSvgWidget" name="widget_animation" native="true"/>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QSvgWidget" name="widget_animation" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>160</width>
+              <height>160</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>160</width>
+              <height>160</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_drop_text_2">
+            <property name="font">
+             <font>
+              <pointsize>18</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(100, 100, 100);</string>
+            </property>
+            <property name="text">
+             <string>loading...</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item row="1" column="2">
          <spacer name="horizontalSpacer_4">
@@ -3465,23 +3519,6 @@
         <string notr="true">DEV</string>
        </attribute>
       </widget>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="4">
-     <widget class="QLabel" name="statusLabel">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: 1px solid rgb(255, 53, 3);
-background: rgba(255, 170, 0, 128);</string>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
      </widget>
     </item>
    </layout>

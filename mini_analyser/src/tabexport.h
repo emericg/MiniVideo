@@ -25,6 +25,8 @@
 // minivideo library
 #include "minivideo_mediafile.h"
 
+#include "mediawrapper.h"
+
 #include <QWidget>
 #include <QFile>
 
@@ -43,6 +45,7 @@ public:
 public slots:
     void clean();
     int loadMedia(const MediaFile_t *media);
+    int loadMedia(const MediaWrapper *wrapper);
     int generateExportDatas();
 
 private slots:
@@ -53,11 +56,15 @@ private slots:
     int generateExportDatas_xml(bool detailed);
     int generateExportMapping_xml();
 
+    void on_comboBox_export_modes_currentIndexChanged(int index);
+    void on_comboBox_export_formats_currentIndexChanged(int index);
+
 private:
     Ui::tabExport *ui;
 
     // Save current media file
     MediaFile_t *media = nullptr;
+    MediaWrapper *wrapper = nullptr;
 
     // Datas export feature
     int exportFormat = 0;

@@ -41,7 +41,7 @@ tabExport::tabExport(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->comboBox_export_mode, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
+    connect(ui->comboBox_export_modes, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
 
     connect(ui->pushButton_export_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
     connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
@@ -69,15 +69,36 @@ tabExport::~tabExport()
 void tabExport::clean()
 {
     media = nullptr;
+    wrapper = nullptr;
 
     exportFormat = EXPORT_TEXT;
     exportDatas.clear();
     //exportFile.close(); // ?
 
-    ui->comboBox_export_mode->setCurrentIndex(0);
+    ui->comboBox_export_modes->setCurrentIndex(0);
     ui->comboBox_export_formats->setCurrentIndex(0);
     ui->lineEdit_export_filename->clear();
     ui->textBrowser_export->clear();
+}
+
+/* ************************************************************************** */
+
+void tabExport::on_comboBox_export_modes_currentIndexChanged(int index)
+{
+    // Save current export mode
+    if (wrapper)
+    {
+        wrapper->exportMode = index;
+    }
+}
+
+void tabExport::on_comboBox_export_formats_currentIndexChanged(int index)
+{
+    // Save current export format
+    if (wrapper)
+    {
+        wrapper->exportFormat = index;
+    }
 }
 
 /* ************************************************************************** */
@@ -158,6 +179,24 @@ int tabExport::loadMedia(const MediaFile_t *media)
     return retcode;
 }
 
+int tabExport::loadMedia(const MediaWrapper *wrapper)
+{
+    int retcode = 0;
+
+    if (wrapper)
+    {
+        if (wrapper->media)
+        {
+            this->wrapper = (MediaWrapper *)wrapper;
+            this->media = (MediaFile_t *)media;
+
+            retcode = generateExportDatas();
+        }
+    }
+
+    return retcode;
+}
+
 int tabExport::generateExportDatas()
 {
     int retcode = 0;
@@ -171,7 +210,7 @@ int tabExport::generateExportDatas()
         QString outputFilePath = media->file_path;
 
         // Read file extension and details
-        int exportMode = ui->comboBox_export_mode->currentIndex();
+        int exportMode = ui->comboBox_export_modes->currentIndex();
         int exportFormat = ui->comboBox_export_formats->currentIndex();
 
         if (exportMode == 0 || exportMode == 1)
@@ -257,7 +296,7 @@ int tabExport::generateExportDatas_text(bool detailed)
         for (unsigned i = 0; i < media->tracks_video_count; i++)
         {
             MediaStream_t *t = media->tracks_video[i];
-            if (t == NULL)
+            if (t == nullptr)
                 break;
 
             // Section title
@@ -367,7 +406,7 @@ int tabExport::generateExportDatas_text(bool detailed)
         for (unsigned i = 0; i < media->tracks_audio_count; i++)
         {
             MediaStream_t *t = media->tracks_audio[i];
-            if (t == NULL)
+            if (t == nullptr)
                 break;
 
             // Section title
@@ -441,7 +480,7 @@ int tabExport::generateExportDatas_text(bool detailed)
         for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
         {
             MediaStream_t *t = media->tracks_subt[i];
-            if (t == NULL)
+            if (t == nullptr)
                 break;
 
             // Section title
@@ -465,7 +504,7 @@ int tabExport::generateExportDatas_text(bool detailed)
         for (unsigned i = 0; i < media->tracks_others_count; i++)
         {
             MediaStream_t *t = media->tracks_others[i];
-            if (t == NULL)
+            if (t == nullptr)
                 break;
 
             // Section title
@@ -534,7 +573,7 @@ int tabExport::generateExportMapping_xml()
         QString filename;
 
         // Load XML file (from given file descriptor)
-        if (media->container_mapper_fd == NULL ||
+        if (media->container_mapper_fd == nullptr ||
             xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
         {
             status = 0;

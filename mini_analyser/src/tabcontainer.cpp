@@ -83,6 +83,8 @@ tabContainer::~tabContainer()
     delete ui;
 }
 
+/* ************************************************************************** */
+
 void tabContainer::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
@@ -93,12 +95,32 @@ void tabContainer::resizeEvent(QResizeEvent *event)
     ui->labelTitle->setMaximumWidth(newwidth);
 }
 
+void tabContainer::on_tabWidget_currentChanged(int index)
+{
+    // Save current mode
+    if (wrapper)
+    {
+        wrapper->containerMode = index;
+    }
+}
+
+void tabContainer::on_tabWidget_tracks_currentChanged(int index)
+{
+    // Save current track
+    if (wrapper)
+    {
+        wrapper->containerTrack = index;
+    }
+}
+
+/* ************************************************************************** */
+
 void tabContainer::loadMedia(const MediaFile_t *media)
 {
-    this->media = (MediaFile_t *)media;
-
     if (media)
     {
+        this->media = (MediaFile_t *)media;
+
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
         setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
@@ -114,14 +136,43 @@ void tabContainer::loadMedia(const MediaFile_t *media)
         containerSelectionEmpty();
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
-        resizeEvent(NULL);
+        resizeEvent(nullptr);
+    }
+}
+
+void tabContainer::loadMedia(const MediaWrapper *wrapper)
+{
+    if (wrapper)
+    {
+        if (wrapper->media)
+        {
+            this->media = (MediaFile_t *)media;
+            this->wrapper = (MediaWrapper *)wrapper;
+
+            mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
+
+            setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+
+            if (!ui->widget_hex->setData(mediaFile))
+            {
+                return;
+            }
+
+            loadXmlFile();
+            loadTracks();
+            loadSamples(0);
+            containerSelectionEmpty();
+
+            // Force a resize event, so the scrollAreas don't get wider than our windows
+            resizeEvent(nullptr);
+        }
     }
 }
 
 void tabContainer::closeMedia()
 {
-    //
     media = nullptr;
+    wrapper = nullptr;
     track = nullptr;
     for (unsigned i = 0; i < 16; i++)
         tracks[i] = nullptr;
@@ -143,6 +194,8 @@ void tabContainer::closeMedia()
     }
     ui->listWidget->clear();
 }
+
+/* ************************************************************************** */
 
 void tabContainer::tabSwitch(int index)
 {
@@ -241,7 +294,7 @@ void tabContainer::loadSamples(int tid)
     }
     else
     {
-        track = NULL;
+        track = nullptr;
     }
 }
 
@@ -305,7 +358,7 @@ void tabContainer::sampleSelection(int sid)
 
         if (essample_count)
         {
-            for (int i = 0; i < essample_count; i++)
+            for (int i = 0; i < essample_count && i < 16; i++)
             {
                 QLabel *a = new QLabel("Sample #" + QString::number(i) + " @ " + QString::number(essample_list[i].offset - track->sample_offset[sid]) + " / " + QString::number(essample_list[i].size) + " bytes");
                 QLineEdit *b = new QLineEdit(QString::fromLocal8Bit(essample_list[i].type_str));
@@ -412,7 +465,7 @@ void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
         // Set atom type
         ////////////////////////////////////////////////////////////////////////
         int fieldCount = 0;
-        QLabel *atom_title = NULL;
+        QLabel *atom_title = nullptr;
         QString type = QString::fromLatin1(eSelected.attribute("tp").value());
         if (type == "MP4 box")
         {
@@ -653,7 +706,7 @@ bool tabContainer::loadXmlFile()
 #else
 
     // Load XML file (from given file descriptor)
-    if (media->container_mapper_fd == NULL ||
+    if (media->container_mapper_fd == nullptr ||
         xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
     {
         status = false;
@@ -714,15 +767,12 @@ bool tabContainer::xmlFileParser(pugi::xml_node &root)
 
         if (root.attribute("xmlMapper"))
         {
-            qDebug() << " - xmlMapper:" << root.attribute("xmlMapper").value();
+            //qDebug() << " - xmlMapper:" << root.attribute("xmlMapper").value();
             if (strcmp(root.attribute("xmlMapper").value(), "0.2") == 0)
                 status = true;
         }
 
-        if (root.attribute("minivideo"))
-        {
-            qDebug() << " - minivideo:" << root.attribute("minivideo").value();
-        }
+        //if (root.attribute("minivideo")) qDebug() << " - minivideo:" << root.attribute("minivideo").value();
     }
 
     return status;
@@ -736,7 +786,7 @@ void tabContainer::xmlHeaderParser(pugi::xml_node &root)
 
         for (pugi::xml_node e = root.first_child(); e; e = e.next_sibling())
         {
-            qDebug() << " -" << e.name() << ":" << e.child_value();
+            //qDebug() << " -" << e.name() << ":" << e.child_value();
         }
     }
 }

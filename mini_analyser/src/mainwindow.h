@@ -27,6 +27,7 @@
 #include <minivideo.h>
 
 // minianalyser
+#include "mediawrapper.h"
 #include "fourcchelper.h"
 #include "videobackends_ui.h"
 #include "about.h"
@@ -67,6 +68,9 @@ private slots:
         int printOtherDetails();
 
     void on_tabWidget_currentChanged(int index);
+    void on_comboBox_audio_selector_currentIndexChanged(int index);
+    void on_comboBox_video_selector_currentIndexChanged(int index);
+    void on_comboBox_subtitles_selector_currentIndexChanged(int index);
     void xAxisRangeChanged(const QCPRange &newRange);
     void yAxisRangeChanged(const QCPRange &newRange);
 
@@ -84,6 +88,9 @@ private slots:
     void About();
     void AboutQt();
 
+public slots:
+    void mediaReady(QString mediaPath);
+
 protected:
     void dropEvent(QDropEvent *ev);
     void dragEnterEvent(QDragEnterEvent *ev);
@@ -100,7 +107,7 @@ private:
     QString applicationPath;
 
     bool emptyFileList = true;
-    std::vector <MediaFile_t *> mediaList;
+    std::vector <MediaWrapper *> mediaList;
 
     // Bitrate graph
     double xRangeMax;
@@ -128,12 +135,22 @@ private:
     QString tabDevText;
     QIcon tabDevIcon;
 
+    QIcon icon_empty;
+    QIcon icon_load;
+    QIcon icon_movie;
+    QIcon icon_music;
+    QIcon icon_error;
+
+    MediaWrapper *currentMediaWrapper();
     MediaFile_t *currentMediaFile();
-    int analyseFile(const QString &file);
+
+    MediaWrapper *namedMediaWrapper(QString &filePath);
+    MediaFile_t *namedMediaFile(QString &filePath);
 
     void setStatus(const QString &text, int type, int duration = 0);
     void handleComboBox(const QString &file);
     void handleTabWidget();
+    void loadingTab();
     void cleanDatas();
     void cleanGui();
 };

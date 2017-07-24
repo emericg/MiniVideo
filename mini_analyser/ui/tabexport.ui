@@ -65,7 +65,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QComboBox" name="comboBox_export_mode">
+       <widget class="QComboBox" name="comboBox_export_modes">
         <property name="enabled">
          <bool>true</bool>
         </property>

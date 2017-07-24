@@ -36,8 +36,8 @@
 
 void MainWindow::cleanDatas()
 {
-    QString unknown = tr("Unknown");
-    QString unknown_bold = tr("<b>Unknown</b>");
+    //QString unknown = tr("Unknown");
+    //QString unknown_bold = tr("<b>Unknown</b>");
 
     // Infos tab
     ui->label_info_filename->clear();
@@ -69,10 +69,10 @@ void MainWindow::cleanDatas()
     ui->label_info_video_size->clear();
 
     // Infos tab // Other tracks
-    if (ui->verticalLayout_other->layout() != NULL)
+    if (ui->verticalLayout_other->layout())
     {
         QLayoutItem *item;
-        while ((item = ui->verticalLayout_other->layout()->takeAt(0)) != NULL )
+        while ((item = ui->verticalLayout_other->layout()->takeAt(0)))
         {
             delete item->widget();
             delete item;
@@ -153,28 +153,28 @@ void MainWindow::cleanDatas()
     ui->textBrowser_sub->clear();
 
     // Others tab
-    if (ui->verticalLayout_other2_track->layout() != NULL)
+    if (ui->verticalLayout_other2_track->layout())
     {
         QLayoutItem *item;
-        while ((item = ui->verticalLayout_other2_track->layout()->takeAt(0)) != NULL )
+        while ((item = ui->verticalLayout_other2_track->layout()->takeAt(0)))
         {
             delete item->widget();
             delete item;
         }
     }
-    if (ui->verticalLayout_other2_chapters->layout() != NULL)
+    if (ui->verticalLayout_other2_chapters->layout())
     {
         QLayoutItem *item;
-        while ((item = ui->verticalLayout_other2_chapters->layout()->takeAt(0)) != NULL )
+        while ((item = ui->verticalLayout_other2_chapters->layout()->takeAt(0)))
         {
             delete item->widget();
             delete item;
         }
     }
-    if (ui->verticalLayout_other2_tags->layout() != NULL)
+    if (ui->verticalLayout_other2_tags->layout())
     {
         QLayoutItem *item;
-        while ((item = ui->verticalLayout_other2_tags->layout()->takeAt(0)) != NULL )
+        while ((item = ui->verticalLayout_other2_tags->layout()->takeAt(0)))
         {
             delete item->widget();
             delete item;
@@ -187,15 +187,34 @@ int MainWindow::printFile()
     int retcode = 0;
 
     MediaFile_t *media = currentMediaFile();
+    MediaWrapper *wrap = currentMediaWrapper();
 
-    if (media)
+    if (media && wrap)
     {
-        handleTabWidget();
+        // Set the file in the UI
+        {
+            wrap->start_ui = std::chrono::steady_clock::now();
 
-        cleanDatas();
-        printDatas();
-        ui->tab_container->loadMedia(media);
-        ui->tab_export->loadMedia(media);
+            handleTabWidget();
+
+            cleanDatas();
+            printDatas();
+            ui->tab_container->loadMedia(media);
+            ui->tab_export->loadMedia(media);
+
+            wrap->end_ui = std::chrono::steady_clock::now();
+        }
+
+        // Add the file to the dev tab
+        {
+            int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_parsing - wrap->start_parsing).count();
+            int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_ui - wrap->start_ui).count() - tp;
+
+            QString name = QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension);
+            QString file = QString::fromLocal8Bit(media->file_path);
+
+            ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
+        }
 
         retcode = 1;
     }
@@ -213,14 +232,11 @@ int MainWindow::printDatas()
     {
         // Combobox icon
         if (media->tracks_video_count > 0)
-            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons_material/icons_material/ic_movie_48px.svg"));
+            ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_movie);
         else if (media->tracks_audio_count > 0)
-            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons_material/icons_material/ic_music_video_48px.svg"));
+            ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_music);
         else
-            ui->file_comboBox->setItemIcon(ui->file_comboBox->currentIndex(),
-                                           QIcon(":/icons_material/icons_material/ic_highlight_off_48px.svg"));
+            ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_error);
 
         // General infos
         ui->label_info_filename->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
@@ -313,7 +329,7 @@ int MainWindow::printDatas()
         // AUDIO
         ////////////////////////////////////////////////////////////////////////
 
-        if (media->tracks_audio_count == 0 || media->tracks_audio[0] == NULL)
+        if (media->tracks_audio_count == 0 || media->tracks_audio[0] == nullptr)
         {
             ui->groupBox_infos_audio->hide();
         }
@@ -377,7 +393,7 @@ int MainWindow::printDatas()
         // VIDEO
         ////////////////////////////////////////////////////////////////////////
 
-        if (media->tracks_video_count == 0 || media->tracks_video[0] == NULL)
+        if (media->tracks_video_count == 0 || media->tracks_video[0] == nullptr)
         {
             ui->groupBox_infos_video->hide();
         }
@@ -543,7 +559,7 @@ int MainWindow::printAudioDetails()
 
         MediaStream_t *t = media->tracks_audio[atid];
 
-        if (t != NULL)
+        if (t)
         {
             ui->groupBox_tab_audio->setTitle(tr("Audio track") + " #" + QString::number(atid + 1));
 
@@ -757,7 +773,7 @@ int MainWindow::printVideoDetails()
 
         MediaStream_t *t = media->tracks_video[vtid];
 
-        if (t != NULL)
+        if (t)
         {
             ui->groupBox_tab_video->setTitle(tr("Video track") + " #" + QString::number(vtid + 1));
 
@@ -1035,7 +1051,7 @@ int MainWindow::printSubtitlesDetails()
 
         MediaStream_t *t = media->tracks_subt[subid];
 
-        if (t != NULL)
+        if (t)
         {
             ui->groupBox_tab_subtitles->setTitle(tr("Subtitles track") + " #" + QString::number(subid + 1));
 
