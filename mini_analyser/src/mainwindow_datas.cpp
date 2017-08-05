@@ -669,8 +669,12 @@ int MainWindow::printAudioDetails()
             ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
 
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
-            //ui->label_audio_framecount->setText(QString::number(t->frame_count));
-            ui->label_audio_frameduration->setText(QString::number(t->frame_duration) + " ms");
+            ui->label_audio_framecount->setText(QString::number(t->frame_count));
+
+            if (t->frame_duration < 1.0)
+                ui->label_audio_frameduration->setText(QString::number(t->frame_duration*1000000.0) + " µs");
+            else
+                ui->label_audio_frameduration->setText(QString::number(t->frame_duration) + " ms");
 
             // Audio bitrate graph
             ////////////////////////////////////////////////////////////////////

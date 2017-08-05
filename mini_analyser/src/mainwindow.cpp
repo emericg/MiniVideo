@@ -487,7 +487,7 @@ MediaWrapper *MainWindow::namedMediaWrapper(QString &filePath)
 {
     MediaWrapper *media = nullptr;
 
-    for (int i = 0; i < mediaList.size(); i++)
+    for (unsigned i = 0; i < mediaList.size(); i++)
     {
         if (mediaList.at(i)->mediaPath == filePath)
         {
@@ -503,7 +503,7 @@ MediaFile_t *MainWindow::namedMediaFile(QString &filePath)
 {
     MediaFile_t *media = nullptr;
 
-    for (int i = 0; i < mediaList.size(); i++)
+    for (unsigned i = 0; i < mediaList.size(); i++)
     {
         if (mediaList.at(i)->mediaPath == filePath)
         {

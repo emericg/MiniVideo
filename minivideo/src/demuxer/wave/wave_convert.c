@@ -116,7 +116,10 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         track->bit_per_sample = wave->fmt.wBitsPerSample;
 
         // SAMPLES
-        if (track->stream_codec == CODEC_LPCM)
+        if (track->stream_codec == CODEC_LPCM ||
+            track->stream_codec == CODEC_LogPCM ||
+            track->stream_codec == CODEC_DPCM ||
+            track->stream_codec == CODEC_ADPCM)
         {
             track->stream_packetized = false;
 

@@ -106,15 +106,21 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.nFramesPerBlock = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.nCodecDelay = endian_flip_16(read_bits(bitstr, 16));
             }
-            else if (wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE && fmt_header->dwSize >= 44)
+            else if (wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE && fmt_header->dwSize >= 40)
             {
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
-                wave->fmt.wSamplesPerBlock = endian_flip_16(read_bits(bitstr, 16));
-                wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
+                //wave->fmt.wSamplesPerBlock = endian_flip_16(read_bits(bitstr, 16));
+                //wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                 for (int i = 0; i < 16; i++)
                     wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
+
+                if (memcmp(wave->fmt.SubFormat+8, wave_guid[1], 8) == 0 ||
+                    memcmp(wave->fmt.SubFormat+8, wave_guid[2], 8) == 0)
+                {
+                    wave->profile = PROF_WAVE_AMB;
+                }
             }
             else
             {
@@ -133,7 +139,8 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             TRACE_1(WAV, "> nBlockAlign     : %u", wave->fmt.nBlockAlign);
             TRACE_1(WAV, "> wBitsPerSample  : %u", wave->fmt.wBitsPerSample);
         }
-        if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18) // extension
+        // extensions
+        if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18)
         {
             TRACE_1(WAV, "> cbSize             : %u", wave->fmt.cbSize);
 
@@ -156,8 +163,8 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             TRACE_1(WAV, "> nCodecDelay    : %u", wave->fmt.nCodecDelay);
 
             TRACE_1(WAV, "> wValidBitsPerSample: %u", wave->fmt.wValidBitsPerSample);
-            TRACE_1(WAV, "> wSamplesPerBlock   : %u", wave->fmt.wSamplesPerBlock);
-            TRACE_1(WAV, "> wReserved          : %u", wave->fmt.wReserved);
+            //TRACE_1(WAV, "> wSamplesPerBlock   : %u", wave->fmt.wSamplesPerBlock);
+            //TRACE_1(WAV, "> wReserved          : %u", wave->fmt.wReserved);
             TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
             TRACE_1(WAV, "> SubFormat: {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
@@ -173,19 +180,21 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
         if (wave->xml)
         {
             write_chunk_header(fmt_header, wave->xml);
-            if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 16)
+            if (fmt_header->dwSize >= 16)
             {
                 fprintf(wave->xml, "  <title>Format chunk</title>\n");
-                fprintf(wave->xml, "  <wFormatTag>%u</wFormatTag>\n", wave->fmt.wFormatTag);
+                fprintf(wave->xml, "  <wFormatTag>0x%04X (%s)</wFormatTag>\n", wave->fmt.wFormatTag, getTccString( wave->fmt.wFormatTag));
                 fprintf(wave->xml, "  <nChannels>%u</nChannels>\n", wave->fmt.nChannels);
                 fprintf(wave->xml, "  <nSamplesPerSec>%u</nSamplesPerSec>\n", wave->fmt.nSamplesPerSec);
                 fprintf(wave->xml, "  <nAvgBytesPerSec>%u</nAvgBytesPerSec>\n", wave->fmt.nAvgBytesPerSec);
                 fprintf(wave->xml, "  <nBlockAlign>%u</nBlockAlign>\n", wave->fmt.nBlockAlign);
                 fprintf(wave->xml, "  <wBitsPerSample>%u</wBitsPerSample>\n", wave->fmt.wBitsPerSample);
             }
-            if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18) // extension
+            // extensions
+            if (wave->fmt.wFormatTag && wave->fmt.cbSize >= 18)
             {
                 fprintf(wave->xml, "  <cbSize>%u</cbSize>\n", wave->fmt.cbSize);
+
                 if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM && fmt_header->dwSize >= 26)
                 {
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
@@ -216,11 +225,11 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     fprintf(wave->xml, "  <nFramesPerBlock>%u</nFramesPerBlock>\n", wave->fmt.nFramesPerBlock);
                     fprintf(wave->xml, "  <nCodecDelay>%u</nCodecDelay>\n", wave->fmt.nCodecDelay);
                 }
-                else if (wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE && fmt_header->dwSize >= 44)
+                else if (wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE && fmt_header->dwSize >= 40)
                 {
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
-                    fprintf(wave->xml, "  <wSamplesPerBlock>%u</wSamplesPerBlock>\n", wave->fmt.wSamplesPerBlock);
-                    fprintf(wave->xml, "  <wReserved>%u</wReserved>\n", wave->fmt.wReserved);
+                    //fprintf(wave->xml, "  <wSamplesPerBlock>%u</wSamplesPerBlock>\n", wave->fmt.wSamplesPerBlock);
+                    //fprintf(wave->xml, "  <wReserved>%u</wReserved>\n", wave->fmt.wReserved);
                     fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
                     fprintf(wave->xml, "  <SubFormat>%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X</SubFormat>\n",
                             wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],

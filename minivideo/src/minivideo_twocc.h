@@ -33,6 +33,8 @@
 
 minivideo_EXPORT Codecs_e getCodecFromTwoCC(const uint16_t tcc);
 
+const char *getTccString(const uint16_t tcc);
+
 /* ************************************************************************** */
 
 /*!

@@ -245,10 +245,23 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
         // Audio frame duration
         if (track->stream_type == stream_AUDIO)
         {
-            if (track->sample_dts && track->sample_count >= 2)
+            if (track->stream_codec == CODEC_LPCM ||
+                track->stream_codec == CODEC_LogPCM ||
+                track->stream_codec == CODEC_DPCM ||
+                track->stream_codec == CODEC_ADPCM)
             {
-                track->frame_duration = track->sample_dts[1] - track->sample_dts[0];
-                track->frame_duration /= 1000; // µs to  ms
+                if (track->sampling_rate)
+                {
+                    track->frame_duration = (1.0 / (double)(track->sampling_rate));
+                }
+            }
+            else
+            {
+                if (track->sample_dts && track->sample_count >= 2)
+                {
+                    track->frame_duration = track->sample_dts[1] - track->sample_dts[0];
+                    track->frame_duration /= 1000; // µs to  ms
+                }
             }
         }
         // Video frame duration

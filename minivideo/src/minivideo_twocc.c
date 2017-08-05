@@ -96,3 +96,104 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
 }
 
 /* ************************************************************************** */
+
+const char *getTccString(const uint16_t tcc)
+{
+    switch (tcc)
+    {
+    case WAVE_FORMAT_MS_WAVE:
+        return "WAVE_FORMAT_MS_WAVE";
+        break;
+    case WAVE_FORMAT_MS_PCM:
+        return "WAVE_FORMAT_MS_PCM";
+        break;
+    case WAVE_FORMAT_MS_ADPCM:
+        return "WAVE_FORMAT_MS_ADPCM";
+        break;
+    case WAVE_FORMAT_IEEE_FLOAT:
+        return "WAVE_FORMAT_IEEE_FLOAT";
+        break;
+    case WAVE_FORMAT_VSELP:
+        return "WAVE_FORMAT_VSELP";
+        break;
+    case WAVE_FORMAT_IBM_CVSD:
+        return "WAVE_FORMAT_IBM_CVSD";
+        break;
+    case WAVE_FORMAT_ALAW:
+        return "WAVE_FORMAT_ALAW";
+        break;
+    case WAVE_FORMAT_MULAW:
+        return "WAVE_FORMAT_MULAW";
+        break;
+    case WAVE_FORMAT_MS_DTS:
+        return "WAVE_FORMAT_MS_DTS";
+        break;
+    case WAVE_FORMAT_MS_DRM:
+        return "WAVE_FORMAT_MS_DRM";
+        break;
+
+    case WAVE_FORMAT_AC2:
+        return "WAVE_FORMAT_AC2";
+        break;
+    case WAVE_FORMAT_MP1:
+        return "WAVE_FORMAT_MP1";
+        break;
+    case WAVE_FORMAT_MP3:
+        return "WAVE_FORMAT_MP3";
+        break;
+    case WAVE_FORMAT_AC3:
+        return "WAVE_FORMAT_AC3";
+        break;
+    case WAVE_FORMAT_DTS:
+        return "WAVE_FORMAT_DTS";
+        break;
+    case WAVE_FORMAT_AAC:
+        return "WAVE_FORMAT_AAC";
+        break;
+
+    case WAVE_FORMAT_WMAS:
+        return "WAVE_FORMAT_WMAS";
+        break;
+    case WAVE_FORMAT_WMA1:
+        return "WAVE_FORMAT_WMA1";
+        break;
+    case WAVE_FORMAT_WMA2:
+        return "WAVE_FORMAT_WMA2";
+        break;
+    case WAVE_FORMAT_WMAP:
+        return "WAVE_FORMAT_WMAP";
+        break;
+    case WAVE_FORMAT_WMAL:
+        return "WAVE_FORMAT_WMAL";
+        break;
+
+    case WAVE_FORMAT_VORBIS1:
+        return "WAVE_FORMAT_VORBIS1";
+        break;
+    case WAVE_FORMAT_VORBIS2:
+        return "WAVE_FORMAT_VORBIS2";
+        break;
+    case WAVE_FORMAT_VORBIS3:
+        return "WAVE_FORMAT_VORBIS3";
+        break;
+    case WAVE_FORMAT_VORBIS1p:
+        return "WAVE_FORMAT_VORBIS1p";
+        break;
+    case WAVE_FORMAT_VORBIS2p:
+        return "WAVE_FORMAT_VORBIS2p";
+        break;
+    case WAVE_FORMAT_VORBIS3p:
+        return "WAVE_FORMAT_VORBIS3p";
+        break;
+
+    case WAVE_FORMAT_EXTENSIBLE:
+        return "WAVE_FORMAT_EXTENSIBLE";
+        break;
+
+    default:
+        return "UNKNOWN";
+        break;
+    }
+}
+
+/* ************************************************************************** */
