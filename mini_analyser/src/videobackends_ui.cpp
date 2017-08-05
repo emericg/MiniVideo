@@ -40,11 +40,11 @@ VideoBackendsUI::VideoBackendsUI(QWidget *parent) :
     ui->setupUi(this);
 
 #if defined(__linux__)
-    //VideoBackendsVDPAU b;
-    //b.load(infos);
+    VideoBackendsVDPAU b;
+    b.load(infos);
 
-    VideoBackendsVAAPI a;
-    a.load(infos);
+    //VideoBackendsVAAPI a;
+    //a.load(infos);
 #elif defined(__APPLE__)
     //
 #elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
