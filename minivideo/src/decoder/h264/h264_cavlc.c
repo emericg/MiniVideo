@@ -40,6 +40,8 @@
     // CAVLC overview
 
     http://en.wikipedia.org/wiki/CAVLC
+
+    CAVLC = Context Adaptative Variable Length Coding
 */
 /* ************************************************************************** */
 

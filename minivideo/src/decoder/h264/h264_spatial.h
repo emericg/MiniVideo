@@ -37,14 +37,14 @@ int InverseRasterScan(const int a,
                       const int e);
 
 int InverseRasterScan_x(const int a,
-                               const int b,
-                               const int c,
-                               const int d);
+                        const int b,
+                        const int c,
+                        const int d);
 
 int InverseRasterScan_y(const int a,
-                               const int b,
-                               const int c,
-                               const int d);
+                        const int b,
+                        const int c,
+                        const int d);
 
 void InverseMacroblockScan(const int mbAddr,
                            const bool MbaffFrameFlag,

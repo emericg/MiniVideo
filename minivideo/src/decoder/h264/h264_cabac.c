@@ -42,8 +42,8 @@
     http://en.wikipedia.org/wiki/Arithmetic_coding
 
     CABAC = Context Adaptative Binary Arithmetic Coding
-    C'est un codage arithmétique particulier (codage arithmétique binaire). Il ne
-    fonctionne qu'avec deux subdivisions dans chaque intervalle. Entre chaque
+    C'est un codage arithmétique particulier (codage arithmétique binaire). Il
+    ne fonctionne qu'avec deux subdivisions dans chaque intervalle. Entre chaque
     sub-division d'un intervalle les probabilités sont réajustées (adaptation au contexte).
 
     Alors ce qu'il faut savoir c'est que le décodage d'un élement de syntaxe est
