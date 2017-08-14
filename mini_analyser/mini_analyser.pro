@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# mini_analyser
-# Project created by QtCreator 2014-03-23T12:56:32
+# mini_analyser build system
+# minivideo library must be built first in order for mini_analyser to work
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser

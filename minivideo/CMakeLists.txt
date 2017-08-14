@@ -1,5 +1,5 @@
-# MiniVideo "library" build system
-# This file allows you to build a shared library of MiniVideo
+# MiniVideo "library" build system / CMake edition
+# This file allows you to build shared & static library of MiniVideo
 ###############################################################################
 
 cmake_minimum_required(VERSION 2.8)

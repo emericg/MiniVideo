@@ -9,6 +9,7 @@ minivideo/build/*
 
 # QtCreator project files
 MiniVideo*
+Makefile.*
 *.pro.user
 
 # QMake temporary files
