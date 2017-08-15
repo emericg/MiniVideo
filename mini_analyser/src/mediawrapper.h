@@ -55,15 +55,16 @@ public:
     std::chrono::time_point<std::chrono::steady_clock> start_parsing, end_parsing;
     std::chrono::time_point<std::chrono::steady_clock> start_ui, end_ui;
 
-    // UI State
-    QString currentTab;
+    // UI States // WIP
+    QString currentTabName;
+    int currentTab = 0;
     int currentVideoTrack = 0;
     int currentAudioTrack = 0;
     int currentSubtitlesTrack = 0;
     int containerMode = 0;
-    int containerExplorerAtom = 0; // TODO
+    int64_t containerExplorerAtom = -1;
     int containerTrack = 0;
-    int containerTrackSample = 0; // TODO
+    int containerTrackSample = 0;
     int exportMode = 0;
     int exportFormat = 0;
 

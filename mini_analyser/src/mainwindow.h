@@ -60,7 +60,7 @@ public:
 private slots:
     void loadFileDialog();
 
-    int printFile();
+    int setActiveFile();
     int printDatas();
         int printAudioDetails();
         int printVideoDetails();
@@ -70,7 +70,7 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_comboBox_audio_selector_currentIndexChanged(int index);
     void on_comboBox_video_selector_currentIndexChanged(int index);
-    void on_comboBox_subtitles_selector_currentIndexChanged(int index);
+    void on_comboBox_sub_selector_currentIndexChanged(int index);
     void xAxisRangeChanged(const QCPRange &newRange);
     void yAxisRangeChanged(const QCPRange &newRange);
 
@@ -106,12 +106,9 @@ private:
     QTimer *statusTimer = nullptr;
     QString applicationPath;
 
-    bool emptyFileList = true;
+    bool mediaListEmpty = true;
     std::vector <MediaWrapper *> mediaList;
-
-    // Bitrate graph
-    double xRangeMax;
-    double yRangeMax;
+    QString currentMediaLoaded;
 
     // Saved tabs infos
     QString tabDropZoneText;

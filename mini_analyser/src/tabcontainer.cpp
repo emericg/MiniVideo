@@ -115,11 +115,17 @@ void tabContainer::on_tabWidget_tracks_currentChanged(int index)
 
 /* ************************************************************************** */
 
-void tabContainer::loadMedia(const MediaFile_t *media)
+void tabContainer::loadMedia(const MediaWrapper *wrap)
 {
-    if (media)
+    if (wrap && wrap->media)
     {
-        this->media = (MediaFile_t *)media;
+        ui->tabWidget->blockSignals(true);
+        ui->tabWidget_tracks->blockSignals(true);
+        ui->treeWidget->blockSignals(true);
+        ui->listWidget->blockSignals(true);
+
+        wrapper = (MediaWrapper *)wrap;
+        media = (MediaFile_t *)wrap->media;
 
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
@@ -132,40 +138,35 @@ void tabContainer::loadMedia(const MediaFile_t *media)
 
         loadXmlFile();
         loadTracks();
-        loadSamples(0);
-        containerSelectionEmpty();
+        loadSamples(wrapper->containerTrack);
+
+        ui->tabWidget->setCurrentIndex(wrapper->containerMode);
+        ui->tabWidget_tracks->setCurrentIndex(wrapper->containerTrack);
+
+        if (wrapper->containerMode == 0)
+        {
+            if (wrapper->containerExplorerAtom >= 0)
+                containerSelection(wrapper->containerExplorerAtom);
+            else
+                containerSelectionEmpty();
+        }
+        else if (wrapper->containerMode == 1)
+        {
+            if (wrapper->containerTrackSample >= 0)
+                ui->listWidget->setCurrentRow(wrapper->containerTrackSample);
+            else
+                ui->listWidget->setCurrentRow(0);
+
+            sampleSelection();
+        }
+
+        ui->tabWidget->blockSignals(false);
+        ui->tabWidget_tracks->blockSignals(false);
+        ui->treeWidget->blockSignals(false);
+        ui->listWidget->blockSignals(false);
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
         resizeEvent(nullptr);
-    }
-}
-
-void tabContainer::loadMedia(const MediaWrapper *wrapper)
-{
-    if (wrapper)
-    {
-        if (wrapper->media)
-        {
-            this->media = (MediaFile_t *)media;
-            this->wrapper = (MediaWrapper *)wrapper;
-
-            mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
-
-            setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
-
-            if (!ui->widget_hex->setData(mediaFile))
-            {
-                return;
-            }
-
-            loadXmlFile();
-            loadTracks();
-            loadSamples(0);
-            containerSelectionEmpty();
-
-            // Force a resize event, so the scrollAreas don't get wider than our windows
-            resizeEvent(nullptr);
-        }
     }
 }
 
@@ -307,6 +308,12 @@ void tabContainer::sampleSelection(int sid)
 {
     //qDebug() << "sampleSelection(sample #" << sid << ")";
 
+    if (wrapper)
+    {
+        // save currently selected item
+        wrapper->containerTrackSample = sid;
+    }
+
     clearContent();
 
     if (media && track &&
@@ -415,19 +422,50 @@ void tabContainer::containerSelectionEmpty()
 
 void tabContainer::containerSelectionChanged()
 {
-    containerSelection(ui->treeWidget->currentItem(), 0);
+    QTreeWidgetItem *item = ui->treeWidget->currentItem();
+    if (!item) return;
+
+    int64_t selected_offset = item->data(0, Qt::UserRole).toLongLong();
+
+    if (wrapper)
+    {
+        // save currently selected item
+        wrapper->containerExplorerAtom = selected_offset;
+    }
+
+    containerSelection(selected_offset);
 }
 
 void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 {
     Q_UNUSED(column);
+    if (!item) return;
 
-    if (!item)
-        return;
+    int64_t selected_offset = item->data(0, Qt::UserRole).toLongLong();
+
+    containerSelection(selected_offset);
+}
+
+void tabContainer::containerSelection(int64_t selected_offset)
+{
+    //qDebug() << "containerSelection(offset) " << selected_offset;
 
     clearContent();
 
-    int selected_offset = item->data(0, Qt::UserRole).toInt();
+    // we find the item with given offset
+    if (ui->treeWidget->currentItem() == nullptr)
+    {
+        QTreeWidgetItemIterator it(ui->treeWidget);
+        while (*it)
+        {
+          if ((*it)->data(0, Qt::UserRole).toLongLong() == selected_offset)
+          {
+              ui->treeWidget->setCurrentItem((*it));
+            break;
+          }
+          ++it;
+        }
+    }
 
     // we need to find the atom with given offset
     pugi::xml_node eSelected;

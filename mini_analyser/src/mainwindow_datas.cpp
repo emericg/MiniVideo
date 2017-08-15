@@ -182,38 +182,44 @@ void MainWindow::cleanDatas()
     }
 }
 
-int MainWindow::printFile()
+int MainWindow::setActiveFile()
 {
     int retcode = 0;
 
     MediaFile_t *media = currentMediaFile();
-    MediaWrapper *wrap = currentMediaWrapper();
+    MediaWrapper *wrapper = currentMediaWrapper();
 
-    if (media && wrap)
+    if (media && wrapper)
     {
-        // Set the file in the UI
+        // Don't reload the datas if the file was already selected
+        if (currentMediaLoaded != media->file_path)
         {
-            wrap->start_ui = std::chrono::steady_clock::now();
+            // Set the file in the UI
+            {
+                wrapper->start_ui = std::chrono::steady_clock::now();
 
-            handleTabWidget();
+                handleTabWidget();
 
-            cleanDatas();
-            printDatas();
-            ui->tab_container->loadMedia(media);
-            ui->tab_export->loadMedia(media);
+                cleanDatas();
+                printDatas();
+                ui->tab_container->loadMedia(wrapper);
+                ui->tab_export->loadMedia(wrapper);
 
-            wrap->end_ui = std::chrono::steady_clock::now();
-        }
+                currentMediaLoaded = media->file_path;
 
-        // Add the file to the dev tab
-        {
-            int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_parsing - wrap->start_parsing).count();
-            int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_ui - wrap->start_ui).count() - tp;
+                wrapper->end_ui = std::chrono::steady_clock::now();
+            }
 
-            QString name = QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension);
-            QString file = QString::fromLocal8Bit(media->file_path);
+            // Add the file to the dev tab
+            {
+                int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_parsing - wrapper->start_parsing).count();
+                int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_ui - wrapper->start_ui).count() - tp;
 
-            ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
+                QString name = QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension);
+                QString file = QString::fromLocal8Bit(media->file_path);
+
+                ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
+            }
         }
 
         retcode = 1;
@@ -227,8 +233,9 @@ int MainWindow::printDatas()
     int retcode = 0;
 
     MediaFile_t *media = currentMediaFile();
+    MediaWrapper *wrapper = currentMediaWrapper();
 
-    if (media)
+    if (media && wrapper)
     {
         // Combobox icon
         if (media->tracks_video_count > 0)
@@ -381,6 +388,8 @@ int MainWindow::printDatas()
                         ui->comboBox_audio_selector->addItem(text);
                     }
                 }
+
+                ui->comboBox_audio_selector->setCurrentIndex(wrapper->currentAudioTrack);
             }
             else
             {
@@ -769,8 +778,9 @@ int MainWindow::printVideoDetails()
     int retcode = 0;
 
     MediaFile_t *media = currentMediaFile();
+    MediaWrapper *wrapper = currentMediaWrapper();
 
-    if (media)
+    if (media && wrapper)
     {
         int vtid = ui->comboBox_video_selector->currentIndex();
         if (vtid < 0) vtid = 0;
@@ -996,8 +1006,8 @@ int MainWindow::printVideoDetails()
 
                 ui->label_video_bitrate_lowest->setText(getBitrateString(bitratemin));
                 ui->label_video_bitrate_highest->setText(getBitrateString(bitratemax));
-                xRangeMax = static_cast<double>(entries);
-                yRangeMax = static_cast<double>(bitratemax_instant);
+                wrapper->xRangeMax = static_cast<double>(entries);
+                wrapper->yRangeMax = static_cast<double>(bitratemax_instant);
 
                 // Create graphs and assign datas
                 ui->videoBitrateGraph->addGraph();
@@ -1009,15 +1019,15 @@ int MainWindow::printVideoDetails()
 
                 // Y axis max is set between 50% and 100% of the max instant bitrate (helps reduce the video IDR spikes)
                 double yScale = 1.0;
-                if (yy[0] < yRangeMax / 10)
+                if (yy[0] < wrapper->yRangeMax / 10)
                     yScale = 0.5;
-                else if (yy[0] < yRangeMax / 2)
+                else if (yy[0] < wrapper->yRangeMax / 2)
                     yScale = 0.75;
 
                 // Set axes ranges and disable legends
-                ui->videoBitrateGraph->xAxis->setRange(0, xRangeMax);
+                ui->videoBitrateGraph->xAxis->setRange(0, wrapper->xRangeMax);
                 ui->videoBitrateGraph->xAxis->setTickLabels(false);
-                ui->videoBitrateGraph->yAxis->setRange(0, yRangeMax * yScale);
+                ui->videoBitrateGraph->yAxis->setRange(0, wrapper->yRangeMax * yScale);
                 ui->videoBitrateGraph->yAxis->setTickLabels(false);
 
                 //ui->videoBitrateGraph->setContentsMargins(0,0,0,0);

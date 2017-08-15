@@ -166,32 +166,22 @@ void tabExport::saveDatas()
 
 /* ************************************************************************** */
 
-int tabExport::loadMedia(const MediaFile_t *media)
+int tabExport::loadMedia(const MediaWrapper *wrap)
 {
     int retcode = 0;
 
-    if (media)
+    if (wrap && wrap->media)
     {
-        this->media = (MediaFile_t *)media;
+        ui->comboBox_export_modes->blockSignals(true);
+        ui->comboBox_export_formats->blockSignals(true);
+
+        wrapper = (MediaWrapper *)wrap;
+        media = (MediaFile_t *)wrap->media;
+
         retcode = generateExportDatas();
-    }
 
-    return retcode;
-}
-
-int tabExport::loadMedia(const MediaWrapper *wrapper)
-{
-    int retcode = 0;
-
-    if (wrapper)
-    {
-        if (wrapper->media)
-        {
-            this->wrapper = (MediaWrapper *)wrapper;
-            this->media = (MediaFile_t *)media;
-
-            retcode = generateExportDatas();
-        }
+        ui->comboBox_export_modes->blockSignals(false);
+        ui->comboBox_export_formats->blockSignals(false);
     }
 
     return retcode;

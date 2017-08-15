@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(AboutQt()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->comboBox_file, SIGNAL(activated(int)), this, SLOT(printFile()));
+    connect(ui->comboBox_file, SIGNAL(activated(int)), this, SLOT(setActiveFile()));
 
     connect(ui->comboBox_video_selector, SIGNAL(activated(int)), this, SLOT(printVideoDetails()));
     connect(ui->comboBox_audio_selector, SIGNAL(activated(int)), this, SLOT(printAudioDetails()));
@@ -165,7 +165,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     MediaWrapper *wrap = currentMediaWrapper();
     if (wrap)
     {
-        wrap->currentTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+        wrap->currentTab = index;
+        wrap->currentTabName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     }
 }
 
@@ -189,7 +190,7 @@ void MainWindow::on_comboBox_video_selector_currentIndexChanged(int index)
     }
 }
 
-void MainWindow::on_comboBox_subtitles_selector_currentIndexChanged(int index)
+void MainWindow::on_comboBox_sub_selector_currentIndexChanged(int index)
 {
     // Save current track
     MediaWrapper *wrap = currentMediaWrapper();
@@ -280,7 +281,7 @@ void MainWindow::mediaReady(QString mediaPath)
     // Only load infos if it's about the currently selected file
     if (mediaPath == ui->comboBox_file->currentText())
     {
-        printFile();
+        setActiveFile();
     }
     else
     {
@@ -390,7 +391,7 @@ void MainWindow::closeFile()
             }
             else // No more file opened?
             {
-                emptyFileList = true;
+                mediaListEmpty = true;
                 QString empty;
 
                 handleTabWidget();
@@ -520,7 +521,7 @@ MediaFile_t *MainWindow::namedMediaFile(QString &filePath)
 void MainWindow::handleComboBox(const QString &file)
 {
     // Is this the first file added?
-    if (emptyFileList)
+    if (mediaListEmpty)
     {
         if (mediaList.empty() == true)
         {
@@ -529,7 +530,7 @@ void MainWindow::handleComboBox(const QString &file)
         else
         {
             ui->comboBox_file->removeItem(0);
-            emptyFileList = false;
+            mediaListEmpty = false;
         }
     }
 
@@ -543,6 +544,7 @@ void MainWindow::handleComboBox(const QString &file)
 void MainWindow::handleTabWidget()
 {
     ui->tabWidget->setEnabled(true);
+    ui->tabWidget->blockSignals(true);
 
     // Save the current tab index if we want to restore it later
     QWidget *tab_widget_saved = ui->tabWidget->currentWidget();
@@ -622,16 +624,25 @@ void MainWindow::handleTabWidget()
             }
 
             // Restore the focus (if the same tab is available)
+            bool sameTabFound = false;
             for (int i = 0; i < ui->tabWidget->count(); i++)
             {
                 if (ui->tabWidget->widget(i) == tab_widget_saved)
                 {
                     ui->tabWidget->setCurrentIndex(i);
+                    sameTabFound = true;
                     break;
                 }
             }
+
+            if (sameTabFound == false)
+            {
+                ui->tabWidget->setCurrentIndex(wrap->currentTab);
+            }
         }
     }
+
+    ui->tabWidget->blockSignals(false);
 }
 
 void MainWindow::loadingTab()

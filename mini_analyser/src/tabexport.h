@@ -44,7 +44,6 @@ public:
 
 public slots:
     void clean();
-    int loadMedia(const MediaFile_t *media);
     int loadMedia(const MediaWrapper *wrapper);
     int generateExportDatas();
 

@@ -51,7 +51,6 @@ public:
     explicit tabContainer(QWidget *parent = 0);
     ~tabContainer();
 
-    void loadMedia(const MediaFile_t *media);
     void loadMedia(const MediaWrapper *wrapper);
     void loadTracks();
     void closeMedia();
@@ -65,6 +64,7 @@ public slots:
     void containerSelectionEmpty();
     void containerSelectionChanged();
     void containerSelection(QTreeWidgetItem *item, int column);
+    void containerSelection(int64_t selected_offset);
 
     bool loadXmlFile();
         bool xmlFileParser(pugi::xml_node &root);
