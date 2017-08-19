@@ -48,7 +48,6 @@
 int main(int argc, char *argv[])
 {
     int retcode = EXIT_FAILURE;
-    bool goodtogo = false;
     bool printhelp = false;
 
     char *input_filepath = NULL;
@@ -93,7 +92,6 @@ int main(int argc, char *argv[])
                 input_filepath = argv[i+1];
                 std::cout << "* input: " << input_filepath << std::endl;
 
-                goodtogo = true;
                 i++;
             }
             else
@@ -209,15 +207,15 @@ int main(int argc, char *argv[])
         else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
         {
             printhelp = true;
-            goodtogo = false;
         }
         else
         {
+            printhelp = true;
             std::cerr << "* " RED "Unknown argument " RESET "'" << argv[i] << "'" << std::endl;
         }
     }
 
-    if (goodtogo == false)
+    if (printhelp == true)
     {
         std::cout << "* Usage: " << std::endl;
         std::cout << "mini_extractor -i <filepath> [-o <directory>] [-a audio_stream_count][-v video_stream_count][-s subtitles_stream_count] [-es] [-pes]" << std::endl;
