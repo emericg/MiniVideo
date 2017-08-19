@@ -366,15 +366,17 @@ void MainWindow::closeFile(const QString &file)
 
 void MainWindow::closeFile()
 {
-    int fileIndex = ui->comboBox_file->currentIndex();
-
     if (mediaList.empty() == false)
     {
-        QString path = mediaList.at(fileIndex)->media->file_path;
+        int fileIndex = ui->comboBox_file->currentIndex();
+        QString filePath = mediaList.at(fileIndex)->media->file_path;
+
+        if (currentMediaLoaded == filePath)
+            currentMediaLoaded.clear();
 
         if ((int)(mediaList.size()) >= (fileIndex + 1))
         {
-            ui->tab_dev->removeFile(path);
+            ui->tab_dev->removeFile(filePath);
             ui->tab_container->closeMedia();
 
             minivideo_close(&mediaList.at(fileIndex)->media);
