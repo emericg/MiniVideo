@@ -117,7 +117,8 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                     media->tracks_audio[tid]->sample_dts[sid] = -1;
                     media->tracks_audio[tid]->sample_pts[sid] = -1;
                 }
-                else if ((dwChunkId & 0x0000FFFF) == 0x6463) // dc: video
+                else if ((dwChunkId & 0x0000FFFF) == 0x6462 || // db: uncompressed video frame (RGB)
+                         (dwChunkId & 0x0000FFFF) == 0x6463)   // dc: video frame
                 {
                     TRACE_3(AVI, BLD_BLUE "> VIDEO" CLR_RESET);
                     int tid = 0;
@@ -148,10 +149,6 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                     media->tracks_subt[tid]->sample_count++;
                 }
 /*
-                else if ((dwChunkId & 0x0000FFFF) == 0x6462) // db: Uncompressed video frame (RGB)
-                {
-                    //
-                }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7063) // pc: Palette change
                 {
                     //
