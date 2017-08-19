@@ -94,9 +94,9 @@ typedef enum NaluType_e
     NALU_TYPE_END_SEQUENCE = 10,    //!< Indicate end of sequence
     NALU_TYPE_END_STREAM   = 11,    //!< Indicate end of stream
     NALU_TYPE_FILL         = 12,    //!< Contain filler data
-    NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+    NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
     NALU_TYPE_15           = 15,    //!< Reserved for future extensions
-    NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+    NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
 } NaluType_e;
 
 //! NAL Unit priority

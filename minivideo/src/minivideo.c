@@ -190,7 +190,7 @@ int minivideo_open(const char *input_filepath, MediaFile_t **input_media)
 
 /* ************************************************************************** */
 
-int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
+int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
 {
     int retcode = FAILURE;
 
@@ -205,7 +205,7 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
     else
     {
         // Enable the container mapping
-        if (extract_metadatas == true)
+        if (extract_metadata == true)
         {
             input_media->container_mapper = true;
         }
@@ -243,8 +243,8 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadatas)
                 break;
         }
 
-        // Compute some additional metadatas
-        if (extract_metadatas == true)
+        // Compute some additional metadata
+        if (extract_metadata == true)
         {
             computeCodecs(input_media);
             computeAspectRatios(input_media);

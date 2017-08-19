@@ -32,10 +32,10 @@
 
 /*!
  * \struct MediaStream_t
- * \brief Infos on stream payload data & metadatas extracted from a container file.
+ * \brief Infos on stream payload data & metadata extracted from a container file.
  *
- * \todo split into 'per container' metadatas structures
- * \todo split into 'per codec' metadatas structures
+ * \todo split into 'per container' metadata structures
+ * \todo split into 'per codec' metadata structures
  *
  * This structure basically represent an audio or a video track. It contains
  * general informations about the track type and the positions of all the
@@ -51,13 +51,13 @@ typedef struct MediaStream_t
     unsigned int stream_duration_ms;//!< Stream duration (rounded in milliseconds)
     int stream_delay;               //!< Stream initial delay (in microseconds)
 
-    // Generic metadatas
+    // Generic metadata
     char *stream_encoder;           //!< Encoder used to generate the stream's datas
     unsigned int creation_time;     //!< Stream creation time (ms?)
     unsigned int modification_time; //!< Stream modification time (ms?)
     uint8_t time_reference[4];      //!< SMPTE timecode reference (hh:mm:ss-fff)
 
-    // Track metadatas (if the container supports them)
+    // Track metadata (if the container supports them)
     unsigned int track_id;          //!< Id of the track (as set by the container)
     bool track_default;             //!<
     bool track_forced;              //!<
@@ -70,7 +70,7 @@ typedef struct MediaStream_t
     unsigned int bitrate_min;       //!< Minimum bitrate (in bit/s)
     unsigned int bitrate_max;       //!< Maximum bitrate (in bit/s)
 
-    // Video metadatas
+    // Video metadata
     unsigned int width;             //!< Horizontal size (in pixels)
     unsigned int height;            //!< Vertical size (in pixels)
     unsigned int visible_width;     //!< Horizontal size (in pixels, without alignment)
@@ -97,14 +97,14 @@ typedef struct MediaStream_t
     double frame_duration;          //!< Frame duration (in ms)
     unsigned int framerate_mode;    //!< Framerate mode
 
-    // Audio metadatas
+    // Audio metadata
     unsigned int channel_count;     //!< Number of audio channels
     unsigned int channel_mode;      //!< Channels configuration
     unsigned int sampling_rate;     //!< Sampling rate (in Hertz)
     unsigned int bit_per_sample;    //!< Bit per sample (in bits)
     unsigned int sample_per_frames; //!< Audio samples per audio frame
 
-    // Subtitles specific metadatas
+    // Subtitles specific metadata
     char *subtitles_name;           //!< Subtitles name?
     unsigned int subtitles_encoding;//!< Text encoding
 

@@ -1403,7 +1403,7 @@ static int parse_mfhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 /* ************************************************************************** */
 
 /*!
- * \brief Parse the container for (fragmented) metadatas.
+ * \brief Parse the container for (fragmented) metadata.
  *
  * From 'ISO/IEC 14496-12' specification:
  * 8.8.4 Movie Fragment Box.

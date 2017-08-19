@@ -16,7 +16,7 @@ MiniVideo has been initially developed in 2010/2011 during an internship I did i
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
 * Open H.264 compressed videos and decode/export intra-coded pictures.
-* Extract various metadatas from container and elementary streams.
+* Extract various metadata from container and elementary streams.
 * Map exact container structure to xml file.
 
 ### Supported video codec (decoding)

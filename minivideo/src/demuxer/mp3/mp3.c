@@ -42,7 +42,7 @@ static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
     TRACE_1(MP3, BLD_GREEN "mp3_indexer_track()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Write track metadatas (samples have been written already)
+    // Write track metadata (samples have been written already)
     if (media && media->tracks_audio[0])
     {
         MediaStream_t *track = media->tracks_audio[0];

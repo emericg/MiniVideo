@@ -102,7 +102,7 @@ void nalu_reset(nalu_t *nalu)
  * - A nal_unit_type, which indicate precisly the content of the NAL Unit.
  *
  * If nal_unit_type is 14 or 20, it indicate the presence of three additional
- * octets in the NAL unit header:
+ * bytes in the NAL unit header:
  * http://r2d2n3po.tistory.com/26
  */
 int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
@@ -290,9 +290,9 @@ const char *nalu_get_string_type1(unsigned nal_unit_type)
         case NALU_TYPE_FILL:
             return "FILL (filler data)";
 /*
-            NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+            NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
             NALU_TYPE_15           = 15,    //!< Reserved for future extensions
-            NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional octets in the NAL unit header)
+            NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
 */
         case NALU_TYPE_UNKNOWN:
         default:

@@ -181,7 +181,7 @@ QString getTrackTypeString(const MediaStream_t *track)
             type_qstr = QObject::tr("TimeCode Record");
             break;
         case stream_META:
-            type_qstr = QObject::tr("Metadatas");
+            type_qstr = QObject::tr("Metadata");
             break;
         case stream_HINT:
             type_qstr = QObject::tr("Hint");

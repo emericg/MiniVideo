@@ -6,7 +6,7 @@ mini_analyser
 Introduction
 ------------
 
-mini_analyser is a software designed to help you extract a maximum of informations and metadatas from multimedia files. It can also map container's internal structure and let you visualize it.
+mini_analyser is a software designed to help you extract a maximum of informations and metadata from multimedia files. It can also map container's internal structure and let you visualize it.
 
 ### Supported container formats
 - AVI [.avi]

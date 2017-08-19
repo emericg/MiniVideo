@@ -47,8 +47,8 @@ typedef struct MediaFile_t
     char file_directory[4096];          //!< Absolute path of the directory containing the file
     char file_name[255];                //!< File name with file extension
     char file_extension[255];           //!< File extension, without dot (may NOT correspond to the real file format)
-    uint64_t file_creation_time;        //!< File creation time (Unix time) (if available from filesystem metadatas)
-    uint64_t file_modification_time;    //!< File modification time (Unix time) (if available from filesystem metadatas)
+    uint64_t file_creation_time;        //!< File creation time (Unix time) (if available from filesystem metadata)
+    uint64_t file_modification_time;    //!< File modification time (Unix time) (if available from filesystem metadata)
 
     // Container
     Containers_e container;             //!< File format / container used by this video file
@@ -56,7 +56,7 @@ typedef struct MediaFile_t
     bool container_mapper;              //!< Enables the xml container mapper
     FILE *container_mapper_fd;          //!< Direct access to xml map without the need of an actual file
 
-    // Container generic metadatas
+    // Container generic metadata
     char *creation_app;                 //!< Container creation application (C string) (if available)
     char *creation_lib;                 //!< Container creation library (C string) (if available)
     uint64_t creation_time;             //!< Container creation time (Unix time) (if available)
@@ -74,7 +74,7 @@ typedef struct MediaFile_t
     MediaStream_t *tracks_subt[16];     //!< A list of parsed subtitles tracks
 
     unsigned int tracks_others_count;
-    MediaStream_t *tracks_others[16];   //!< Other "unknown" tracks found in the container (metadatas, timecodes, ...)
+    MediaStream_t *tracks_others[16];   //!< Other "unknown" tracks found in the container (metadata, timecodes, ...)
 
     // Parsing statistics
     uint64_t parsingTime;               //!< Parsing time (in milliseconds) (only available in debug mode)
@@ -96,8 +96,8 @@ typedef struct BasicFile_t
     char file_directory[4096];          //!< Absolute path of the directory containing the file
     char file_name[255];                //!< File name with file extension
     char file_extension[255];           //!< File extension, without dot (may NOT correspond to the real file format)
-    uint64_t file_creation_time;        //!< File creation time (Unix time) (if available from filesystem metadatas)
-    uint64_t file_modification_time;    //!< File modification time (Unix time) (if available from filesystem metadatas)
+    uint64_t file_creation_time;        //!< File creation time (Unix time) (if available from filesystem metadata)
+    uint64_t file_modification_time;    //!< File modification time (Unix time) (if available from filesystem metadata)
 
 } BasicFile_t;
 

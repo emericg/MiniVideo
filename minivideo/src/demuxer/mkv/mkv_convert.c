@@ -292,7 +292,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
 {
     int status = SUCCESS;
 
-    // File metadatas
+    // File metadata
     media->container_profile = mkv->profile;
     if (mkv->info.WritingApp)
     {
@@ -306,7 +306,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
     media->duration = (uint64_t)(mkv->info.Duration / ((double)mkv->info.TimecodeScale / 1000000.0));
     //mkv->info.DateUTC
 
-    // Tracks metadatas
+    // Tracks metadata
     if (mkv->tracks_count == 0) // Check if we have extracted tracks
     {
         TRACE_WARNING(MKV, "No tracks extracted from MKV file!");

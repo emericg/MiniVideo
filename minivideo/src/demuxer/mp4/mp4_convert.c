@@ -49,14 +49,14 @@ int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
 {
     int status = SUCCESS;
 
-    // File metadatas
+    // File metadata
     media->duration = (double)mp4->duration / (double)mp4->timescale * 1000.0;
     media->creation_time = (double)mp4->creation_time ;
     media->modification_time = (double)mp4->modification_time ;
 
     media->container_profile = mp4->profile;
 
-    // Tracks metadatas
+    // Tracks metadata
     if (mp4->tracks_count == 0) // Check if we have extracted tracks
     {
         TRACE_WARNING(MP4, "No tracks extracted from MP4 file!");
