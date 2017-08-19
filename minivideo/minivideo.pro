@@ -16,22 +16,15 @@ DEFINES     += minivideo_VERSION_PATCH=1
 OBJECTS_DIR  = build/artifacts
 DESTDIR      = build/
 
-# build settings
-DEFINES += ENABLE_COLORS=1        # Toggle colored terminal output
-DEFINES += ENABLE_C99_STDINT=1    # Toggle C99 <stdint.h> usage
-DEFINES += ENABLE_C99_STDBOOL=1   # Toggle C99 <stdbool.h> usage
-DEFINES += ENABLE_C11_STDALIGN=0  # Toggle C11 <stdalign.h> usage
-
-DEFINES += ENABLE_WEBP=0          # Toggle external libwebp support
-DEFINES += ENABLE_JPEG=0          # Toggle external libjpeg support
-DEFINES += ENABLE_PNG=0           # Toggle external libpng support
-DEFINES += ENABLE_STBIMWRITE=1    # Toggle internal stb_image_write library for bmp/png/tga support
-
-DEFINES += ENABLE_MEMFD=1         # Enable memfd support, for Linux kernels 3.17+
+# build settings are usually set by the CMake build system.
+# default settings have been set in "minivideo_settings.h", but if you wish to
+# change them you'll need to do it manually by editing this file
 
 # build configuration
-QMAKE_CFLAGS += -std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
-QMAKE_CFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
+unix {
+    QMAKE_CFLAGS += -std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+    QMAKE_CFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
+}
 
 linux {
     QMAKE_LFLAGS += -lm -Wl,-z,now -Wl,-z,relro
