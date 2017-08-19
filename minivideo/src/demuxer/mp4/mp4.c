@@ -114,7 +114,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         fprintf(mp4->xml, "  <minor_version>%u</minor_version>\n", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
         {
-            fprintf(mp4->xml, "  <compatible_brands index=\"%i\">%s</compatible_brands>\n",
+            fprintf(mp4->xml, "  <compatible_brands index=\"%u\">%s</compatible_brands>\n",
                     i, getFccString_le(compatible_brands[i], fcc));
         }
         fprintf(mp4->xml, "  </a>\n");

@@ -1026,7 +1026,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->display_aspect_ratio = (1.0 / 1.0);
+                    map->display_aspect_ratio = 1.0;
                     break;
                 case 8:
                 case 12:
@@ -1049,7 +1049,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
                 switch (aspect_ratio_index)
                 {
                 case 1:
-                    map->video_aspect_ratio = (1.0 / 1.0);
+                    map->video_aspect_ratio = 1.0;
                     break;
                 case 2:
                     map->video_aspect_ratio = (4.0 / 3.0);

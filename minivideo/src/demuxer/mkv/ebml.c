@@ -335,14 +335,11 @@ char *read_ebml_data_string(Bitstream_t *bitstr, int size)
 {
     TRACE_2(MKV, "read_ebml_data_string(%i bytes)", size);
 
-    char *value = NULL;
-
-    value = malloc(size+1);
+    char *value = malloc(size+1);
     if (value)
     {
-        if (value)
-            for (int i = 0; i < size; i++)
-                value[i] = read_bits(bitstr, 8);
+        for (int i = 0; i < size; i++)
+            value[i] = read_bits(bitstr, 8);
         value[size] = '\0';
     }
 
@@ -354,9 +351,7 @@ char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element,
 {
     TRACE_2(MKV, "read_ebml_data_string(%i bytes)", element->size);
 
-    char *value = NULL;
-
-    value = malloc(element->size+1);
+    char *value = malloc(element->size+1);
     if (value)
     {
         for (int i = 0; i < element->size; i++)
@@ -383,14 +378,11 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size)
 {
     TRACE_2(MKV, "read_ebml_data_binary(%i bytes)", size);
 
-    uint8_t *value = NULL;
-
-    value = malloc(size+1);
+    uint8_t *value = malloc(size+1);
     if (value)
     {
-        if (value)
-            for (int i = 0; i < size; i++)
-                value[i] = read_bits(bitstr, 8);
+       for (int i = 0; i < size; i++)
+           value[i] = read_bits(bitstr, 8);
         value[size] = '\0';
     }
 
@@ -402,9 +394,7 @@ uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element,
 {
     TRACE_2(MKV, "read_ebml_data_binary2(%i bytes)", element->size);
 
-    uint8_t *value = NULL;
-
-    value = malloc(element->size+1);
+    uint8_t *value = malloc(element->size+1);
     if (value)
     {
         for (int i = 0; i < element->size; i++)

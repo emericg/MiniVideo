@@ -325,7 +325,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
     int retcode = SUCCESS;
     MediaStream_t *mytrack = NULL;
 
-    if (index_entry_count <= 0)
+    if (index_entry_count == 0)
         index_entry_count = 1;
 
     if (track->strh.fccType == fcc_auds)
