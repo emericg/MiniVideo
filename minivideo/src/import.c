@@ -132,7 +132,10 @@ static void getInfosFromPath(MediaFile_t *media)
         }
         else
         {
-            TRACE_WARNING(IO, "* Cannot find file name and extension!");
+            TRACE_WARNING(IO, "* Cannot find file extension!");
+
+            // Set file name (without the extension)
+            strncpy(media->file_name, pos_last_slash_p + 1, 254);
         }
     }
     else

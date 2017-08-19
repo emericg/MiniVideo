@@ -215,8 +215,10 @@ int MainWindow::setActiveFile()
                 int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_parsing - wrapper->start_parsing).count();
                 int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_ui - wrapper->start_ui).count() - tp;
 
-                QString name = QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension);
                 QString file = QString::fromLocal8Bit(media->file_path);
+                QString name = QString::fromLocal8Bit(media->file_name);
+                if (strlen(media->file_extension) > 0)
+                    name += "." + QString::fromLocal8Bit(media->file_extension);
 
                 ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
             }
@@ -246,7 +248,11 @@ int MainWindow::printDatas()
             ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_error);
 
         // General infos
-        ui->label_info_filename->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+        QString name = QString::fromLocal8Bit(media->file_name);
+        if (strlen(media->file_extension) > 0)
+            name += "." + QString::fromLocal8Bit(media->file_extension);
+
+        ui->label_info_filename->setText(name);
         ui->label_info_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
         ui->label_info_fullpath->setText(QString::fromLocal8Bit(media->file_path));
         ui->label_info_fullpath->setToolTip(QString::fromLocal8Bit(media->file_path));
