@@ -689,7 +689,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
 
-    fprintf(mkv->xml, "  </a>\n");
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
 }

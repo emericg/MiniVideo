@@ -474,7 +474,10 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             if (track->TrackType == MKV_TRACK_VIDEO)
             {
                 if (s->idr)
+                {
                     map->sample_type[sid] = sample_VIDEO_SYNC;
+                    map->frame_count_idr++;
+                }
                 else
                     map->sample_type[sid] = sample_VIDEO;
             }

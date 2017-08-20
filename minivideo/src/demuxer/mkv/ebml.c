@@ -411,7 +411,7 @@ uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element,
             else
                 TRACE_1(MKV, "* %s  = 0x", name);
             for (int i = 0; i < element->size && i < 1024; i++)
-                printf("%X", value[i]);
+                printf("%02X", value[i]);
 #endif // ENABLE_DEBUG
 
             if (xml)
@@ -421,7 +421,7 @@ uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element,
                 else
                     fprintf(xml, "  <%s>0x", name);
                 for (int i = 0; i < element->size && i < 1024; i++)
-                    fprintf(xml, "%X", value[i]);
+                    fprintf(xml, "%02X", value[i]);
                 fprintf(xml, "</%s>\n", name);
             }
         }
