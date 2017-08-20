@@ -484,25 +484,19 @@ static int export_idr_webp_advanced(DecodingContext_t *dc, FILE *PictureFile)
 
 /*!
  * \param *dc The current DecodingContext.
- * \param *PictureFile The file pointer to write to.
+ * \param *PictureFile A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
- *
- * From http://www.ijg.org/files/README:
- * jpegaltui.vN.tar.gz contains source code for an alternate user interface for
- * cjpeg/djpeg in Unix format.
- *
- * For RAW write : http://www.jpegcameras.com/libjpeg/libjpeg-3.html#ss3.11
  */
-static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
+static int export_idr_jpg(DecodingContext_t *dc, BasicFile_t *PictureFile)
 {
     int retcode = FAILURE;
-
-#if ENABLE_JPEG
-    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()" CLR_RESET);
 
     sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
+
+#if ENABLE_JPEG
+    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg()" CLR_RESET);
 
     // 0. we will be using this uninitialized pointer later to store raw, uncompressd image
 
@@ -527,7 +521,7 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
 
     // 2. Specify the destination for the compressed data (eg, a file)
 
-    jpeg_stdio_dest(&cinfo, PictureFile);
+    jpeg_stdio_dest(&cinfo, PictureFile->file_pointer);
 
     // 3. Set parameters for compression, including image size & colorspace
 
@@ -585,7 +579,24 @@ static int export_idr_jpg(DecodingContext_t *dc, FILE *PictureFile)
     free(buffer_ycbcr);
 
     retcode = SUCCESS;
-#endif // ENABLE_JPEG
+
+#elif ENABLE_STBIMWRITE
+
+    TRACE_INFO(IO, BLD_GREEN "export_idr_jpg(STBIMWRITE)" CLR_RESET);
+
+    // convert macroblocks to rgb buffer
+    unsigned char *buffer_rgb = (unsigned char *)calloc(img_width*img_height*3, sizeof(unsigned char));
+    if (buffer_rgb)
+    {
+        mb_to_rgb(dc, buffer_rgb);
+
+        // export to jpeg
+        retcode = stbi_write_jpg(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
+
+        free(buffer_rgb);
+    }
+
+#endif // ENABLE_JPG or ENABLE_STBIMWRITE
 
     return retcode;
 }
@@ -823,7 +834,7 @@ int export_idr(DecodingContext_t *dc)
     }
     #endif // ENABLE_WEBP
 
-    #if ENABLE_JPEG == 0
+    #if ENABLE_JPEG == 0 && ENABLE_STBIMWRITE == 0
     if (dc->output_format == PICTURE_JPG)
     {
         TRACE_WARNING(IO, "No jpg export library available, trying png");
@@ -908,7 +919,7 @@ int export_idr(DecodingContext_t *dc)
         }
         else if (dc->output_format == PICTURE_JPG)
         {
-            retcode = export_idr_jpg(dc, PictureFile.file_pointer);
+            retcode = export_idr_jpg(dc, &PictureFile);
         }
         else if (dc->output_format == PICTURE_PNG)
         {
