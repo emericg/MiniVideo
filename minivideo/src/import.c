@@ -287,6 +287,11 @@ static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
             container = CONTAINER_MP4;
         }
     }
+    else if (buffer[0] == 0x30 && buffer[1] == 0x26 && buffer[2] == 0xB2 && buffer[3] == 0x75)
+    {
+        TRACE_1(IO, "* File type      : ASF container detected");
+        container = CONTAINER_ASF;
+    }
     else if (buffer[0] == 0x4F && buffer[1] == 0x67 && buffer[2] == 0x67 && buffer[3] == 0x53)
     {
         TRACE_1(IO, "* File type      : OGG container detected");

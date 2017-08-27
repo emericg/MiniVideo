@@ -32,6 +32,7 @@
 
 // Demuxers
 #include "demuxer/avi/avi.h"
+#include "demuxer/asf/asf.h"
 #include "demuxer/mkv/mkv.h"
 #include "demuxer/mp4/mp4.h"
 #include "demuxer/mp3/mp3.h"
@@ -216,14 +217,17 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
             case CONTAINER_UNKNOWN:
                 TRACE_ERROR(MAIN, "Unwknown container file format: unable to parse this file!");
                 break;
-            case CONTAINER_AVI:
-                retcode = avi_fileParse(input_media);
-                break;
             case CONTAINER_MP4:
                 retcode = mp4_fileParse(input_media);
                 break;
             case CONTAINER_MKV:
                 retcode = mkv_fileParse(input_media);
+                break;
+            case CONTAINER_AVI:
+                retcode = avi_fileParse(input_media);
+                break;
+            case CONTAINER_ASF:
+                retcode = asf_fileParse(input_media);
                 break;
             case CONTAINER_WAVE:
                 retcode = wave_fileParse(input_media);

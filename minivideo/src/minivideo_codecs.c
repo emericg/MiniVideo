@@ -38,7 +38,7 @@ const char *getContainerString(Containers_e container, bool long_description)
             return "AVI (Audio Video Interleave) [.avi, ...]";
             break;
         case CONTAINER_ASF:
-            return "ASF (Advanced Systems Format) [.asf, .wma, .wmv, ...]";
+            return "ASF (Advanced Systems Format) [.asf, .wma, .wmv]";
             break;
         case CONTAINER_MKV:
             return "MKV (Matroska) [.mkv, .mka, .webm]";

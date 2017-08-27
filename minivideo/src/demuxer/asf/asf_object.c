@@ -1,0 +1,250 @@
+/*!
+ * COPYRIGHT (C) 2017 Emeric Grange - All Rights Reserved
+ *
+ * This file is part of MiniVideo.
+ *
+ * MiniVideo is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MiniVideo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \file      asf_object.c
+ * \author    Emeric Grange <emeric.grange@gmail.com>
+ * \date      2017
+ */
+
+// minivideo headers
+#include "asf_object.h"
+#include "asf_struct.h"
+
+#include "../xml_mapper.h"
+#include "../../bitstream.h"
+#include "../../bitstream_utils.h"
+#include "../../minivideo_typedef.h"
+#include "../../minitraces.h"
+
+// C standard libraries
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <limits.h>
+
+/* ************************************************************************** */
+
+int parse_asf_object(Bitstream_t *bitstr, AsfObject_t *asf_object)
+{
+    TRACE_INFO(ASF, "parse_asf_object()");
+    int retcode = SUCCESS;
+
+    if (asf_object == NULL)
+    {
+        TRACE_ERROR(ASF, "Invalid AsfObject_t structure!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        // Set object offset
+        asf_object->offset_start = bitstream_get_absolute_byte_offset(bitstr);
+
+        // Read object GUID
+        for (int i = 3; i > -1; i--)
+            asf_object->guid[i] = (uint8_t)read_bits(bitstr, 8);
+        for (int i = 5; i > 3; i--)
+            asf_object->guid[i] = (uint8_t)read_bits(bitstr, 8);
+        for (int i = 7; i > 5; i--)
+            asf_object->guid[i] = (uint8_t)read_bits(bitstr, 8);
+        for (int i = 8; i < 10; i++)
+            asf_object->guid[i] = (uint8_t)read_bits(bitstr, 8);
+        for (int i = 10; i < 16; i++)
+            asf_object->guid[i] = (uint8_t)read_bits(bitstr, 8);
+
+        // Read object size
+        asf_object->size = (int64_t)endian_flip_64(read_bits_64(bitstr, 64));
+
+        // Set end offset
+        asf_object->offset_end = asf_object->offset_start + asf_object->size;
+    }
+
+    return retcode;
+}
+
+void print_asf_object(AsfObject_t *asf_object)
+{
+#if ENABLE_DEBUG
+    if (asf_object == NULL)
+    {
+        TRACE_ERROR(RIF, "Invalid AsfObject_t structure!");
+    }
+    else
+    {
+        TRACE_2(ASF, "* start offset  : %lli", asf_object->offset_start);
+        TRACE_2(ASF, "* end offset    : %lli", asf_object->offset_end);
+
+        // Print Box header
+        TRACE_2(ASF, "* object guid   : {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+                asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
+                asf_object->guid[4], asf_object->guid[5],
+                asf_object->guid[6], asf_object->guid[7],
+                asf_object->guid[8], asf_object->guid[9],
+                asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15]);
+        TRACE_2(ASF, "* object size   : %lli", asf_object->size);
+    }
+#endif // ENABLE_DEBUG
+}
+
+void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title)
+{
+    if (xml)
+    {
+        if (asf_object == NULL)
+        {
+            TRACE_ERROR(ASF, "Invalid AsfObject_t structure!");
+        }
+        else
+        {
+            if (title != NULL)
+                fprintf(xml, "  <a tt=\"%s\" guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                    title,
+                    asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
+                    asf_object->guid[4], asf_object->guid[5],
+                    asf_object->guid[6], asf_object->guid[7],
+                    asf_object->guid[8], asf_object->guid[9],
+                    asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
+                    asf_object->offset_start,
+                    asf_object->size);
+            else
+                fprintf(xml, "  <a guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                    asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
+                    asf_object->guid[4], asf_object->guid[5],
+                    asf_object->guid[6], asf_object->guid[7],
+                    asf_object->guid[8], asf_object->guid[9],
+                    asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
+                    asf_object->offset_start,
+                    asf_object->size);
+        }
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int parse_unknown_object(Bitstream_t *bitstr, AsfObject_t *asf_object, FILE *xml)
+{
+#if ENABLE_DEBUG
+    TRACE_WARNING(ASF, BLD_GREEN "parse_unknown_object({%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X} @ %lli; size is %llu)" CLR_RESET,
+                  asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
+                  asf_object->guid[4], asf_object->guid[5],
+                  asf_object->guid[6], asf_object->guid[7],
+                  asf_object->guid[8], asf_object->guid[9],
+                  asf_object->guid[10], asf_object->guid[11], asf_object->guid[12],
+                  asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
+                  asf_object->offset_start, asf_object->offset_end - asf_object->offset_start);
+
+    print_asf_object(asf_object);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (xml)
+    {
+        write_asf_object(asf_object, xml, "Unknown");
+        fprintf(xml, "  </a>\n");
+    }
+
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+/*!
+ * \brief Jumpy protect your parsing - ASF edition.
+ * \param bitstr: Our bitstream reader.
+ * \param parent: The box containing the current box we're in.
+ * \param current: The current box we're in.
+ * \return SUCCESS or FAILURE if the jump could not be done.
+ *
+ * 'Jumpy' is in charge of checking your position into the stream after your
+ * parser finish parsing a box / list / chunk / element, never leaving you
+ * stranded  in the middle of nowhere with no easy way to get back on track.
+ * It will check available informations to known if the current element has been
+ * fully parsed, and if not perform a jump (or even a rewind) to the next known
+ * element.
+ */
+int jumpy_asf(Bitstream_t *bitstr, AsfObject_t *parent, AsfObject_t *current)
+{
+    int retcode = SUCCESS;
+
+    // Done as a precaution, because the parsing of some boxes (like ESDS...)
+    // can leave us in the middle of a byte and that will never be caught by
+    // offset checks (cause they works on the assumption that we are byte aligned)
+    bitstream_force_alignment(bitstr);
+
+    // Check if we need a jump
+    int64_t current_pos = bitstream_get_absolute_byte_offset(bitstr);
+    if (current_pos != current->offset_end)
+    {
+        int64_t file_size = bitstream_get_full_size(bitstr);
+        int64_t offset_end = current->offset_end;
+
+        // Check offset_end
+        if (parent && parent->offset_end < file_size) // current box has valid parent
+        {
+            // Validate offset_end against parent's (parent win)
+            if (offset_end > parent->offset_end)
+                offset_end = parent->offset_end;
+        }
+        else // current box has no parent (or parent with invalid offset_end)
+        {
+            // Validate offset_end against file's (file win)
+            if (offset_end > file_size)
+                offset_end = file_size;
+        }
+        TRACE_WARNING(ASF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+
+        // If the offset_end is past the last byte of the file, we do not need to jump
+        // The parser will pick that fact and finish up...
+        if (offset_end >= file_size)
+        {
+            bitstr->bitstream_offset = file_size;
+            return SUCCESS;
+        }
+
+        TRACE_WARNING(ASF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+
+        // Now, do we need to go forward or backward to reach our goal?
+        // Then, can we move in our current buffer or do we need to reload a new one?
+        if (current_pos < offset_end)
+        {
+            int64_t jump = offset_end - current_pos;
+
+            if (jump < (UINT_MAX/8))
+                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+            else
+                retcode = bitstream_goto_offset(bitstr, offset_end);
+        }
+        else
+        {
+            int64_t rewind = current_pos - offset_end;
+
+            if (rewind > 0)
+            {
+                if (rewind > (UINT_MAX/8))
+                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                else
+                    retcode = bitstream_goto_offset(bitstr, offset_end);
+            }
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */

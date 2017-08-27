@@ -24,6 +24,7 @@ The minivideo library can:
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import modules)
+- ASF [.asf, .wma, .wmv]
 - AVI [.avi]
 - WAVE [.wav]
 - MKV [.mkv, .webm, ...]

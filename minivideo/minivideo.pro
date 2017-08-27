@@ -42,6 +42,7 @@ win32 {
 SOURCES += src/*.c \
            src/decoder/h264/*.c \
            src/demuxer/*.c \
+           src/demuxer/asf/*.c \
            src/demuxer/avi/*.c \
            src/demuxer/esparser/*.c \
            src/demuxer/mkv/*.c \

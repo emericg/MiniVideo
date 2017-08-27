@@ -201,6 +201,7 @@ set(minivideo_SRC
     src/demuxer/riff/riff.c src/demuxer/riff/riff_common.c src/demuxer/riff/riff_struct.h
         src/demuxer/avi/avi.c src/demuxer/avi/avi_convert.c src/demuxer/avi/avi_struct.h
         src/demuxer/wave/wave.c src/demuxer/wave/wave_convert.c src/demuxer/wave/wave_struct.h
+    src/demuxer/asf/asf.c src/demuxer/asf/asf_object.c src/demuxer/asf/asf_convert.c src/demuxer/asf/asf_struct.h
     src/muxer/muxer.c
         src/muxer/pes_packetizer.c
     src/depacketizer/depack.c src/depacketizer/depack_struct.h
