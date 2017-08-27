@@ -104,8 +104,8 @@ void print_list_header(RiffList_t *list_header)
     }
     else
     {
-        TRACE_2(RIF, "* offset_s   : %u", list_header->offset_start);
-        TRACE_2(RIF, "* offset_e   : %u", list_header->offset_end);
+        TRACE_2(RIF, "* offset_s   : %lli", list_header->offset_start);
+        TRACE_2(RIF, "* offset_e   : %lli", list_header->offset_end);
 
         if (list_header->dwList == fcc_RIFF)
         {
@@ -144,14 +144,14 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
 
             if (list_header->dwList == fcc_RIFF)
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%li\" sz=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
             }
             else
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%li\" sz=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
