@@ -805,6 +805,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         // datas
         if (tag == 0x03) // ESDescriptor TAG
         {
+            xmlSpacer(mp4->xml, "ESDescriptor", -1);
+
             uint16_t esId = read_bits(bitstr, 16);
             bool streamDependenceFlag = read_bit(bitstr);
             bool urlFlag = read_bit(bitstr);
@@ -850,6 +852,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x04) // decoderConfigDescriptor TAG
         {
+            xmlSpacer(mp4->xml, "decoderConfigDescriptor", -1);
+
             uint8_t objectTypeIndication = read_bits(bitstr, 8);
             uint8_t streamType = read_bits(bitstr, 6); // FIXME
             uint8_t upStream = read_bits(bitstr, 2);
@@ -900,6 +904,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x05) // decoderSpecificInfo TAG
         {
+            xmlSpacer(mp4->xml, "decoderSpecificInfo", -1);
+
             uint8_t audioObjectType = read_bits(bitstr, 5);
             uint8_t audioObjectTypeExt = 0;
             if (audioObjectType == 31)
@@ -1054,6 +1060,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x06) // SLConfigDescription TAG
         {
+            xmlSpacer(mp4->xml, "SLConfigDescription", -1);
+
             uint8_t predefined = read_bits(bitstr, 8);
 
             if (mp4->xml)
@@ -1063,6 +1071,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else
         {
+            xmlSpacer(mp4->xml, "UNKNOWN TAG", -1);
+
             TRACE_WARNING(MP4, "esds UNKNOWN TAG %X", tag);
             if (mp4->xml) fprintf(mp4->xml, "  <UNKNOWN_TAG>0x%X</UNKNOWN_TAG>\n", tag);
 
@@ -1210,6 +1220,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
         for (i = 0; i < track->sps_count; i++)
         {
+            xmlSpacer(mp4->xml, "SequenceParameterSet", i);
             fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
             fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%li</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
         }
@@ -1217,6 +1228,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
         for (i = 0; i < track->pps_count; i++)
         {
+            xmlSpacer(mp4->xml, "PictureParameterSet", i);
             fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
             fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }

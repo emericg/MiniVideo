@@ -47,6 +47,11 @@ int xmlMapperFinalize(FILE *xml);
  * \param **xml[in,out]: Mapping file.
  */
 int xmlMapperClose(FILE **xml);
+
+/* ************************************************************************** */
+
+void xmlSpacer(FILE *xml, const char *name, const int index);
+
 /* ************************************************************************** */
 /*
 // xmlMapper format v2

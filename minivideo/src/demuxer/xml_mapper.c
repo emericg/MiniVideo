@@ -173,3 +173,20 @@ int xmlMapperClose(FILE **xml)
 }
 
 /* ************************************************************************** */
+
+void xmlSpacer(FILE *xml, const char *name, const int index)
+{
+    if (xml && name)
+    {
+        if (index < 0)
+        {
+            fprintf(xml, "  <spacer>%s</spacer>\n", name);
+        }
+        else
+        {
+            char SpaceTitle[32];
+            snprintf(SpaceTitle, 32, "%s #%i", name, index);
+            fprintf(xml, "  <spacer>%s</spacer>\n", SpaceTitle);
+        }
+    }
+}

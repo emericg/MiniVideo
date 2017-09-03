@@ -93,9 +93,7 @@ static int parse_extendedcontentdescription(Bitstream_t *bitstr, AsfObject_t *ob
         {
             for (int i = 0; i < asf->asfh.ecd->ContentDescriptorsCount; i++)
             {
-                char SpaceTitle[32];
-                sprintf(SpaceTitle, "Content Descriptor #%i", i);
-                if (asf->xml) fprintf(asf->xml, "  <spacer>%s</spacer>\n",  SpaceTitle);
+                xmlSpacer(asf->xml, "Content Descriptor", i);
 
                 asf->asfh.ecd->ContentDescriptors[i] = malloc(sizeof(AsfCodecEntry_t));
                 parse_contentdescriptor(bitstr, asf->asfh.ecd->ContentDescriptors[i], asf);
@@ -203,9 +201,7 @@ static int parse_codeclist(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
         {
             for (int i = 0; i < asf->asfh.cl->CodecEntriesCount; i++)
             {
-                char SpaceTitle[32];
-                sprintf(SpaceTitle, "Codec Entry #%i", i);
-                if (asf->xml) fprintf(asf->xml, "  <spacer>%s</spacer>\n",  SpaceTitle);
+                xmlSpacer(asf->xml, "Codec Entry", i);
 
                 asf->asfh.cl->CodecEntries[i] = malloc(sizeof(AsfCodecEntry_t));
                 parse_codecentry(bitstr, asf, asf->asfh.cl->CodecEntries[i]);
