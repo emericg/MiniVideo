@@ -78,7 +78,7 @@ private slots:
 
     void detachFile();
     void reloadFile();
-    void closeFile(const QString &file);
+    void closeFile(const QString &fileToClose);
     void closeFile();
     void closeFiles();
 

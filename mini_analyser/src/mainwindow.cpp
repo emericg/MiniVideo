@@ -339,17 +339,22 @@ void MainWindow::closeFiles()
             minivideo_close(&mediaList.at(i)->media);
         }
     }
+
+    currentMediaLoaded.clear();
 }
 
-void MainWindow::closeFile(const QString &file)
+void MainWindow::closeFile(const QString &fileToClose)
 {
     if (mediaList.empty() == false)
     {
+        if (currentMediaLoaded == fileToClose)
+            currentMediaLoaded.clear();
+
         // Find the index of the given file
         for (unsigned i = 0; i < mediaList.size(); i++)
         {
             QString path = mediaList.at(i)->media->file_path;
-            if (file == path)
+            if (fileToClose == path)
             {
                 ui->tab_dev->removeFile(path);
                 ui->tab_container->closeMedia();
