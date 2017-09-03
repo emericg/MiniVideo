@@ -125,8 +125,7 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
 
 #if ENABLE_DEBUG
                 TRACE_INFO(DEMUX, "bitstream_map->totalsamples = %i", media->tracks_video[0]->sample_count);
-                unsigned int i = 0;
-                for (i = 0; i < media->tracks_video[0]->sample_count; i++)
+                for (unsigned i = 0; i < media->tracks_video[0]->sample_count; i++)
                 {
                     TRACE_1(DEMUX, "bitstream_map->sample_offset[%i] = %i", i, media->tracks_video[0]->sample_offset[i]);
                     TRACE_1(DEMUX, "bitstream_map->sample_size[%i] = %i", i, media->tracks_video[0]->sample_size[i]);

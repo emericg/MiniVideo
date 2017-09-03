@@ -407,18 +407,22 @@ bool computeCodecs(MediaFile_t *media)
 
     for (unsigned i = 0; i < media->tracks_audio_count; i++)
     {
-        if (media->tracks_audio[i] && media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
+        if (media->tracks_audio[i])
         {
-            media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
-        }
 
-        // PCM hack
-        if (media->tracks_audio[i]->stream_codec == CODEC_LPCM ||
-            media->tracks_audio[i]->stream_codec == CODEC_LogPCM ||
-            media->tracks_audio[i]->stream_codec == CODEC_DPCM ||
-            media->tracks_audio[i]->stream_codec == CODEC_ADPCM)
-        {
-            computePCMSettings(media->tracks_audio[i]);
+            if (media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
+            {
+                media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
+            }
+
+            // PCM hack
+            if (media->tracks_audio[i]->stream_codec == CODEC_LPCM ||
+                media->tracks_audio[i]->stream_codec == CODEC_LogPCM ||
+                media->tracks_audio[i]->stream_codec == CODEC_DPCM ||
+                media->tracks_audio[i]->stream_codec == CODEC_ADPCM)
+            {
+                computePCMSettings(media->tracks_audio[i]);
+            }
         }
     }
 

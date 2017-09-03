@@ -426,9 +426,8 @@ int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
 {
     TRACE_INFO(AVI, BLD_GREEN "avi_indexer()" CLR_RESET);
     int retcode = SUCCESS;
-    unsigned int i = 0, j = 0;
 
-    for (i = 0; i < avi->tracks_count; i++)
+    for (unsigned i = 0; i < avi->tracks_count; i++)
     {
         if (avi->tracks[i]->track_indexed == 1)
         {
@@ -436,7 +435,7 @@ int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
         }
         else
         {
-            for (j = 0; j < avi->tracks[i]->superindex_count; j++)
+            for (unsigned j = 0; j < avi->tracks[i]->superindex_count; j++)
             {
                 // IX offset
                 bitstream_goto_offset(bitstr, avi->tracks[i]->superindex_entries[j].offset);
@@ -456,12 +455,11 @@ int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
             if (retcode == SUCCESS)
             {
                 // Set sample into bitstream map
-                unsigned int k = 0;
                 unsigned int tid = 0; // only support 1 audio and 1 video track for now
 
                 if (avi->tracks[i]->strh.fccType == fcc_auds)
                 {
-                    for (k = 0; k < avi->tracks[i]->index_count; k++)
+                    for (unsigned k = 0; k < avi->tracks[i]->index_count; k++)
                     {
                         int sid = media->tracks_audio[tid]->sample_count;
                         media->tracks_audio[tid]->sample_count++;
@@ -475,7 +473,7 @@ int avi_indexer(Bitstream_t *bitstr, MediaFile_t *media, avi_t *avi)
                 }
                 else if (avi->tracks[i]->strh.fccType == fcc_vids)
                 {
-                    for (k = 0; k < avi->tracks[i]->index_count; k++)
+                    for (unsigned k = 0; k < avi->tracks[i]->index_count; k++)
                     {
                         int sid = media->tracks_video[tid]->sample_count;
                         media->tracks_video[tid]->sample_count++;

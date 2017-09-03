@@ -63,8 +63,7 @@ int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
     }
     else // Convert tracks
     {
-        unsigned int i = 0;
-        for (i = 0; i < mp4->tracks_count; i++)
+        for (unsigned i = 0; i < mp4->tracks_count; i++)
         {
             status = mp4_convert_track(media, mp4->tracks[i]);
             mp4_clean_track(&(mp4->tracks[i]));

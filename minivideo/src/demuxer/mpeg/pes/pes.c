@@ -303,8 +303,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
 
                 if (packet->PES_private_data_flag == 1)
                 {
-                    int i = 0;
-                    for (i = 0; i < 16; i++)
+                    for (int i = 0; i < 16; i++)
                     {
                         packet->PES_private_data[i] = read_bits(bitstr, 8);
                     }
@@ -341,8 +340,7 @@ int parse_pes(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet)
                 {
                     MARKER_BIT
                     packet->PES_extension_field_length = read_bits(bitstr, 7);
-                    int i = 0;
-                    for (i = 0; i < packet->PES_extension_field_length; i++)
+                    for (int i = 0; i < packet->PES_extension_field_length; i++)
                     {
                         /*int reserved =*/ read_bits(bitstr, 8);
                     }
@@ -598,8 +596,7 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
             if (packet->PES_extension_flag_2 == 1)
             {
                 TRACE_1(MPS, " PES_extension_field_length= %i", packet->PES_extension_field_length);
-                int i = 0;
-                for (i = 0; i < packet->PES_extension_field_length; i++)
+                for (int i = 0; i < packet->PES_extension_field_length; i++)
                 {
                     TRACE_1(MPS, " reserved= xx");
                 }

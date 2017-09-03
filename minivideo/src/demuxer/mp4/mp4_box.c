@@ -88,8 +88,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
             //box_header->usertype = malloc(16);
             //if (box_header->usertype)
             {
-                int i = 0;
-                for (i = 0; i < 16; i++)
+                for (int i = 0; i < 16; i++)
                 {
                     box_header->usertype[i] = (uint8_t)read_bits(bitstr, 8);
                 }
