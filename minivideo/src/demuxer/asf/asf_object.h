@@ -36,17 +36,18 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
 
 int16_t read_asf_int16(Bitstream_t *bitstr, FILE *xml, const char *name);
 
-int32_t read_asf_int32(Bitstream_t *bitstr, const unsigned int n,
-                       FILE *xml, const char *name);
+int32_t read_asf_int32(Bitstream_t *bitstr, FILE *xml, const char *name);
 
-int64_t read_asf_int64(Bitstream_t *bitstr, const unsigned int n,
-                       FILE *xml, const char *name);
+int64_t read_asf_int64(Bitstream_t *bitstr, FILE *xml, const char *name);
+
+int64_t read_asf_int(Bitstream_t *bitstr, const unsigned int n,
+                     FILE *xml, const char *name);
 
 uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
                          FILE *xml, const char *name);
 
-uint8_t *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
-                         FILE *xml, const char *name);
+char *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
+                      FILE *xml, const char *name);
 
 /* ************************************************************************** */
 

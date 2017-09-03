@@ -49,7 +49,6 @@ typedef struct AsfObject_t
 static const uint8_t ASF_object_GUIDS[64][16] =
 {
     // 10.1 Top-level ASF object GUIDS
-                           //
     {0x75, 0xB2, 0x26, 0x30, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
     {0x75, 0xB2, 0x26, 0x36, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
     {0x33, 0x00, 0x08, 0x90, 0xE5, 0xB1, 0x11, 0xCF, 0x89, 0xF4, 0x00, 0xA0, 0xC9, 0x03, 0x49, 0xCB},
@@ -76,6 +75,42 @@ static const uint8_t ASF_object_GUIDS[64][16] =
     {0x29, 0x8A, 0xE6, 0x14, 0x26, 0x22, 0x4C, 0x17, 0xB9, 0x35, 0xDA, 0xE0, 0x7E, 0xE9, 0x28, 0x9C},
     {0x22, 0x11, 0xB3, 0xFC, 0xBD, 0x23, 0x11, 0xD2, 0xB4, 0xB7, 0x00, 0xA0, 0xC9, 0x55, 0xFC, 0x6E},
     {0x18, 0x06, 0xD4, 0x74, 0xCA, 0xDF, 0x45, 0x09, 0xA4, 0xBA, 0x9A, 0xAB, 0xCB, 0x96, 0xAA, 0xE8},
+
+    // 10.3 Header Extension Object GUIDs
+    // TODO (13)
+
+    // 10.4 Stream Properties Object Stream Type GUIDs
+    // TODO (7)
+
+    // 10.4.1 Web stream Type-Specific Data GUIDs
+    // TODO (2)
+
+    // 10.5 Stream Properties Object Error Correction Type GUIDs
+    // TODO (2)
+
+    // 10.6 Header Extension Object GUIDs
+    // TODO (1)
+
+    // 10.7 Advanced Content Encryption Object System ID GUIDs
+    // TODO (1)
+
+    // 10.8 Codec List Object GUIDs
+    // TODO (1)
+
+    // 10.9 Script Command Object GUIDs
+    // TODO (1)
+
+    // 10.10 Marker Object GUIDs
+    // TODO (1)
+
+    // 10.11 Mutual Exclusion Object Exclusion Type GUIDs
+    // TODO (3)
+
+    // 10.12 Bandwidth Sharing Object GUIDs
+    // TODO (2)
+
+    // 10.13 Standard Payload Extension System GUIDs
+    // TODO (7)
 
 };
 
@@ -108,6 +143,71 @@ typedef enum ASF_object_Names_e
     ASF_Extended_Content_Encryption_Object,
     ASF_Digital_Signature_Object,
     ASF_Padding_Object,
+
+    // 10.3 Header Extension Object GUIDs
+    ASF_Extended_Stream_Properties_Object,
+    ASF_Advanced_Mutual_Exclusion_Object,
+    ASF_Group_Mutual_Exclusion_Object,
+    ASF_Stream_Prioritization_Object,
+    ASF_Bandwidth_Sharing_Object,
+    ASF_Language_List_Object,
+    ASF_Metadata_Object,
+    ASF_Metadata_Library_Object,
+    ASF_Index_Parameters_Object,
+    ASF_Media_Object_Index_Parameters_Object,
+    ASF_Timecode_Index_Parameters_Object,
+    ASF_Compatibility_Object,
+    ASF_Advanced_Content_Encryption_Object,
+
+    // 10.4 Stream Properties Object Stream Type GUIDs
+    ASF_Audio_Media,
+    ASF_Video_Media,
+    ASF_Command_Media,
+    ASF_JFIF_Media,
+    ASF_Degradable_JPEG_Media,
+    ASF_File_Transfer_Media,
+    ASF_Binary_Media,
+
+    // 10.4.1 Web stream Type-Specific Data GUIDs
+    ASF_Web_Stream_Media_Subtype,
+    ASF_Web_Stream_Format,
+
+    // 10.5 Stream Properties Object Error Correction Type GUIDs
+    ASF_No_Error_Correction,
+    ASF_Audio_Spread,
+
+    // 10.6 Header Extension Object GUIDs
+    ASF_Reserved_1,
+
+    // 10.7 Advanced Content Encryption Object System ID GUIDs
+    ASF_Content_Encryption_System_Windows_Media_DRM_Network_Devices,
+
+    // 10.8 Codec List Object GUIDs
+    ASF_Reserved_2,
+
+    // 10.9 Script Command Object GUIDs
+    ASF_Reserved_3,
+
+    // 10.10 Marker Object GUIDs
+    ASF_Reserved_4,
+
+    // 10.11 Mutual Exclusion Object Exclusion Type GUIDs
+    ASF_Mutex_Language,
+    ASF_Mutex_Bitrate,
+    ASF_Mutex_Unknown,
+
+    // 10.12 Bandwidth Sharing Object GUIDs
+    ASF_Bandwidth_Sharing_Exclusive,
+    ASF_Bandwidth_Sharing_Partial,
+
+    // 10.13 Standard Payload Extension System GUIDs
+    ASF_Payload_Extension_System_Timecode,
+    ASF_Payload_Extension_System_File_Name,
+    ASF_Payload_Extension_System_Content_Type,
+    ASF_Payload_Extension_System_Pixel_Aspect_Ratio,
+    ASF_Payload_Extension_System_Sample_Duration,
+    ASF_Payload_Extension_System_Encryption_Sample_ID,
+    ASF_Payload_Extension_System_Degradable_JPEG,
 
 } ASF_object_GUIDS_e;
 
@@ -164,6 +264,14 @@ typedef struct AsfBitrateRecord_t
 
 } AsfBitrateRecord_t;
 
+typedef struct AsfBitrateMutualExclusion_t
+{
+    int32_t StreamNumber;
+    int32_t Reserved;
+    int32_t AverageBitrate;
+
+} AsfBitrateMutualExclusion_t;
+
 typedef struct AsfStreamBitratePropertiesObject_t
 {
     int16_t BitrateRecordsCount;
@@ -178,6 +286,7 @@ typedef struct AsfHeaderExtensionObject_t
     int32_t HeaderExtensionDataSize;
     uint8_t *HeaderExtensionData;
 
+    // TODO
     //AsfExtendedStreamPropertiesObject_t
     //AsfAdvancedMutualExclusionObject_t
     //AsfGroupMutualExclusionObject_t
@@ -206,9 +315,9 @@ typedef struct AsfCodecEntry_t
 {
     int16_t Type;
     int16_t CodecNameLength;
-    uint8_t *CodecName;
+    char *CodecName;
     int16_t CodecDescriptionLength;
-    uint8_t *CodecDescription;
+    char *CodecDescription;
     int16_t CodecInformationLength;
     uint8_t *CodecInformation;
 
@@ -225,7 +334,7 @@ typedef struct AsfCodecListObject_t
 typedef struct AsfCommandTypes_t
 {
     int16_t CommandTypeNameLength;
-    uint8_t *CommandTypeName;
+    char *CommandTypeName;
 
 } AsfCommandTypes_t;
 
@@ -234,7 +343,7 @@ typedef struct AsfCommands_t
     int32_t PresentationTime;
     int16_t TypeIndex;
     int16_t CommandNameLength;
-    uint8_t *CommandName;
+    char *CommandName;
 
 } AsfCommands_t;
 
@@ -255,8 +364,8 @@ typedef struct AsfContentDescriptor_t
     int16_t DescriptorValueDataType;
     int16_t DescriptorValueLength;
 
-    uint8_t *DescriptorValue;
-    uint64_t DescriptorValueInt;
+    uint8_t *DescriptorValue_data;
+    uint64_t DescriptorValue_numerical;
 
 } AsfContentDescriptor_t;
 
@@ -275,12 +384,12 @@ typedef struct AsfContentDescriptionObject_t
     int16_t DescriptionLength;
     int16_t RatingLength;
 
-    uint8_t *Title;
-    uint8_t *Author;
-    uint8_t *Copyright;
-    uint8_t *Varies;
-    uint8_t *Description;
-    uint8_t *Rating;
+    char *Title;
+    char *Author;
+    char *Copyright;
+    char *Varies;
+    char *Description;
+    char *Rating;
 
 } AsfContentDescriptionObject_t;
 
@@ -311,7 +420,7 @@ typedef struct AsfBitrateMutualExclusionObject_t
 {
     uint8_t ExclusionType[16];
     int16_t StreamNumbersCount;
-    int32_t *StreamNumbers;
+    int16_t StreamNumbers[128];
 
 } AsfBitrateMutualExclusionObject_t;
 
@@ -323,6 +432,54 @@ typedef struct AsfErrorCorrectionObject_t
 
 } AsfErrorCorrectionObject_t;
 
+typedef struct AsfContentBrandingObject_t
+{
+    int32_t BannerImageType;
+    int32_t BannerImageDataSize;
+    uint8_t *BannerImageData;
+    int32_t BannerImageURLLength;
+    char *BannerImageURL;
+    int32_t CopyrightURLLength;
+    char *CopyrightURL;
+
+} AsfContentBrandingObject_t;
+
+typedef struct AsfContentEncryptionObject_t
+{
+    int32_t SecretDataLength;
+    uint8_t *SecretData;
+    int32_t ProtectionTypeLength;
+    char *ProtectionType;
+    int32_t KeyIDLength;
+    char *KeyID;
+    int32_t LicenseURLLength;
+    char *LicenseURL;
+
+} AsfContentEncryptionObject_t;
+
+typedef struct AsfExtendedContentEncryptionObject_t
+{
+    int32_t DataSize;
+    uint8_t *Data;
+
+} AsfExtendedContentEncryptionObject_t;
+
+typedef struct AsfDigitalSignatureObject_t
+{
+    int32_t SignatureType;
+    int32_t SignatureDataLength;
+    uint8_t *SignatureData;
+
+} AsfDigitalSignatureObject_t;
+
+typedef struct AsfPaddingObject_t
+{
+    int32_t PaddingDataLength;
+    uint8_t *PaddingData;
+
+} AsfPaddingObject_t;
+
+/* ************************************************************************** */
 typedef struct AsfHeaderObject_t
 {
     int32_t NumberOfHeaderObjects;
@@ -337,18 +494,19 @@ typedef struct AsfHeaderObject_t
     AsfScriptCommandObject_t *sc;        //!< Contains commands that can be executed on the playback timeline
     AsfMarkerObject_t *md;               //!< Provides named jump points within a file
     AsfBitrateMutualExclusionObject_t *bme;
-    AsfErrorCorrectionObject_t *eco;
+    AsfErrorCorrectionObject_t *ec;
     AsfContentDescriptionObject_t *cd;   //!< Contains bibliographic information
     AsfExtendedContentDescriptionObject_t *ecd;
     AsfStreamBitratePropertiesObject_t *sbp;
-    //AsfContentBrandingObject_t *cb;
-    //AsfContentEncryptionObject_t *ce;
-    //AsfExtendedContentEncryptionObject_t *ece;
-    //AsfDigitalSignatureObject_t *ds;
-    //AsfPaddingObject_t *pad;
+    AsfContentBrandingObject_t *cb;
+    AsfContentEncryptionObject_t *ce;
+    AsfExtendedContentEncryptionObject_t *ece;
+    AsfDigitalSignatureObject_t *ds;
+    AsfPaddingObject_t *pad;
 
 } AsfHeaderObject_t;
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!

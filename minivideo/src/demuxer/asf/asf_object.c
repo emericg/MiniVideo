@@ -45,6 +45,8 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
     FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_guid()");
+    int status = SUCCESS;
+
     read_guid(bitstr, guid);
 
     if (name)
@@ -57,6 +59,8 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
             fprintf(xml, "  <%s>{%s}</%s>\n", name, guid_str, name);
         }
     }
+
+    return status;
 }
 
 int16_t read_asf_int16(Bitstream_t *bitstr,
@@ -77,20 +81,10 @@ int16_t read_asf_int16(Bitstream_t *bitstr,
     return value;
 }
 
-int32_t read_asf_int32(Bitstream_t *bitstr, const unsigned int n,
-                       FILE *xml, const char *name)
+int32_t read_asf_int32(Bitstream_t *bitstr, FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_int32()");
-    int32_t value = (int)read_bits(bitstr, n);
-
-    if (n > 16)
-    {
-        value = (int)endian_flip_32(value);
-    }
-    else if (n > 8)
-    {
-        value = (int)endian_flip_16(value);
-    }
+    int32_t value = (int32_t)endian_flip_32(read_bits(bitstr, 32));
 
     if (name)
     {
@@ -104,15 +98,45 @@ int32_t read_asf_int32(Bitstream_t *bitstr, const unsigned int n,
     return value;
 }
 
-int64_t read_asf_int64(Bitstream_t *bitstr, const unsigned int n,
-                       FILE *xml, const char *name)
+int64_t read_asf_int64(Bitstream_t *bitstr, FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_int64()");
-    int64_t value = (int64_t)endian_flip_64(read_bits_64(bitstr, n));
+    int64_t value = (int64_t)endian_flip_64(read_bits_64(bitstr, 64));
 
     if (name)
     {
-        TRACE_1(ASF, "* %s  = %lli", name, value);
+        TRACE_1(ASF, "* %s  = %"PRId64"", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
+int64_t read_asf_int(Bitstream_t *bitstr, const unsigned int n,
+                       FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_int32()");
+    int64_t value = (int64_t)read_bits(bitstr, n);
+
+    if (n > 32)
+    {
+        value = (int64_t)endian_flip_64(value);
+    }
+    else if (n > 16)
+    {
+        value = (int64_t)endian_flip_32(value);
+    }
+    else if (n > 8)
+    {
+        value = (int64_t)endian_flip_16(value);
+    }
+
+    if (name)
+    {
+        TRACE_1(ASF, "* %s  = %"PRId64"", name, value);
         if (xml)
         {
             fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
@@ -127,35 +151,40 @@ uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
 {
     TRACE_2(ASF, "read_asf_binary(%i bytes)", size);
 
-    uint8_t *data = malloc(size+1);
-    if (data)
+    uint8_t *data = NULL;
+
+    if (size > 0)
     {
-        for (unsigned i = 0; i < size; i++)
-            data[i] = read_bits(bitstr, 8);
-        data[size] = '\0';
-
-        if (name)
+        data = malloc(size+1);
+        if (data)
         {
-#if ENABLE_DEBUG
-            TRACE_1(ASF, "* %s  = 0x", name);
+            for (unsigned i = 0; i < size; i++)
+                data[i] = read_bits(bitstr, 8);
+            data[size] = '\0';
 
-            if (size > 1023)
-                TRACE_1(ASF, "* %s  = (first 1024B) 0x", name);
-            else
+            if (name)
+            {
+#if ENABLE_DEBUG
                 TRACE_1(ASF, "* %s  = 0x", name);
-            for (unsigned i = 0; i < size && i < 1024; i++)
-                printf("%02X", data[i]);
+
+                if (size > 1023)
+                    TRACE_1(ASF, "* %s  = (first 1024B) 0x", name);
+                else
+                    TRACE_1(ASF, "* %s  = 0x", name);
+                for (unsigned i = 0; i < size && i < 1024; i++)
+                    printf("%02X", data[i]);
 #endif // ENABLE_DEBUG
 
-            if (xml)
-            {
-                if (size > 1023)
-                    fprintf(xml, "  <%s>(first 1024B) 0x", name);
-                else
-                    fprintf(xml, "  <%s>0x", name);
-                for (unsigned i = 0; i < size && i < 1024; i++)
-                    fprintf(xml, "%02X", data[i]);
-                fprintf(xml, "</%s>\n", name);
+                if (xml)
+                {
+                    if (size > 1023)
+                        fprintf(xml, "  <%s>(first 1024B) 0x", name);
+                    else
+                        fprintf(xml, "  <%s>0x", name);
+                    for (unsigned i = 0; i < size && i < 1024; i++)
+                        fprintf(xml, "%02X", data[i]);
+                    fprintf(xml, "</%s>\n", name);
+                }
             }
         }
     }
@@ -163,30 +192,34 @@ uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
     return data;
 }
 
-uint8_t *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
+char *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
                          FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_string(%i bytes)", size);
 
-    uint8_t *string = malloc(size+1);
-    if (string)
-    {
-        for (unsigned i = 0; i < size; i++)
-        {
-            string[i] = read_bits(bitstr, 8);
-            skip_bits(bitstr, 8);
-        }
-        string[size] = '\0';
+    char *string = malloc(size+1);
 
-        if (name)
+    if (size > 0)
+    {
+        if (string)
         {
+            for (unsigned i = 0; i < size; i++)
+            {
+                string[i] = read_bits(bitstr, 8);
+                skip_bits(bitstr, 8);
+            }
+            string[size] = '\0';
+
+            if (name)
+            {
 #if ENABLE_DEBUG
-            TRACE_1(ASF, "* %s  = '%s'", name, string);
+                TRACE_1(ASF, "* %s  = '%s'", name, string);
 #endif // ENABLE_DEBUG
 
-            if (xml)
-            {
-                fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+                if (xml)
+                {
+                    fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+                }
             }
         }
     }
@@ -316,6 +349,7 @@ int parse_unknown_object(Bitstream_t *bitstr, AsfObject_t *asf_object, FILE *xml
         fprintf(xml, "  </a>\n");
     }
 
+    return SUCCESS;
 }
 
 /* ************************************************************************** */
