@@ -144,14 +144,14 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
 
             if (list_header->dwList == fcc_RIFF)
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%"PRId64"\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
             }
             else
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%"PRId64"\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);

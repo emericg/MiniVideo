@@ -73,8 +73,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
 
         // Check if the tracks have already been indexed
         int track_left = 0;
-        unsigned int i = 0;
-        for (i = 0; i < avi->tracks_count; i++)
+        for (unsigned i = 0; i < avi->tracks_count; i++)
         {
             if (avi->tracks[i]->track_indexed == false &&
                 avi->tracks[i]->superindex_count == 0)
@@ -96,7 +95,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
             TRACE_1(AVI, "> movi_offset : %i", movioffset);
 
             // Parse index structure
-            for (i = 0; i < index_entry_count; i++)
+            for (unsigned i = 0; i < index_entry_count; i++)
             {
                 uint32_t dwChunkId = read_bits(bitstr, 32);
                 uint32_t dwFlags = endian_flip_32(read_bits(bitstr, 32));
@@ -170,7 +169,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                 TRACE_3(AVI, "> dwChunkLength: %u", dwChunkLength);
             }
 
-            for (i = 0; i < avi->tracks_count; i++)
+            for (unsigned i = 0; i < avi->tracks_count; i++)
             {
                 avi->tracks[i]->track_indexed = true;
             }
