@@ -476,6 +476,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
         //QString selected_title = eSelected.attributeNode("tt").value();
         QString selected_fcc = QString::fromLatin1(eSelected.attribute("fcc").value());
         QString selected_id = QString::fromLatin1(eSelected.attribute("id").value());
+        QString selected_guid = QString::fromLatin1(eSelected.attribute("guid").value());
         QString selected_title = QString::fromLatin1(eSelected.attribute("tt").value());
         int selected_size = eSelected.attribute("sz").as_int();
         int selected_version = eSelected.attribute("version").as_int();
@@ -492,8 +493,10 @@ void tabContainer::containerSelection(int64_t selected_offset)
                 ui->labelTitle->setText(selected_title + "  <font color=\"black\">(" + selected_fcc + ")</font>");
             else if (selected_id.isEmpty() == false)
                 ui->labelTitle->setText(selected_title + "  <font color=\"black\">(" + selected_id + ")</font>");
+            else if (selected_guid.isEmpty() == false)
+                ui->labelTitle->setText(selected_title + "  <font color=\"black\">{" + selected_guid + "}</font>");
             else
-                ui->labelTitle->setText(selected_title + "</font>");
+                ui->labelTitle->setText(selected_title);
         }
         else
         {
@@ -523,11 +526,15 @@ void tabContainer::containerSelection(int64_t selected_offset)
         }
         else if (type == "EBML")
         {
-            atom_title = new QLabel(tr("<b>> EBML element</b>"));
+            atom_title = new QLabel(tr("<b>> EBML Element</b>"));
+        }
+        else if (type == "ASF obj")
+        {
+            atom_title = new QLabel(tr("<b>> ASF Object</b>"));
         }
         else
         {
-            atom_title = new QLabel(tr("<b>> Atom</b>"));
+            atom_title = new QLabel(tr("<b>> atom</b>"));
         }
 
         // Set atom settings
@@ -592,6 +599,15 @@ void tabContainer::containerSelection(int64_t selected_offset)
             {
                 QLabel *fl = new QLabel(QString::fromLatin1(e.child_value()));
                 ui->gridLayout_content->addWidget(fl, fieldCount++, 1);
+            }
+            else if (strncmp(e.name(), "spacer", 4) == 0)
+            {
+                QLabel *fl = new QLabel("<strong>" + QString::fromLatin1(e.child_value()) + "</strong>");
+                fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                QLabel *sp = new QLabel();
+
+                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_content->addWidget(sp, fieldCount++, 1);
             }
             else if (strcmp(e.name(), "a"))
             {
