@@ -48,14 +48,7 @@ int asf_indexer(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
 
     for (i = 0; i < asf->tracks_count; i++)
     {
-        if (asf->tracks[i]->track_indexed == 1)
-        {
-            TRACE_1(ASF, "> track already indexed");
-        }
-        else
-        {
-            //
-        }
+        //
     }
 
     return retcode;
@@ -72,8 +65,22 @@ void asf_clean(asf_t *asf)
 {
     if (asf)
     {
-        unsigned int i = 0;
-        for (i = 0; i < asf->tracks_count; i++)
+        for (unsigned i = 0; i < 16; i++)
+        {
+            free(asf->asfh.sp[i].TypeSpecificData);
+            free(asf->asfh.sp[i].ErrorCorrectionData);
+        }
+
+        if (asf->asfh.cl)
+        {
+            //for (int j = 0; j < asf->asfh.cl->CodecEntriesCount; j++)
+            //    free(asf->asfh.cl->CodecEntries[j]);
+            //free(asf->asfh.cl->CodecEntries);
+            free(asf->asfh.cl);
+        }
+
+        //
+        for (unsigned i = 0; i < asf->tracks_count; i++)
         {
             if (asf->tracks[i])
             {

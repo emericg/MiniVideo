@@ -176,7 +176,7 @@ set(minivideo_SRC
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
         src/minivideo_codecs.c src/minivideo_avutils.h
-        src/minivideo_fourcc.c src/minivideo_twocc.c
+        src/minivideo_fourcc.c src/minivideo_twocc.c src/minivideo_guid.c
         src/utils.c src/thirdparty/simple_vector.c
     src/minitraces.c src/minitraces_conf.h
     src/bitstream.c

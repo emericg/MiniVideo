@@ -35,9 +35,166 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 #include <math.h>
 #include <limits.h>
 
+/* ************************************************************************** */
+
+int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
+    FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_guid()");
+    read_guid(bitstr, guid);
+
+    if (name)
+    {
+        char guid_str[36];
+        getGuidString(guid, guid_str);
+        TRACE_1(ASF, "* %s  = {%s}", name, guid_str);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>{%s}</%s>\n", name, guid_str, name);
+        }
+    }
+}
+
+int16_t read_asf_int16(Bitstream_t *bitstr,
+                       FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_int16()");
+    int16_t value = (int16_t)endian_flip_16(read_bits(bitstr, 16));
+
+    if (name)
+    {
+        TRACE_1(ASF, "* %s  = %i", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%i</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
+int32_t read_asf_int32(Bitstream_t *bitstr, const unsigned int n,
+                       FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_int32()");
+    int32_t value = (int)read_bits(bitstr, n);
+
+    if (n > 16)
+    {
+        value = (int)endian_flip_32(value);
+    }
+    else if (n > 8)
+    {
+        value = (int)endian_flip_16(value);
+    }
+
+    if (name)
+    {
+        TRACE_1(ASF, "* %s  = %i", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%i</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
+int64_t read_asf_int64(Bitstream_t *bitstr, const unsigned int n,
+                       FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_int64()");
+    int64_t value = (int64_t)endian_flip_64(read_bits_64(bitstr, n));
+
+    if (name)
+    {
+        TRACE_1(ASF, "* %s  = %lli", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
+uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
+                         FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_binary(%i bytes)", size);
+
+    uint8_t *data = malloc(size+1);
+    if (data)
+    {
+        for (unsigned i = 0; i < size; i++)
+            data[i] = read_bits(bitstr, 8);
+        data[size] = '\0';
+
+        if (name)
+        {
+#if ENABLE_DEBUG
+            TRACE_1(ASF, "* %s  = 0x", name);
+
+            if (size > 1023)
+                TRACE_1(ASF, "* %s  = (first 1024B) 0x", name);
+            else
+                TRACE_1(ASF, "* %s  = 0x", name);
+            for (unsigned i = 0; i < size && i < 1024; i++)
+                printf("%02X", data[i]);
+#endif // ENABLE_DEBUG
+
+            if (xml)
+            {
+                if (size > 1023)
+                    fprintf(xml, "  <%s>(first 1024B) 0x", name);
+                else
+                    fprintf(xml, "  <%s>0x", name);
+                for (unsigned i = 0; i < size && i < 1024; i++)
+                    fprintf(xml, "%02X", data[i]);
+                fprintf(xml, "</%s>\n", name);
+            }
+        }
+    }
+
+    return data;
+}
+
+uint8_t *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
+                         FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_string(%i bytes)", size);
+
+    uint8_t *string = malloc(size+1);
+    if (string)
+    {
+        for (unsigned i = 0; i < size; i++)
+        {
+            string[i] = read_bits(bitstr, 8);
+            skip_bits(bitstr, 8);
+        }
+        string[size] = '\0';
+
+        if (name)
+        {
+#if ENABLE_DEBUG
+            TRACE_1(ASF, "* %s  = '%s'", name, string);
+#endif // ENABLE_DEBUG
+
+            if (xml)
+            {
+                fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+            }
+        }
+    }
+
+    return string;
+}
+
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 int parse_asf_object(Bitstream_t *bitstr, AsfObject_t *asf_object)

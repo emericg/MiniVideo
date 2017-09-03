@@ -61,6 +61,22 @@ static const uint8_t ASF_object_GUIDS[64][16] =
     {0x8C, 0xAB, 0xDC, 0xA1, 0xA9, 0x47, 0x11, 0xCF, 0x8E, 0xE4, 0x00, 0xC0, 0x0C, 0x20, 0x53, 0x65},
     {0xB7, 0xDC, 0x07, 0x91, 0xA9, 0xB7, 0x11, 0xCF, 0x8E, 0xE6, 0x00, 0xC0, 0x0C, 0x20, 0x53, 0x65},
     {0x5F, 0xBF, 0x03, 0xB5, 0xA9, 0x2E, 0x11, 0xCF, 0x8E, 0xE3, 0x00, 0xC0, 0x0C, 0x20, 0x53, 0x65},
+
+    {0x86, 0xD1, 0x52, 0x40, 0x31, 0x1D, 0x11, 0xD0, 0xA3, 0xA4, 0x00, 0xA0, 0xC9, 0x03, 0x48, 0xF6},
+    {0x1E, 0xFB, 0x1A, 0x30, 0x0B, 0x62, 0x11, 0xD0, 0xA3, 0x9B, 0x00, 0xA0, 0xC9, 0x03, 0x48, 0xF6},
+    {0xF4, 0x87, 0xCD, 0x01, 0xA9, 0x51, 0x11, 0xCF, 0x8E, 0xE6, 0x00, 0xC0, 0x0C, 0x20, 0x53, 0x65},
+    {0xD6, 0xE2, 0x29, 0xDC, 0x35, 0xDA, 0x11, 0xD1, 0x90, 0x34, 0x00, 0xA0, 0xC9, 0x03, 0x49, 0xBE},
+    {0x75, 0xB2, 0x26, 0x35, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
+
+    {0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
+    {0xD2, 0xD0, 0xA4, 0x40, 0xE3, 0x07, 0x11, 0xD2, 0x97, 0xF0, 0x00, 0xA0, 0xC9, 0x5E, 0xA8, 0x50},
+    {0x22, 0x11, 0xB3, 0xFA, 0xBD, 0x23, 0x11, 0xD2, 0xB4, 0xB7, 0x00, 0xA0, 0xC9, 0x55, 0xFC, 0x6E},
+    {0x7B, 0xF8, 0x75, 0xCE, 0x46, 0x8D, 0x11, 0xD1, 0x8D, 0x82, 0x00, 0x60, 0x97, 0xC9, 0xA2, 0xB2},
+    {0x22, 0x11, 0xB3, 0xFB, 0xBD, 0x23, 0x11, 0xD2, 0xB4, 0xB7, 0x00, 0xA0, 0xC9, 0x55, 0xFC, 0x6E},
+    {0x29, 0x8A, 0xE6, 0x14, 0x26, 0x22, 0x4C, 0x17, 0xB9, 0x35, 0xDA, 0xE0, 0x7E, 0xE9, 0x28, 0x9C},
+    {0x22, 0x11, 0xB3, 0xFC, 0xBD, 0x23, 0x11, 0xD2, 0xB4, 0xB7, 0x00, 0xA0, 0xC9, 0x55, 0xFC, 0x6E},
+    {0x18, 0x06, 0xD4, 0x74, 0xCA, 0xDF, 0x45, 0x09, 0xA4, 0xBA, 0x9A, 0xAB, 0xCB, 0x96, 0xAA, 0xE8},
+
 };
 
 typedef enum ASF_object_Names_e
@@ -77,22 +93,22 @@ typedef enum ASF_object_Names_e
     ASF_File_Properties_Object,
     ASF_Stream_Properties_Object,
     ASF_Header_Extension_Object,
-/*
-    ASF_Codec_List_Object 86D15240-311D-11D0-A3A4-00A0C90348F6
-    ASF_Script_Command_Object 1EFB1A30-0B62-11D0-A39B-00A0C90348F6
-    ASF_Marker_Object F487CD01-A951-11CF-8EE6-00C00C205365
-    ASF_Bitrate_Mutual_Exclusion_Object D6E229DC-35DA-11D1-9034-00A0C90349BE
-    ASF_Error_Correction_Object 75B22635-668E-11CF-A6D9-00AA0062CE6C
 
-    ASF_Content_Description_Object 75B22633-668E-11CF-A6D9-00AA0062CE6C
-    ASF_Extended_Content_Description_Object D2D0A440-E307-11D2-97F0-00A0C95EA850
-    ASF_Content_Branding_Object 2211B3FA-BD23-11D2-B4B7-00A0C955FC6E
-    ASF_Stream_Bitrate_Properties_Object 7BF875CE-468D-11D1-8D82-006097C9A2B2
-    ASF_Content_Encryption_Object 2211B3FB-BD23-11D2-B4B7-00A0C955FC6E
-    ASF_Extended_Content_Encryption_Object 298AE614-2622-4C17-B935-DAE07EE9289C
-    ASF_Digital_Signature_Object  2211B3FC-BD23-11D2-B4B7-00A0C955FC6E
-    ASF_Padding_Object 1806D474-CADF-4509-A4BA-9AABCB96AAE8
-*/
+    ASF_Codec_List_Object,
+    ASF_Script_Command_Object,
+    ASF_Marker_Object,
+    ASF_Bitrate_Mutual_Exclusion_Object,
+    ASF_Error_Correction_Object,
+
+    ASF_Content_Description_Object,
+    ASF_Extended_Content_Description_Object,
+    ASF_Content_Branding_Object,
+    ASF_Stream_Bitrate_Properties_Object,
+    ASF_Content_Encryption_Object,
+    ASF_Extended_Content_Encryption_Object,
+    ASF_Digital_Signature_Object,
+    ASF_Padding_Object,
+
 } ASF_object_GUIDS_e;
 
 /* ************************************************************************** */
@@ -111,6 +127,7 @@ typedef struct AsfFilePropertiesObject_t
 
     bool BroadcastFlag;
     bool SeekableFlag;
+    int32_t Reserved;
 
     int32_t MinimumDataPacketSize;
     int32_t MaximumDataPacketSize;
@@ -132,18 +149,33 @@ typedef struct AsfStreamPropertiesObject_t
     uint8_t Reserved;
     bool EncryptedContentFlag;
 
-    uint32_t Reserved2;
+    int32_t Reserved2;
 
     uint8_t *TypeSpecificData;
     uint8_t *ErrorCorrectionData;
 
 } AsfStreamPropertiesObject_t;
 
+typedef struct AsfBitrateRecord_t
+{
+    int32_t StreamNumber;
+    int32_t Reserved;
+    int32_t AverageBitrate;
+
+} AsfBitrateRecord_t;
+
+typedef struct AsfStreamBitratePropertiesObject_t
+{
+    int16_t BitrateRecordsCount;
+    AsfBitrateRecord_t **BitrateRecords;
+
+} AsfStreamBitratePropertiesObject_t;
+
 typedef struct AsfHeaderExtensionObject_t
 {
     uint8_t ReservedField1[16];
-    uint16_t ReservedField2;
-    uint32_t HeaderExtensionDataSize;
+    int16_t ReservedField2;
+    int32_t HeaderExtensionDataSize;
     uint8_t *HeaderExtensionData;
 
     //AsfExtendedStreamPropertiesObject_t
@@ -162,6 +194,14 @@ typedef struct AsfHeaderExtensionObject_t
 
 } AsfHeaderExtensionObject_t;
 
+typedef enum AsfCodecType
+{
+    AsfCodecVideo   = 0x0001,
+    AsfCodecAudio   = 0x0002,
+    AsfCodecUnknown = 0xFFFF
+
+} AsfCodecType;
+
 typedef struct AsfCodecEntry_t
 {
     int16_t Type;
@@ -172,13 +212,13 @@ typedef struct AsfCodecEntry_t
     int16_t CodecInformationLength;
     uint8_t *CodecInformation;
 
-} AsfCodecEntry;
+} AsfCodecEntry_t;
 
 typedef struct AsfCodecListObject_t
 {
     uint8_t Reserved[16];
     int32_t CodecEntriesCount;
-    AsfCodecEntry *CodecEntries;
+    AsfCodecEntry_t **CodecEntries;
 
 } AsfCodecListObject_t;
 
@@ -201,22 +241,48 @@ typedef struct AsfCommands_t
 typedef struct AsfScriptCommandObject_t
 {
     uint8_t Reserved[16];
-    uint16_t CommandsCount;
-    uint16_t CommandTypesCount;
+    int16_t CommandsCount;
+    int16_t CommandTypesCount;
     AsfCommandTypes_t *CommandTypes;
     AsfCommands_t *Commands;
 
 } AsfScriptCommandObject_t;
 
+typedef struct AsfContentDescriptor_t
+{
+    int16_t DescriptorNameLength;
+    char *DescriptorName;
+    int16_t DescriptorValueDataType;
+    int16_t DescriptorValueLength;
+
+    uint8_t *DescriptorValue;
+    uint64_t DescriptorValueInt;
+
+} AsfContentDescriptor_t;
+
+typedef struct AsfExtendedContentDescriptionObject_t
+{
+    int16_t ContentDescriptorsCount;
+    AsfContentDescriptor_t **ContentDescriptors;
+
+} AsfExtendedContentDescriptionObject_t;
 
 typedef struct AsfContentDescriptionObject_t
 {
-    uint8_t Reserved[16];
-    int32_t CodecEntriesCount;
-    AsfCodecEntry *CodecEntries;
+    int16_t TitleLength;
+    int16_t AuthorLength;
+    int16_t CopyrightLength;
+    int16_t DescriptionLength;
+    int16_t RatingLength;
+
+    uint8_t *Title;
+    uint8_t *Author;
+    uint8_t *Copyright;
+    uint8_t *Varies;
+    uint8_t *Description;
+    uint8_t *Rating;
 
 } AsfContentDescriptionObject_t;
-
 
 typedef struct AsfMarkers
 {
@@ -259,7 +325,7 @@ typedef struct AsfErrorCorrectionObject_t
 
 typedef struct AsfHeaderObject_t
 {
-    uint32_t NumberOfHeaderObjects;
+    int32_t NumberOfHeaderObjects;
     uint8_t Reserved1;
     uint8_t Reserved2;
 
@@ -273,13 +339,13 @@ typedef struct AsfHeaderObject_t
     AsfBitrateMutualExclusionObject_t *bme;
     AsfErrorCorrectionObject_t *eco;
     AsfContentDescriptionObject_t *cd;   //!< Contains bibliographic information
-    //AsfExtendedContentDescriptionObject_t
-    //AsfStreamBitratePropertiesObject_t
-    //AsfContentBrandingObject_t
-    //AsfContentEncryptionObject_t
-    //AsfExtendedContentEncryptionObject_t
-    //AsfDigitalSignatureObject_t
-    //AsfPaddingObject_t
+    AsfExtendedContentDescriptionObject_t *ecd;
+    AsfStreamBitratePropertiesObject_t *sbp;
+    //AsfContentBrandingObject_t *cb;
+    //AsfContentEncryptionObject_t *ce;
+    //AsfExtendedContentEncryptionObject_t *ece;
+    //AsfDigitalSignatureObject_t *ds;
+    //AsfPaddingObject_t *pad;
 
 } AsfHeaderObject_t;
 
