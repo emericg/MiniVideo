@@ -704,7 +704,7 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 void tabContainer::clearContent()
 {
     //qDebug() << "CLEARING CONTENT";
-    for (int i = 0; i < 32; i++)
+    for (int i = 0; i < 64; i++)
     {
         removeRow(ui->gridLayout_header, i, true);
         removeRow(ui->gridLayout_samples, i, true);
@@ -923,7 +923,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
     }
 }
 
-bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int value, pugi::xml_node &foundElement)
+bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int64_t value, pugi::xml_node &foundElement)
 {
     bool status = false;
 
@@ -931,7 +931,7 @@ bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int
     {
         if (atom)
         {
-            if (atom.attribute("off").as_int() == value)
+            if (atom.attribute("off").as_llong() == value)
             {
                 foundElement = atom;
                 return true;

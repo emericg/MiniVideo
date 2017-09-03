@@ -72,7 +72,7 @@ public slots:
         void xmlStructureParser(pugi::xml_node &root);
         void xmlAtomParser(pugi::xml_node &root, QTreeWidgetItem *item);
 
-    bool findAtom(const pugi::xml_node &elem, const QString &attr, int value, pugi::xml_node &foundElement);
+    bool findAtom(const pugi::xml_node &elem, const QString &attr, int64_t value, pugi::xml_node &foundElement);
 
 private slots:
     void on_tabWidget_currentChanged(int index);
