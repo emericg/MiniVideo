@@ -113,9 +113,6 @@
     #undef stat64
     #define stat64 _stat64
 
-    #undef lseek
-    #define lseek(x, y, z) _lseeki64(x, y, z)
-
     #undef fseek
     #define fseek(x, y, z) _fseeki64(x, y, z)
 

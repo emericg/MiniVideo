@@ -727,8 +727,8 @@ bool tabContainer::loadXmlFile()
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
     QString filename;
-    wchar_t xmlMapPath[256] = {0};
 #if defined(_MSC_VER)
+    wchar_t xmlMapPath[256] = {0};
     wchar_t tempdir_mv[256] = {0};
     if (GetTempPath(256, tempdir_mv) != 0)
     {
@@ -740,6 +740,7 @@ bool tabContainer::loadXmlFile()
     filename += media->file_name;
     filename += "_mapped.xml";
 #elif defined(__MINGW32__) || defined(__MINGW64__)
+    char xmlMapPath[256] = {0};
     char *tempdir = getenv("TEMP");
     if (tempdir)
     {
