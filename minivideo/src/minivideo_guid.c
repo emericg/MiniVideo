@@ -48,9 +48,16 @@ char *getGuidString(const uint8_t guid_in[16], char *guid_out)
     return NULL;
 }
 
-void read_guid(Bitstream_t *bitstr, uint8_t guid[16])
+void read_guid_be(Bitstream_t *bitstr, uint8_t guid[16])
 {
-    // Read GUID
+    // Read GUID (be)
+    for (int i = 0; i < 16; i++)
+        guid[i] = (uint8_t)read_bits(bitstr, 8);
+}
+
+void read_guid_le(Bitstream_t *bitstr, uint8_t guid[16])
+{
+    // Read GUID (le)
     for (int i = 3; i > -1; i--)
         guid[i] = (uint8_t)read_bits(bitstr, 8);
     for (int i = 5; i > 3; i--)

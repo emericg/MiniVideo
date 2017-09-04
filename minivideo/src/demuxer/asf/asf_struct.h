@@ -46,9 +46,9 @@ typedef struct AsfObject_t
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static const uint8_t ASF_object_GUIDS[64][16] =
+static const uint8_t ASF_object_GUIDs[64][16] =
 {
-    // 10.1 Top-level ASF object GUIDS
+    // 10.1 Top-level ASF object GUIDs
     {0x75, 0xB2, 0x26, 0x30, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
     {0x75, 0xB2, 0x26, 0x36, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C},
     {0x33, 0x00, 0x08, 0x90, 0xE5, 0xB1, 0x11, 0xCF, 0x89, 0xF4, 0x00, 0xA0, 0xC9, 0x03, 0x49, 0xCB},
@@ -116,7 +116,7 @@ static const uint8_t ASF_object_GUIDS[64][16] =
 
 typedef enum ASF_object_Names_e
 {
-    // 10.1 Top-level ASF object GUIDS
+    // 10.1 Top-level ASF object GUIDs
     ASF_Header_Object,
     ASF_Data_Object,
     ASF_Simple_Index_Object,
@@ -209,7 +209,7 @@ typedef enum ASF_object_Names_e
     ASF_Payload_Extension_System_Encryption_Sample_ID,
     ASF_Payload_Extension_System_Degradable_JPEG,
 
-} ASF_object_GUIDS_e;
+} ASF_object_Names_e;
 
 /* ************************************************************************** */
 /* ************************************************************************** */

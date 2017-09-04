@@ -32,6 +32,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
+#include "../../minivideo_guid.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minitraces.h"
@@ -84,8 +85,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                for (int i = 0; i < 16; i++)
-                    wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
+                read_guid_le(bitstr, wave->fmt.SubFormat);
             }
             else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1 && fmt_header->dwSize >= 40)
             {
@@ -113,11 +113,10 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 //wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                for (int i = 0; i < 16; i++)
-                    wave->fmt.SubFormat[i] = read_bits(bitstr, 8);
+                read_guid_le(bitstr, wave->fmt.SubFormat);
 
-                if (memcmp(wave->fmt.SubFormat+8, wave_guid[1], 8) == 0 ||
-                    memcmp(wave->fmt.SubFormat+8, wave_guid[2], 8) == 0)
+                if (memcmp(wave->fmt.SubFormat, WAVE_SubFormat_GUIDs[WAVE_AMBISONIC_SUBTYPE_PCM], 16) == 0 ||
+                    memcmp(wave->fmt.SubFormat, WAVE_SubFormat_GUIDs[WAVE_AMBISONIC_SUBTYPE_IEEE_FLOAT], 16) == 0)
                 {
                     wave->profile = PROF_WAVE_AMB;
                 }
@@ -167,12 +166,9 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             //TRACE_1(WAV, "> wReserved          : %u", wave->fmt.wReserved);
             TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
-            TRACE_1(WAV, "> SubFormat: {%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-                    wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
-                    wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
-                    wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
-                    wave->fmt.SubFormat[8], wave->fmt.SubFormat[9],
-                    wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
+            char SubFormat_str[36];
+            getGuidString(wave->fmt.SubFormat, SubFormat_str);
+            TRACE_1(WAV, "> SubFormat: {%s}", SubFormat_str);
         }
 #endif // ENABLE_DEBUG
 
@@ -183,7 +179,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             if (fmt_header->dwSize >= 16)
             {
                 fprintf(wave->xml, "  <title>Format chunk</title>\n");
-                fprintf(wave->xml, "  <wFormatTag>0x%04X (%s)</wFormatTag>\n", wave->fmt.wFormatTag, getTccString( wave->fmt.wFormatTag));
+                fprintf(wave->xml, "  <wFormatTag>0x%04X (%s)</wFormatTag>\n", wave->fmt.wFormatTag, getTccString(wave->fmt.wFormatTag));
                 fprintf(wave->xml, "  <nChannels>%u</nChannels>\n", wave->fmt.nChannels);
                 fprintf(wave->xml, "  <nSamplesPerSec>%u</nSamplesPerSec>\n", wave->fmt.nSamplesPerSec);
                 fprintf(wave->xml, "  <nAvgBytesPerSec>%u</nAvgBytesPerSec>\n", wave->fmt.nAvgBytesPerSec);
@@ -199,12 +195,10 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 {
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
                     fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
-                    fprintf(wave->xml, "  <SubFormat>%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X</SubFormat>\n",
-                            wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
-                            wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
-                            wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
-                            wave->fmt.SubFormat[8], wave->fmt.SubFormat[9],
-                            wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
+
+                    char SubFormat_str[36];
+                    getGuidString(wave->fmt.SubFormat, SubFormat_str);
+                    fprintf(wave->xml, "  <SubFormat>{%s}</SubFormat>\n", SubFormat_str);
                 }
                 else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1 && fmt_header->dwSize >= 40)
                 {
@@ -230,13 +224,10 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
                     //fprintf(wave->xml, "  <wSamplesPerBlock>%u</wSamplesPerBlock>\n", wave->fmt.wSamplesPerBlock);
                     //fprintf(wave->xml, "  <wReserved>%u</wReserved>\n", wave->fmt.wReserved);
-                    fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
-                    fprintf(wave->xml, "  <SubFormat>%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X</SubFormat>\n",
-                            wave->fmt.SubFormat[0], wave->fmt.SubFormat[1], wave->fmt.SubFormat[2], wave->fmt.SubFormat[3],
-                            wave->fmt.SubFormat[4], wave->fmt.SubFormat[5],
-                            wave->fmt.SubFormat[6], wave->fmt.SubFormat[7],
-                            wave->fmt.SubFormat[8], wave->fmt.SubFormat[9],
-                            wave->fmt.SubFormat[10], wave->fmt.SubFormat[11], wave->fmt.SubFormat[12], wave->fmt.SubFormat[13], wave->fmt.SubFormat[14], wave->fmt.SubFormat[15]);
+
+                    char SubFormat_str[36];
+                    getGuidString(wave->fmt.SubFormat, SubFormat_str);
+                    fprintf(wave->xml, "  <SubFormat>{%s}</SubFormat>\n", SubFormat_str);
                 }
             }
             fprintf(wave->xml, "  </a>\n");

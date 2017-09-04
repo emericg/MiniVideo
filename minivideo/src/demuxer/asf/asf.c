@@ -536,20 +536,20 @@ static int parse_header(Bitstream_t *bitstr, AsfObject_t *header, asf_t *asf)
         AsfObject_t asf_object;
         retcode = parse_asf_object(bitstr, &asf_object);
 
-        if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_File_Properties_Object], 16) == 0)
+        if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_File_Properties_Object], 16) == 0)
         {
             retcode = parse_fileproperties(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Stream_Properties_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Stream_Properties_Object], 16) == 0)
         {
             retcode = parse_streamproperties(bitstr, &asf_object, asf, asf->tracks_count);
             asf->tracks_count++;
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Header_Extension_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Header_Extension_Object], 16) == 0)
         {
             retcode = parse_header_extension(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Codec_List_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Codec_List_Object], 16) == 0)
         {
             retcode = parse_codeclist(bitstr, &asf_object, asf);
         }
@@ -563,43 +563,43 @@ static int parse_header(Bitstream_t *bitstr, AsfObject_t *header, asf_t *asf)
             retcode = parse_marker(bitstr, &asf_object, asf);
         }
 */
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Bitrate_Mutual_Exclusion_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Bitrate_Mutual_Exclusion_Object], 16) == 0)
         {
             retcode = parse_bitratemutualexclusion(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Error_Correction_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Error_Correction_Object], 16) == 0)
         {
             retcode = parse_errorcorrection(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Content_Description_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Content_Description_Object], 16) == 0)
         {
             retcode = parse_contentdescription(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Extended_Content_Description_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Extended_Content_Description_Object], 16) == 0)
         {
             retcode = parse_extendedcontentdescription(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Content_Branding_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Content_Branding_Object], 16) == 0)
         {
             retcode = parse_contentbranding(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Stream_Bitrate_Properties_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Stream_Bitrate_Properties_Object], 16) == 0)
         {
             retcode = parse_streambitrateproperties(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Content_Encryption_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Content_Encryption_Object], 16) == 0)
         {
             retcode = parse_contentencryption(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Extended_Content_Encryption_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Extended_Content_Encryption_Object], 16) == 0)
         {
             retcode = parse_extendedcontentencryption(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Digital_Signature_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Digital_Signature_Object], 16) == 0)
         {
             retcode = parse_digitalsignature(bitstr, &asf_object, asf);
         }
-        else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Padding_Object], 16) == 0)
+        else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Padding_Object], 16) == 0)
         {
             retcode = parse_padding(bitstr, &asf_object, asf);
         }
@@ -701,19 +701,19 @@ int asf_fileParse(MediaFile_t *media)
             AsfObject_t asf_object;
             retcode = parse_asf_object(bitstr, &asf_object);
 
-            if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Header_Object], 16) == 0)
+            if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Header_Object], 16) == 0)
             {
                 retcode = parse_header(bitstr, &asf_object, &asf);
             }
-            else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Data_Object], 16) == 0)
+            else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Data_Object], 16) == 0)
             {
                 retcode = parse_data(bitstr, &asf_object, &asf);
             }
-            else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Simple_Index_Object], 16) == 0)
+            else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Simple_Index_Object], 16) == 0)
             {
                 retcode = parse_simple_index(bitstr, &asf_object, &asf);
             }
-            else if (memcmp(asf_object.guid, ASF_object_GUIDS[ASF_Index_Object], 16) == 0)
+            else if (memcmp(asf_object.guid, ASF_object_GUIDs[ASF_Index_Object], 16) == 0)
             {
                 retcode = parse_index(bitstr, &asf_object, &asf);
             }

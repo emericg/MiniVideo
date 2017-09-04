@@ -30,6 +30,7 @@
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
+#include "../../minivideo_guid.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
@@ -545,21 +546,18 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         uint32_t dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                         uint8_t SubFormat_GUID[16];
-                        for (int i = 0; i < 16; i++)
-                        {
-                            SubFormat_GUID[i] = read_bits(bitstr, 8);
-                        }
+                        char SubFormat_GUID_str[36];
+
+                        read_guid_le(bitstr, SubFormat_GUID);
+                        getGuidString(SubFormat_GUID, SubFormat_GUID_str);
+
 #if ENABLE_DEBUG
                         TRACE_1(AVI, "> cbSize: %u", cbSize);
                         TRACE_1(AVI, "> samples_wValidBitsPerSample : %u", samples_wValidBitsPerSample);
                         TRACE_1(AVI, "> samples_wSamplesPerBlock    : %u", samples_wSamplesPerBlock);
                         TRACE_1(AVI, "> samples_wReserved   : %u", samples_wReserved);
                         TRACE_1(AVI, "> dwChannelMask       : %u", dwChannelMask);
-                        TRACE_1(AVI, "> SubFormat_GUID      : [%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u]",
-                                SubFormat_GUID[0], SubFormat_GUID[1], SubFormat_GUID[2], SubFormat_GUID[3],
-                                SubFormat_GUID[4], SubFormat_GUID[5], SubFormat_GUID[6], SubFormat_GUID[7],
-                                SubFormat_GUID[8], SubFormat_GUID[9], SubFormat_GUID[10], SubFormat_GUID[11],
-                                SubFormat_GUID[12], SubFormat_GUID[13], SubFormat_GUID[14], SubFormat_GUID[15]);
+                        TRACE_1(AVI, "> SubFormat_GUID      : {%s}", SubFormat_GUID_str);
 #endif
                         if (avi->xml)
                         {
@@ -568,12 +566,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                             fprintf(avi->xml, "  <samples_wSamplesPerBlock>%u</samples_wSamplesPerBlock>\n", samples_wSamplesPerBlock);
                             fprintf(avi->xml, "  <samples_wReserved>%u</samples_wReserved>\n", samples_wReserved);
                             fprintf(avi->xml, "  <dwChannelMask>%u</dwChannelMask>\n", dwChannelMask);
-                            fprintf(avi->xml, "  <SubFormat_GUID>%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X</SubFormat_GUID>\n",
-                                    SubFormat_GUID[0], SubFormat_GUID[1], SubFormat_GUID[2], SubFormat_GUID[3],
-                                    SubFormat_GUID[4], SubFormat_GUID[5],
-                                    SubFormat_GUID[6], SubFormat_GUID[7],
-                                    SubFormat_GUID[8], SubFormat_GUID[9],
-                                    SubFormat_GUID[10], SubFormat_GUID[11], SubFormat_GUID[12], SubFormat_GUID[13], SubFormat_GUID[14], SubFormat_GUID[15]);
+                            fprintf(avi->xml, "  <SubFormat_GUID>{%s}</SubFormat_GUID>\n", SubFormat_GUID_str);
                         }
                     }
                 }

@@ -609,7 +609,7 @@ void print_pes(PesHeader_t *header, PesPacket_t *packet)
 
 /*!
  * \brief parse_pes_padding
- * \param bitstr
+ * \param bitstr: Our bitstream reader.
  * \param header
  * \param packet
  * \return 1 if succeed, 0 otherwise.
@@ -640,7 +640,7 @@ int parse_pes_padding(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *pac
 
 /*!
  * \brief Parse the 'body' of a PES packet containing audio data.
- * \param bitstr
+ * \param bitstr: Our bitstream reader.
  * \param header
  * \param packet
  * \param map
@@ -980,7 +980,7 @@ int parse_pes_a(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
 
 /*!
  * \brief Parse the 'body' of a PES packet containing video data.
- * \param bitstr
+ * \param bitstr: Our bitstream reader.
  * \param header
  * \param packet
  * \param map

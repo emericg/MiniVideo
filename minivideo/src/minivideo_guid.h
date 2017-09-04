@@ -36,7 +36,9 @@ extern "C" {
 
 char *getGuidString(const uint8_t guid_in[16], char *guid_out);
 
-void read_guid(Bitstream_t *bitstr, uint8_t guid[16]);
+void read_guid_be(Bitstream_t *bitstr, uint8_t guid[16]);
+
+void read_guid_le(Bitstream_t *bitstr, uint8_t guid[16]);
 
 /* ************************************************************************** */
 #ifdef __cplusplus

@@ -47,7 +47,7 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
     TRACE_2(ASF, "read_asf_guid()");
     int status = SUCCESS;
 
-    read_guid(bitstr, guid);
+    read_guid_le(bitstr, guid);
 
     if (name)
     {
