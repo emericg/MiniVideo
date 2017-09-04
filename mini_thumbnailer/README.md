@@ -24,7 +24,7 @@ minivideo library must have been built first.
 
 Installation into the system, available for root user with both testing softwares:
 >  $ su  
->  # make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+>  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
 
 Using mini_thumbnailer
