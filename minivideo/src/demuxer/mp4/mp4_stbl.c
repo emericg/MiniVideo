@@ -1592,7 +1592,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
-    TRACE_1(MP4, "> colour_type             : %u", getFccString_le(colour_type, fcc));
+    TRACE_1(MP4, "> colour_type             : %s", getFccString_le(colour_type, fcc));
     if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
         colour_type == MV_FOURCC_BE('n','c','l','x'))
     {
@@ -1608,7 +1608,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Colour Information</title>\n");
-        fprintf(mp4->xml, "  <colour_type>%u</colour_type>\n", colour_type);
+        fprintf(mp4->xml, "  <colour_type>%s</colour_type>\n", getFccString_le(colour_type, fcc));
         if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
             colour_type == MV_FOURCC_BE('n','c','l','x'))
         {
