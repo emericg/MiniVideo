@@ -1565,8 +1565,8 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         colour_primaries = read_bits(bitstr, 16);
         transfer_characteristics = read_bits(bitstr, 16);
         matrix_coefficients = read_bits(bitstr, 16);
-        /*unsigned int reserved =*/ //read_bits(bitstr, 7);
-        track->color_range = read_bits(bitstr, 16);
+        track->color_range = read_bit(bitstr);
+        unsigned int reserved = read_bits(bitstr, 7);
 
         if (matrix_coefficients == 1)
         {
