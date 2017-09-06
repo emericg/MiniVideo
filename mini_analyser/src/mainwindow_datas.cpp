@@ -208,6 +208,8 @@ int MainWindow::setActiveFile()
                 currentMediaLoaded = media->file_path;
 
                 wrapper->end_ui = std::chrono::steady_clock::now();
+
+                resizeEvent(nullptr);
             }
 
             // Add the file to the dev tab
