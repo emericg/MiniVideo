@@ -66,15 +66,19 @@ tabContainer::tabContainer(QWidget *parent) :
 
     // Setup HEX widget
     ui->widget_hex->setReadOnly(true);
+    ui->widget_hex->setAddressArea(false);
+    ui->widget_hex->setBytesPerLine(16);
+    ui->widget_hex->setHexCaps(true);
+
 #ifdef Q_OS_LINUX
     /*int id =*/ QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 11));
+    ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 12));
 #endif
 #ifdef Q_OS_OSX
     ui->widget_hex->setFont(QFont("Andale Mono", 14));
 #endif
 #ifdef Q_OS_WIN32
-    ui->widget_hex->setFont(QFont("Lucida Console", 11));
+    ui->widget_hex->setFont(QFont("Lucida Console", 12));
 #endif
 }
 
@@ -386,7 +390,6 @@ void tabContainer::sampleSelection(int sid)
         }
 
         // HexEditor
-        ui->widget_hex->setReadOnly(true);
         ui->widget_hex->setData(mediaFile);
         ui->widget_hex->setData(ui->widget_hex->dataAt(offset, size));
     }
@@ -416,7 +419,6 @@ void tabContainer::containerSelectionEmpty()
     ui->widgetSamples->hide();
 
     // HexEditor
-    ui->widget_hex->setReadOnly(true);
     ui->widget_hex->setData(mediaFile);
 }
 
@@ -630,7 +632,6 @@ void tabContainer::containerSelection(int64_t selected_offset)
         }
 
         // HexEditor
-        ui->widget_hex->setReadOnly(true);
         ui->widget_hex->setData(mediaFile);
         ui->widget_hex->setData(ui->widget_hex->dataAt(selected_offset, selected_size));
     }
