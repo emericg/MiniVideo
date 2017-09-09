@@ -44,11 +44,17 @@ int asf_indexer(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
 {
     TRACE_INFO(ASF, BLD_GREEN "asf_indexer()" CLR_RESET);
     int retcode = SUCCESS;
-    unsigned int i = 0, j = 0;
 
-    for (i = 0; i < asf->tracks_count; i++)
+    for (unsigned tid = 0; tid < asf->tracks_count; tid++)
     {
-        //
+        if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Audio_Media], 16) == 0)
+        {
+
+        }
+        else if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Video_Media], 16) == 0)
+        {
+
+        }
     }
 
     return retcode;

@@ -40,14 +40,17 @@ int32_t read_asf_int32(Bitstream_t *bitstr, FILE *xml, const char *name);
 
 int64_t read_asf_int64(Bitstream_t *bitstr, FILE *xml, const char *name);
 
-int64_t read_asf_int(Bitstream_t *bitstr, const unsigned int n,
+int64_t read_asf_int(Bitstream_t *bitstr, const int n,
                      FILE *xml, const char *name);
 
-uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
+uint8_t *read_asf_binary(Bitstream_t *bitstr, const int sizeBytes,
                          FILE *xml, const char *name);
 
-char *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
-                      FILE *xml, const char *name);
+char *read_asf_string_ascii(Bitstream_t *bitstr, const int sizeChar,
+                            FILE *xml, const char *name);
+
+char *read_asf_string_utf16(Bitstream_t *bitstr, const int sizeChar,
+                            FILE *xml, const char *name);
 
 /* ************************************************************************** */
 

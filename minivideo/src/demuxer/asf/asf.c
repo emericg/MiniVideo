@@ -179,11 +179,11 @@ static int parse_contentencryption(Bitstream_t *bitstr, AsfObject_t *obj, asf_t 
         asf->asfh.ce->SecretDataLength = read_asf_int32(bitstr, asf->xml, "SecretDataLength");
         asf->asfh.ce->SecretData = read_asf_binary(bitstr, asf->asfh.ce->SecretDataLength, asf->xml, "SecretData");
         asf->asfh.ce->ProtectionTypeLength = read_asf_int32(bitstr, asf->xml, "ProtectionTypeLength");
-        asf->asfh.ce->ProtectionType = read_asf_string(bitstr, asf->asfh.ce->ProtectionTypeLength, asf->xml, "ProtectionType");
+        asf->asfh.ce->ProtectionType = read_asf_string_utf16(bitstr, (asf->asfh.ce->ProtectionTypeLength/2), asf->xml, "ProtectionType");
         asf->asfh.ce->KeyIDLength = read_asf_int32(bitstr, asf->xml, "KeyIDLength");
-        asf->asfh.ce->KeyID = read_asf_string(bitstr, asf->asfh.ce->KeyIDLength, asf->xml, "KeyID");
+        asf->asfh.ce->KeyID = read_asf_string_ascii(bitstr, asf->asfh.ce->KeyIDLength, asf->xml, "KeyID");
         asf->asfh.ce->LicenseURLLength = read_asf_int32(bitstr, asf->xml, "LicenseURLLength");
-        asf->asfh.ce->LicenseURL = read_asf_string(bitstr, asf->asfh.ce->LicenseURLLength, asf->xml, "LicenseURL");
+        asf->asfh.ce->LicenseURL = read_asf_string_utf16(bitstr, (asf->asfh.ce->LicenseURLLength/2), asf->xml, "LicenseURL");
     }
 
     fprintf(asf->xml, "  </a>\n");
@@ -208,9 +208,9 @@ static int parse_contentbranding(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *a
         asf->asfh.cb->BannerImageDataSize = read_asf_int32(bitstr, asf->xml, "BannerImageDataSize");
         asf->asfh.cb->BannerImageData = read_asf_binary(bitstr, asf->asfh.cb->BannerImageDataSize, asf->xml, "BannerImageData");
         asf->asfh.cb->BannerImageURLLength = read_asf_int32(bitstr, asf->xml, "BannerImageURLLength");
-        asf->asfh.cb->BannerImageURL = read_asf_string(bitstr, asf->asfh.cb->BannerImageURLLength, asf->xml, "BannerImageURL");
+        asf->asfh.cb->BannerImageURL = read_asf_string_utf16(bitstr, (asf->asfh.cb->BannerImageURLLength / 2), asf->xml, "BannerImageURL");
         asf->asfh.cb->CopyrightURLLength = read_asf_int32(bitstr, asf->xml, "CopyrightURLLength");
-        asf->asfh.cb->CopyrightURL = read_asf_string(bitstr, asf->asfh.cb->CopyrightURLLength, asf->xml, "CopyrightURL");
+        asf->asfh.cb->CopyrightURL = read_asf_string_utf16(bitstr, (asf->asfh.cb->CopyrightURLLength / 2), asf->xml, "CopyrightURL");
     }
 
     fprintf(asf->xml, "  </a>\n");
@@ -275,23 +275,24 @@ static int parse_contentdescriptor(Bitstream_t *bitstr, AsfContentDescriptor_t *
     if (cd)
     {
         cd->DescriptorNameLength = read_asf_int16(bitstr, asf->xml, "DescriptorNameLength");
-        if (cd->DescriptorNameLength > 0)
-            cd->DescriptorName = read_asf_string(bitstr, cd->DescriptorNameLength, asf->xml, "DescriptorName");
+        cd->DescriptorName = read_asf_string_utf16(bitstr, (cd->DescriptorNameLength / 2), asf->xml, "DescriptorName");
 
         cd->DescriptorValueDataType = read_asf_int16(bitstr, asf->xml, "DescriptorValueDataType");
         cd->DescriptorValueLength = read_asf_int16(bitstr, asf->xml, "DescriptorValueLength");
         if (cd->DescriptorValueLength > 0)
         {
             if (cd->DescriptorValueDataType == 0) // string
-                cd->DescriptorValue_data = (uint8_t *)read_asf_string(bitstr, cd->DescriptorValueLength, asf->xml, "DescriptorValue");
+                cd->DescriptorValue_data = (uint8_t *)read_asf_string_utf16(bitstr, (cd->DescriptorValueLength / 2), asf->xml, "DescriptorValue");
             else if (cd->DescriptorValueDataType == 1) // binary
-                cd->DescriptorValue_data = read_asf_binary(bitstr, cd->DescriptorValueLength, asf->xml, "DescriptorValue");
+                cd->DescriptorValue_data = read_asf_binary(bitstr, (cd->DescriptorValueLength / 2), asf->xml, "DescriptorValue");
             else if (cd->DescriptorValueDataType == 2 || cd->DescriptorValueDataType == 3) // bool / int32
                 cd->DescriptorValue_numerical = read_asf_int32(bitstr, asf->xml, "DescriptorValue");
             else if (cd->DescriptorValueDataType == 4) // int64
                 cd->DescriptorValue_numerical = read_asf_int64(bitstr, asf->xml, "DescriptorValue");
             else if (cd->DescriptorValueDataType == 5) // int16
                 cd->DescriptorValue_numerical = read_asf_int16(bitstr, asf->xml, "DescriptorValue");
+            else
+                TRACE_ERROR(ASF, "CONTENT DESCRIPTOR TYPE ERROR (%02X)", cd->DescriptorValueDataType);
         }
     }
 
@@ -348,11 +349,11 @@ static int parse_contentdescription(Bitstream_t *bitstr, AsfObject_t *obj, asf_t
         asf->asfh.cd->DescriptionLength = read_asf_int16(bitstr, asf->xml, "DescriptionLength");
         asf->asfh.cd->RatingLength = read_asf_int16(bitstr, asf->xml, "RatingLength");
 
-        asf->asfh.cd->Title = read_asf_string(bitstr, asf->asfh.cd->TitleLength, asf->xml, "Title");
-        asf->asfh.cd->Author = read_asf_string(bitstr, asf->asfh.cd->AuthorLength, asf->xml, "Author");
-        asf->asfh.cd->Copyright = read_asf_string(bitstr, asf->asfh.cd->CopyrightLength, asf->xml, "Copyright");
-        asf->asfh.cd->Description = read_asf_string(bitstr, asf->asfh.cd->DescriptionLength, asf->xml, "Description");
-        asf->asfh.cd->Rating = read_asf_string(bitstr, asf->asfh.cd->RatingLength, asf->xml, "Rating");
+        asf->asfh.cd->Title = read_asf_string_utf16(bitstr, (asf->asfh.cd->TitleLength / 2), asf->xml, "Title");
+        asf->asfh.cd->Author = read_asf_string_utf16(bitstr, (asf->asfh.cd->AuthorLength / 2), asf->xml, "Author");
+        asf->asfh.cd->Copyright = read_asf_string_utf16(bitstr, (asf->asfh.cd->CopyrightLength / 2), asf->xml, "Copyright");
+        asf->asfh.cd->Description = read_asf_string_utf16(bitstr, (asf->asfh.cd->DescriptionLength / 2), asf->xml, "Description");
+        asf->asfh.cd->Rating = read_asf_string_utf16(bitstr, (asf->asfh.cd->RatingLength / 2), asf->xml, "Rating");
     }
 
     fprintf(asf->xml, "  </a>\n");
@@ -385,10 +386,10 @@ static int parse_codecentry(Bitstream_t *bitstr, asf_t *asf, AsfCodecEntry_t *c)
         }
 
         c->CodecNameLength = read_asf_int16(bitstr, asf->xml, "CodecNameLength");
-        c->CodecName = read_asf_string(bitstr, c->CodecNameLength, asf->xml, "CodecName");
+        c->CodecName = read_asf_string_utf16(bitstr, c->CodecNameLength, asf->xml, "CodecName");
 
         c->CodecDescriptionLength = read_asf_int16(bitstr, asf->xml, "CodecDescriptionLength");
-        c->CodecDescription = read_asf_string(bitstr, c->CodecDescriptionLength, asf->xml, "CodecDescription");
+        c->CodecDescription = read_asf_string_utf16(bitstr, c->CodecDescriptionLength, asf->xml, "CodecDescription");
 
         c->CodecInformationLength = read_asf_int16(bitstr, asf->xml, "CodecInformationLength");
         c->CodecInformation = read_asf_binary(bitstr, c->CodecInformationLength, asf->xml, "CodecInformation");
@@ -439,6 +440,8 @@ static int parse_streamproperties(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *
 
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Stream Properties");
+
+    asf->tracks_count++;
 
     read_asf_guid(bitstr, asf->asfh.sp[tid].StreamType, asf->xml, "StreamType");
     read_asf_guid(bitstr, asf->asfh.sp[tid].ErrorCorrectionType, asf->xml, "ErrorCorrectionType");

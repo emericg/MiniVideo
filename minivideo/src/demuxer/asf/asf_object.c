@@ -42,7 +42,7 @@
 /* ************************************************************************** */
 
 int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
-    FILE *xml, const char *name)
+                  FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_guid()");
     int status = SUCCESS;
@@ -115,8 +115,8 @@ int64_t read_asf_int64(Bitstream_t *bitstr, FILE *xml, const char *name)
     return value;
 }
 
-int64_t read_asf_int(Bitstream_t *bitstr, const unsigned int n,
-                       FILE *xml, const char *name)
+int64_t read_asf_int(Bitstream_t *bitstr, const int n,
+                     FILE *xml, const char *name)
 {
     TRACE_2(ASF, "read_asf_int32()");
     int64_t value = (int64_t)read_bits(bitstr, n);
@@ -146,42 +146,42 @@ int64_t read_asf_int(Bitstream_t *bitstr, const unsigned int n,
     return value;
 }
 
-uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
+uint8_t *read_asf_binary(Bitstream_t *bitstr, const int sizeBytes,
                          FILE *xml, const char *name)
 {
-    TRACE_2(ASF, "read_asf_binary(%i bytes)", size);
+    TRACE_2(ASF, "read_asf_binary(%i bytes)", sizeBytes);
 
     uint8_t *data = NULL;
 
-    if (size > 0)
+    if (sizeBytes > 0)
     {
-        data = malloc(size+1);
+        data = malloc(sizeBytes+1);
         if (data)
         {
-            for (unsigned i = 0; i < size; i++)
+            for (int i = 0; i < sizeBytes; i++)
                 data[i] = read_bits(bitstr, 8);
-            data[size] = '\0';
+            data[sizeBytes] = '\0';
 
             if (name)
             {
 #if ENABLE_DEBUG
                 TRACE_1(ASF, "* %s  = 0x", name);
 
-                if (size > 1023)
+                if (sizeBytes > 1023)
                     TRACE_1(ASF, "* %s  = (first 1024B) 0x", name);
                 else
                     TRACE_1(ASF, "* %s  = 0x", name);
-                for (unsigned i = 0; i < size && i < 1024; i++)
+                for (int i = 0; i < sizeBytes && i < 1024; i++)
                     printf("%02X", data[i]);
 #endif // ENABLE_DEBUG
 
                 if (xml)
                 {
-                    if (size > 1023)
+                    if (sizeBytes > 1023)
                         fprintf(xml, "  <%s>(first 1024B) 0x", name);
                     else
                         fprintf(xml, "  <%s>0x", name);
-                    for (unsigned i = 0; i < size && i < 1024; i++)
+                    for (int i = 0; i < sizeBytes && i < 1024; i++)
                         fprintf(xml, "%02X", data[i]);
                     fprintf(xml, "</%s>\n", name);
                 }
@@ -192,23 +192,61 @@ uint8_t *read_asf_binary(Bitstream_t *bitstr, const unsigned int size,
     return data;
 }
 
-char *read_asf_string(Bitstream_t *bitstr, const unsigned int size,
-                         FILE *xml, const char *name)
+char *read_asf_string_ascii(Bitstream_t *bitstr, const int sizeChar,
+                            FILE *xml, const char *name)
 {
-    TRACE_2(ASF, "read_asf_string(%i bytes)", size);
+    TRACE_2(ASF, "read_asf_string_ascii(%i ASCII char)", sizeChar);
 
-    char *string = malloc(size+1);
+    char *string = NULL;
 
-    if (size > 0)
+    if (sizeChar > 0)
     {
+        string = malloc(sizeChar+1);
         if (string)
         {
-            for (unsigned i = 0; i < size; i++)
+            for (int i = 0; i < sizeChar; i++)
+            {
+                string[i] = read_bits(bitstr, 8);
+            }
+            string[sizeChar] = '\0';
+
+            if (name)
+            {
+#if ENABLE_DEBUG
+                TRACE_1(ASF, "* %s  = '%s'", name, string);
+#endif // ENABLE_DEBUG
+
+                if (xml)
+                {
+                    fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+                }
+            }
+        }
+    }
+
+    return string;
+}
+
+char *read_asf_string_utf16(Bitstream_t *bitstr, const int sizeChar,
+                            FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_string_utf16(%i UTF16 char)", sizeChar);
+
+    char *string = NULL;
+
+    if (sizeChar > 0)
+    {
+        //int sizeBytes = sizeChar * 2;
+
+        string = malloc(sizeChar+1);
+        if (string)
+        {
+            for (int i = 0; i < sizeChar; i++)
             {
                 string[i] = read_bits(bitstr, 8);
                 skip_bits(bitstr, 8);
             }
-            string[size] = '\0';
+            string[sizeChar] = '\0';
 
             if (name)
             {
