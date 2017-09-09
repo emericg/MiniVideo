@@ -436,12 +436,12 @@ int jumpy_asf(Bitstream_t *bitstr, AsfObject_t *parent, AsfObject_t *current)
             if (offset_end > file_size)
                 offset_end = file_size;
         }
-        TRACE_WARNING(ASF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // If the offset_end is past the last byte of the file, we do not need to jump
         // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
+            TRACE_WARNING(ASF, "JUMPY > going EOF (%lli)", file_size);
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }

@@ -476,11 +476,12 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
         // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
+            TRACE_WARNING(RIF, "JUMPY > going EOF (%lli)", file_size);
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
 
-        //TRACE_WARNING(RIF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        TRACE_WARNING(RIF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

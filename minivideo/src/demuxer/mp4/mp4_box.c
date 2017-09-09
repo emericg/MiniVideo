@@ -296,11 +296,12 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
         // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
+            TRACE_WARNING(MP4, "JUMPY > going EOF (%lli)", file_size);
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
 
-        //TRACE_WARNING(MP4, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        TRACE_WARNING(MP4, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

@@ -508,11 +508,13 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
         // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
+            TRACE_WARNING(MKV, "JUMPY > going EOF (%lli)", file_size);
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
 
-        //TRACE_WARNING(MKV, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        TRACE_WARNING(MKV, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        TRACE_WARNING(MKV, "JUMPY > FIXME FIXME FIXME");
 
         return bitstream_goto_offset(bitstr, offset_end); // FIXME
 
