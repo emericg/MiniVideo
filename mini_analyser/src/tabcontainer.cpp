@@ -704,13 +704,14 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 
 void tabContainer::clearContent()
 {
-    //qDebug() << "CLEARING CONTENT";
-    for (int i = 0; i < 64; i++)
-    {
-        removeRow(ui->gridLayout_header, i, true);
-        removeRow(ui->gridLayout_samples, i, true);
-        removeRow(ui->gridLayout_content, i, true);
-    }
+    //qDebug() << "tabContainer::clearContent()";
+
+    for (int i = 0;  i < ui->gridLayout_header->columnCount(); i++)
+        removeColumn(ui->gridLayout_header, i, true);
+    for (int i = 0;  i < ui->gridLayout_samples->columnCount(); i++)
+        removeColumn(ui->gridLayout_samples, i, true);
+    for (int i = 0;  i < ui->gridLayout_content->columnCount(); i++)
+        removeColumn(ui->gridLayout_content, i, true);
 }
 
 /* ************************************************************************** */
