@@ -617,9 +617,7 @@ static int mkv_parse_info(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
                 mkv->info.Duration = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "Duration");
                 break;
             case eid_DateUTC:
-                mkv->info.DateUTC = read_ebml_data_date(bitstr, element_sub.size);
-                TRACE_1(MKV, "* DateUTC   = '%llu'", mkv->info.DateUTC);
-                if (mkv->xml) fprintf(mkv->xml, "  <DateUTC>%lu</DateUTC>\n", mkv->info.DateUTC);
+                mkv->info.DateUTC = read_ebml_data_date2(bitstr, &element_sub, mkv->xml, "DateUTC");
                 break;
             case eid_Title:
                 mkv->info.Title = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "Title");

@@ -46,6 +46,10 @@ typedef struct EbmlElement_t
 
 /* ************************************************************************** */
 
+uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime);
+
+/* ************************************************************************** */
+
 int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element);
 void print_ebml_element(EbmlElement_t *element);
 void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title);
@@ -67,7 +71,7 @@ char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *
 uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size);
 uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-int64_t read_ebml_data_date(Bitstream_t *bitstr, int size);
+int64_t read_ebml_data_date(Bitstream_t *bitstr);
 int64_t read_ebml_data_date2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
 /* ************************************************************************** */

@@ -40,6 +40,24 @@
 
 /* ************************************************************************** */
 
+#define EBML_TICK 1000000000LL
+#define SEC_TO_UNIX_EPOCH 978264000LL // 978285600LL
+
+/*!
+ * \param ebmlTime: Seconds since January 1, 2000
+ * \return Unix time
+ *
+ * For infos on "EBML time":
+ * - https://www.matroska.org/technical/specs/index.html
+ * - https://en.wikipedia.org/wiki/Epoch_(reference_date)
+ */
+uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime)
+{
+     return (uint64_t)(ebmlTime / EBML_TICK + SEC_TO_UNIX_EPOCH);
+}
+
+/* ************************************************************************** */
+
 /*!
  * \brief Read an EBML element ID.
  * \param *bitstr The bitstream to read.
@@ -258,17 +276,29 @@ int64_t read_ebml_data_int2(Bitstream_t *bitstr, EbmlElement_t *element,
 
 /* ************************************************************************** */
 
-int64_t read_ebml_data_date(Bitstream_t *bitstr, int size)
+int64_t read_ebml_data_date(Bitstream_t *bitstr)
 {
-    TRACE_2(MKV, "read_ebml_data_date(%i bits)", size*8);
-    return 0;
+    TRACE_2(MKV, "read_ebml_data_date()", 64);
+    return (int64_t)read_bits_64(bitstr, 64);
 }
 
 int64_t read_ebml_data_date2(Bitstream_t *bitstr, EbmlElement_t *element,
                              FILE *xml, const char *name)
 {
-    TRACE_2(MKV, "read_ebml_data_date2()");
-    return 0;
+    TRACE_2(MKV, "read_ebml_data_date2(%i bits)", element->size*8);
+    int64_t value = (int64_t)read_bits_64(bitstr, 64);
+
+    if (name)
+    {
+        TRACE_1(MKV, "* %s  = %lli", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+
 }
 
 /* ************************************************************************** */

@@ -733,7 +733,7 @@ int asf_fileParse(MediaFile_t *media)
             media->container_mapper_fd = asf.xml;
 
         // Go for the indexation
-        retcode = asf_indexer(bitstr, media, &asf),
+        retcode = asf_convert(bitstr, media, &asf),
         media->container_profile = asf.profile;
 
         // Free asf_t structure content

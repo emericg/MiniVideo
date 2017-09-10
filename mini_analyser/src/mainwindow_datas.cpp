@@ -302,14 +302,13 @@ int MainWindow::printDatas()
             ui->label_cd->setVisible(true);
             ui->label_info_creation_date->setVisible(true);
 
-            if (media->container == CONTAINER_MP4)
-            {
-                QDate date(1904, 1, 1);
-                QTime time(0, 0, 0, 0);
-                QDateTime datetime(date, time);
-                datetime = datetime.addSecs(media->creation_time);
-                ui->label_info_creation_date->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
-            }
+            QDate date(1970, 1, 1);
+            QTime time(0, 0, 0, 0);
+            QDateTime datetime(date, time);
+
+            datetime = datetime.addSecs(media->creation_time);
+            //datetime = datetime.toUTC();
+            ui->label_info_creation_date->setText(datetime.toString("dddd d MMMM yyyy, hh:mm:ss"));
         }
         else
         {

@@ -31,9 +31,9 @@
 
 /* ************************************************************************** */
 
-int asf_indexer(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf);
+int asf_convert(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf);
 
-int asf_indexer_initmap(MediaFile_t *media, AsfTrack_t *track, uint32_t index_entry_count);
+int asf_convert_track(MediaFile_t *media, asf_t *asf, uint32_t tid);
 
 void asf_clean(asf_t *asf);
 

@@ -304,7 +304,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
     }
 
     media->duration = (uint64_t)(mkv->info.Duration / ((double)mkv->info.TimecodeScale / 1000000.0));
-    //mkv->info.DateUTC
+    media->creation_time = EbmlTimeToUnixSeconds(mkv->info.DateUTC);
 
     // Tracks metadata
     if (mkv->tracks_count == 0) // Check if we have extracted tracks
@@ -342,7 +342,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
     if (media == NULL || track == NULL)
     {
-        TRACE_ERROR(MKV, "Cannot access audio or video tracks from the MP4 parser!");
+        TRACE_ERROR(MKV, "Cannot access audio or video tracks from the MKV parser!");
         retcode = FAILURE;
     }
 
@@ -408,8 +408,8 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
         if (track->Name && strnlen(track->Name, 256) > 0)
         {
-                map->track_title = (char *)malloc(sizeof(track->Name));
-                strcpy(map->track_title, track->Name);
+            map->track_title = (char *)malloc(sizeof(track->Name));
+            strcpy(map->track_title, track->Name);
         }
 
         if (track->Language && strlen(track->Language) > 0)

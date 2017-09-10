@@ -41,6 +41,24 @@
 
 /* ************************************************************************** */
 
+#define WINDOWS_TICK 10000000LL
+#define SEC_TO_UNIX_EPOCH 11644473600LL
+
+/*!
+ * \param windowsTicks: Seconds since January 1, 1904
+ * \return Unix time
+ *
+ * For infos on "Windows ticks":
+ * - https://msdn.microsoft.com/en-us/library/windows/desktop/ms724284(v=vs.85).aspx
+ * - https://en.wikipedia.org/wiki/Epoch_(reference_date)
+ */
+uint64_t WindowsTickToUnixSeconds(int64_t windowsTicks)
+{
+     return (uint64_t)(windowsTicks / WINDOWS_TICK - SEC_TO_UNIX_EPOCH);
+}
+
+/* ************************************************************************** */
+
 int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
                   FILE *xml, const char *name)
 {

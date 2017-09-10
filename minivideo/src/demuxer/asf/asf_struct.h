@@ -572,7 +572,6 @@ typedef struct AsfDataObject_t
 typedef struct AsfTrack_t
 {
     unsigned int track_id;
-    unsigned int track_indexed;
 
 } AsfTrack_t;
 

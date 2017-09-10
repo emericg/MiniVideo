@@ -61,6 +61,7 @@ SOURCES += src/*.c \
 HEADERS += src/*.h \
            src/decoder/h264/*.h \
            src/demuxer/*.h \
+           src/demuxer/asf/*.h \
            src/demuxer/avi/*.h \
            src/demuxer/esparser/*.h \
            src/demuxer/mkv/*.h \

@@ -42,6 +42,22 @@
 
 /* ************************************************************************** */
 
+#define SEC_TO_UNIX_EPOCH 2082844800LL
+
+/*!
+ * \param LabVIEWTime: Seconds since January 1, 1904
+ * \return Unix time
+ *
+ * For infos on "LabVIEW time":
+ * - https://en.wikipedia.org/wiki/Epoch_(reference_date)
+ */
+uint64_t LabVIEWTimeToUnixSeconds(int64_t LabVIEWTime)
+{
+    return (uint64_t)(LabVIEWTime - SEC_TO_UNIX_EPOCH);
+}
+
+/* ************************************************************************** */
+
 /*!
  * \brief Parse box header.
  * \note 'bitstr' pointer is not checked for performance reasons.

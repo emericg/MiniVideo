@@ -30,6 +30,10 @@
 
 /* ************************************************************************** */
 
+uint64_t LabVIEWTimeToUnixSeconds(int64_t LabVIEWTime);
+
+/* ************************************************************************** */
+
 int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header);
 
 int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header);

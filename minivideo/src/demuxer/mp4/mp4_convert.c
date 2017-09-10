@@ -51,8 +51,8 @@ int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
 
     // File metadata
     media->duration = (double)mp4->duration / (double)mp4->timescale * 1000.0;
-    media->creation_time = (double)mp4->creation_time ;
-    media->modification_time = (double)mp4->modification_time ;
+    media->creation_time = LabVIEWTimeToUnixSeconds(mp4->creation_time); // from january 1 1901 to Unix time
+    media->modification_time = LabVIEWTimeToUnixSeconds(mp4->modification_time);
 
     media->container_profile = mp4->profile;
 

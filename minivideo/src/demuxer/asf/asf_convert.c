@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "asf_convert.h"
+#include "asf_object.h"
 #include "asf_struct.h"
 #include "../../utils.h"
 #include "../../bitstream.h"
@@ -40,27 +41,86 @@
 
 /* ************************************************************************** */
 
-int asf_indexer(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
+int asf_convert(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
 {
-    TRACE_INFO(ASF, BLD_GREEN "asf_indexer()" CLR_RESET);
+    TRACE_INFO(ASF, BLD_GREEN "asf_convert()" CLR_RESET);
     int retcode = SUCCESS;
 
-    for (unsigned tid = 0; tid < asf->tracks_count; tid++)
+    // File metadata
+    media->duration = asf->asfh.fp.SendDuration / 10000; // period of 100ns to ms
+    media->creation_time = WindowsTickToUnixSeconds(asf->asfh.fp.CreationDate); // period of 100ns from january 1 1601 to Unix time
+
+    // Tracks metadata
+    if (asf->tracks_count == 0) // Check if we have extracted tracks
     {
-        if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Audio_Media], 16) == 0)
+        TRACE_WARNING(ASF, "No tracks extracted from ASF file!");
+    }
+    else // Convert tracks
+    {
+        for (unsigned tid = 0; tid < asf->tracks_count; tid++)
         {
-
+            //if (asf->asfh.sp[tid])
+            {
+                retcode = asf_convert_track(media, asf, tid);
+            }
         }
-        else if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Video_Media], 16) == 0)
-        {
 
+        if (media->tracks_video_count == 0 && media->tracks_audio_count == 0)
+        {
+            TRACE_WARNING(ASF, "No tracks converted successfully!");
         }
     }
+
+    asf_clean(asf);
 
     return retcode;
 }
 
 /* ************************************************************************** */
+
+int asf_convert_track(MediaFile_t *media, asf_t *asf, uint32_t tid)
+{
+    TRACE_INFO(ASF, BLD_GREEN "asf_convert_track()" CLR_RESET);
+    int retcode = SUCCESS;
+    MediaStream_t *map = NULL;
+
+    if (media == NULL)
+    {
+        TRACE_ERROR(MKV, "Cannot access audio or video tracks from the ASF parser!");
+        retcode = FAILURE;
+    }
+
+    // Select and init a bitstream map (A or V)
+    ////////////////////////////////////////////////////////////////////////////
+
+    int sample_count = 1;
+
+    if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Audio_Media], 16) == 0)
+    {
+        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
+        if (retcode == SUCCESS)
+        {
+            map = media->tracks_audio[media->tracks_audio_count];
+            media->tracks_audio_count++;
+        }
+    }
+    else if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Video_Media], 16) == 0)
+    {
+        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count);
+        if (retcode == SUCCESS)
+        {
+            map = media->tracks_video[media->tracks_video_count];
+            media->tracks_video_count++;
+        }
+    }
+    else
+    {
+        //
+    }
+
+    return retcode;
+}
+
 /* ************************************************************************** */
 
 /*!
@@ -71,12 +131,13 @@ void asf_clean(asf_t *asf)
 {
     if (asf)
     {
-        for (unsigned i = 0; i < 16; i++)
+/*
+        for (unsigned i = 0; i < asf->tracks_count; i++)
         {
             free(asf->asfh.sp[i].TypeSpecificData);
             free(asf->asfh.sp[i].ErrorCorrectionData);
         }
-
+*/
         if (asf->asfh.cl)
         {
             //for (int j = 0; j < asf->asfh.cl->CodecEntriesCount; j++)
