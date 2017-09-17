@@ -543,8 +543,8 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
             return SUCCESS;
         }
 
-        TRACE_WARNING(MKV, "JUMPY > going from %lli to %lli", current_pos, offset_end);
-        TRACE_WARNING(MKV, "JUMPY > FIXME FIXME FIXME");
+        //TRACE_WARNING(MKV, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        //TRACE_WARNING(MKV, "JUMPY > FIXME FIXME FIXME");
 
         return bitstream_goto_offset(bitstr, offset_end); // FIXME
 
