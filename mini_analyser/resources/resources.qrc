@@ -17,7 +17,7 @@
         <file>icons/package-remove.svg</file>
         <file>icons/package-upgrade.svg</file>
         <file>icons/sysprof-icon.svg</file>
-        </qresource>
+    </qresource>
     <qresource prefix="/icons_material">
         <file>icons_material/ic_bug_report_48px.svg</file>
         <file>icons_material/ic_closed_caption_48px.svg</file>
@@ -50,6 +50,7 @@
         <file>img/A.png</file>
         <file>img/E.png</file>
         <file>img/T.png</file>
+        <file>img/P.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/DejaVuSansMono.ttf</file>

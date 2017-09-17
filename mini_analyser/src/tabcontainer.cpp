@@ -61,6 +61,7 @@ tabContainer::tabContainer(QWidget *parent) :
 
     // Preload icons
     icon_atom.addFile(":/img/img/A.png");
+    icon_param.addFile(":/img/img/P.png");
     icon_ext.addFile(":/img/img/E.png");
     icon_track.addFile(":/img/img/T.png");
 
@@ -534,6 +535,10 @@ void tabContainer::containerSelection(int64_t selected_offset)
         {
             atom_title = new QLabel(tr("<b>> ASF Object</b>"));
         }
+        else if (type == "param")
+        {
+            atom_title = new QLabel(tr("<b>> Parameter Set</b>"));
+        }
         else
         {
             atom_title = new QLabel(tr("<b>> atom</b>"));
@@ -875,8 +880,9 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
 {
     QString fcc = QString::fromLatin1(a.attribute("fcc").value());
     QString id = QString::fromLatin1(a.attribute("id").value());
-    QString title = QString::fromLatin1(a.attribute("tt").value()); // TODO not qstring
-    QString offset = QString::fromLatin1(a.attribute("off").value()); // TODO not qstring
+    QString title = QString::fromLatin1(a.attribute("tt").value());
+    QString type = QString::fromLatin1(a.attribute("tp").value());
+    QString offset = QString::fromLatin1(a.attribute("off").value());
 
     //qDebug() << "> xmlAtomParser() >" << fcc << id;
 
@@ -889,7 +895,10 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
     if (child_item)
     {
         child_item->setData(0, Qt::UserRole, offset);
-        child_item->setIcon(0, icon_atom);
+        if (type == "param")
+            child_item->setIcon(0, icon_param);
+        else
+            child_item->setIcon(0, icon_atom);
 
         if (fcc.isEmpty())
             child_item->setText(0, title);
@@ -905,7 +914,8 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
                 if (strcmp(e.name(), "a") == 0)
                 {
                     // Don't expand everything
-                    if (fcc != "trak" && fcc != "moof" && title != "Cluster" && title != "Cues" && title != "Tags")
+                    if (fcc != "trak" && fcc != "moof" &&
+                        title != "Cluster" && title != "Cues" && title != "Tags")
                     {
                         ui->treeWidget->setItemExpanded(child_item, true);
                     }
