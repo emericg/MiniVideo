@@ -19,15 +19,12 @@ TODOs
   - progressive streaming support
 - AVI parser (improvements)
   - global overhaul
-- WAVE parser (improvements)
-  - BWF and RF64 support
 - MPEG PS parser (improvements)
   - multiple frames per PES packet?
   - IDR detection
   - tag_descriptors
 - MPEG TS parser
 - MXF parser (maybe)
-- ASF parser (maybe)
 
 // Video decoder
 - CABAC bugfix

@@ -36,7 +36,7 @@ The minivideo library can:
 
 ### Supported picture formats (output modules)
 - webp (when libwebp support available)
-- jpeg (when libjpeg support is available)
+- jpeg (internal OR when libjpeg support is available)
 - png (internal OR when libpng support available)
 - bmp
 - tiff
