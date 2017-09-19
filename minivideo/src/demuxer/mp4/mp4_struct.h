@@ -233,6 +233,11 @@ typedef enum Mp4BoxType_e
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
                             BOX_ESDS = 0x65736473,      //!< elementary stream descriptor box
 
+                            BOX_WAVE = 0x77617665,              //!< QuickTime siDecompressionParam
+                            BOX_FRMA = 0x66726D61,              //!< QuickTime Format atom
+                            BOX_ENDA = 0x656E6461,              //!< QuickTime Endianness atom
+                            BOX_CHAN = 0x6368616E,              //!< QuickTime Channel Layout atom
+
                             BOX_SA3D = 0x53413344,              //!< (v) Google Spatial Audio Box
                             BOX_SAND = 0x53414E44,              //!< (v) Non-Diegetic Audio Box
                             BOX_ST3D = 0x73743364,              //!< (v) Google Stereoscopic 3D Video Box

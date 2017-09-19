@@ -44,6 +44,154 @@
 /* ************************************************************************** */
 
 /*!
+ * \brief QuickTime Format Atom ('frma')
+ * \param bitstr
+ * \param box_header
+ * \param track
+ * \param mp4
+ * \return
+ *
+ * https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFChap3/qtff3.html#//apple_ref/doc/uid/TP40000939-CH205-75770
+ */
+int parse_frma(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_frma()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    char fcc[5];
+    unsigned int format = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> format  : %s", getFccString_le(format, fcc));
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Format</title>\n");
+        fprintf(mp4->xml, "  <format>%s</format>\n", getFccString_le(format, fcc));
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+int parse_enda(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_enda()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    unsigned int endian = read_bits(bitstr, 16);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> endian  : %u", endian);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Format</title>\n");
+        fprintf(mp4->xml, "  <endian>%u</endian>\n", endian);
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+int parse_chan(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_chan()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    unsigned int mChannelBitmap = read_bits(bitstr, 16);
+    unsigned int mChannelDescriptions = read_bits(bitstr, 16);
+    unsigned int mChannelLayoutTag = read_bits(bitstr, 32);
+    unsigned int mNumberChannelDescriptions = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> mChannelBitmap  : %u", mChannelBitmap);
+    TRACE_1(MP4, "> mChannelDescriptions  : %u", mChannelDescriptions);
+    TRACE_1(MP4, "> mChannelLayoutTag  : %u", mChannelLayoutTag);
+    TRACE_1(MP4, "> mNumberChannelDescriptions  : %u", mNumberChannelDescriptions);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Audio Channel Layout</title>\n");
+        fprintf(mp4->xml, "  <mChannelBitmap>%u</mChannelBitmap>\n", mChannelBitmap);
+        fprintf(mp4->xml, "  <mChannelDescriptions>%u</mChannelDescriptions>\n", mChannelDescriptions);
+        fprintf(mp4->xml, "  <mChannelLayoutTag>%u</mChannelLayoutTag>\n", mChannelLayoutTag);
+        fprintf(mp4->xml, "  <mNumberChannelDescriptions>%u</mNumberChannelDescriptions>\n", mNumberChannelDescriptions);
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+/*!
+ * \brief siDecompressionParam Atom ('wave')
+ * \param bitstr
+ * \param box_header
+ * \param track
+ * \param mp4
+ * \return
+ */
+int parse_wave(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_wave()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml);
+    if (mp4->xml) fprintf(mp4->xml, "  <title>siDecompressionParam</title>\n");
+
+    while (mp4->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
+    {
+        // Parse subbox header
+        Mp4Box_t box_subheader;
+        retcode = parse_box_header(bitstr, &box_subheader);
+
+        // Then parse subbox content
+        if (mp4->run == true && retcode == SUCCESS)
+        {
+            switch (box_subheader.boxtype)
+            {
+                case BOX_FRMA:
+                    retcode = parse_frma(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_ENDA:
+                    retcode = parse_enda(bitstr, &box_subheader, track, mp4);
+                    break;
+
+                default:
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+            }
+
+            retcode = jumpy_mp4(bitstr, box_header, &box_subheader);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief Sample Table Box.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -142,6 +290,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // Parse stsd box content
     unsigned int entry_count = read_bits(bitstr, 32);
 
+    print_box_header(box_header);
     write_box_header(box_header, mp4->xml);
     if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description</title>\n");
     if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
@@ -238,64 +387,96 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                           getFccString_le(box_header->boxtype, fcc));
         }
 
-        /*const unsigned int reserved[0] =*/ read_bits(bitstr, 32);
-        /*const unsigned int reserved[1] =*/ read_bits(bitstr, 32);
+        unsigned int reserved0 = read_bits(bitstr, 32);
+        unsigned int reserved1 = read_bits(bitstr, 32);
 
         track->channel_count = read_bits(bitstr, 16);
         track->sample_size_bits = read_bits(bitstr, 16);
 
-        /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
-        /*const short reserved =*/ read_bits(bitstr, 16);
+        unsigned int pre_defined = read_bits(bitstr, 16);
+        short reserved3 = read_bits(bitstr, 16);
 
         track->sample_rate_hz = read_bits(bitstr, 16);
-        /*const short reserved =*/ read_bits(bitstr, 16);
+        short reserved4 = read_bits(bitstr, 16);
 
-        if (box_header->version == 1)
-        {
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-        }
-        else if (box_header->version == 2)
-        {
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 64);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-            /*const unsigned reserved =*/ read_bits(bitstr, 32);
-        }
 #if ENABLE_DEBUG
-        print_box_header(box_header);
         TRACE_1(MP4, "> channel_count   : %u", track->channel_count);
         TRACE_1(MP4, "> sample_size_bits: %u", track->sample_size_bits);
         TRACE_1(MP4, "> sample_rate_hz  : %u", track->sample_rate_hz);
-        if (box_header->version == 1)
-        {
-            //
-        }
-        else if (box_header->version == 2)
-        {
-            //
-        }
-#endif // ENABLE_DEBUG
-
-        // xmlMapper
-        if (mp4->xml)
+#endif
+        if (mp4->xml) // xmlMapper
         {
             fprintf(mp4->xml, "  <title>Audio Sample Entry</title>\n");
+            xmlSpacer(mp4->xml, "Sound Sample Description (Version 0)", -1);
+            fprintf(mp4->xml, "  <reserved0>%u</reserved0>\n", reserved0);
+            fprintf(mp4->xml, "  <reserved1>%u</reserved1>\n", reserved1);
             fprintf(mp4->xml, "  <channel_count>%u</channel_count>\n", track->channel_count);
             fprintf(mp4->xml, "  <sample_size_bits>%u</sample_size_bits>\n", track->sample_size_bits);
+            fprintf(mp4->xml, "  <pre_defined>%u</pre_defined>\n", pre_defined);
+            fprintf(mp4->xml, "  <reserved3>%u</reserved3>\n", reserved3);
             fprintf(mp4->xml, "  <sample_rate_hz>%u</sample_rate_hz>\n", track->sample_rate_hz);
-            if (box_header->version == 1)
+            fprintf(mp4->xml, "  <reserved4>%u</reserved4>\n", reserved4);
+        }
+
+        if ((reserved0 >> 16) == 1)
+        {
+            unsigned samples_per_packet = read_bits(bitstr, 32);
+            unsigned bytes_per_packet = read_bits(bitstr, 32);
+            unsigned bytes_per_frame = read_bits(bitstr, 32);
+            unsigned bytes_per_sample = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+            //
+#endif
+            if (mp4->xml) // xmlMapper
             {
-                //
+                xmlSpacer(mp4->xml, "Sound Sample Description (Version 1)", -1);
+                fprintf(mp4->xml, "  <samples_per_packet>%u</samples_per_packet>\n", samples_per_packet);
+                fprintf(mp4->xml, "  <bytes_per_packet>%u</bytes_per_packet>\n", bytes_per_packet);
+                fprintf(mp4->xml, "  <bytes_per_frame>%u</bytes_per_frame>\n", bytes_per_frame);
+                fprintf(mp4->xml, "  <bytes_per_sample>%u</bytes_per_sample>\n", bytes_per_sample);
             }
-            else if (box_header->version == 2)
+        }
+        else if ((reserved0 >> 16) == 2)
+        {
+            unsigned version = read_bits(bitstr, 16);
+            unsigned revision_level = read_bits(bitstr, 16);
+            unsigned vendor = read_bits(bitstr, 32);
+            unsigned always3 = read_bits(bitstr, 16);
+            unsigned always16 = read_bits(bitstr, 16);
+            unsigned alwaysMinus2 = read_bits(bitstr, 16);
+            unsigned always0 = read_bits(bitstr, 16);
+            unsigned always65536 = read_bits(bitstr, 32);
+            unsigned sizeOfStructOnly = read_bits(bitstr, 32);
+            double audioSampleRate = *((double *)read_bits_64(bitstr, 64));
+            unsigned numAudioChannels = read_bits(bitstr, 32);
+            unsigned always7F000000 = read_bits(bitstr, 32);
+            unsigned constBitsPerChannel = read_bits(bitstr, 32);
+            unsigned formatSpecificFlags = read_bits(bitstr, 32);
+            unsigned constBytesPerAudioPacket = read_bits(bitstr, 32);
+            unsigned constLPCMFramesPerAudioPacket = read_bits(bitstr, 32);
+#if ENABLE_DEBUG
+            //
+#endif
+            if (mp4->xml) // xmlMapper
             {
-                //
+                xmlSpacer(mp4->xml, "Sound Sample Description (Version 2)", -1);
+                fprintf(mp4->xml, "  <version>%u</version>\n", version);
+                fprintf(mp4->xml, "  <revision_level>%u</revision_level>\n", revision_level);
+                fprintf(mp4->xml, "  <vendor>%u</vendor>\n", vendor);
+                fprintf(mp4->xml, "  <always3>%u</always3>\n", always3);
+                fprintf(mp4->xml, "  <always16>%u</always16>\n", always16);
+                fprintf(mp4->xml, "  <alwaysMinus2>%u</alwaysMinus2>\n", alwaysMinus2);
+                fprintf(mp4->xml, "  <always0>%u</always0>\n", always0);
+                fprintf(mp4->xml, "  <always65536>%u</always65536>\n", always65536);
+                fprintf(mp4->xml, "  <sizeOfStructOnly>%u</sizeOfStructOnly>\n", sizeOfStructOnly);
+                fprintf(mp4->xml, "  <audioSampleRate>%f</audioSampleRate>\n", audioSampleRate);
+                fprintf(mp4->xml, "  <numAudioChannels>%u</numAudioChannels>\n", numAudioChannels);
+                fprintf(mp4->xml, "  <always7F000000>%u</always7F000000>\n", always7F000000);
+                fprintf(mp4->xml, "  <constBitsPerChannel>%u</constBitsPerChannel>\n", constBitsPerChannel);
+                fprintf(mp4->xml, "  <formatSpecificFlags>%u</formatSpecificFlags>\n", formatSpecificFlags);
+                fprintf(mp4->xml, "  <constBytesPerAudioPacket>%u</constBytesPerAudioPacket>\n", constBytesPerAudioPacket);
+                fprintf(mp4->xml, "  <constLPCMFramesPerAudioPacket>%u</constLPCMFramesPerAudioPacket>\n", constLPCMFramesPerAudioPacket);
             }
         }
     }
@@ -314,14 +495,20 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         {
             switch (box_subsubheader.boxtype)
             {
+                case BOX_ESDS:
+                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_WAVE:
+                    retcode = parse_wave(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_CHAN:
+                    retcode = parse_chan(bitstr, &box_subsubheader, track, mp4);
+                    break;
                 case BOX_SA3D:
                     retcode = parse_sa3d(bitstr, &box_subsubheader, track, mp4);
                     break;
                 case BOX_SAND:
                     retcode = parse_sand(bitstr, &box_subsubheader, track, mp4);
-                    break;
-                case BOX_ESDS:
-                    retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
@@ -406,7 +593,6 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         /*int pre_defined = */ read_bits(bitstr, 16);
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
         TRACE_1(MP4, "> width  : %u", track->width);
         TRACE_1(MP4, "> height : %u", track->height);
         TRACE_1(MP4, "> horizresolution : 0x%X", horizresolution);
@@ -512,7 +698,6 @@ int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
         /*uint8_t reserved =*/ read_bits(bitstr, 8);
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
         TRACE_1(MP4, "> flags  : %u", flags);
         TRACE_1(MP4, "> time_scale : %u", time_scale);
         TRACE_1(MP4, "> frame_duration : %u", frame_duration);
@@ -588,7 +773,6 @@ int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
         //char text_name[128]; // TODO
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
         TRACE_1(MP4, "> display_flags  : %u", display_flags);
         TRACE_1(MP4, "> text_justification  : %u", text_justification);
         TRACE_1(MP4, "> background_color  : 0x%X%X%X",
