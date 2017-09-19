@@ -24,6 +24,7 @@ DESTDIR      = build/
 unix {
     QMAKE_CFLAGS += -std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
     QMAKE_CFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
+    QMAKE_CFLAGS += -fPIC
 }
 
 linux {

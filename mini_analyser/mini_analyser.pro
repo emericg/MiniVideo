@@ -84,6 +84,8 @@ LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 # OS specifics
 
 unix {
+    QMAKE_CXXFLAGS += -fPIE
+
     linux {
         # Add videobackends
         SOURCES += src/videobackends_vdpau.cpp \
