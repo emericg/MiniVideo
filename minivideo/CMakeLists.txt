@@ -9,7 +9,7 @@ cmake_policy(SET CMP0054 NEW)
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 8)
+set(minivideo_VERSION_MINOR 9)
 set(minivideo_VERSION_PATCH 1)
 
 

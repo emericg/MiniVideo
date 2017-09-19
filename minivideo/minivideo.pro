@@ -7,9 +7,9 @@ TARGET       = minivideo
 TEMPLATE     = lib
 CONFIG      += shared_and_static build_all
 
-VERSION      = 0.8.1
+VERSION      = 0.9.1
 DEFINES     += minivideo_VERSION_MAJOR=0
-DEFINES     += minivideo_VERSION_MINOR=8
+DEFINES     += minivideo_VERSION_MINOR=9
 DEFINES     += minivideo_VERSION_PATCH=1
 
 # build artifacts
