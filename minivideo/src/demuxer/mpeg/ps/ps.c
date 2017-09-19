@@ -396,7 +396,7 @@ int ps_fileParse(MediaFile_t *media)
                 // Init bitstream_map (as needed) to store samples
                 if (media->tracks_audio[track_id] == NULL)
                 {
-                    retcode = init_bitstream_map(&media->tracks_audio[track_id], 999999);
+                    retcode = init_bitstream_map(&media->tracks_audio[track_id], 0, 999999);
                     media->tracks_audio_count++;
                     media->tracks_audio[track_id]->stream_type = stream_AUDIO;
                 }
@@ -429,7 +429,7 @@ int ps_fileParse(MediaFile_t *media)
                 unsigned track_id = pes_header.stream_id - 0xE0;
                 if (media->tracks_video[track_id] == NULL)
                 {
-                    retcode = init_bitstream_map(&media->tracks_video[track_id], 999999);
+                    retcode = init_bitstream_map(&media->tracks_video[track_id], 0, 999999);
                     media->tracks_video_count++;
                     media->tracks_video[track_id]->stream_type = stream_VIDEO;
                 }

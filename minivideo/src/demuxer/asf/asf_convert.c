@@ -97,7 +97,7 @@ int asf_convert_track(MediaFile_t *media, asf_t *asf, uint32_t tid)
 
     if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Audio_Media], 16) == 0)
     {
-        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
+        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], 0, sample_count);
         if (retcode == SUCCESS)
         {
             map = media->tracks_audio[media->tracks_audio_count];
@@ -106,7 +106,7 @@ int asf_convert_track(MediaFile_t *media, asf_t *asf, uint32_t tid)
     }
     else if (memcmp(asf->asfh.sp[tid].StreamType, ASF_object_GUIDs[ASF_Video_Media], 16) == 0)
     {
-        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count);
+        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], 0, sample_count);
         if (retcode == SUCCESS)
         {
             map = media->tracks_video[media->tracks_video_count];

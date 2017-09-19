@@ -53,11 +53,11 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         if (pcm_samples_count > UINT32_MAX)
             pcm_samples_count = UINT32_MAX;
 
-        retcode = init_bitstream_map(&media->tracks_audio[0], (uint32_t)pcm_samples_count);
+        retcode = init_bitstream_map(&media->tracks_audio[0], 0, (uint32_t)pcm_samples_count);
     }
     else
     {
-        retcode = init_bitstream_map(&media->tracks_audio[0], 1);
+        retcode = init_bitstream_map(&media->tracks_audio[0], 0, 1);
     }
 
     if (retcode == SUCCESS)

@@ -411,7 +411,7 @@ int mp3_fileParse(MediaFile_t *media)
     if (bitstr != NULL)
     {
         // Init a MediaStream_t to store samples
-        retcode = init_bitstream_map(&media->tracks_audio[0], 999999);
+        retcode = init_bitstream_map(&media->tracks_audio[0], 0, 999999);
 
         // Init an MP3 structure
         mp3_t mp3;

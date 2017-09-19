@@ -26,6 +26,7 @@
 #include "h264_parameterset.h"
 #include "h264_slice.h"
 #include "h264_macroblock.h"
+#include "h264_transform.h"
 #include "../../depacketizer/depack.h"
 #include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
@@ -387,7 +388,8 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                if (decodeAUD(dc))
+                aud_t aud;
+                if (decodeAUD(dc->bitstr, &aud))
                 {
                     retcode = SUCCESS;
                 }
@@ -400,13 +402,17 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                if (decodeSEI(dc))
+                sei_t *sei = (sei_t*)calloc(1, sizeof(sei_t));
+                if (sei)
                 {
-                    retcode = SUCCESS;
-                    printSEI(dc);
+                    if (decodeSEI(dc->bitstr, sei))
+                    {
+                        retcode = SUCCESS;
+                        printSEI(NULL);
+                    }
+                    else
+                        dc->errorCounter++;
                 }
-                else
-                    dc->errorCounter++;
             }
             break;
 
@@ -414,13 +420,34 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                if (decodeSPS(dc))
+                decodeSPS_legacy(dc);
+/*
+                sps_t *sps = (sps_t*)calloc(1, sizeof(sps_t));
+                if (sps)
                 {
-                    retcode = SUCCESS;
-                    printSPS(dc);
+                    if (decodeSPS(dc->bitstr, sps))
+                    {
+                        dc->sps_array[sps->seq_parameter_set_id] = sps;
+
+                        dc->active_sps = sps->seq_parameter_set_id;
+                        dc->profile_idc = sps->profile_idc;
+                        dc->ChromaArrayType = sps->ChromaArrayType;
+
+                        // Init some quantization tables
+                        computeLevelScale4x4(dc, sps);
+                        computeLevelScale8x8(dc, sps);
+
+                        // Macroblocks "table" allocation (on macroblock **mbs_data):
+                        dc->PicSizeInMbs = sps->FrameHeightInMbs * sps->PicWidthInMbs;
+                        dc->mb_array = (Macroblock_t**)calloc(dc->PicSizeInMbs, sizeof(Macroblock_t*));
+
+                        //printSPS(sps);
+                        retcode = SUCCESS;
+                    }
+                    else
+                        dc->errorCounter++;
                 }
-                else
-                    dc->errorCounter++;
+*/
             }
             break;
 
@@ -428,13 +455,21 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                if (decodePPS(dc))
+                pps_t *pps = (pps_t*)calloc(1, sizeof(pps_t));
+                if (pps)
                 {
-                    retcode = SUCCESS;
-                    printPPS(dc);
+                    if (decodePPS(dc->bitstr, pps, dc->sps_array))
+                    {
+                        dc->pps_array[pps->pic_parameter_set_id] = pps;
+                        dc->active_pps = pps->pic_parameter_set_id;
+                        dc->entropy_coding_mode_flag = pps->entropy_coding_mode_flag,
+
+                        //printPPS(pps, dc->sps_array);
+                        retcode = SUCCESS;
+                    }
+                    else
+                        dc->errorCounter++;
                 }
-                else
-                    dc->errorCounter++;
             }
             break;
 
@@ -498,19 +533,14 @@ int h264_decode(MediaFile_t *input_video,
     int tid = 0;
     int sid = 0;
 
-    // Load SPS
-    int64_t samplesoffset = dc->VideoFile->tracks_video[tid]->sample_offset[sid];
-    int64_t samplesize = dc->VideoFile->tracks_video[tid]->sample_size[sid];
-    retcode = buffer_feed_manual(dc->bitstr, samplesoffset, samplesize);
-    retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
-    sid++;
-
-    // Load PPS
-    samplesoffset = dc->VideoFile->tracks_video[tid]->sample_offset[sid];
-    samplesize = dc->VideoFile->tracks_video[tid]->sample_size[sid];
-    retcode = buffer_feed_manual(dc->bitstr, samplesoffset, samplesize);
-    retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
-    sid++;
+    // Load "parameter sets"
+    for (unsigned pid = 0; pid < dc->VideoFile->tracks_video[tid]->parameter_count; pid++)
+    {
+        int64_t samplesoffset = dc->VideoFile->tracks_video[tid]->parameter_offset[pid];
+        int64_t samplesize = dc->VideoFile->tracks_video[tid]->parameter_size[pid];
+        retcode = buffer_feed_manual(dc->bitstr, samplesoffset-1, samplesize+1);
+        retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
+    }
 
     // Loop until the end of the decoding
     while (dc->decoderRunning && retcode == SUCCESS)

@@ -30,22 +30,25 @@
 
 /* ************************************************************************** */
 
-int decodeSPS(DecodingContext_t *dc);
+int decodeSPS_legacy(DecodingContext_t *dc);
+int decodeSPS(Bitstream_t *bitstr, sps_t *sps);
 void freeSPS(sps_t **sps_ptr);
 
-int decodePPS(DecodingContext_t *dc);
+int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array);
 void freePPS(pps_t **pps_ptr);
 
-int decodeSEI(DecodingContext_t *dc);
+int decodeSEI(Bitstream_t *bitstr, sei_t *sei);
 void freeSEI(sei_t **sei_ptr);
 
-int decodeAUD(DecodingContext_t *dc);
+int decodeAUD(Bitstream_t *bitstr, aud_t *aud);
 
-void printSPS(DecodingContext_t *dc);
-void printPPS(DecodingContext_t *dc);
-void printSEI(DecodingContext_t *dc);
-void printVUI(vui_t *vui);
-void printHRD(hrd_t *hrd);
+void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml);
+void mapPPS(pps_t *pps, sps_t **sps, int64_t offset, int64_t size, FILE *xml);
+void mapSEI(sei_t *sei, int64_t offset, int64_t size, FILE *xml);
+
+void printSPS(sps_t *sps);
+void printPPS(pps_t *pps, sps_t **sps_array);
+void printSEI(sei_t *sei);
 
 /* ************************************************************************** */
 #endif // H264_PARAMETER_SET_H

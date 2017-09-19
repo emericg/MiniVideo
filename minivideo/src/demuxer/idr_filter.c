@@ -128,7 +128,7 @@ int idr_filtering(MediaStream_t **stream_ptr,
 
             // Init bitstream_map_filtered
             MediaStream_t *map_filtered = NULL;
-            retcode = init_bitstream_map(&map_filtered, spspps + temporary_totalsamples_idr);
+            retcode = init_bitstream_map(&map_filtered, spspps, temporary_totalsamples_idr);
 
             // Write bitstream_map_filtered
             if (retcode)

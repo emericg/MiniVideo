@@ -330,7 +330,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
     if (track->strh.fccType == fcc_auds)
     {
         // Audio track
-        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], index_entry_count);
+        retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], 0, index_entry_count);
 
         if (retcode == SUCCESS)
         {
@@ -357,7 +357,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
     else if (track->strh.fccType == fcc_vids)
     {
         // Video track
-        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], index_entry_count);
+        retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], 0, index_entry_count);
 
         if (retcode == SUCCESS)
         {
@@ -392,7 +392,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
     else if (track->strh.fccType == fcc_txts)
     {
         // Subtitles track
-        retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], index_entry_count);
+        retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], 0, index_entry_count);
         media->tracks_subtitles_count++;
 
         if (retcode == SUCCESS)

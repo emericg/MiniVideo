@@ -29,6 +29,8 @@
 #include "../../minivideo_codecs.h"
 #include "../../thirdparty/simple_vector.h"
 
+#include "../../decoder/h264/h264_parameterset.h"
+
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -279,6 +281,7 @@ typedef struct mkv_track_t
     char *Name;
     char *Language;
     char *CodecID;
+    int64_t CodecPrivate_offset;
     int CodecPrivate_size;
     uint8_t *CodecPrivate;
     char *CodecName;
@@ -295,6 +298,20 @@ typedef struct mkv_track_t
     mkv_track_encodings_t *encodings;
 
     vector sample_vector;
+
+    // AVC/HEVC specific parameters
+    unsigned int codec_profile;
+    unsigned int codec_level;
+    unsigned int ref_frames;
+
+    unsigned int sps_count;
+    sps_t *sps_array[MAX_SPS];
+    unsigned int *sps_sample_size;
+    int64_t *sps_sample_offset;
+    unsigned int pps_count;
+    pps_t *pps_array[MAX_PPS];
+    unsigned int *pps_sample_size;
+    int64_t *pps_sample_offset;
 
 } mkv_track_t;
 

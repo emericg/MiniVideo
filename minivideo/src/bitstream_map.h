@@ -30,7 +30,7 @@
 
 /* ************************************************************************** */
 
-int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t entries);
+int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uint32_t sample_count);
 
 void free_bitstream_map(MediaStream_t **stream_ptr);
 

@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "mkv_tracks.h"
+#include "mkv_codec.h"
 #include "mkv_struct.h"
 #include "ebml.h"
 
@@ -694,7 +695,25 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                 break;
             case eid_CodecPrivate:
                 mkv_track->CodecPrivate = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "CodecPrivate");
-                if (mkv_track->CodecPrivate) mkv_track->CodecPrivate_size = element_sub.size;
+                if (mkv_track->CodecPrivate)
+                {
+                    mkv_track->CodecPrivate_offset = bitstream_get_absolute_byte_offset(bitstr) - element_sub.size;
+                    mkv_track->CodecPrivate_size = element_sub.size;
+
+                    if (mkv_track->CodecPrivate_offset && mkv_track->CodecPrivate_size)
+                    {
+                        int64_t saveOffset = bitstream_get_absolute_byte_offset(bitstr);
+
+                        bitstream_goto_offset(bitstr, mkv_track->CodecPrivate_offset);
+
+                        if (mkv_track->CodecID && strcmp(mkv_track->CodecID, "V_MPEG4/ISO/AVC") == 0)
+                        {
+                            parse_h264_private(bitstr, mkv_track, mkv);
+                        }
+
+                        bitstream_goto_offset(bitstr, saveOffset);
+                    }
+                }
                 break;
             case eid_CodecName:
                 mkv_track->CodecName = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "CodecName");

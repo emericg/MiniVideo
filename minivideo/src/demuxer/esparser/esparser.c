@@ -48,7 +48,7 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
 
     // Init bitstream and bitstream_map
     Bitstream_t *bitstr = init_bitstream(media, NULL);
-    int retcode = init_bitstream_map(&media->tracks_video[0], 999999);
+    int retcode = init_bitstream_map(&media->tracks_video[0], 0, 999999);
     media->tracks_video_count = 1;
 
     if (bitstr != NULL && media->tracks_video[0] != NULL)

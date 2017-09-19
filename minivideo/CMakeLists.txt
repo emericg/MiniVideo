@@ -190,7 +190,7 @@ set(minivideo_SRC
         src/demuxer/mp4/mp4_stbl.c src/demuxer/mp4/mp4_spatial.c src/demuxer/mp4/mp4_convert.c
     src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
     src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
-        src/demuxer/mkv/mkv_tracks.c src/demuxer/mkv/mkv_cluster.c src/demuxer/mkv/mkv_convert.c
+        src/demuxer/mkv/mkv_tracks.c src/demuxer/mkv/mkv_cluster.c src/demuxer/mkv/mkv_codec.c src/demuxer/mkv/mkv_convert.c
     src/demuxer/esparser/esparser.c
     src/demuxer/idr_filter.c
     src/demuxer/xml_mapper.c

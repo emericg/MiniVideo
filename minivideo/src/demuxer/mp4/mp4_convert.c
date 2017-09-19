@@ -22,6 +22,7 @@
  */
 
 // minivideo headers
+#include "mp4_box.h"
 #include "mp4_convert.h"
 #include "mp4_struct.h"
 #include "../../minivideo_fourcc.h"
@@ -104,13 +105,9 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 
     if (retcode == SUCCESS)
     {
-        int sample_count = track->stsz_sample_count;
-        if (sample_count <= 0)
-            sample_count = 1;
-
         if (track->handlerType == MP4_HANDLER_AUDIO)
         {
-            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], 0, track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_audio[media->tracks_audio_count];
@@ -119,7 +116,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
         else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count + track->sps_count + track->pps_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -130,7 +127,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                  track->handlerType == MP4_HANDLER_SBTL ||
                  track->handlerType == MP4_HANDLER_TEXT)
         {
-            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], 0, track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_subt[media->tracks_subtitles_count];
@@ -143,7 +140,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             TRACE_1(MP4, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)",
                     track->id, getFccString_le(track->handlerType, fcc));
 
-            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], 0, track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_others[media->tracks_others_count];
@@ -157,8 +154,6 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 
     if (retcode == SUCCESS && map)
     {
-        unsigned int i = 0, j = 0;
-
         map->stream_fcc = track->fcc;
         map->stream_codec = (Codecs_e)track->codec;
         map->stream_codec_profile = (CodecProfiles_e)track->codec_profile;
@@ -186,7 +181,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
 
         map->stream_packetized = true;
-        map->sample_count = track->stsz_sample_count + track->sps_count + track->pps_count;
+        map->sample_count = track->stsz_sample_count;
 
         map->track_id = track->id;
 
@@ -240,22 +235,20 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             if (track->codec == CODEC_H264 || track->codec == CODEC_H265)
             {
                 // Set SPS
-                for (i = 0; i < track->sps_count; i++)
+                for (unsigned i = 0; i < track->sps_count; i++)
                 {
-                    map->sample_type[i] = sample_VIDEO_PARAM;
-                    map->sample_offset[i] = track->sps_sample_offset[i];
-                    map->sample_size[i] = track->sps_sample_size[i];
-                    map->sample_pts[i] = -1;
-                    map->sample_dts[i] = -1;
+                    map->parameter_type[i] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i] = track->sps_sample_offset[i];
+                    map->parameter_size[i] = track->sps_sample_size[i];
+                    map->parameter_count++;
                 }
                 // Set PPS
-                for (i = 0; i < track->pps_count; i++)
+                for (unsigned i = 0; i < track->pps_count; i++)
                 {
-                    map->sample_type[i + track->sps_count] = sample_VIDEO_PARAM;
-                    map->sample_offset[i + track->sps_count] = track->pps_sample_offset[i];
-                    map->sample_size[i + track->sps_count] = track->pps_sample_size[i];
-                    map->sample_pts[i + track->sps_count] = -1;
-                    map->sample_dts[i + track->sps_count] = -1;
+                    map->parameter_type[i + track->sps_count] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i + track->sps_count] = track->pps_sample_offset[i];
+                    map->parameter_size[i + track->sps_count] = track->pps_sample_size[i];
+                    map->parameter_count++;
                 }
             }
         }
@@ -295,16 +288,16 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
 
         // Set sample type & size
-        for (i = 0; i < track->stsz_sample_count; i++)
+        for (unsigned i = 0; i < track->stsz_sample_count; i++)
         {
-            unsigned sid = i + track->sps_count + track->pps_count; // Sample id
+            unsigned sid = i; // Sample id
 
             // Set sample type
             if (track->handlerType == MP4_HANDLER_VIDEO)
             {
                 map->sample_type[sid] = sample_VIDEO;
 
-                for (j = 0; j < track->stss_entry_count; j++)
+                for (unsigned j = 0; j < track->stss_entry_count; j++)
                 {
                     if (i == (track->stss_sample_number[j] - 1))
                         map->sample_type[sid] = sample_VIDEO_SYNC;
@@ -344,18 +337,19 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
 
         // Set sample decoding and presentation timecodes
-        uint32_t k = 0;
-        j = 0;
-        int32_t _samples_pts_to_dts_shift = 0; // FIXME // from cslg
+        unsigned i = 0;
+        unsigned j = 0;
+        unsigned k = 0;
+        int _samples_pts_to_dts_shift = 0; // FIXME // from cslg
 
         if (track->ctts_sample_count) //if (_samples_pts_array)
         {
             // Compute DTS
-            for (i = 0, k = track->sps_count + track->pps_count; i < track->stts_entry_count; i++)
+            for (i = 0, k = 0; i < track->stts_entry_count; i++)
             {
                 j = 0;
 
-                if (k == track->sps_count + track->pps_count)
+                if (k == 0)
                 {
                     // Decoding time = 0 for the first DTS sample
                     map->sample_dts[k] = 0;
@@ -374,7 +368,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             }
 
             // Then compute PTS
-            for (i = 0, k = track->sps_count + track->pps_count; i < track->ctts_entry_count; i++)
+            for (i = 0, k = 0; i < track->ctts_entry_count; i++)
             {
                 for (j = 0; j < track->ctts_sample_count[i]; j++, k++)
                 {
@@ -388,11 +382,11 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         else
         {
             // Compute DTS, then copy results into PTS
-            for (i = 0, k = track->sps_count + track->pps_count; i < track->stts_entry_count; i++)
+            for (i = 0, k = 0; i < track->stts_entry_count; i++)
             {
                 j = 0;
 
-                if (k == track->sps_count + track->pps_count)
+                if (k == 0)
                 {
                     // Decoding time = 0 for the first DTS sample
                     map->sample_dts[k] = map->sample_pts[k] = 0;
@@ -412,7 +406,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
 
         // Set sample offset
-        uint32_t index = track->sps_count + track->pps_count;
+        uint32_t index = 0;
         uint32_t chunkOffset = 0;
 
         for (i = 0; (i < track->stsc_entry_count) && (chunkOffset < track->stco_entry_count); i++)
@@ -545,10 +539,12 @@ void mp4_clean_track(Mp4Track_t **track_ptr)
     if (*track_ptr != NULL)
     {
         // SPS
+        free(*(*track_ptr)->sps_array);
         free((*track_ptr)->sps_sample_offset);
         free((*track_ptr)->sps_sample_size);
 
         // PPS
+        free(*(*track_ptr)->pps_array);
         free((*track_ptr)->pps_sample_offset);
         free((*track_ptr)->pps_sample_size);
 

@@ -23,6 +23,7 @@
 
 // minivideo headers
 #include "mkv_convert.h"
+#include "mkv_codec.h"
 #include "mkv_struct.h"
 #include "ebml.h"
 
@@ -39,253 +40,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ************************************************************************** */
-
-void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
-{
-    if (!codec_str || !codec || !profile)
-        return;
-
-    *codec = CODEC_UNKNOWN;
-    *profile = PROF_UNKNOWN;
-
-    if (strncmp(codec_str, "A_", 2) == 0)
-    {
-        if (strncmp(codec_str, "A_AAC", 5) == 0)
-        {
-            *codec = CODEC_AAC;
-/*
-            A_AAC/MPEG2/MAIN
-            A_AAC/MPEG2/LC
-            A_AAC/MPEG2/LC/SBR
-            A_AAC/MPEG2/SSR
-            A_AAC/MPEG4/MAIN
-            A_AAC/MPEG4/LC
-            A_AAC/MPEG4/LC/SBR
-            A_AAC/MPEG4/SSR
-            A_AAC/MPEG4/LTP
-*/
-        }
-        else if (strncmp(codec_str, "A_MPEG", 6) == 0)
-        {
-            if (strcmp(codec_str, "A_MPEG/L3") == 0)
-            {
-                *codec = CODEC_MPEG_L3;
-            }
-            else if (strcmp(codec_str, "A_MPEG/L2") == 0)
-            {
-                *codec = CODEC_MPEG_L2;
-            }
-            else if (strcmp(codec_str, "A_MPEG/L1") == 0)
-            {
-                *codec = CODEC_MPEG_L1;
-            }
-        }
-        else if (strncmp(codec_str, "A_PCM", 5) == 0)
-        {
-            if (strcmp(codec_str, "A_PCM/INT/BIG") == 0)
-            {
-                *codec = CODEC_LPCM;
-            }
-            else if (strcmp(codec_str, "A_PCM/INT/LIT") == 0)
-            {
-                *codec = CODEC_LPCM;
-            }
-            else if (strcmp(codec_str, "A_PCM/FLOAT/IEEE") == 0)
-            {
-                *codec = CODEC_LPCM;
-            }
-        }
-        else if (strcmp(codec_str, "A_MPC") == 0)
-        {
-            *codec = CODEC_MPC;
-        }
-        else if (strcmp(codec_str, "A_AC3") == 0)
-        {
-            //A_AC3/BSID9
-            //A_AC3/BSID10
-            *codec = CODEC_AC3;
-        }
-        else if (strcmp(codec_str, "A_EAC3") == 0)
-        {
-            *codec = CODEC_EAC3;
-        }
-        else if (strcmp(codec_str, "A_AC4") == 0)
-        {
-            *codec = CODEC_AC4;
-        }
-        else if (strcmp(codec_str, "A_ALAC") == 0)
-        {
-            *codec = CODEC_ALAC;
-        }
-        else if (strcmp(codec_str, "A_DTS") == 0)
-        {
-            //A_DTS/EXPRESS
-            //A_DTS/LOSSLESS
-            *codec = CODEC_DTS;
-        }
-        else if (strcmp(codec_str, "A_VORBIS") == 0)
-        {
-            *codec = CODEC_VORBIS;
-        }
-        else if (strcmp(codec_str, "A_OPUS") == 0)
-        {
-            *codec = CODEC_OPUS;
-        }
-        else if (strcmp(codec_str, "A_FLAC") == 0)
-        {
-            *codec = CODEC_FLAC;
-        }
-        else if (strncmp(codec_str, "A_REAL", 6) == 0)
-        {
-            if (strcmp(codec_str, "A_REAL/14_4") == 0)
-            {
-                *codec = CODEC_RA_14;
-            }
-            else if (strcmp(codec_str, "A_REAL/28_8") == 0)
-            {
-                *codec = CODEC_RA_28;
-            }
-            else if (strcmp(codec_str, "A_REAL/SIPR") == 0)
-            {
-                *codec = CODEC_UNKNOWN; // Sipro Voice Codec
-            }
-            else if (strcmp(codec_str, "A_REAL/COOK") == 0)
-            {
-                *codec = CODEC_RA_cook;
-            }
-            else if (strcmp(codec_str, "A_REAL/RALF") == 0)
-            {
-                *codec = CODEC_RA_cook;
-            }
-            else if (strcmp(codec_str, "A_REAL/ATRC") == 0)
-            {
-                *codec = CODEC_ATRAC;
-            }
-        }
-    }
-    else if (strncmp(codec_str, "V_", 2) == 0)
-    {
-        // V_MS/VFW/FOURCC
-        // V_UNCOMPRESSED
-        // V_QUICKTIME
-
-        if (strncmp(codec_str, "V_MPEG4/ISO", 11) == 0)
-        {
-            if (strcmp(codec_str, "V_MPEG4/ISO/AVC") == 0)
-            {
-                *codec = CODEC_H264;
-            }
-            else if (strcmp(codec_str, "V_MPEG4/ISO/SP") == 0)
-            {
-                *codec = CODEC_MPEG4_ASP;
-                *profile = PROF_MPEG4_SP;
-            }
-            else if (strcmp(codec_str, "V_MPEG4/ISO/ASP") == 0)
-            {
-                *codec = CODEC_MPEG4_ASP;
-                *profile = PROF_MPEG4_ASP;
-            }
-            else if (strcmp(codec_str, "V_MPEG4/ISO/AP") == 0)
-            {
-                *codec = CODEC_MPEG4_ASP;
-                *profile = PROF_MPEG4_AP;
-            }
-        }
-        else if (strcmp(codec_str, "V_MPEGH/ISO/HEVC") == 0)
-        {
-            *codec = CODEC_H265;
-        }
-        else if (strncmp(codec_str, "V_VP", 4) == 0)
-        {
-            if (strcmp(codec_str, "V_VP9") == 0)
-            {
-                *codec = CODEC_VP9;
-            }
-            else if (strcmp(codec_str, "V_VP8") == 0)
-            {
-                *codec = CODEC_VP8;
-            }
-            else if (strcmp(codec_str, "V_VP7") == 0)
-            {
-                *codec = CODEC_VP7;
-            }
-            else if (strcmp(codec_str, "V_VP6") == 0)
-            {
-                *codec = CODEC_VP6;
-            }
-        }
-        else if (strcmp(codec_str, "V_MPEG2") == 0)
-        {
-            *codec = CODEC_MPEG2;
-        }
-        else if (strcmp(codec_str, "V_MPEG1") == 0)
-        {
-            *codec = CODEC_MPEG1;
-        }
-        else if (strcmp(codec_str, "V_MPEG4/MS/V3") == 0)
-        {
-            *codec = CODEC_MSMPEG4;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV10") == 0)
-        {
-            *codec = CODEC_RV10;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV20") == 0)
-        {
-            *codec = CODEC_RV20;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV30") == 0)
-        {
-            *codec = CODEC_RV30;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV40") == 0)
-        {
-            *codec = CODEC_RV40;
-        }
-        else if (strcmp(codec_str, "V_THEORA") == 0)
-        {
-            *codec = CODEC_VP4;
-        }
-        else if (strcmp(codec_str, "V_PRORES") == 0)
-        {
-            *codec = CODEC_PRORES_422;
-        }
-    }
-    else if (strncmp(codec_str, "S_", 2) == 0)
-    {
-        if (strcmp(codec_str, "S_TEXT/UTF8") == 0)
-        {
-            *codec = CODEC_SRT;
-        }
-        else if (strcmp(codec_str, "S_TEXT/SSA") == 0)
-        {
-            *codec = CODEC_SSA;
-        }
-        else if (strcmp(codec_str, "S_TEXT/ASS") == 0)
-        {
-            *codec = CODEC_ASS;
-        }
-        else if (strcmp(codec_str, "S_TEXT/USF") == 0)
-        {
-            *codec = CODEC_USF;
-        }
-        else if (strcmp(codec_str, "S_TEXT/WEBVTT") == 0)
-        {
-            *codec = CODEC_WebVTT;
-        }
-        else if (strcmp(codec_str, "S_VOBSUB") == 0)
-        {
-            *codec = CODEC_VobSub;
-        }
-/*
-        S_IMAGE/BMP
-        S_KATE
-*/
-    }
-}
-
-/* ************************************************************************** */
 /* ************************************************************************** */
 
 int mkv_convert(MediaFile_t *media, mkv_t *mkv)
@@ -357,7 +111,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
         if (track->TrackType == MKV_TRACK_AUDIO || track->audio)
         {
-            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], 0, sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_audio[media->tracks_audio_count];
@@ -366,7 +120,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         }
         else if (track->TrackType == MKV_TRACK_VIDEO || track->video)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -375,7 +129,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         }
         else if (track->TrackType == MKV_TRACK_SUBTITLES)
         {
-            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_subt[media->tracks_subtitles_count], 0, sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_subt[media->tracks_subtitles_count];
@@ -388,7 +142,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             //TRACE_1(MKV, "Not sure we can build bitstream_map for other track types! (track #%u handlerType: %s)",
             //        track->id, getFccString_le(track->handlerType, fcc));
 
-            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], sample_count);
+            retcode = init_bitstream_map(&media->tracks_others[media->tracks_others_count], 0, sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_others[media->tracks_others_count];
@@ -442,6 +196,27 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             }
             map->color_depth *= 3;
             map->framerate = 1000000000.0 / track->DefaultDuration;
+
+            // Codec specific metadata
+            if (map->stream_codec == CODEC_H264 || map->stream_codec == CODEC_H265)
+            {
+                // Set SPS
+                for (unsigned i = 0; i < track->sps_count; i++)
+                {
+                    map->parameter_type[i] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i] = track->sps_sample_offset[i];
+                    map->parameter_size[i] = track->sps_sample_size[i];
+                    map->parameter_count++;
+                }
+                // Set PPS
+                for (unsigned i = 0; i < track->pps_count; i++)
+                {
+                    map->parameter_type[i + track->sps_count] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i + track->sps_count] = track->pps_sample_offset[i];
+                    map->parameter_size[i + track->sps_count] = track->pps_sample_size[i];
+                    map->parameter_count++;
+                }
+            }
         }
         else if (track->TrackType == MKV_TRACK_AUDIO && track->audio)
         {
@@ -463,7 +238,6 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         }
 
         // Track samples
-
         map->sample_count = vector_count(&track->sample_vector);
         //TRACE_1(MKV, "sample_count: %i", sample_count);
 
@@ -541,6 +315,7 @@ void mkv_clean(mkv_t *mkv)
                     }
                     free(mkv->tracks[i]->video->ColourSpace);
                     free(mkv->tracks[i]->video);
+
                 }
                 if (mkv->tracks[i]->audio)
                 {
@@ -559,6 +334,17 @@ void mkv_clean(mkv_t *mkv)
                     free(mkv->tracks[i]->encodings);
                 }
 
+                // SPS
+                free(*mkv->tracks[i]->sps_array);
+                free(mkv->tracks[i]->sps_sample_offset);
+                free(mkv->tracks[i]->sps_sample_size);
+
+                // PPS
+                free(*mkv->tracks[i]->pps_array);
+                free(mkv->tracks[i]->pps_sample_offset);
+                free(mkv->tracks[i]->pps_sample_size);
+
+                // Samples
                 int samplecount = vector_count(&mkv->tracks[i]->sample_vector);
                 for (int j = 0; j < samplecount; j++)
                 {

@@ -37,13 +37,14 @@
 /*!
  * \brief Initialize a MediaStream_t structure with a fixed number of entries.
  * \param stream_ptr: The address of the pointer to the MediaStream_t structure to initialize.
- * \param entries: The number of sample to init into the MediaStream_t structure.
+ * \param parameter_count: The number of sample to init into the MediaStream_t structure.
+ * \param sample_count: The number of sample to init into the MediaStream_t structure.
  * \return 1 if succeed, 0 otherwise.
  *
  * Everything inside the MediaStream_t structure is set to 0, even the number
  * of entries (sample_count).
  */
-int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t entries)
+int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uint32_t sample_count)
 {
     TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()" CLR_RESET);
     int retcode = SUCCESS;
@@ -55,27 +56,46 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t entries)
     }
     else
     {
-        if (entries == 0)
+        *stream_ptr = (MediaStream_t*)calloc(1, sizeof(MediaStream_t));
+        if (*stream_ptr == NULL)
         {
-            TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map: no entries to allocate!");
+            TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!");
             retcode = FAILURE;
         }
         else
         {
-            *stream_ptr = (MediaStream_t*)calloc(1, sizeof(MediaStream_t));
+            if (retcode == SUCCESS && parameter_count > 0)
+            {
+                (*stream_ptr)->parameter_type = (uint32_t*)calloc(parameter_count, sizeof(uint32_t));
+                (*stream_ptr)->parameter_size = (uint32_t*)calloc(parameter_count, sizeof(uint32_t));
+                (*stream_ptr)->parameter_offset = (int64_t*)calloc(parameter_count, sizeof(int64_t));
 
-            if (*stream_ptr == NULL)
-            {
-                TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!");
-                retcode = FAILURE;
+                if ((*stream_ptr)->parameter_type == NULL ||
+                    (*stream_ptr)->parameter_size == NULL ||
+                    (*stream_ptr)->parameter_offset == NULL)
+                {
+                    TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!");
+
+                    if ((*stream_ptr)->parameter_type != NULL)
+                        free((*stream_ptr)->parameter_type);
+                    if ((*stream_ptr)->parameter_size != NULL)
+                        free((*stream_ptr)->parameter_size);
+                    if ((*stream_ptr)->parameter_offset != NULL)
+                        free((*stream_ptr)->parameter_offset);
+
+                    free(*stream_ptr);
+                    *stream_ptr = NULL;
+                    retcode = FAILURE;
+                }
             }
-            else
+
+            if (retcode == SUCCESS && sample_count > 0)
             {
-                (*stream_ptr)->sample_type = (uint32_t*)calloc(entries, sizeof(uint32_t));
-                (*stream_ptr)->sample_size = (uint32_t*)calloc(entries, sizeof(uint32_t));
-                (*stream_ptr)->sample_offset = (int64_t*)calloc(entries, sizeof(int64_t));
-                (*stream_ptr)->sample_pts = (int64_t*)calloc(entries, sizeof(int64_t));
-                (*stream_ptr)->sample_dts = (int64_t*)calloc(entries, sizeof(int64_t));
+                (*stream_ptr)->sample_type = (uint32_t*)calloc(sample_count, sizeof(uint32_t));
+                (*stream_ptr)->sample_size = (uint32_t*)calloc(sample_count, sizeof(uint32_t));
+                (*stream_ptr)->sample_offset = (int64_t*)calloc(sample_count, sizeof(int64_t));
+                (*stream_ptr)->sample_pts = (int64_t*)calloc(sample_count, sizeof(int64_t));
+                (*stream_ptr)->sample_dts = (int64_t*)calloc(sample_count, sizeof(int64_t));
 
                 if ((*stream_ptr)->sample_type == NULL ||
                     (*stream_ptr)->sample_size == NULL ||
@@ -129,7 +149,7 @@ void free_bitstream_map(MediaStream_t **stream_ptr)
         free((*stream_ptr)->subtitles_name);
         (*stream_ptr)->subtitles_name = NULL;
 
-        // Parameter set arrays
+        // "Parameter sets" arrays
         free((*stream_ptr)->parameter_type);
         (*stream_ptr)->parameter_type = NULL;
 

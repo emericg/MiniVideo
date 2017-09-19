@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      mkv_convert.h
+ * \file      mkv_codec.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2017
  */
 
-#ifndef PARSER_MKV_CONVERT_H
-#define PARSER_MKV_CONVERT_H
+#ifndef PARSER_MKV_CODEC_H
+#define PARSER_MKV_CODEC_H
 
 // minivideo headers
 #include "mkv_struct.h"
@@ -31,11 +31,11 @@
 
 /* ************************************************************************** */
 
-int mkv_convert(MediaFile_t *media, mkv_t *mkv);
-
-int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track);
-
-void mkv_clean(mkv_t *mkv);
+void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile);
 
 /* ************************************************************************** */
-#endif // PARSER_MKV_CONVERT_H
+
+int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+
+/* ************************************************************************** */
+#endif // PARSER_MKV_CODEC_H

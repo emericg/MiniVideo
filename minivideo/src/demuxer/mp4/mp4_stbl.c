@@ -32,6 +32,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
+#include "../../decoder/h264/h264_parameterset.h"
 
 // C standard libraries
 #include <stdio.h>
@@ -1120,24 +1121,51 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->sps_count = read_bits(bitstr, 5); // MAX_SPS = 32
     track->sps_sample_offset = (int64_t*)calloc(track->sps_count, sizeof(int64_t));
     track->sps_sample_size = (unsigned int*)calloc(track->sps_count, sizeof(unsigned int));
+
     for (i = 0; i < track->sps_count; i++)
     {
         track->sps_sample_size[i] = read_bits(bitstr, 16);
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
 
-        skip_bits(bitstr, track->sps_sample_size[i] * 8); // sequenceParameterSetNALUnit
+        track->sps_array[i] = (sps_t *)malloc(sizeof(sps_t));
+
+        skip_bits(bitstr, 8); // skip NAL header
+        decodeSPS(bitstr, track->sps_array[i]);
+        bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
+
+        if (bitstream_get_absolute_byte_offset(bitstr) != (track->sps_sample_offset[i] + track->sps_sample_size[i]))
+        {
+            TRACE_WARNING(MP4, "SPS OFFSET ERROR  %lli vs %lli",
+                          bitstream_get_absolute_byte_offset(bitstr),
+                          (track->sps_sample_offset[i] + track->sps_sample_size[i]));
+
+            skip_bits(bitstr, ((track->sps_sample_offset[i] + track->sps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+        }
     }
 
     // PPS
     track->pps_count = read_bits(bitstr, 8); // MAX_PPS = 256
     track->pps_sample_offset = (int64_t*)calloc(track->pps_count, sizeof(int64_t));
     track->pps_sample_size = (unsigned int*)calloc(track->pps_count, sizeof(unsigned int));
+
     for (i = 0; i < track->pps_count; i++)
     {
        track->pps_sample_size[i] = read_bits(bitstr, 16);
        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
 
-       skip_bits(bitstr, track->pps_sample_size[i] * 8); // pictureParameterSetNALUnit
+       track->pps_array[i] = (pps_t *)malloc(sizeof(pps_t));
+
+       skip_bits(bitstr, 8); // skip NAL header
+       decodePPS(bitstr, track->pps_array[i], track->sps_array);
+       bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
+
+       if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
+       {
+           TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
+                         bitstream_get_absolute_byte_offset(bitstr),
+                         (track->pps_sample_offset[i] + track->pps_sample_size[i]));
+           skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+       }
     }
 
     // Handle H.264 profiles
@@ -1220,7 +1248,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
         for (i = 0; i < track->sps_count; i++)
         {
-            xmlSpacer(mp4->xml, "SequenceParameterSet", i);
+            xmlSpacer(mp4->xml, "SequenceParameterSet infos", i);
             fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
             fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%li</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
         }
@@ -1231,6 +1259,26 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             xmlSpacer(mp4->xml, "PictureParameterSet", i);
             fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
             fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
+        }
+
+        for (i = 0; i < track->sps_count; i++)
+        {
+            printPPS(track->pps_array[i], track->sps_array);
+
+            mapSPS(track->sps_array[i],
+                   track->sps_sample_offset[i],
+                   track->sps_sample_size[i],
+                   mp4->xml);
+        }
+        for (i = 0; i < track->pps_count; i++)
+        {
+            printPPS(track->pps_array[i], track->sps_array);
+
+            mapPPS(track->pps_array[i],
+                   track->sps_array,
+                   track->pps_sample_offset[i],
+                   track->pps_sample_size[i],
+                   mp4->xml);
         }
 
         fprintf(mp4->xml, "  </a>\n");

@@ -631,8 +631,9 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
 
     mb->QPprimeC[iCbCr] = mb->QPC[iCbCr] + sps->QpBdOffsetC;
 /*
-    NOTE 1: QP quantisation parameter values QPY and QSY are always in the range of -QpBdOffsetY to 51, inclusive. QP
-    quantisation parameter values QPC and QSC are always in the range of -QpBdOffsetC to 39, inclusive.
+    NOTE 1: QP quantisation parameter values QPY and QSY are always in the range
+    of -QpBdOffsetY to 51, inclusive. QP quantisation parameter values QPC and
+    QSC are always in the range of -QpBdOffsetC to 39, inclusive.
 */
 }
 

@@ -113,7 +113,7 @@ typedef struct MediaStream_t
     bool stream_intracoded;         //!< True if the stream is intra coded
     bool stream_packetized;         //!< True if a container sample isn't a complete audio/video/... frame
 
-    // Parameter set arrays
+    // "Parameter sets" arrays
     uint32_t parameter_count;       //!< The total number of parameter set in this stream
     uint32_t *parameter_type;       //!< Parameter set type
     uint32_t *parameter_size;       //!< Size (in byte)

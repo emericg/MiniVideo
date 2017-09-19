@@ -372,5 +372,18 @@ typedef struct sei_t
     unsigned int payloadSize;
 } sei_t;
 
+/*!
+ * \struct aud_t
+ * \brief AUD - Access Unit Delimiter.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * - 7.3.2.4 Access unit delimiter RBSP syntax.
+ * - 7.4.2.4 Access unit delimiter RBSP semantics.
+ */
+typedef struct aud_t
+{
+    unsigned int primary_pic_type;
+} aud_t;
+
 /* ************************************************************************** */
 #endif // H264_PARAMETER_SET_STRUCT_H

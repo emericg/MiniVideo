@@ -27,6 +27,9 @@
 // minivideo headers
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_codecs.h"
+
+#include "../../decoder/h264/h264_parameterset.h"
+
 #include <stdio.h>
 
 /* ************************************************************************** */
@@ -93,9 +96,11 @@ typedef struct Mp4Track_t
         unsigned int ref_frames;
 
         unsigned int sps_count;
+        sps_t *sps_array[MAX_SPS];
         unsigned int *sps_sample_size;
         int64_t *sps_sample_offset;
         unsigned int pps_count;
+        pps_t *pps_array[MAX_PPS];
         unsigned int *pps_sample_size;
         int64_t *pps_sample_offset;
 
