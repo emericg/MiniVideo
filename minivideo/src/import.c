@@ -627,6 +627,11 @@ int import_fileClose(MediaFile_t **media_ptr)
             free_bitstream_map(&(*media_ptr)->tracks_subt[i]);
         }
 
+        for (i = 0; i < 16/*(*media_ptr)->tracks_others_count*/; i++)
+        {
+            free_bitstream_map(&(*media_ptr)->tracks_others[i]);
+        }
+
         {
             free(*media_ptr);
             *media_ptr = NULL;

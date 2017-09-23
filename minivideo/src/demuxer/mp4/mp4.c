@@ -195,7 +195,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_hdlr()" CLR_RESET);
     int retcode = SUCCESS;
     char fcc[5];
-    char name[128];
+    char name[128] = {0};
     char *pname = name;
 
     // Read FullBox attributs

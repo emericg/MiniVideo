@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    closeFiles();
+    cleanGui();
 
     delete statusTimer;
     delete ui;

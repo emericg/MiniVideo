@@ -59,10 +59,7 @@ int asf_convert(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
     {
         for (unsigned tid = 0; tid < asf->tracks_count; tid++)
         {
-            //if (asf->asfh.sp[tid])
-            {
-                retcode = asf_convert_track(media, asf, tid);
-            }
+            retcode = asf_convert_track(media, asf, tid);
         }
 
         if (media->tracks_video_count == 0 && media->tracks_audio_count == 0)
@@ -71,6 +68,7 @@ int asf_convert(Bitstream_t *bitstr, MediaFile_t *media, asf_t *asf)
         }
     }
 
+    // Free asf_t structure content
     asf_clean(asf);
 
     return retcode;
@@ -131,30 +129,149 @@ void asf_clean(asf_t *asf)
 {
     if (asf)
     {
-/*
+        if (asf->asfh.cl)
+        {
+            for (int j = 0; j < asf->asfh.cl->CodecEntriesCount; j++)
+            {
+                free(asf->asfh.cl->CodecEntries[j]->CodecName);
+                free(asf->asfh.cl->CodecEntries[j]->CodecDescription);
+                free(asf->asfh.cl->CodecEntries[j]->CodecInformation);
+
+                free(asf->asfh.cl->CodecEntries[j]);
+            }
+            free(asf->asfh.cl->CodecEntries);
+
+            free(asf->asfh.cl);
+        }
+
+        if (asf->asfh.sc)
+        {
+            if (asf->asfh.sc->CommandTypes)
+            {
+                free(asf->asfh.sc->CommandTypes->CommandTypeName);
+                free(asf->asfh.sc->CommandTypes);
+            }
+            if (asf->asfh.sc->Commands)
+            {
+                free(asf->asfh.sc->Commands->CommandName);
+                free(asf->asfh.sc->Commands);
+            }
+
+            free(asf->asfh.sc);
+        }
+
+        if (asf->asfh.md)
+        {
+            free(asf->asfh.md->Name);
+
+            if (asf->asfh.md->Markers)
+            {
+                free(asf->asfh.md->Markers->MarkerDescription);
+                free(asf->asfh.md->Markers);
+            }
+
+            free(asf->asfh.md);
+        }
+
+        if (asf->asfh.bme)
+        {
+            free(asf->asfh.bme);
+        }
+
+        if (asf->asfh.ec)
+        {
+            free(asf->asfh.ec->ErrorCorrectionData);
+            free(asf->asfh.ec);
+        }
+
+        if (asf->asfh.cd)
+        {
+            free(asf->asfh.cd->Title);
+            free(asf->asfh.cd->Author);
+            free(asf->asfh.cd->Copyright);
+            free(asf->asfh.cd->Varies);
+            free(asf->asfh.cd->Description);
+            free(asf->asfh.cd->Rating);
+
+            free(asf->asfh.cd);
+        }
+
+        if (asf->asfh.ecd)
+        {
+            for (int i = 0; i < asf->asfh.ecd->ContentDescriptorsCount; i++)
+            {
+                free(asf->asfh.ecd->ContentDescriptors[i]->DescriptorName);
+                free(asf->asfh.ecd->ContentDescriptors[i]->DescriptorValue_data);
+
+                free(asf->asfh.ecd->ContentDescriptors[i]);
+            }
+            free(asf->asfh.ecd->ContentDescriptors);
+            free(asf->asfh.ecd);
+        }
+
+        if (asf->asfh.sbp)
+        {
+            for (int i = 0; i < asf->asfh.sbp->BitrateRecordsCount; i++)
+            {
+                free(asf->asfh.sbp->BitrateRecords[i]);
+            }
+            free(asf->asfh.sbp->BitrateRecords);
+
+            free(asf->asfh.sbp);
+        }
+
+        if (asf->asfh.cb)
+        {
+            free(asf->asfh.cb->BannerImageData);
+            free(asf->asfh.cb->BannerImageURL);
+            free(asf->asfh.cb->CopyrightURL);
+
+            free(asf->asfh.cb);
+        }
+
+        if (asf->asfh.ce)
+        {
+            free(asf->asfh.ce->SecretData);
+            free(asf->asfh.ce->ProtectionType);
+            free(asf->asfh.ce->KeyID);
+            free(asf->asfh.ce->LicenseURL);
+
+            free(asf->asfh.ce);
+        }
+
+        if (asf->asfh.ece)
+        {
+            free(asf->asfh.ece->Data);
+            free(asf->asfh.ece);
+        }
+
+        if (asf->asfh.ds)
+        {
+            free(asf->asfh.ds->SignatureData);
+            free(asf->asfh.ds);
+        }
+
+        if (asf->asfh.pad)
+        {
+            free(asf->asfh.pad->PaddingData);
+            free(asf->asfh.pad);
+        }
+
+        // Tracks
         for (unsigned i = 0; i < asf->tracks_count; i++)
         {
             free(asf->asfh.sp[i].TypeSpecificData);
             free(asf->asfh.sp[i].ErrorCorrectionData);
-        }
-*/
-        if (asf->asfh.cl)
-        {
-            //for (int j = 0; j < asf->asfh.cl->CodecEntriesCount; j++)
-            //    free(asf->asfh.cl->CodecEntries[j]);
-            //free(asf->asfh.cl->CodecEntries);
-            free(asf->asfh.cl);
-        }
 
-        //
-        for (unsigned i = 0; i < asf->tracks_count; i++)
-        {
             if (asf->tracks[i])
             {
                 //free(asf->tracks[i]->index_entries);
                 free(asf->tracks[i]);
             }
         }
+
+        // Header Extensions
+        free(asf->asfh.ex.HeaderExtensionData);
     }
 }
 

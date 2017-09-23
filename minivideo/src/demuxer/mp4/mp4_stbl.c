@@ -2007,20 +2007,23 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // Parse box content
     track->stts_entry_count = read_bits(bitstr, 32);
-    track->stts_sample_count = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
-    track->stts_sample_delta = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
+    if (track->stts_entry_count > 0)
+    {
+        track->stts_sample_count = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
+        track->stts_sample_delta = (unsigned int*)calloc(track->stts_entry_count, sizeof(unsigned int));
 
-    if (track->stts_sample_count == NULL || track->stts_sample_delta == NULL)
-    {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        for (unsigned i = 0; i < track->stts_entry_count; i++)
+        if (track->stts_sample_count == NULL || track->stts_sample_delta == NULL)
         {
-            track->stts_sample_count[i] = read_bits(bitstr, 32);
-            track->stts_sample_delta[i] = read_bits(bitstr, 32);
+            TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
+            retcode = FAILURE;
+        }
+        else
+        {
+            for (unsigned i = 0; i < track->stts_entry_count; i++)
+            {
+                track->stts_sample_count[i] = read_bits(bitstr, 32);
+                track->stts_sample_delta[i] = read_bits(bitstr, 32);
+            }
         }
     }
 
@@ -2074,24 +2077,27 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // Parse box content
     track->ctts_entry_count = read_bits(bitstr, 32);
-    track->ctts_sample_count = (uint32_t*)calloc(track->ctts_entry_count, sizeof(uint32_t));
-    track->ctts_sample_offset = (int64_t*)calloc(track->ctts_entry_count, sizeof(int64_t));
+    if (track->ctts_entry_count > 0)
+    {
+        track->ctts_sample_count = (uint32_t*)calloc(track->ctts_entry_count, sizeof(uint32_t));
+        track->ctts_sample_offset = (int64_t*)calloc(track->ctts_entry_count, sizeof(int64_t));
 
-    if (track->ctts_sample_count == NULL || track->ctts_sample_offset == NULL)
-    {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        for (unsigned i = 0; i < track->ctts_entry_count; i++)
+        if (track->ctts_sample_count == NULL || track->ctts_sample_offset == NULL)
         {
-            track->ctts_sample_count[i] = read_bits(bitstr, 32);
+            TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
+            retcode = FAILURE;
+        }
+        else
+        {
+            for (unsigned i = 0; i < track->ctts_entry_count; i++)
+            {
+                track->ctts_sample_count[i] = read_bits(bitstr, 32);
 
-            if (box_header->version == 0)
-                track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read uint
-            else if (box_header->version == 1)
-                track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read int
+                if (box_header->version == 0)
+                    track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read uint
+                else if (box_header->version == 1)
+                    track->ctts_sample_offset[i] = (int64_t)read_bits(bitstr, 32); // read int
+            }
         }
     }
 
@@ -2144,47 +2150,49 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    unsigned int i = 0;
     track->stss_entry_count = read_bits(bitstr, 32);
-    track->stss_sample_number = (unsigned int*)calloc(track->stss_entry_count, sizeof(unsigned int));
+    if (track->stss_entry_count > 0)
+    {
+        track->stss_sample_number = (unsigned int*)calloc(track->stss_entry_count, sizeof(unsigned int));
 
-    if (track->stss_sample_number == NULL)
-    {
-        TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        for (i = 0; i < track->stss_entry_count; i++)
+        if (track->stss_sample_number == NULL)
         {
-            track->stss_sample_number[i] = read_bits(bitstr, 32);
+            TRACE_ERROR(MP4, "Unable to alloc entry_table table!");
+            retcode = FAILURE;
         }
+        else
+        {
+            for (unsigned i = 0; i < track->stss_entry_count; i++)
+            {
+                track->stss_sample_number[i] = read_bits(bitstr, 32);
+            }
+        }
+    }
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
-        TRACE_1(MP4, "> entry_count   : %u", track->stss_entry_count);
+    print_box_header(box_header);
+    TRACE_1(MP4, "> entry_count   : %u", track->stss_entry_count);
 /*
-        TRACE_1(MP4, "> sample_number : [");
-        for (i = 0; i < track->stss_entry_count; i++)
-        {
-            printf("%u, ", track->stss_sample_number[i]);
-        }
-        printf("]\n");
+    TRACE_1(MP4, "> sample_number : [");
+    for (unsigned i = 0; i < track->stss_entry_count; i++)
+    {
+        printf("%u, ", track->stss_sample_number[i]);
+    }
+    printf("]\n");
 */
 #endif // ENABLE_DEBUG
 
-        // xmlMapper
-        if (mp4->xml)
-        {
-            write_box_header(box_header, mp4->xml);
-            fprintf(mp4->xml, "  <title>Sync Sample</title>\n");
-            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stss_entry_count);
-            fprintf(mp4->xml, "  <stss_sample_number>[");
-            for (i = 0; i < track->stss_entry_count; i++)
-                fprintf(mp4->xml, "%u, ", track->stss_sample_number[i]);
-            fprintf(mp4->xml, "]</stss_sample_number>\n");
-            fprintf(mp4->xml, "  </a>\n");
-        }
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Sync Sample</title>\n");
+        fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stss_entry_count);
+        fprintf(mp4->xml, "  <stss_sample_number>[");
+        for (unsigned i = 0; i < track->stss_entry_count; i++)
+            fprintf(mp4->xml, "%u, ", track->stss_sample_number[i]);
+        fprintf(mp4->xml, "]</stss_sample_number>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -2213,81 +2221,83 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    unsigned int i = 0;
     track->stsc_entry_count = read_bits(bitstr, 32);
-    track->stsc_first_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
-    track->stsc_samples_per_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
-    track->stsc_sample_description_index = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
+    if (track->stsc_entry_count > 0)
+    {
+        track->stsc_first_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
+        track->stsc_samples_per_chunk = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
+        track->stsc_sample_description_index = (unsigned int*)calloc(track->stsc_entry_count, sizeof(unsigned int));
 
-    if (track->stsc_first_chunk == NULL ||
-        track->stsc_samples_per_chunk == NULL ||
-        track->stsc_sample_description_index == NULL)
-    {
-        TRACE_ERROR(MP4, "Unable to alloc first_chunk, samples_per_chunk or sample_description_index tables!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        for (i = 0; i < track->stsc_entry_count; i++)
+        if (track->stsc_first_chunk == NULL ||
+            track->stsc_samples_per_chunk == NULL ||
+            track->stsc_sample_description_index == NULL)
         {
-            track->stsc_first_chunk[i] = read_bits(bitstr, 32);
-            track->stsc_samples_per_chunk[i] = read_bits(bitstr, 32);
-            track->stsc_sample_description_index[i] = read_bits(bitstr, 32);
+            TRACE_ERROR(MP4, "Unable to alloc first_chunk, samples_per_chunk or sample_description_index tables!");
+            retcode = FAILURE;
         }
+        else
+        {
+            for (unsigned i = 0; i < track->stsc_entry_count; i++)
+            {
+                track->stsc_first_chunk[i] = read_bits(bitstr, 32);
+                track->stsc_samples_per_chunk[i] = read_bits(bitstr, 32);
+                track->stsc_sample_description_index[i] = read_bits(bitstr, 32);
+            }
+        }
+    }
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
+    print_box_header(box_header);
 /*
-        // Print box content
-        TRACE_1(MP4, "> entry_count : %u", track->stsc_entry_count);
+    // Print box content
+    TRACE_1(MP4, "> entry_count : %u", track->stsc_entry_count);
 
-        TRACE_1(MP4, "> first_chunk : [");
-        for (i = 0; i < track->stsc_entry_count; i++)
-        {
-            printf("%u, ", track->stsc_first_chunk[i]);
-        }
-        printf("]\n");
+    TRACE_1(MP4, "> first_chunk : [");
+    for (unsigned i = 0; i < track->stsc_entry_count; i++)
+    {
+        printf("%u, ", track->stsc_first_chunk[i]);
+    }
+    printf("]\n");
 
-        TRACE_1(MP4, "> samples_per_chunk : [");
-        for (i = 0; i < track->stsc_entry_count; i++)
-        {
-            printf("%u, ", track->stsc_samples_per_chunk[i]);
-        }
-        printf("]\n");
+    TRACE_1(MP4, "> samples_per_chunk : [");
+    for (unsigned i = 0; i < track->stsc_entry_count; i++)
+    {
+        printf("%u, ", track->stsc_samples_per_chunk[i]);
+    }
+    printf("]\n");
 
-        TRACE_1(MP4, "> sample_description_index : [");
-        for (i = 0; i < track->stsc_entry_count; i++)
-        {
-            printf("%u, ", track->stsc_sample_description_index[i]);
-        }
-        printf("]\n");
+    TRACE_1(MP4, "> sample_description_index : [");
+    for (unsigned i = 0; i < track->stsc_entry_count; i++)
+    {
+        printf("%u, ", track->stsc_sample_description_index[i]);
+    }
+    printf("]\n");
 */
 #endif // ENABLE_DEBUG
 
-        // xmlMapper
-        if (mp4->xml)
-        {
-            write_box_header(box_header, mp4->xml);
-            fprintf(mp4->xml, "  <title>Sample To Chunk</title>\n");
-            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stsc_entry_count);
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Sample To Chunk</title>\n");
+        fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stsc_entry_count);
 
-            fprintf(mp4->xml, "  <first_chunk>[");
-            for (i = 0; i < track->stss_entry_count; i++)
-                fprintf(mp4->xml, "%u, ", track->stsc_first_chunk[i]);
-            fprintf(mp4->xml, "]</first_chunk>\n");
+        fprintf(mp4->xml, "  <first_chunk>[");
+        for (unsigned i = 0; i < track->stsc_entry_count; i++)
+            fprintf(mp4->xml, "%u, ", track->stsc_first_chunk[i]);
+        fprintf(mp4->xml, "]</first_chunk>\n");
 
-            fprintf(mp4->xml, "  <samples_per_chunk>[");
-            for (i = 0; i < track->stss_entry_count; i++)
-                fprintf(mp4->xml, "%u, ", track->stsc_samples_per_chunk[i]);
-            fprintf(mp4->xml, "]</samples_per_chunk>\n");
+        fprintf(mp4->xml, "  <samples_per_chunk>[");
+        for (unsigned i = 0; i < track->stsc_entry_count; i++)
+            fprintf(mp4->xml, "%u, ", track->stsc_samples_per_chunk[i]);
+        fprintf(mp4->xml, "]</samples_per_chunk>\n");
 
-            fprintf(mp4->xml, "  <stsc_sample_description_index>[");
-            for (i = 0; i < track->stss_entry_count; i++)
-                fprintf(mp4->xml, "%u, ", track->stsc_sample_description_index[i]);
-            fprintf(mp4->xml, "]</stsc_sample_description_index>\n");
+        fprintf(mp4->xml, "  <stsc_sample_description_index>[");
+        for (unsigned i = 0; i < track->stsc_entry_count; i++)
+            fprintf(mp4->xml, "%u, ", track->stsc_sample_description_index[i]);
+        fprintf(mp4->xml, "]</stsc_sample_description_index>\n");
 
-            fprintf(mp4->xml, "  </a>\n");
-        }
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -2315,7 +2325,6 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsz()" CLR_RESET);
     int retcode = SUCCESS;
-    unsigned int i = 0;
     unsigned int field_size = 32;
 
     // Read FullBox attributs
@@ -2346,7 +2355,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else
         {
-            for (i = 0; i < track->stsz_sample_count; i++)
+            for (unsigned i = 0; i < track->stsz_sample_count; i++)
             {
                 track->stsz_entry_size[i] = read_bits(bitstr, field_size);
             }
@@ -2361,7 +2370,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     if (track->stsz_sample_size == 0)
     {
         TRACE_1(MP4, "> entry_size : [");
-        for (i = 0; i < track->stsz_sample_count; i++)
+        for (unsigned i = 0; i < track->stsz_sample_count; i++)
             printf("%u, ", track->stsz_entry_size[i]);
         printf("]\n");
     }
@@ -2377,7 +2386,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <sample_size>%u</sample_size>\n", track->stsz_sample_size);
         fprintf(mp4->xml, "  <entry_size>[");
         if (track->stsz_sample_size == 0)
-            for (i = 0; i < track->stsz_sample_count; i++)
+            for (unsigned i = 0; i < track->stsz_sample_count; i++)
                 fprintf(mp4->xml, "%u, ", track->stsz_entry_size[i]);
         fprintf(mp4->xml, "]</entry_size>\n");
         fprintf(mp4->xml, "  </a>\n");
@@ -2408,58 +2417,60 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->flags = read_bits(bitstr, 24);
 
     // Parse box content
-    unsigned int i = 0;
     track->stco_entry_count = read_bits(bitstr, 32);
-    track->stco_chunk_offset = (int64_t*)calloc(track->stco_entry_count, sizeof(int64_t));
+    if (track->stco_entry_count)
+    {
+        track->stco_chunk_offset = (int64_t*)calloc(track->stco_entry_count, sizeof(int64_t));
 
-    if (track->stco_chunk_offset == NULL)
-    {
-        TRACE_ERROR(MP4, "Unable to alloc chunk_offset table!");
-        retcode = FAILURE;
+        if (track->stco_chunk_offset == NULL)
+        {
+            TRACE_ERROR(MP4, "Unable to alloc chunk_offset table!");
+            retcode = FAILURE;
+        }
+        else
+        {
+            if (box_header->boxtype == BOX_CO64)
+            {
+                for (unsigned i = 0; i < track->stco_entry_count; i++)
+                {
+                    track->stco_chunk_offset[i] = (int64_t)read_bits_64(bitstr, 64);
+                }
+            }
+            else //if (box_header->type == BOX_STCO)
+            {
+                for (unsigned i = 0; i < track->stco_entry_count; i++)
+                {
+                    track->stco_chunk_offset[i] = (int64_t)read_bits(bitstr, 32);
+                }
+            }
+        }
     }
-    else
-    {
-        if (box_header->boxtype == BOX_CO64)
-        {
-            for (i = 0; i < track->stco_entry_count; i++)
-            {
-                track->stco_chunk_offset[i] = (int64_t)read_bits_64(bitstr, 64);
-            }
-        }
-        else //if (box_header->type == BOX_STCO)
-        {
-            for (i = 0; i < track->stco_entry_count; i++)
-            {
-                track->stco_chunk_offset[i] = (int64_t)read_bits(bitstr, 32);
-            }
-        }
 
 #if ENABLE_DEBUG
-        print_box_header(box_header);
+    print_box_header(box_header);
 /*
-        TRACE_1(MP4, "> entry_count  : %u", track->stco_entry_count);
+    TRACE_1(MP4, "> entry_count  : %u", track->stco_entry_count);
 
-        TRACE_1(MP4, "> chunk_offset : [");
-        for (i = 0; i < track->stco_entry_count; i++)
-        {
-            printf("%li, ", track->stco_chunk_offset[i]);
-        }
-        printf("]\n");
+    TRACE_1(MP4, "> chunk_offset : [");
+    for (unsigned i = 0; i < track->stco_entry_count; i++)
+    {
+        printf("%li, ", track->stco_chunk_offset[i]);
+    }
+    printf("]\n");
 */
 #endif // ENABLE_DEBUG
 
-        // xmlMapper
-        if (mp4->xml)
-        {
-            write_box_header(box_header, mp4->xml);
-            fprintf(mp4->xml, "  <title>Chunk Offset</title>\n");
-            fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stco_entry_count);
-            fprintf(mp4->xml, "  <chunk_offset>[");
-            for (i = 0; i < track->stco_entry_count; i++)
-                fprintf(mp4->xml, "%li, ", track->stco_chunk_offset[i]);
-            fprintf(mp4->xml, "]</chunk_offset>\n");
-            fprintf(mp4->xml, "  </a>\n");
-        }
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Chunk Offset</title>\n");
+        fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stco_entry_count);
+        fprintf(mp4->xml, "  <chunk_offset>[");
+        for (unsigned i = 0; i < track->stco_entry_count; i++)
+            fprintf(mp4->xml, "%li, ", track->stco_chunk_offset[i]);
+        fprintf(mp4->xml, "]</chunk_offset>\n");
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -2482,14 +2493,13 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    uint32_t sample_count = track->stsz_sample_count;
+    unsigned sample_count = track->stsz_sample_count;
     if (sample_count == 0)
         sample_count = track->ctts_entry_count;
 
     // Parse box content
     if (sample_count > 0)
     {
-        unsigned int i = 0;
         track->sdtp_is_leading = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
         track->sdtp_sample_depends_on = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
         track->sdtp_sample_is_depended_on = (uint8_t*)calloc(sample_count, sizeof(uint8_t));
@@ -2503,73 +2513,73 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else
         {
-            for (i = 0; i < sample_count; i++)
+            for (unsigned i = 0; i < sample_count; i++)
             {
                 track->sdtp_is_leading[i] = (int8_t)read_bits(bitstr, 2);
                 track->sdtp_sample_depends_on[i] = (int8_t)read_bits(bitstr, 2);
                 track->sdtp_sample_is_depended_on[i] = (int8_t)read_bits(bitstr, 2);
                 track->sdtp_sample_has_redundancy[i] = (int8_t)read_bits(bitstr, 2);
             }
+        }
+    }
 
 #if ENABLE_DEBUG
-            print_box_header(box_header);
+    print_box_header(box_header);
 /*
-            TRACE_1(MP4, "> sdtp_is_leading : [");
-            for (i = 0; i < sample_count; i++)
-            {
-                printf("%u, ", track->sdtp_is_leading[i]);
-            }
-            printf("]\n");
-            TRACE_1(MP4, "> sdtp_is_leading : [");
-            for (i = 0; i < sample_count; i++)
-            {
-                printf("%u, ", track->sdtp_is_leading[i]);
-            }
-            printf("]\n");
-            TRACE_1(MP4, "> sdtp_is_leading : [");
-            for (i = 0; i < sample_count; i++)
-            {
-                printf("%u, ", track->sdtp_is_leading[i]);
-            }
-            printf("]\n");
-            TRACE_1(MP4, "> sdtp_is_leading : [");
-            for (i = 0; i < sample_count; i++)
-            {
-                printf("%u, ", track->sdtp_is_leading[i]);
-            }
-            printf("]\n");
+    TRACE_1(MP4, "> sdtp_is_leading : [");
+    for (unsigned i = 0; i < sample_count; i++)
+    {
+        printf("%u, ", track->sdtp_is_leading[i]);
+    }
+    printf("]\n");
+    TRACE_1(MP4, "> sdtp_is_leading : [");
+    for (unsigned i = 0; i < sample_count; i++)
+    {
+        printf("%u, ", track->sdtp_is_leading[i]);
+    }
+    printf("]\n");
+    TRACE_1(MP4, "> sdtp_is_leading : [");
+    for (unsigned i = 0; i < sample_count; i++)
+    {
+        printf("%u, ", track->sdtp_is_leading[i]);
+    }
+    printf("]\n");
+    TRACE_1(MP4, "> sdtp_is_leading : [");
+    for (unsigned i = 0; i < sample_count; i++)
+    {
+        printf("%u, ", track->sdtp_is_leading[i]);
+    }
+    printf("]\n");
 */
 #endif // ENABLE_DEBUG
 
-            // xmlMapper
-            if (mp4->xml)
-            {
-                write_box_header(box_header, mp4->xml);
-                fprintf(mp4->xml, "  <title>Independent and Disposable Samples</title>\n");
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml);
+        fprintf(mp4->xml, "  <title>Independent and Disposable Samples</title>\n");
 
-                fprintf(mp4->xml, "  <sdtp_is_leading>[");
-                for (i = 0; i < sample_count; i++)
-                    fprintf(mp4->xml, "%u, ", track->sdtp_is_leading[i]);
-                fprintf(mp4->xml, "]</sdtp_is_leading>\n");
+        fprintf(mp4->xml, "  <sdtp_is_leading>[");
+        for (unsigned i = 0; i < sample_count; i++)
+            fprintf(mp4->xml, "%u, ", track->sdtp_is_leading[i]);
+        fprintf(mp4->xml, "]</sdtp_is_leading>\n");
 
-                fprintf(mp4->xml, "  <sdtp_sample_depends_on>[");
-                for (i = 0; i < sample_count; i++)
-                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_depends_on[i]);
-                fprintf(mp4->xml, "]</sdtp_sample_depends_on>\n");
+        fprintf(mp4->xml, "  <sdtp_sample_depends_on>[");
+        for (unsigned i = 0; i < sample_count; i++)
+            fprintf(mp4->xml, "%u, ", track->sdtp_sample_depends_on[i]);
+        fprintf(mp4->xml, "]</sdtp_sample_depends_on>\n");
 
-                fprintf(mp4->xml, "  <sdtp_sample_is_depended_on>[");
-                for (i = 0; i < sample_count; i++)
-                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_is_depended_on[i]);
-                fprintf(mp4->xml, "]</sdtp_sample_is_depended_on>\n");
+        fprintf(mp4->xml, "  <sdtp_sample_is_depended_on>[");
+        for (unsigned i = 0; i < sample_count; i++)
+            fprintf(mp4->xml, "%u, ", track->sdtp_sample_is_depended_on[i]);
+        fprintf(mp4->xml, "]</sdtp_sample_is_depended_on>\n");
 
-                fprintf(mp4->xml, "  <sdtp_sample_has_redundancy>[");
-                for (i = 0; i < sample_count; i++)
-                    fprintf(mp4->xml, "%u, ", track->sdtp_sample_has_redundancy[i]);
-                fprintf(mp4->xml, "]</sdtp_sample_has_redundancy>\n");
+        fprintf(mp4->xml, "  <sdtp_sample_has_redundancy>[");
+        for (unsigned i = 0; i < sample_count; i++)
+            fprintf(mp4->xml, "%u, ", track->sdtp_sample_has_redundancy[i]);
+        fprintf(mp4->xml, "]</sdtp_sample_has_redundancy>\n");
 
-                fprintf(mp4->xml, "  </a>\n");
-            }
-        }
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;

@@ -210,7 +210,7 @@ static void scaling_list_8x8(Bitstream_t *bitstr, sps_t *sps, int i)
  */
 int decodeSPS_legacy(DecodingContext_t *dc)
 {
-    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS()" CLR_RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS_legacy()" CLR_RESET);
     int retcode = SUCCESS;
 
     // SPS allocation
@@ -257,6 +257,7 @@ int decodeSPS_legacy(DecodingContext_t *dc)
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
             sps->profile_idc == STEREO_HIGH)
         {
+            sps->separate_colour_plane_flag = false;
             sps->chroma_format_idc = read_ue(dc->bitstr);
             dc->ChromaArrayType = sps->ChromaArrayType = sps->chroma_format_idc;
 
@@ -332,12 +333,10 @@ int decodeSPS_legacy(DecodingContext_t *dc)
                     {
                         if (i < 6)
                         {
-                            //scaling_list_4x4(dc, i);
                             scaling_list_4x4(dc->bitstr, sps, i);
                         }
                         else
                         {
-                            //scaling_list_8x8(dc, i - 6);
                             scaling_list_8x8(dc->bitstr, sps, i - 6);
                         }
                     }
@@ -349,9 +348,10 @@ int decodeSPS_legacy(DecodingContext_t *dc)
             dc->ChromaArrayType = 1;
             sps->ChromaArrayType = 1;
             sps->chroma_format_idc = 1;
+            sps->separate_colour_plane_flag = false;
+
             sps->SubHeightC = sps->SubWidthC = 2;
             sps->MbHeightC = sps->MbWidthC = 8;
-
             sps->bit_depth_luma_minus8 = 0;
             sps->BitDepthY = 8;
             sps->QpBdOffsetY = 0;
@@ -428,9 +428,10 @@ int decodeSPS_legacy(DecodingContext_t *dc)
 
         sps->frame_mbs_only_flag = read_bit(dc->bitstr);
         if (sps->frame_mbs_only_flag == false)
-        {
             sps->mb_adaptive_frame_field_flag = read_bit(dc->bitstr);
-        }
+        else
+            sps->mb_adaptive_frame_field_flag = false;
+
         sps->FrameHeightInMbs = (2 - sps->frame_mbs_only_flag) * sps->PicHeightInMapUnits;
 
         // Macroblocks number
@@ -482,7 +483,7 @@ int decodeSPS_legacy(DecodingContext_t *dc)
 
 int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 {
-    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS_standalone()" CLR_RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (sps == NULL)
@@ -513,6 +514,7 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 
         sps->level_idc = read_bits(bitstr, 8);
         sps->seq_parameter_set_id = read_ue(bitstr);
+        sps->separate_colour_plane_flag = false;
 
         // Handle parameters for profiles >= HIGH
         if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
@@ -521,11 +523,11 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             sps->profile_idc == STEREO_HIGH)
         {
             sps->chroma_format_idc = read_ue(bitstr);
+            sps->ChromaArrayType = sps->chroma_format_idc;
 
             if (sps->chroma_format_idc == 0) // 4:0:0 subsampling
             {
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 0, yuv 4:0:0)");
-                return UNSUPPORTED;
 
                 sps->SubHeightC = 0;
                 sps->SubWidthC = 0;
@@ -538,7 +540,6 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             else if (sps->chroma_format_idc == 2) // 4:2:2 subsampling
             {
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 2, yuv 4:2:1)");
-                return UNSUPPORTED;
 
                 sps->SubHeightC = 1;
                 sps->SubWidthC = 2;
@@ -546,14 +547,11 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             else if (sps->chroma_format_idc == 3) // 4:4:4 subsampling
             {
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 3, yuv 4:4:4)");
-                return UNSUPPORTED;
 
                 sps->separate_colour_plane_flag = read_bit(bitstr);
-
                 if (sps->separate_colour_plane_flag)
                 {
                     TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == 1)");
-                    return UNSUPPORTED;
 
                     sps->ChromaArrayType = 0;
 
@@ -586,7 +584,7 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             sps->seq_scaling_matrix_present_flag = read_bit(bitstr);
             if (sps->seq_scaling_matrix_present_flag)
             {
-                for (int i = 0; i < ((sps->chroma_format_idc != 3) ? 8 : 12); i++)
+                for (unsigned i = 0; i < ((sps->chroma_format_idc != 3) ? 8 : 12); i++)
                 {
                     sps->seq_scaling_list_present_flag[i] = read_bit(bitstr);
                     if (sps->seq_scaling_list_present_flag[i])
@@ -607,6 +605,8 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
         {
             sps->ChromaArrayType = 1;
             sps->chroma_format_idc = 1;
+            sps->separate_colour_plane_flag = false;
+
             sps->SubHeightC = sps->SubWidthC = 2;
             sps->MbHeightC = sps->MbWidthC = 8;
 
@@ -682,9 +682,10 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 
         sps->frame_mbs_only_flag = read_bit(bitstr);
         if (sps->frame_mbs_only_flag == false)
-        {
             sps->mb_adaptive_frame_field_flag = read_bit(bitstr);
-        }
+        else
+            sps->mb_adaptive_frame_field_flag = false;
+
         sps->FrameHeightInMbs = (2 - sps->frame_mbs_only_flag) * sps->PicHeightInMapUnits;
 
         sps->direct_8x8_inference_flag = read_bit(bitstr);
@@ -742,9 +743,11 @@ void freeSPS(sps_t **sps_ptr)
             if ((*sps_ptr)->vui->hrd != NULL)
             {
                 free((*sps_ptr)->vui->hrd);
+                (*sps_ptr)->vui->hrd = NULL;
             }
 
             free((*sps_ptr)->vui);
+            (*sps_ptr)->vui = NULL;
         }
 
         {
@@ -792,7 +795,6 @@ static int checkSPS(sps_t *sps)
             TRACE_WARNING(PARAM, "  <!> Only MAIN and HIGH profiles are supported by this decoder");
 
             TRACE_ERROR(PARAM, ">>> UNSUPPORTED (profile_idc != 77 && profile_idc != 100)");
-            return UNSUPPORTED;
         }
 
         if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
@@ -811,13 +813,11 @@ static int checkSPS(sps_t *sps)
                 TRACE_ERROR(PARAM, "  <!> Only 4:0:0 (0) and 4:2:0 (1) chroma_format_idc are supported by this decoder");
 
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc > 1)");
-                return UNSUPPORTED;
             }
 
             if (sps->separate_colour_plane_flag)
             {
                 TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
-                return UNSUPPORTED;
             }
 
             if (sps->bit_depth_luma_minus8 > 6)
@@ -883,7 +883,6 @@ static int checkSPS(sps_t *sps)
         if (sps->mb_adaptive_frame_field_flag)
         {
             TRACE_ERROR(PARAM, ">>> UNSUPPORTED (mb_adaptive_frame_field_flag)");
-            return UNSUPPORTED;
         }
 
         if (sps->frame_cropping_flag)
@@ -1133,7 +1132,7 @@ void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 
 int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
 {
-    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodePPS_standalone()" CLR_RESET);
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodePPS()" CLR_RESET);
     int retcode = SUCCESS;
 
     if (pps == NULL)
@@ -1215,7 +1214,6 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
                     {
 /*
                         // TODO
-
                         if (i < 6)
                             scaling_list_4x4(sps_array[pps->seq_parameter_set_id]->ScalingList4x4[i], 16,
                                              sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix4x4Flag[i]);
@@ -1231,6 +1229,8 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
         }
         else
         {
+            pps->transform_8x8_mode_flag = false;
+            pps->pic_scaling_matrix_present_flag = false;
             pps->second_chroma_qp_index_offset = pps->chroma_qp_index_offset;
         }
 
@@ -1309,7 +1309,7 @@ static int checkPPS(pps_t *pps, sps_t *sps)
         else if (pps->num_slice_groups_minus1 > 0)
         {
             TRACE_ERROR(PARAM, "  - FMO is not implemented. Decoding aborted!");
-            return UNSUPPORTED;
+            retcode = FAILURE;
         }
 
         if (pps->num_ref_idx_l0_default_active_minus1 > 31)
@@ -2146,8 +2146,9 @@ hrd_t *decodeHRD(Bitstream_t *bitstr)
         hrd->bit_rate_scale = read_bits(bitstr, 4);
         hrd->cpb_size_scale = read_bits(bitstr, 4);
 
-        unsigned int SchedSelIdx = 0;
-        for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
+        for (unsigned SchedSelIdx = 0;
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx++)
         {
             hrd->bit_rate_value_minus1[SchedSelIdx] = read_ue(bitstr);
             hrd->cpb_size_value_minus1[SchedSelIdx] = read_ue(bitstr);
@@ -2192,7 +2193,7 @@ static int checkHRD(hrd_t *hrd)
     }
     else // Check HRD values
     {
-        if (hrd->cpb_cnt_minus1 > 31)
+        if (hrd->cpb_cnt_minus1 > (MAX_CPB - 1))
         {
             TRACE_WARNING(PARAM, "      - cpb_cnt_minus1 is %i, but should be between 0 and 31", hrd->cpb_cnt_minus1);
             retcode = FAILURE;
@@ -2202,8 +2203,9 @@ static int checkHRD(hrd_t *hrd)
         //TRACE_1(PARAM, "      - bit_rate_scale    : %i", hrd->bit_rate_scale);
         //TRACE_1(PARAM, "      - cpb_size_scale    : %i", hrd->cpb_size_scale);
 
-        unsigned int SchedSelIdx = 0;
-        for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
+        for (unsigned SchedSelIdx = 0;
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx++)
         {
             if (hrd->bit_rate_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
             {

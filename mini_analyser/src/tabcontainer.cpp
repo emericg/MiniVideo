@@ -793,7 +793,7 @@ bool tabContainer::loadXmlFile()
     if (status == true)
     {
         xmlMapFile.seek(0);
-        char *b = new char[xmlMapFile.size()];
+        char *b = static_cast<char*>(pugi::get_memory_allocation_function()(xmlMapFile.size()));
         xmlMapFile.read(b, xmlMapFile.size());
 
         pugi::xml_parse_result result = xmlMapDatas.load_buffer_inplace_own(b, xmlMapFile.size());

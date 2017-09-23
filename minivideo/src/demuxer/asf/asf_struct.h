@@ -513,8 +513,8 @@ typedef struct AsfPaddingObject_t
 typedef struct AsfHeaderObject_t
 {
     int32_t NumberOfHeaderObjects;
-    uint8_t Reserved1;
-    uint8_t Reserved2;
+    int8_t Reserved1;
+    int8_t Reserved2;
 
     AsfFilePropertiesObject_t fp;       //!< Contains global file attributes
     AsfStreamPropertiesObject_t sp[16]; //!< Defines a digital media stream and its characteristics

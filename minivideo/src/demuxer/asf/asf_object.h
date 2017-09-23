@@ -38,6 +38,8 @@ uint64_t WindowsTickToUnixSeconds(int64_t windowsTicks);
 int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
                   FILE *xml, const char *name);
 
+int8_t read_asf_int8(Bitstream_t *bitstr, FILE *xml, const char *name);
+
 int16_t read_asf_int16(Bitstream_t *bitstr, FILE *xml, const char *name);
 
 int32_t read_asf_int32(Bitstream_t *bitstr, FILE *xml, const char *name);

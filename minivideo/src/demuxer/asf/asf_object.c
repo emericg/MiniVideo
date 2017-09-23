@@ -81,6 +81,24 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
     return status;
 }
 
+int8_t read_asf_int8(Bitstream_t *bitstr,
+                     FILE *xml, const char *name)
+{
+    TRACE_2(ASF, "read_asf_int8()");
+    int8_t value = (uint8_t)read_bits(bitstr, 8);
+
+    if (name)
+    {
+        TRACE_1(ASF, "* %s  = %i", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%i</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
 int16_t read_asf_int16(Bitstream_t *bitstr,
                        FILE *xml, const char *name)
 {
