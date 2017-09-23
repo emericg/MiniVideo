@@ -138,6 +138,7 @@ typedef enum fourcc_list_e
 
     fcc_AVC1 = 0x41564331, //!< H.264 / MPEG-4 part 10 "AVC"
     fcc_avc1 = 0x61766331,
+    fcc_avc3 = 0x61766333,
     fcc_AVCC = 0x41564343,
     fcc_avcc = 0x61766363,
     fcc_H264 = 0x48323634,

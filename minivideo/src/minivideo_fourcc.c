@@ -116,6 +116,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
 
     case fcc_AVC1:
     case fcc_avc1:
+    case fcc_avc3:
     case fcc_AVCC:
     case fcc_avcc:
     case fcc_H264:
