@@ -104,7 +104,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g")
     set(CMAKE_VERBOSE_MAKEFILE off)
 else()
-    message(STATUS "> This is a RELEASE build. You can change this using -DCMAKE_BUILD_TYPE=Debug")
+    message(STATUS "> This is a RELEASE build.")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     set(ENABLE_DEBUG 0)
 endif()
@@ -123,7 +123,7 @@ elseif(${CMAKE_C_COMPILER_ID} STREQUAL "MSVC")
 endif()
 
 
-# Platform specific
+# Platform specific build configuration
 ################################################################################
 
 # Linux specific stuff

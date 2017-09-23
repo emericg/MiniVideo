@@ -23,8 +23,12 @@
 #include "ui_videobackends.h"
 
 #if defined(__linux__)
-#include "videobackends_vdpau.h"
-#include "videobackends_vaapi.h"
+#if defined(VIDEOBACKEND_VDPAU)
+    #include "videobackends_vdpau.h"
+#endif
+#if defined(VIDEOBACKEND_VAAPI)
+    #include "videobackends_vaapi.h"
+#endif
 #elif defined(__APPLE__)
     //
 #elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
@@ -40,11 +44,17 @@ VideoBackendsUI::VideoBackendsUI(QWidget *parent) :
     ui->setupUi(this);
 
 #if defined(__linux__)
+
+#if defined(VIDEOBACKEND_VDPAU)
     VideoBackendsVDPAU b;
     b.load(infos);
+#endif
 
+#if defined(VIDEOBACKEND_VAAPI)
     //VideoBackendsVAAPI a;
     //a.load(infos);
+#endif
+
 #elif defined(__APPLE__)
     //
 #elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64)

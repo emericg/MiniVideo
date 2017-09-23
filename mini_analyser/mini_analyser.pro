@@ -87,16 +87,26 @@ unix {
     QMAKE_CXXFLAGS += -fPIE
 
     linux {
-        # Add videobackends
-        SOURCES += src/videobackends_vdpau.cpp \
-                   src/videobackends_vaapi.cpp
-        HEADERS += src/videobackends_vdpau.h \
-                   src/vdpau/VDPDeviceImpl.h \
-                   src/videobackends_vaapi.h
+        # Add videobackends # Link with video decoding APIs
+        exists("/usr/lib/libva.so") {
+            DEFINES += VIDEOBACKEND_VAAPI
+            SOURCES += src/videobackends_vaapi.cpp
+            HEADERS += src/videobackends_vaapi.h
+            LIBS    += -lva -lva-drm -lva-x11 -lX11
+        }
+        !exists("/usr/lib/libva.so") {
+            message("You can install 'libva' on your system to enable VA-API decoding/encoding capabilities checker")
+        }
 
-        # Link with video decoding APIs
-        LIBS += -lvdpau -lX11
-        LIBS += -lva -lva-drm -lva-x11 -lX11
+        exists("/usr/lib/libvdpau.so") {
+            DEFINES += VIDEOBACKEND_VDPAU
+            SOURCES += src/videobackends_vdpau.cpp
+            HEADERS += src/videobackends_vdpau.h src/vdpau/VDPDeviceImpl.h
+            LIBS    += -lvdpau -lX11
+        }
+        !exists("/usr/lib/libvdpau.so") {
+            message("You can install 'libvdpau' on your system to enable VADPAU decoding capabilities checker")
+        }
 
         # Using RPATH
         QMAKE_RPATHDIR += $${PWD}/../minivideo/build

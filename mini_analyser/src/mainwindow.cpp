@@ -254,7 +254,6 @@ int MainWindow::loadFile(const QString &file)
             media->mediaPath = file;
 
             handleComboBox(file);
-            //handleTabWidget();
             loadingTab();
 
             media->moveToThread(thread);
@@ -262,7 +261,7 @@ int MainWindow::loadFile(const QString &file)
             connect(thread, SIGNAL(started()), media, SLOT(parsing()));
             connect(media, SIGNAL(parsingFinished(QString)), thread, SLOT(quit()));
             connect(media, SIGNAL(parsingFinished(QString)), this, SLOT(mediaReady(QString)));
-            // automatically delete thread when work is done
+            // automatically delete thread when its work is done
             connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
             thread->start();
@@ -340,7 +339,9 @@ void MainWindow::closeFiles()
         }
     }
 
+    ui->comboBox_file->clear();
     currentMediaLoaded.clear();
+    mediaList.clear();
 }
 
 void MainWindow::closeFile(const QString &fileToClose)
@@ -358,7 +359,6 @@ void MainWindow::closeFile(const QString &fileToClose)
             {
                 ui->tab_dev->removeFile(path);
                 ui->tab_container->closeMedia();
-
                 minivideo_close(&mediaList.at(i)->media);
 
                 mediaList.erase(mediaList.begin() + i);

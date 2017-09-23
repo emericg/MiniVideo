@@ -6,6 +6,7 @@
 TARGET       = minivideo
 TEMPLATE     = lib
 CONFIG      += shared_and_static build_all
+CONFIG      -= qt
 
 VERSION      = 0.9.1
 DEFINES     += minivideo_VERSION_MAJOR=0
