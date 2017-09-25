@@ -120,10 +120,10 @@ unix {
         DEFINES += VIDEOBACKEND_VDA
         DEFINES += VIDEOBACKEND_VTB
 
-        SOURCES += src/videobackends_vda.cpp \
-                   src/videobackends_vtb.cpp
-        HEADERS += src/videobackends_vda.h \
-                   src/videobackends_vtb.h
+        SOURCES += src/hw_apis/videobackends_vda.cpp \
+                   src/hw_apis/videobackends_vtb.cpp
+        HEADERS += src/hw_apis/videobackends_vda.h \
+                   src/hw_apis/videobackends_vtb.h
 
         # Link with video decoding APIs
         LIBS += -Wl,-framework,Foundation -Wl,-framework,CoreFoundation -Wl,-framework,CoreMedia -Wl,-framework,CoreVideo
