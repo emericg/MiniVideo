@@ -201,6 +201,18 @@ typedef struct mkv_track_video_colour_t
 
 } mkv_track_video_colour_t;
 
+//! Google spatial media support (https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md)
+typedef struct mkv_track_video_projection_t
+{
+    uint64_t ProjectionType;
+    int ProjectionPrivate_size;
+    uint8_t *ProjectionPrivate;
+    uint64_t ProjectionPoseYaw;
+    uint64_t ProjectionPosePitch;
+    uint64_t ProjectionPoseRoll;
+
+} mkv_track_video_projection_t;
+
 typedef struct mkv_track_video_t
 {
     uint64_t FlagInterlaced;
@@ -220,6 +232,7 @@ typedef struct mkv_track_video_t
     int ColourSpace_size;
     uint8_t *ColourSpace;
     mkv_track_video_colour_t *Colour;
+    mkv_track_video_projection_t *Projection;
 
 } mkv_track_video_t;
 
@@ -475,6 +488,14 @@ typedef enum EbmlElement_e
         eid_DisplayUnit = 0x54B2,
         eid_AspectRatioType = 0x54B3,
         eid_ColourSpace = 0x2EB524,
+
+        eid_spatial_Projection = 0x7670, //!< Google spatial media support
+        eid_spatial_ProjectionType = 0x7671,
+        eid_spatial_ProjectionPrivate = 0x7672,
+        eid_spatial_ProjectionPoseYaw = 0x7673,
+        eid_spatial_ProjectionPosePitch = 0x7674,
+        eid_spatial_ProjectionPoseRoll = 0x7675,
+
         eid_Colour = 0x55B0,        //!<
             eid_MatrixCoefficients = 0x55B1,
             eid_BitsPerChannel = 0x55B2,

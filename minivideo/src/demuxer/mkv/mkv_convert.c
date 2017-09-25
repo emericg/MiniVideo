@@ -308,6 +308,11 @@ void mkv_clean(mkv_t *mkv)
 
                 if (mkv->tracks[i]->video)
                 {
+                    if (mkv->tracks[i]->video->Projection)
+                    {
+                        free(mkv->tracks[i]->video->Projection->ProjectionPrivate);
+                        free(mkv->tracks[i]->video->Projection);
+                    }
                     if (mkv->tracks[i]->video->Colour)
                     {
                         free(mkv->tracks[i]->video->Colour->MasteringMetadata);
@@ -315,7 +320,6 @@ void mkv_clean(mkv_t *mkv)
                     }
                     free(mkv->tracks[i]->video->ColourSpace);
                     free(mkv->tracks[i]->video);
-
                 }
                 if (mkv->tracks[i]->audio)
                 {

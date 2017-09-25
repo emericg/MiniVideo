@@ -173,6 +173,73 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Google spatial media support (video v2)
+ * \param bitstr
+ * \param element
+ * \param mkv
+ * \param track
+ * \return
+ *
+ * https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md
+ */
+static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_projection()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Projection");
+
+    track->video->Projection = calloc(1, sizeof(mkv_track_video_projection_t));
+    if (track->video->Projection == NULL)
+        retcode = FAILURE;
+    mkv_track_video_projection_t *projection = track->video->Projection;
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_spatial_ProjectionType:
+                projection->ProjectionType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionType");
+                break;
+            case eid_spatial_ProjectionPrivate:
+                projection->ProjectionPrivate = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "ProjectionPrivate");
+                if (projection->ProjectionPrivate) projection->ProjectionPrivate_size = element_sub.size;
+                break;
+            case eid_spatial_ProjectionPoseYaw:
+                projection->ProjectionPoseYaw = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPoseYaw");
+                break;
+            case eid_spatial_ProjectionPosePitch:
+                projection->ProjectionPosePitch = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPosePitch");
+                break;
+            case eid_spatial_ProjectionPoseRoll:
+                projection->ProjectionPoseRoll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
+        }
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
 static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry_video_colour()" CLR_RESET);
@@ -327,6 +394,10 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
             case eid_ColourSpace:
                 track->video->ColourSpace = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "ColourSpace");
                 if (track->video->ColourSpace) track->video->ColourSpace_size = element_sub.size;
+                break;
+
+            case eid_spatial_Projection:
+                retcode = mkv_parse_tracks_entry_video_projection(bitstr, &element_sub, mkv, track);
                 break;
 
             case eid_Colour:

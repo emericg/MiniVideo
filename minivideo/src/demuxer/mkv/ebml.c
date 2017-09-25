@@ -211,7 +211,6 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
                         element->eid,
                         element->offset_start,
                         (element->eid_size + element->size_size +  element->size));
-
             else
                 fprintf(xml, "  <a tt=\"Unknown\" id=\"0x%X\" tp=\"EBML\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
                         element->eid,
