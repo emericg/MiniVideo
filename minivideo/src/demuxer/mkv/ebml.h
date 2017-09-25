@@ -56,23 +56,19 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title);
 
 /* ************************************************************************** */
 
-uint64_t read_ebml_data_uint(Bitstream_t *bitstr, int size);
-uint64_t read_ebml_data_uint2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+uint64_t read_ebml_data_uint(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+uint64_t read_ebml_data_uint_UID(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-int64_t read_ebml_data_int(Bitstream_t *bitstr, int size);
-int64_t read_ebml_data_int2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-double read_ebml_data_float(Bitstream_t *bitstr, int size);
-double read_ebml_data_float2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+double read_ebml_data_float(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-char *read_ebml_data_string(Bitstream_t *bitstr, int size);
-char *read_ebml_data_string2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, int size);
-uint8_t *read_ebml_data_binary2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+uint8_t *read_ebml_data_binary_guid(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
-int64_t read_ebml_data_date(Bitstream_t *bitstr);
-int64_t read_ebml_data_date2(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
 /* ************************************************************************** */
 

@@ -67,20 +67,15 @@ static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *
             switch (element_sub.eid)
             {
             case eid_TrackTranslateEditionUID:
-                TrackTranslateEditionUID = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackTranslateEditionUID = %llu", TrackTranslateEditionUID);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackTranslateEditionUID>%lu</TrackTranslateEditionUID>\n", TrackTranslateEditionUID);
+                TrackTranslateEditionUID = read_ebml_data_uint_UID(bitstr, &element_sub, mkv->xml, "TrackTranslateEditionUID");
                 break;
             case eid_TrackTranslateCodec:
-                TrackTranslateCodec = read_bits_64(bitstr, element_sub.size*8);
-                TRACE_1(MKV, "* TrackTranslateCodec      = %llu", TrackTranslateCodec);
-                if (mkv->xml) fprintf(mkv->xml, "  <TrackTranslateCodec>%lu</TrackTranslateCodec>\n", TrackTranslateCodec);
+                TrackTranslateCodec = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TrackTranslateCodec");
                 break;
             case eid_TrackTranslateTrackID:
-                TrackTranslateTrackID = read_ebml_data_binary(bitstr, element_sub.size);
-                TRACE_1(MKV, "TrackTranslateTrackID      = '%s'", TrackTranslateTrackID);
-                fprintf(mkv->xml, "  <TrackTranslateTrackID>%s</TrackTranslateTrackID>\n", TrackTranslateTrackID);
+                TrackTranslateTrackID = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "TrackTranslateTrackID");
                 break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -127,34 +122,34 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
             switch (element_sub.eid)
             {
             case eid_PrimaryRChromaticityX:
-                mastering->PrimaryRChromaticityX = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryRChromaticityX");
+                mastering->PrimaryRChromaticityX = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryRChromaticityX");
                 break;
             case eid_PrimaryRChromaticityY:
-                mastering->PrimaryRChromaticityY = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryRChromaticityY");
+                mastering->PrimaryRChromaticityY = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryRChromaticityY");
                 break;
             case eid_PrimaryGChromaticityX:
-                mastering->PrimaryGChromaticityX = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryGChromaticityX");
+                mastering->PrimaryGChromaticityX = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryGChromaticityX");
                 break;
             case eid_PrimaryGChromaticityY:
-                mastering->PrimaryGChromaticityY = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryGChromaticityY");
+                mastering->PrimaryGChromaticityY = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryGChromaticityY");
                 break;
             case eid_PrimaryBChromaticityX:
-                mastering->PrimaryBChromaticityX = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryBChromaticityX");
+                mastering->PrimaryBChromaticityX = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryBChromaticityX");
                 break;
             case eid_PrimaryBChromaticityY:
-                mastering->PrimaryBChromaticityY = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "PrimaryBChromaticityY");
+                mastering->PrimaryBChromaticityY = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "PrimaryBChromaticityY");
                 break;
             case eid_WhitePointChromaticityX:
-                mastering->WhitePointChromaticityX = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "WhitePointChromaticityX");
+                mastering->WhitePointChromaticityX = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "WhitePointChromaticityX");
                 break;
             case eid_WhitePointChromaticityY:
-                mastering->WhitePointChromaticityY = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "WhitePointChromaticityY");
+                mastering->WhitePointChromaticityY = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "WhitePointChromaticityY");
                 break;
             case eid_LuminanceMax:
-                mastering->LuminanceMax = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "LuminanceMax");
+                mastering->LuminanceMax = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "LuminanceMax");
                 break;
             case eid_LuminanceMin:
-                mastering->LuminanceMin = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "LuminanceMin");
+                mastering->LuminanceMin = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "LuminanceMin");
                 break;
 
             default:
@@ -210,20 +205,20 @@ static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElem
             switch (element_sub.eid)
             {
             case eid_spatial_ProjectionType:
-                projection->ProjectionType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionType");
+                projection->ProjectionType = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionType");
                 break;
             case eid_spatial_ProjectionPrivate:
-                projection->ProjectionPrivate = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "ProjectionPrivate");
+                projection->ProjectionPrivate = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ProjectionPrivate");
                 if (projection->ProjectionPrivate) projection->ProjectionPrivate_size = element_sub.size;
                 break;
             case eid_spatial_ProjectionPoseYaw:
-                projection->ProjectionPoseYaw = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPoseYaw");
+                projection->ProjectionPoseYaw = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPoseYaw");
                 break;
             case eid_spatial_ProjectionPosePitch:
-                projection->ProjectionPosePitch = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPosePitch");
+                projection->ProjectionPosePitch = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPosePitch");
                 break;
             case eid_spatial_ProjectionPoseRoll:
-                projection->ProjectionPoseRoll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
+                projection->ProjectionPoseRoll = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
                 break;
 
             default:
@@ -267,43 +262,43 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
             switch (element_sub.eid)
             {
             case eid_MatrixCoefficients:
-                colour->MatrixCoefficients = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MatrixCoefficients");
+                colour->MatrixCoefficients = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MatrixCoefficients");
                 break;
             case eid_BitsPerChannel:
-                colour->BitsPerChannel = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "BitsPerChannel");
+                colour->BitsPerChannel = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BitsPerChannel");
                 break;
             case eid_ChromaSubsamplingHorz:
-                colour->ChromaSubsamplingHorz = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ChromaSubsamplingHorz");
+                colour->ChromaSubsamplingHorz = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChromaSubsamplingHorz");
                 break;
             case eid_ChromaSubsamplingVert:
-                colour->ChromaSubsamplingVert = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ChromaSubsamplingVert");
+                colour->ChromaSubsamplingVert = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChromaSubsamplingVert");
                 break;
             case eid_CbSubsamplingHorz:
-                colour->CbSubsamplingHorz = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CbSubsamplingHorz");
+                colour->CbSubsamplingHorz = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CbSubsamplingHorz");
                 break;
             case eid_CbSubsamplingVert:
-                colour->CbSubsamplingVert = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CbSubsamplingVert");
+                colour->CbSubsamplingVert = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CbSubsamplingVert");
                 break;
             case eid_ChromaSitingHorz:
-                colour->ChromaSitingHorz = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ChromaSitingHorz");
+                colour->ChromaSitingHorz = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChromaSitingHorz");
                 break;
             case eid_ChromaSitingVert:
-                colour->ChromaSitingVert = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ChromaSitingVert");
+                colour->ChromaSitingVert = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChromaSitingVert");
                 break;
             case eid_Range:
-                colour->Range = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "Range");
+                colour->Range = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Range");
                 break;
             case eid_TransferCharacteristics:
-                colour->TransferCharacteristics = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TransferCharacteristics");
+                colour->TransferCharacteristics = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TransferCharacteristics");
                 break;
             case eid_Primaries:
-                colour->Primaries = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "Primaries");
+                colour->Primaries = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Primaries");
                 break;
             case eid_MaxCLL:
-                colour->MaxCLL = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxCLL");
+                colour->MaxCLL = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MaxCLL");
                 break;
             case eid_MaxFALL:
-                colour->MaxFALL = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxFALL");
+                colour->MaxFALL = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MaxFALL");
                 break;
 
             case eid_MasteringMetadata:
@@ -350,49 +345,49 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
             switch (element_sub.eid)
             {
             case eid_FlagInterlaced:
-                track->video->FlagInterlaced = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagInterlaced");
+                track->video->FlagInterlaced = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagInterlaced");
                 break;
             case eid_FieldOrder:
-                track->video->FieldOrder = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FieldOrder");
+                track->video->FieldOrder = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FieldOrder");
                 break;
             case eid_StereoMode:
-                track->video->StereoMode = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "StereoMode");
+                track->video->StereoMode = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "StereoMode");
                 break;
             case eid_AlphaMode:
-                track->video->AlphaMode = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AlphaMode");
+                track->video->AlphaMode = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "AlphaMode");
                 break;
             case eid_PixelWidth:
-                track->video->PixelWidth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelWidth");
+                track->video->PixelWidth = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelWidth");
                 break;
             case eid_PixelHeight:
-                track->video->PixelHeight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelHeight");
+                track->video->PixelHeight = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelHeight");
                 break;
             case eid_PixelCropBottom:
-                track->video->PixelCropBottom = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropBottom");
+                track->video->PixelCropBottom = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelCropBottom");
                 break;
             case eid_PixelCropTop:
-                track->video->PixelCropTop = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropTop");
+                track->video->PixelCropTop = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelCropTop");
                 break;
             case eid_PixelCropLeft:
-                track->video->PixelCropLeft = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropLeft");
+                track->video->PixelCropLeft = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelCropLeft");
                 break;
             case eid_PixelCropRight:
-                track->video->PixelCropRight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "PixelCropRight");
+                track->video->PixelCropRight = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PixelCropRight");
                 break;
             case eid_DisplayWidth:
-                track->video->DisplayWidth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayWidth");
+                track->video->DisplayWidth = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "DisplayWidth");
                 break;
             case eid_DisplayHeight:
-                track->video->DisplayHeight = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayHeight");
+                track->video->DisplayHeight = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "DisplayHeight");
                 break;
             case eid_DisplayUnit:
-                track->video->DisplayUnit = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DisplayUnit");
+                track->video->DisplayUnit = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "DisplayUnit");
                 break;
             case eid_AspectRatioType:
-                track->video->AspectRatioType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AspectRatioType");
+                track->video->AspectRatioType = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "AspectRatioType");
                 break;
             case eid_ColourSpace:
-                track->video->ColourSpace = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "ColourSpace");
+                track->video->ColourSpace = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ColourSpace");
                 if (track->video->ColourSpace) track->video->ColourSpace_size = element_sub.size;
                 break;
 
@@ -447,16 +442,16 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
             switch (element_sub.eid)
             {
             case eid_SamplingFrequency:
-                track->audio->SamplingFrequency = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "SamplingFrequency");
+                track->audio->SamplingFrequency = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "SamplingFrequency");
                 break;
             case eid_OutputSamplingFrequency:
-                track->audio->OutputSamplingFrequency = read_ebml_data_float2(bitstr, &element_sub, mkv->xml, "OutputSamplingFrequency");
+                track->audio->OutputSamplingFrequency = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "OutputSamplingFrequency");
                 break;
             case eid_Channels:
-                track->audio->Channels = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "Channels");
+                track->audio->Channels = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Channels");
                 break;
             case eid_BitDepth:
-                track->audio->BitDepth = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "BitDepth");
+                track->audio->BitDepth = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BitDepth");
                 break;
 
             default:
@@ -545,13 +540,13 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
             switch (element_sub.eid)
             {
             case eid_ContentEncodingOrder:
-                encoding->ContentEncodingOrder = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ContentEncodingOrder");
+                encoding->ContentEncodingOrder = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ContentEncodingOrder");
                 break;
             case eid_ContentEncodingScope:
-                encoding->ContentEncodingScope = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ContentEncodingScope");
+                encoding->ContentEncodingScope = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ContentEncodingScope");
                 break;
             case eid_ContentEncodingType:
-                encoding->ContentEncodingType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ContentEncodingType");
+                encoding->ContentEncodingType = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ContentEncodingType");
                 break;
 
             case eid_ContentCompression:
@@ -570,10 +565,10 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                         switch (element_subsub.eid)
                         {
                         case eid_ContentCompAlgo:
-                            encoding->ContentCompAlgo = read_ebml_data_uint2(bitstr, &element_subsub, mkv->xml, "ContentCompAlgo");
+                            encoding->ContentCompAlgo = read_ebml_data_uint(bitstr, &element_subsub, mkv->xml, "ContentCompAlgo");
                             break;
                         case eid_ContentCompSettings:
-                            encoding->ContentCompSettings = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentCompSettings");
+                            encoding->ContentCompSettings = read_ebml_data_binary(bitstr, &element_subsub, mkv->xml, "ContentCompSettings");
                             if (encoding->ContentCompSettings) encoding->ContentCompSettings_size = element_subsub.size;
                             break;
 
@@ -603,25 +598,25 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                         switch (element_subsub.eid)
                         {
                         case eid_ContentEncAlgo:
-                            encoding->ContentEncAlgo = read_ebml_data_uint2(bitstr, &element_subsub, mkv->xml, "ContentEncAlgo");
+                            encoding->ContentEncAlgo = read_ebml_data_uint(bitstr, &element_subsub, mkv->xml, "ContentEncAlgo");
                             break;
                         case eid_ContentEncKeyID:
-                            encoding->ContentEncKeyID = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentEncKeyID");
+                            encoding->ContentEncKeyID = read_ebml_data_binary(bitstr, &element_subsub, mkv->xml, "ContentEncKeyID");
                             if (encoding->ContentEncKeyID) encoding->ContentEncKeyID_size = element_subsub.size;
                             break;
                         case eid_ContentSignature:
-                            encoding->ContentSignature = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentSignature");
+                            encoding->ContentSignature = read_ebml_data_binary(bitstr, &element_subsub, mkv->xml, "ContentSignature");
                             if (encoding->ContentSignature) encoding->ContentSignature_size = element_subsub.size;
                             break;
                         case eid_ContentSigKeyID:
-                            encoding->ContentSigKeyID = read_ebml_data_binary2(bitstr, &element_subsub, mkv->xml, "ContentSigKeyID");
+                            encoding->ContentSigKeyID = read_ebml_data_binary(bitstr, &element_subsub, mkv->xml, "ContentSigKeyID");
                             if (encoding->ContentSigKeyID) encoding->ContentSigKeyID_size = element_subsub.size;
                             break;
                         case eid_ContentSigAlgo:
-                            encoding->ContentSigAlgo = read_ebml_data_uint2(bitstr, &element_subsub, mkv->xml, "ContentSigAlgo");
+                            encoding->ContentSigAlgo = read_ebml_data_uint(bitstr, &element_subsub, mkv->xml, "ContentSigAlgo");
                             break;
                         case eid_ContentSigHashAlgo:
-                            encoding->ContentSigHashAlgo = read_ebml_data_uint2(bitstr, &element_subsub, mkv->xml, "ContentSigHashAlgo");
+                            encoding->ContentSigHashAlgo = read_ebml_data_uint(bitstr, &element_subsub, mkv->xml, "ContentSigHashAlgo");
                             break;
 
                         default:
@@ -717,55 +712,55 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
             switch (element_sub.eid)
             {
             case eid_TrackNumber:
-                mkv_track->TrackNumber = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackNumber");
+                mkv_track->TrackNumber = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TrackNumber");
                 break;
             case eid_TrackUID:
-                mkv_track->TrackUID = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackUID");
+                mkv_track->TrackUID = read_ebml_data_uint_UID(bitstr, &element_sub, mkv->xml, "TrackUID");
                 break;
             case eid_TrackType:
-                mkv_track->TrackType = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackType");
+                mkv_track->TrackType = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TrackType");
                 break;
             case eid_FlagEnabled:
-                mkv_track->FlagEnabled = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagEnabled");
+                mkv_track->FlagEnabled = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagEnabled");
                 break;
             case eid_FlagDefault:
-                mkv_track->FlagDefault = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagDefault");
+                mkv_track->FlagDefault = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagDefault");
                 break;
             case eid_FlagForced:
-                mkv_track->FlagForced = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagForced");
+                mkv_track->FlagForced = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagForced");
                 break;
             case eid_FlagLacing:
-                mkv_track->FlagLacing = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "FlagLacing");
+                mkv_track->FlagLacing = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagLacing");
                 break;
             case eid_MinCache:
-                mkv_track->MinCache = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MinCache");
+                mkv_track->MinCache = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MinCache");
                 break;
             case eid_MaxCache:
-                mkv_track->MaxCache = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxCache");
+                mkv_track->MaxCache = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MaxCache");
                 break;
             case eid_DefaultDuration:
-                mkv_track->DefaultDuration = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DefaultDuration");
+                mkv_track->DefaultDuration = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "DefaultDuration");
                 break;
             case eid_DefaultDecodedFieldDuration:
-                mkv_track->DefaultDecodedFieldDuration = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "DefaultDecodedFieldDuration");
+                mkv_track->DefaultDecodedFieldDuration = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "DefaultDecodedFieldDuration");
                 break;
             case eid_TrackTimecodeScale:
-                mkv_track->TrackTimecodeScale = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackTimecodeScale");
+                mkv_track->TrackTimecodeScale = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TrackTimecodeScale");
                 break;
             case eid_MaxBlockAdditionID:
-                mkv_track->MaxBlockAdditionID = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "MaxBlockAdditionID");
+                mkv_track->MaxBlockAdditionID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "MaxBlockAdditionID");
                 break;
             case eid_Name:
-                mkv_track->Name = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "Name");
+                mkv_track->Name = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "Name");
                 break;
             case eid_Language:
-                mkv_track->Language = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "Language");
+                mkv_track->Language = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "Language");
                 break;
             case eid_CodecID:
-                mkv_track->CodecID = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "CodecID");
+                mkv_track->CodecID = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "CodecID");
                 break;
             case eid_CodecPrivate:
-                mkv_track->CodecPrivate = read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "CodecPrivate");
+                mkv_track->CodecPrivate = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "CodecPrivate");
                 if (mkv_track->CodecPrivate)
                 {
                     mkv_track->CodecPrivate_offset = bitstream_get_absolute_byte_offset(bitstr) - element_sub.size;
@@ -787,22 +782,22 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                 }
                 break;
             case eid_CodecName:
-                mkv_track->CodecName = read_ebml_data_string2(bitstr, &element_sub, mkv->xml, "CodecName");
+                mkv_track->CodecName = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "CodecName");
                 break;
             case eid_CodecDecodeAll:
-                mkv_track->CodecDecodeAll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CodecDecodeAll");
+                mkv_track->CodecDecodeAll = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CodecDecodeAll");
                 break;
             case eid_TrackOverlay:
-                mkv_track->TrackOverlay = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "TrackOverlay");
+                mkv_track->TrackOverlay = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TrackOverlay");
                 break;
             case eid_AttachmentLink:
-                mkv_track->AttachmentLink = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "AttachmentLink");
+                mkv_track->AttachmentLink = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "AttachmentLink");
                 break;
             case eid_CodecDelay:
-                mkv_track->CodecDelay = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "CodecDelay");
+                mkv_track->CodecDelay = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CodecDelay");
                 break;
             case eid_SeekPreRoll:
-                mkv_track->SeekPreRoll = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "SeekPreRoll");
+                mkv_track->SeekPreRoll = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "SeekPreRoll");
                 break;
 
             case eid_TrackTranslate:

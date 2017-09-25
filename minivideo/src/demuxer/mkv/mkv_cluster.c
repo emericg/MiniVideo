@@ -88,16 +88,16 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
                 if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
                 break;
             case eid_BlockDuration:
-                /*BlockDuration =*/ read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "BlockDuration");
+                /*BlockDuration =*/ read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BlockDuration");
                 break;
             case eid_ReferencePriority:
-                /*ReferencePriority =*/ read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "ReferencePriority");
+                /*ReferencePriority =*/ read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ReferencePriority");
                 break;
             case eid_ReferenceBlock:
-                /*ReferenceBlock =*/ read_ebml_data_int2(bitstr, &element_sub, mkv->xml, "ReferenceBlock");
+                /*ReferenceBlock =*/ read_ebml_data_int(bitstr, &element_sub, mkv->xml, "ReferenceBlock");
                 break;
             case eid_CodecState:
-                /*CodecState =*/ read_ebml_data_binary2(bitstr, &element_sub, mkv->xml, "CodecState");
+                /*CodecState =*/ read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "CodecState");
                 break;
 
             default:
@@ -142,7 +142,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             switch (element_sub.eid)
             {
             case eid_TimeCode:
-                cluster.Timecode = read_ebml_data_uint2(bitstr, &element_sub, mkv->xml, "Timecode");
+                cluster.Timecode = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Timecode");
                 break;
 
             case eid_SimpleBlock:
