@@ -174,7 +174,7 @@ VideoBackendsVAAPI::~VideoBackendsVAAPI()
 
 bool VideoBackendsVAAPI::load(VideoBackendInfos &infos)
 {
-    bool status = true;
+    bool status = false;
 
     VADisplay display;
     const char *drm_device  = 0;
@@ -190,26 +190,30 @@ bool VideoBackendsVAAPI::load(VideoBackendInfos &infos)
         display = open_device_x11(x11_display);
     }
 
-    // Init API
-    VAStatus vas;
-    int major = 0, minor = 0;
-    vas = vaInitialize(display, &major, &minor);
-    if (vas != VA_STATUS_SUCCESS)
+    if (display /*&& (x11_display || drm_device)*/)
     {
-        qDebug() << "Failed to initialise VA-API:" << vas << "(" << vaErrorStr(vas) << ")";
-        status = false;
-    }
-    else
-    {
-        // Gather infos
-        infos.api_name = "VA-API";
-        infos.api_version = QString::number(major) + "." + QString::number(minor);
+        // Init API
+        VAStatus vas;
+        int major = 0, minor = 0;
+        vas = vaInitialize(display, &major, &minor);
+        if (vas != VA_STATUS_SUCCESS)
+        {
+            qDebug() << "Failed to initialise VA-API:" << vas << "(" << vaErrorStr(vas) << ")";
+        }
+        else
+        {
+            // Gather infos
+            infos.api_name = "VA-API";
+            infos.api_version = QString::number(major) + "." + QString::number(minor);
 
-        const char *vendor_string = vaQueryVendorString(display);
-        if (vendor_string)
-            infos.driver_info = QString::fromLocal8Bit(vendor_string);
+            const char *vendor_string = vaQueryVendorString(display);
+            if (vendor_string)
+                infos.api_info = QString::fromLocal8Bit(vendor_string);
 
-        dump_profiles(display, infos);
+            dump_profiles(display, infos);
+
+            status = true;
+        }
     }
 
     return status;

@@ -26,6 +26,7 @@
 #include "videobackends.h"
 
 #include <QWidget>
+#include <QTableWidget>
 
 namespace Ui {
 class VideoBackendsUI;
@@ -35,17 +36,21 @@ class VideoBackendsUI : public QWidget
 {
     Q_OBJECT
 
+    Ui::VideoBackendsUI *ui;
+
+    void removeTab(QString tabName);
+    void setInfosTable(VideoBackendInfos &infos, QTableWidget *tabDec, QTableWidget *tabEnc);
+
 public:
     explicit VideoBackendsUI(QWidget *parent = 0);
     ~VideoBackendsUI();
+
+    void setInfos();
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    Ui::VideoBackendsUI *ui;
-
-    VideoBackendInfos infos;
 };
 
 /* ************************************************************************** */

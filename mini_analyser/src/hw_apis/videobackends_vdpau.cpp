@@ -38,26 +38,6 @@
 
 /* ************************************************************************** */
 
-bool queryBaseInfo(VDPDeviceImpl *device, VideoBackendInfos &infos)
-{
-    uint32_t api;
-    const char *info;
-
-    if (device->GetApiVersion(&api) != VDP_STATUS_OK ||
-        device->GetInformationString(&info) != VDP_STATUS_OK)
-    {
-        qDebug("Error querying API version or information\n");
-        return false;
-    }
-    else
-    {
-        infos.api_version = QString::number(api);
-        infos.api_info = QString::fromLocal8Bit(info);
-    }
-
-    return true;
-}
-
 // Generic description structure
 struct Desc
 {
@@ -103,11 +83,33 @@ Desc decoder_profiles_vdpau[] =
 
 const size_t decoder_profile_count = sizeof(decoder_profiles_vdpau) / sizeof(Desc);
 
+/* ************************************************************************** */
+
+bool queryBaseInfo(VDPDeviceImpl *device, VideoBackendInfos &infos)
+{
+    uint32_t api;
+    const char *info;
+
+    if (device->GetApiVersion(&api) != VDP_STATUS_OK ||
+        device->GetInformationString(&info) != VDP_STATUS_OK)
+    {
+        qDebug("Error querying API version or information\n");
+        return false;
+    }
+    else
+    {
+        infos.api_version = QString::number(api);
+        infos.api_info = QString::fromLocal8Bit(info);
+    }
+
+    return true;
+}
+
 bool queryDecoderCaps(VDPDeviceImpl *device, VideoBackendInfos &infos)
 {
     VdpStatus rv;
 
-    for (size_t x = 0; x < decoder_profile_count; ++x)
+    for (size_t x = 0; x < decoder_profile_count; x++)
     {
         VdpBool is_supported;
         uint32_t max_level, max_macroblocks, max_width, max_height;
@@ -153,18 +155,22 @@ VideoBackendsVDPAU::~VideoBackendsVDPAU()
 
 bool VideoBackendsVDPAU::load(VideoBackendInfos &infos)
 {
-    bool status = true;
+    bool status = false;
 
     VdpDevice device;
-    VDPDeviceImpl *deviceI;
-    char *display_name = XDisplayName(nullptr);
+    VDPDeviceImpl *deviceI = nullptr;
 
     // Create an X Display
     Display *display = XOpenDisplay(nullptr);
-    if (!display)
+    char *display_name = XDisplayName(nullptr);
+    if (!display || !display_name)
     {
-        qDebug() << "vdpau: Cannot connect to X server" << display_name;
-        status = false;
+        if (display_name)
+            qDebug() << "vdpau: Cannot connect to X server for display:" << display_name;
+        else
+            qDebug() << "vdpau: Cannot connect to X server";
+
+        return false;
     }
 
     int screen = 0; //(screen == -1) ? DefaultScreen(display) : -1;
@@ -177,20 +183,24 @@ bool VideoBackendsVDPAU::load(VideoBackendInfos &infos)
     qDebug() << "vdpau: display:" << display_name << "   screen:" << screen;
 
     // Create device
-    VdpGetProcAddress *get_proc_address;
-    VdpStatus rv;
-    rv = vdp_device_create_x11(display, screen, &device, &get_proc_address);
-    if (rv != VDP_STATUS_OK)
+    VdpGetProcAddress *get_proc_address = nullptr;
+    VdpStatus rv = vdp_device_create_x11(display, screen, &device, &get_proc_address);
+    if (rv != VDP_STATUS_OK || !get_proc_address)
     {
         qDebug() << "vdpau: Error creating VDPAU device:" << rv;
+        return false;
     }
 
     deviceI = new VDPDeviceImpl(device, get_proc_address);
+    if (deviceI)
+    {
+        // Gather infos
+        infos.api_name = "VDPAU";
+        queryBaseInfo(deviceI, infos);
+        queryDecoderCaps(deviceI, infos);
 
-    // Gather infos
-    infos.api_name = "VDPAU";
-    queryBaseInfo(deviceI, infos);
-    queryDecoderCaps(deviceI, infos);
+        status = true;
+    }
 
     return status;
 }

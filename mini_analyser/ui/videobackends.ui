@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>650</height>
+    <width>500</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VideoBackends</string>
+   <string>HW API capability checker</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
@@ -22,7 +22,7 @@
     <number>8</number>
    </property>
    <property name="topMargin">
-    <number>8</number>
+    <number>12</number>
    </property>
    <property name="rightMargin">
     <number>8</number>
@@ -31,7 +31,7 @@
     <number>8</number>
    </property>
    <item row="0" column="0">
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="comboBox_device_selection">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -57,130 +57,23 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_vdpau">
       <attribute name="title">
-       <string>API #0</string>
+       <string>VDPAU</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
-        <number>6</number>
+        <number>8</number>
        </property>
        <property name="topMargin">
-        <number>6</number>
+        <number>8</number>
        </property>
        <property name="rightMargin">
-        <number>6</number>
+        <number>8</number>
        </property>
        <property name="bottomMargin">
-        <number>6</number>
+        <number>8</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Generic Infos</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_driver_string">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_driver_version">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>API string</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="maximumSize">
-             <size>
-              <width>140</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>API version</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Driver version</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Driver string</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_api_version">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_api_string">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
@@ -200,7 +93,414 @@
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <widget class="QTableWidget" name="tableWidget">
+           <widget class="QTableWidget" name="tableWidget_vdpau_decoding">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>256</height>
+             </size>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Codec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Profile</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max width</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max height</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Generic Infos</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_vdpau_version">
+            <property name="text">
+             <string>Unknown</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_as">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>API string</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_av">
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>API version</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_vdpau_string">
+            <property name="text">
+             <string>Unknown</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_vaapi">
+      <attribute name="title">
+       <string>VA-API</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Generic Infos</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_as_2">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>API string</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_av_2">
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>API version</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_vaapi_version">
+            <property name="text">
+             <string>Unknown</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_vaapi_string">
+            <property name="text">
+             <string>Unknown</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Decoding support</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_vaapi_decoding">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>256</height>
+             </size>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Codec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Profile</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max width</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max height</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_vda">
+      <attribute name="title">
+       <string>Video Decode Acceleration</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Decoding support</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_vda_decoding">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>256</height>
+             </size>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Codec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Profile</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max width</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max height</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_vtb">
+      <attribute name="title">
+       <string>VideoToolBox</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Decoding support</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_vtb_decoding">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>256</height>
+             </size>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Codec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Profile</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max width</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Max height</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>Encoding support</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_vtb_encoding">
             <property name="minimumSize">
              <size>
               <width>0</width>

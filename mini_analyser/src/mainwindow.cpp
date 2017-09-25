@@ -729,6 +729,7 @@ void MainWindow::openVideoBackends()
     else
     {
         videobackends = new VideoBackendsUI();
+        videobackends->setInfos();
         videobackends->show();
     }
 }

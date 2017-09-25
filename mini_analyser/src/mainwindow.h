@@ -29,8 +29,8 @@
 // minianalyser
 #include "mediawrapper.h"
 #include "fourcchelper.h"
-#include "videobackends_ui.h"
 #include "about.h"
+#include "hw_apis/videobackends_ui.h"
 
 #include <vector>
 

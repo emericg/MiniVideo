@@ -28,8 +28,8 @@ SOURCES     += src/main.cpp \
                src/tabexport.cpp \
                src/tabdev.cpp \
                src/tabcontainer.cpp \
-               src/videobackends.cpp \
-               src/videobackends_ui.cpp
+               src/hw_apis/videobackends.cpp \
+               src/hw_apis/videobackends_ui.cpp
 
 HEADERS     += src/main.h \
                src/mainwindow.h \
@@ -40,8 +40,8 @@ HEADERS     += src/main.h \
                src/tabexport.h \
                src/tabdev.h \
                src/tabcontainer.h \
-               src/videobackends.h \
-               src/videobackends_ui.h
+               src/hw_apis/videobackends.h \
+               src/hw_apis/videobackends_ui.h
 
 FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \
@@ -90,8 +90,8 @@ unix {
         # Add videobackends # Link with video decoding APIs
         exists("/usr/lib/libva.so") {
             DEFINES += VIDEOBACKEND_VAAPI
-            SOURCES += src/videobackends_vaapi.cpp
-            HEADERS += src/videobackends_vaapi.h
+            SOURCES += src/hw_apis/videobackends_vaapi.cpp
+            HEADERS += src/hw_apis/videobackends_vaapi.h
             LIBS    += -lva -lva-drm -lva-x11 -lX11
         }
         !exists("/usr/lib/libva.so") {
@@ -100,8 +100,8 @@ unix {
 
         exists("/usr/lib/libvdpau.so") {
             DEFINES += VIDEOBACKEND_VDPAU
-            SOURCES += src/videobackends_vdpau.cpp
-            HEADERS += src/videobackends_vdpau.h src/vdpau/VDPDeviceImpl.h
+            SOURCES += src/hw_apis/videobackends_vdpau.cpp
+            HEADERS += src/hw_apis/videobackends_vdpau.h src/hw_apis/vdpau/VDPDeviceImpl.h
             LIBS    += -lvdpau -lX11
         }
         !exists("/usr/lib/libvdpau.so") {
@@ -116,8 +116,18 @@ unix {
     }
 
     macx {
+        # Add videobackends
+        DEFINES += VIDEOBACKEND_VDA
+        DEFINES += VIDEOBACKEND_VTB
+
+        SOURCES += src/videobackends_vda.cpp \
+                   src/videobackends_vtb.cpp
+        HEADERS += src/videobackends_vda.h \
+                   src/videobackends_vtb.h
+
         # Link with video decoding APIs
-        #LIBS += -Wl,-framework,Foundation -Wl,-framework,VideoToolbox -Wl,-framework,CoreMedia -Wl,-framework,CoreVideo
+        LIBS += -Wl,-framework,Foundation -Wl,-framework,CoreFoundation -Wl,-framework,CoreMedia -Wl,-framework,CoreVideo
+        LIBS += -Wl,-framework,VideoToolbox -Wl,-framework,VideoDecodeAcceleration
 
         # Force compiler to use available macOS SDK version (with automatic detection)
         XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")

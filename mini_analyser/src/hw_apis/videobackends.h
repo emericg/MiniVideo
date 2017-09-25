@@ -31,11 +31,13 @@ typedef struct CodecSupport
     unsigned codec;
     unsigned profile;
 
+    bool software = false;
     bool hardware = false;
 
     int max_width = -1;
     int max_height = -1;
     int max_bitdepth = -1;
+
 } CodecSupport;
 
 class VideoBackendInfos
@@ -45,12 +47,8 @@ public:
     ~VideoBackendInfos();
 
     QString api_name;
-
     QString api_info;
     QString api_version;
-
-    QString driver_info;
-    QString driver_version;
 
     std::vector<CodecSupport> decodingSupport;
     std::vector<CodecSupport> encodingSupport;
