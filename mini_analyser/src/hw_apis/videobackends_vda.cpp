@@ -29,9 +29,7 @@
 #include "videobackends_h264.h"
 #include <minivideo_codecs.h>
 
-#include <stdarg.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 #include <QDebug>
@@ -61,11 +59,15 @@ Desc decoder_profiles_vda[] =
     { CODEC_H264,   PROF_H264_XP,   1280,  720, 8, nullptr },
     { CODEC_H264,   PROF_H264_BP,   1280,  720, 8, avcC_BP_720 },
     { CODEC_H264,   PROF_H264_MP,   1280,  720, 8, nullptr },
+
     { CODEC_H264,   PROF_H264_HiP,  1280,  720, 8, avcC_HiP_720 },
     { CODEC_H264,   PROF_H264_HiP,  1920, 1080, 8, avcC_HiP_1080 },
     { CODEC_H264,   PROF_H264_HiP,  3840, 2160, 8, avcC_HiP_2160 },
     { CODEC_H264,   PROF_H264_HiP,  4096, 2048, 8, avcC_HiP_2048 },
+    { CODEC_H264,   PROF_H264_HiP,  4096, 2160, 8, avcC_HiP_2048 },
     { CODEC_H264,   PROF_H264_HiP,  7680, 3840, 8, avcC_HiP_3840 },
+    { CODEC_H264,   PROF_H264_HiP,  8192, 4096, 8, nullptr },
+
     { CODEC_H264,   PROF_H264_PHiP, 1280,  720, 8, nullptr },
     { CODEC_H264,   PROF_H264_CHiP, 1280,  720, 8, nullptr },
     { CODEC_H264,   PROF_H264_Hi444PP, 1280, 720, 8, nullptr },
@@ -97,7 +99,7 @@ typedef struct MyUserData
 
 } MyUserData, *MyUserDataPtr;
 
-OSStatus CreateDecoder(Desc &prof)
+OSStatus CreateDecoderVDA(Desc &prof)
 {
     OSStatus status;
 
@@ -150,7 +152,7 @@ OSStatus CreateDecoder(Desc &prof)
                                                                  &kCFTypeDictionaryValueCallBacks);
 
     emptyDictionary = CFDictionaryCreate(kCFAllocatorDefault, // our empty IOSurface properties dictionary
-                                         NULL, NULL, 0,
+                                         nullptr, nullptr, 0,
                                          &kCFTypeDictionaryKeyCallBacks,
                                          &kCFTypeDictionaryValueCallBacks);
 
@@ -190,62 +192,35 @@ VideoBackendsVDA::~VideoBackendsVDA()
 
 bool VideoBackendsVDA::load(VideoBackendInfos &infos)
 {
-    infos.api_name = "VDA";
-
-    return testDecoder(infos);
-}
-
-bool VideoBackendsVDA::testDecoder(VideoBackendInfos &infos)
-{
     bool status = true;
-
-    int testProfiles[11][2] =
-    {
-        { 1280,  720 },
-        { 1920, 1080 },
-        { 2048, 1024 },
-        { 2560, 1440 },
-        { 3840, 1920 },
-        { 3840, 2160 },
-        { 4096, 2048 },
-        { 4096, 2160 },
-        { 5120, 2160 },
-        { 8192, 4096 },
-    };
+    infos.api_name = "VDA (Video Decode Acceleration)";
 
     for (size_t x = 0; x < decoder_profile_count; x++)
     {
-        OSStatus vda_status = CreateDecoder(decoder_profiles_vda[x]);
-
-        if (vda_status == kVDADecoderNoErr)
-        {
-            qDebug() << "CreateDecoder() SUCCESS";
-
-            CodecSupport c;
-            c.codec = decoder_profiles_vda[x].codec;
-            c.profile = decoder_profiles_vda[x].profile;
-            c.max_width = decoder_profiles_vda[x].width;
-            c.max_height = decoder_profiles_vda[x].height;
-            c.max_bitdepth = decoder_profiles_vda[x].bitdepth;
-
-            if (x > 0 && decoder_profiles_vda[x-1].profile == decoder_profiles_vda[x].profile)
-            {
-                infos.decodingSupport.pop_back();
-                infos.decodingSupport.push_back(c);
-            }
-            else
-                infos.decodingSupport.push_back(c);
-        }
-        else
-        {
-            qDebug() << "CreateDecoder() FAILED";
-        }
+        OSStatus vda_status = CreateDecoderVDA(decoder_profiles_vda[x]);
 
         switch (vda_status)
         {
             case kVDADecoderNoErr:
-                qDebug() << "Hardware acceleration is supported";
-                break;
+            {
+                qDebug() << "CreateDecoder(VDA) SUCCESS";
+
+                CodecSupport c;
+                c.codec = decoder_profiles_vda[x].codec;
+                c.profile = decoder_profiles_vda[x].profile;
+                c.max_width = decoder_profiles_vda[x].width;
+                c.max_height = decoder_profiles_vda[x].height;
+                c.max_bitdepth = decoder_profiles_vda[x].bitdepth;
+
+                //if (x > 0 && decoder_profiles_vda[x-1].profile == decoder_profiles_vda[x].profile)
+                //{
+                //    infos.decodingSupport.pop_back();
+                //    infos.decodingSupport.push_back(c);
+                //}
+                //else
+                    infos.decodingSupport.push_back(c);
+            } break;
+
             case kVDADecoderHardwareNotSupportedErr:
                 qDebug() << "The hardware does not support accelerated video services required for hardware decode.";
                 break;
