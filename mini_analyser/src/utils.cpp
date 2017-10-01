@@ -256,6 +256,10 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
             else
                 size_qstr += " (" + QString::number(sizepercent, 'g', 3) + " %)";
         }
+        else
+        {
+            size_qstr += "0 bytes";
+        }
 
         //qDebug() << "getTrackSizeString(" << size_int << ") >" << size_qstr;
     }
@@ -634,6 +638,8 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "th", lng_size) == 0 ||
                  strncmp(languageCode, "tha", lng_size) == 0)
             langage_qstr = QObject::tr("Thai");
+        else if (strncmp(languageCode, "```", lng_size) == 0)
+            langage_qstr = "";
         else
             langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));
     }

@@ -722,7 +722,9 @@ int MainWindow::printAudioDetails()
             rawsize *= t->stream_duration_ms;
             rawsize /= 1024.0;
 
-            uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
+            uint64_t ratio = 1;
+            if (rawsize && t->stream_size)
+                ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
             ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
 
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
@@ -1026,7 +1028,9 @@ int MainWindow::printVideoDetails()
 
             uint64_t rawsize = t->width * t->height * (t->color_depth / 8);
             rawsize *= t->sample_count;
-            uint64_t ratio = static_cast<uint64_t>(std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size)));
+            uint64_t ratio = 1;
+            if (rawsize && t->stream_size)
+                ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
             ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
 
             // Video bitrate graph
