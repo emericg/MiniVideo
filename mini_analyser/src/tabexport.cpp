@@ -307,15 +307,11 @@ int tabExport::generateExportDatas_text(bool detailed)
                 exportDatas += "\nTrack ID      : ";
                 exportDatas += QString::number(t->track_id);
 
-                char fcc_str[4];
+                if (t->stream_fcc)
                 {
-                    fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                    fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                    fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                    fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                    exportDatas += "\nFourCC        : ";
+                    exportDatas += getFourccString(t->stream_fcc);
                 }
-                exportDatas += "\nFourCC        : ";
-                exportDatas += QString::fromLatin1(fcc_str, 4);
             }
             exportDatas += "\nCodec         : ";
             exportDatas += getCodecString(stream_VIDEO, t->stream_codec, true);
@@ -410,15 +406,11 @@ int tabExport::generateExportDatas_text(bool detailed)
                 exportDatas += "\nTrack ID      : ";
                 exportDatas += QString::number(t->track_id);
 
-                char fcc_str[4];
+                if (t->stream_fcc)
                 {
-                    fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                    fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                    fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                    fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                    exportDatas += "\nFourCC        : ";
+                    exportDatas += getFourccString(t->stream_fcc);
                 }
-                exportDatas += "\nFourCC        : ";
-                exportDatas += QString::fromLatin1(fcc_str, 4);
             }
             exportDatas += "\nCodec         : ";
             exportDatas += getCodecString(stream_AUDIO, t->stream_codec, true);

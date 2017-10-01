@@ -23,8 +23,12 @@
 
 #include "minivideo_codecs.h"
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wswitch"
+#endif
+#ifdef __clang__
 #pragma clang diagnostic ignored "-Wswitch"
+#endif
 
 /* ************************************************************************** */
 

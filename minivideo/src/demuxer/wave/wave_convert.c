@@ -150,7 +150,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             track->sample_count = track->frame_count_idr = 1;
             track->bitrate_mode = BITRATE_UNKNOWN;
 
-            track->sample_type[0] = sample_RAW;
+            track->sample_type[0] = sample_RAW_DATA;
             track->sample_size[0] = wave->data.datasSize;
             track->sample_offset[0] = wave->data.datasOffset;
             track->sample_pts[0] = 0;

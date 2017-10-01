@@ -21,6 +21,8 @@
 
 #include "utils.h"
 
+#include "minivideo_fourcc.h"
+
 #include <cstdint>
 #include <cstring>
 #include <cmath>
@@ -408,7 +410,7 @@ QString getBitrateString(const unsigned bitrate)
     return bitrate_qstr;
 }
 
-QString getBitrateModeString(const unsigned bitrateMode)
+QString getBitrateModeString(const BitrateMode_e bitrateMode)
 {
     QString bitrate_mode_qstr;
 
@@ -426,7 +428,7 @@ QString getBitrateModeString(const unsigned bitrateMode)
     return bitrate_mode_qstr;
 }
 
-QString getFramerateModeString(const unsigned framerateMode)
+QString getFramerateModeString(const FramerateMode_e framerateMode)
 {
     QString framerate_mode_qstr;
 
@@ -438,6 +440,108 @@ QString getFramerateModeString(const unsigned framerateMode)
         framerate_mode_qstr = QObject::tr("Unknown");
 
     return framerate_mode_qstr;
+}
+
+QString getProjectionString(const Projection_e projection)
+{
+    QString projection_qstr;
+
+    if (projection == PROJECTION_RECTANGULAR)
+        projection_qstr = QObject::tr("Rectangular");
+    else if (projection == PROJECTION_EQUIRECTANGULAR)
+        projection_qstr = QObject::tr("Equirectangular");
+    else if (projection == PROJECTION_EAC)
+        projection_qstr = QObject::tr("Equi-Angular Cubemap(EAC)");
+    else if (projection == PROJECTION_CUBEMAP_A)
+        projection_qstr = QObject::tr("Cubemap (3x2: right face - left face - up face then down face - front face - back face)");
+    else if (projection == PROJECTION_MESH)
+        projection_qstr = QObject::tr("3D Mesh");
+    else
+        projection_qstr = QObject::tr("Unknown");
+
+    return projection_qstr;
+}
+
+QString getChannelModeString(const ChannelMode_e channelMode)
+{
+    QString channel_mode_qstr;
+
+    if (channelMode == CHANS_MONO)
+        channel_mode_qstr = QObject::tr("Mono");
+    else if (channelMode == CHANS_STEREO)
+        channel_mode_qstr = QObject::tr("Stereo");
+    else if (channelMode == CHANS_QUAD)
+        channel_mode_qstr = QObject::tr("Quadraphonic");
+    else if (channelMode == CHANS_SURROUND_21)
+        channel_mode_qstr = "2.1";
+    else if (channelMode == CHANS_SURROUND_31)
+        channel_mode_qstr = "3.1";
+    else if (channelMode == CHANS_SURROUND_41)
+        channel_mode_qstr = "4.1";
+    else if (channelMode == CHANS_SURROUND_51)
+        channel_mode_qstr = "5.1";
+    else if (channelMode == CHANS_SURROUND_71)
+        channel_mode_qstr = "7.1";
+    else if (channelMode == CHANS_SURROUND_91)
+        channel_mode_qstr = "9.1";
+    else if (channelMode == CHANS_SURROUND_111)
+        channel_mode_qstr = "11.1";
+    else if (channelMode == CHANS_SURROUND_102)
+        channel_mode_qstr = "10.2";
+    else if (channelMode == CHANS_SURROUND_222)
+        channel_mode_qstr = "22.2";
+    else if (channelMode == CHANS_AMBISONIC_FOA)
+        channel_mode_qstr = QObject::tr("Ambisonic FOA");
+    else if (channelMode == CHANS_AMBISONIC_SOA)
+        channel_mode_qstr = QObject::tr("Ambisonic SOA");
+    else if (channelMode == CHANS_AMBISONIC_TOA)
+        channel_mode_qstr = QObject::tr("Ambisonic TOA");
+    else
+        channel_mode_qstr = QObject::tr("Unknown");
+
+    return channel_mode_qstr;
+}
+
+QString getStereoModeString(const StereoMode_e stereoMode)
+{
+    QString channel_mode_qstr;
+
+    if (stereoMode == MONOSCOPIC)
+        channel_mode_qstr = QObject::tr("Monoscopic");
+    else if (stereoMode == STEREO_ANAGLYPH_CR)
+        channel_mode_qstr = QObject::tr("Anaglyph (cyan/red)");
+    else if (stereoMode == STEREO_ANAGLYPH_GM)
+        channel_mode_qstr = QObject::tr("Anaglyph (green/magenta)");
+    else if (stereoMode == STEREO_SIDEBYSIDE_LEFT)
+        channel_mode_qstr = QObject::tr("Side by side (left eye is first)");
+    else if (stereoMode == STEREO_SIDEBYSIDE_RIGHT)
+        channel_mode_qstr = QObject::tr("Side by side (righ eye is first)");
+    else if (stereoMode == STEREO_TOPBOTTOM_LEFT)
+        channel_mode_qstr = QObject::tr("Top-bottom (left eye is first)");
+    else if (stereoMode == STEREO_TOPBOTTOM_RIGHT)
+        channel_mode_qstr = QObject::tr("Top-bottom (righ eye is first)");
+    else if (stereoMode == STEREO_CHECKBOARD_LEFT)
+        channel_mode_qstr = QObject::tr("Checkboard (left eye is first)");
+    else if (stereoMode == STEREO_CHECKBOARD_RIGHT)
+        channel_mode_qstr = QObject::tr("Checkboard (righ eye is first)");
+    else if (stereoMode == STEREO_ROWINTERLEAVED_LEFT)
+        channel_mode_qstr = QObject::tr("Row interleaved (left eye is first)");
+    else if (stereoMode == STEREO_ROWINTERLEAVED_RIGHT)
+        channel_mode_qstr = QObject::tr("Row interleaved (righ eye is first)");
+    else if (stereoMode == STEREO_COLUMNINTERLEAVED_LEFT)
+        channel_mode_qstr = QObject::tr("Column interleaved (left eye is first)");
+    else if (stereoMode == STEREO_COLUMNINTERLEAVED_RIGHT)
+        channel_mode_qstr = QObject::tr("Column interleaved (righ eye is first)");
+    else
+        channel_mode_qstr = QObject::tr("Unknown");
+
+    return channel_mode_qstr;
+}
+
+QString getFourccString(const unsigned fourcc)
+{
+    char fcc_str[5];
+    return QString::fromLatin1(getFccString_le(fourcc, fcc_str));
 }
 
 QString getLanguageString(const char *languageCode)
@@ -555,7 +659,7 @@ QString getSampleTypeString(const unsigned sampleType)
         sample_type_qstr = QObject::tr("Text sample");
     else if (sampleType == sample_TEXT_FILE)
         sample_type_qstr = QObject::tr("Text file");
-    else if (sampleType == sample_RAW)
+    else if (sampleType == sample_RAW_DATA)
         sample_type_qstr = QObject::tr("RAW datas");
     else if (sampleType == sample_TMCD)
         sample_type_qstr = QObject::tr("TimeCode Reference");

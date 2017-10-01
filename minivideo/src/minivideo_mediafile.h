@@ -57,11 +57,11 @@ typedef struct MediaFile_t
     FILE *container_mapper_fd;          //!< Direct access to xml map without the need of an actual file
 
     // Container generic metadata
-    char *creation_app;                 //!< Container creation application (C string) (if available)
-    char *creation_lib;                 //!< Container creation library (C string) (if available)
+    uint64_t duration;                  //!< Content global duration (in ms)
     uint64_t creation_time;             //!< Container creation time (Unix time, UTC) (if available)
     uint64_t modification_time;         //!< Container modification time (Unix time, UTC) (if available)
-    uint64_t duration;                  //!< Content global duration (in milliseconds)
+    char *creation_app;                 //!< Container creation application (C string) (if available)
+    char *creation_lib;                 //!< Container creation library (C string) (if available)
 
     // A/V track(s) datas and infos
     unsigned int tracks_audio_count;

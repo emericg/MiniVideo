@@ -71,6 +71,13 @@ int parse_sa3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
     }
 
+    if (ambisonic_order == 1)
+        track->channel_mode = CHANS_AMBISONIC_FOA;
+    else if (ambisonic_order == 2)
+        track->channel_mode = CHANS_AMBISONIC_SOA;
+    else if (ambisonic_order == 3)
+        track->channel_mode = CHANS_AMBISONIC_TOA;
+
 #if ENABLE_DEBUG
     print_box_header(box_header);
     TRACE_1(MP4, "> version         : %u", version);
@@ -164,6 +171,13 @@ int parse_st3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->flags = read_bits(bitstr, 24);
 
     unsigned int stereo_mode = read_bits(bitstr, 8);
+
+    if (stereo_mode == 1)
+        track->stereo = STEREO_TOPBOTTOM_LEFT;
+    else if (stereo_mode == 2)
+        track->stereo = STEREO_SIDEBYSIDE_LEFT;
+    else if (stereo_mode == 3)
+        track->stereo = 999;
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
@@ -389,6 +403,9 @@ int parse_cbmp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned layout = read_bits(bitstr, 32);
     unsigned padding = read_bits(bitstr, 32);
 
+    if (layout == 1)
+        track->projection = PROJECTION_CUBEMAP_A;
+
 #if ENABLE_DEBUG
     print_box_header(box_header);
     TRACE_1(MP4, "> layout : %u", layout);
@@ -424,6 +441,8 @@ int parse_equi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // Read FullBox attributs
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
+
+    track->projection = PROJECTION_EQUIRECTANGULAR;
 
     unsigned projection_bounds_top = read_bits(bitstr, 32);
     unsigned projection_bounds_bottom = read_bits(bitstr, 32);
@@ -472,6 +491,8 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     unsigned crc = read_bits(bitstr, 32);
     unsigned encoding_four_cc = read_bits(bitstr, 32);
+
+    track->projection = PROJECTION_EQUIRECTANGULAR;
 
 #if ENABLE_DEBUG
     print_box_header(box_header);

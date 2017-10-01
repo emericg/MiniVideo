@@ -26,6 +26,7 @@
 #include "mp4_struct.h"
 #include "mp4_box.h"
 #include "mp4_stbl.h"
+#include "mp4_spatial.h"
 #include "mp4_convert.h"
 
 #include "../xml_mapper.h"
@@ -1113,6 +1114,17 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                 case BOX_MDIA:
                     retcode = parse_mdia(bitstr, &box_subheader, mp4->tracks[track_id], mp4);
                     break;
+
+                case BOX_UDTA:
+                    retcode = parse_udta(bitstr, &box_subheader, mp4);
+                    break;
+
+                case BOX_UUID:
+                    if (memcmp(box_subheader.usertype, SphericalVideoUUID, 16))
+                        mp4->tracks[track_id]->projection = PROJECTION_EQUIRECTANGULAR;
+                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
+                    break;
+
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;

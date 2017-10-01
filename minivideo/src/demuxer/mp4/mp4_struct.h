@@ -77,8 +77,12 @@ typedef struct Mp4Track_t
 
         // Audio specific parameters
         unsigned int channel_count;
+        unsigned int channel_mode;
         unsigned int sample_size_bits;
         unsigned int sample_rate_hz;
+        unsigned int pcm_format;
+        unsigned int pcm_bitdepth;
+        unsigned int pcm_endianness;
 
         // Video specific parameters
         unsigned int width;
@@ -89,6 +93,8 @@ typedef struct Mp4Track_t
         unsigned int color_range;
         unsigned int par_h;
         unsigned int par_v;
+        unsigned int stereo;
+        unsigned int projection;
 
         // AVC/HEVC specific parameters
         unsigned int codec_profile;

@@ -37,7 +37,7 @@
  * \param duration: Duration in milliseconds.
  * \return Duration QString.
  *
- * Prints duration hours/min/sec/ms
+ * Prints a duration in hours/min/sec/ms.
  */
 QString getDurationString(const uint32_t duration);
 
@@ -46,7 +46,7 @@ QString getDurationString(const uint32_t duration);
  * \param duration: Timestamp in microseconds.
  * \return Timestamp QString.
  *
- * Prints timestamp hours/min/sec/ms
+ * Prints a precise timestamp (ex: 1 h 2 m 3 s 40 ms 50 µs).
  */
 QString getTimestampString(const uint64_t timestamp);
 
@@ -55,7 +55,7 @@ QString getTimestampString(const uint64_t timestamp);
  * \param size: File size in bytes.
  * \return File size QString.
  *
- * Prints size in (G/M/K)iB, (G/M/K)B and bytes.
+ * Prints size in (G/M/K)iB and (G/M/K)B and bytes.
  */
 QString getSizeString(const int64_t size);
 
@@ -108,9 +108,17 @@ QString getAspectRatioString(const double ar, const bool detailed = false);
  */
 QString getBitrateString(const unsigned bitrate);
 
-QString getBitrateModeString(const unsigned bitrateMode);
+QString getBitrateModeString(const BitrateMode_e bitrateMode);
 
-QString getFramerateModeString(const unsigned framerateMode);
+QString getFramerateModeString(const FramerateMode_e framerateMode);
+
+QString getProjectionString(const Projection_e projection);
+
+QString getChannelModeString(const ChannelMode_e channelMode);
+
+QString getStereoModeString(const StereoMode_e stereoMode);
+
+QString getFourccString(const unsigned fourcc);
 
 /*!
  * \brief Get a readable language string.

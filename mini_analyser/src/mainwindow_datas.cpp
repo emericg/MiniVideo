@@ -370,6 +370,18 @@ int MainWindow::printDatas()
                 ui->label_info_audio_lng->setText(lng);
             }
 
+            if (t->channel_mode)
+            {
+                ui->label_86->show();
+                ui->label_info_audio_channelmode->show();
+                ui->label_info_audio_channelmode->setText(getChannelModeString(t->channel_mode));
+            }
+            else
+            {
+                ui->label_86->hide();
+                ui->label_info_audio_channelmode->hide();
+            }
+
             ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate_avg));
             ui->label_info_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_info_audio_channels->setText(QString::number(t->channel_count));
@@ -428,6 +440,18 @@ int MainWindow::printDatas()
             ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+
+            if (t->video_projection)
+            {
+                ui->label_84->show();
+                ui->label_info_video_projection->show();
+                ui->label_info_video_projection->setText(getProjectionString(t->video_projection));
+            }
+            else
+            {
+                ui->label_84->hide();
+                ui->label_info_video_projection->hide();
+            }
 
             if (media->tracks_video_count > 1)
             {
@@ -655,14 +679,31 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_codec_profile->setVisible(false);
             }
 
-            char fcc_str[4];
+            if (t->stream_fcc)
             {
-                fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                ui->label_12->setVisible(true);
+                ui->label_audio_fcc->setVisible(true);
+
+                char fcc_str[5];
+                ui->label_audio_fcc->setText(QString::fromLatin1(getFccString_le(t->stream_fcc, fcc_str), 4));
             }
-            ui->label_audio_fcc->setText(QString::fromLatin1(fcc_str, 4));
+            else
+            {
+                ui->label_12->setVisible(false);
+                ui->label_audio_fcc->setVisible(false);
+            }
+
+            if (t->channel_mode)
+            {
+                ui->label_6->show();
+                ui->label_audio_channelmode->show();
+                ui->label_audio_channelmode->setText(getChannelModeString(t->channel_mode));
+            }
+            else
+            {
+                ui->label_6->hide();
+                ui->label_audio_channelmode->hide();
+            }
 
             ui->label_audio_duration->setText(getDurationString(t->stream_duration_ms));
 
@@ -854,14 +895,19 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_profile->setVisible(false);
             }
 
-            char fcc_str[4];
+            if (t->stream_fcc)
             {
-                fcc_str[3] = (t->stream_fcc >>  0) & 0xFF;
-                fcc_str[2] = (t->stream_fcc >>  8) & 0xFF;
-                fcc_str[1] = (t->stream_fcc >> 16) & 0xFF;
-                fcc_str[0] = (t->stream_fcc >> 24) & 0xFF;
+                ui->label_14->setVisible(true);
+                ui->label_video_fcc->setVisible(true);
+
+                char fcc_str[5];
+                ui->label_video_fcc->setText(QString::fromLatin1(getFccString_le(t->stream_fcc, fcc_str), 4));
             }
-            ui->label_video_fcc->setText(QString::fromLatin1(fcc_str, 4));
+            else
+            {
+                ui->label_14->setVisible(false);
+                ui->label_video_fcc->setVisible(false);
+            }
 
             ui->label_video_duration->setText(getDurationString(t->stream_duration_ms));
 
@@ -870,6 +916,28 @@ int MainWindow::printVideoDetails()
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
             ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, true));
+            if (t->video_projection)
+            {
+                ui->label_5->setVisible(true);
+                ui->label_video_projection->setVisible(true);
+                ui->label_video_projection->setText(getProjectionString(t->video_projection));
+            }
+            else
+            {
+                ui->label_5->setVisible(false);
+                ui->label_video_projection->setVisible(false);
+            }
+            if (t->stereo_mode)
+            {
+                ui->label_85->setVisible(true);
+                ui->label_video_stereomode->setVisible(true);
+                ui->label_video_stereomode->setText(getStereoModeString(t->stereo_mode));
+            }
+            else
+            {
+                ui->label_85->setVisible(false);
+                ui->label_video_stereomode->setVisible(false);
+            }
             if (t->video_aspect_ratio != t->display_aspect_ratio)
             {
                 ui->label_38->setVisible(true);

@@ -197,6 +197,44 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->color_depth *= 3;
             map->framerate = 1000000000.0 / track->DefaultDuration;
 
+            if (track->video->StereoMode)
+            {
+                if (track->video->StereoMode == 1)
+                    map->stereo_mode = STEREO_SIDEBYSIDE_LEFT;
+                else if (track->video->StereoMode == 2)
+                    map->stereo_mode = STEREO_TOPBOTTOM_RIGHT;
+                else if (track->video->StereoMode == 3)
+                    map->stereo_mode = STEREO_TOPBOTTOM_LEFT;
+                else if (track->video->StereoMode == 4)
+                    map->stereo_mode = STEREO_CHECKBOARD_RIGHT;
+                else if (track->video->StereoMode == 5)
+                    map->stereo_mode = STEREO_CHECKBOARD_LEFT;
+                else if (track->video->StereoMode == 6)
+                    map->stereo_mode = STEREO_ROWINTERLEAVED_RIGHT;
+                else if (track->video->StereoMode == 7)
+                    map->stereo_mode = STEREO_ROWINTERLEAVED_LEFT;
+                else if (track->video->StereoMode == 8)
+                    map->stereo_mode = STEREO_COLUMNINTERLEAVED_RIGHT;
+                else if (track->video->StereoMode == 9)
+                    map->stereo_mode = STEREO_COLUMNINTERLEAVED_LEFT;
+                else if (track->video->StereoMode == 10)
+                    map->stereo_mode = STEREO_ANAGLYPH_CR;
+                else if (track->video->StereoMode == 11)
+                    map->stereo_mode = STEREO_SIDEBYSIDE_RIGHT;
+                else if (track->video->StereoMode == 12)
+                    map->stereo_mode = STEREO_ANAGLYPH_GM;
+            }
+
+            if (track->video->Projection)
+            {
+                if (track->video->Projection->ProjectionType == 1)
+                    map->video_projection = PROJECTION_EQUIRECTANGULAR;
+                else if (track->video->Projection->ProjectionType == 2)
+                    map->video_projection = PROJECTION_CUBEMAP_A;
+                else if (track->video->Projection->ProjectionType == 3)
+                    map->video_projection = PROJECTION_MESH;
+            }
+
             // Codec specific metadata
             if (map->stream_codec == CODEC_H264 || map->stream_codec == CODEC_H265)
             {

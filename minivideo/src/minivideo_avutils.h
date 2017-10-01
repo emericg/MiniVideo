@@ -49,14 +49,14 @@ typedef enum SampleType_e
 {
     sample_UNKNOWN = 0,
 
-    sample_RAW,
+    sample_RAW_DATA,
 
     sample_AUDIO,
     sample_AUDIO_TAG,
 
-    sample_VIDEO,
-    sample_VIDEO_SYNC,
     sample_VIDEO_PARAM,
+    sample_VIDEO_SYNC,
+    sample_VIDEO,
 
     sample_TEXT,
     sample_TEXT_FILE,
@@ -88,6 +88,41 @@ typedef enum FramerateMode_e
     FRAMERATE_VFR     = 2, //!< Variable FrameRate
 
 } FramerateMode_e;
+
+//! Projection
+typedef enum Projection_e
+{
+    PROJECTION_RECTANGULAR = 0,
+
+    PROJECTION_EQUIRECTANGULAR  = 1,
+    PROJECTION_EAC              = 2,
+    PROJECTION_CUBEMAP_A        = 3,
+    PROJECTION_MESH             = 4,
+
+} Projection_e;
+
+//! Stereo mode
+typedef enum StereoMode_e
+{
+    MONOSCOPIC = 0,
+
+    STEREO_ANAGLYPH_CR      = 1,        //!< (cyan/red)
+    STEREO_ANAGLYPH_GM      = 2,        //!< (green/magenta)
+
+    STEREO_SIDEBYSIDE_LEFT  = 3,        //!< (left eye is first)
+    STEREO_SIDEBYSIDE_RIGHT = 4,        //!< (right eye is first)
+    STEREO_TOPBOTTOM_LEFT   = 5,        //!< (left eye is first)
+    STEREO_TOPBOTTOM_RIGHT  = 6,        //!< (right eye is first)
+    STEREO_CHECKBOARD_LEFT  = 7,        //!< (left eye is first)
+    STEREO_CHECKBOARD_RIGHT = 8,        //!< (right eye is first)
+    STEREO_ROWINTERLEAVED_LEFT     =  9,//!< (left eye is first)
+    STEREO_ROWINTERLEAVED_RIGHT    = 10,//!< (right eye is first)
+    STEREO_COLUMNINTERLEAVED_LEFT  = 11,//!< (left eye is first)
+    STEREO_COLUMNINTERLEAVED_RIGHT = 12,//!< (right eye is first)
+    // both eyes laced in one Block     //!< (left eye is first)
+    // both eyes laced in one Block     //!< (right eye is first)
+
+} StereoMode_e;
 
 /* ************************************************************************** */
 
@@ -163,7 +198,11 @@ typedef enum ChannelMode_e
     CHANS_SURROUND_111  = 22,
 
     CHANS_SURROUND_102  = 32,
-    CHANS_SURROUND_222  = 33
+    CHANS_SURROUND_222  = 33,
+
+    CHANS_AMBISONIC_FOA = 64,
+    CHANS_AMBISONIC_SOA = 65,
+    CHANS_AMBISONIC_TOA = 66
 
 } ChannelMode_e;
 

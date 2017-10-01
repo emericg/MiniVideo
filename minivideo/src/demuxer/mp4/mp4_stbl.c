@@ -59,11 +59,11 @@ int parse_frma(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     char fcc[5];
-    unsigned int format = read_bits(bitstr, 32);
+    track->pcm_format = read_bits(bitstr, 32);
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
-    TRACE_1(MP4, "> format  : %s", getFccString_le(format, fcc));
+    TRACE_1(MP4, "> format  : %s", getFccString_le(track->pcm_format, fcc));
 #endif // ENABLE_DEBUG
 
     // xmlMapper
@@ -71,7 +71,7 @@ int parse_frma(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Format</title>\n");
-        fprintf(mp4->xml, "  <format>%s</format>\n", getFccString_le(format, fcc));
+        fprintf(mp4->xml, "  <format>%s</format>\n", getFccString_le(track->pcm_format, fcc));
         fprintf(mp4->xml, "  </a>\n");
     }
 
@@ -83,11 +83,11 @@ int parse_enda(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_enda()" CLR_RESET);
     int retcode = SUCCESS;
 
-    unsigned int endian = read_bits(bitstr, 16);
+    track->pcm_endianness = read_bits(bitstr, 16);
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
-    TRACE_1(MP4, "> endian  : %u", endian);
+    TRACE_1(MP4, "> endian  : %u", track->pcm_endianness);
 #endif // ENABLE_DEBUG
 
     // xmlMapper
@@ -95,7 +95,7 @@ int parse_enda(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  <title>Format</title>\n");
-        fprintf(mp4->xml, "  <endian>%u</endian>\n", endian);
+        fprintf(mp4->xml, "  <endian>%u</endian>\n", track->pcm_endianness);
         fprintf(mp4->xml, "  </a>\n");
     }
 
@@ -138,6 +138,7 @@ int parse_chan(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     return retcode;
 }
+
 /*!
  * \brief siDecompressionParam Atom ('wave')
  * \param bitstr
@@ -418,7 +419,8 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             fprintf(mp4->xml, "  <reserved4>%u</reserved4>\n", reserved4);
         }
 
-        if ((reserved0 >> 16) == 1)
+        int atom_version = reserved0 >> 16;
+        if (atom_version == 1)
         {
             unsigned samples_per_packet = read_bits(bitstr, 32);
             unsigned bytes_per_packet = read_bits(bitstr, 32);
@@ -437,7 +439,7 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 fprintf(mp4->xml, "  <bytes_per_sample>%u</bytes_per_sample>\n", bytes_per_sample);
             }
         }
-        else if ((reserved0 >> 16) == 2)
+        else if (atom_version == 2)
         {
             unsigned version = read_bits(bitstr, 16);
             unsigned revision_level = read_bits(bitstr, 16);
@@ -448,13 +450,15 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             unsigned always0 = read_bits(bitstr, 16);
             unsigned always65536 = read_bits(bitstr, 32);
             unsigned sizeOfStructOnly = read_bits(bitstr, 32);
-            double audioSampleRate = *((double *)read_bits_64(bitstr, 64));
+            uint64_t asr = read_bits_64(bitstr, 64);
+            double audioSampleRate = *((double *)&asr);
             unsigned numAudioChannels = read_bits(bitstr, 32);
             unsigned always7F000000 = read_bits(bitstr, 32);
             unsigned constBitsPerChannel = read_bits(bitstr, 32);
             unsigned formatSpecificFlags = read_bits(bitstr, 32);
             unsigned constBytesPerAudioPacket = read_bits(bitstr, 32);
             unsigned constLPCMFramesPerAudioPacket = read_bits(bitstr, 32);
+
 #if ENABLE_DEBUG
             //
 #endif
@@ -478,6 +482,10 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 fprintf(mp4->xml, "  <constBytesPerAudioPacket>%u</constBytesPerAudioPacket>\n", constBytesPerAudioPacket);
                 fprintf(mp4->xml, "  <constLPCMFramesPerAudioPacket>%u</constLPCMFramesPerAudioPacket>\n", constLPCMFramesPerAudioPacket);
             }
+        }
+        else if (atom_version > 2)
+        {
+            TRACE_WARNING(MP4, "Unknown atom_version value: %i", atom_version);
         }
     }
 

@@ -30,6 +30,8 @@
 
 /* ************************************************************************** */
 
+static const uint8_t SphericalVideoUUID[16] = {0xFF, 0xCC, 0x82, 0x63, 0xF8, 0x55, 0x4A, 0x93, 0x88, 0x12, 0x58, 0x7A, 0x02, 0x52, 0x1F, 0xDD};
+
 int parse_sa3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4);
 int parse_sand(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4);
 
