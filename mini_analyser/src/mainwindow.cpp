@@ -105,9 +105,20 @@ MainWindow::MainWindow(QWidget *parent) :
     icon_music.addFile(":/icons_material/icons_material/ic_music_video_48px.svg");
     icon_error.addFile(":/icons_material/icons_material/ic_error_outline_48px.svg");
 
+#ifdef Q_OS_LINUX
+#if !defined(VIDEOBACKEND_VDPAU) && !defined(VIDEOBACKEND_VAAPI)
+    ui->mainToolBar->removeAction(ui->actionVideoBackends);
+#endif
+#endif
 #ifdef Q_OS_OSX
+#if !defined(VIDEOBACKEND_VDA) && !defined(VIDEOBACKEND_VTB)
+    ui->mainToolBar->removeAction(ui->actionVideoBackends);
+#endif
     ui->comboBox_file->setIconSize(QSize(16,16));
     ui->mainToolBar->setStyleSheet("");
+#endif
+#ifdef Q_OS_WIN32
+    ui->mainToolBar->removeAction(ui->actionVideoBackends);
 #endif
 }
 
