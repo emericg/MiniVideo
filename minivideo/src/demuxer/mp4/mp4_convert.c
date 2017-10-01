@@ -384,7 +384,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 }
             }
         }
-        else
+        else if (track->stsz_sample_count > 0)
         {
             // Compute DTS, then copy results into PTS
             for (i = 0, k = 0; i < track->stts_entry_count; i++)
