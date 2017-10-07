@@ -601,15 +601,15 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
 
 #if ENABLE_DEBUG
         print_chunk_header(data_header);
-        TRACE_1(WAV, "> datasOffset     : %u", wave->data.datasOffset);
-        TRACE_1(WAV, "> datasSize       : %u", wave->data.datasSize);
+        TRACE_1(WAV, "> datasOffset     : %lli", wave->data.datasOffset);
+        TRACE_1(WAV, "> datasSize       : %lli", wave->data.datasSize);
 #endif
         // xmlMapper
         if (wave->xml)
         {
             write_chunk_header(data_header, wave->xml);
-            fprintf(wave->xml, "  <datasOffset>%li</datasOffset>\n", wave->data.datasOffset);
-            fprintf(wave->xml, "  <datasSize>%li</datasSize>\n", wave->data.datasSize);
+            fprintf(wave->xml, "  <datasOffset>%"PRId64"</datasOffset>\n", wave->data.datasOffset);
+            fprintf(wave->xml, "  <datasSize>%"PRId64"</datasSize>\n", wave->data.datasSize);
             fprintf(wave->xml, "  </a>\n");
         }
     }

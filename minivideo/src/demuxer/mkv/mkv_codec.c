@@ -447,7 +447,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         {
             xmlSpacer(mkv->xml, "SequenceParameterSet infos", i);
             fprintf(mkv->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
-            fprintf(mkv->xml, "  <sequenceParameterSetOffset index=\"%u\">%li</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
+            fprintf(mkv->xml, "  <sequenceParameterSetOffset index=\"%u\">%"PRId64"</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
         }
 
         fprintf(mkv->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
@@ -455,7 +455,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         {
             xmlSpacer(mkv->xml, "PictureParameterSet", i);
             fprintf(mkv->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
-            fprintf(mkv->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
+            fprintf(mkv->xml, "  <pictureParameterSetOffset index=\"%u\">%"PRId64"</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }
 
         for (i = 0; i < track->sps_count; i++)
