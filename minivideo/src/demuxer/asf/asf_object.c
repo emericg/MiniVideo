@@ -65,16 +65,16 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
     TRACE_2(ASF, "read_asf_guid()");
     int status = SUCCESS;
 
-    read_guid_le(bitstr, guid);
+    read_uuid_le(bitstr, guid);
 
     if (name)
     {
-        char guid_str[36];
+        char guid_str[38];
         getGuidString(guid, guid_str);
-        TRACE_1(ASF, "* %s  = {%s}", name, guid_str);
+        TRACE_1(ASF, "* %s  = %s", name, guid_str);
         if (xml)
         {
-            fprintf(xml, "  <%s>{%s}</%s>\n", name, guid_str, name);
+            fprintf(xml, "  <%s>%s</%s>\n", name, guid_str, name);
         }
     }
 

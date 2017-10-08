@@ -11,6 +11,7 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 ### Supported container formats
 - AVI [.avi]
 - WAVE [.wav]
+- ASF [.asf, .wma, .wmv]
 - MKV [.mkv, .webm, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
@@ -22,26 +23,32 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 Building mini_analyser
 ----------------------
 
-Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
-how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
-In case of problem, it may be necessary to manually indicate the paths of these files.
+minivideo library must have been built first!
 
-minivideo library must have been built first.
+You can either use CMake (recommanded, more configurable)
+> $ cd minivideo/build  
+> $ cmake ..  
+> $ make  
 
+Or qmake (simplier)
+> $ cd minivideo/  
+> $ qmake  
+> $ make  
+
+Then:
 > $ cd mini_analyser/  
 > $ qmake  
 > $ make  
 
-Installation into the system, available for root user with both testing softwares:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+
+Using mini_analyser GUI
+-----------------------
+
+Just drag and drop files to analyse them!
 
 
-Using mini_analyser
--------------------
+Using mini_analyser CLI
+-----------------------
 
-> $ cd mini_analyser/build/  
-> $ export LD_LIBRARY_PATH=../../minivideo/build
-> $ ./mini_analyser
-
-Then drag and drop files to analyse them!
+> $ cd mini_analyser/bin/  
+> $ ./mini_analyser --cli [--details] /path/to/files

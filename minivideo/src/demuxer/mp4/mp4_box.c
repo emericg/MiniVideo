@@ -27,7 +27,7 @@
 
 #include "../xml_mapper.h"
 #include "../../minivideo_fourcc.h"
-#include "../../minivideo_guid.h"
+#include "../../minivideo_uuid.h"
 #include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -102,7 +102,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 
         if (box_header->boxtype == BOX_UUID)
         {
-            read_guid_be(bitstr, box_header->usertype);
+            read_uuid_be(bitstr, box_header->usertype);
         }
 
         // Init "FullBox" parameters
@@ -172,10 +172,9 @@ void print_box_header(Mp4Box_t *box_header)
         TRACE_2(MP4, "* box type      : 0x%X", box_header->boxtype);
         if (box_header->boxtype == BOX_UUID)
         {
-            char guid_str[36];
+            char guid_str[38];
             getGuidString(box_header->usertype, guid_str);
-
-            TRACE_2(MP4, "* box usertype  : {%s}", guid_str);
+            TRACE_2(MP4, "* box usertype  : %s", guid_str);
         }
 
         // Print FullBox header
@@ -222,9 +221,9 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml)
 
             if (box_header->boxtype == BOX_UUID)
             {
-                char guid_str[36];
+                char guid_str[38];
                 getGuidString(box_header->usertype, guid_str);
-                fprintf(xml, "  <usertype>{%s}</usertype>\n", guid_str);
+                fprintf(xml, "  <usertype>%s</usertype>\n", guid_str);
             }
         }
     }

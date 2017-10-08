@@ -2,9 +2,13 @@
 stash/
 
 # Build directories
+mini_analyser/bin/*
 mini_analyser/build/*
+mini_extractor/bin/*
 mini_extractor/build/*
+mini_thumbnailer/bin/*
 mini_thumbnailer/build/*
+minivideo/bin/*
 minivideo/build/*
 
 # QtCreator project files

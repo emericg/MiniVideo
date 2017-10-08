@@ -93,8 +93,7 @@ endif(DOXYGEN_FOUND)
 # Build configuration
 ###############################################################################
 
-# Generic build flags
-set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Detect build type (default is release)
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
@@ -131,6 +130,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     message(STATUS "Building on Linux plateform")
 
+    set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
     set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-z,now -Wl,-z,relro")
 
 endif()
@@ -140,6 +140,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     message(STATUS "Building on macOS plateform")
 
+    set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
     set(CMAKE_SHARED_LINKER_FLAGS "-lm")
 
 endif()
@@ -176,7 +177,7 @@ set(minivideo_SRC
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
         src/minivideo_codecs.c src/minivideo_avutils.h
-        src/minivideo_fourcc.c src/minivideo_twocc.c src/minivideo_guid.c
+        src/minivideo_fourcc.c src/minivideo_twocc.c src/minivideo_uuid.c
         src/utils.c src/thirdparty/simple_vector.c
     src/minitraces.c src/minitraces_conf.h
     src/bitstream.c

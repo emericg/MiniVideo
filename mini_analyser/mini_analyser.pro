@@ -16,7 +16,7 @@ OBJECTS_DIR  = build/
 MOC_DIR      = build/
 RCC_DIR      = build/
 UI_DIR       = build/
-DESTDIR      = build/
+DESTDIR      = bin/
 
 # mini_analyser files
 SOURCES     += src/main.cpp \
@@ -116,7 +116,7 @@ unix {
         QMAKE_RPATHDIR += $${PWD}/../minivideo/build
 
         # Using https://nixos.org/patchelf.html
-        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/build/mini_analyser)
+        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/bin/mini_analyser)
     }
 
     macx {
@@ -152,12 +152,12 @@ win32 {
 
 win32 {
     # 'automatic' application packaging
-    system(windeployqt build/)
+    system(windeployqt bin/)
 }
 
 macx {
     # 'automatic' bundle packaging
-    system(macdeployqt build/$${TARGET}.app)
+    system(macdeployqt bin/$${TARGET}.app)
 }
 
 linux {

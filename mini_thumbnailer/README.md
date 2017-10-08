@@ -13,10 +13,10 @@ Building mini_thumbnailer
 -------------------------
 
 Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
-how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
+how to find the library (libminivideo.so file) and its header (minivideo.h file)
 In case of problem, it may be necessary to manually indicate the paths of these files.
 
-minivideo library must have been built first.
+minivideo library must have been built first!
 
 > $ cd mini_thumbnailer/build/  
 > $ cmake ..  

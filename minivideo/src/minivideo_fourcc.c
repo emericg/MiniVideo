@@ -33,7 +33,7 @@
 
 /* ************************************************************************** */
 
-char *getFccString_le(const uint32_t fcc_in, char *fcc_out)
+char *getFccString_le(const uint32_t fcc_in, char fcc_out[5])
 {
     if (fcc_out)
     {
@@ -49,7 +49,7 @@ char *getFccString_le(const uint32_t fcc_in, char *fcc_out)
     return NULL;
 }
 
-char *getFccString_be(const uint32_t fcc_in, char *fcc_out)
+char *getFccString_be(const uint32_t fcc_in, char fcc_out[5])
 {
     if (fcc_out)
     {
@@ -62,7 +62,7 @@ char *getFccString_be(const uint32_t fcc_in, char *fcc_out)
         return fcc_out;
     }
 
-    return "0000";
+    return NULL;
 }
 
 /* ************************************************************************** */

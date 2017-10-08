@@ -31,16 +31,26 @@
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Find a codec from a TwoCC value.
+ * \param tcc[in]: A TwoCC value.
+ * \return A Codecs_e value.
+ */
 minivideo_EXPORT Codecs_e getCodecFromTwoCC(const uint16_t tcc);
 
-const char *getTccString(const uint16_t tcc);
+/*!
+ * \brief Get a printable TwoCC description (from a TwoCC value).
+ * \param tcc[in]: A TwoCC value.
+ * \return A NULL terminated C string.
+ */
+minivideo_EXPORT const char *getTccString(const uint16_t tcc);
 
 /* ************************************************************************** */
 
 /*!
  * Good ressources about TwoCCs:
- * http://wiki.multimedia.cx/index.php?title=Twocc
- * http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html (search for WAVE_FORMAT_)
+ * - http://wiki.multimedia.cx/index.php?title=Twocc
+ * - http://www.videolan.org/developers/vlc/doc/doxygen/html/vlc__codecs_8h_source.html (search for WAVE_FORMAT_)
  */
 typedef enum twocc_list_e
 {

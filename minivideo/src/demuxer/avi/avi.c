@@ -30,7 +30,7 @@
 #include "../../utils.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
-#include "../../minivideo_guid.h"
+#include "../../minivideo_uuid.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
@@ -546,9 +546,9 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         uint32_t dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                         uint8_t SubFormat_GUID[16];
-                        char SubFormat_GUID_str[36];
+                        char SubFormat_GUID_str[38];
 
-                        read_guid_le(bitstr, SubFormat_GUID);
+                        read_uuid_le(bitstr, SubFormat_GUID);
                         getGuidString(SubFormat_GUID, SubFormat_GUID_str);
 
 #if ENABLE_DEBUG
@@ -557,7 +557,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         TRACE_1(AVI, "> samples_wSamplesPerBlock    : %u", samples_wSamplesPerBlock);
                         TRACE_1(AVI, "> samples_wReserved   : %u", samples_wReserved);
                         TRACE_1(AVI, "> dwChannelMask       : %u", dwChannelMask);
-                        TRACE_1(AVI, "> SubFormat_GUID      : {%s}", SubFormat_GUID_str);
+                        TRACE_1(AVI, "> SubFormat_GUID      : %s", SubFormat_GUID_str);
 #endif
                         if (avi->xml)
                         {
@@ -566,7 +566,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                             fprintf(avi->xml, "  <samples_wSamplesPerBlock>%u</samples_wSamplesPerBlock>\n", samples_wSamplesPerBlock);
                             fprintf(avi->xml, "  <samples_wReserved>%u</samples_wReserved>\n", samples_wReserved);
                             fprintf(avi->xml, "  <dwChannelMask>%u</dwChannelMask>\n", dwChannelMask);
-                            fprintf(avi->xml, "  <SubFormat_GUID>{%s}</SubFormat_GUID>\n", SubFormat_GUID_str);
+                            fprintf(avi->xml, "  <SubFormat_GUID>%s</SubFormat_GUID>\n", SubFormat_GUID_str);
                         }
                     }
                 }

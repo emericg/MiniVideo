@@ -47,19 +47,36 @@ extern "C" {
 
 /* ************************************************************************** */
 
+/*!
+ * \brief Find a codec from a uint32_t packed FourCC.
+ * \param fcc[in]: uint32_t packed FourCC.
+ * \return A Codecs_e value.
+ */
 minivideo_EXPORT Codecs_e getCodecFromFourCC(const uint32_t fcc);
 
-char *getFccString_le(const uint32_t fcc_in, char *fcc_out);
+/*!
+ * \brief Get a printable FourCC (from packed little endian FourCC).
+ * \param fcc_in[in]: uint32_t packed FourCC (little endian).
+ * \param fcc_out[in,out]: A NULL terminated C string.
+ * \return A pointer to the provided fcc_out[5] so this function can be used directly inside a printf().
+ */
+minivideo_EXPORT char *getFccString_le(const uint32_t fcc_in, char fcc_out[5]);
 
-char *getFccString_be(const uint32_t fcc_in, char *fcc_out);
+/*!
+ * \brief Get a printable FourCC (from packed big endian FourCC).
+ * \param fcc_in[in]: uint32_t packed FourCC (big endian).
+ * \param fcc_out[in,out]: A NULL terminated C string.
+ * \return A pointer to the provided fcc_out[5] so this function can be used directly inside a printf().
+ */
+minivideo_EXPORT char *getFccString_be(const uint32_t fcc_in, char fcc_out[5]);
 
 /* ************************************************************************** */
 
 /*!
  * Good ressources about FourCCs:
- * http://www.fourcc.org/codecs.php
- * http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
- * https://support.microsoft.com/en-us/kb/281188
+ * - http://www.fourcc.org/codecs.php
+ * - http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
+ * - https://support.microsoft.com/en-us/kb/281188
  *
  * Both upper and lower cases FourCC are present sometimes, because we encountered
  * in the wild...

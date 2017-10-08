@@ -27,7 +27,7 @@
 // minivideo headers
 #include "asf_struct.h"
 #include "../../bitstream.h"
-#include "../../minivideo_guid.h"
+#include "../../minivideo_uuid.h"
 
 /* ************************************************************************** */
 

@@ -24,9 +24,9 @@ The minivideo library can:
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import modules)
-- ASF [.asf, .wma, .wmv]
 - AVI [.avi]
 - WAVE [.wav]
+- ASF [.asf, .wma, .wmv]
 - MKV [.mkv, .webm, ...]
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
@@ -35,9 +35,9 @@ The minivideo library can:
 - MP3 "elementary stream" (.mp3)
 
 ### Supported picture formats (output modules)
-- webp (when libwebp support available)
 - jpeg (internal OR when libjpeg support is available)
-- png (internal OR when libpng support available)
+- png (internal OR when libpng support is available)
+- webp (when libwebp support is available)
 - bmp
 - tiff
 - tga

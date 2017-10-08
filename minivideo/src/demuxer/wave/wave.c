@@ -32,7 +32,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
-#include "../../minivideo_guid.h"
+#include "../../minivideo_uuid.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minitraces.h"
@@ -85,7 +85,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 wave->fmt.wValidBitsPerSample = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                read_guid_le(bitstr, wave->fmt.SubFormat);
+                read_uuid_le(bitstr, wave->fmt.SubFormat);
             }
             else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1 && fmt_header->dwSize >= 40)
             {
@@ -113,7 +113,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                 //wave->fmt.wReserved = endian_flip_16(read_bits(bitstr, 16));
                 wave->fmt.dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
-                read_guid_le(bitstr, wave->fmt.SubFormat);
+                read_uuid_le(bitstr, wave->fmt.SubFormat);
 
                 if (memcmp(wave->fmt.SubFormat, WAVE_SubFormat_GUIDs[WAVE_AMBISONIC_SUBTYPE_PCM], 16) == 0 ||
                     memcmp(wave->fmt.SubFormat, WAVE_SubFormat_GUIDs[WAVE_AMBISONIC_SUBTYPE_IEEE_FLOAT], 16) == 0)
@@ -166,9 +166,9 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             //TRACE_1(WAV, "> wReserved          : %u", wave->fmt.wReserved);
             TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
-            char SubFormat_str[36];
+            char SubFormat_str[38];
             getGuidString(wave->fmt.SubFormat, SubFormat_str);
-            TRACE_1(WAV, "> SubFormat: {%s}", SubFormat_str);
+            TRACE_1(WAV, "> SubFormat: %s", SubFormat_str);
         }
 #endif // ENABLE_DEBUG
 
@@ -196,9 +196,9 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
                     fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
 
-                    char SubFormat_str[36];
+                    char SubFormat_str[38];
                     getGuidString(wave->fmt.SubFormat, SubFormat_str);
-                    fprintf(wave->xml, "  <SubFormat>{%s}</SubFormat>\n", SubFormat_str);
+                    fprintf(wave->xml, "  <SubFormat>%s</SubFormat>\n", SubFormat_str);
                 }
                 else if (wave->fmt.wFormatTag == WAVE_FORMAT_MP1 && fmt_header->dwSize >= 40)
                 {
@@ -225,9 +225,9 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     //fprintf(wave->xml, "  <wSamplesPerBlock>%u</wSamplesPerBlock>\n", wave->fmt.wSamplesPerBlock);
                     //fprintf(wave->xml, "  <wReserved>%u</wReserved>\n", wave->fmt.wReserved);
 
-                    char SubFormat_str[36];
+                    char SubFormat_str[38];
                     getGuidString(wave->fmt.SubFormat, SubFormat_str);
-                    fprintf(wave->xml, "  <SubFormat>{%s}</SubFormat>\n", SubFormat_str);
+                    fprintf(wave->xml, "  <SubFormat>%s</SubFormat>\n", SubFormat_str);
                 }
             }
             fprintf(wave->xml, "  </a>\n");
