@@ -46,80 +46,123 @@
  */
 int main(int argc, char *argv[])
 {
-    std::cout << GREEN "mini_analyser(" BLUE << VERSION_STR << GREEN ")" RESET << std::endl;
-#ifdef QT_DEBUG
-    std::cout << "* DEBUG build" << std::endl;
-#else
-    std::cout << "* RELEASE build" << std::endl;
-#endif
-    std::cout << "* Qt version " << QT_VERSION_STR << std::endl;
+    bool cli_enabled = false;
+    bool cli_details_enabled = false;
+    QStringList files;
 
     std::cout << GREEN "mini_analyser() arguments" RESET << std::endl;
-    for (int i = 0; i < argc; i++)
-    {
-        std::cout << "> " << argv[i] << std::endl;
-    }
-
-    // Print informations about libMiniVideo and system endianness
-    minivideo_print_infos();
-    minivideo_endianness();
-
-    // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
-    MiniAnalyser app(argc, argv);
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    // High DPI monitor?
-    if (app.devicePixelRatio() > 1)
-    {
-        app.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    }
-#endif
-
-    // Launch program window
-    app.w.show();
-
-    // Used to launch new detached instances
-    if (argv[0])
-    {
-        app.w.setAppPath(QString::fromLocal8Bit(argv[0]));
-    }
-
-    // If files have been passed as arguments, load them
     for (int i = 1; i < argc; i++)
     {
         if (argv[i])
         {
-            QString fileAsArgument = QFile::decodeName(argv[i]);
-            if (QFile::exists(fileAsArgument))
+            std::cout << "> " << argv[i] << std::endl;
+
+            if (QString::fromLocal8Bit(argv[i]) == "--cli")
+                cli_enabled = true;
+            else if (QString::fromLocal8Bit(argv[i]) == "--details")
+                cli_details_enabled = true;
+            else
             {
-                app.w.loadFile(fileAsArgument);
+                QString fileAsArgument = QFile::decodeName(argv[i]);
+                if (QFile::exists(fileAsArgument))
+                    files << fileAsArgument;
             }
         }
     }
 
-    return app.exec();
+    if (cli_enabled)
+    {
+        // CLI /////////////////////////////////////////////////////////////////////
+
+        MiniAnalyserCLI app(argc, argv);
+
+        for (auto file: files)
+        {
+            app.cli.printFile(file, cli_details_enabled);
+        }
+
+        return EXIT_SUCCESS;
+    }
+    else
+    {
+        // GUI /////////////////////////////////////////////////////////////////////
+
+        std::cout << GREEN "mini_analyser(" BLUE << VERSION_STR << GREEN ")" RESET << std::endl;
+#ifdef QT_DEBUG
+        std::cout << "* DEBUG build" << std::endl;
+#else
+        std::cout << "* RELEASE build" << std::endl;
+#endif
+        std::cout << "* Qt version " << QT_VERSION_STR << std::endl;
+
+        // Print informations about libMiniVideo and system endianness
+        minivideo_print_infos();
+        minivideo_endianness();
+
+        // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
+        MiniAnalyserGUI app(argc, argv);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        // High DPI monitor?
+        if (app.devicePixelRatio() > 1)
+        {
+            app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+        }
+#endif
+
+        // Launch program window
+        app.gui.show();
+
+        // Used to launch new detached instances
+        if (argv[0])
+        {
+            app.gui.setAppPath(QString::fromLocal8Bit(argv[0]));
+        }
+
+        // If files have been passed as arguments, load them
+        for (auto file: files)
+        {
+            app.gui.loadFile(file);
+        }
+
+        return app.exec();
+    }
+
+    return EXIT_FAILURE;
 }
 
 /* ************************************************************************** */
 
-MiniAnalyser::MiniAnalyser(int &argc, char **argv) : QApplication(argc, argv)
+MiniAnalyserCLI::MiniAnalyserCLI(int &argc, char **argv) : QCoreApplication(argc, argv)
 {
     //
 }
 
-MiniAnalyser::~MiniAnalyser()
+MiniAnalyserCLI::~MiniAnalyserCLI()
 {
     //
 }
 
-bool MiniAnalyser::event(QEvent *e)
+/* ************************************************************************** */
+
+MiniAnalyserGUI::MiniAnalyserGUI(int &argc, char **argv) : QApplication(argc, argv)
+{
+    //
+}
+
+MiniAnalyserGUI::~MiniAnalyserGUI()
+{
+    //
+}
+
+bool MiniAnalyserGUI::event(QEvent *e)
 {
     if (e->type() == QEvent::FileOpen)
     {
         QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(e);
         if (QFile::exists(openEvent->file()))
         {
-            w.loadFile(openEvent->file());
+            gui.loadFile(openEvent->file());
         }
     }
 

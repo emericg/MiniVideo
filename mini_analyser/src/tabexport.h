@@ -38,6 +38,17 @@ class tabExport : public QWidget
 {
     Q_OBJECT
 
+    Ui::tabExport *ui;
+
+    // Save current media file
+    MediaFile_t *media = nullptr;
+    MediaWrapper *wrapper = nullptr;
+
+    // Datas export feature
+    int exportFormat = 0;
+    QString exportDatas;
+    QFile exportFile;
+
 public:
     explicit tabExport(QWidget *parent = 0);
     ~tabExport();
@@ -50,33 +61,9 @@ public slots:
 private slots:
     void saveFileDialog();
     void saveDatas();
-    int generateExportDatas_text(bool detailed);
-    int generateExportDatas_json(bool detailed);
-    int generateExportDatas_xml(bool detailed);
-    int generateExportMapping_xml();
 
     void on_comboBox_export_modes_currentIndexChanged(int index);
     void on_comboBox_export_formats_currentIndexChanged(int index);
-
-private:
-    Ui::tabExport *ui;
-
-    // Save current media file
-    MediaFile_t *media = nullptr;
-    MediaWrapper *wrapper = nullptr;
-
-    // Datas export feature
-    int exportFormat = 0;
-    QString exportDatas;
-    QFile exportFile;
-
-    typedef enum TextExportFormat_e
-    {
-        EXPORT_TEXT  = 0,
-        EXPORT_XML   = 1,
-        EXPORT_JSON  = 2,
-
-    } TextExportFormat_e;
 };
 
 #endif // TABEXPORT_H

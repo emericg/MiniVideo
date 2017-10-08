@@ -20,11 +20,13 @@ DESTDIR      = build/
 
 # mini_analyser files
 SOURCES     += src/main.cpp \
+               src/cli.cpp \
                src/mainwindow.cpp \
                src/mainwindow_datas.cpp \
                src/utils.cpp \
                src/about.cpp \
                src/fourcchelper.cpp \
+               src/textexport.cpp \
                src/tabexport.cpp \
                src/tabdev.cpp \
                src/tabcontainer.cpp \
@@ -32,11 +34,13 @@ SOURCES     += src/main.cpp \
                src/hw_apis/videobackends_ui.cpp
 
 HEADERS     += src/main.h \
+               src/cli.h \
                src/mainwindow.h \
                src/mediawrapper.h \
                src/utils.h \
                src/about.h \
                src/fourcchelper.h \
+               src/textexport.h \
                src/tabexport.h \
                src/tabdev.h \
                src/tabcontainer.h \
@@ -47,9 +51,9 @@ FORMS       += ui/mainwindow.ui \
                ui/fourcchelper.ui \
                ui/videobackends.ui \
                ui/about.ui \
+               ui/tabcontainer.ui \
                ui/tabexport.ui \
                ui/tabdev.ui \
-               ui/tabcontainer.ui
 
 # mini_analyser resources
 RESOURCES   += resources/resources.qrc
