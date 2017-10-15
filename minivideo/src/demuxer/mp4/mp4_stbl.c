@@ -69,8 +69,7 @@ int parse_frma(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Format</title>\n");
+        write_box_header(box_header, mp4->xml, "Format");
         fprintf(mp4->xml, "  <format>%s</format>\n", getFccString_le(track->pcm_format, fcc));
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -93,8 +92,7 @@ int parse_enda(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Format</title>\n");
+        write_box_header(box_header, mp4->xml, "Format");
         fprintf(mp4->xml, "  <endian>%u</endian>\n", track->pcm_endianness);
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -127,8 +125,7 @@ int parse_chan(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Audio Channel Layout</title>\n");
+        write_box_header(box_header, mp4->xml, "Audio Channel Layout");
         fprintf(mp4->xml, "  <mChannelBitmap>%u</mChannelBitmap>\n", mChannelBitmap);
         fprintf(mp4->xml, "  <mChannelDescriptions>%u</mChannelDescriptions>\n", mChannelDescriptions);
         fprintf(mp4->xml, "  <mChannelLayoutTag>%u</mChannelLayoutTag>\n", mChannelLayoutTag);
@@ -153,8 +150,7 @@ int parse_wave(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>siDecompressionParam</title>\n");
+    write_box_header(box_header, mp4->xml, "siDecompressionParam");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -208,8 +204,7 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // Print stbl box header
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Table</title>\n");
+    write_box_header(box_header, mp4->xml, "Sample Table");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -292,8 +287,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned int entry_count = read_bits(bitstr, 32);
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Sample Description</title>\n");
+    write_box_header(box_header, mp4->xml, "Sample Description");
     if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
 
     // Parse subbox header (> SampleEntry)
@@ -312,7 +306,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         unsigned int data_reference_index = read_bits(bitstr, 16);
 
-        write_box_header(&box_subheader, mp4->xml);
+        write_box_header(&box_subheader, mp4->xml, NULL);
         if (mp4->xml) fprintf(mp4->xml, "  <data_reference_index>%u</data_reference_index>\n", data_reference_index);
 
         // Then parse subbox content (> SampleEntry extensions)
@@ -968,15 +962,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-#if ENABLE_DEBUG
     print_box_header(box_header);
-#endif // ENABLE_DEBUG
-
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Elementary Stream Descriptor</title>\n");
-    }
+    write_box_header(box_header, mp4->xml, "Elementary Stream Descriptor");
 
     // Parse box content
     while (bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end))
@@ -1430,8 +1417,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>AVC Configuration</title>\n");
+        write_box_header(box_header, mp4->xml, "AVC Configuration");
         fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
         fprintf(mp4->xml, "  <AVCProfileIndication>%u</AVCProfileIndication>\n", AVCProfileIndication);
         fprintf(mp4->xml, "  <profile_compatibility>%u</profile_compatibility>\n", profile_compatibility);
@@ -1630,8 +1616,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>HEVC Configuration</title>\n");
+        write_box_header(box_header, mp4->xml, "HEVC Configuration");
         fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
         fprintf(mp4->xml, "  <general_profile_space>%u</general_profile_space>\n", general_profile_space);
         fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
@@ -1704,8 +1689,7 @@ int parse_btrt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Bitrate</title>\n");
+        write_box_header(box_header, mp4->xml, "Bitrate");
         fprintf(mp4->xml, "  <bufferSizeDB>%u</bufferSizeDB>\n", bufferSizeDB);
         fprintf(mp4->xml, "  <bitrate_max>%u</bitrate_max>\n", track->bitrate_max);
         fprintf(mp4->xml, "  <bitrate_avg>%u</bitrate_avg>\n", track->bitrate_avg);
@@ -1760,8 +1744,7 @@ int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Clean Aperture</title>\n");
+        write_box_header(box_header, mp4->xml, "Clean Aperture");
         fprintf(mp4->xml, "  <cleanApertureWidthN>%u</cleanApertureWidthN>\n", cleanApertureWidthN);
         fprintf(mp4->xml, "  <cleanApertureWidthD>%u</cleanApertureWidthD>\n", cleanApertureWidthD);
         fprintf(mp4->xml, "  <cleanApertureHeightN>%u</cleanApertureHeightN>\n", cleanApertureHeightN);
@@ -1847,8 +1830,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Colour Information</title>\n");
+        write_box_header(box_header, mp4->xml, "Colour Information");
         fprintf(mp4->xml, "  <colour_type>%s</colour_type>\n", getFccString_le(colour_type, fcc));
         if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
             colour_type == MV_FOURCC_BE('n','c','l','x'))
@@ -1879,7 +1861,7 @@ int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
+        write_box_header(box_header, mp4->xml, NULL);
         fprintf(mp4->xml, "  </a>\n");
     }
 
@@ -1901,7 +1883,7 @@ int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
+        write_box_header(box_header, mp4->xml, NULL);
         fprintf(mp4->xml, "  </a>\n");
     }
 
@@ -1945,8 +1927,7 @@ int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Padding Bits</title>\n");
+        write_box_header(box_header, mp4->xml, "Padding Bits");
         fprintf(mp4->xml, "  <sample_count>%u</sample_count>\n", sample_count);
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -1982,8 +1963,7 @@ int parse_pasp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Pixel Aspect Ratio</title>\n");
+        write_box_header(box_header, mp4->xml, "Pixel Aspect Ratio");
         fprintf(mp4->xml, "  <hSpacing>%u</hSpacing>\n", track->par_h);
         fprintf(mp4->xml, "  <vSpacing>%u</vSpacing>\n", track->par_v);
         fprintf(mp4->xml, "  </a>\n");
@@ -2050,8 +2030,7 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Decoding Time to Sample</title>\n");
+        write_box_header(box_header, mp4->xml, "Decoding Time to Sample");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stts_entry_count);
         fprintf(mp4->xml, "  <stts_sample_delta>[");
         for (unsigned i = 0; i < track->stts_entry_count; i++)
@@ -2124,8 +2103,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Composition Time to Sample</title>\n");
+        write_box_header(box_header, mp4->xml, "Composition Time to Sample");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->ctts_entry_count);
         fprintf(mp4->xml, "  <ctts_sample_delta>[");
         for (unsigned i = 0; i < track->ctts_entry_count; i++)
@@ -2193,8 +2171,7 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Sync Sample</title>\n");
+        write_box_header(box_header, mp4->xml, "Sync Sample");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stss_entry_count);
         fprintf(mp4->xml, "  <stss_sample_number>[");
         for (unsigned i = 0; i < track->stss_entry_count; i++)
@@ -2286,8 +2263,7 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Sample To Chunk</title>\n");
+        write_box_header(box_header, mp4->xml, "Sample To Chunk");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stsc_entry_count);
 
         fprintf(mp4->xml, "  <first_chunk>[");
@@ -2388,8 +2364,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Sample Size</title>\n");
+        write_box_header(box_header, mp4->xml, "Sample Size");
         fprintf(mp4->xml, "  <sample_count>%u</sample_count>\n", track->stsz_sample_count);
         fprintf(mp4->xml, "  <sample_size>%u</sample_size>\n", track->stsz_sample_size);
         fprintf(mp4->xml, "  <entry_size>[");
@@ -2471,8 +2446,7 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Chunk Offset</title>\n");
+        write_box_header(box_header, mp4->xml, "Chunk Offset");
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stco_entry_count);
         fprintf(mp4->xml, "  <chunk_offset>[");
         for (unsigned i = 0; i < track->stco_entry_count; i++)
@@ -2564,8 +2538,7 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Independent and Disposable Samples</title>\n");
+        write_box_header(box_header, mp4->xml, "Independent and Disposable Samples");
 
         fprintf(mp4->xml, "  <sdtp_is_leading>[");
         for (unsigned i = 0; i < sample_count; i++)

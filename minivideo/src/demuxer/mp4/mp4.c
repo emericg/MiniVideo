@@ -27,6 +27,7 @@
 #include "mp4_box.h"
 #include "mp4_stbl.h"
 #include "mp4_spatial.h"
+#include "mp4_gopro.h"
 #include "mp4_convert.h"
 
 #include "../xml_mapper.h"
@@ -109,8 +110,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>File Type</title>\n");
+        write_box_header(box_header, mp4->xml, "File Type");
         fprintf(mp4->xml, "  <major_brand>%s</major_brand>\n", getFccString_le(major_brand, fcc));
         fprintf(mp4->xml, "  <minor_version>%u</minor_version>\n", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
@@ -149,11 +149,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     TRACE_1(MP4, "pdin contains %i pairs of values", tbr);
 #endif
     // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Progressive Download Information</title>\n");
-    }
+    write_box_header(box_header, mp4->xml, "Progressive Download Information");
 
     for (int i = 0; i < tbr; i++) // to end of box
     {
@@ -249,8 +245,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Handler Reference</title>\n");
+        write_box_header(box_header, mp4->xml, "Handler Reference");
         fprintf(mp4->xml, "  <pre_defined>%u</pre_defined>\n", pre_defined);
         fprintf(mp4->xml, "  <handler_type>%s</handler_type>\n",
                 getFccString_le(handlerType, fcc));
@@ -272,8 +267,7 @@ static int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Apple item list</title>\n");
+    write_box_header(box_header, mp4->xml, "Apple item list");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -326,8 +320,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     }
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Meta</title>\n");
+    write_box_header(box_header, mp4->xml, "Meta");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -376,8 +369,7 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>User Data</title>\n");
+    write_box_header(box_header, mp4->xml, "User Data");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -395,6 +387,45 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                 case BOX_META:
                     retcode = parse_meta(bitstr, &box_subheader, mp4);
                     break;
+
+                case BOX_FIRM:
+                    retcode = parse_firm(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_LENS:
+                    retcode = parse_lens(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_CAME:
+                    retcode = parse_came(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_SETT:
+                    retcode = parse_sett(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_AMBA:
+                    retcode = parse_amba(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_MUID:
+                    retcode = parse_muid(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_HMMT:
+                    retcode = parse_hmmt(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_BCID:
+                    retcode = parse_bcid(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_GURI:
+                    retcode = parse_guri(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_GUSI:
+                    retcode = parse_gusi(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_GUMI:
+                    retcode = parse_gumi(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_GPMF:
+                    retcode = parse_gpmf(bitstr, &box_subheader, mp4);
+                    break;
+
+                case BOX_FREE:
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;
@@ -469,8 +500,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Media Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Media Header");
         fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", track->creation_time);
         fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", track->modification_time);
         fprintf(mp4->xml, "  <timescale>%u</timescale>\n", track->timescale);
@@ -518,8 +548,7 @@ static int parse_vmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Video Media Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Video Media Header");
         fprintf(mp4->xml, "  <graphicsmode>%u</graphicsmode>\n", graphicsmode);
         fprintf(mp4->xml, "  <opcolor>[%u, %u, %u]</opcolor>\n", opcolor[0], opcolor[1], opcolor[2]);
         fprintf(mp4->xml, "  </a>\n");
@@ -558,8 +587,7 @@ static int parse_smhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Sound Media Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Sound Media Header");
         fprintf(mp4->xml, "  <balance>%u</balance>\n", balance);
         fprintf(mp4->xml, "  <reserved>%u</reserved>\n", reserved);
         fprintf(mp4->xml, "  </a>\n");
@@ -604,8 +632,7 @@ static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Hint Media Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Hint Media Header");
         fprintf(mp4->xml, "  <maxPDUsize>%u</maxPDUsize>\n", maxPDUsize);
         fprintf(mp4->xml, "  <avgPDUsize>%u</avgPDUsize>\n", avgPDUsize);
         fprintf(mp4->xml, "  <maxbitrate>%u</maxbitrate>\n", maxbitrate);
@@ -639,8 +666,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     box_header->flags = read_bits(bitstr, 24);
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Data Reference</title>\n");
+    write_box_header(box_header, mp4->xml, "Data Reference");
 
     uint32_t entry_count = read_bits(bitstr, 32);
     if (mp4->xml) fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", entry_count);
@@ -693,8 +719,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Data Information</title>\n");
+    write_box_header(box_header, mp4->xml, "Data Information");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -744,8 +769,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Media Information</title>\n");
+    write_box_header(box_header, mp4->xml, "Media Information");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -810,8 +834,7 @@ static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Media</title>\n");
+    write_box_header(box_header, mp4->xml, "Media");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -873,8 +896,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Edit List</title>\n");
+        write_box_header(box_header, mp4->xml, "Edit List");
     }
 
     // Read box content
@@ -926,8 +948,7 @@ static int parse_edts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Edit</title>\n");
+    write_box_header(box_header, mp4->xml, "Edit");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1034,8 +1055,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Track Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Track Header");
         fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", track->creation_time);
         fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", track->modification_time);
         fprintf(mp4->xml, "  <track_ID>%u</track_ID>\n", track->id);
@@ -1074,8 +1094,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Track Reference</title>\n");
+    write_box_header(box_header, mp4->xml, "Track Reference");
 
     // Init a track structure
     unsigned int track_id = mp4->tracks_count;
@@ -1165,8 +1184,7 @@ static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     // xmlMapper
     if (xml)
     {
-        write_box_header(box_header, xml);
-        fprintf(xml, "  <title>object descriptor</title>\n");
+        write_box_header(box_header, xml, "object descriptor");
         fprintf(xml, "  </a>\n");
     }
 
@@ -1249,8 +1267,7 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Movie Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Movie Header");
         fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", mp4->creation_time);
         fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", mp4->modification_time);
         fprintf(mp4->xml, "  <timescale>%u</timescale>\n", mp4->timescale);
@@ -1282,8 +1299,7 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Movie Box</title>\n");
+    write_box_header(box_header, mp4->xml, "Movie Box");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1342,8 +1358,7 @@ static int parse_traf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Track Fragment</title>\n");
+    write_box_header(box_header, mp4->xml, "Track Fragment");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1403,8 +1418,7 @@ static int parse_mfhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Movie Fragment Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Movie Fragment Header");
         fprintf(mp4->xml, "  <sequence_number>%u</sequence_number>\n", sequence_number);
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -1426,8 +1440,7 @@ static int parse_moof(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Movie Fragment</title>\n");
+    write_box_header(box_header, mp4->xml, "Movie Fragment");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -1486,8 +1499,7 @@ static int parse_mdat(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     // xmlMapper
     if (xml)
     {
-        write_box_header(box_header, xml);
-        fprintf(xml, "  <title>Media Data</title>\n");
+        write_box_header(box_header, xml, "Media Data");
         fprintf(xml, "  </a>\n");
     }
 

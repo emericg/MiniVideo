@@ -203,7 +203,18 @@ typedef enum Mp4BoxType_e
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
     BOX_UDTA = 0x75647461,                      //!< user data box
-        BOX_HMMT = 0x686D6D74,                  //!< (v) GoPro HiLight tags
+        BOX_AMBA = 0x414D4241,                  //!< (v) Ambarella stuff
+        BOX_FIRM = 0x4649524D,                  //!< (v) GoPro Firmware
+        BOX_LENS = 0x4C454E53,                  //!< (v) GoPro Lens
+        BOX_CAME = 0x43414D45,                  //!< (v) GoPro Camera
+        BOX_SETT = 0x53455454,                  //!< (v) GoPro Settings
+        BOX_MUID = 0x4D554944,                  //!< (v) GoPro Media Unique ID
+        BOX_HMMT = 0x484D4D54,                  //!< (v) GoPro HiLight Tags
+        BOX_BCID = 0x42434944,                  //!< (v) GoPro Broadcast ID
+        BOX_GURI = 0x47555249,                  //!< (v) GoPro GURI
+        BOX_GUSI = 0x47555349,                  //!< (v) GoPro GUSI
+        BOX_GUMI = 0x47554D49,                  //!< (v) GoPro GUMI
+        BOX_GPMF = 0x47504D46,                  //!< (v) GoPro Metadata Format
 
     BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
         BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations

@@ -224,7 +224,7 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
 /* ************************************************************************** */
 
 uint64_t read_ebml_data_uint(Bitstream_t *bitstr, EbmlElement_t *element,
-                              FILE *xml, const char *name)
+                             FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_uint(%i bits)", element->size*8);
     uint64_t value = read_bits_64(bitstr, element->size * 8);
@@ -262,7 +262,7 @@ uint64_t read_ebml_data_uint_UID(Bitstream_t *bitstr, EbmlElement_t *element,
 /* ************************************************************************** */
 
 int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
-                            FILE *xml, const char *name)
+                           FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_int2(%i bits)", element->size*8);
     int64_t value = (int64_t)read_bits_64(bitstr, element->size*8);
@@ -282,7 +282,7 @@ int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
 /* ************************************************************************** */
 
 int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
-                             FILE *xml, const char *name)
+                            FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_date2(%i bits)", element->size*8);
     int64_t value = (int64_t)read_bits_64(bitstr, 64);
@@ -303,7 +303,7 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
 /* ************************************************************************** */
 
 double read_ebml_data_float(Bitstream_t *bitstr, EbmlElement_t *element,
-                             FILE *xml, const char *name)
+                            FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_float2(%i bits)", element->size*8);
     double x = 0;
@@ -338,7 +338,7 @@ double read_ebml_data_float(Bitstream_t *bitstr, EbmlElement_t *element,
 /* ************************************************************************** */
 
 char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
-                             FILE *xml, const char *name)
+                            FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_string(%i bytes)", element->size);
 
@@ -366,7 +366,7 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
 /* ************************************************************************** */
 
 uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element,
-                                FILE *xml, const char *name)
+                               FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_binary2(%i bytes)", element->size);
 

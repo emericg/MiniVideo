@@ -28,6 +28,8 @@
 #include "mkv_struct.h"
 #include "../../bitstream.h"
 
+#include <stdint.h>
+
 /* ************************************************************************** */
 
 //! EBML element structure

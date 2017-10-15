@@ -96,8 +96,7 @@ int parse_sa3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Spatial Audio</title>\n");
+        write_box_header(box_header, mp4->xml, "Spatial Audio");
         fprintf(mp4->xml, "  <version>%u</version>\n", version);
         fprintf(mp4->xml, "  <ambisonic_type>%u</ambisonic_type>\n", ambisonic_type);
         fprintf(mp4->xml, "  <ambisonic_order>%u</ambisonic_order>\n", ambisonic_order);
@@ -132,21 +131,12 @@ int parse_sand(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_sand()" CLR_RESET);
     int retcode = SUCCESS;
 
-    unsigned int version = read_bits(bitstr, 8);
-
-#if ENABLE_DEBUG
     print_box_header(box_header);
-    TRACE_1(MP4, "> version  : %u", version);
-#endif // ENABLE_DEBUG
+    write_box_header(box_header, mp4->xml, "Non-Diegetic Audio");
 
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Non-Diegetic Audio</title>\n");
-        fprintf(mp4->xml, "  <version>%u</version>\n", version);
-        fprintf(mp4->xml, "  </a>\n");
-    }
+    unsigned version = read_mp4_uint(bitstr, 8, mp4->xml, "version");
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -170,7 +160,10 @@ int parse_st3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    unsigned int stereo_mode = read_bits(bitstr, 8);
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Stereoscopic 3D Video");
+
+    unsigned stereo_mode = read_mp4_uint(bitstr, 24, mp4->xml, "stereo_mode");
 
     if (stereo_mode == 1)
         track->stereo = STEREO_TOPBOTTOM_LEFT;
@@ -179,19 +172,7 @@ int parse_st3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     else if (stereo_mode == 3)
         track->stereo = 999;
 
-#if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> stereo_mode  : %u", stereo_mode);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Stereoscopic 3D Video</title>\n");
-        fprintf(mp4->xml, "  <stereo_mode>%u</stereo_mode>\n", stereo_mode);
-        fprintf(mp4->xml, "  </a>\n");
-    }
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -212,8 +193,7 @@ int parse_sv3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Spherical Video V2</title>\n");
+    write_box_header(box_header, mp4->xml, "Spherical Video V2");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -276,8 +256,7 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Spherical Video Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Spherical Video Header");
         fprintf(mp4->xml, "  <metadata_source>%s</metadata_source>\n", metadata_source);
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -299,8 +278,7 @@ int parse_proj(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml);
-    if (mp4->xml) fprintf(mp4->xml, "  <title>Projection</title>\n");
+    write_box_header(box_header, mp4->xml, "Projection");
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -372,8 +350,7 @@ int parse_prhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Projection Header</title>\n");
+        write_box_header(box_header, mp4->xml, "Projection Header");
         fprintf(mp4->xml, "  <pose_yaw_degrees>%i</pose_yaw_degrees>\n", pose_yaw_degrees);
         fprintf(mp4->xml, "  <pose_pitch_degrees>%i</pose_pitch_degrees>\n", pose_pitch_degrees);
         fprintf(mp4->xml, "  <pose_roll_degrees>%i</pose_roll_degrees>\n", pose_roll_degrees);
@@ -400,27 +377,16 @@ int parse_cbmp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    unsigned layout = read_bits(bitstr, 32);
-    unsigned padding = read_bits(bitstr, 32);
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Projection Header");
+
+    unsigned layout = read_mp4_uint32(bitstr, mp4->xml, "layout");
+    unsigned padding = read_mp4_uint32(bitstr, mp4->xml, "padding");
 
     if (layout == 1)
         track->projection = PROJECTION_CUBEMAP_A;
 
-#if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> layout : %u", layout);
-    TRACE_1(MP4, "> padding: %u", padding);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Projection Header</title>\n");
-        fprintf(mp4->xml, "  <layout>%u</layout>\n", layout);
-        fprintf(mp4->xml, "  <padding>%u</padding>\n", padding);
-        fprintf(mp4->xml, "  </a>\n");
-    }
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -442,32 +408,17 @@ int parse_equi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Equirectangular Projection");
+
     track->projection = PROJECTION_EQUIRECTANGULAR;
 
-    unsigned projection_bounds_top = read_bits(bitstr, 32);
-    unsigned projection_bounds_bottom = read_bits(bitstr, 32);
-    unsigned projection_bounds_left = read_bits(bitstr, 32);
-    unsigned projection_bounds_right = read_bits(bitstr, 32);
+    unsigned projection_bounds_top = read_mp4_uint32(bitstr, mp4->xml, "projection_bounds_top");
+    unsigned projection_bounds_bottom = read_mp4_uint32(bitstr, mp4->xml, "projection_bounds_bottom");
+    unsigned projection_bounds_left = read_mp4_uint32(bitstr, mp4->xml, "projection_bounds_left");
+    unsigned projection_bounds_right = read_mp4_uint32(bitstr, mp4->xml, "projection_bounds_right");
 
-#if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> projection_bounds_top   : %u", projection_bounds_top);
-    TRACE_1(MP4, "> projection_bounds_bottom: %u", projection_bounds_bottom);
-    TRACE_1(MP4, "> projection_bounds_left  : %u", projection_bounds_left);
-    TRACE_1(MP4, "> projection_bounds_right : %u", projection_bounds_right);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Equirectangular Projection</title>\n");
-        fprintf(mp4->xml, "  <projection_bounds_top>%u</projection_bounds_top>\n", projection_bounds_top);
-        fprintf(mp4->xml, "  <projection_bounds_bottom>%u</projection_bounds_bottom>\n", projection_bounds_bottom);
-        fprintf(mp4->xml, "  <projection_bounds_left>%u</projection_bounds_left>\n", projection_bounds_left);
-        fprintf(mp4->xml, "  <projection_bounds_right>%u</projection_bounds_right>\n", projection_bounds_right);
-        fprintf(mp4->xml, "  </a>\n");
-    }
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -489,25 +440,13 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    unsigned crc = read_bits(bitstr, 32);
-    unsigned encoding_four_cc = read_bits(bitstr, 32);
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Mesh Projection");
+
+    unsigned crc = read_mp4_uint32(bitstr, mp4->xml, "crc");
+    unsigned encoding_four_cc = read_mp4_uint32(bitstr, mp4->xml, "encoding_four_cc");
 
     track->projection = PROJECTION_EQUIRECTANGULAR;
-
-#if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> crc             : %u", crc);
-    TRACE_1(MP4, "> encoding_four_cc: %u", encoding_four_cc);
-#endif // ENABLE_DEBUG
-
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml);
-        fprintf(mp4->xml, "  <title>Mesh Projection</title>\n");
-        fprintf(mp4->xml, "  <crc>%u</crc>\n", crc);
-        fprintf(mp4->xml, "  <encoding_four_cc>%u</encoding_four_cc>\n", encoding_four_cc);
-    }
 
     if (encoding_four_cc == fcc_raw)
     {

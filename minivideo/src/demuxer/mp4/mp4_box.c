@@ -57,6 +57,7 @@ uint64_t LabVIEWTimeToUnixSeconds(int64_t LabVIEWTime)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
  * \brief Parse box header.
@@ -192,7 +193,7 @@ void print_box_header(Mp4Box_t *box_header)
 /*!
  * \brief Write box header content to a file for the xmlMapper.
  */
-void write_box_header(Mp4Box_t *box_header, FILE *xml)
+void write_box_header(Mp4Box_t *box_header, FILE *xml, char *title)
 {
     if (xml)
     {
@@ -203,21 +204,25 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml)
         else
         {
             char fcc[5];
+            char boxatom[16];
+            char boxtitle[64];
 
             if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
-            {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"MP4 box\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
-                        getFccString_le(box_header->boxtype, fcc),
-                        box_header->offset_start,
-                        box_header->size);
-            }
+                strcpy(boxatom, "MP4 box");
             else
-            {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"MP4 fullbox\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
-                        getFccString_le(box_header->boxtype, fcc),
-                        box_header->offset_start,
-                        box_header->size);
-            }
+                strcpy(boxatom, "MP4 fullbox");
+
+            if (title != NULL)
+                snprintf(boxtitle, 63, "tt=\"%s\"", title);
+            else
+                boxtitle[0] = '\0';
+
+            fprintf(xml, "  <a %s fcc=\"%s\" tp=\"%s\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                    boxtitle,
+                    getFccString_le(box_header->boxtype, fcc),
+                    boxatom,
+                    box_header->offset_start,
+                    box_header->size);
 
             if (box_header->boxtype == BOX_UUID)
             {
@@ -253,11 +258,159 @@ int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     // xmlMapper
     if (xml)
     {
-        write_box_header(box_header, xml);
+        write_box_header(box_header, xml, NULL);
         fprintf(xml, "  </a>\n");
     }
 
     return SUCCESS;
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint64()");
+    uint64_t value = read_bits_64(bitstr, 64);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%llu</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint32_t read_mp4_uint32(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint32()");
+    uint32_t value = read_bits(bitstr, 32);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint16_t read_mp4_uint16(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint16()");
+    uint16_t value = read_bits(bitstr, 16);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint8_t read_mp4_uint8(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint8()");
+    uint8_t value = read_bits(bitstr, 8);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint()");
+    uint32_t value = read_bits(bitstr, bits);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_data()");
+
+    uint8_t *value = malloc(bytes+1);
+    if (value)
+    {
+        for (int i = 0; i < bytes; i++)
+            value[i] = read_bits(bitstr, 8);
+        value[bytes] = '\0';
+
+        if (name)
+        {
+#if ENABLE_DEBUG
+            TRACE_1(MP4, "* %s  = 0x", name);
+
+            if (bytes > 1023)
+                TRACE_1(MP4, "* %s  = (first 1024B) 0x", name);
+            else
+                TRACE_1(MP4, "* %s  = 0x", name);
+            for (int i = 0; i < bytes && i < 1024; i++)
+                printf("%02X", value[i]);
+#endif // ENABLE_DEBUG
+
+            if (xml)
+            {
+                if (bytes > 1023)
+                    fprintf(xml, "  <%s>(first 1024B) 0x", name);
+                else
+                    fprintf(xml, "  <%s>0x", name);
+                for (int i = 0; i < bytes && i < 1024; i++)
+                    fprintf(xml, "%02X", value[i]);
+                fprintf(xml, "</%s>\n", name);
+            }
+        }
+    }
+
+    return value;
+}
+
+char *read_mp4_string(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_string()");
+
+    uint8_t *value = malloc(bytes+1);
+    if (value)
+    {
+        for (int i = 0; i < bytes; i++)
+            value[i] = read_bits(bitstr, 8);
+        value[bytes] = '\0';
+
+        if (name)
+        {
+            TRACE_1(MKV, "* %s  = '%s'", name, value);
+
+            if (xml)
+            {
+                fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+            }
+        }
+    }
+
+    return value;
 }
 
 /* ************************************************************************** */

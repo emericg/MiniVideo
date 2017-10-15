@@ -40,11 +40,21 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header);
 
 void print_box_header(Mp4Box_t *box_header);
 
-void write_box_header(Mp4Box_t *box_header, FILE *xml);
+void write_box_header(Mp4Box_t *box_header, FILE *xml, char *title);
 
 /* ************************************************************************** */
 
 int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml);
+
+/* ************************************************************************** */
+
+uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name);
+uint32_t read_mp4_uint32(Bitstream_t *bitstr, FILE *xml, const char *name);
+uint16_t read_mp4_uint16(Bitstream_t *bitstr, FILE *xml, const char *name);
+uint8_t read_mp4_uint8(Bitstream_t *bitstr, FILE *xml, const char *name);
+uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *name);
+uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name);
+char *read_mp4_string(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name);
 
 /* ************************************************************************** */
 
