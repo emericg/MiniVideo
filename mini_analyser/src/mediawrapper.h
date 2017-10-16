@@ -27,6 +27,7 @@
 #include <minivideo.h>
 
 #include <vector>
+#include <chrono>
 
 #include <QObject>
 #include <QString>
