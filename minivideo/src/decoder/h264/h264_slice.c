@@ -91,18 +91,6 @@ int decode_slice(DecodingContext_t *dc)
         {
             retcode = decodeSliceData(dc, dc->active_slice);
         }
-
-        // Export IDR slice
-        if (retcode == SUCCESS && dc->IdrPicFlag == true)
-        {
-            retcode = export_idr(dc);
-        }
-
-        // Free macroblocks in **mb_array
-        freeMbArrayContent(dc);
-
-        // Free slice
-        free_slice(&dc->active_slice);
     }
 
     return retcode;
@@ -137,12 +125,8 @@ void free_slice(slice_t **slice_ptr)
             free((*slice_ptr)->cc);
         }
 
-        {
-            free(*slice_ptr);
-            *slice_ptr = NULL;
-
-            TRACE_1(SLICE, ">> Slice freed");
-        }
+        free(*slice_ptr);
+        *slice_ptr = NULL;
     }
 }
 

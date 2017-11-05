@@ -29,7 +29,9 @@
 
 /* ************************************************************************** */
 
-int export_idr(DecodingContext_t *dc);
+int export_idr_file(DecodingContext_t *dc, OutputFile_t *out);
+
+int export_idr_surface(DecodingContext_t *dc, OutputSurface_t *out);
 
 /* ************************************************************************** */
 #endif // EXPORT_H

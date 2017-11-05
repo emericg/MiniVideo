@@ -112,7 +112,7 @@ void make_path_absolute(const char *path, char *path_absolute)
  * \param *buffer_ycbcr The RGB buffer to fill.
  * \return The number of missing macroblock(s).
  *
- * Convert the YCbCr 4:2:0 macroblock array to YCbCr 4:2:0 planar.
+ * Convert the YCbCr 4:2:0 macroblock array to an I420 surface.
  */
 int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 {
@@ -204,7 +204,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
  * \param *buffer_rgb The RGB buffer to fill.
  * \return The number of missing macroblock(s).
  *
- * Convert the YCbCr 4:2:0 macroblock array to YCbCr 4:4:4 planar, then to rgb buffer.
+ * Convert the YCbCr 4:2:0 macroblock array to YCbCr 4:4:4 planar, then to packed RGB24 buffer.
  */
 int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
 {
@@ -230,9 +230,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
     unsigned char *buffer_cb = (unsigned char *)calloc(img_width*img_height, sizeof(unsigned char));
     unsigned char *buffer_cr = (unsigned char *)calloc(img_width*img_height, sizeof(unsigned char));
 
-    if (buffer_y == NULL ||
-        buffer_cb == NULL ||
-        buffer_cr == NULL)
+    if (buffer_y == NULL || buffer_cb == NULL || buffer_cr == NULL)
     {
         TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!");
         missing_mbs = mb_lines_total * mb_columns_total;
@@ -263,7 +261,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
             }
         }
 
-        // Cb and Cr extraction + super sampling
+        // Cb and Cr extraction + up sampling
         for (mb_lines = 0, i = 0; mb_lines < mb_lines_total; mb_lines++)
         {
             for (mb_y = 0; mb_y < 8; mb_y++)

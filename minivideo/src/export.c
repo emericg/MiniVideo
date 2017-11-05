@@ -64,8 +64,8 @@
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile The file pointer to write to.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: The file pointer to write to.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
@@ -196,8 +196,8 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile The file pointer to write to.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: The file pointer to write to.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
@@ -334,8 +334,8 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile The file pointer to write to.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: The file pointer to write to.
  * \return 1 if success, 0 otherwise.
  *
  * Using https://developers.google.com/speed/webp/docs/api#simple_encoding_api
@@ -385,8 +385,8 @@ static int export_idr_webp(DecodingContext_t *dc, FILE *PictureFile)
 }
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile The file pointer to write to.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: The file pointer to write to.
  * \return 1 if success, 0 otherwise.
  *
  * Using https://developers.google.com/speed/webp/docs/api#advanced_encoding_api
@@ -483,11 +483,11 @@ static int export_idr_webp_advanced(DecodingContext_t *dc, FILE *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile A file structure containing useful informations.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_jpg(DecodingContext_t *dc, BasicFile_t *PictureFile)
+static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -604,11 +604,11 @@ static int export_idr_jpg(DecodingContext_t *dc, BasicFile_t *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile A file structure containing useful informations.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_png(DecodingContext_t *dc, BasicFile_t *PictureFile)
+static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -704,7 +704,7 @@ static int export_idr_png(DecodingContext_t *dc, BasicFile_t *PictureFile)
         mb_to_rgb(dc, buffer_rgb);
 
         // export to png
-        retcode = stbi_write_png(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
+        retcode = stbi_write_png(PictureFile->file_path, img_width, img_height, 3, buffer_rgb, img_width*3);
 
         free(buffer_rgb);
     }
@@ -717,11 +717,11 @@ static int export_idr_png(DecodingContext_t *dc, BasicFile_t *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile A file structure containing useful informations.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_bmp(DecodingContext_t *dc, BasicFile_t *PictureFile)
+static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -738,7 +738,7 @@ static int export_idr_bmp(DecodingContext_t *dc, BasicFile_t *PictureFile)
     {
         mb_to_rgb(dc, buffer_rgb);
 
-        retcode = stbi_write_bmp(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
+        retcode = stbi_write_bmp(PictureFile->file_path, img_width, img_height, 3, buffer_rgb);
 
         free(buffer_rgb);
     }
@@ -751,11 +751,11 @@ static int export_idr_bmp(DecodingContext_t *dc, BasicFile_t *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \param *PictureFile A file structure containing useful informations.
+ * \param *dc: The current DecodingContext.
+ * \param *PictureFile: A file structure containing useful informations.
  * \return 1 if success, 0 otherwise.
  */
-static int export_idr_tga(DecodingContext_t *dc, BasicFile_t *PictureFile)
+static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
@@ -772,7 +772,7 @@ static int export_idr_tga(DecodingContext_t *dc, BasicFile_t *PictureFile)
     {
         mb_to_rgb(dc, buffer_rgb);
 
-        retcode = stbi_write_tga(PictureFile->file_name, img_width, img_height, 3, buffer_rgb);
+        retcode = stbi_write_tga(PictureFile->file_path, img_width, img_height, 3, buffer_rgb);
 
         free(buffer_rgb);
     }
@@ -785,121 +785,128 @@ static int export_idr_tga(DecodingContext_t *dc, BasicFile_t *PictureFile)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
+ * \param *dc: The current DecodingContext.
+ * \param *out: Output file.
  * \return 1 if success, 0 otherwise.
  *
  * Set the name of the file to export, choose file extension and check file format
  * availability, open a FILE *pointer, then call the appropriate export_idr_xxx() function.
  */
-int export_idr(DecodingContext_t *dc)
+int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
 {
-    TRACE_INFO(IO, BLD_GREEN "export_idr()" CLR_RESET);
+    TRACE_INFO(IO, BLD_GREEN "export_idr_file()" CLR_RESET);
     int retcode = FAILURE;
-
-    // Picture file
-    BasicFile_t PictureFile; //!< Output file
-
-    // Picture name
-    strncpy(PictureFile.file_name, dc->VideoFile->file_name, 254);
-
-    // Picture number (if more than one picture is gonna be exported)
-    if (dc->picture_number > 1)
-    {
-        char framenum[8];
-        strncat(PictureFile.file_name, "_", 254);
-
-        // idr_pic_id is periodically reseted so it is not a good way for counting idr
-        //snprintf(framenum, 7, "%d", dc->active_slice->idr_pic_id);
-
-        // picture_exported is only used by this function (incrementation is only done when picture is successfully exported)
-        snprintf(framenum, 7, "%d", dc->picture_exported);
-
-        strncat(PictureFile.file_name, framenum, 254);
-    }
 
     // Check export format availability
 #if ENABLE_WEBP == 0 && ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
-    if (dc->output_format < PICTURE_YUV420)
+    if (out->picture_format < PICTURE_YUV420)
     {
         TRACE_WARNING(IO, "No export library available, forcing YCbCr 4:2:0");
-        dc->output_format = PICTURE_YUV420;
+        out->picture_format = PICTURE_YUV420;
     }
 #else
 
     #if ENABLE_WEBP == 0
-    if (dc->output_format == PICTURE_WEBP)
+    if (out->picture_format == PICTURE_WEBP)
     {
         TRACE_WARNING(IO, "No webp export library available, trying jpg");
-        dc->output_format = PICTURE_JPG;
+        out->picture_format = PICTURE_JPG;
     }
     #endif // ENABLE_WEBP
 
     #if ENABLE_JPEG == 0 && ENABLE_STBIMWRITE == 0
-    if (dc->output_format == PICTURE_JPG)
+    if (out->picture_format == PICTURE_JPG)
     {
         TRACE_WARNING(IO, "No jpg export library available, trying png");
-        dc->output_format = PICTURE_PNG;
+        out->picture_format = PICTURE_PNG;
     }
     #endif // ENABLE_JPEG
 
     #if ENABLE_PNG == 0 && ENABLE_STBIMWRITE == 0
-    if (dc->output_format == PICTURE_PNG)
+    if (out->picture_format == PICTURE_PNG)
     {
         TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0");
-        dc->output_format = PICTURE_YUV420;
+        out->picture_format = PICTURE_YUV420;
     }
     #endif // ENABLE_PNG
 
     #if ENABLE_STBIMWRITE == 0
-    if (dc->output_format == PICTURE_BMP || dc->output_format == PICTURE_TGA)
+    if (out->picture_format == PICTURE_BMP || out->picture_format == PICTURE_TGA)
     {
         TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0");
-        dc->output_format = PICTURE_YUV420;
+        out->picture_format = PICTURE_YUV420;
     }
     #endif // ENABLE_STBIMWRITE
 #endif
 
     // Picture file extension checker
-    if (dc->output_format == PICTURE_WEBP)
+    if (out->picture_format == PICTURE_WEBP)
     {
         TRACE_1(IO, "* Picture file format : WEBP");
-        strncpy(PictureFile.file_extension, "webp", 8);
+        strncpy(out->file_extension, "webp", 8);
     }
-    else if (dc->output_format == PICTURE_JPG)
+    else if (out->picture_format == PICTURE_JPG)
     {
         TRACE_1(IO, "* Picture file format : JPG");
-        strncpy(PictureFile.file_extension, "jpg", 8);
+        strncpy(out->file_extension, "jpg", 8);
     }
-    else if (dc->output_format == PICTURE_PNG)
+    else if (out->picture_format == PICTURE_PNG)
     {
         TRACE_1(IO, "* Picture file format : PNG");
-        strncpy(PictureFile.file_extension, "png", 8);
+        strncpy(out->file_extension, "png", 8);
     }
-    else if (dc->output_format == PICTURE_BMP)
+    else if (out->picture_format == PICTURE_BMP)
     {
         TRACE_1(IO, "* Picture file format : BMP");
-        strncpy(PictureFile.file_extension, "bmp", 8);
+        strncpy(out->file_extension, "bmp", 8);
     }
-    else if (dc->output_format == PICTURE_TGA)
+    else if (out->picture_format == PICTURE_TGA)
     {
         TRACE_1(IO, "* Picture file format : TGA");
-        strncpy(PictureFile.file_extension, "tga", 8);
+        strncpy(out->file_extension, "tga", 8);
     }
     else
     {
         TRACE_1(IO, "* Picture file format : YUV 4:x:x");
-        strncpy(PictureFile.file_extension, "yuv", 8);
+        strncpy(out->file_extension, "yuv", 8);
     }
 
-    strncat(PictureFile.file_name, ".", 1);
-    strncat(PictureFile.file_name, PictureFile.file_extension, 254);
+    // Picture export directory (use same as media file if unspecified)
+    if (strlen(out->file_directory) == 0)
+        strncpy(out->file_directory, dc->MediaFile->file_directory, 254);
+
+    // Picture name
+    strncpy(out->file_name, dc->MediaFile->file_name, 254);
+
+    // Picture number (if more than one picture is gonna be exported)
+    int pic_exported = rand(); // FIXME
+    if (pic_exported > 1)
+    {
+        char framenum[8];
+        strncat(out->file_name, "_", 254);
+
+        // idr_pic_id is periodically reseted so it is not a good way for counting idr
+        //snprintf(framenum, 7, "%d", dc->active_slice->idr_pic_id);
+
+        // picture_exported is only used by this function
+        // (incrementation is only done when picture is successfully exported)
+        snprintf(framenum, 7, "%d", pic_exported);
+
+        strncat(out->file_name, framenum, 254);
+    }
+
+    // Picture absolute file path
+    strncat(out->file_path, out->file_directory, 254);
+    strncat(out->file_path, out->file_name, 254);
+    strncat(out->file_path, ".", 1);
+    strncat(out->file_path, out->file_extension, 254);
 
     // Open a write only (w) binary file (b)
-    PictureFile.file_pointer = fopen(PictureFile.file_name, "wb");
+    out->file_pointer = fopen(out->file_path, "wb");
 
-    if (PictureFile.file_pointer == NULL)
+    if (out->file_pointer == NULL)
     {
-        TRACE_1(IO, "* Picture file path   : '%s'", PictureFile.file_name);
+        TRACE_1(IO, "* Picture file path   : '%s'", out->file_path);
         TRACE_ERROR(IO, "* Unable to create/open file!");
 
         retcode = FAILURE;
@@ -908,38 +915,40 @@ int export_idr(DecodingContext_t *dc)
     {
         sps_t *sps = dc->sps_array[dc->active_sps];
 
-        TRACE_1(IO, "* Picture file name   : '%s'", PictureFile.file_name);
+        TRACE_1(IO, "* Picture file name   : '%s'", out->file_name);
+        TRACE_1(IO, "* Picture file dir    : '%s'", out->file_directory);
+        TRACE_1(IO, "* Picture file path   : '%s'", out->file_path);
         TRACE_1(IO, "* Picture definition  : %ix%i", sps->PicWidthInMbs*16, sps->PicHeightInMapUnits*16);
         TRACE_1(IO, "* Picture file successfully created");
 
         // Start export
-        if (dc->output_format == PICTURE_WEBP)
+        if (out->picture_format == PICTURE_WEBP)
         {
-            retcode = export_idr_webp(dc, PictureFile.file_pointer);
+            retcode = export_idr_webp(dc, out->file_pointer);
         }
-        else if (dc->output_format == PICTURE_JPG)
+        else if (out->picture_format == PICTURE_JPG)
         {
-            retcode = export_idr_jpg(dc, &PictureFile);
+            retcode = export_idr_jpg(dc, out);
         }
-        else if (dc->output_format == PICTURE_PNG)
+        else if (out->picture_format == PICTURE_PNG)
         {
-            retcode = export_idr_png(dc, &PictureFile);
+            retcode = export_idr_png(dc, out);
         }
-        else if (dc->output_format == PICTURE_BMP)
+        else if (out->picture_format == PICTURE_BMP)
         {
-            retcode = export_idr_bmp(dc, &PictureFile);
+            retcode = export_idr_bmp(dc, out);
         }
-        else if (dc->output_format == PICTURE_TGA)
+        else if (out->picture_format == PICTURE_TGA)
         {
-            retcode = export_idr_tga(dc, &PictureFile);
+            retcode = export_idr_tga(dc, out);
         }
-        else if (dc->output_format == PICTURE_YUV420)
+        else if (out->picture_format == PICTURE_YUV420)
         {
-            retcode = export_idr_yuv420(dc, PictureFile.file_pointer);
+            retcode = export_idr_yuv420(dc, out->file_pointer);
         }
-        else if (dc->output_format == PICTURE_YUV444)
+        else if (out->picture_format == PICTURE_YUV444)
         {
-            retcode = export_idr_yuv444(dc, PictureFile.file_pointer);
+            retcode = export_idr_yuv444(dc, out->file_pointer);
         }
         else
         {
@@ -950,12 +959,42 @@ int export_idr(DecodingContext_t *dc)
         if (retcode == SUCCESS)
         {
             TRACE_1(IO, "* Picture content successfully written on disk");
-            dc->picture_exported++;
+            //dc->picture_exported++;
         }
 
         // Close file
-        fclose(PictureFile.file_pointer);
-        PictureFile.file_pointer = NULL;
+        fclose(out->file_pointer);
+        out->file_pointer = NULL;
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \param *dc: The current DecodingContext.
+ * \param *out: Output surface.
+ * \return 1 if success, 0 otherwise.
+ *
+ * Set the name of the file to export, choose file extension and check file format
+ * availability, open a FILE *pointer, then call the appropriate export_idr_xxx() function.
+ */
+int export_idr_surface(DecodingContext_t *dc, OutputSurface_t *out)
+{
+    TRACE_INFO(IO, BLD_GREEN "export_idr_surface()" CLR_RESET);
+    int retcode = FAILURE;
+
+    sps_t *sps = dc->sps_array[dc->active_sps];
+    out->width = sps->PicWidthInMbs * 16;
+    out->height = sps->PicHeightInMapUnits * 16;
+
+    // convert macroblocks to rgb buffer
+    out->surface = (unsigned char *)calloc(out->width*out->height*3, sizeof(unsigned char));
+    if (out->surface)
+    {
+        mb_to_rgb(dc, out->surface);
+        retcode = SUCCESS;
     }
 
     return retcode;

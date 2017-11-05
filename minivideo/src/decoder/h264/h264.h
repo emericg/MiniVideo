@@ -30,19 +30,15 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Decode H.264 bitstream.
- * \param *input_video A pointer to a MediaFile_t structure, containing every informations available about the current video file.
- * \param *output_directory The directory where to save exported pictures.
- * \param picture_format The picture file format.
- * \param picture_quality The quality we want for exported picture [1;100].
- * \param picture_number The number of thumbnail(s) we want to extract.
- * \param picture_extractionmode The method of distribution for thumbnails extraction.
- * \return 1 if succeed, 0 otherwise.
+ * \brief Initialize an H.264 decoder.
+ * \param *input_video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
+ * \param tid: The video track ID to decode.
+ * \return A pointer to a DecodingContext_t.
  *
  * This decoder is based on the 'ITU-T H.264' recommendation:
- * 'Advanced Video Coding for generic audiovisual services'
+ * - 'Advanced Video Coding for generic audiovisual services'
  * It also correspond to 'ISO/IEC 14496-10' international standard, part 10:
- * 'Advanced Video Coding'.
+ * - 'Advanced Video Coding'.
  *
  * You can download the H.264 specification for free on the ITU website:
  * http://www.itu.int/rec/T-REC-H.264
@@ -51,15 +47,26 @@
  * then start the decoding process, which loop on NAL Units found in the bitstream.
  * Each NAL Unit is processed following it's content type.
  */
-int h264_decode(MediaFile_t *input_video,
-                const char *output_directory,
-                const int picture_format,
-                const int picture_quality,
-                const int picture_number,
-                const int picture_extractionmode);
+DecodingContext_t *h264_init(MediaFile_t *input_video, unsigned tid);
 
-DecodingContext_t *initDecodingContext(MediaFile_t *media);
-void freeDecodingContext(DecodingContext_t **dc_ptr);
+/*!
+ * \brief Decode H.264 bitstream.
+ * \param *dc: A pointer to a valid DecodingContext_t structure.
+ * \param sid: The sample ID to decode.
+ * \return 1 if succeed, 0 otherwise.
+ *
+ * If a video frame is decoded, the result will be stored in intermediate format
+ * in the Macroblock_t **mb_array, to be exploited by h264_export_surface() or
+ * h264_export_file().
+ */
+int h264_decode(DecodingContext_t *dc, unsigned sid);
+
+int h264_export_surface(DecodingContext_t *dc, OutputSurface_t *out);
+
+int h264_export_file(DecodingContext_t *dc, OutputFile_t *out);
+
+void h264_cleanup(DecodingContext_t *dc);
+
 int checkDecodingContext(DecodingContext_t *dc);
 
 /* ************************************************************************** */

@@ -110,7 +110,7 @@ minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media, const bool extrac
  * \todo This does nothing right now.
  * \todo Split minivideo_thumbnail() into filtering /decoding / extraction stages.
  */
-minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media);
+minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media, OutputSurface_t *out, int picture_number);
 
 /*!
  * \brief Thumnbail a video file and export thumbnails.
@@ -118,7 +118,7 @@ minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media);
  * \param *output_directory: The directory where we want to save decoded thumbnail(s).
  * \param picture_format: The picture format for thumbnail(s) we want to extract.
  * \param picture_quality: The quality of thumbnail(s) we want to extract.
- * \param picture_number: The number of thumbnail(s) we want to extract.
+ * \param picture_count: The number of thumbnail(s) we want to extract.
  * \param picture_extractionmode: The method of distribution for thumbnails extraction.
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  *
@@ -129,7 +129,7 @@ minivideo_EXPORT int minivideo_thumbnail(MediaFile_t *input_media,
                                          const char *output_directory,
                                          const int picture_format,
                                          const int picture_quality,
-                                         const int picture_number,
+                                         const int picture_count,
                                          const int picture_extractionmode);
 
 /*!
@@ -139,15 +139,13 @@ minivideo_EXPORT int minivideo_thumbnail(MediaFile_t *input_media,
  * \param extract_audio: True to extract audio tracks.
  * \param extract_video: True to extract video tracks.
  * \param extract_subtitles: True to extract subtitles tracks.
- * \param output_format: '0' for ES format, '1' for PES format.
  * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
  */
 minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
                                        const char *output_directory,
                                        const bool extract_audio,
                                        const bool extract_video,
-                                       const bool extract_subtitles,
-                                       const int output_format);
+                                       const bool extract_subtitles);
 
 /*!
  * \brief Close a video file.

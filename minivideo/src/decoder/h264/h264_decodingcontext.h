@@ -39,60 +39,52 @@ typedef struct DecodingContext_t
     // Input
     ////////////////////////////////////////////////////////////////////////////
 
-    MediaFile_t *VideoFile;          //!< H.264 input video file
+    MediaFile_t *MediaFile;         //!< Input file
+    MediaStream_t *VideoStream;     //!< Selected track
+    unsigned active_tid;            //!< Selected track id
 
-    Bitstream_t *bitstr;             //!< Bitstream reader opened on the input file
-
-    // Output
+    // H.264 decoding context
     ////////////////////////////////////////////////////////////////////////////
 
-    char output_directory[4096];     //!< Absolute path of the directory where to save the thumbnails. Linux has a pathname limit of 4,096 characters.
-    int output_format;               //!< The picture file format
-    int picture_quality;             //!< The quality we want for exported picture in range [1;100]
-    int picture_number;              //!< The number of thumbnail(s) we want to extract
-    int picture_extractionmode;      //!< The method of distribution for thumbnails extraction
-    int picture_exported;            //!< Number of picture successfully exported
+    Bitstream_t *bitstr;            //!< Bitstream reader used for decoding (opened on the input file)
 
-    // H.264 Decoding context
-    ////////////////////////////////////////////////////////////////////////////
-
-    bool decoderRunning;             //!< Set 'decoderRunning' to false to stop video decoding
-    unsigned frameCounter;           //!< The number of frame decoded
-    unsigned idrCounter;             //!< The number of idr frame decoded
-    unsigned errorCounter;           //!< The number of decoding error so far
+    bool decoderRunning;            //!< Set 'decoderRunning' to false to stop video decoding
+    unsigned frameCounter;          //!< The number of frame decoded
+    unsigned idrCounter;            //!< The number of idr frame decoded
+    unsigned errorCounter;          //!< The number of decoding error so far
 
     // NAL
-    nalu_t *active_nalu;             //!< Current NAL Unit
+    nalu_t *active_nalu;            //!< Current NAL Unit
 
     // SPS
-    unsigned int active_sps;         //!< ID of the last/current SPS. May be inaccurate!
+    unsigned active_sps;            //!< ID of the last/current SPS. May be inaccurate!
     sps_t *sps_array[MAX_SPS];
 
     // PPS
-    unsigned int active_pps;         //!< ID of the last/current PPS. May be inaccurate!
+    unsigned active_pps;            //!< ID of the last/current PPS. May be inaccurate!
     pps_t *pps_array[MAX_PPS];
 
     // SEI
-    sei_t *active_sei;               //!< Current SEI
+    sei_t *active_sei;              //!< Current SEI
 
     // Slice
-    bool IdrPicFlag;                 //!< Current frame type (INTRA=1, INTER=0)
-    unsigned int frame_num;          //!< Current frame number, set from slice
-    slice_t *active_slice;           //!< Current Slice
+    bool IdrPicFlag;                //!< Current frame type (INTRA=1, INTER=0)
+    unsigned frame_num;             //!< Current frame number, set from slice
+    slice_t *active_slice;          //!< Current Slice
 
     // Macroblocks
-    unsigned int CurrMbAddr;         //!< Address of the current macroblock
-    unsigned int PicSizeInMbs;       //!< Number of macroblocks per frame
-    Macroblock_t **mb_array;         //!< Array containing all macroblocks of current frame
+    unsigned CurrMbAddr;            //!< Address of the current macroblock
+    unsigned PicSizeInMbs;          //!< Number of macroblocks per frame
+    Macroblock_t **mb_array;        //!< Array containing all macroblocks of current frame
 
     // Some useful parameters
-    unsigned int profile_idc;        //!< Current H.264 profile, set from SPS
-    unsigned int ChromaArrayType;    //!< Current subsampling scheme, set from SPS
-    bool entropy_coding_mode_flag;   //!< Current entropy coding method, set from PPS
+    unsigned profile_idc;           //!< Current H.264 profile, set from SPS
+    unsigned ChromaArrayType;       //!< Current subsampling scheme, set from SPS
+    bool entropy_coding_mode_flag;  //!< Current entropy coding method, set from PPS
 
     // Quantization parameters
-    int normAdjust4x4[6][4][4];      //!< Used to build LevelScale4x4. Computed during decoder initialization.
-    int normAdjust8x8[6][8][8];      //!< Used to build LevelScale8x8. Computed during decoder initialization.
+    int normAdjust4x4[6][4][4];     //!< Used to build LevelScale4x4. Computed during decoder initialization.
+    int normAdjust8x8[6][8][8];     //!< Used to build LevelScale8x8. Computed during decoder initialization.
 
 } DecodingContext_t;
 

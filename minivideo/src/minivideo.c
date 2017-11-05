@@ -263,7 +263,7 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
 
 /* ************************************************************************** */
 
-int minivideo_decode(MediaFile_t *input_media)
+int minivideo_decode(MediaFile_t *input_media, OutputSurface_t *out, int picture_number)
 {
     int retcode = FAILURE;
 
@@ -271,11 +271,34 @@ int minivideo_decode(MediaFile_t *input_media)
 
     if (input_media != NULL)
     {
-        //
+        // Print status
+        //import_fileStatus(input_media);
+
+        int tid = 0;
+
+        // Start video decoding
+        switch (input_media->tracks_video[tid]->stream_codec)
+        {
+            case CODEC_H264:
+            {
+                DecodingContext_t *dc = h264_init(input_media, tid);
+                retcode = h264_decode(dc, picture_number);
+                retcode = h264_export_surface(dc, out);
+                h264_cleanup(dc);
+            } break;
+
+            case CODEC_UNKNOWN:
+                TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!");
+                break;
+            default:
+                TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!",
+                            getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec, true));
+                break;
+        }
     }
     else
     {
-        TRACE_ERROR(MAIN, "Unable to decode from a NULL MediaFile_t struct!");
+        TRACE_ERROR(MAIN, "Unable to thumbnail from a NULL MediaFile_t struct!");
     }
 
     return retcode;
@@ -287,7 +310,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
                         const char *output_directory,
                         const int picture_format,
                         const int picture_quality,
-                        const int picture_number,
+                        const int picture_count,
                         const int picture_extractionmode)
 {
     int retcode = FAILURE;
@@ -296,9 +319,15 @@ int minivideo_thumbnail(MediaFile_t *input_media,
 
     if (input_media != NULL)
     {
+        // Print status
+        //import_fileStatus(input_media);
+
+        int tid = 0;
+        int sid = 0;
+
         // IDR frame filtering
-        int picture_number_filtered = idr_filtering(&input_media->tracks_video[0],
-                                                    picture_number, picture_extractionmode);
+        int picture_number_filtered = idr_filtering(&input_media->tracks_video[tid],
+                                                    picture_count, picture_extractionmode);
 
         if (picture_number_filtered == 0)
         {
@@ -306,17 +335,28 @@ int minivideo_thumbnail(MediaFile_t *input_media,
         }
         else
         {
-            // Print status
-            //import_fileStatus(input_media);
+            OutputFile_t out;
+            if (output_directory && strlen(output_directory))
+                strncpy(out.file_directory, output_directory, 254);
+            else
+                strncpy(out.file_directory, input_media->file_directory, 254);
+
+            out.picture_format = picture_format;
+            out.picture_quality = picture_quality;
 
             // Start video decoding
-            switch (input_media->tracks_video[0]->stream_codec)
+            switch (input_media->tracks_video[tid]->stream_codec)
             {
+                case CODEC_H264:
+                {
+                    DecodingContext_t *dc = h264_init(input_media, tid);
+                    retcode = h264_decode(dc, sid);
+                    retcode = h264_export_file(dc, &out);
+                    h264_cleanup(dc);
+                } break;
+
                 case CODEC_UNKNOWN:
                     TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!");
-                    break;
-                case CODEC_H264:
-                    retcode = h264_decode(input_media, output_directory, picture_format, picture_quality, picture_number_filtered, picture_extractionmode);
                     break;
                 default:
                     TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!",
@@ -339,8 +379,7 @@ int minivideo_extract(MediaFile_t *input_media,
                       const char *output_directory,
                       const bool extract_audio,
                       const bool extract_video,
-                      const bool extract_subtitles,
-                      const int output_format)
+                      const bool extract_subtitles)
 {
     int retcode = FAILURE;
 
@@ -351,15 +390,17 @@ int minivideo_extract(MediaFile_t *input_media,
         // Print status
         //import_fileStatus(input_media);
 
+        int tid = 0;
+
         // Export audio and video PES stream
         if (extract_audio)
-            retcode = muxer_export_samples(input_media, input_media->tracks_audio[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_audio[tid], 0);
 
         if (extract_video)
-            retcode = muxer_export_samples(input_media, input_media->tracks_video[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_video[tid], 0);
 
         if (extract_subtitles)
-            retcode = muxer_export_samples(input_media, input_media->tracks_subt[0], output_format);
+            retcode = muxer_export_samples(input_media, input_media->tracks_subt[tid], 0);
     }
     else
     {

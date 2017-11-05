@@ -280,8 +280,12 @@ int main(int argc, char *argv[])
             if (minivideo_retcode == SUCCESS)
             {
                 // IDR frame filtering // Video decoding // Thumbnail export
-                minivideo_retcode = minivideo_thumbnail(input_video, output_directory, picture_format,
-                                                        picture_quality, picture_number, picture_extraction_mode);
+                minivideo_retcode = minivideo_thumbnail(input_video,
+                                                        output_directory,
+                                                        picture_format,
+                                                        picture_quality,
+                                                        picture_number,
+                                                        picture_extraction_mode);
             }
 
             // Close the video file

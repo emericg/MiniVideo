@@ -28,225 +28,15 @@
 #include "h264_macroblock.h"
 #include "h264_transform.h"
 #include "../../depacketizer/depack.h"
+#include "../../export.h"
 #include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/*!
- * \brief Free decoding context.
- * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
- * \return A pointer to the newlee allocated DecodingContext.
- *
- * Initialize the DecodingContext and it's bitstream (with a MediaFile_t passed in parameters),
- * then NAL Unit structure, then init all pointer's (sps, pps, sei) to NULL.
- */
-DecodingContext_t *initDecodingContext(MediaFile_t *media)
-{
-    TRACE_INFO(H264, BLD_GREEN "initDecodingContext()" CLR_RESET);
-    DecodingContext_t *dc = NULL;
-
-    if (media != NULL)
-    {
-        // DecodingContext allocation
-        dc = (DecodingContext_t*)calloc(1, sizeof(DecodingContext_t));
-
-        if (dc == NULL)
-        {
-            TRACE_ERROR(H264, "Unable to alloc new DecodingContext!");
-        }
-        else
-        {
-            // Init output variables
-            dc->output_format = 0;
-            dc->picture_quality = 75;
-            dc->picture_number = 1;
-            dc->picture_extractionmode = 0;
-
-            // Init input bitstream
-            dc->VideoFile = media;
-            dc->bitstr = init_bitstream(media, media->tracks_video[0]);
-
-            if (dc->bitstr == NULL)
-            {
-                free(dc);
-                dc = NULL;
-            }
-            else
-            {
-                // Init NAL Unit
-                dc->active_nalu = initNALU();
-
-                if (dc->active_nalu == NULL)
-                {
-                    free(dc->bitstr);
-                    dc->bitstr = NULL;
-
-                    free(dc);
-                    dc = NULL;
-                }
-                else
-                {
-                    // Cleanup arrays of SPS and PPS
-                    int i = 0;
-
-                    for (i = 0; i < MAX_SPS; i++)
-                    {
-                        dc->sps_array[i] = NULL;
-                    }
-
-                    for (i = 0; i < MAX_PPS; i++)
-                    {
-                        dc->pps_array[i] = NULL;
-                    }
-
-                    dc->active_sei = NULL;
-
-                    dc->active_slice = NULL;
-
-                    dc->mb_array = NULL;
-
-                    TRACE_1(H264, "* DecodingContext allocation success");
-                }
-            }
-        }
-    }
-
-    // Return the DecodingContext
-    return dc;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \param *dc The DecodingContext structure we want to check.
- * \return The error code.
- *
- * This function aim to the validity of DecodingContext.
- * If any of the following checks failed, we can assume that something prior to
- * this function call had gone wrong and that we cannot safely pursue decoding.
- */
-int checkDecodingContext(DecodingContext_t *dc)
-{
-    TRACE_INFO(H264, "> " BLD_GREEN "checkDecodingContext()" CLR_RESET);
-    int retcode = SUCCESS;
-
-    if (dc->bitstr == NULL)
-    {
-        TRACE_WARNING(H264, "* Bitstream structure is invalid!");
-        retcode = FAILURE;
-    }
-
-    if (dc->active_nalu == NULL)
-    {
-        TRACE_WARNING(H264, "* NAL Unit structure is invalid!");
-        retcode = FAILURE;
-    }
-
-    if (dc->sps_array[dc->active_sps] == NULL)
-    {
-        TRACE_WARNING(H264, "* SPS structure currently in use is invalid!");
-        retcode = FAILURE;
-    }
-
-    if (dc->pps_array[dc->active_pps] == NULL)
-    {
-        TRACE_WARNING(H264, "* PPS structure currently in use is invalid!");
-        retcode = FAILURE;
-    }
-
-    if (dc->active_slice == NULL)
-    {
-        TRACE_WARNING(H264, "* Slice structure is invalid!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
-        if (pps == NULL)
-        {
-            TRACE_WARNING(H264, "* The slice structure refer to an invalid PPS structure!");
-            retcode = FAILURE;
-        }
-        else
-        {
-            sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
-            if (sps == NULL)
-            {
-                TRACE_WARNING(H264, "* The slice structure refer to an invalid SPS structure!");
-                retcode = FAILURE;
-            }
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \brief Free decoding context.
- * \param **dc_ptr The decoding context to freed.
- *
- * Free the DecodingContext and it's attached content:
- * - Bitstream.
- * - Active NAL Unit.
- * - All existing SPS.
- * - All existing PPS.
- * - Active SEI.
- * - Active Slice.
- * - All existing macroblocks.
- *
- * The MediaFile_t is not freed.
- */
-void freeDecodingContext(DecodingContext_t **dc_ptr)
-{
-    TRACE_INFO(H264, BLD_GREEN "freeDecodingContext()" CLR_RESET);
-
-    // free DecodingContext content
-    if ((*dc_ptr) != NULL)
-    {
-        int i = 0;
-        free_bitstream(&(*dc_ptr)->bitstr);
-
-        if ((*dc_ptr)->active_nalu != NULL)
-        {
-            free((*dc_ptr)->active_nalu);
-            (*dc_ptr)->active_nalu = NULL;
-
-            TRACE_1(H264, ">> NAL Unit freed");
-        }
-
-        for (i = 0; i < MAX_SPS; i++)
-        {
-            freeSPS(&(*dc_ptr)->sps_array[i]);
-        }
-
-        for (i = 0; i < MAX_PPS; i++)
-        {
-            freePPS(&(*dc_ptr)->pps_array[i]);
-        }
-
-        freeSEI(&(*dc_ptr)->active_sei);
-
-        free_slice(&(*dc_ptr)->active_slice);
-
-        freeMbArray(*dc_ptr);
-
-        {
-            free(*dc_ptr);
-            *dc_ptr = NULL;
-
-            TRACE_1(H264, ">> DecodingContext freed");
-        }
-    }
-}
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -337,6 +127,191 @@ static int computeNormAdjust(DecodingContext_t *dc)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+/*!
+ * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param tid: Track ID.
+ * \return A pointer to the newlee allocated DecodingContext.
+ *
+ * Initialize the DecodingContext and it's bitstream (with a MediaFile_t passed in parameters),
+ * then NAL Unit structure, then init all pointer's (sps, pps, sei) to NULL.
+ */
+DecodingContext_t *initDecodingContext(MediaFile_t *media, unsigned tid)
+{
+    TRACE_INFO(H264, BLD_GREEN "initDecodingContext()" CLR_RESET);
+    DecodingContext_t *dc = NULL;
+
+    if (media != NULL &&
+        tid < media->tracks_video_count &&
+        media->tracks_video[tid] != NULL)
+    {
+        // DecodingContext allocation
+        dc = (DecodingContext_t*)calloc(1, sizeof(DecodingContext_t));
+
+        if (dc == NULL)
+        {
+            TRACE_ERROR(H264, "Unable to alloc new DecodingContext!");
+        }
+        else
+        {
+            // Select media and track
+            dc->MediaFile = media;
+            dc->VideoStream = media->tracks_video[tid];
+            dc->active_tid = tid;
+
+            // Init some quantization parameters
+            computeNormAdjust(dc);
+
+            // Init input bitstream
+            dc->bitstr = init_bitstream(media, media->tracks_video[tid]);
+
+            if (dc->bitstr == NULL)
+            {
+                free(dc);
+                dc = NULL;
+            }
+            else
+            {
+                // Init NAL Unit
+                dc->active_nalu = initNALU();
+
+                if (dc->active_nalu == NULL)
+                {
+                    free(dc->bitstr);
+                    dc->bitstr = NULL;
+
+                    free(dc);
+                    dc = NULL;
+                }
+            }
+        }
+    }
+
+    // Return the DecodingContext
+    return dc;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \param *dc The DecodingContext structure we want to check.
+ * \return The error code.
+ *
+ * This function aim to the validity of DecodingContext.
+ * If any of the following checks failed, we can assume that something prior to
+ * this function call had gone wrong and that we cannot safely pursue decoding.
+ */
+int checkDecodingContext(DecodingContext_t *dc)
+{
+    TRACE_INFO(H264, "> " BLD_GREEN "checkDecodingContext()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (dc->bitstr == NULL)
+    {
+        TRACE_WARNING(H264, "* Bitstream reader structure is invalid!");
+        retcode = FAILURE;
+    }
+
+    if (dc->active_nalu == NULL)
+    {
+        TRACE_WARNING(H264, "* NAL Unit structure is invalid!");
+        retcode = FAILURE;
+    }
+
+    if (dc->sps_array[dc->active_sps] == NULL)
+    {
+        TRACE_WARNING(H264, "* SPS structure currently in use is invalid!");
+        retcode = FAILURE;
+    }
+
+    if (dc->pps_array[dc->active_pps] == NULL)
+    {
+        TRACE_WARNING(H264, "* PPS structure currently in use is invalid!");
+        retcode = FAILURE;
+    }
+
+    if (dc->active_slice == NULL)
+    {
+        TRACE_WARNING(H264, "* Slice structure is invalid!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+        if (pps == NULL)
+        {
+            TRACE_WARNING(H264, "* The slice structure refer to an invalid PPS!");
+            retcode = FAILURE;
+        }
+        else
+        {
+            sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+            if (sps == NULL)
+            {
+                TRACE_WARNING(H264, "* The slice structure refer to an invalid SPS!");
+                retcode = FAILURE;
+            }
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \param **dc_ptr The decoding context to freed.
+ *
+ * The MediaFile_t is not freed by this call, only the DecodingContext_t and it's attached content:
+ * - Bitstream reader.
+ * - Active NAL Unit.
+ * - All existing SPS.
+ * - All existing PPS.
+ * - Active SEI.
+ * - Active Slice.
+ * - All existing macroblocks.
+ */
+void freeDecodingContext(DecodingContext_t **dc_ptr)
+{
+    TRACE_INFO(H264, BLD_GREEN "freeDecodingContext()" CLR_RESET);
+
+    // free DecodingContext content
+    if ((*dc_ptr) != NULL)
+    {
+        int i = 0;
+        free_bitstream(&(*dc_ptr)->bitstr);
+
+        if ((*dc_ptr)->active_nalu != NULL)
+        {
+            free((*dc_ptr)->active_nalu);
+            (*dc_ptr)->active_nalu = NULL;
+
+            TRACE_1(H264, ">> NAL Unit freed");
+        }
+
+        for (i = 0; i < MAX_SPS; i++)
+        {
+            freeSPS(&(*dc_ptr)->sps_array[i]);
+        }
+
+        for (i = 0; i < MAX_PPS; i++)
+        {
+            freePPS(&(*dc_ptr)->pps_array[i]);
+        }
+
+        freeSEI(&(*dc_ptr)->active_sei);
+
+        free_slice(&(*dc_ptr)->active_slice);
+
+        freeMbArray(*dc_ptr);
+
+        free(*dc_ptr);
+        *dc_ptr = NULL;
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
 int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int64_t nalu_size)
 {
     TRACE_1(H264, BLD_GREEN "h264_decode_nalu()" CLR_RESET);
@@ -380,7 +355,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                 else
                     dc->errorCounter++;
 
-                dc->IdrPicFlag = false;
+                //dc->IdrPicFlag = false;
             }
             break;
 
@@ -420,7 +395,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                decodeSPS_legacy(dc);
+                retcode = decodeSPS_legacy(dc);
 /*
                 sps_t *sps = (sps_t*)calloc(1, sizeof(sps_t));
                 if (sps)
@@ -482,11 +457,11 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
         }
 
         // Reset NAL Unit structure
-        nalu_reset(dc->active_nalu);
+        //nalu_reset(dc->active_nalu);
     }
     else
     {
-        retcode = false;
+        retcode = FAILURE;
         dc->errorCounter++;
         TRACE_WARNING(NALU, "No valid NAL Unit to decode! (errorCounter = %i)", dc->errorCounter);
     }
@@ -496,63 +471,78 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
 /* ************************************************************************** */
 
-int h264_decode(MediaFile_t *input_video,
-                const char *output_directory,
-                const int picture_format,
-                const int picture_quality,
-                const int picture_number,
-                const int picture_extractionmode)
+DecodingContext_t *h264_init(MediaFile_t *input_video, unsigned tid)
 {
-    TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
-    int retcode = FAILURE;
+    TRACE_INFO(H264, BLD_GREEN "h264_init()" CLR_RESET);
 
-    // Init decoding context
-    DecodingContext_t *dc = initDecodingContext(input_video);
+    DecodingContext_t *dc = NULL;
 
-    if (dc == NULL)
+    if (input_video == NULL)
     {
-        TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder");
-        return retcode;
+        TRACE_ERROR(H264, "MediaFile_t is NULL, exiting decoder");
     }
     else
     {
-        // Init some quantization parameters
-        computeNormAdjust(dc);
+        // Init decoding context
+        dc = initDecodingContext(input_video, tid);
 
-        // Init some export parameters
-        //strncpy(dc->output_directory, output_directory, sizeof(output_directory));
-        dc->output_format = picture_format;
-        dc->picture_quality = picture_quality;
-        dc->picture_number = picture_number;
-        dc->picture_extractionmode = picture_extractionmode;
+        if (dc == NULL)
+        {
+            TRACE_ERROR(H264, "Unable to allocate DecodingContext_t, exiting decoder");
+        }
+        else
+        {
+            int error_count = 0;
 
-        // Start the decoding process
-        dc->decoderRunning = true;
+            // Start the decoding process
+            dc->decoderRunning = true;
+
+            // Load "parameter sets"
+            for (unsigned pid = 0; pid < dc->MediaFile->tracks_video[tid]->parameter_count; pid++)
+            {
+                int64_t samplesoffset = dc->MediaFile->tracks_video[tid]->parameter_offset[pid];
+                int64_t samplesize = dc->MediaFile->tracks_video[tid]->parameter_size[pid];
+
+                if (buffer_feed_manual(dc->bitstr, samplesoffset-1, samplesize+1) != SUCCESS)
+                    error_count++;
+                else
+                    if (h264_decode_nalu(dc, samplesoffset, samplesize) != SUCCESS)
+                        error_count++;
+            }
+
+            if (error_count != 0)
+            {
+                TRACE_ERROR(H264, "%i errors happened when decoding SPS and PPS content!", error_count);
+
+                // Stop the decoding process and free resources
+                dc->decoderRunning = false;
+                freeDecodingContext(&dc);
+            }
+        }
     }
 
-    int tid = 0;
-    int sid = 0;
+    return dc;
+}
 
-    // Load "parameter sets"
-    for (unsigned pid = 0; pid < dc->VideoFile->tracks_video[tid]->parameter_count; pid++)
-    {
-        int64_t samplesoffset = dc->VideoFile->tracks_video[tid]->parameter_offset[pid];
-        int64_t samplesize = dc->VideoFile->tracks_video[tid]->parameter_size[pid];
-        retcode = buffer_feed_manual(dc->bitstr, samplesoffset-1, samplesize+1);
-        retcode = h264_decode_nalu(dc, samplesoffset, samplesize);
-    }
+int h264_decode(DecodingContext_t *dc, unsigned sid)
+{
+    TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (!dc)
+        return FAILURE;
 
     // Loop until the end of the decoding
     while (dc->decoderRunning && retcode == SUCCESS)
     {
         buffer_feed_manual(dc->bitstr,
-                           dc->VideoFile->tracks_video[tid]->sample_offset[sid],
-                           dc->VideoFile->tracks_video[tid]->sample_size[sid]);
+                           dc->MediaFile->tracks_video[dc->active_tid]->sample_offset[sid],
+                           dc->MediaFile->tracks_video[dc->active_tid]->sample_size[sid]);
 
         // Depacketize
         es_sample_t essample_list[16];
-        int essample_count = depack_loaded_sample(dc->bitstr, dc->VideoFile,
-                                                  dc->VideoFile->tracks_video[tid],
+        int essample_count = depack_loaded_sample(dc->bitstr, dc->MediaFile,
+                                                  dc->MediaFile->tracks_video[dc->active_tid],
                                                   sid, essample_list);
 
         if (essample_count < 1)
@@ -566,16 +556,16 @@ int h264_decode(MediaFile_t *input_video,
         {
             int64_t current_nalu_offset = essample_list[i].offset;
             int64_t current_nalu_size = essample_list[i].size;
-            h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
+            retcode = h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
 
-            if (dc->idrCounter == (unsigned)picture_number)
+            if (dc->idrCounter == 1 && retcode == SUCCESS)
             {
                 TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
                 TRACE_INFO(H264, "H.264 decoding ended");
                 retcode = SUCCESS;
                 dc->decoderRunning = false;
             }
-
+/*
             if (dc->errorCounter > 64 || retcode == FAILURE)
             {
                 TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
@@ -583,14 +573,61 @@ int h264_decode(MediaFile_t *input_video,
                 retcode = FAILURE;
                 dc->decoderRunning = false;
             }
+*/
         }
     }
 
-    // Destroy decoding context
-    freeDecodingContext(&dc);
-
-    // Exit decoder
     return retcode;
+}
+
+int h264_export_file(DecodingContext_t *dc, OutputFile_t *out)
+{
+    TRACE_INFO(H264, BLD_GREEN "h264_export_file()" CLR_RESET);
+    int retcode = FAILURE;
+
+    if (dc)
+    {
+        // Export IDR slice
+        if (dc->IdrPicFlag == true)
+        {
+            TRACE_INFO(H264, BLD_GREEN "h264_export_file()" CLR_RESET);
+
+            retcode = export_idr_file(dc, out);
+        }
+
+        // Free slice
+        //free_slice(&dc->active_slice);
+    }
+
+    return retcode;
+}
+
+int h264_export_surface(DecodingContext_t *dc, OutputSurface_t *out)
+{
+    TRACE_INFO(H264, BLD_GREEN "h264_export_surface()" CLR_RESET);
+    int retcode = FAILURE;
+
+    if (dc)
+    {
+        // Export IDR slice
+        if (dc->IdrPicFlag == true)
+        {
+            TRACE_INFO(H264, BLD_GREEN "h264_export_file()" CLR_RESET);
+
+            retcode = export_idr_surface(dc, out);
+        }
+
+        // Free slice
+        //free_slice(&dc->active_slice);
+    }
+
+    return retcode;
+}
+
+void h264_cleanup(DecodingContext_t *dc)
+{
+    TRACE_INFO(H264, BLD_GREEN "h264_cleanup()" CLR_RESET);
+    freeDecodingContext(&dc);
 }
 
 /* ************************************************************************** */

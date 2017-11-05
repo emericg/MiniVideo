@@ -254,7 +254,11 @@ int main(int argc, char *argv[])
             // Export audio and video PES stream
             if (minivideo_retcode == SUCCESS)
             {
-                retcode = minivideo_extract(input_video, output_directory, extract_audio, extract_video, extract_subtitles, output_format);
+                retcode = minivideo_extract(input_video,
+                                            output_directory,
+                                            extract_audio,
+                                            extract_video,
+                                            extract_subtitles);
             }
 
             // Close the video file
