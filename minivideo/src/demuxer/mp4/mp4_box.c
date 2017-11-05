@@ -278,7 +278,7 @@ uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name)
         TRACE_1(MP4, "* %s  = %u", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%llu</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
         }
     }
 
@@ -392,11 +392,11 @@ char *read_mp4_string(Bitstream_t *bitstr, int bytes, FILE *xml, const char *nam
 {
     TRACE_2(MP4, "read_mp4_string()");
 
-    uint8_t *value = malloc(bytes+1);
+    char *value = malloc(bytes+1);
     if (value)
     {
         for (int i = 0; i < bytes; i++)
-            value[i] = read_bits(bitstr, 8);
+            value[i] = (char)read_bits(bitstr, 8);
         value[bytes] = '\0';
 
         if (name)
