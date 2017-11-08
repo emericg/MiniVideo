@@ -255,7 +255,8 @@ int decodeSPS_legacy(DecodingContext_t *dc)
         if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
             sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
-            sps->profile_idc == STEREO_HIGH)
+            sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
+            sps->profile_idc == 134 || sps->profile_idc == 135)
         {
             sps->separate_colour_plane_flag = false;
             sps->chroma_format_idc = read_ue(dc->bitstr);
@@ -332,13 +333,9 @@ int decodeSPS_legacy(DecodingContext_t *dc)
                     if (sps->seq_scaling_list_present_flag[i])
                     {
                         if (i < 6)
-                        {
                             scaling_list_4x4(dc->bitstr, sps, i);
-                        }
                         else
-                        {
                             scaling_list_8x8(dc->bitstr, sps, i - 6);
-                        }
                     }
                 }
             }
@@ -401,7 +398,7 @@ int decodeSPS_legacy(DecodingContext_t *dc)
             sps->log2_max_pic_order_cnt_lsb_minus4 = read_ue(dc->bitstr);
             sps->MaxPicOrderCntLsb = pow(2, sps->log2_max_pic_order_cnt_lsb_minus4 + 4);
         }
-        else
+        else if (sps->pic_order_cnt_type == 1)
         {
             sps->delta_pic_order_always_zero_flag = read_bit(dc->bitstr);
             sps->offset_for_non_ref_pic = read_se(dc->bitstr);
@@ -520,7 +517,8 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
         if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
             sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
-            sps->profile_idc == STEREO_HIGH)
+            sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
+            sps->profile_idc == 134 || sps->profile_idc == 135)
         {
             sps->chroma_format_idc = read_ue(bitstr);
             sps->ChromaArrayType = sps->chroma_format_idc;
@@ -590,13 +588,9 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
                     if (sps->seq_scaling_list_present_flag[i])
                     {
                         if (i < 6)
-                        {
                             scaling_list_4x4(bitstr, sps, i);
-                        }
                         else
-                        {
                             scaling_list_8x8(bitstr, sps, i - 6);
-                        }
                     }
                 }
             }
@@ -627,15 +621,14 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
         // Initialize flat scaling list
         if (sps->seq_scaling_matrix_present_flag == false)
         {
-            int i = 0, k = 0;
-            for (i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
-                for (k = 0; k < 16; k++)
+                for (int k = 0; k < 16; k++)
                 {
                     sps->ScalingList4x4[i][k] = 16;
                 }
 
-                for (k = 0; k < 64; k++)
+                for (int k = 0; k < 64; k++)
                 {
                     sps->ScalingList8x8[i][k] = 16;
                 }
@@ -655,7 +648,7 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             sps->log2_max_pic_order_cnt_lsb_minus4 = read_ue(bitstr);
             sps->MaxPicOrderCntLsb = pow(2, sps->log2_max_pic_order_cnt_lsb_minus4 + 4);
         }
-        else
+        else if (sps->pic_order_cnt_type == 1)
         {
             sps->delta_pic_order_always_zero_flag = read_bit(bitstr);
             sps->offset_for_non_ref_pic = read_se(bitstr);
@@ -740,22 +733,18 @@ void freeSPS(sps_t **sps_ptr)
     {
         if ((*sps_ptr)->vui != NULL)
         {
-            if ((*sps_ptr)->vui->hrd != NULL)
-            {
-                free((*sps_ptr)->vui->hrd);
-                (*sps_ptr)->vui->hrd = NULL;
-            }
+            free((*sps_ptr)->vui->nal_hrd);
+            (*sps_ptr)->vui->nal_hrd = NULL;
+
+            free((*sps_ptr)->vui->vcl_hrd);
+            (*sps_ptr)->vui->vcl_hrd = NULL;
 
             free((*sps_ptr)->vui);
             (*sps_ptr)->vui = NULL;
         }
 
-        {
-            free(*sps_ptr);
-            *sps_ptr = NULL;
-
-            TRACE_1(PARAM, ">> SPS freed");
-        }
+        free(*sps_ptr);
+        *sps_ptr = NULL;
     }
 }
 
@@ -1063,7 +1052,7 @@ void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml)
         fprintf(xml, "  <seq_scaling_matrix_present_flag>%u</seq_scaling_matrix_present_flag>\n", sps->seq_scaling_matrix_present_flag);
         if (sps->seq_scaling_matrix_present_flag)
         {
-             for (int i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
+             for (unsigned i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
              {
                  fprintf(xml, "  <seq_scaling_list_present_flag_%u>%u</seq_scaling_list_present_flag_%u>\n", i, sps->seq_scaling_list_present_flag[i], i);
              }
@@ -1146,7 +1135,7 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
         ////////////////////////////////////////////////////////////////////////
 
         pps->pic_parameter_set_id = read_ue(bitstr);
-        pps->seq_parameter_set_id = 0;read_ue(bitstr);
+        pps->seq_parameter_set_id = read_ue(bitstr);
 
         pps->entropy_coding_mode_flag = read_bit(bitstr);
         pps->bottom_field_pic_order_in_frame_present_flag = read_bit(bitstr);
@@ -1183,6 +1172,8 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
                 for (unsigned i = 0; i <= pps->pic_size_in_map_units_minus1; i++)
                 {
                     //pps->slice_group_id[i] = read_bits(bitstr, ceil(log2(pps->num_slice_groups_minus1 + 1)));
+                    //pps->slice_group_id[i] = read_bit(bitstr);
+                    TRACE_ERROR(PARAM, "UNIMPLEMENTED read_u(v) !!!"); //FIXME
                 }
             }
         }
@@ -1206,12 +1197,12 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
             pps->pic_scaling_matrix_present_flag = read_bit(bitstr);
             if (pps->pic_scaling_matrix_present_flag)
             {
-                int i = 0;
-                for (i = 0; i < 6 + ((sps_array[pps->seq_parameter_set_id]->chroma_format_idc != 3) ? 2 : 6) * pps->transform_8x8_mode_flag; i++)
+                for (int i = 0; i < (6 + ((sps_array[pps->seq_parameter_set_id]->chroma_format_idc != 3) ? 2 : 6) * pps->transform_8x8_mode_flag); i++)
                 {
-                    pps->pic_scaling_list_present_flag[i] = read_bit(bitstr); //FIXME?
+                    pps->pic_scaling_list_present_flag[i] = read_bit(bitstr);
                     if (pps->pic_scaling_list_present_flag[i])
                     {
+                        TRACE_ERROR(PARAM, "UNIMPLEMENTED PPS scaling list !!!"); //FIXME
 /*
                         // TODO
                         if (i < 6)
@@ -1233,6 +1224,8 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
             pps->pic_scaling_matrix_present_flag = false;
             pps->second_chroma_qp_index_offset = pps->chroma_qp_index_offset;
         }
+
+        retcode = h264_rbsp_trailing_bits(bitstr);
 
         // PPS check
         ////////////////////////////////////////////////////////////////////////
@@ -1257,8 +1250,6 @@ void freePPS(pps_t **pps_ptr)
     {
         free(*pps_ptr);
         *pps_ptr = NULL;
-
-        TRACE_1(PARAM, ">> PPS freed");
     }
 }
 
@@ -1519,7 +1510,7 @@ void mapPPS(pps_t *pps, sps_t **sps, int64_t offset, int64_t size, FILE *xml)
                      fprintf(xml, "  <pic_scaling_list_present_flag_%u>%u</pic_scaling_list_present_flag_%u>\n", i, pps->pic_scaling_list_present_flag[i], i);
                  }
             }
-            fprintf(xml, "  <second_chroma_qp_index_offset>%u</second_chroma_qp_index_offset>\n", pps->second_chroma_qp_index_offset);
+            fprintf(xml, "  <second_chroma_qp_index_offset>%i</second_chroma_qp_index_offset>\n", pps->second_chroma_qp_index_offset);
         }
 
         fprintf(xml, "  </a>\n");
@@ -1680,6 +1671,7 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
 
     // VUI allocation
     ////////////////////////////////////////////////////////////////////////////
+
     vui_t *vui = (vui_t*)calloc(1, sizeof(vui_t));
 
     if (vui == NULL)
@@ -1688,9 +1680,9 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
     }
     else
     {
-        ////////////////////////////////////////////////////////////////////////////
+        // VUI decoding
+        ////////////////////////////////////////////////////////////////////////
 
-                // VUI decodi
         vui->aspect_ratio_info_present_flag = read_bit(bitstr);
         if (vui->aspect_ratio_info_present_flag)
         {
@@ -1741,14 +1733,14 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
         if (vui->nal_hrd_parameters_present_flag)
         {
             // Hypothetical Reference Decoder
-            vui->hrd = decodeHRD(bitstr);
+            vui->nal_hrd = decodeHRD(bitstr);
         }
 
         vui->vcl_hrd_parameters_present_flag = read_bit(bitstr);
         if (vui->vcl_hrd_parameters_present_flag)
         {
-            // Decode HRD
-            vui->hrd = decodeHRD(bitstr);
+            // Hypothetical Reference Decoder
+            vui->vcl_hrd = decodeHRD(bitstr);
         }
 
         if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
@@ -1863,9 +1855,12 @@ static int checkVUI(vui_t *vui, sps_t *sps)
         }
 
         // Check HRD content
-        if (retcode == SUCCESS && (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true))
+        if (retcode == SUCCESS)
         {
-            retcode = checkHRD(vui->hrd);
+            if (vui->nal_hrd_parameters_present_flag == true)
+                retcode = checkHRD(vui->nal_hrd);
+            if (vui->vcl_hrd_parameters_present_flag == true)
+                retcode = checkHRD(vui->vcl_hrd);
         }
 
         if (vui->chroma_loc_info_present_flag)
@@ -2011,8 +2006,12 @@ static void printVUI(vui_t *vui)
     // HRD
     if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
     {
+        if (vui->nal_hrd_parameters_present_flag == true)
+            printHRD(vui->nal_hrd);
+        if (vui->vcl_hrd_parameters_present_flag == true)
+            printHRD(vui->vcl_hrd);
+
         TRACE_1(PARAM, "    - low_delay_hrd_flag        = %u", vui->low_delay_hrd_flag);
-        printHRD(vui->hrd);
     }
 
     TRACE_1(PARAM, "    - pic_struct_present_flag       = %u", vui->pic_struct_present_flag);
@@ -2053,7 +2052,7 @@ static void mapVUI(vui_t *vui, FILE *xml)
         fprintf(xml, "  <overscan_info_present_flag>%i</overscan_info_present_flag>\n", vui->overscan_info_present_flag);
         if (vui->overscan_info_present_flag)
         {
-            fprintf(xml, "  <overscan_appropriate_flag>%i</overscan_appropriate_flag>\n", vui->overscan_appropriate_flag);
+            fprintf(xml, "  <overscan_appropriate_flag>%u</overscan_appropriate_flag>\n", vui->overscan_appropriate_flag);
         }
 
         fprintf(xml, "  <video_signal_type_present_flag>%i</video_signal_type_present_flag>\n", vui->video_signal_type_present_flag);
@@ -2091,8 +2090,11 @@ static void mapVUI(vui_t *vui, FILE *xml)
         // HRD
         if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
         {
+            if (vui->nal_hrd_parameters_present_flag == true)
+                mapHRD(vui->nal_hrd, xml);
+            if (vui->vcl_hrd_parameters_present_flag == true)
+                mapHRD(vui->vcl_hrd, xml);
             fprintf(xml, "  <vcl_hrd_parameters_present_flag>%i</vcl_hrd_parameters_present_flag>\n", vui->vcl_hrd_parameters_present_flag);
-            mapHRD(vui->hrd, xml);
         }
 
         fprintf(xml, "  <pic_struct_present_flag>%i</pic_struct_present_flag>\n", vui->pic_struct_present_flag);
@@ -2131,6 +2133,7 @@ hrd_t *decodeHRD(Bitstream_t *bitstr)
 
     // HRD allocation
     ////////////////////////////////////////////////////////////////////////////
+
     hrd_t *hrd = (hrd_t*)calloc(1, sizeof(hrd_t));
 
     if (hrd == NULL)
@@ -2140,7 +2143,7 @@ hrd_t *decodeHRD(Bitstream_t *bitstr)
     else
     {
         // HRD decoding
-        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
 
         hrd->cpb_cnt_minus1 = read_ue(bitstr);
         hrd->bit_rate_scale = read_bits(bitstr, 4);
@@ -2291,12 +2294,11 @@ static void mapHRD(hrd_t *hrd, FILE *xml)
         fprintf(xml, "  <bit_rate_scale>%u</bit_rate_scale>\n", hrd->bit_rate_scale);
         fprintf(xml, "  <cpb_size_scale>%u</cpb_size_scale>\n", hrd->cpb_size_scale);
 
-        unsigned int SchedSelIdx = 0;
-        for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
+        for (unsigned SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
         {
-            fprintf(xml, "  <bit_rate_value_minus1_%i>%u</bit_rate_value_minus1_%i>\n", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx], SchedSelIdx);
-            fprintf(xml, "  <cpb_size_value_minus1_%i>%u</cpb_size_value_minus1_%i>\n", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx], SchedSelIdx);
-            fprintf(xml, "  <cbr_flag_%i>%u</cbr_flag_%i>\n", SchedSelIdx, hrd->cbr_flag[SchedSelIdx], SchedSelIdx);
+            fprintf(xml, "  <bit_rate_value_minus1_%u>%u</bit_rate_value_minus1_%u>\n", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx], SchedSelIdx);
+            fprintf(xml, "  <cpb_size_value_minus1_%u>%u</cpb_size_value_minus1_%u>\n", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx], SchedSelIdx);
+            fprintf(xml, "  <cbr_flag_%u>%u</cbr_flag_%u>\n", SchedSelIdx, hrd->cbr_flag[SchedSelIdx], SchedSelIdx);
         }
 
         fprintf(xml, "  <initial_cpb_removal_delay_length_minus1>%u</initial_cpb_removal_delay_length_minus1>\n", hrd->initial_cpb_removal_delay_length_minus1);

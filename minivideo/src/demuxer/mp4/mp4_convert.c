@@ -544,11 +544,15 @@ void mp4_clean_track(Mp4Track_t **track_ptr)
     if (*track_ptr != NULL)
     {
         // SPS
+        for (unsigned i = 0; i < (*track_ptr)->sps_count && i < MAX_SPS; i++)
+            freeSPS(&(*track_ptr)->sps_array[i]);
         free(*(*track_ptr)->sps_array);
         free((*track_ptr)->sps_sample_offset);
         free((*track_ptr)->sps_sample_size);
 
         // PPS
+        for (unsigned i = 0; i < (*track_ptr)->pps_count && i < MAX_PPS; i++)
+            freePPS(&(*track_ptr)->pps_array[i]);
         free(*(*track_ptr)->pps_array);
         free((*track_ptr)->pps_sample_offset);
         free((*track_ptr)->pps_sample_size);

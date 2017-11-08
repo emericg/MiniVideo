@@ -229,12 +229,19 @@ int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t si
     // Reset parameters
     bitstr->buffer_offset = 0;
     bitstr->buffer_discarded_bytes = 0;
-    //
-    bitstr->bitstream_offset = bitstream_offset;
-    bitstr->buffer_size = size;
-    //
-    //free(bitstr->buffer);
-    bitstr->buffer = malloc(bitstr->buffer_size);
+    // Deallocate buffer (if needed)
+    if (bitstr->buffer != NULL &&
+        bitstr->buffer_size != size)
+    {
+        free(bitstr->buffer);
+        bitstr->buffer = NULL;
+    }
+    // Allocate new buffer (if needed)
+    if (bitstr->buffer == NULL)
+    {
+        bitstr->buffer_size = size;
+        bitstr->buffer = malloc(bitstr->buffer_size);
+    }
 
     if (bitstr->buffer == NULL)
     {
@@ -244,6 +251,7 @@ int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t si
     else
     {
         // Move file pointer
+        bitstr->bitstream_offset = bitstream_offset;
         if (fseek(bitstr->bitstream_file, bitstr->bitstream_offset, SEEK_SET) != 0)
         {
             TRACE_ERROR(BITS, "<b> Unable to seek through the input file!");

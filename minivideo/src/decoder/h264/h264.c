@@ -354,8 +354,6 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                 }
                 else
                     dc->errorCounter++;
-
-                //dc->IdrPicFlag = false;
             }
             break;
 
@@ -377,10 +375,13 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 nalu_clean_sample(dc->bitstr);
 
-                sei_t *sei = (sei_t*)calloc(1, sizeof(sei_t));
-                if (sei)
+                if (dc->active_sei != NULL)
+                    free(dc->active_sei);
+
+                dc->active_sei = (sei_t*)calloc(1, sizeof(sei_t));
+                if (dc->active_sei)
                 {
-                    if (decodeSEI(dc->bitstr, sei))
+                    if (decodeSEI(dc->bitstr, dc->active_sei))
                     {
                         retcode = SUCCESS;
                         printSEI(NULL);
@@ -457,7 +458,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
         }
 
         // Reset NAL Unit structure
-        //nalu_reset(dc->active_nalu);
+        nalu_reset(dc->active_nalu);
     }
     else
     {

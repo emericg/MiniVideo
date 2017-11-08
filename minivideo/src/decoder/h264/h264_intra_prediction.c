@@ -322,9 +322,9 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
     // Initialization
     int retcode = FAILURE;
-    int mbAddrN = -1;
-    int xW = -1, yW = -1;
-    int x = -1, y = -1;
+    int mbAddrN;
+    int xW, yW;
+    int x, y;
 
     intrapred4x4_t ip;
     ip.blkIdx = luma4x4BlkIdx;
@@ -1114,9 +1114,9 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
     // Initialization
     int retcode = FAILURE;
-    int mbAddrN = -1;
-    int xW = -1, yW = -1;
-    int x = -1, y = -1;
+    int mbAddrN;
+    int xW, yW;
+    int x, y;
 
     intrapred8x8_t ip;
     ip.blkIdx = luma8x8BlkIdx;
@@ -1821,9 +1821,9 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 
     // Initialization
     int retcode = SUCCESS;
-    int mbAddrN = -1;
-    int x = -1, y = -1;
-    int xW = -1, yW = -1;
+    int mbAddrN;
+    int x, y;
+    int xW, yW;
 
     intrapred16x16_t ip;
     ip.phv = 0;
@@ -2165,9 +2165,9 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 
     // Initialization
     int retcode = SUCCESS;
-    int mbAddrN = -1;
-    int xW = -1, yW = -1;
-    int x = -1, y = -1;
+    int mbAddrN;
+    int xW, yW;
+    int x, y;
 
     intrapredChroma_t ipCb;
     ipCb.blkIdx = dc->CurrMbAddr;

@@ -592,7 +592,10 @@ int mp3_fileParse(MediaFile_t *media)
         if (retcode == SUCCESS)
         {
             retcode = mp3_indexer_track(media, &mp3);
-            retcode = mp3_indexer(media, &mp3);
+            if (retcode == SUCCESS)
+            {
+                retcode = mp3_indexer(media, &mp3);
+            }
         }
     }
     else

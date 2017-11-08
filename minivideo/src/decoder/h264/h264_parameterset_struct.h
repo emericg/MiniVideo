@@ -154,11 +154,14 @@ typedef struct vui_t
     bool nal_hrd_parameters_present_flag;
     bool vcl_hrd_parameters_present_flag;
 
+    //if (nal_hrd_parameters_present_flag)
+        hrd_t *nal_hrd;
+    //if (vcl_hrd_parameters_present_flag)
+        hrd_t *vcl_hrd;
     //if (nal_hrd_parameters_present_flag || vcl_hrd_parameters_present_flag)
-        hrd_t *hrd;
         bool low_delay_hrd_flag;
-        bool pic_struct_present_flag;
-        bool bitstream_restriction_flag;
+    bool pic_struct_present_flag;
+    bool bitstream_restriction_flag;
 
     //if (bitstream_restriction_flag)
         bool motion_vectors_over_pic_boundaries_flag;

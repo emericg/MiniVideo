@@ -147,7 +147,7 @@ int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     for (unsigned i = 0; i < hmmt_count && i < 100; i++)
     {
         char tagname[16];
-        snprintf(tagname, 16, "tag_%i", i);
+        snprintf(tagname, 16, "tag_%u", i);
 
         read_mp4_uint32(bitstr, mp4->xml, tagname);
     }
