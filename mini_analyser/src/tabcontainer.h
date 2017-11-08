@@ -55,10 +55,12 @@ public:
     void loadTracks();
     void closeMedia();
 
-public slots:
+private slots:
     void clearContent();
+    void clearPreviews();
     void tabSwitch(int intex);
     void loadSamples(int track_id);
+    void previewSample(int sid);
     void sampleSelection();
     void sampleSelection(int sample_id);
     void containerSelectionEmpty();
@@ -86,6 +88,8 @@ private:
 
     MediaStream_t *track = nullptr;
     MediaStream_t *tracks[16] = {0};
+
+    std::map <unsigned, OutputSurface_t *> thumbnails;
 
     QFile mediaFile;
     QByteArray mediaDatas;

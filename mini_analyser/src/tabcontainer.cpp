@@ -47,6 +47,8 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 
+#define THUMBNAILS_ENABLED 0
+
 tabContainer::tabContainer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::tabContainer)
@@ -85,6 +87,8 @@ tabContainer::tabContainer(QWidget *parent) :
 
 tabContainer::~tabContainer()
 {
+    closeMedia();
+
     delete ui;
 }
 
@@ -98,6 +102,12 @@ void tabContainer::resizeEvent(QResizeEvent *event)
     int newwidth = this->width() - ui->tabWidget->width() - 12;
     ui->scrollAreaWidgetContents_2->setMaximumWidth(newwidth);
     ui->labelTitle->setMaximumWidth(newwidth);
+
+    // Resize thumbnail (if needed)
+    if (ui->label_pic->isVisible())
+    {
+        previewSample(ui->listWidget->currentRow());
+    }
 }
 
 void tabContainer::on_tabWidget_currentChanged(int index)
@@ -134,12 +144,12 @@ void tabContainer::loadMedia(const MediaWrapper *wrap)
 
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
-        setWindowTitle(tr("Container Explorer: ") + QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
-
         if (!ui->widget_hex->setData(mediaFile))
         {
             return;
         }
+
+        clearPreviews();
 
         loadXmlFile();
         loadTracks();
@@ -199,6 +209,9 @@ void tabContainer::closeMedia()
         delete item;
     }
     ui->listWidget->clear();
+
+    // Clean thumbnails
+    clearPreviews();
 }
 
 /* ************************************************************************** */
@@ -390,10 +403,71 @@ void tabContainer::sampleSelection(int sid)
             ui->gridLayout_samples->addWidget(b, 0, 1);
         }
 
+        // Preview thumbnail
+        if (track->sample_type[sid] == sample_VIDEO_SYNC)
+        {
+            previewSample(sid);
+        }
+
         // HexEditor
         ui->widget_hex->setData(mediaFile);
         ui->widget_hex->setData(ui->widget_hex->dataAt(offset, size));
     }
+}
+
+void tabContainer::previewSample(int sid)
+{
+#if THUMBNAILS_ENABLED == 1
+
+    if (media && track &&
+        sid >= 0 && static_cast<uint32_t>(sid) < track->sample_count &&
+        track->sample_type[sid] == sample_VIDEO_SYNC)
+    {
+        OutputSurface_t *out = nullptr;
+
+        // Searching element in std::map by key (with sample ID).
+        if (thumbnails.find(sid) != thumbnails.end())
+        {
+            out = thumbnails[sid];
+        }
+        else
+        {
+            out = new OutputSurface_t;
+            if (minivideo_decode(media, out, sid) == 0)
+            {
+                delete out;
+                out = nullptr;
+            }
+            else
+            {
+                // Clean first thumbnail if we have more than x thumbnails already
+                if (thumbnails.size() > 4)
+                {
+                    OutputSurface_t *s = thumbnails.begin()->second;
+                    free(s->surface);
+                    s->surface = NULL;
+                    delete s;
+                    s = nullptr;
+
+                    thumbnails.erase(thumbnails.begin());
+                }
+                thumbnails.insert(std::make_pair(sid, out));
+            }
+        }
+
+        if (out)
+        {
+            QImage img((uchar*)out->surface, out->width, out->height, QImage::Format_RGB888);
+
+            double w = (ui->scrollArea_2->width() - 24);
+            int h = out->height / (out->width / w);
+
+            ui->label_pic->setPixmap(QPixmap::fromImage(img).scaled(w,h,Qt::KeepAspectRatio));
+            ui->label_pic->show();
+        }
+    }
+
+#endif //THUMBNAILS_ENABLED
 }
 
 void tabContainer::containerSelectionEmpty()
@@ -711,12 +785,33 @@ void tabContainer::clearContent()
 {
     //qDebug() << "tabContainer::clearContent()";
 
+    ui->label_pic->hide();
+
     for (int i = 0;  i < ui->gridLayout_header->columnCount(); i++)
         removeColumn(ui->gridLayout_header, i, true);
     for (int i = 0;  i < ui->gridLayout_samples->columnCount(); i++)
         removeColumn(ui->gridLayout_samples, i, true);
     for (int i = 0;  i < ui->gridLayout_content->columnCount(); i++)
         removeColumn(ui->gridLayout_content, i, true);
+}
+
+void tabContainer::clearPreviews()
+{
+    //qDebug() << "tabContainer::clearPreviews()";
+
+    for (std::map<unsigned, OutputSurface_t*>::iterator it = thumbnails.begin();
+         it != thumbnails.end();
+         ++it)
+    {
+        OutputSurface_t *s = (it->second);
+
+        free(s->surface);
+        s->surface = NULL;
+        delete s;
+        s = nullptr;
+
+        thumbnails.erase(it);
+    }
 }
 
 /* ************************************************************************** */

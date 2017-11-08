@@ -347,6 +347,8 @@ void MainWindow::closeFiles()
             ui->tab_dev->removeFile(mediaList.at(i)->media->file_path);
             ui->tab_container->closeMedia();
             minivideo_close(&mediaList.at(i)->media);
+
+            delete mediaList.at(i);
         }
     }
 
