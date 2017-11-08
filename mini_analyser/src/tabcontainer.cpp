@@ -359,7 +359,9 @@ void tabContainer::sampleSelection(int sid)
         if (track->sample_pts[sid] >= 0 || track->sample_dts[sid] >= 0)
         {
             QString pts = QString::number(static_cast<double>(track->sample_pts[sid] / 1000.0), 'f', 3) + " ms";
-            pts += "   (" + getTimestampString(track->sample_pts[sid]) + ")";
+            pts += "   (" + getTimestampPreciseString(track->sample_pts[sid]) + ")";
+            if (track->stream_type == stream_VIDEO)
+                pts += "   (SMTPE: " + getTimestampSmtpeString(track->sample_pts[sid], track->framerate) + ")";
             QLabel *lp = new QLabel(tr("> PTS"));
             QLineEdit *dp = new QLineEdit(pts);
             dp->setReadOnly(true);
@@ -367,7 +369,7 @@ void tabContainer::sampleSelection(int sid)
             ui->gridLayout_header->addWidget(dp, 3, 1);
 
             QString dts = QString::number(static_cast<double>(track->sample_dts[sid] / 1000.0), 'f', 3) + " ms";
-            dts += "   (" + getTimestampString(track->sample_dts[sid]) + ")";
+            dts += "   (" + getTimestampPreciseString(track->sample_dts[sid]) + ")";
             QLabel *ld = new QLabel(tr("> DTS"));
             QLineEdit *dd = new QLineEdit(dts);
             dd->setReadOnly(true);

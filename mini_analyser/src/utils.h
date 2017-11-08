@@ -46,9 +46,23 @@ QString getDurationString(const uint32_t duration);
  * \param duration: Timestamp in microseconds.
  * \return Timestamp QString.
  *
- * Prints a precise timestamp (ex: 1 h 2 m 3 s 40 ms 50 µs).
+ * Prints a 'precise' timestamp (ex: 1 h 2 m 3 s 40 ms 50 µs).
  */
-QString getTimestampString(const uint64_t timestamp);
+QString getTimestampPreciseString(const uint64_t timestamp);
+
+/*!
+ * \brief Get a SMTPE timestamp string from a duration in milliseconds.
+ * \param duration: Timestamp in microseconds.
+ * \param framerate: Framerate of a video.
+ * \return Timestamp QString.
+ *
+ * \note Right now this function only use the SMTPE format, but not the exact
+ * computation used to produce a valid SMTPE timestamp.
+ *
+ * Prints a 'SMTPE' timestamp (ex: 01:02:03:32).
+ * SMTPE timestamps are only valid for video streams.
+ */
+QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate);
 
 /*!
  * \brief Get a size string from a size in bytes.

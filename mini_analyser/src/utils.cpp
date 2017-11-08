@@ -72,7 +72,7 @@ QString getDurationString(const uint32_t duration)
     return duration_qstr;
 }
 
-QString getTimestampString(const uint64_t timestamp)
+QString getTimestampPreciseString(const uint64_t timestamp)
 {
     QString timestamp_qstr;
 
@@ -110,7 +110,37 @@ QString getTimestampString(const uint64_t timestamp)
         }
     }
 
-    //qDebug() << "getTimestampString(" << timestamp << ") >" << timestamp_qstr;
+    //qDebug() << "getTimestampPreciseString(" << timestamp << ") >" << timestamp_qstr;
+
+    return timestamp_qstr;
+}
+
+QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate)
+{
+    QString timestamp_qstr;
+
+    if (timestamp == 0)
+    {
+        timestamp_qstr = "00:00:00-000";
+    }
+    else
+    {
+        uint64_t hours = timestamp / 3600000000;
+        uint64_t minutes = (timestamp - (hours * 3600000000)) / 60000000;
+        uint64_t seconds = (timestamp - (hours * 3600000000) - (minutes * 60000000)) / 1000000;
+
+        double us = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000));
+        uint64_t frames = std::floor(us / std::floor(1000000.0 / framerate));
+
+        timestamp_qstr = QString::number(hours) + ":" + QString::number(minutes) + ":" + QString::number(seconds) + "-" + QString::number(frames);
+        timestamp_qstr = QString("%1:%2:%3-%4")\
+                            .arg(hours, 2, 10, QChar('0'))\
+                            .arg(minutes, 2, 10, QChar('0'))\
+                            .arg(seconds, 2, 10, QChar('0'))\
+                            .arg(frames, 3, 10, QChar('0'));
+    }
+
+    //qDebug() << "getTimestampSmtpeString(" << timestamp << ") >" << timestamp_qstr;
 
     return timestamp_qstr;
 }
