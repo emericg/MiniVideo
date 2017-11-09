@@ -135,7 +135,10 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
  * there are non-zero transform coefficient levels for subsequent scanning
  * positions i + 1 to maxNumCoeff - 1 as follows.
  */
-void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int startIdx, const int endIdx, const int maxNumCoeff, const int blkType, const int blkIdx)
+void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel,
+                          const int startIdx, const int endIdx,
+                          const int maxNumCoeff,
+                          const int blkType, const int blkIdx)
 {
     TRACE_1(CABAC, "> " BLD_GREEN "residual_block_cabac()" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
@@ -170,7 +173,7 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
     // Read and store coded_block_flag, if present
     if (maxNumCoeff != 64 || dc->ChromaArrayType == 3)
     {
-        cbf = read_ae_blk(dc, SE_coded_block_flag, blkType, blkIdx);
+        cbf = read_ae_blk(dc, SE_coded_block_flag, (BlockType_e)blkType, blkIdx);
 
         switch (blkType)
         {
@@ -210,10 +213,10 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
         // Find the number and position of coded coefficients
         while (i < (numCoeff - 1))
         {
-           significant_coeff_flag[i] = read_ae_blk(dc, SE_significant_coeff_flag, blkType, blkIdx);
+           significant_coeff_flag[i] = read_ae_blk(dc, SE_significant_coeff_flag, (BlockType_e)blkType, blkIdx);
            if (significant_coeff_flag[i] == true)
            {
-               last_significant_coeff_flag[i] = read_ae_blk(dc, SE_last_significant_coeff_flag, blkType, blkIdx);
+               last_significant_coeff_flag[i] = read_ae_blk(dc, SE_last_significant_coeff_flag, (BlockType_e)blkType, blkIdx);
                if (last_significant_coeff_flag[i] == true)
                {
                    numCoeff = i + 1;
@@ -228,8 +231,8 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
         {
             // decode coeff
             mb->levelListIdx = numCoeff - 1;
-            coeff_abs_level_minus1[numCoeff - 1] = read_ae_blk(dc, SE_coeff_abs_level_minus1, blkType, blkIdx);
-            coeff_sign_flag[numCoeff - 1] = read_ae_blk(dc, SE_coeff_sign_flag, blkType, blkIdx);
+            coeff_abs_level_minus1[numCoeff - 1] = read_ae_blk(dc, SE_coeff_abs_level_minus1, (BlockType_e)blkType, blkIdx);
+            coeff_sign_flag[numCoeff - 1] = read_ae_blk(dc, SE_coeff_sign_flag, (BlockType_e)blkType, blkIdx);
 
             // update stats
             if ((coeff_abs_level_minus1[numCoeff - 1] + 1) == 1)
@@ -249,8 +252,8 @@ void residual_block_cabac(DecodingContext_t *dc, int *coeffLevel, const int star
             {
                 // decode coeff
                 mb->levelListIdx = i;
-                coeff_abs_level_minus1[i] = read_ae_blk(dc, SE_coeff_abs_level_minus1, blkType, blkIdx);
-                coeff_sign_flag[i] = read_ae_blk(dc, SE_coeff_sign_flag, blkType, blkIdx);
+                coeff_abs_level_minus1[i] = read_ae_blk(dc, SE_coeff_abs_level_minus1, (BlockType_e)blkType, blkIdx);
+                coeff_sign_flag[i] = read_ae_blk(dc, SE_coeff_sign_flag, (BlockType_e)blkType, blkIdx);
 
                 // update stats
                 if ((coeff_abs_level_minus1[i] + 1) == 1)
@@ -372,7 +375,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     // Binarization process
     ////////////////////////////////////////////////////////////////////////////
 
-    if (getBinarization(dc, seType, 999, &prefix, &suffix) == FAILURE)
+    if (getBinarization(dc, seType, blk_UNKNOWN, &prefix, &suffix) == FAILURE)
     {
         TRACE_ERROR(CABAC, "Fatal error during Binarization process");
         exit(EXIT_FAILURE);
@@ -382,7 +385,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     ////////////////////////////////////////////////////////////////////////////
 
     // Prefix
-    if (decodingProcessFlow(dc, seType, 999, 999, &prefix) == FAILURE)
+    if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &prefix) == FAILURE)
     {
         TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process");
         exit(EXIT_FAILURE);
@@ -391,7 +394,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     // Suffix ?
     if (suffix.maxBinIdxCtx != -1)
     {
-        if (decodingProcessFlow(dc, seType, 999, 999, &suffix) == FAILURE)
+        if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &suffix) == FAILURE)
         {
             TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process");
             exit(EXIT_FAILURE);

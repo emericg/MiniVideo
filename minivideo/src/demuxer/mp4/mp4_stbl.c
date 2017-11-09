@@ -1013,7 +1013,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                 uint8_t URLLength = read_bits(bitstr, 8);
                 if (URLLength)
                 {
-                    uint8_t *URL = malloc(URLLength);
+                    uint8_t *URL = (uint8_t *)malloc(URLLength);
 
                     // read string
                     for (unsigned i = 0; i < URLLength; i++)

@@ -191,7 +191,7 @@ uint8_t *read_asf_binary(Bitstream_t *bitstr, const int sizeBytes,
 
     if (sizeBytes > 0)
     {
-        data = malloc(sizeBytes+1);
+        data = (uint8_t *)malloc(sizeBytes+1);
         if (data)
         {
             for (int i = 0; i < sizeBytes; i++)
@@ -237,7 +237,7 @@ char *read_asf_string_ascii(Bitstream_t *bitstr, const int sizeChar,
 
     if (sizeChar > 0)
     {
-        string = malloc(sizeChar+1);
+        string = (char*)malloc(sizeChar+1);
         if (string)
         {
             for (int i = 0; i < sizeChar; i++)
@@ -274,7 +274,7 @@ char *read_asf_string_utf16(Bitstream_t *bitstr, const int sizeChar,
     {
         //int sizeBytes = sizeChar * 2;
 
-        string = malloc(sizeChar+1);
+        string = (char*)malloc(sizeChar+1);
         if (string)
         {
             for (int i = 0; i < sizeChar; i++)

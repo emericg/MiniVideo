@@ -166,8 +166,9 @@ typedef enum BlockType_e
     blk_CHROMA_DC_Cb  = 4,
     blk_CHROMA_DC_Cr  = 5,
     blk_CHROMA_AC_Cb  = 6,
-    blk_CHROMA_AC_Cr  = 7
+    blk_CHROMA_AC_Cr  = 7,
 
+    blk_UNKNOWN       = 999
 } BlockType_e;
 
 /*!

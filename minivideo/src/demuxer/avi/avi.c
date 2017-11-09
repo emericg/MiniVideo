@@ -56,7 +56,7 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
     }
     else
     {
-        char *string = malloc(chunk_header->dwSize);
+        char *string = (char *)malloc(chunk_header->dwSize);
 
         if (string == NULL)
         {

@@ -103,7 +103,7 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Mastering Metadata");
 
-    track->video->Colour->MasteringMetadata = calloc(1, sizeof(mkv_track_video_colour_mastering_t));
+    track->video->Colour->MasteringMetadata = (mkv_track_video_colour_mastering_t*)calloc(1, sizeof(mkv_track_video_colour_mastering_t));
     if (track->video->Colour->MasteringMetadata == NULL)
         retcode = FAILURE;
     mkv_track_video_colour_mastering_t *mastering = track->video->Colour->MasteringMetadata;
@@ -186,7 +186,7 @@ static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElem
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Projection");
 
-    track->video->Projection = calloc(1, sizeof(mkv_track_video_projection_t));
+    track->video->Projection = (mkv_track_video_projection_t *)calloc(1, sizeof(mkv_track_video_projection_t));
     if (track->video->Projection == NULL)
         retcode = FAILURE;
     mkv_track_video_projection_t *projection = track->video->Projection;
@@ -243,7 +243,7 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Colour");
 
-    track->video->Colour = calloc(1, sizeof(mkv_track_video_colour_t));
+    track->video->Colour = (mkv_track_video_colour_t*)calloc(1, sizeof(mkv_track_video_colour_t));
     if (track->video->Colour == NULL)
         retcode = FAILURE;
     mkv_track_video_colour_t *colour = track->video->Colour;
@@ -327,7 +327,7 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Video");
 
-    track->video = calloc(1, sizeof(mkv_track_video_t));
+    track->video = (mkv_track_video_t*)calloc(1, sizeof(mkv_track_video_t));
     if (track->video == NULL)
         retcode = FAILURE;
 
@@ -424,7 +424,7 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Audio");
 
-    track->audio = calloc(1, sizeof(mkv_track_audio_t));
+    track->audio = (mkv_track_audio_t*)calloc(1, sizeof(mkv_track_audio_t));
     if (track->audio == NULL)
         retcode = FAILURE;
 
@@ -479,7 +479,7 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Entry Operation");
 
-    track->operation = calloc(1, sizeof(mkv_track_operation_t));
+    track->operation = (mkv_track_operation_t*)calloc(1, sizeof(mkv_track_operation_t));
     if (track->operation == NULL)
         retcode = FAILURE;
 
@@ -521,7 +521,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Content Encoding");
 
-    track->encodings->encoding = calloc(1, sizeof(mkv_track_encoding_t));
+    track->encodings->encoding = (mkv_track_encoding_t*)calloc(1, sizeof(mkv_track_encoding_t));
     if (track->encodings->encoding == NULL)
         retcode = FAILURE;
     mkv_track_encoding_t *encoding = track->encodings->encoding;
@@ -653,7 +653,7 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Content Encodings");
 
-    track->encodings = calloc(1, sizeof(mkv_track_encodings_t));
+    track->encodings = (mkv_track_encodings_t*)calloc(1, sizeof(mkv_track_encodings_t));
     if (track->encodings == NULL)
         retcode = FAILURE;
 

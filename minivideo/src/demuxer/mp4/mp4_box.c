@@ -352,7 +352,7 @@ uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *na
 {
     TRACE_2(MP4, "read_mp4_data()");
 
-    uint8_t *value = malloc(bytes+1);
+    uint8_t *value = (uint8_t *)malloc(bytes+1);
     if (value)
     {
         for (int i = 0; i < bytes; i++)
@@ -392,7 +392,7 @@ char *read_mp4_string(Bitstream_t *bitstr, int bytes, FILE *xml, const char *nam
 {
     TRACE_2(MP4, "read_mp4_string()");
 
-    char *value = malloc(bytes+1);
+    char *value = (char *)malloc(bytes+1);
     if (value)
     {
         for (int i = 0; i < bytes; i++)

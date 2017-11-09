@@ -52,7 +52,7 @@ void make_path_absolute(const char *path, char *path_absolute)
     TRACE_2(IO, "make_path_absolute()");
 
     // Check if 'path' is absolute
-    char *pos_first_slash_p = strchr(path, '/');
+    const char *pos_first_slash_p = strchr(path, '/');
 
     if (pos_first_slash_p != NULL &&
         (pos_first_slash_p - path) == 0)

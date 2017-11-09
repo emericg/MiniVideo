@@ -281,7 +281,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
         for (unsigned sid = 0; sid < map->sample_count; sid++)
         {
-            mkv_sample_t *s = vector_get(&track->sample_vector, sid);
+            mkv_sample_t *s = (mkv_sample_t *)vector_get(&track->sample_vector, sid);
 
             if (track->TrackType == MKV_TRACK_VIDEO)
             {
@@ -390,7 +390,7 @@ void mkv_clean(mkv_t *mkv)
                 int samplecount = vector_count(&mkv->tracks[i]->sample_vector);
                 for (int j = 0; j < samplecount; j++)
                 {
-                    mkv_sample_t *s = vector_get(&mkv->tracks[i]->sample_vector, j);
+                    mkv_sample_t *s = (mkv_sample_t *)vector_get(&mkv->tracks[i]->sample_vector, j);
                     free(s);
                 }
                 vector_free(&mkv->tracks[i]->sample_vector);

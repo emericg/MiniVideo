@@ -64,7 +64,7 @@ int parse_sa3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned int *channel_map = NULL;
     if (num_channels > 0)
     {
-        channel_map = malloc(num_channels);
+        channel_map = (unsigned int*)malloc(num_channels);
         for (unsigned i = 0; i < num_channels; i++)
         {
             channel_map[i] = read_bits(bitstr, 32);

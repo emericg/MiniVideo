@@ -192,7 +192,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->channel_count = track->channel_count;
             map->bit_per_sample = track->sample_size_bits;
 
-            map->channel_mode = track->channel_mode;
+            map->channel_mode = (ChannelMode_e)track->channel_mode;
         }
         else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
@@ -214,8 +214,8 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 map->pixel_aspect_ratio_v = 1;
             }
 
-            map->stereo_mode = track->stereo;
-            map->video_projection = track->projection;
+            map->stereo_mode = (StereoMode_e)track->stereo;
+            map->video_projection = (Projection_e)track->projection;
 
             map->frame_count_idr = track->stss_entry_count;
 

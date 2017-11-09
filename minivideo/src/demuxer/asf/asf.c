@@ -60,7 +60,7 @@ static int parse_bitratemutualexclusion(Bitstream_t *bitstr, AsfObject_t *obj, a
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Bitrate Mutual Exclusion");
 
-    asf->asfh.bme = calloc(1, sizeof(AsfBitrateMutualExclusionObject_t));
+    asf->asfh.bme = (AsfBitrateMutualExclusionObject_t*)calloc(1, sizeof(AsfBitrateMutualExclusionObject_t));
     if (asf->asfh.bme)
     {
         read_asf_guid(bitstr, asf->asfh.bme->ExclusionType, asf->xml, "ExclusionType");
@@ -84,7 +84,7 @@ static int parse_errorcorrection(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *a
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Error Correction");
 
-    asf->asfh.ec = calloc(1, sizeof(AsfErrorCorrectionObject_t));
+    asf->asfh.ec = (AsfErrorCorrectionObject_t*)calloc(1, sizeof(AsfErrorCorrectionObject_t));
     if (asf->asfh.ec)
     {
         read_asf_guid(bitstr, asf->asfh.ec->ErrorCorrectionType, asf->xml, "ErrorCorrectionType");
@@ -106,7 +106,7 @@ static int parse_padding(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Padding");
 
-    asf->asfh.pad = calloc(1, sizeof(AsfPaddingObject_t));
+    asf->asfh.pad = (AsfPaddingObject_t*)calloc(1, sizeof(AsfPaddingObject_t));
     if (asf->asfh.pad)
     {
         asf->asfh.pad->PaddingDataLength = obj->size - 24; // 24 = sizeof(obj->guid) + sizeof(obj->size)
@@ -128,7 +128,7 @@ static int parse_digitalsignature(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Digital Signature");
 
-    asf->asfh.ds = calloc(1, sizeof(AsfDigitalSignatureObject_t));
+    asf->asfh.ds = (AsfDigitalSignatureObject_t*)calloc(1, sizeof(AsfDigitalSignatureObject_t));
     if (asf->asfh.ds)
     {
         asf->asfh.ds->SignatureType = read_asf_int32(bitstr, asf->xml, "SignatureType");
@@ -151,7 +151,7 @@ static int parse_extendedcontentencryption(Bitstream_t *bitstr, AsfObject_t *obj
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Extended Content Encryption");
 
-    asf->asfh.ece = calloc(1, sizeof(AsfExtendedContentEncryptionObject_t));
+    asf->asfh.ece = (AsfExtendedContentEncryptionObject_t*)calloc(1, sizeof(AsfExtendedContentEncryptionObject_t));
     if (asf->asfh.ece)
     {
         asf->asfh.ece->DataSize = read_asf_int32(bitstr, asf->xml, "DataSize");
@@ -173,7 +173,7 @@ static int parse_contentencryption(Bitstream_t *bitstr, AsfObject_t *obj, asf_t 
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Content Encryption");
 
-    asf->asfh.ce = calloc(1, sizeof(AsfContentEncryptionObject_t));
+    asf->asfh.ce = (AsfContentEncryptionObject_t*)calloc(1, sizeof(AsfContentEncryptionObject_t));
     if (asf->asfh.ce)
     {
         asf->asfh.ce->SecretDataLength = read_asf_int32(bitstr, asf->xml, "SecretDataLength");
@@ -201,7 +201,7 @@ static int parse_contentbranding(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *a
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Content Branding");
 
-    asf->asfh.cb = calloc(1, sizeof(AsfContentBrandingObject_t));
+    asf->asfh.cb = (AsfContentBrandingObject_t*)calloc(1, sizeof(AsfContentBrandingObject_t));
     if (asf->asfh.cb)
     {
         asf->asfh.cb->BannerImageType = read_asf_int32(bitstr, asf->xml, "BannerImageType");
@@ -243,20 +243,20 @@ static int parse_streambitrateproperties(Bitstream_t *bitstr, AsfObject_t *obj, 
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Stream Bitrate Properties");
 
-    asf->asfh.sbp = calloc(1, sizeof(AsfStreamBitratePropertiesObject_t));
+    asf->asfh.sbp = (AsfStreamBitratePropertiesObject_t*)calloc(1, sizeof(AsfStreamBitratePropertiesObject_t));
     if (asf->asfh.sbp)
     {
         asf->asfh.sbp->BitrateRecordsCount = read_asf_int16(bitstr, asf->xml, "BitrateRecordsCount");
         if (asf->asfh.sbp->BitrateRecordsCount > 0)
         {
-            asf->asfh.sbp->BitrateRecords = malloc(asf->asfh.sbp->BitrateRecordsCount * sizeof(AsfBitrateRecord_t *));
+            asf->asfh.sbp->BitrateRecords = (AsfBitrateRecord_t**)malloc(asf->asfh.sbp->BitrateRecordsCount * sizeof(AsfBitrateRecord_t *));
             if (asf->asfh.sbp->BitrateRecords)
             {
                 for (int i = 0; i < asf->asfh.sbp->BitrateRecordsCount; i++)
                 {
                     xmlSpacer(asf->xml, "Bitrate Record", i);
 
-                    asf->asfh.sbp->BitrateRecords[i] = calloc(1, sizeof(AsfBitrateRecord_t));
+                    asf->asfh.sbp->BitrateRecords[i] = (AsfBitrateRecord_t*)calloc(1, sizeof(AsfBitrateRecord_t));
                     parse_bitraterecord(bitstr, asf->asfh.sbp->BitrateRecords[i], asf);
                 }
             }
@@ -310,20 +310,20 @@ static int parse_extendedcontentdescription(Bitstream_t *bitstr, AsfObject_t *ob
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Extended Content Description");
 
-    asf->asfh.ecd = calloc(1, sizeof(AsfExtendedContentDescriptionObject_t));
+    asf->asfh.ecd = (AsfExtendedContentDescriptionObject_t*)calloc(1, sizeof(AsfExtendedContentDescriptionObject_t));
     if (asf->asfh.ecd)
     {
         asf->asfh.ecd->ContentDescriptorsCount = read_asf_int16(bitstr, asf->xml, "ContentDescriptorsCount");
         if (asf->asfh.ecd->ContentDescriptorsCount > 0)
         {
-            asf->asfh.ecd->ContentDescriptors = malloc(asf->asfh.ecd->ContentDescriptorsCount * sizeof(AsfContentDescriptor_t *));
+            asf->asfh.ecd->ContentDescriptors = (AsfContentDescriptor_t**)malloc(asf->asfh.ecd->ContentDescriptorsCount * sizeof(AsfContentDescriptor_t *));
             if (asf->asfh.ecd->ContentDescriptors)
             {
                 for (int i = 0; i < asf->asfh.ecd->ContentDescriptorsCount; i++)
                 {
                     xmlSpacer(asf->xml, "Content Descriptor", i);
 
-                    asf->asfh.ecd->ContentDescriptors[i] = calloc(1, sizeof(AsfContentDescriptor_t));
+                    asf->asfh.ecd->ContentDescriptors[i] = (AsfContentDescriptor_t*)calloc(1, sizeof(AsfContentDescriptor_t));
                     parse_contentdescriptor(bitstr, asf->asfh.ecd->ContentDescriptors[i], asf);
                 }
             }
@@ -345,7 +345,7 @@ static int parse_contentdescription(Bitstream_t *bitstr, AsfObject_t *obj, asf_t
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Content Description");
 
-    asf->asfh.cd = calloc(1, sizeof(AsfContentDescriptionObject_t));
+    asf->asfh.cd = (AsfContentDescriptionObject_t*)calloc(1, sizeof(AsfContentDescriptionObject_t));
     if (asf->asfh.cd)
     {
         asf->asfh.cd->TitleLength = read_asf_int16(bitstr, asf->xml, "TitleLength");
@@ -411,7 +411,7 @@ static int parse_codeclist(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
     print_asf_object(obj);
     write_asf_object(obj, asf->xml, "Codec List");
 
-    asf->asfh.cl = calloc(1, sizeof(AsfCodecListObject_t));
+    asf->asfh.cl = (AsfCodecListObject_t*)calloc(1, sizeof(AsfCodecListObject_t));
     if (asf->asfh.cl)
     {
         read_asf_guid(bitstr, asf->asfh.cl->Reserved, asf->xml, "Reserved");
@@ -419,14 +419,14 @@ static int parse_codeclist(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
         asf->asfh.cl->CodecEntriesCount = read_asf_int32(bitstr, asf->xml, "CodecEntriesCount");
         if (asf->asfh.cl->CodecEntriesCount > 0)
         {
-            asf->asfh.cl->CodecEntries = malloc(asf->asfh.cl->CodecEntriesCount * sizeof(AsfCodecEntry_t *));
+            asf->asfh.cl->CodecEntries = (AsfCodecEntry_t**)malloc(asf->asfh.cl->CodecEntriesCount * sizeof(AsfCodecEntry_t *));
             if (asf->asfh.cl->CodecEntries)
             {
                 for (int i = 0; i < asf->asfh.cl->CodecEntriesCount; i++)
                 {
                     xmlSpacer(asf->xml, "Codec Entry", i);
 
-                    asf->asfh.cl->CodecEntries[i] = calloc(1, sizeof(AsfCodecEntry_t));
+                    asf->asfh.cl->CodecEntries[i] = (AsfCodecEntry_t*)calloc(1, sizeof(AsfCodecEntry_t));
                     parse_codecentry(bitstr, asf, asf->asfh.cl->CodecEntries[i]);
                 }
             }

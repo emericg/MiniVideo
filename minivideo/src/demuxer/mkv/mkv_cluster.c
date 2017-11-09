@@ -157,7 +157,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 
                 if ((unsigned)mkv->tracks_count >= stn && mkv->tracks[stn])
                 {
-                    mkv_sample_t *s = malloc(sizeof(mkv_sample_t));
+                    mkv_sample_t *s = (mkv_sample_t *)malloc(sizeof(mkv_sample_t));
                     if (s)
                     {
                         s->idr = read_bit(bitstr);

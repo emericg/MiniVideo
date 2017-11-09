@@ -73,7 +73,8 @@ typedef struct binarization_t
 
 void residual_block_cabac(DecodingContext_t *dc,
                           int *coeffLevel,
-                          const int startIdx, const int endIdx, const int maxNumCoeff,
+                          const int startIdx, const int endIdx,
+                          const int maxNumCoeff,
                           const int blkType, const int blxIdx);
 
 /* ************************************************************************** */

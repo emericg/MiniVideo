@@ -26,7 +26,6 @@
 
 // minivideo headers
 #include "minivideo_typedef.h"
-#include "import.h"
 #include "bitstream_map.h"
 
 /* ************************************************************************** */
@@ -72,6 +71,9 @@ typedef struct Bitstream_t
 
 } Bitstream_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 /* ************************************************************************** */
 
 Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint32_t buffer_size);
@@ -103,4 +105,8 @@ int64_t bitstream_get_absolute_byte_offset(Bitstream_t *bitstr);
 int64_t bitstream_get_absolute_bit_offset(Bitstream_t *bitstr);
 
 /* ************************************************************************** */
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
 #endif // BITSTREAM_H

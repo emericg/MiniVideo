@@ -274,7 +274,7 @@ int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, avi_t *avi,  AviTr
             {
                 start = track->index_count;
                 track->index_count += nEntriesInUse;
-                track->index_entries = realloc(track->index_entries, track->index_count * sizeof(AviIndexEntries_t));
+                track->index_entries = (AviIndexEntries_t*)realloc(track->index_entries, track->index_count * sizeof(AviIndexEntries_t));
             }
 
             // Parse index entries

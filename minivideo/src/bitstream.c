@@ -26,6 +26,7 @@
 #include "bitstream_utils.h"
 #include "minitraces.h"
 #include "minivideo_typedef.h"
+#include "import.h"
 
 // C POSIX library
 #ifndef _MSC_VER
@@ -240,7 +241,7 @@ int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t si
     if (bitstr->buffer == NULL)
     {
         bitstr->buffer_size = size;
-        bitstr->buffer = malloc(bitstr->buffer_size);
+        bitstr->buffer = (uint8_t *)malloc(bitstr->buffer_size);
     }
 
     if (bitstr->buffer == NULL)
@@ -330,7 +331,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
         {
             unsigned int buffer_size_saved = bitstr->buffer_size;
             bitstr->buffer_size = (unsigned int)(bitstr->bitstream_size - bitstr->bitstream_offset);
-            bitstr->buffer = realloc(bitstr->buffer, bitstr->buffer_size);
+            bitstr->buffer = (uint8_t*)realloc(bitstr->buffer, bitstr->buffer_size);
 
             if (bitstr->buffer == NULL)
             {
