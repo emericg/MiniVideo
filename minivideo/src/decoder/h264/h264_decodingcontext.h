@@ -67,6 +67,15 @@ typedef struct DecodingContext_t
     // SEI
     sei_t *active_sei;              //!< Current SEI
 
+    // Some useful parameters (shortcuts from SPS/PPS)
+    unsigned profile_idc;           //!< Current H.264 profile, set from SPS
+    unsigned ChromaArrayType;       //!< Current subsampling scheme, set from SPS
+    bool entropy_coding_mode_flag;  //!< Current entropy coding method, set from PPS
+
+    // Quantization parameters
+    int normAdjust4x4[6][4][4];     //!< Used to build LevelScale4x4. Computed during decoder initialization.
+    int normAdjust8x8[6][8][8];     //!< Used to build LevelScale8x8. Computed during decoder initialization.
+
     // Slice
     bool IdrPicFlag;                //!< Current frame type (INTRA=1, INTER=0)
     unsigned frame_num;             //!< Current frame number, set from slice
@@ -76,15 +85,6 @@ typedef struct DecodingContext_t
     unsigned CurrMbAddr;            //!< Address of the current macroblock
     unsigned PicSizeInMbs;          //!< Number of macroblocks per frame
     Macroblock_t **mb_array;        //!< Array containing all macroblocks of current frame
-
-    // Some useful parameters
-    unsigned profile_idc;           //!< Current H.264 profile, set from SPS
-    unsigned ChromaArrayType;       //!< Current subsampling scheme, set from SPS
-    bool entropy_coding_mode_flag;  //!< Current entropy coding method, set from PPS
-
-    // Quantization parameters
-    int normAdjust4x4[6][4][4];     //!< Used to build LevelScale4x4. Computed during decoder initialization.
-    int normAdjust8x8[6][8][8];     //!< Used to build LevelScale8x8. Computed during decoder initialization.
 
 } DecodingContext_t;
 

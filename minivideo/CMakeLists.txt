@@ -9,8 +9,8 @@ cmake_policy(SET CMP0054 NEW)
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 9)
-set(minivideo_VERSION_PATCH 1)
+set(minivideo_VERSION_MINOR 10)
+set(minivideo_VERSION_PATCH 0)
 
 
 # Build settings
@@ -100,25 +100,25 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
     set(ENABLE_DEBUG 1)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
     set(CMAKE_VERBOSE_MAKEFILE off)
 else()
     message(STATUS "> This is a RELEASE build.")
-    set(CMAKE_C_FLAGS_RELEASE "-O3 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     set(ENABLE_DEBUG 0)
 endif()
 
 # Add per-compiler custom rules
-if(${CMAKE_C_COMPILER_ID} MATCHES "Clang")
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     message(STATUS "Building with Clang compiler")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
-elseif(${CMAKE_C_COMPILER_ID} STREQUAL "Intel")
-    message(STATUS "Building with Intel C compiler")
-elseif(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+    message(STATUS "Building with Intel C++ compiler")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     message(STATUS "Building with GCC compiler")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
-elseif(${CMAKE_C_COMPILER_ID} STREQUAL "MSVC")
-    message(STATUS "Building with Visual Studio C compiler")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+    message(STATUS "Building with Visual Studio C++ compiler")
 endif()
 
 
@@ -130,7 +130,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     message(STATUS "Building on Linux plateform")
 
-    set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    set(CMAKE_CXX_FLAGS "-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
     set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-z,now -Wl,-z,relro")
 
 endif()
@@ -140,7 +140,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     message(STATUS "Building on macOS plateform")
 
-    set(CMAKE_C_FLAGS "-std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    set(CMAKE_CXX_FLAGS "-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
     set(CMAKE_SHARED_LINKER_FLAGS "-lm")
 
 endif()
@@ -173,59 +173,59 @@ configure_file("${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
 
 # MiniVideo source code
 set(minivideo_SRC
-    src/minivideo.c
+    src/minivideo.cpp
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
-        src/minivideo_codecs.c src/minivideo_avutils.h
-        src/minivideo_fourcc.c src/minivideo_twocc.c src/minivideo_uuid.c
-        src/utils.c src/thirdparty/simple_vector.c
-    src/minitraces.c src/minitraces_conf.h
-    src/bitstream.c
-        src/bitstream_utils.c
-        src/bitstream_map.c
-    src/import.c
-    src/export.c
-        src/export_utils.c
+        src/minivideo_codecs.cpp src/minivideo_avutils.h
+        src/minivideo_fourcc.cpp src/minivideo_twocc.cpp src/minivideo_uuid.cpp
+        src/utils.cpp src/thirdparty/simple_vector.c
+    src/minitraces.cpp src/minitraces_conf.h
+    src/bitstream.cpp
+        src/bitstream_utils.cpp
+        src/bitstream_map.cpp
+    src/import.cpp
+    src/export.cpp
+        src/export_utils.cpp
         src/thirdparty/stb_image_write.h
-    src/demuxer/mp4/mp4.c src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4_box.c
-        src/demuxer/mp4/mp4_stbl.c src/demuxer/mp4/mp4_gopro.c src/demuxer/mp4/mp4_spatial.c src/demuxer/mp4/mp4_convert.c
-    src/demuxer/mp3/mp3.c src/demuxer/mp3/mp3_struct.h
-    src/demuxer/mkv/mkv.c src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.c
-        src/demuxer/mkv/mkv_tracks.c src/demuxer/mkv/mkv_cluster.c src/demuxer/mkv/mkv_codec.c src/demuxer/mkv/mkv_convert.c
-    src/demuxer/esparser/esparser.c
-    src/demuxer/idr_filter.c
-    src/demuxer/xml_mapper.c
-    src/demuxer/mpeg/pes/pes.c src/demuxer/mpeg/pes/pes_struct.h
+    src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4_box.cpp
+        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
+    src/demuxer/mp3/mp3.cpp src/demuxer/mp3/mp3_struct.h
+    src/demuxer/mkv/mkv.cpp src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.cpp
+        src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp src/demuxer/mkv/mkv_convert.cpp
+    src/demuxer/esparser/esparser.cpp
+    src/demuxer/idr_filter.cpp
+    src/demuxer/xml_mapper.cpp
+    src/demuxer/mpeg/pes/pes.cpp src/demuxer/mpeg/pes/pes_struct.h
         src/demuxer/mpeg/descriptor_struct.h
-        src/demuxer/mpeg/ps/ps.c src/demuxer/mpeg/ps/ps_struct.h
-        src/demuxer/mpeg/ts/ts.c src/demuxer/mpeg/ts/ts_struct.h
-    src/demuxer/riff/riff.c src/demuxer/riff/riff_common.c src/demuxer/riff/riff_struct.h
-        src/demuxer/avi/avi.c src/demuxer/avi/avi_convert.c src/demuxer/avi/avi_struct.h
-        src/demuxer/wave/wave.c src/demuxer/wave/wave_convert.c src/demuxer/wave/wave_struct.h
-    src/demuxer/asf/asf.c src/demuxer/asf/asf_object.c src/demuxer/asf/asf_convert.c src/demuxer/asf/asf_struct.h
-    src/muxer/muxer.c
-        src/muxer/pes_packetizer.c
-    src/depacketizer/depack.c src/depacketizer/depack_struct.h
-        src/depacketizer/h264/depack_h264.c
-    src/decoder/h264/h264.c
+        src/demuxer/mpeg/ps/ps.cpp src/demuxer/mpeg/ps/ps_struct.h
+        src/demuxer/mpeg/ts/ts.cpp src/demuxer/mpeg/ts/ts_struct.h
+    src/demuxer/riff/riff.cpp src/demuxer/riff/riff_common.cpp src/demuxer/riff/riff_struct.h
+        src/demuxer/avi/avi.cpp src/demuxer/avi/avi_convert.cpp src/demuxer/avi/avi_struct.h
+        src/demuxer/wave/wave.cpp src/demuxer/wave/wave_convert.cpp src/demuxer/wave/wave_struct.h
+    src/demuxer/asf/asf.cpp src/demuxer/asf/asf_object.cpp src/demuxer/asf/asf_convert.cpp src/demuxer/asf/asf_struct.h
+    src/muxer/muxer.cpp
+        src/muxer/pes_packetizer.cpp
+    src/depacketizer/depack.cpp src/depacketizer/depack_struct.h
+        src/depacketizer/h264/depack_h264.cpp
+    src/decoder/h264/h264.cpp
         src/decoder/h264/h264_decodingcontext.h
-        src/decoder/h264/h264_expgolomb.c
-        src/decoder/h264/h264_cavlc.c
+        src/decoder/h264/h264_expgolomb.cpp
+        src/decoder/h264/h264_cavlc.cpp
         src/decoder/h264/h264_cavlc_tables.h
-        src/decoder/h264/h264_cabac.c
+        src/decoder/h264/h264_cabac.cpp
         src/decoder/h264/h264_cabac_tables.h
-        src/decoder/h264/h264_nalu.c
-        src/decoder/h264/h264_parameterset.c
+        src/decoder/h264/h264_nalu.cpp
+        src/decoder/h264/h264_parameterset.cpp
         src/decoder/h264/h264_parameterset_struct.h
-        src/decoder/h264/h264_slice.c
+        src/decoder/h264/h264_slice.cpp
         src/decoder/h264/h264_slice_struct.h
-        src/decoder/h264/h264_macroblock.c
-        src/decoder/h264/h264_macroblock_utils.c
+        src/decoder/h264/h264_macroblock.cpp
+        src/decoder/h264/h264_macroblock_utils.cpp
         src/decoder/h264/h264_macroblock_struct.h
-        src/decoder/h264/h264_intra_prediction.c
-        src/decoder/h264/h264_inter_prediction.c
-        src/decoder/h264/h264_spatial.c
-        src/decoder/h264/h264_transform.c
+        src/decoder/h264/h264_intra_prediction.cpp
+        src/decoder/h264/h264_inter_prediction.cpp
+        src/decoder/h264/h264_spatial.cpp
+        src/decoder/h264/h264_transform.cpp
 )
 
 

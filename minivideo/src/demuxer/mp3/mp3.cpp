@@ -58,22 +58,22 @@ static int mp3_indexer_track(MediaFile_t *media, mp3_t *mp3)
         if (mp3->audio_channels == 0)
         {
             track->channel_count = 2;
-            track->channel_mode = CHAN_STEREO;
+            //track->channel_mode = CHAN_STEREO;
         }
         else if (mp3->audio_channels == 1)
         {
             track->channel_count = 2;
-            track->channel_mode = CHAN_STEREO_JOINT;
+            //track->channel_mode = CHAN_STEREO_JOINT;
         }
         else if (mp3->audio_channels == 2)
         {
             track->channel_count = 2;
-            track->channel_mode = CHAN_DUAL;
+            //track->channel_mode = CHAN_DUAL;
         }
         else if (mp3->audio_channels == 3)
         {
             track->channel_count = 1;
-            track->channel_mode = CHAN_MONO;
+            //track->channel_mode = CHAN_MONO;
         }
 
         track->sampling_rate = mp3->audio_samplingrate;

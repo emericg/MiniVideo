@@ -193,7 +193,7 @@ void print_box_header(Mp4Box_t *box_header)
 /*!
  * \brief Write box header content to a file for the xmlMapper.
  */
-void write_box_header(Mp4Box_t *box_header, FILE *xml, char *title)
+void write_box_header(Mp4Box_t *box_header, FILE *xml, const char *title)
 {
     if (xml)
     {
@@ -217,7 +217,7 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml, char *title)
             else
                 boxtitle[0] = '\0';
 
-            fprintf(xml, "  <a %s fcc=\"%s\" tp=\"%s\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+            fprintf(xml, "  <a %s fcc=\"%s\" tp=\"%s\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                     boxtitle,
                     getFccString_le(box_header->boxtype, fcc),
                     boxatom,
@@ -278,7 +278,7 @@ uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name)
         TRACE_1(MP4, "* %s  = %u", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 

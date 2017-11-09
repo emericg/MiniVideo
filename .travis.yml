@@ -1,23 +1,29 @@
-os:
-  - linux
-  - osx
-
-dist: trusty
+language: cpp
 sudo: false
-
-language: c
 
 compiler:
   - clang
   - gcc
+os:
+  - linux
+  - osx
+
+# We need newer compilers for c++11
+install:
+  # /usr/bin/gcc is v4.8 by default, but newer gcc package (gcc-X prefixed) is available.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi; fi;
+  # /usr/bin/clang is v3.4 by default, and newer clang package (clang-X.Y prefixed) is available.
+  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then if  [ "$CXX" = "clang++" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi; fi;
 
 addons:
   apt:
     packages:
+      - g++-6
       - linux-headers-generic
 
 before_script:
-  - cd minivideo/build
+  - cd minivideo/build/
   - cmake ..
 
-script: make
+script:
+   - make

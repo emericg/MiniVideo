@@ -5,13 +5,14 @@
 
 TARGET       = minivideo
 TEMPLATE     = lib
+CONFIG      += c++11
 CONFIG      += shared_and_static build_all
 CONFIG      -= qt
 
-VERSION      = 0.9.1
+VERSION      = 0.10.0
 DEFINES     += minivideo_VERSION_MAJOR=0
-DEFINES     += minivideo_VERSION_MINOR=9
-DEFINES     += minivideo_VERSION_PATCH=1
+DEFINES     += minivideo_VERSION_MINOR=10
+DEFINES     += minivideo_VERSION_PATCH=0
 
 # build artifacts
 OBJECTS_DIR  = build/artifacts
@@ -23,9 +24,9 @@ DESTDIR      = build/
 
 # build configuration
 unix {
-    QMAKE_CFLAGS += -std=c99 -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
-    QMAKE_CFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
-    QMAKE_CFLAGS += -fPIC
+    QMAKE_CXXFLAGS += -fPIC
+    QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+    QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable
 }
 
 linux {
@@ -41,24 +42,24 @@ win32 {
 }
 
 # minivideo files
-SOURCES += src/*.c \
-           src/decoder/h264/*.c \
-           src/demuxer/*.c \
-           src/demuxer/asf/*.c \
-           src/demuxer/avi/*.c \
-           src/demuxer/esparser/*.c \
-           src/demuxer/mkv/*.c \
-           src/demuxer/mp3/*.c \
-           src/demuxer/mp4/*.c \
-           src/demuxer/mpeg/pes/*.c \
-           src/demuxer/mpeg/ps/*.c \
-           src/demuxer/mpeg/ts/*.c \
-           src/demuxer/riff/*.c \
-           src/demuxer/wave/*.c \
-           src/depacketizer/*.c \
-           src/depacketizer/h264/*.c \
-           src/muxer/*.c \
-           src/thirdparty/*.c
+SOURCES += src/*.cpp \
+           src/decoder/h264/*.cpp \
+           src/demuxer/*.cpp \
+           src/demuxer/asf/*.cpp \
+           src/demuxer/avi/*.cpp \
+           src/demuxer/esparser/*.cpp \
+           src/demuxer/mkv/*.cpp \
+           src/demuxer/mp3/*.cpp \
+           src/demuxer/mp4/*.cpp \
+           src/demuxer/mpeg/pes/*.cpp \
+           src/demuxer/mpeg/ps/*.cpp \
+           src/demuxer/mpeg/ts/*.cpp \
+           src/demuxer/riff/*.cpp \
+           src/demuxer/wave/*.cpp \
+           src/depacketizer/*.cpp \
+           src/depacketizer/h264/*.cpp \
+           src/muxer/*.cpp \
+           src/thirdparty/*.cpp
 
 HEADERS += src/*.h \
            src/decoder/h264/*.h \

@@ -342,7 +342,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
 
             // We cannot rely on the fccHandler from the container,
             // but we should have extracted the correct codec infos from strh
-            mytrack->stream_codec = track->strh.fccHandler;
+            //mytrack->stream_codec = track->strh.fccHandler;
 
             mytrack->stream_packetized = true;
 
