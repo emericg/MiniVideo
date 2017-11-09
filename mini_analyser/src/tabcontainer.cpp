@@ -132,6 +132,8 @@ void tabContainer::on_tabWidget_tracks_currentChanged(int index)
 
 void tabContainer::loadMedia(const MediaWrapper *wrap)
 {
+    closeMedia();
+
     if (wrap && wrap->media)
     {
         ui->tabWidget->blockSignals(true);
@@ -148,8 +150,6 @@ void tabContainer::loadMedia(const MediaWrapper *wrap)
         {
             return;
         }
-
-        clearPreviews();
 
         loadXmlFile();
         loadTracks();
@@ -823,11 +823,11 @@ bool tabContainer::loadXmlFile()
     //qDebug() << "loadXmlFile()";
     bool status = true;
 
-    if (!media)
-        return false;
-
     ui->treeWidget->clear();
     xmlMapFile.close();
+
+    if (!media)
+        return false;
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
     QString filename;
