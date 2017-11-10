@@ -618,7 +618,8 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
     }
 
     // Compute qPI, QPC and QPprimeC
-    qPI = iClip3(-sps->QpBdOffsetC, 51, mb->QPY + qPOffset);
+    int low = sps->QpBdOffsetC;
+    qPI = iClip3(-low, 51, mb->QPY + qPOffset);
 
     if (qPI > 29)
     {

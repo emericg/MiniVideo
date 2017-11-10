@@ -130,13 +130,11 @@ int read_se(Bitstream_t *bitstr)
 unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool intracoding_flag)
 {
     TRACE_1(EXPGO, "read_me()");
-    unsigned int coded_block_pattern = 0;
 
-    int cat = 1;
+    unsigned coded_block_pattern = 0;
+    unsigned cat = 1;
     if (ChromaArrayType == 0 || ChromaArrayType == 3)
-    {
         cat = 0;
-    }
 
     // Fetch syntax element 'coded_block_pattern' value
     coded_block_pattern = NCBP[cat][get_codeNum(bitstr)][!intracoding_flag];

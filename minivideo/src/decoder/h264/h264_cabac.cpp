@@ -1352,7 +1352,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
         TRACE_3(CABAC, " binIdx > maxBinIdxCtx (%i < %i)", binIdx, maxBinIdxCtx);
     }
 
-    while (i < 22)
+    while (i < 21)
     {
         i++;
 

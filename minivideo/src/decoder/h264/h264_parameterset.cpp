@@ -2150,7 +2150,7 @@ hrd_t *decodeHRD(Bitstream_t *bitstr)
         hrd->cpb_size_scale = read_bits(bitstr, 4);
 
         for (unsigned SchedSelIdx = 0;
-             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
              SchedSelIdx++)
         {
             hrd->bit_rate_value_minus1[SchedSelIdx] = read_ue(bitstr);
@@ -2207,7 +2207,7 @@ static int checkHRD(hrd_t *hrd)
         //TRACE_1(PARAM, "      - cpb_size_scale    : %i", hrd->cpb_size_scale);
 
         for (unsigned SchedSelIdx = 0;
-             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
              SchedSelIdx++)
         {
             if (hrd->bit_rate_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
@@ -2267,8 +2267,9 @@ static void printHRD(hrd_t *hrd)
     TRACE_1(PARAM, "      - bit_rate_scale  = %u", hrd->bit_rate_scale);
     TRACE_1(PARAM, "      - cpb_size_scale  = %u", hrd->cpb_size_scale);
 
-    unsigned int SchedSelIdx = 0;
-    for (SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
+    for (unsigned SchedSelIdx = 0;
+         SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
+         SchedSelIdx++)
     {
         TRACE_1(PARAM, "      - bit_rate_value_minus1[%u]       = %u", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
         TRACE_1(PARAM, "      - cpb_size_value_minus1[%u]       = %u", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx]);
@@ -2294,7 +2295,9 @@ static void mapHRD(hrd_t *hrd, FILE *xml)
         fprintf(xml, "  <bit_rate_scale>%u</bit_rate_scale>\n", hrd->bit_rate_scale);
         fprintf(xml, "  <cpb_size_scale>%u</cpb_size_scale>\n", hrd->cpb_size_scale);
 
-        for (unsigned SchedSelIdx = 0; SchedSelIdx <= hrd->cpb_cnt_minus1; SchedSelIdx++)
+        for (unsigned SchedSelIdx = 0;
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx++)
         {
             fprintf(xml, "  <bit_rate_value_minus1_%u>%u</bit_rate_value_minus1_%u>\n", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx], SchedSelIdx);
             fprintf(xml, "  <cpb_size_value_minus1_%u>%u</cpb_size_value_minus1_%u>\n", SchedSelIdx, hrd->cpb_size_value_minus1[SchedSelIdx], SchedSelIdx);

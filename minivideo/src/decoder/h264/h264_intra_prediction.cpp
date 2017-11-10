@@ -60,7 +60,6 @@ static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip);
 static int Intra_8x8_Horizontal_Up(uint8_t pred8x8L[8][8], intrapred8x8_t *ip);
 
-
 // 16x16
 static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock_t *mb);
 static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip);

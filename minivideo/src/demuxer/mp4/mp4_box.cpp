@@ -173,7 +173,7 @@ void print_box_header(Mp4Box_t *box_header)
         TRACE_2(MP4, "* box type      : 0x%X", box_header->boxtype);
         if (box_header->boxtype == BOX_UUID)
         {
-            char guid_str[38];
+            char guid_str[39];
             getGuidString(box_header->usertype, guid_str);
             TRACE_2(MP4, "* box usertype  : %s", guid_str);
         }
@@ -226,7 +226,7 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml, const char *title)
 
             if (box_header->boxtype == BOX_UUID)
             {
-                char guid_str[38];
+                char guid_str[39];
                 getGuidString(box_header->usertype, guid_str);
                 fprintf(xml, "  <usertype>%s</usertype>\n", guid_str);
             }
