@@ -141,10 +141,10 @@ int64_t read_asf_int64(Bitstream_t *bitstr, FILE *xml, const char *name)
 
     if (name)
     {
-        TRACE_1(ASF, "* %s  = %"PRId64"", name, value);
+        TRACE_1(ASF, "* %s  = %" PRId64 "", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 
@@ -172,10 +172,10 @@ int64_t read_asf_int(Bitstream_t *bitstr, const int n,
 
     if (name)
     {
-        TRACE_1(ASF, "* %s  = %"PRId64"", name, value);
+        TRACE_1(ASF, "* %s  = %" PRId64 "", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 
@@ -376,7 +376,7 @@ void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title)
         else
         {
             if (title != NULL)
-                fprintf(xml, "  <a tt=\"%s\" guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a tt=\"%s\" guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                     title,
                     asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
                     asf_object->guid[4], asf_object->guid[5],
@@ -386,7 +386,7 @@ void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title)
                     asf_object->offset_start,
                     asf_object->size);
             else
-                fprintf(xml, "  <a guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                     asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
                     asf_object->guid[4], asf_object->guid[5],
                     asf_object->guid[6], asf_object->guid[7],

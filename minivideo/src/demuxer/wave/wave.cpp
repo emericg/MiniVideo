@@ -608,8 +608,8 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
         if (wave->xml)
         {
             write_chunk_header(data_header, wave->xml);
-            fprintf(wave->xml, "  <datasOffset>%"PRId64"</datasOffset>\n", wave->data.datasOffset);
-            fprintf(wave->xml, "  <datasSize>%"PRId64"</datasSize>\n", wave->data.datasSize);
+            fprintf(wave->xml, "  <datasOffset>%" PRId64 "</datasOffset>\n", wave->data.datasOffset);
+            fprintf(wave->xml, "  <datasSize>%" PRId64 "</datasSize>\n", wave->data.datasSize);
             fprintf(wave->xml, "  </a>\n");
         }
     }

@@ -796,7 +796,7 @@ int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
             fprintf(mp4->xml, "  <text_justification>%u</text_justification>\n", text_justification);
             fprintf(mp4->xml, "  <background_color>0x%X%X%X</background_color>\n",
                     backgroundcolor_r, backgroundcolor_g, backgroundcolor_b);
-            fprintf(mp4->xml, "  <default_text_box>%lu</default_text_box>\n", default_text_box);
+            fprintf(mp4->xml, "  <default_text_box>%" PRId64 "</default_text_box>\n", default_text_box);
             fprintf(mp4->xml, "  <font_number>%u</font_number>\n", font_number);
             fprintf(mp4->xml, "  <font_face>%u</font_face>\n", font_face);
             fprintf(mp4->xml, "  <foreground_color>0x%X%X%X</foreground_color>\n",
@@ -1429,7 +1429,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         {
             xmlSpacer(mp4->xml, "SequenceParameterSet infos", i);
             fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
-            fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%li</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
+            fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%" PRId64 "</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
         }
 
         fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
@@ -1437,7 +1437,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         {
             xmlSpacer(mp4->xml, "PictureParameterSet", i);
             fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
-            fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%li</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
+            fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%" PRId64 "</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }
 
         for (i = 0; i < track->sps_count; i++)
@@ -1622,7 +1622,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
         fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
         fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
-        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%lu</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
         fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
 
         for (unsigned j = 0; j < numOfArrays; j++)
@@ -2108,7 +2108,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <ctts_sample_delta>[");
         for (unsigned i = 0; i < track->ctts_entry_count; i++)
             for (unsigned j = 0; j < track->ctts_sample_count[i]; j++)
-                fprintf(mp4->xml, "%li, ", track->ctts_sample_offset[i]);
+                fprintf(mp4->xml, "%" PRId64 ", ", track->ctts_sample_offset[i]);
         fprintf(mp4->xml, "]</ctts_sample_delta>\n");
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -2450,7 +2450,7 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <entry_count>%u</entry_count>\n", track->stco_entry_count);
         fprintf(mp4->xml, "  <chunk_offset>[");
         for (unsigned i = 0; i < track->stco_entry_count; i++)
-            fprintf(mp4->xml, "%li, ", track->stco_chunk_offset[i]);
+            fprintf(mp4->xml, "%" PRId64 ", ", track->stco_chunk_offset[i]);
         fprintf(mp4->xml, "]</chunk_offset>\n");
         fprintf(mp4->xml, "  </a>\n");
     }

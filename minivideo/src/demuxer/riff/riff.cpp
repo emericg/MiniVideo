@@ -144,14 +144,14 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
 
             if (list_header->dwList == fcc_RIFF)
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%"PRId64"\" sz=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%" PRId64 "\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
             }
             else
             {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%"PRId64"\" sz=\"%u\">\n",
+                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%" PRId64 "\" sz=\"%u\">\n",
                         getFccString_le(list_header->dwFourCC, fcc),
                         list_header->offset_start,
                         list_header->dwSize + 8);
@@ -278,7 +278,7 @@ void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
         else
         {
             char fcc[5];
-            fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF chunk\" off=\"%li\" sz=\"%u\">\n",
+            fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF chunk\" off=\"%" PRId64 "\" sz=\"%u\">\n",
                     getFccString_le(chunk_header->dwFourCC, fcc),
                     chunk_header->offset_start,
                     chunk_header->dwSize + 8);

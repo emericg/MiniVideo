@@ -59,7 +59,7 @@ SOURCES += src/*.cpp \
            src/depacketizer/*.cpp \
            src/depacketizer/h264/*.cpp \
            src/muxer/*.cpp \
-           src/thirdparty/*.cpp
+           src/thirdparty/*.c
 
 HEADERS += src/*.h \
            src/decoder/h264/*.h \

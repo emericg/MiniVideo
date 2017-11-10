@@ -501,10 +501,10 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml, "Media Header");
-        fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", track->creation_time);
-        fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", track->modification_time);
+        fprintf(mp4->xml, "  <creation_time>%" PRId64 "</creation_time>\n", track->creation_time);
+        fprintf(mp4->xml, "  <modification_time>%" PRId64 "</modification_time>\n", track->modification_time);
         fprintf(mp4->xml, "  <timescale>%u</timescale>\n", track->timescale);
-        fprintf(mp4->xml, "  <duration>%lu</duration>\n", track->duration);
+        fprintf(mp4->xml, "  <duration>%" PRId64 "</duration>\n", track->duration);
         fprintf(mp4->xml, "  <language>%c%c%c</language>\n",
                 track->language[0], track->language[1], track->language[2]);
         fprintf(mp4->xml, "  </a>\n");
@@ -1056,10 +1056,10 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml, "Track Header");
-        fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", track->creation_time);
-        fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", track->modification_time);
+        fprintf(mp4->xml, "  <creation_time>%" PRId64 "</creation_time>\n", track->creation_time);
+        fprintf(mp4->xml, "  <modification_time>%" PRId64 "</modification_time>\n", track->modification_time);
         fprintf(mp4->xml, "  <track_ID>%u</track_ID>\n", track->id);
-        fprintf(mp4->xml, "  <duration>%lu</duration>\n", track->duration);
+        fprintf(mp4->xml, "  <duration>%" PRId64 "</duration>\n", track->duration);
         fprintf(mp4->xml, "  <layer>%i</layer>\n", layer);
         fprintf(mp4->xml, "  <alternate_group>%i</alternate_group>\n", alternate_group);
         fprintf(mp4->xml, "  <volume>%i</volume>\n", volume);
@@ -1268,10 +1268,10 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     if (mp4->xml)
     {
         write_box_header(box_header, mp4->xml, "Movie Header");
-        fprintf(mp4->xml, "  <creation_time>%lu</creation_time>\n", mp4->creation_time);
-        fprintf(mp4->xml, "  <modification_time>%lu</modification_time>\n", mp4->modification_time);
+        fprintf(mp4->xml, "  <creation_time>%" PRId64 "</creation_time>\n", mp4->creation_time);
+        fprintf(mp4->xml, "  <modification_time>%" PRId64 "</modification_time>\n", mp4->modification_time);
         fprintf(mp4->xml, "  <timescale>%u</timescale>\n", mp4->timescale);
-        fprintf(mp4->xml, "  <duration>%lu</duration>\n", mp4->duration);
+        fprintf(mp4->xml, "  <duration>%" PRId64 "</duration>\n", mp4->duration);
         fprintf(mp4->xml, "  <rate>%u</rate>\n", rate);
         fprintf(mp4->xml, "  <volume>%u</volume>\n", volume);
         fprintf(mp4->xml, "  <matrix>[%i, %i, %i, %i, %i, %i, %i, %i, %i]</matrix>\n",

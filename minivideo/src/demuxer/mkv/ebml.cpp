@@ -206,13 +206,13 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
         else
         {
             if (title != NULL)
-                fprintf(xml, "  <a tt=\"%s\" id=\"0x%X\" tp=\"EBML\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a tt=\"%s\" id=\"0x%X\" tp=\"EBML\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                         title,
                         element->eid,
                         element->offset_start,
                         (element->eid_size + element->size_size +  element->size));
             else
-                fprintf(xml, "  <a tt=\"Unknown\" id=\"0x%X\" tp=\"EBML\" off=\"%"PRId64"\" sz=\"%"PRId64"\">\n",
+                fprintf(xml, "  <a tt=\"Unknown\" id=\"0x%X\" tp=\"EBML\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                         element->eid,
                         element->offset_start,
                         (element->eid_size + element->size_size +  element->size));
@@ -234,7 +234,7 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr, EbmlElement_t *element,
         TRACE_1(MKV, "* %s  = %llu", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 
@@ -252,7 +252,7 @@ uint64_t read_ebml_data_uint_UID(Bitstream_t *bitstr, EbmlElement_t *element,
         TRACE_1(MKV, "* %08X  = %llu", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>0x%"PRIX64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>0x%" PRIX64 "</%s>\n", name, value, name);
         }
     }
 
@@ -272,7 +272,7 @@ int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
         TRACE_1(MKV, "* %s  = %lli", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 
@@ -292,7 +292,7 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
         TRACE_1(MKV, "* %s  = %lli", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%"PRId64"</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
         }
     }
 

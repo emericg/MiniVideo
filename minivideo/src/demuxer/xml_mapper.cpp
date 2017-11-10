@@ -123,7 +123,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
                         minivideo_VERSION_MAJOR, minivideo_VERSION_MINOR, minivideo_VERSION_PATCH) < 0) retcode = FAILURE;
             if (fprintf(*xml, "<header>\n") < 0) retcode = FAILURE;
             if (fprintf(*xml, "  <format>%s</format>\n", getContainerString(media->container, false)) < 0) retcode = FAILURE;
-            if (fprintf(*xml, "  <size>%"PRId64"</size>\n", media->file_size) < 0) retcode = FAILURE;
+            if (fprintf(*xml, "  <size>%" PRId64 "</size>\n", media->file_size) < 0) retcode = FAILURE;
             if (fprintf(*xml, "  <path>%s</path>\n", media->file_path) < 0) retcode = FAILURE;
             if (fprintf(*xml, "</header>\n") < 0) retcode = FAILURE;
             if (fprintf(*xml, "<structure>\n") < 0) retcode = FAILURE;

@@ -4,11 +4,15 @@ sudo: false
 compiler:
   - clang
   - gcc
+
 os:
   - linux
   - osx
 
-# We need newer compilers for c++11
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
 install:
   # /usr/bin/gcc is v4.8 by default, but newer gcc package (gcc-X prefixed) is available.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi; fi;
