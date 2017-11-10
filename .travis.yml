@@ -9,20 +9,22 @@ os:
   - linux
   - osx
 
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
+osx_image: xcode9.1
 
 install:
   # /usr/bin/gcc is v4.8 by default, but newer gcc package (gcc-X prefixed) is available.
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi; fi;
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then export CXX="g++-7" CC="gcc-7"; fi; fi;
   # /usr/bin/clang is v3.4 by default, and newer clang package (clang-X.Y prefixed) is available.
-  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then if  [ "$CXX" = "clang++" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi; fi;
+  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then if  [ "$CXX" = "clang++" ]; then export CXX="clang++-5.0" CC="clang-5.0"; fi; fi;
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty
     packages:
-      - g++-6
+      - g++-7
+      - clang-5.0
       - linux-headers-generic
 
 before_script:

@@ -28,16 +28,19 @@
 #include "minitraces.h"
 #include "minivideo_typedef.h"
 
-// C POSIX library
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-
 // C standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+// C POSIX library
+#ifdef _MSC_VER
+    #include <direct.h>
+    #define getcwd _getcwd
+#else
+    #include <unistd.h>
+#endif
 
 /* ************************************************************************** */
 
