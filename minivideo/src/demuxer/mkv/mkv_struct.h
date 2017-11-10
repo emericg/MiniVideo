@@ -144,6 +144,13 @@ typedef struct mkv_attachments_t
 
 /* ************************************************************************** */
 
+typedef enum MkvSampleType_e
+{
+    sampletype_Block,
+    sampletype_SimpleBlock
+
+} MkvSampleType_e;
+
 typedef struct mkv_sample_t
 {
     int64_t offset;

@@ -63,16 +63,14 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
 {
     TRACE_1(EXPGO, "get_codeNum()");
 
-    int leadingZeroBits = -1;
-    unsigned int b = 0;
-    unsigned int codeNum = 0;
-
     // Loop until a non zero bit is found
-    for (b = 0; !b; leadingZeroBits++)
+    int leadingZeroBits = -1;
+    for (int b = 0; !b; leadingZeroBits++)
     {
         b = read_bit(bitstr);
     }
 
+    unsigned int codeNum = 0;
     if (leadingZeroBits > 0)
     {
         codeNum = (unsigned int)(pow(2, leadingZeroBits) - 1 + read_bits(bitstr, leadingZeroBits));

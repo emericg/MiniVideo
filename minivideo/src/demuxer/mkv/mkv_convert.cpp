@@ -373,15 +373,20 @@ void mkv_clean(mkv_t *mkv)
                 }
                 if (mkv->tracks[i]->encodings)
                 {
+                    free(mkv->tracks[i]->encodings->encoding);
                     free(mkv->tracks[i]->encodings);
                 }
 
                 // SPS
+                for (unsigned sps_i = 0; sps_i < mkv->tracks[i]->sps_count && sps_i < MAX_SPS; sps_i++)
+                    freeSPS(&mkv->tracks[i]->sps_array[sps_i]);
                 free(*mkv->tracks[i]->sps_array);
                 free(mkv->tracks[i]->sps_sample_offset);
                 free(mkv->tracks[i]->sps_sample_size);
 
                 // PPS
+                for (unsigned pps_i = 0; pps_i < mkv->tracks[i]->pps_count && pps_i < MAX_PPS; pps_i++)
+                    freePPS(&mkv->tracks[i]->pps_array[pps_i]);
                 free(*mkv->tracks[i]->pps_array);
                 free(mkv->tracks[i]->pps_sample_offset);
                 free(mkv->tracks[i]->pps_sample_size);

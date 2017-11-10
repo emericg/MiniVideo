@@ -69,7 +69,7 @@ int read_asf_guid(Bitstream_t *bitstr, uint8_t guid[16],
 
     if (name)
     {
-        char guid_str[38];
+        char guid_str[39];
         getGuidString(guid, guid_str);
         TRACE_1(ASF, "* %s  = %s", name, guid_str);
         if (xml)

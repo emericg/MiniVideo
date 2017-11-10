@@ -60,9 +60,101 @@ uint32_t read_ebmllike_value(Bitstream_t *bitstr)
 }
 
 /* ************************************************************************** */
+
+mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                              MkvSampleType_e type, int64_t cluster_timecode)
+{
+    uint32_t stn = read_ebmllike_value(bitstr) - 1;
+    int16_t stc = (int)read_bits(bitstr, 16);
+    uint8_t lacing = 0;
+
+    //TRACE_1(MKV, "block track number: %u", stn);
+    //TRACE_1(MKV, "block timecode: %u", stc + cluster.Timecode);
+
+    mkv_sample_t *s = (mkv_sample_t *)calloc(1, sizeof(mkv_sample_t));
+    if (s)
+    {
+        if (type == sampletype_SimpleBlock)
+        {
+            s->idr = read_bit(bitstr);
+            skip_bits(bitstr, 3);
+            s->visible = read_bit(bitstr);
+            lacing = read_bits(bitstr, 2);
+            s->discardable = read_bit(bitstr);
+        }
+        else // if (type == sampletype_Block)
+        {
+            skip_bits(bitstr, 4);
+            s->visible = read_bit(bitstr);
+            lacing = read_bits(bitstr, 2);
+            skip_bits(bitstr, 1);
+        }
+
+        if (lacing)
+        {
+            TRACE_WARNING(MKV, "Lacing used, but not really supported...");
+
+            uint8_t frame_count_minus1 = read_bits(bitstr, 8);
+            if (lacing == 0x01 || lacing == 0x02)
+            {
+                for (int i = 0; i < frame_count_minus1; i++)
+                {
+                    uint8_t frame_x_size = read_bits(bitstr, 8);
+                }
+            }
+        }
+
+        s->offset = bitstream_get_absolute_byte_offset(bitstr);
+        s->size = element->size;
+        s->timecode = stc + cluster_timecode;
+
+        // Index sample
+        if ((unsigned)mkv->tracks_count >= stn && mkv->tracks[stn])
+        {
+            vector_add(&(mkv->tracks[stn]->sample_vector), s);
+        }
+        else
+        {
+            TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
+        }
+
+        // Map sample
+        if (mkv->xml)
+        {
+            if (type == sampletype_SimpleBlock)
+            {
+                write_ebml_element(element, mkv->xml, "SimpleBlock");
+                fprintf(mkv->xml, "  <track>%u</track>\n", stn);
+
+                fprintf(mkv->xml, "  <idr>%u</idr>\n", s->idr);
+                fprintf(mkv->xml, "  <visible>%u</visible>\n", s->visible);
+                fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
+                fprintf(mkv->xml, "  <discardable>%u</discardable>\n", s->discardable);
+            }
+            else
+            {
+                write_ebml_element(element, mkv->xml, "Block");
+                fprintf(mkv->xml, "  <track>%u</track>\n", stn);
+
+                fprintf(mkv->xml, "  <visible>%u</visible>\n", s->visible);
+                fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
+            }
+
+            fprintf(mkv->xml, "  <offset>%" PRId64 "</offset>\n", s->offset);
+            fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
+            fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
+            fprintf(mkv->xml, "  </a>\n");
+        }
+    }
+
+    return s;
+}
+
+
+/* ************************************************************************** */
 /* ************************************************************************** */
 
-int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, int64_t cluster_timecode)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_blockgroup()" CLR_RESET);
     int retcode = SUCCESS;
@@ -84,9 +176,9 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             switch (element_sub.eid)
             {
             case eid_Block:
-                write_ebml_element(&element_sub, mkv->xml, "Block");
-                if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+                mkv_parse_block(bitstr, &element_sub, mkv, sampletype_Block, cluster_timecode);
                 break;
+
             case eid_BlockDuration:
                 /*BlockDuration =*/ read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BlockDuration");
                 break;
@@ -99,6 +191,12 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             case eid_CodecState:
                 /*CodecState =*/ read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "CodecState");
                 break;
+            case eid_DiscardPadding:
+                /*DiscardPadding =*/ read_ebml_data_int(bitstr, &element_sub, mkv->xml, "DiscardPadding");
+                break;
+
+            // TODO BlockAdditions
+            // TODO slices
 
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
@@ -145,41 +243,12 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
                 cluster.Timecode = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Timecode");
                 break;
 
-            case eid_SimpleBlock:
-            {
-                write_ebml_element(&element_sub, mkv->xml, "SimpleBlock");
-                if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
-
-                uint32_t stn = read_ebmllike_value(bitstr) - 1;
-                int16_t stc = (int)read_bits(bitstr, 16);
-                //TRACE_1(MKV, "simpleblock track number: %u", stn);
-                //TRACE_1(MKV, "simpleblock timecode: %u", stc + cluster.Timecode);
-
-                if ((unsigned)mkv->tracks_count >= stn && mkv->tracks[stn])
-                {
-                    mkv_sample_t *s = (mkv_sample_t *)malloc(sizeof(mkv_sample_t));
-                    if (s)
-                    {
-                        s->idr = read_bit(bitstr);
-                        skip_bits(bitstr, 3);
-                        s->visible = read_bit(bitstr);
-                        uint8_t lacing = read_bits(bitstr, 2);
-                        s->discardable = read_bit(bitstr);
-
-                        s->offset = bitstream_get_absolute_byte_offset(bitstr);
-                        s->size = element_sub.size;
-                        s->timecode = stc + cluster.Timecode;
-                        vector_add(&(mkv->tracks[stn]->sample_vector), s);
-                    }
-                }
-                else
-                {
-                    TRACE_WARNING(MKV, "simpleblock with no associated track: %i", stn);
-                }
-            } break;
-
             case eid_BlockGroup:
-                retcode = mkv_parse_blockgroup(bitstr, &element_sub, mkv);
+                retcode = mkv_parse_blockgroup(bitstr, &element_sub, mkv, cluster.Timecode);
+                break;
+
+            case eid_SimpleBlock:
+                mkv_parse_block(bitstr, &element_sub, mkv, sampletype_SimpleBlock, cluster.Timecode);
                 break;
 
             default:

@@ -994,6 +994,8 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
         child_item->setData(0, Qt::UserRole, offset);
         if (type == "param")
             child_item->setIcon(0, icon_param);
+        else if (title == "Track Entry")
+            child_item->setIcon(0, icon_track);
         else
             child_item->setIcon(0, icon_atom);
 

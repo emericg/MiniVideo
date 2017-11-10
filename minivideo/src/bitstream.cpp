@@ -419,29 +419,29 @@ void free_bitstream(Bitstream_t **bitstr_ptr)
  */
 uint32_t read_bit(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bit()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
-    uint32_t bit = 0;
-    uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bit()" CLR_RESET " starting at bit offset %lli", bitstream_get_absolute_bit_offset(bitstr));
+
     uint32_t start_byte = (uint32_t)(bitstr->buffer_offset / 8);
 
     // Fill new data into the bitstream buffer, if needed
     ////////////////////////////////////////////////////////////////////////
 
-    if (start_byte > bitstr->buffer_size)
+    if (start_byte >= bitstr->buffer_size)
     {
         if (buffer_feed_dynamic(bitstr, -1) == FAILURE)
         {
             return FAILURE;
         }
 
-        bp = 7 - (uint32_t)(bitstr->buffer_offset % 8);
         start_byte = (uint32_t)(bitstr->buffer_offset / 8);
     }
 
     // Read one bit
     ////////////////////////////////////////////////////////////////////////
 
-    bit = (uint32_t)(bitstr->buffer[start_byte] >> bp);
+    uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
+
+    uint32_t bit = (uint32_t)(bitstr->buffer[start_byte] >> bp);
     bit &= 0x01;
 
     // Update bit offset
@@ -468,7 +468,7 @@ uint32_t read_bit(Bitstream_t *bitstr)
  */
 uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits(%u)" CLR_RESET " starting at bit offset %lli", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint32_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
@@ -589,7 +589,7 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
  */
 uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits_64(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_bits_64(%u)" CLR_RESET " starting at bit offset %lli", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint64_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
@@ -710,7 +710,7 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
  */
 uint32_t read_byte_aligned(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "read_byte_aligned()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "read_byte_aligned()" CLR_RESET " starting at bit offset %lli", bitstream_get_absolute_bit_offset(bitstr));
     uint32_t byte = 0;
 
     // Fill new data into the bitstream buffer, if needed
@@ -730,7 +730,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
 #if ENABLE_DEBUG
     if ((bitstr->buffer_offset % 8) != 0)
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %lli + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
 #endif // ENABLE_DEBUG
@@ -763,7 +763,7 @@ uint32_t read_byte_aligned(Bitstream_t *bitstr)
  */
 uint32_t next_byte_aligned(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_byte_aligned()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_byte_aligned()" CLR_RESET " starting at bit offset %lli", bitstream_get_absolute_bit_offset(bitstr));
     uint32_t byte = 0;
 
     // Fill new data into the bitstream buffer, if needed
@@ -783,7 +783,7 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
 #if ENABLE_DEBUG
     if ((bitstr->buffer_offset % 8) != 0)
     {
-        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %i + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
+        TRACE_ERROR(BITS, "<b> " BLD_BLUE "read_byte_aligned() on unaligned offset" CLR_RESET " at current byte offset %lli + %i bit(s)", bitstream_get_absolute_byte_offset(bitstr), bitstream_get_absolute_bit_offset(bitstr)%8);
         return FAILURE;
     }
 #endif // ENABLE_DEBUG
@@ -814,30 +814,29 @@ uint32_t next_byte_aligned(Bitstream_t *bitstr)
  */
 uint32_t next_bit(Bitstream_t *bitstr)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_bit()" CLR_RESET " starting at bit offset %i", bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_bit()" CLR_RESET " starting at bit offset %lli", bitstream_get_absolute_bit_offset(bitstr));
 
-    uint32_t bit = 0;
-    uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
     uint32_t start_byte = (uint32_t)(bitstr->buffer_offset / 8);
 
     // Fill new data into the bitstream buffer, if needed
     ////////////////////////////////////////////////////////////////////////
 
-    if (start_byte > bitstr->buffer_size)
+    if (start_byte >= bitstr->buffer_size)
     {
         if (buffer_feed_dynamic(bitstr, -1) == FAILURE)
         {
             return FAILURE;
         }
 
-        bp = 7 - (uint32_t)(bitstr->buffer_offset % 8);
         start_byte = (uint32_t)(bitstr->buffer_offset / 8);
     }
 
     // Read one bit
     ////////////////////////////////////////////////////////////////////////
 
-    bit = (uint32_t)(bitstr->buffer[start_byte] >> bp);
+    uint32_t bp = 7 - (uint32_t)(bitstr->buffer_offset % 8); // back padding, in bit
+
+    uint32_t bit = (uint32_t)(bitstr->buffer[start_byte] >> bp);
     bit &= 0x01;
 
     // Return result
@@ -861,7 +860,7 @@ uint32_t next_bit(Bitstream_t *bitstr)
  */
 uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
 {
-    TRACE_3(BITS, "<b> " BLD_BLUE "next_bits(%u)" CLR_RESET " starting at bit offset %i", n, bitstream_get_absolute_bit_offset(bitstr));
+    TRACE_3(BITS, "<b> " BLD_BLUE "next_bits(%u)" CLR_RESET " starting at bit offset %lli", n, bitstream_get_absolute_bit_offset(bitstr));
 
     uint32_t bits = 0;
     uint32_t fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit

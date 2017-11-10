@@ -1146,14 +1146,14 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
             pps->slice_group_map_type = read_ue(bitstr);
             if (pps->slice_group_map_type == 0)
             {
-                for (unsigned iGroup = 0; iGroup <= pps->num_slice_groups_minus1; iGroup++)
+                for (unsigned iGroup = 0; iGroup <= pps->num_slice_groups_minus1 && iGroup < 8; iGroup++)
                 {
                     pps->run_length_minus1[iGroup] = read_ue(bitstr);
                 }
             }
             else if (pps->slice_group_map_type == 2)
             {
-                for (unsigned iGroup = 0; iGroup < pps->num_slice_groups_minus1; iGroup++)
+                for (unsigned iGroup = 0; iGroup <= pps->num_slice_groups_minus1 && iGroup < 8; iGroup++)
                 {
                     pps->top_left[iGroup] = read_ue(bitstr);
                     pps->bottom_right[iGroup] = read_ue(bitstr);
