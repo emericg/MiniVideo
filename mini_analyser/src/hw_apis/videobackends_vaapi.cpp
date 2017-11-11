@@ -25,10 +25,10 @@
 #include "videobackends_vaapi.h"
 #include <minivideo_codecs.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -88,7 +88,7 @@ Desc decoder_profiles_vaapi[] =
     { VAProfileMPEG4Simple,                 CODEC_MPEG4_ASP,PROF_MPEG4_SP, 8 },
     { VAProfileMPEG4AdvancedSimple,         CODEC_MPEG4_ASP,PROF_MPEG4_ASP, 8 },
     { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,PROF_UNKNOWN, 8 },
-    { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 },
+//  { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED from libva 2.0.0
     { VAProfileH264Main,                    CODEC_H264,     PROF_H264_MP, 8 },
     { VAProfileH264High,                    CODEC_H264,     PROF_H264_HiP, 8 },
     { VAProfileVC1Simple,                   CODEC_VC1,      PROF_VC1_SIMPLE, 8 },
@@ -115,6 +115,12 @@ Desc decoder_profiles_vaapi[] =
     { VAProfileVP9Profile1,                 CODEC_VP9,      PROF_VP9_1, 8 },
     { VAProfileVP9Profile2,                 CODEC_VP9,      PROF_VP9_2, 12 },
     { VAProfileVP9Profile3,                 CODEC_VP9,      PROF_VP9_3, 12 },
+#endif
+#if VA_CHECK_VERSION(0, 40, 0)
+    // libva 1.8
+#endif
+#if VA_CHECK_VERSION(1,  0, 0)
+    // libva 2.0
 #endif
 };
 
@@ -185,7 +191,7 @@ bool VideoBackendsVAAPI::load(VideoBackendInfos &infos)
     {
         display = open_device_drm(drm_device);
     }
-    else
+    else //if (x11_display)
     {
         display = open_device_x11(x11_display);
     }

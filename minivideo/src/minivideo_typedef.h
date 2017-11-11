@@ -38,70 +38,11 @@
 #define SUCCESS      1
 
 /* ************************************************************************** */
-// Custom types
+// Types
 
-#if ENABLE_C99_STDINT
-    #include <inttypes.h>
-    #include <stdint.h>
-#else
-    // Defines custom types (if C99 <stdint.h> is not available)
-    // These types may have already been defined by your compiler
-
-    typedef signed char        int8_t;
-    typedef signed short       int16_t;
-    typedef signed int         int32_t;
-    typedef signed long long   int64_t;
-
-    typedef unsigned char      uint8_t;
-    typedef unsigned short     uint16_t;
-    typedef unsigned int       uint32_t;
-    typedef unsigned long long uint64_t;
-#endif // ENABLE_C99_STDINT
-
-/* ************************************************************************** */
-// Boolean support
-
-#if ENABLE_C99_STDBOOL
-    #include <stdbool.h>
-#else
-    // Software fallback (if C99 <stdbool.h> is not available)
-
-    typedef unsigned int   bool;
-    #define true       1
-    #define false      0
-#endif // ENABLE_C99_STDBOOL
-
-/* ************************************************************************** */
-// Memory alignment
-
-#if ENABLE_C11_STDALIGN
-    #include <stdlib.h>
-    #include <stdalign.h>
-#else
-    // Software fallback (if C11 <stdalign.h> is not available)
-/*
-#ifdef _WIN32
-    #include <malloc.h>
-
-    //! Aligned malloc from MSVC implementation
-    void *aligned_alloc(size_t alignment, size_t size)
-    {
-        void *__memptr = _aligned_malloc(size, alignment);
-        return __memptr;
-    }
-#else
-    #include <stdlib.h>
-
-    //! Aligned malloc from POSIX implementation
-    void *aligned_alloc(size_t alignment, size_t size)
-    {
-        void *__memptr = NULL;
-        posix_memalign(&__memptr, alignment, size);
-        return __memptr;
-    }
-#endif // _WIN32
-*/
-#endif // ENABLE_C11_STDALIGN
+#include <cstdbool>
+#include <cstdint>
+#include <cinttypes>
 
 /* ************************************************************************** */
 // Windows large file support

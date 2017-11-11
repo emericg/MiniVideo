@@ -25,10 +25,10 @@
 #include "videobackends_vdpau.h"
 #include <minivideo_codecs.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 #include <QDebug>
 

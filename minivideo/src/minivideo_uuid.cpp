@@ -26,8 +26,8 @@
 #include "minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 /* ************************************************************************** */
 

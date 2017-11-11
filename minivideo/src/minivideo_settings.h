@@ -34,9 +34,6 @@
 
 #define ENABLE_DEBUG        1  //!< Toggle debug and trace output
 #define ENABLE_COLORS       1  //!< Toggle colored terminal output
-#define ENABLE_C99_STDINT   1  //!< Toggle C99 <stdint.h> usage
-#define ENABLE_C99_STDBOOL  1  //!< Toggle C99 <stdbool.h> usage
-#define ENABLE_C11_STDALIGN 0  //!< Toggle C11 <stdalign.h> usage
 
 #define ENABLE_STBIMWRITE   1  //!< Toggle bundled stb_image_write support
 #define ENABLE_WEBP         0  //!< Toggle external libwebp support

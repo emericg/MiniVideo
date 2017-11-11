@@ -28,9 +28,6 @@
 #include "minivideo_avutils.h"
 #include "minivideo_export.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 /* ************************************************************************** */
 
 //! Container file formats
@@ -343,16 +340,12 @@ typedef enum Pictures_e
 
 /* ************************************************************************** */
 
-minivideo_EXPORT const char *getContainerString(Containers_e container, bool long_description);
-minivideo_EXPORT const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_description);
-minivideo_EXPORT const char *getPictureString(Pictures_e picture, bool long_description);
+minivideo_EXPORT const char *getContainerString(const Containers_e container, const bool long_description = false);
+minivideo_EXPORT const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description = false);
+minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bool long_description = false);
 
-minivideo_EXPORT const char *getContainerProfileString(ContainerProfiles_e profile, bool long_description);
-minivideo_EXPORT const char *getCodecProfileString(CodecProfiles_e profile, bool long_description);
+minivideo_EXPORT const char *getContainerProfileString(const ContainerProfiles_e profile, const bool long_description = false);
+minivideo_EXPORT const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description = false);
 
 /* ************************************************************************** */
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
 #endif // MINIVIDEO_CODECS_H

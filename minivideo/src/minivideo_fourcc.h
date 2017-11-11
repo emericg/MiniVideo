@@ -24,10 +24,6 @@
 #ifndef MINIVIDEO_FOURCC_H
 #define MINIVIDEO_FOURCC_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 // minivideo headers
 #include "minivideo_export.h"
 #include "minivideo_typedef.h"
@@ -44,6 +40,18 @@ extern "C" {
                                           (((uint32_t)((uint8_t)(c))) << 16) + \
                                           (((uint32_t)((uint8_t)(b))) <<  8) + \
                                           (((uint32_t)((uint8_t)(a)))      )))
+
+/* ************************************************************************** */
+
+constexpr uint32_t fourcc_be(char const fcc[5])
+{
+    return (fcc[0] << 24) | (fcc[1] << 16) | (fcc[2] << 8) | fcc[3];
+}
+
+constexpr uint32_t fourcc_le(char const fcc[5])
+{
+    return (fcc[3] << 24) | (fcc[2] << 16) | (fcc[1] << 8) | fcc[0];
+}
 
 /* ************************************************************************** */
 
@@ -70,6 +78,7 @@ minivideo_EXPORT char *getFccString_le(const uint32_t fcc_in, char fcc_out[5]);
  */
 minivideo_EXPORT char *getFccString_be(const uint32_t fcc_in, char fcc_out[5]);
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!
@@ -358,8 +367,4 @@ typedef enum fourcc_list_e
 } fourcc_list_e;
 
 /* ************************************************************************** */
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
 #endif // MINIVIDEO_FOURCC_H

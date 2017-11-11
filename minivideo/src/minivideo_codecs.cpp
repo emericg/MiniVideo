@@ -32,7 +32,7 @@
 
 /* ************************************************************************** */
 
-const char *getContainerString(Containers_e container, bool long_description)
+const char *getContainerString(const Containers_e container, const bool long_description)
 {
     if (long_description)
     {
@@ -172,7 +172,7 @@ const char *getContainerString(Containers_e container, bool long_description)
 
 /* ************************************************************************** */
 
-const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_description)
+const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description)
 {
     if (type == stream_AUDIO || type == stream_UNKNOWN)
     {
@@ -677,7 +677,7 @@ const char *getCodecString(StreamType_e type, Codecs_e codec, bool long_descript
 
 /* ************************************************************************** */
 
-const char *getPictureString(Pictures_e picture, bool long_description)
+const char *getPictureString(const Pictures_e picture, const bool long_description)
 {
     switch (picture)
     {
@@ -712,7 +712,7 @@ const char *getPictureString(Pictures_e picture, bool long_description)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-const char *getContainerProfileString(ContainerProfiles_e profile, bool long_description)
+const char *getContainerProfileString(const ContainerProfiles_e profile, const bool long_description)
 {
     switch (profile)
     {
@@ -772,7 +772,7 @@ const char *getContainerProfileString(ContainerProfiles_e profile, bool long_des
 
 /* ************************************************************************** */
 
-const char *getCodecProfileString(CodecProfiles_e profile, bool long_description)
+const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description)
 {
     switch (profile)
     {

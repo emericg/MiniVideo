@@ -1768,6 +1768,8 @@ int parse_clap(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
  * 8.5.2 Sample Description Box
  * 8.5.2.2 Syntax
  * 8.5.2.3 Semantics
+ *
+ * - https://developer.apple.com/library/mac/technotes/tn2227/_index.html
  */
 int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -1784,13 +1786,15 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
         colour_type == MV_FOURCC_BE('n','c','l','x')) // "on-screen colours"
     {
-        // https://developer.apple.com/library/mac/technotes/tn2227/_index.html
-
         colour_primaries = read_bits(bitstr, 16);
         transfer_characteristics = read_bits(bitstr, 16);
         matrix_coefficients = read_bits(bitstr, 16);
-        track->color_range = read_bit(bitstr);
-        unsigned int reserved = read_bits(bitstr, 7);
+
+        if (colour_type == MV_FOURCC_BE('n','c','l','x'))
+        {
+            track->color_range = read_bit(bitstr);
+            unsigned int reserved = read_bits(bitstr, 7);
+        }
 
         if (matrix_coefficients == 1)
         {

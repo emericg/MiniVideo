@@ -24,8 +24,6 @@
 #ifndef MINIVIDEO_AVUTILS_H
 #define MINIVIDEO_AVUTILS_H
 
-#include "minivideo_typedef.h"
-
 /* ************************************************************************** */
 
 //! Stream type
