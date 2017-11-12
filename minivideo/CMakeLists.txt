@@ -90,6 +90,8 @@ endif(DOXYGEN_FOUND)
 # Build configuration
 ###############################################################################
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Detect build type (default is release)
@@ -101,7 +103,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_VERBOSE_MAKEFILE off)
 else()
     message(STATUS "> This is a RELEASE build.")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     set(ENABLE_DEBUG 0)
 endif()
 
@@ -127,8 +129,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     message(STATUS "Building on Linux plateform")
 
-    set(CMAKE_CXX_FLAGS "-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
-    set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-z,now -Wl,-z,relro")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-z,now -Wl,-z,relro")
 
 endif()
 
@@ -137,8 +139,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     message(STATUS "Building on macOS plateform")
 
-    set(CMAKE_CXX_FLAGS "-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
-    set(CMAKE_SHARED_LINKER_FLAGS "-lm")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
 
 endif()
 
@@ -156,7 +158,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         include(GenerateExportHeader)
     endif()
 
-    set(CMAKE_SHARED_LINKER_FLAGS "-lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
 
 endif()
 
