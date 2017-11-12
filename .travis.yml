@@ -1,5 +1,5 @@
 language: cpp
-sudo: false
+sudo: required
 
 compiler:
   - clang
@@ -13,8 +13,10 @@ os:
 
 install:
   # /usr/bin/gcc is v4.8 by default, but newer gcc package (gcc-X prefixed) is available.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then sudo apt-get install -qq g++7; fi; fi;
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then export CXX="g++-7" CC="gcc-7"; fi; fi;
   # /usr/bin/clang is v3.4 by default, and newer clang package (clang-X.Y prefixed) is available.
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "g++" ]; then sudo apt-get install -qq clang-5.0; fi; fi;
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if  [ "$CXX" = "clang++" ]; then export CXX="clang++-5.0" CC="clang-5.0"; fi; fi;
 
 addons:
@@ -23,8 +25,6 @@ addons:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty-5.0
     packages:
-      - g++-7
-      - clang-5.0
       - linux-headers-generic
 
 before_script:
