@@ -29,8 +29,8 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #define INITIAL_SEARCH_WINDOW  4194304 // 4MiB
 #define GUESS_BUFFERSIZE        262144 // 256 KiB

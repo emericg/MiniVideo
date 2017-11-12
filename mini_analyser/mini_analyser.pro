@@ -4,19 +4,20 @@
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
+DESTDIR      = bin/
+
+VERSION      = 44
+DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
+
 TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport
-
-VERSION      = 43
-DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 # build artifacts
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
 RCC_DIR      = build/
 UI_DIR       = build/
-DESTDIR      = bin/
 
 # mini_analyser files
 SOURCES     += src/main.cpp \

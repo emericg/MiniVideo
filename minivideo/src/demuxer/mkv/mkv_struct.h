@@ -28,10 +28,10 @@
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_codecs.h"
 #include "../../thirdparty/simple_vector.h"
-
 #include "../../decoder/h264/h264_parameterset.h"
 
-#include <stdio.h>
+#include <cstdio>
+#include <vector>
 
 /* ************************************************************************** */
 

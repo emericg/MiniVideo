@@ -40,7 +40,6 @@
 /* ************************************************************************** */
 // Types
 
-#include <cstdbool>
 #include <cstdint>
 #include <cinttypes>
 
@@ -49,7 +48,7 @@
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 #if defined(_MSC_VER) || defined(__MINGW32__)
-    #include <stdio.h>
+    #include <cstdio>
 
     #undef stat64
     #define stat64 _stat64

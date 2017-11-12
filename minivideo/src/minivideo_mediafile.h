@@ -28,8 +28,9 @@
 #include "minivideo_mediastream.h"
 #include "minivideo_codecs.h"
 
-// C standard library
-#include <stdio.h>
+// C standard libraries
+#include <cstdio>
+#include <cstdint>
 
 /* ************************************************************************** */
 

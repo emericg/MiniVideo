@@ -29,6 +29,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <climits>
 
 // C++ standard libraries
 #include <limits>
@@ -267,7 +268,7 @@ int64_t i64max(int64_t a, int64_t b)
 
 short sabs(short x)
 {
-    static const short SHORT_BITS = (sizeof(short) * __CHAR_BIT__) - 1;
+    static const short SHORT_BITS = (sizeof(short) * CHAR_BIT) - 1;
     short y = (short) (x >> SHORT_BITS);
 
     return (short) ((x ^ y) - y);
@@ -275,7 +276,7 @@ short sabs(short x)
 
 int iabs(int x)
 {
-    static const int INT_BITS = (sizeof(int) * __CHAR_BIT__) - 1;
+    static const int INT_BITS = (sizeof(int) * CHAR_BIT) - 1;
     int y = x >> INT_BITS;
 
     return (x ^ y) - y;
@@ -288,7 +289,7 @@ double dabs(double x)
 
 int64_t i64abs(int64_t x)
 {
-    static const int64_t int64_t_BITS = (sizeof(int64_t) * __CHAR_BIT__) - 1;
+    static const int64_t int64_t_BITS = (sizeof(int64_t) * CHAR_BIT) - 1;
     int64_t y = x >> int64_t_BITS;
     return (x ^ y) - y;
 }

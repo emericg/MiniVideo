@@ -6,13 +6,13 @@
 TARGET       = mini_extractor
 TEMPLATE     = app
 CONFIG      += c++11
+DESTDIR      = bin/
 
 # build artifacts
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
 RCC_DIR      = build/
 UI_DIR       = build/
-DESTDIR      = build/
 
 # mini_extractor files
 SOURCES     += src/main.cpp

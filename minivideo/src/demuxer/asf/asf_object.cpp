@@ -32,12 +32,12 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
-#include <math.h>
-#include <limits.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cwchar>
+#include <cmath>
+#include <climits>
 
 /* ************************************************************************** */
 

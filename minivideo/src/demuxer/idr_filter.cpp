@@ -28,10 +28,10 @@
 #include "../minivideo_typedef.h"
 #include "../minitraces.h"
 
-// C standard library
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+// C standard libraries
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 /* ************************************************************************** */
 

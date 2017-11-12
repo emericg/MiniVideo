@@ -24,9 +24,6 @@
 #ifndef IMPORT_H
 #define IMPORT_H
 
-// C standard library
-#include <stdio.h>
-
 // minivideo headers
 #include "minivideo_mediafile.h"
 

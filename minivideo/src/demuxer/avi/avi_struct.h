@@ -27,7 +27,8 @@
 // minivideo headers
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_codecs.h"
-#include <stdio.h>
+
+#include <cstdio>
 
 /* ************************************************************************** */
 

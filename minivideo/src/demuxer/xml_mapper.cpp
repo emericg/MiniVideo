@@ -31,10 +31,10 @@
 #include <unistd.h>
 #endif
 
-// C standard library
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// C standard libraries
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #if defined(_MSC_VER)
 #include <windows.h>

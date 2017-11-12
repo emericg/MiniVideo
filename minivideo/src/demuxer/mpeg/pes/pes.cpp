@@ -28,10 +28,10 @@
 #include "../../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <climits>
+#include <cmath>
 
 /* ************************************************************************** */
 

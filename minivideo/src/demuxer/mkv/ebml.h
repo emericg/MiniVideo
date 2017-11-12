@@ -28,7 +28,7 @@
 #include "mkv_struct.h"
 #include "../../bitstream.h"
 
-#include <stdint.h>
+#include <cstdint>
 
 /* ************************************************************************** */
 

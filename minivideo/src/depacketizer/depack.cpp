@@ -33,8 +33,8 @@
 #include "../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 /* ************************************************************************** */
 

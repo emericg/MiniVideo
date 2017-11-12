@@ -28,9 +28,9 @@
 #include "minitraces.h"
 
 // C standard libraries
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 /* ************************************************************************** */
 
