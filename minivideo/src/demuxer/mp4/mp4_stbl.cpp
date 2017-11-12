@@ -1039,8 +1039,8 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             uint8_t streamType = read_bits(bitstr, 6); // FIXME
             uint8_t upStream = read_bits(bitstr, 2);
             uint32_t bufferSizeDB = read_bits(bitstr, 24);
-            int32_t maxBitRate = (int)read_bits(bitstr, 32);
-            int32_t avgBitRate = (int)read_bits(bitstr, 32);
+            int32_t maxBitRate = static_cast<int32_t>(read_bits(bitstr, 32));
+            int32_t avgBitRate = static_cast<int32_t>(read_bits(bitstr, 32));
 
             switch (objectTypeIndication)
             {
@@ -1779,21 +1779,20 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // Parse box content
     unsigned int colour_type = read_bits(bitstr, 32);
-    unsigned int colour_primaries;
-    unsigned int transfer_characteristics;
-    unsigned int matrix_coefficients;
+    unsigned int colour_primaries = 0;
+    unsigned int transfer_characteristics = 0;
+    unsigned int matrix_coefficients = 0;
 
-    if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
-        colour_type == MV_FOURCC_BE('n','c','l','x')) // "on-screen colours"
+    if (colour_type == fourcc_be("nclc") || colour_type == fourcc_be("nclx"))
     {
         colour_primaries = read_bits(bitstr, 16);
         transfer_characteristics = read_bits(bitstr, 16);
         matrix_coefficients = read_bits(bitstr, 16);
 
-        if (colour_type == MV_FOURCC_BE('n','c','l','x'))
+        if (colour_type == fourcc_be("nclx"))
         {
             track->color_range = read_bit(bitstr);
-            unsigned int reserved = read_bits(bitstr, 7);
+            /*unsigned int reserved =*/ read_bits(bitstr, 7);
         }
 
         if (matrix_coefficients == 1)
@@ -1809,24 +1808,26 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             track->color_matrix = CM_SMPTE240M;
         }
     }
-    else if (colour_type == MV_FOURCC_BE('r','I','C','C'))
+    else if (colour_type == fourcc_be("rICC"))
     {
-        // ICC_profile; // restricted ICC profile
+        // TODO // restricted ICC profile
     }
-    else if (colour_type == MV_FOURCC_BE('p','r','o','f'))
+    else if (colour_type == fourcc_be("prof"))
     {
-        // ICC_profile; // unrestricted ICC profile
+        // TODO // unrestricted ICC profile
     }
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
     TRACE_1(MP4, "> colour_type             : %s", getFccString_le(colour_type, fcc));
-    if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
-        colour_type == MV_FOURCC_BE('n','c','l','x'))
+    if (colour_type == fourcc_be("nclc") || colour_type == fourcc_be("nclx"))
     {
         TRACE_1(MP4, "> colour_primaries        : %u", colour_primaries);
         TRACE_1(MP4, "> transfer_characteristics: %u", transfer_characteristics);
         TRACE_1(MP4, "> matrix_coefficients     : %u", matrix_coefficients);
+    }
+    if (colour_type == fourcc_be("nclx"))
+    {
         TRACE_1(MP4, "> full_range_flag         : %u", track->color_range);
     }
 #endif // ENABLE_DEBUG
@@ -1836,8 +1837,14 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         write_box_header(box_header, mp4->xml, "Colour Information");
         fprintf(mp4->xml, "  <colour_type>%s</colour_type>\n", getFccString_le(colour_type, fcc));
-        if (colour_type == MV_FOURCC_BE('n','c','l','c') ||
-            colour_type == MV_FOURCC_BE('n','c','l','x'))
+        if (colour_type == fourcc_be("nclc") || colour_type == fourcc_be("nclx"))
+        {
+            fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
+            fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);
+            fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
+            fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
+        }
+        if (colour_type == fourcc_be("nclx"))
         {
             fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
             fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);

@@ -272,14 +272,14 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
             {
                 if (track->sampling_rate)
                 {
-                    track->frame_duration = (1.0 / (double)(track->sampling_rate));
+                    track->frame_duration = (1.0 / static_cast<double>(track->sampling_rate));
                 }
             }
             else
             {
                 if (track->sample_dts && track->sample_count >= 2)
                 {
-                    track->frame_duration = track->sample_dts[1] - track->sample_dts[0];
+                    track->frame_duration = static_cast<double>(track->sample_dts[1] - track->sample_dts[0]);
                     track->frame_duration /= 1000; // µs to  ms
                 }
             }

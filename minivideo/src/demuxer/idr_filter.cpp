@@ -92,14 +92,14 @@ int idr_filtering(MediaStream_t **stream_ptr,
             }
 
             // Used to filter the frames that are below the threshold (33% of the average frame size)
-            unsigned frame_sizethreshold = (unsigned)(((double)payload / (double)map->frame_count_idr) / 1.66);
+            unsigned frame_sizethreshold = static_cast<unsigned>(((double)payload / (double)map->frame_count_idr) / 1.66);
 
             // If we have enough frames (let's say 48), filter the frames from the first and last 3%
             // Note: for a movie, cut the last 33% to avoid spoilers & credits?
             unsigned frame_borders = 0;
             if (map->frame_count_idr > 48)
             {
-                frame_borders = (int)ceil(map->frame_count_idr * 0.03);
+                frame_borders = std::ceil(map->frame_count_idr * 0.03);
                 TRACE_1(FILTR, "frame_borders is %i", frame_borders);
             }
 
@@ -123,7 +123,7 @@ int idr_filtering(MediaStream_t **stream_ptr,
                 picture_number = temporary_totalsamples_idr;
 
             // Jump between two frames in PICTURE_DISTRIBUTED mode
-            int frame_jump = (int)ceil(temporary_totalsamples_idr / (picture_number-1));
+            int frame_jump = std::ceil(temporary_totalsamples_idr / (picture_number-1));
             TRACE_1(FILTR, "frame_jump is %i", frame_jump);
 
             // Init bitstream_map_filtered

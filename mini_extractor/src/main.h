@@ -21,7 +21,6 @@
 
 #ifndef MINI_EXTRACTOR_H
 #define MINI_EXTRACTOR_H
-
 /* ************************************************************************** */
 
 int main(int argc, char *argv[]);
@@ -31,7 +30,6 @@ int main(int argc, char *argv[]);
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 1
 
-#define ENABLE_DEBUG  1
 #define ENABLE_COLORS 1
 
 /* ************************************************************************** */

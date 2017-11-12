@@ -394,7 +394,7 @@ void MainWindow::closeFile()
         if (currentMediaLoaded == filePath)
             currentMediaLoaded.clear();
 
-        if ((int)(mediaList.size()) >= (fileIndex + 1))
+        if (static_cast<int>(mediaList.size()) >= (fileIndex + 1))
         {
             ui->tab_dev->removeFile(filePath);
             ui->tab_container->closeMedia();

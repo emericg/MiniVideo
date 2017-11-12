@@ -64,13 +64,10 @@ int main(int argc, char *argv[])
     bool output_format_specified = false;
     int output_format = 0;
 
-#if ENABLE_DEBUG
-    std::cout << GREEN "main()" RESET << std::endl;
-    std::cout << "* This is DEBUG from mini_extractor()" << std::endl;
+    std::cout << GREEN "mini_extractor main()" RESET << std::endl;
     std::cout << "* mini_extractor version " << VERSION_MAJOR << "." << VERSION_MINOR << std::endl;
     std::cout << std::endl;
     std::cout << GREEN "main() arguments" RESET << std::endl;
-#endif // ENABLE_DEBUG
 
     // Argument(s) parsing
     ////////////////////////////////////////////////////////////////////////////
@@ -232,6 +229,7 @@ int main(int argc, char *argv[])
     {
         // Print informations about libMiniVideo and system endianness
         minivideo_print_infos();
+        minivideo_print_features();
         minivideo_endianness();
 
         // Let's get to work

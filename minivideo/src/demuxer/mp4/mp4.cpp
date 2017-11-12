@@ -61,9 +61,9 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // Read brand identifier
     unsigned int major_brand = read_bits(bitstr, 32);
 
-    if (major_brand == MV_FOURCC_BE('q','t',' ',' '))
+    if (major_brand == fourcc_be("qt  "))
         mp4->profile = PROF_ISOBMF_MOV;
-    else if (major_brand == MV_FOURCC_BE('3','g','p','4'))
+    else if (major_brand == fourcc_be("3gp4"))
         mp4->profile = PROF_ISOBMF_3GP;
 
     // Read informative integer for the minor version of the major brand
@@ -73,7 +73,7 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     unsigned int compatible_brands[16] = {0};
 
     unsigned int i = 0;
-    unsigned int nb_compatible_brands = (box_header->size - 16) / 4;
+    unsigned int nb_compatible_brands = static_cast<unsigned int>((box_header->size - 16) / 4);
 
     if (nb_compatible_brands > 16)
         nb_compatible_brands = 16;

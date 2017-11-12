@@ -245,9 +245,8 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml, const char *title)
  */
 int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
 {
-    char fcc[5];
-
 #if ENABLE_DEBUG
+    char fcc[5];
     TRACE_WARNING(MP4, BLD_GREEN "parse_unknown_box('%s' @ %lli; size is %u)" CLR_RESET,
                   getFccString_le(box_header->boxtype, fcc), box_header->offset_start,
                   box_header->offset_end - box_header->offset_start);

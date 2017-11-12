@@ -36,10 +36,10 @@ char *getFccString_le(const uint32_t fcc_in, char fcc_out[5])
 {
     if (fcc_out)
     {
-        fcc_out[0] = (char)((fcc_in >> 24) & 0xFF);
-        fcc_out[1] = (char)((fcc_in >> 16) & 0xFF);
-        fcc_out[2] = (char)((fcc_in >>  8) & 0xFF);
-        fcc_out[3] = (char)((fcc_in >>  0) & 0xFF);
+        fcc_out[0] = static_cast<char>((fcc_in >> 24) & 0xFF);
+        fcc_out[1] = static_cast<char>((fcc_in >> 16) & 0xFF);
+        fcc_out[2] = static_cast<char>((fcc_in >>  8) & 0xFF);
+        fcc_out[3] = static_cast<char>((fcc_in >>  0) & 0xFF);
         fcc_out[4] = '\0';
 
         return fcc_out;
@@ -52,10 +52,10 @@ char *getFccString_be(const uint32_t fcc_in, char fcc_out[5])
 {
     if (fcc_out)
     {
-        fcc_out[0] = (char)((fcc_in >>  0) & 0xFF);
-        fcc_out[1] = (char)((fcc_in >>  8) & 0xFF);
-        fcc_out[2] = (char)((fcc_in >> 16) & 0xFF);
-        fcc_out[3] = (char)((fcc_in >> 24) & 0xFF);
+        fcc_out[0] = static_cast<char>((fcc_in >>  0) & 0xFF);
+        fcc_out[1] = static_cast<char>((fcc_in >>  8) & 0xFF);
+        fcc_out[2] = static_cast<char>((fcc_in >> 16) & 0xFF);
+        fcc_out[3] = static_cast<char>((fcc_in >> 24) & 0xFF);
         fcc_out[4] = '\0';
 
         return fcc_out;

@@ -72,6 +72,13 @@ void minivideo_print_infos(void)
 #endif
 
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
+}
+
+/* ************************************************************************** */
+
+void minivideo_print_features(void)
+{
+    printf(BLD_GREEN "minivideo_print_features()\n" CLR_RESET);
 
 #if ENABLE_STBIMWRITE
     printf("* STB_IMAGE_WRITE support is " BLD_GREEN "ON\n" CLR_RESET);
@@ -97,12 +104,6 @@ void minivideo_print_infos(void)
     printf("* EXTERNAL PNG support is " BLD_RED "OFF\n" CLR_RESET);
 #endif
 
-#if ENABLE_DEBUG
-    printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
-#else
-    printf("* DEBUG traces are " BLD_RED "OFF\n" CLR_RESET);
-#endif
-
 #if ENABLE_COLORS
     printf("* COLORS are " BLD_GREEN "ON\n" CLR_RESET);
 #else
@@ -110,13 +111,15 @@ void minivideo_print_infos(void)
 #endif
 
 #if ENABLE_DEBUG
-    printf("* MiniVideo library tracing test:\n");
+    printf("* DEBUG traces are " BLD_GREEN "ON\n" CLR_RESET);
     TRACE_ERROR(MAIN, "TEST error");
     TRACE_WARNING(MAIN, "TEST warning");
     TRACE_INFO(MAIN, "TEST info");
     TRACE_1(MAIN, "TEST lvl 1");
     TRACE_2(MAIN, "TEST lvl 2");
     TRACE_3(MAIN, "TEST lvl 3");
+#else
+    printf("* DEBUG traces are " BLD_RED "OFF\n" CLR_RESET);
 #endif
 }
 
@@ -143,18 +146,20 @@ void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivi
 
 int minivideo_endianness(void)
 {
+    printf(BLD_GREEN "minivideo_endianness()\n" CLR_RESET);
+
     int endianness = -1;
     int i = 1;
     char *p = (char *)&i;
 
     if (p[0] == 1)
     {
-        printf("* System is using " BLD_BLUE "LITTLE_ENDIAN" CLR_RESET "\n");
+        printf("* Host system is " BLD_BLUE "LITTLE_ENDIAN" CLR_RESET "\n");
         endianness = __LITTLE_ENDIAN; // 1234
     }
     else
     {
-        printf("* System is using " BLD_BLUE "BIG_ENDIAN" CLR_RESET "\n");
+        printf("* Host system is " BLD_BLUE "BIG_ENDIAN" CLR_RESET "\n");
         endianness = __BIG_ENDIAN; // 4321
     }
 

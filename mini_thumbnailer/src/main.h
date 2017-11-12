@@ -21,17 +21,15 @@
 
 #ifndef MINI_THUMBNAILER_H
 #define MINI_THUMBNAILER_H
-
 /* ************************************************************************** */
 
 int main(int argc, char *argv[]);
 
 /* ************************************************************************** */
 
-#define VERSION_MAJOR 4
-#define VERSION_MINOR 1
+#define VERSION_MAJOR 5
+#define VERSION_MINOR 0
 
-#define ENABLE_DEBUG  1
 #define ENABLE_COLORS 1
 
 /* ************************************************************************** */

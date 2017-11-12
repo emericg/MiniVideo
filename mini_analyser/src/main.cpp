@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
 
         // Print informations about libMiniVideo and system endianness
         minivideo_print_infos();
+        minivideo_print_features();
         minivideo_endianness();
 
         // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent

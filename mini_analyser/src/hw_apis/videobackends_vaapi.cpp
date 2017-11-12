@@ -88,7 +88,7 @@ Desc decoder_profiles_vaapi[] =
     { VAProfileMPEG4Simple,                 CODEC_MPEG4_ASP,PROF_MPEG4_SP, 8 },
     { VAProfileMPEG4AdvancedSimple,         CODEC_MPEG4_ASP,PROF_MPEG4_ASP, 8 },
     { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,PROF_UNKNOWN, 8 },
-//  { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED from libva 2.0.0
+    { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED from libva 2.0.0
     { VAProfileH264Main,                    CODEC_H264,     PROF_H264_MP, 8 },
     { VAProfileH264High,                    CODEC_H264,     PROF_H264_HiP, 8 },
     { VAProfileVC1Simple,                   CODEC_VC1,      PROF_VC1_SIMPLE, 8 },
@@ -148,6 +148,8 @@ bool dump_profiles(VADisplay display, VideoBackendInfos &infos)
             if (decoder_profiles_vaapi[j].id == profile_list[i])
                 break;
         }
+        if (j >= decoder_profile_count)
+            j = 0;
 
         CodecSupport c;
         c.codec = decoder_profiles_vaapi[j].codec;

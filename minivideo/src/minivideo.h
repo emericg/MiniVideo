@@ -53,9 +53,14 @@ typedef enum MiniVideoErrorCodes_e
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about the library (version, enabled features, traces levels...) into standard output.
+ * \brief Print informations about the library (version, date of the build, ...) into standard output.
  */
 minivideo_EXPORT void minivideo_print_infos(void);
+
+/*!
+ * \brief Print informations about the library (enabled features, traces levels, ...) into standard output.
+ */
+minivideo_EXPORT void minivideo_print_features(void);
 
 /*!
  * \brief Get informations about the library (version and build date/time).

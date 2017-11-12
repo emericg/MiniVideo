@@ -411,7 +411,7 @@ int iClip1_YCbCr_8(const int x)
 
 uint8_t Clip1_YCbCr_8(const int x)
 {
-    return (uint8_t)std::min(std::max(x, 0), 255);
+    return std::min(std::max(x, 0), 255);
 }
 
 /* ************************************************************************** */
