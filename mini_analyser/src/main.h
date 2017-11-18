@@ -35,6 +35,8 @@ int main(int argc, char *argv[]);
 
 class MiniAnalyserCLI : public QCoreApplication
 {
+    Q_OBJECT
+
 public:
     MiniAnalyserCLI(int &argc, char **argv);
     ~MiniAnalyserCLI();
@@ -44,6 +46,8 @@ public:
 
 class MiniAnalyserGUI : public QApplication
 {
+    Q_OBJECT
+
     bool event(QEvent *e);
 
 public:

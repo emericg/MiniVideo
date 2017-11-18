@@ -10196,6 +10196,7 @@ PUGI__NS_BEGIN
 				// fallthrough to type conversion
 			}
 
+			// fallthrough
 			default:
 			{
 				switch (_rettype)
@@ -10332,6 +10333,7 @@ PUGI__NS_BEGIN
 				// fallthrough to type conversion
 			}
 
+			// fallthrough
 			default:
 			{
 				switch (_rettype)
@@ -10616,6 +10618,7 @@ PUGI__NS_BEGIN
 				// fallthrough to type conversion
 			}
 
+			// fallthrough
 			default:
 			{
 				switch (_rettype)
@@ -10766,6 +10769,7 @@ PUGI__NS_BEGIN
 				// fallthrough to type conversion
 			}
 
+			// fallthrough
 			default:
 				assert(false && "Wrong expression for return type node set");
 				return xpath_node_set_raw();

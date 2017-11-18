@@ -754,7 +754,9 @@ int MainWindow::printAudioDetails()
                 ui->label_74->show();
                 ui->label_audio_bitrate_lowest->show();
 
-                bitrateMinMax btc((static_cast<double>(t->sample_count) / (t->stream_duration_ms/1000.0)));
+                double fps = 0;
+                if (t->stream_duration_ms > 0) fps = (static_cast<double>(t->sample_count) / (static_cast<double>(t->stream_duration_ms)/1000.0));
+                bitrateMinMax btc(fps);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
                 // Generate datas (bitrate) from A/V samples

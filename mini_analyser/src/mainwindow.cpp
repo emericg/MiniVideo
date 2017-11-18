@@ -409,7 +409,7 @@ void MainWindow::closeFile()
             // Update comboBox index
             if (ui->comboBox_file->count() > 0)
             {
-                ui->comboBox_file->activated(fileIndex-1);
+                emit ui->comboBox_file->activated(fileIndex-1);
             }
             else // No more file opened?
             {

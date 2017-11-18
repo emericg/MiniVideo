@@ -709,7 +709,7 @@ QString getSampleTypeString(const unsigned sampleType)
 
 bitrateMinMax::bitrateMinMax(const double fps)
 {
-    if (fps > 0 && fps < 480)
+    if (fps > 0.0 && fps <= 240.0)
     {
         this->fps = static_cast<uint32_t>(std::round(fps));
     }
@@ -717,7 +717,7 @@ bitrateMinMax::bitrateMinMax(const double fps)
 
 bitrateMinMax::bitrateMinMax(const uint32_t fps)
 {
-    if (fps > 0 && fps < 480)
+    if (fps > 0 && fps <= 240)
     {
         this->fps = fps;
     }
