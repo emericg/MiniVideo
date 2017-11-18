@@ -7,11 +7,11 @@ MiniVideo framework
 Introduction
 ------------
 
-MiniVideo is a small **video decoding library developed from scratch** in C, bundled with small testing programs developed in C++.  
+MiniVideo is a **video framework developed from scratch** in C++, bundled with small testing programs and a media analyser.  
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The build system uses CMake. Both library and test programs can be installed into your system.  
 
-MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*. Its goal was to provide a video thumbnailing program, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
+MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*, as a small **video decoding library developed from scratch** in C. Its goal was to generate video thumbnails, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
@@ -32,7 +32,10 @@ The minivideo library can:
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
-- MP3 "elementary stream" (.mp3)
+- MP3 "elementary stream" [.mp3]
+
+### Supported container formats (export modules)
+- Elementary Streams
 
 ### Supported picture formats (output modules)
 - jpeg (internal OR when libjpeg support is available)
@@ -41,6 +44,7 @@ The minivideo library can:
 - bmp
 - tiff
 - tga
+
 
 Building minivideo library
 --------------------------

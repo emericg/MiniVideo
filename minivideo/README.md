@@ -27,11 +27,10 @@ The minivideo library can:
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
-- MP3 "elementary stream" (.mp3)
+- MP3 "elementary stream" [.mp3]
 
 ### Supported container formats (export modules)
 - Elementary Streams
-- MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 
 ### Supported picture formats (output modules)
 - jpeg (internal OR when libjpeg support is available)
