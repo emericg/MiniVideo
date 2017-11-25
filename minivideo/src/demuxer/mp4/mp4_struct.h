@@ -199,6 +199,7 @@ typedef enum IsoBmfVariant_e
 typedef enum Mp4BoxType_e
 {
     BOX_FTYP = 0x66747970,                      //!< (*) file type and compatibility
+    BOX_STYP = 0x73747970,                      //!< (*) segment type
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
     BOX_UDTA = 0x75647461,                      //!< user data box
@@ -304,7 +305,6 @@ typedef enum Mp4BoxType_e
     BOX_MECO = 0x6D65636F,                      //!< additional metadata container
         BOX_MERE = 0x6D657265,                  //!< metabox relation
 
-    BOX_STYP = 0x73747970,                      //!< segment type
     BOX_SIDX = 0x73696478,                      //!< segment index, provides a compact index of one media stream
     BOX_SSIX = 0x73736978,                      //!< subsegment index
     BOX_PRFT = 0x70726674,                      //!< producer reference time

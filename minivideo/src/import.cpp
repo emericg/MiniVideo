@@ -124,7 +124,7 @@ static void getInfosFromPath(MediaFile_t *media)
             unsigned int pos_last_dot_i = pos_last_dot_p - media->file_path - pos_last_slash_i;
             if (pos_last_dot_i > sizeof(media->file_name) - 1)
             {
-                 pos_last_dot_i = sizeof(media->file_name) - 1;
+                pos_last_dot_i = sizeof(media->file_name) - 1;
             }
 
             // Set file name
@@ -265,7 +265,7 @@ static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
         {
             if (buffer[4] == 0xBA)
             {
-                TRACE_1(IO, "* File type      : PS (MPEG 'Program Stream') container detected");
+                TRACE_1(IO, "* File type      : MPEG-PS (MPEG 'Program Stream') container detected");
                 container = CONTAINER_MPEG_PS;
             }
             else if (buffer[4] == 0xB3)
@@ -285,6 +285,13 @@ static Containers_e getContainerUsingStartcodes(MediaFile_t *media)
         if (buffer[4] == 0x66 && buffer[5] == 0x74 && buffer[6] == 0x79 && buffer[7] == 0x70)
         {
             // MP4: 00 00 xx xx 66 74 79 70 // (size) f t y p
+
+            TRACE_1(IO, "* File type      : ISO BMF (MOV,MP4, ...) container detected");
+            container = CONTAINER_MP4;
+        }
+        else if (buffer[4] == 0x73 && buffer[5] == 0x74 && buffer[6] == 0x79 && buffer[7] == 0x70)
+        {
+            // MP4: 00 00 xx xx 73 74 79 70 // (size) s t y p
 
             TRACE_1(IO, "* File type      : ISO BMF (MOV,MP4, ...) container detected");
             container = CONTAINER_MP4;
@@ -366,6 +373,7 @@ static Containers_e getContainerUsingExtension(MediaFile_t *media)
                  strncmp(media->file_extension, "m4a", 255) == 0 ||
                  strncmp(media->file_extension, "m4p", 255) == 0 ||
                  strncmp(media->file_extension, "m4b", 255) == 0 ||
+                 strncmp(media->file_extension, "m4s", 255) == 0 ||
                  strncmp(media->file_extension, "mp4v", 255)== 0 ||
                  strncmp(media->file_extension, "mp4a", 255)== 0 ||
                  strncmp(media->file_extension, "3gp", 255) == 0 || // ISO BMF / 3GP profile

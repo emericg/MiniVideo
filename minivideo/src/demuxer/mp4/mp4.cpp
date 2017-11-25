@@ -110,7 +110,11 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "File Type");
+        if (box_header->boxtype == BOX_STYP)
+            write_box_header(box_header, mp4->xml, "Segment Type");
+        else
+            write_box_header(box_header, mp4->xml, "File Type");
+
         fprintf(mp4->xml, "  <major_brand>%s</major_brand>\n", getFccString_le(major_brand, fcc));
         fprintf(mp4->xml, "  <minor_version>%u</minor_version>\n", minor_version);
         for (i = 0; i < nb_compatible_brands; i++)
@@ -1546,6 +1550,9 @@ int mp4_fileParse(MediaFile_t *media)
                 switch (box_header.boxtype)
                 {
                     case BOX_FTYP:
+                        retcode = parse_ftyp(bitstr, &box_header, &mp4);
+                        break;
+                    case BOX_STYP:
                         retcode = parse_ftyp(bitstr, &box_header, &mp4);
                         break;
                     case BOX_PDIN:
