@@ -70,7 +70,7 @@ static int parse_string(Bitstream_t *bitstr, RiffChunk_t *chunk_header, avi_t *a
                 string[i] = read_bits(bitstr, 8);
             }
 
-            // Check for additionnal 0x00 bytes at the end of the string. This is
+            // Check for additional 0x00 bytes at the end of the string. This is
             // a hack based on the fact that AVI string chunk often return erroneous size.
             // We read one byte until its not equal to 0x00.
             while (next_bits(bitstr, 8) == 0)
@@ -1194,13 +1194,13 @@ int avi_fileParse(MediaFile_t *media)
             }
         }
 
-        // xmlMapper
-        if (xmlMapperFinalize(avi.xml) == SUCCESS)
-            media->container_mapper_fd = avi.xml;
-
         // Go for the indexation
         retcode = avi_indexer(bitstr, media, &avi),
         media->container_profile = avi.profile;
+
+        // xmlMapper
+        if (xmlMapperFinalize(avi.xml) == SUCCESS)
+            media->container_mapper_fd = avi.xml;
 
         // Free avi_t structure content
         avi_clean(&avi);

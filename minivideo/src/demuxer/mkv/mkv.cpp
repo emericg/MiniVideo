@@ -317,7 +317,7 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
     write_ebml_element(element, mkv->xml, "Tag");
 
     mkv_tag_t tag;
-
+/*
     while (mkv->run == true &&
            retcode == SUCCESS &&
            bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
@@ -339,7 +339,7 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
-
+*/
     if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;

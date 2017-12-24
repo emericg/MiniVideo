@@ -65,7 +65,7 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
                               MkvSampleType_e type, int64_t cluster_timecode)
 {
     uint32_t stn = read_ebmllike_value(bitstr) - 1;
-    int16_t stc = (int)read_bits(bitstr, 16);
+    int16_t stc = static_cast<int16_t>(read_bits(bitstr, 16));
     uint8_t lacing = 0;
 
     //TRACE_1(MKV, "block track number: %u", stn);

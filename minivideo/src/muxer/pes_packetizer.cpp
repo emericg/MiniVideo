@@ -137,7 +137,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
             // [4-5] pes packet length
             uint16_t packetlength = (uint16_t)size + 3 + (pes_header_size - 9);
             if (stream->stream_codec == CODEC_H264)
-                packetlength += 4; // because of the additionnal 4 bytes start code
+                packetlength += 4; // because of the additional 4 bytes start code
 
             pes_header[4] = (uint8_t)(packetlength >> 8);
             pes_header[5] = (uint8_t)(packetlength & 0x00FF);

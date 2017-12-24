@@ -440,6 +440,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 for (l = 0; l < track->stsc_samples_per_chunk[i]; l++)
                 {
                     // Adjust DTS and PTS unit: from timescale to µs
+                    if (track->timescale)
                     {
                         if (map->sample_dts[index])
                         {

@@ -107,21 +107,22 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                     TRACE_3(AVI, BLD_BLUE "> AUDIO" CLR_RESET);
                     int tid = 0;
                     int sid = media->tracks_audio[tid]->sample_count;
-                    media->tracks_audio[tid]->sample_count++;
 
                     media->tracks_audio[tid]->sample_type[sid] = sample_AUDIO;
                     media->tracks_audio[tid]->sample_offset[sid] = movioffset + (int64_t)dwChunkOffset;
                     media->tracks_audio[tid]->sample_size[sid] = (int64_t)dwChunkLength;
                     media->tracks_audio[tid]->sample_dts[sid] = -1;
                     media->tracks_audio[tid]->sample_pts[sid] = -1;
+
+                    media->tracks_audio[tid]->sample_count++;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x6462 || // db: uncompressed video frame (RGB)
-                         (dwChunkId & 0x0000FFFF) == 0x6463)   // dc: video frame
+                         (dwChunkId & 0x0000FFFF) == 0x6463 || // dc: video frame
+                         (dwChunkId & 0x0000FFFF) == 0x6976)   // iv: indeo video frame?
                 {
                     TRACE_3(AVI, BLD_BLUE "> VIDEO" CLR_RESET);
                     int tid = 0;
                     int sid = media->tracks_video[tid]->sample_count;
-                    media->tracks_video[tid]->sample_count++;
 
                     if (dwFlags == AVIIF_KEYFRAME)
                         media->tracks_video[tid]->sample_type[sid] = sample_VIDEO_SYNC;
@@ -132,6 +133,8 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                     media->tracks_video[tid]->sample_size[sid] = (int64_t)dwChunkLength;
                     media->tracks_video[tid]->sample_dts[sid] = -1;
                     media->tracks_video[tid]->sample_pts[sid] = -1;
+
+                    media->tracks_video[tid]->sample_count++;
                 }
                 else if ((dwChunkId & 0x0000FFFF) == 0x7478) // tx: subtitles
                 {
@@ -144,6 +147,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
                     media->tracks_subt[tid]->sample_size[sid] = (int64_t)dwChunkLength;
                     media->tracks_subt[tid]->sample_dts[sid] = -1;
                     media->tracks_subt[tid]->sample_pts[sid] = -1;
+
                     media->tracks_subt[tid]->sample_count++;
                 }
 /*
@@ -376,7 +380,7 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
             mytrack->color_depth = track->strf.biBitCount;
 
             mytrack->framerate = (double)(track->strh.dwRate) / (double)(track->strh.dwScale);
-            //mytrack->frame_rate = avi->avih.dwMicroSecPerFrame; // But do not trust dwMicroSecPerFrame
+            //mytrack->frame_rate = avi->avih.dwMicroSecPerFrame; // do NOT trust dwMicroSecPerFrame
         }
     }
     else if (track->strh.fccType == fcc_txts)
