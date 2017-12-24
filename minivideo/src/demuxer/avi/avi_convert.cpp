@@ -338,11 +338,12 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
             media->tracks_audio_count++;
 
             mytrack->stream_type = stream_AUDIO;
-            mytrack->stream_fcc  = track->strh.fccHandler;
+            //mytrack->stream_fcc  = 0;
+            //mytrack->stream_tcc  = track->strf.wFormatTag;
 
             // We cannot rely on the fccHandler from the container,
             // but we should have extracted the correct codec infos from strh
-            //mytrack->stream_codec = track->strh.fccHandler;
+            mytrack->stream_codec = (Codecs_e)track->strh.fccHandler;
 
             mytrack->stream_packetized = true;
 
@@ -369,15 +370,6 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
                 mytrack->stream_fcc  = track->strh.fccHandler;
             else if (track->strf.biCompression)
                 mytrack->stream_fcc  = track->strf.biCompression;
-
-            if (track->strh.fccHandler == fcc_xvid ||
-                track->strh.fccHandler == fcc_XVID ||
-                track->strh.fccHandler == fcc_FMP4 ||
-                track->strh.fccHandler == fcc_DIVX ||
-                track->strh.fccHandler == fcc_DX50)
-                mytrack->stream_codec = CODEC_MPEG4_ASP;
-            else
-                mytrack->stream_codec = CODEC_UNKNOWN;
 
             mytrack->stream_packetized = true;
 

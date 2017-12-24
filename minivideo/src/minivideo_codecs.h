@@ -132,10 +132,11 @@ typedef enum Codecs_e
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
-    CODEC_RA_14         = 64,   //!< Real Audio 14.4
-    CODEC_RA_28         = 65,   //!< Real Audio 28.8
-    CODEC_RA_cook       = 66,   //!< Real Audio cook
+    CODEC_RA_14         = 64,   //!< Real Audio 1 / 14.4
+    CODEC_RA_28         = 65,   //!< Real Audio 2 / 28.8
+    CODEC_RA_cook       = 66,   //!< Real Audio G2 / Cook
     CODEC_RA_ralf       = 67,   //!< Real Audio Lossless Format
+    CODEC_IAC2          = 68,   //!< Indeo Audio Codec
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 

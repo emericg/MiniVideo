@@ -333,16 +333,19 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 break;
 
             case CODEC_RA_14:
-                return "RealAudio 14.4";
+                return "RealAudio 1 / 14.4";
                 break;
             case CODEC_RA_28:
-                return "RealAudio 28.8";
+                return "RealAudio 2 / 28.8";
                 break;
             case CODEC_RA_cook:
-                return "RealAudio cook";
+                return "RealAudio G2 / Cook";
                 break;
             case CODEC_RA_ralf:
                 return "RealAudio Lossless Format";
+                break;
+            case CODEC_IAC2:
+                return "Indeo Audio Codec";
                 break;
 
             case CODEC_APE:

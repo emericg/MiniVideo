@@ -319,12 +319,15 @@ typedef enum fourcc_list_e
 
     // Uncommon audio codecs ///////////////////////////////////////////////////
 
-    fcc_28_8 = 0x32385F38, //!< RealAudio 28.8
-    fcc_cook = 0x636F6F6B, //!< RealAudio cook
-    fcc_atrc = 0x61747263, //!< Used for Sony ATRAC in RealMedia
+    fcc_lpcJ = 0x6C70634A, //!< RealAudio 1 / 14.4
+    fcc_28_8 = 0x32385F38, //!< RealAudio 2 / 28.8
     fcc_dnet = 0x646E6574, //!< Used for A52/AC3 in RealMedia (the byte order of the data is reversed from standard AC3)
+    fcc_sipr = 0x73697072, //!< Sipro Lab Telecom ACELP-NET
+    fcc_cook = 0x636F6F6B, //!< RealAudio G2 / Cook
+    fcc_atrc = 0x61747263, //!< Used for Sony ATRAC in RealMedia
     fcc_raac = 0x72616163, //!< Used for AAC-LC in RealMedia
     fcc_racp = 0x72616370, //!< Used for HE-AAC in RealMedia
+    fcc_ralf = 0x72616C66, //!< RealAudio Lossless Format (RealAudio 10)
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 

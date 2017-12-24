@@ -438,7 +438,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
 #endif
             if (avi->xml)
             {
-                fprintf(avi->xml, "  <wFormatTag>%u</wFormatTag>\n", track->strf.wFormatTag);
+                fprintf(avi->xml, "  <wFormatTag>0x%04X (%s)</wFormatTag>\n", track->strf.wFormatTag, getTccString(track->strf.wFormatTag));
                 fprintf(avi->xml, "  <nChannels>%u</nChannels>\n", track->strf.nChannels);
                 fprintf(avi->xml, "  <nSamplesPerSec>%u</nSamplesPerSec>\n", track->strf.nSamplesPerSec);
                 fprintf(avi->xml, "  <nAvgBytesPerSec>%u</nAvgBytesPerSec>\n", track->strf.nAvgBytesPerSec);
@@ -570,29 +570,10 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         }
                     }
                 }
-                else if (track->strf.wFormatTag == WAVE_FORMAT_AAC)
+                else
                 {
-                    TRACE_1(AVI, "> EXT > AAC");
-                    track->strh.fccHandler = CODEC_AAC;
-                }
-                else if (track->strf.wFormatTag == WAVE_FORMAT_AC3)
-                {
-                    TRACE_1(AVI, "> EXT > AC3");
-                    track->strh.fccHandler = CODEC_AC3;
-                }
-                else if (track->strf.wFormatTag == WAVE_FORMAT_DTS)
-                {
-                    TRACE_1(AVI, "> EXT > DTS");
-                    track->strh.fccHandler = CODEC_DTS;
-                }
-                else if (track->strf.wFormatTag == WAVE_FORMAT_WMAS ||
-                         track->strf.wFormatTag == WAVE_FORMAT_WMA1 ||
-                         track->strf.wFormatTag == WAVE_FORMAT_WMA2 ||
-                         track->strf.wFormatTag == WAVE_FORMAT_WMAP ||
-                         track->strf.wFormatTag == WAVE_FORMAT_WMAL)
-                {
-                    TRACE_1(AVI, "> EXT > WMA");
-                    track->strh.fccHandler = CODEC_WMA;
+                    TRACE_1(AVI, "> EXT > %s", getTccString(track->strf.wFormatTag));
+                    track->strh.fccHandler = getCodecFromTwoCC(track->strf.wFormatTag);
                 }
             }
         }

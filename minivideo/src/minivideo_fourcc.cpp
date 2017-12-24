@@ -389,11 +389,17 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_ALAC;
         break;
 
+    case fcc_lpcJ:
+        codec = CODEC_RA_14;
+        break;
     case fcc_28_8:
         codec = CODEC_RA_28;
         break;
     case fcc_cook:
         codec = CODEC_RA_cook;
+        break;
+    case fcc_ralf:
+        codec = CODEC_RA_ralf;
         break;
 
     case fcc_atrc:

@@ -40,14 +40,14 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
     switch (tcc)
     {
     case WAVE_FORMAT_MS_PCM:
-    case WAVE_FORMAT_IEEE_FLOAT:
+    case WAVE_FORMAT_MS_IEEE_FLOAT:
         codec = CODEC_LPCM;
         break;
     case WAVE_FORMAT_MS_ADPCM:
         codec = CODEC_ADPCM;
         break;
-    case WAVE_FORMAT_ALAW:
-    case WAVE_FORMAT_MULAW:
+    case WAVE_FORMAT_MS_ALAW:
+    case WAVE_FORMAT_MS_MULAW:
         codec = CODEC_LogPCM;
         break;
     case WAVE_FORMAT_MS_DTS:
@@ -66,6 +66,19 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
     case WAVE_FORMAT_DTS:
         codec = CODEC_DTS;
         break;
+    case WAVE_FORMAT_RA_14:
+        codec = CODEC_RA_14;
+        break;
+    case WAVE_FORMAT_RA_28:
+        codec = CODEC_RA_28;
+        break;
+    case WAVE_FORMAT_RA_cook:
+        codec = CODEC_RA_cook;
+     break;
+
+
+    case WAVE_FORMAT_RA9:
+    case WAVE_FORMAT_RA10p:
     case WAVE_FORMAT_AAC:
         codec = CODEC_AAC;
         break;
@@ -76,6 +89,10 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
     case WAVE_FORMAT_WMAP:
     case WAVE_FORMAT_WMAL:
          codec = CODEC_WMA;
+         break;
+
+    case WAVE_FORMAT_IAC2:
+         codec = CODEC_IAC2;
          break;
 
     case WAVE_FORMAT_VORBIS1:
@@ -110,8 +127,8 @@ const char *getTccString(const uint16_t tcc)
     case WAVE_FORMAT_MS_ADPCM:
         return "WAVE_FORMAT_MS_ADPCM";
         break;
-    case WAVE_FORMAT_IEEE_FLOAT:
-        return "WAVE_FORMAT_IEEE_FLOAT";
+    case WAVE_FORMAT_MS_IEEE_FLOAT:
+        return "WAVE_FORMAT_MS_IEEE_FLOAT";
         break;
     case WAVE_FORMAT_VSELP:
         return "WAVE_FORMAT_VSELP";
@@ -119,17 +136,23 @@ const char *getTccString(const uint16_t tcc)
     case WAVE_FORMAT_IBM_CVSD:
         return "WAVE_FORMAT_IBM_CVSD";
         break;
-    case WAVE_FORMAT_ALAW:
-        return "WAVE_FORMAT_ALAW";
+    case WAVE_FORMAT_MS_ALAW:
+        return "WAVE_FORMAT_MS_ALAW";
         break;
-    case WAVE_FORMAT_MULAW:
-        return "WAVE_FORMAT_MULAW";
+    case WAVE_FORMAT_MS_MULAW:
+        return "WAVE_FORMAT_MS_MULAW";
         break;
     case WAVE_FORMAT_MS_DTS:
         return "WAVE_FORMAT_MS_DTS";
         break;
     case WAVE_FORMAT_MS_DRM:
         return "WAVE_FORMAT_MS_DRM";
+        break;
+    case WAVE_FORMAT_WMAS:
+        return "WAVE_FORMAT_WMAS";
+        break;
+    case WAVE_FORMAT_MS_WMRTV:
+        return "WAVE_FORMAT_MS_WMRTV";
         break;
 
     case WAVE_FORMAT_AC2:
@@ -151,9 +174,6 @@ const char *getTccString(const uint16_t tcc)
         return "WAVE_FORMAT_AAC";
         break;
 
-    case WAVE_FORMAT_WMAS:
-        return "WAVE_FORMAT_WMAS";
-        break;
     case WAVE_FORMAT_WMA1:
         return "WAVE_FORMAT_WMA1";
         break;
@@ -165,6 +185,10 @@ const char *getTccString(const uint16_t tcc)
         break;
     case WAVE_FORMAT_WMAL:
         return "WAVE_FORMAT_WMAL";
+        break;
+
+    case WAVE_FORMAT_IAC2:
+        return "WAVE_FORMAT_IAC2";
         break;
 
     case WAVE_FORMAT_VORBIS1:
