@@ -61,8 +61,7 @@ int parse_idx1(Bitstream_t *bitstr, MediaFile_t *media, RiffChunk_t *idx1_header
     else
     {
         print_chunk_header(idx1_header);
-        write_chunk_header(idx1_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>AVI 1.0 index</title>\n");
+        write_chunk_header(idx1_header, avi->xml, "AVI 1.0 index");
 
         // Compute number of index entries
         uint32_t index_entry_count = idx1_header->dwSize / 16;
@@ -222,8 +221,7 @@ int parse_indx(Bitstream_t *bitstr, RiffChunk_t *indx_header, avi_t *avi,  AviTr
         // xmlMapper
         if (avi->xml)
         {
-            write_chunk_header(indx_header, avi->xml);
-            //fprintf(avi->xml, "  <title>Index chunk</title>\n");
+            write_chunk_header(indx_header, avi->xml, "Index chunk");
             fprintf(avi->xml, "  <wLongsPerEntry>%u</wLongsPerEntry>\n", wLongsPerEntry);
             fprintf(avi->xml, "  <bIndexSubType>%u</bIndexSubType>\n", bIndexSubType);
             fprintf(avi->xml, "  <bIndexType>%u</bIndexType>\n", bIndexType);

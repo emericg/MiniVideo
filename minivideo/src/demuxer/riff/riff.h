@@ -36,7 +36,8 @@ int parse_list_header(Bitstream_t *bitstr, RiffList_t *list_header);
 
 void print_list_header(RiffList_t *list_header);
 
-void write_list_header(RiffList_t *list_header, FILE *xml);
+void write_list_header(RiffList_t *list_header, FILE *xml,
+                       const char *title = nullptr, const char *additional = nullptr);
 
 int skip_list(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffList_t *list_header_child);
 
@@ -44,7 +45,8 @@ int parse_chunk_header(Bitstream_t *bitstr, RiffChunk_t *chunk_header);
 
 void print_chunk_header(RiffChunk_t *chunk_header);
 
-void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml);
+void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml,
+                        const char *title = nullptr, const char *additional = nullptr);
 
 int skip_chunk(Bitstream_t *bitstr, RiffList_t *list_header_parent, RiffChunk_t *chunk_header_child);
 

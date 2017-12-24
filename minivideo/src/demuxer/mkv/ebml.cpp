@@ -195,27 +195,36 @@ void print_ebml_element(EbmlElement_t *element)
 /*!
  * \brief Write element header to a file for the xmlMapper.
  */
-void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title)
+void write_ebml_element(EbmlElement_t *element, FILE *xml,
+                        const char *title, const char *additional)
 {
     if (xml)
     {
-        if (element == NULL)
+        if (element == nullptr)
         {
             TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
         }
         else
         {
-            if (title != NULL)
-                fprintf(xml, "  <a tt=\"%s\" id=\"0x%X\" tp=\"EBML\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
-                        title,
-                        element->eid,
-                        element->offset_start,
-                        (element->eid_size + element->size_size +  element->size));
+            char boxtitle[64];
+            char boxtypeadd[16];
+
+            if (title != nullptr)
+                snprintf(boxtitle, 63, "tt=\"%s\" ", title);
             else
-                fprintf(xml, "  <a tt=\"Unknown\" id=\"0x%X\" tp=\"EBML\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
-                        element->eid,
-                        element->offset_start,
-                        (element->eid_size + element->size_size +  element->size));
+                boxtitle[0] = '\0';
+
+            if (additional != nullptr)
+                snprintf(boxtypeadd, 15, "add=\"%s\" ", additional);
+            else
+                boxtypeadd[0] = '\0';
+
+            fprintf(xml, "  <a %s%stp=\"EBML\" id=\"0x%X\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+                    boxtitle,
+                    boxtypeadd,
+                    element->eid,
+                    element->offset_start,
+                    (element->eid_size + element->size_size +  element->size));
         }
     }
 }

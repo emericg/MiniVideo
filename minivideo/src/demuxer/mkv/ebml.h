@@ -54,7 +54,8 @@ uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime);
 
 int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element);
 void print_ebml_element(EbmlElement_t *element);
-void write_ebml_element(EbmlElement_t *element, FILE *xml, const char *title);
+void write_ebml_element(EbmlElement_t *element, FILE *xml,
+                        const char *title = nullptr, const char *additional = nullptr);
 
 /* ************************************************************************** */
 

@@ -64,7 +64,8 @@ int parse_asf_object(Bitstream_t *bitstr, AsfObject_t *asf_object);
 
 void print_asf_object(AsfObject_t *asf_object);
 
-void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title);
+void write_asf_object(AsfObject_t *asf_object, FILE *xml,
+                      const char *title = nullptr, const char *additional = nullptr);
 
 /* ************************************************************************** */
 

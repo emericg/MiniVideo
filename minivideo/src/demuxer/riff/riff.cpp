@@ -130,7 +130,8 @@ void print_list_header(RiffList_t *list_header)
 /*!
  * \brief Write a RIFF list header to a file for the xmlMapper.
  */
-void write_list_header(RiffList_t *list_header, FILE *xml)
+void write_list_header(RiffList_t *list_header, FILE *xml,
+                       const char *title, const char *additional)
 {
     if (xml)
     {
@@ -140,22 +141,31 @@ void write_list_header(RiffList_t *list_header, FILE *xml)
         }
         else
         {
+            char boxtitle[64];
+            char boxtype[20];
+            char boxtypeadd[16];
             char fcc[5];
 
-            if (list_header->dwList == fcc_RIFF)
-            {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF header\" off=\"%" PRId64 "\" sz=\"%u\">\n",
-                        getFccString_le(list_header->dwFourCC, fcc),
-                        list_header->offset_start,
-                        list_header->dwSize + 8);
-            }
+            if (title != nullptr)
+                snprintf(boxtitle, 63, "tt=\"%s\" ", title);
             else
-            {
-                fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF list\" off=\"%" PRId64 "\" sz=\"%u\">\n",
-                        getFccString_le(list_header->dwFourCC, fcc),
-                        list_header->offset_start,
-                        list_header->dwSize + 8);
-            }
+                boxtitle[0] = '\0';
+
+            if (list_header->dwList == fcc_RIFF)
+                strcpy(boxtype, "tp=\"RIFF header\" ");
+            else
+                strcpy(boxtype, "tp=\"RIFF list\" ");
+
+            if (additional != nullptr)
+                snprintf(boxtypeadd, 15, "add=\"%s\" ", additional);
+            else
+                boxtypeadd[0] = '\0';
+
+            fprintf(xml, "  <a %s%s%sfcc=\"%s\" off=\"%" PRId64 "\" sz=\"%u\">\n",
+                    boxtitle, boxtype, boxtypeadd,
+                    getFccString_le(list_header->dwFourCC, fcc),
+                    list_header->offset_start,
+                    list_header->dwSize + 8);
         }
     }
 }
@@ -267,7 +277,8 @@ void print_chunk_header(RiffChunk_t *chunk_header)
 /*!
  * \brief Write a RIFF chunk header to a file for the xmlMapper.
  */
-void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
+void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml,
+                        const char *title, const char *additional)
 {
     if (xml)
     {
@@ -278,7 +289,22 @@ void write_chunk_header(RiffChunk_t *chunk_header, FILE *xml)
         else
         {
             char fcc[5];
-            fprintf(xml, "  <a fcc=\"%s\" tp=\"RIFF chunk\" off=\"%" PRId64 "\" sz=\"%u\">\n",
+            char boxtitle[64];
+            char boxadd[16];
+
+            if (title != nullptr)
+                snprintf(boxtitle, 63, "tt=\"%s\" ", title);
+            else
+                boxtitle[0] = '\0';
+
+            if (additional != nullptr)
+                snprintf(boxadd, 15, "add=\"%s\" ", additional);
+            else
+                boxadd[0] = '\0';
+
+            fprintf(xml, "  <a %s%stp=\"RIFF chunk\" fcc=\"%s\" off=\"%" PRId64 "\" sz=\"%u\">\n",
+                    boxtitle,
+                    boxadd,
                     getFccString_le(chunk_header->dwFourCC, fcc),
                     chunk_header->offset_start,
                     chunk_header->dwSize + 8);

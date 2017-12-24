@@ -365,7 +365,8 @@ void print_asf_object(AsfObject_t *asf_object)
 #endif // ENABLE_DEBUG
 }
 
-void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title)
+void write_asf_object(AsfObject_t *asf_object, FILE *xml,
+                      const char *title, const char *additional)
 {
     if (xml)
     {
@@ -375,25 +376,28 @@ void write_asf_object(AsfObject_t *asf_object, FILE *xml, const char *title)
         }
         else
         {
-            if (title != NULL)
-                fprintf(xml, "  <a tt=\"%s\" guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
-                    title,
-                    asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
-                    asf_object->guid[4], asf_object->guid[5],
-                    asf_object->guid[6], asf_object->guid[7],
-                    asf_object->guid[8], asf_object->guid[9],
-                    asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
-                    asf_object->offset_start,
-                    asf_object->size);
+            char boxtitle[64];
+            char boxtypeadd[16];
+
+            if (title != nullptr)
+                snprintf(boxtitle, 63, "tt=\"%s\" ", title);
             else
-                fprintf(xml, "  <a guid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
-                    asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
-                    asf_object->guid[4], asf_object->guid[5],
-                    asf_object->guid[6], asf_object->guid[7],
-                    asf_object->guid[8], asf_object->guid[9],
-                    asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
-                    asf_object->offset_start,
-                    asf_object->size);
+                boxtitle[0] = '\0';
+
+            if (additional != nullptr)
+                snprintf(boxtypeadd, 15, "add=\"%s\" ", additional);
+            else
+                boxtypeadd[0] = '\0';
+
+            fprintf(xml, "  <a %s%sguid=\"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X\" tp=\"ASF obj\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+                boxtitle, boxtypeadd,
+                asf_object->guid[0], asf_object->guid[1], asf_object->guid[2], asf_object->guid[3],
+                asf_object->guid[4], asf_object->guid[5],
+                asf_object->guid[6], asf_object->guid[7],
+                asf_object->guid[8], asf_object->guid[9],
+                asf_object->guid[10], asf_object->guid[11], asf_object->guid[12], asf_object->guid[13], asf_object->guid[14], asf_object->guid[15],
+                asf_object->offset_start,
+                asf_object->size);
         }
     }
 }

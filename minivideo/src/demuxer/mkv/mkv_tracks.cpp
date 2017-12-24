@@ -696,7 +696,7 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
     int retcode = SUCCESS;
 
     print_ebml_element(element);
-    write_ebml_element(element, mkv->xml, "Track Entry");
+    write_ebml_element(element, mkv->xml, "Track Entry", "track");
 
     while (mkv->run == true &&
            retcode == SUCCESS &&

@@ -306,7 +306,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         unsigned int data_reference_index = read_bits(bitstr, 16);
 
-        write_box_header(&box_subheader, mp4->xml, NULL);
+        write_box_header(&box_subheader, mp4->xml);
         if (mp4->xml) fprintf(mp4->xml, "  <data_reference_index>%u</data_reference_index>\n", data_reference_index);
 
         // Then parse subbox content (> SampleEntry extensions)
@@ -1872,7 +1872,7 @@ int parse_fiel(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, NULL);
+        write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  </a>\n");
     }
 
@@ -1894,7 +1894,7 @@ int parse_gama(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, NULL);
+        write_box_header(box_header, mp4->xml);
         fprintf(mp4->xml, "  </a>\n");
     }
 

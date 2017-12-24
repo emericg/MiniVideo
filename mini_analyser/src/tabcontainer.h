@@ -98,7 +98,7 @@ private:
     pugi::xml_document xmlMapDatas;
 
     QIcon icon_atom;
-    QIcon icon_param;
+    QIcon icon_datas;
     QIcon icon_ext;
     QIcon icon_track;
 

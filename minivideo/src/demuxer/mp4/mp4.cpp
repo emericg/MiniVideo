@@ -1098,7 +1098,7 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
 
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml, "Track Reference");
+    write_box_header(box_header, mp4->xml, "Track Reference", "track");
 
     // Init a track structure
     unsigned int track_id = mp4->tracks_count;

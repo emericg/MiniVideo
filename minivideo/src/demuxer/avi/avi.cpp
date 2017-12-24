@@ -158,8 +158,7 @@ static int parse_avih(Bitstream_t *bitstr, RiffChunk_t *avih_header, avi_t *avi)
         // xmlMapper
         if (avi->xml)
         {
-            write_chunk_header(avih_header, avi->xml);
-            fprintf(avi->xml, "  <title>AVI header</title>\n");
+            write_chunk_header(avih_header, avi->xml, "AVI header");
             fprintf(avi->xml, "  <dwMicroSecPerFrame>%u</dwMicroSecPerFrame>\n", avi->avih.dwMicroSecPerFrame);
             fprintf(avi->xml, "  <dwMaxBytesPerSec>%u</dwMaxBytesPerSec>\n", avi->avih.dwMaxBytesPerSec);
             fprintf(avi->xml, "  <dwPaddingGranularity>%u</dwPaddingGranularity>\n", avi->avih.dwPaddingGranularity);
@@ -202,8 +201,7 @@ static int parse_dmlh(Bitstream_t *bitstr, RiffChunk_t *dmlh_header, avi_t *avi)
         // xmlMapper
         if (avi->xml)
         {
-            write_chunk_header(dmlh_header, avi->xml);
-            fprintf(avi->xml, "  <title>Extended AVI Header</title>\n");
+            write_chunk_header(dmlh_header, avi->xml, "Extended AVI Header");
             fprintf(avi->xml, "  <dwTotalFrames>%u</dwTotalFrames>\n", avi->avih.dwTotalFrames);
             fprintf(avi->xml, "  </a>\n");
         }
@@ -252,8 +250,7 @@ static int parse_vprp(Bitstream_t *bitstr, RiffChunk_t *vprp_header, avi_t *avi)
         // xmlMapper
         if (avi->xml)
         {
-            write_chunk_header(vprp_header, avi->xml);
-            fprintf(avi->xml, "  <title>Video Properties Header</title>\n");
+            write_chunk_header(vprp_header, avi->xml, "Video Properties Header");
             fprintf(avi->xml, "  <_VideoFormatToken>%u</_VideoFormatToken>\n", _VideoFormatToken);
             fprintf(avi->xml, "  <_VideoStandard>%u</_VideoStandard>\n", _VideoStandard);
             fprintf(avi->xml, "  <_dwVerticalRefreshRate>%u</_dwVerticalRefreshRate>\n", _dwVerticalRefreshRate);
@@ -329,8 +326,7 @@ static int parse_strh(Bitstream_t *bitstr, RiffChunk_t *strh_header, avi_t *avi,
         // xmlMapper
         if (avi->xml)
         {
-            write_chunk_header(strh_header, avi->xml);
-            fprintf(avi->xml, "  <title>Stream Header</title>\n");
+            write_chunk_header(strh_header, avi->xml, "Stream Header");
             fprintf(avi->xml, "  <fccType>%s</fccType>\n", getFccString_le(track->strh.fccType, fcc));
             fprintf(avi->xml, "  <fccHandler>%s</fccHandler>\n", getFccString_le(track->strh.fccHandler, fcc));
             fprintf(avi->xml, "  <dwFlags>%u</dwFlags>\n", track->strh.dwFlags);
@@ -371,8 +367,7 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
     else
     {
         print_chunk_header(strf_header);
-        write_chunk_header(strf_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>Stream Format</title>\n");
+        write_chunk_header(strf_header, avi->xml, "Stream Format");
 
         // Parse chunk content
         if (track->strh.fccType == fcc_vids)
@@ -610,8 +605,7 @@ static int parse_strl(Bitstream_t *bitstr, RiffList_t *strl_header, avi_t *avi)
     {
         // Print list header
         print_list_header(strl_header);
-        write_list_header(strl_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>Stream List</title>\n");
+        write_list_header(strl_header, avi->xml, "Stream List", "track");
 
         // Init a new AviTrack_t structure to store strl content
         track_id = avi->tracks_count;
@@ -719,8 +713,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
 
         // Print list header
         print_list_header(odml_header);
-        write_list_header(odml_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>Open DML extension</title>\n");
+        write_list_header(odml_header, avi->xml, "Open DML extension");
 
         // Loop on "odml" content
         while (avi->run == true &&
@@ -873,8 +866,7 @@ static int parse_INFO(Bitstream_t *bitstr, RiffList_t *INFO_header, avi_t *avi)
     {
         // Print INFO list header
         print_list_header(INFO_header);
-        write_list_header(INFO_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>INFO</title>\n");
+        write_list_header(INFO_header, avi->xml, "INFO");
 
         // Loop on "INFO" content
         while (avi->run == true &&
@@ -944,8 +936,7 @@ static int parse_hdrl(Bitstream_t *bitstr, RiffList_t *hdrl_header, avi_t *avi)
     {
         // Print list header
         print_list_header(hdrl_header);
-        write_list_header(hdrl_header, avi->xml);
-        if (avi->xml) fprintf(avi->xml, "  <title>Main AVI Header</title>\n");
+        write_list_header(hdrl_header, avi->xml, "Main AVI Header");
 
         // Loop on "hdrl" content
         while (avi->run == true &&

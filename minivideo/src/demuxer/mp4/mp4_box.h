@@ -40,7 +40,8 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header);
 
 void print_box_header(Mp4Box_t *box_header);
 
-void write_box_header(Mp4Box_t *box_header, FILE *xml, const char *title);
+void write_box_header(Mp4Box_t *box_header, FILE *xml,
+                      const char *title = nullptr, const char *additional = nullptr);
 
 /* ************************************************************************** */
 

@@ -446,7 +446,7 @@ static int parse_streamproperties(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *
     int retcode = SUCCESS;
 
     print_asf_object(obj);
-    write_asf_object(obj, asf->xml, "Stream Properties");
+    write_asf_object(obj, asf->xml, "Stream Properties", "track");
 
     asf->tracks_count++;
 

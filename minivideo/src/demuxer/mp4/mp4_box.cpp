@@ -71,7 +71,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
     TRACE_3(MP4, "parse_box_header()");
     int retcode = SUCCESS;
 
-    if (box_header == NULL)
+    if (box_header == nullptr)
     {
         TRACE_ERROR(MP4, "Invalid Mp4Box_t structure!");
         retcode = FAILURE;
@@ -128,7 +128,7 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
     TRACE_3(MP4, "parse_fullbox_header()");
     int retcode = SUCCESS;
 
-    if (box_header == NULL)
+    if (box_header == nullptr)
     {
         TRACE_ERROR(MP4, "Invalid Mp4Box_t structure!");
         retcode = FAILURE;
@@ -151,7 +151,7 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 void print_box_header(Mp4Box_t *box_header)
 {
 #if ENABLE_DEBUG
-    if (box_header == NULL)
+    if (box_header == nullptr)
     {
         TRACE_ERROR(RIF, "Invalid Mp4Box_t structure!");
     }
@@ -193,34 +193,40 @@ void print_box_header(Mp4Box_t *box_header)
 /*!
  * \brief Write box header content to a file for the xmlMapper.
  */
-void write_box_header(Mp4Box_t *box_header, FILE *xml, const char *title)
+void write_box_header(Mp4Box_t *box_header, FILE *xml,
+                      const char *title, const char *additional)
 {
     if (xml)
     {
-        if (box_header == NULL)
+        if (box_header == nullptr)
         {
             TRACE_ERROR(MP4, "Invalid Mp4Box_t structure!");
         }
         else
         {
-            char fcc[5];
-            char boxatom[16];
             char boxtitle[64];
+            char boxtype[20];
+            char boxtypeadd[16];
+            char fcc[5];
 
-            if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
-                strcpy(boxatom, "MP4 box");
-            else
-                strcpy(boxatom, "MP4 fullbox");
-
-            if (title != NULL)
-                snprintf(boxtitle, 63, "tt=\"%s\"", title);
+            if (title != nullptr)
+                snprintf(boxtitle, 63, "tt=\"%s\" ", title);
             else
                 boxtitle[0] = '\0';
 
-            fprintf(xml, "  <a %s fcc=\"%s\" tp=\"%s\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
-                    boxtitle,
+            if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
+                strcpy(boxtype, "tp=\"MP4 box\" ");
+            else
+                strcpy(boxtype, "tp=\"MP4 fullbox\" ");
+
+            if (additional != nullptr)
+                snprintf(boxtypeadd, 15, "add=\"%s\" ", additional);
+            else
+                boxtypeadd[0] = '\0';
+
+            fprintf(xml, "  <a %s%s%sfcc=\"%s\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+                    boxtitle, boxtype, boxtypeadd,
                     getFccString_le(box_header->boxtype, fcc),
-                    boxatom,
                     box_header->offset_start,
                     box_header->size);
 
@@ -257,7 +263,7 @@ int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     // xmlMapper
     if (xml)
     {
-        write_box_header(box_header, xml, NULL);
+        write_box_header(box_header, xml, nullptr);
         fprintf(xml, "  </a>\n");
     }
 
