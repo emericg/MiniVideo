@@ -226,10 +226,17 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
             exportDatas += "\nTitle         : ";
             exportDatas += QString::fromLocal8Bit(t->track_title);
         }
-        if (t->track_languagecode)
+        if (t->track_languagecode && strcmp(t->track_languagecode, "und") != 0)
         {
-            exportDatas += "\nLanguage      : ";
+            exportDatas += "\nLanguage code : ";
             exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+
+            QString track_language = getLanguageString(t->track_languagecode);
+            if (!track_language.isEmpty())
+            {
+                exportDatas += "\nLanguage      : ";
+                exportDatas +=  getLanguageString(t->track_languagecode);
+            }
         }
         exportDatas += "\nChannels      : ";
         exportDatas += QString::number(t->channel_count);
@@ -279,8 +286,18 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         exportDatas += getTrackSizeString(t, media.file_size, detailed);
         exportDatas += "\nTitle         : ";
         exportDatas += QString::fromLocal8Bit(t->track_title);
-        exportDatas += "\nLanguage      : ";
-        exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+        if (t->track_languagecode && strcmp(t->track_languagecode, "und") != 0)
+        {
+            exportDatas += "\nLanguage code : ";
+            exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+
+            QString track_language = getLanguageString(t->track_languagecode);
+            if (!track_language.isEmpty())
+            {
+                exportDatas += "\nLanguage      : ";
+                exportDatas +=  getLanguageString(t->track_languagecode);
+            }
+        }
     }
 
     // OTHER TRACKS
