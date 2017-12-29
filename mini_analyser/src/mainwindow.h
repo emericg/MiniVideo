@@ -145,6 +145,7 @@ private:
     MediaFile_t *namedMediaFile(QString &filePath);
 
     void setStatus(const QString &text, int type, int duration = 0);
+    void handleComboBox();
     void handleComboBox(const QString &file);
     void handleTabWidget();
     void loadingTab();

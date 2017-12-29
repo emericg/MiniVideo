@@ -52,6 +52,9 @@
       </property>
       <item row="1" column="2">
        <widget class="QPushButton" name="pushButton_export">
+        <property name="toolTip">
+         <string>Export current text into a file.</string>
+        </property>
         <property name="text">
          <string>Export</string>
         </property>
@@ -68,6 +71,9 @@
        <widget class="QComboBox" name="comboBox_export_modes">
         <property name="enabled">
          <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>Change the &quot;textual export&quot; mode.</string>
         </property>
         <item>
          <property name="text">
@@ -126,6 +132,9 @@
             <width>24</width>
             <height>24</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Change the destination directory for the &quot;textual export&quot; file.</string>
           </property>
           <property name="text">
            <string/>

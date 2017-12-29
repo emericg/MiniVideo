@@ -89,7 +89,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Open current file in a new windows.</string>
+       <string>Launch a new instance of mini_analyser.</string>
       </property>
       <property name="text">
        <string/>
@@ -132,7 +132,7 @@ background: rgba(255, 170, 0, 128);</string>
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_dropzone">
        <attribute name="title">

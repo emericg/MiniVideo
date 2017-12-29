@@ -335,6 +335,7 @@ void MainWindow::cleanGui()
 {
     closeFiles();
     cleanDatas();
+    handleComboBox();
     handleTabWidget();
 }
 
@@ -381,6 +382,8 @@ void MainWindow::closeFile(const QString &fileToClose)
                 return;
             }
         }
+
+        handleComboBox();
     }
 }
 
@@ -414,12 +417,11 @@ void MainWindow::closeFile()
             else // No more file opened?
             {
                 mediaListEmpty = true;
-                QString empty;
-
                 handleTabWidget();
-                handleComboBox(empty);
             }
         }
+
+        handleComboBox();
     }
 }
 
@@ -457,6 +459,7 @@ void MainWindow::detachFile()
 
         if (media && fileCount > 1)
         {
+            // Start another instance for the current file
             QString detachPath = media->file_path;
             QStringList args;
             args.push_back(detachPath);
@@ -464,6 +467,11 @@ void MainWindow::detachFile()
             QProcess::startDetached(applicationPath, args);
 
             closeFile();
+        }
+        else
+        {
+            // Just start another instance
+            QProcess::startDetached(applicationPath);
         }
     }
 }
@@ -540,12 +548,12 @@ MediaFile_t *MainWindow::namedMediaFile(QString &filePath)
 
 /* ************************************************************************** */
 
-void MainWindow::handleComboBox(const QString &file)
+void MainWindow::handleComboBox()
 {
     // Is this the first file added?
     if (mediaListEmpty)
     {
-        if (mediaList.empty() == true)
+        if (mediaList.empty())
         {
             ui->comboBox_file->addItem(icon_empty, "Drag and drop files to analyse them!");
         }
@@ -556,7 +564,17 @@ void MainWindow::handleComboBox(const QString &file)
         }
     }
 
-    if (file.isEmpty() == false)
+    if (mediaList.size() > 1)
+        ui->pushButton_file_detach->setToolTip(tr("Open current file in a new window."));
+    else
+        ui->pushButton_file_detach->setToolTip(tr("Launch a new instance of mini_analyser."));
+}
+
+void MainWindow::handleComboBox(const QString &file)
+{
+    handleComboBox();
+
+    if (!file.isEmpty())
     {
         ui->comboBox_file->addItem(icon_load, file);
         ui->comboBox_file->setCurrentIndex(ui->comboBox_file->count() - 1);
