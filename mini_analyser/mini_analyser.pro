@@ -91,6 +91,10 @@ LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 unix {
     QMAKE_CXXFLAGS += -fPIE
 
+    # Enables AddressSanitizer
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined
+    #QMAKE_LFLAGS += -fsanitize=address,undefined
+
     linux {
         # Add videobackends # Link with video decoding APIs
         exists("/usr/lib/libva.so") {

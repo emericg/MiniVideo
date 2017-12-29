@@ -23,7 +23,7 @@ set(ENABLE_WEBP 0)          # Toggle external libwebp support
 set(ENABLE_JPEG 0)          # Toggle external libjpeg support
 set(ENABLE_PNG 0)           # Toggle external libpng support
 
-set(ENABLE_MEMFD 0)         # Enable memfd support, for Linux kernels 3.17+
+set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
 
 
 # Build dependencies
@@ -80,11 +80,11 @@ if(ENABLE_PNG)
 endif()
 
 # Doxygen OPTIONAL module
-find_package(Doxygen) # FindDoxygen.cmake
+#find_package(Doxygen) # FindDoxygen.cmake
 
 if(DOXYGEN_FOUND)
     message(STATUS "* Doxygen found, you can use it to generate a nice API documentation!")
-endif(DOXYGEN_FOUND)
+endif()
 
 
 # Build configuration
@@ -94,30 +94,49 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Detect build type (default is release)
+# Detect build type (default is "Release")
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
     set(ENABLE_DEBUG 1)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
-    set(CMAKE_VERBOSE_MAKEFILE off)
+    set(CMAKE_VERBOSE_MAKEFILE on)
+    message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
 else()
-    message(STATUS "> This is a RELEASE build.")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     set(ENABLE_DEBUG 0)
+    message(STATUS "> This is a RELEASE build.")
 endif()
 
 # Add per-compiler custom rules
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+
     message(STATUS "Building with Clang compiler")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong")
+        add_definitions(-D_FORTIFY_SOURCE=2)
+    endif()
+
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+
     message(STATUS "Building with Intel C++ compiler")
+
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+
     message(STATUS "Building with GCC compiler")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong")
+        add_definitions(-D_FORTIFY_SOURCE=2)
+    endif()
+
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+
     message(STATUS "Building with Visual Studio C++ compiler")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
 endif()
 
 
@@ -128,8 +147,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     message(STATUS "Building on Linux plateform")
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    add_definitions(-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-z,now -Wl,-z,relro")
 
 endif()
@@ -138,8 +156,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     message(STATUS "Building on macOS plateform")
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64")
+    add_definitions(-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
 
 endif()

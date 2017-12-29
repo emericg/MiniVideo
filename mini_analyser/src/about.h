@@ -37,7 +37,8 @@ public:
     ~AboutWindows();
 
     void setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,
-                             const char *minivideo_builddate, const char*minivideo_buildtime);
+                             const char *minivideo_builddate, const char *minivideo_buildtime,
+                             bool minivideo_builddebug);
 
 private slots:
     void tabAbout();

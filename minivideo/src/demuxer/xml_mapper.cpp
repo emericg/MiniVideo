@@ -41,7 +41,7 @@
 #include <Lmcons.h>
 #endif
 
-#if ENABLE_MEMFD && defined(__linux__)
+#if defined(ENABLE_MEMFD) && defined(__linux__)
 #include "../thirdparty/memfd_wrapper.h"
 #endif
 
@@ -104,7 +104,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
         {
             TRACE_1(MAPPR, "xmlMapPath: '%s'", xmlMapPath);
 
-#if ENABLE_MEMFD && defined(__linux__)
+#if defined(ENABLE_MEMFD) && defined(__linux__)
             *xml = memfd_fopen(xmlMapPath, "w+");
 #else
             *xml = fopen(xmlMapPath, "w+");

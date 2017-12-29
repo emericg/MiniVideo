@@ -71,7 +71,8 @@ minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
                                           int *minivideo_minor,
                                           int *minivideo_patch,
                                           const char **minivideo_builddate,
-                                          const char **minivideo_buildtime);
+                                          const char **minivideo_buildtime,
+                                          bool *minivideo_builddebug);
 
 /*!
  * \brief Print endianness of the current system.

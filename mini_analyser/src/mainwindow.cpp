@@ -638,11 +638,10 @@ void MainWindow::handleTabWidget()
 
                 // Add the export tab
                 ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
-
-#if ENABLE_DEBUG
-                // Add the developer tab
+#ifdef QT_DEBUG
+                // Add the developer tab (when builded in DEBUG mode)
                 ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
-#endif  // ENABLE_DEBUG
+#endif
             }
 
             // Restore the focus (if the same tab is available)
@@ -757,12 +756,13 @@ void MainWindow::openAbout()
     {
         int minivideo_major, minivideo_minor, minivideo_patch;
         const char *minivideo_builddate, *minivideo_buildtime;
+        bool minivideo_builddebug;
         minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
-                            &minivideo_builddate, &minivideo_buildtime);
+                            &minivideo_builddate, &minivideo_buildtime, &minivideo_builddebug);
 
         aboutwindows = new AboutWindows();
         aboutwindows->setMinivideoVersion(minivideo_major, minivideo_minor, minivideo_patch,
-                                          minivideo_builddate, minivideo_buildtime);
+                                          minivideo_builddate, minivideo_buildtime, minivideo_builddebug);
         aboutwindows->show();
     }
 }

@@ -60,6 +60,7 @@
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 /* ************************************************************************** */
 

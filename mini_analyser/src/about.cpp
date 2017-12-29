@@ -46,14 +46,22 @@ AboutWindows::~AboutWindows()
 }
 
 void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,
-                                       const char *minivideo_builddate, const char*minivideo_buildtime)
+                                       const char *minivideo_builddate, const char*minivideo_buildtime,
+                                       bool minivideo_builddebug)
 {
-    QString title = "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Cantarell'; font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-family:'Cantarell'; font-size:16pt; font-weight:600;\"> (" + QString::fromLocal8Bit(VERSION_STR) + ")</span></p></body></html>";
+    QString title = "<p align=\"left\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Cantarell'; font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-family:'Cantarell'; font-size:16pt; font-weight:600;\"> (" + QString::fromLocal8Bit(VERSION_STR) + ")</span></p></body></html>";
 
-    QString text = tr("MiniAnalyser") + " " + QString::fromLocal8Bit(VERSION_STR);
+    QString text = "<html>";
+    text += tr("MiniAnalyser") + " " + QString::fromLocal8Bit(VERSION_STR);
+#ifdef QT_DEBUG
+    text += " / <b>DEBUG</b>";
+#endif
     text += " / " + tr("builded on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
-    text += "\n" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
+
+    text += "<br>" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
+    if (minivideo_builddebug) text += " / <b>DEBUG</b>";
     text += " / " + tr("builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
+    text += "</html>";
 
     ui->textBrowser_title->setText(title);
     ui->textBrowser_version->setText(text);

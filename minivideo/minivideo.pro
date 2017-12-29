@@ -6,21 +6,26 @@
 TARGET       = minivideo
 TEMPLATE     = lib
 CONFIG      += c++11
-CONFIG      += shared_and_static build_all
+CONFIG      += shared_and_static
 CONFIG      -= qt
-
-VERSION      = 0.10.0
-DEFINES     += minivideo_VERSION_MAJOR=0
-DEFINES     += minivideo_VERSION_MINOR=10
-DEFINES     += minivideo_VERSION_PATCH=0
 
 # build artifacts
 OBJECTS_DIR  = build/artifacts
 DESTDIR      = build/
 
+# build version are usually set by the CMake build system.
+VERSION      = 0.10.0
+DEFINES     += minivideo_VERSION_MAJOR=0
+DEFINES     += minivideo_VERSION_MINOR=10
+DEFINES     += minivideo_VERSION_PATCH=0
+
 # build settings are usually set by the CMake build system.
-# default settings have been set in "minivideo_settings.h", but if you wish to
-# change them you'll need to do it manually by editing this file
+CONFIG(debug, debug|release) { DEFINES += ENABLE_DEBUG=1 }
+DEFINES += ENABLE_COLORS=1
+DEFINES += ENABLE_STBIMWRITE=1
+DEFINES += ENABLE_WEBP=0
+DEFINES += ENABLE_JPEG=0
+DEFINES += ENABLE_PNG=0
 
 # build configuration
 unix {
@@ -30,6 +35,13 @@ unix {
 }
 
 linux {
+    # Enables AddressSanitizer
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined
+    #QMAKE_LFLAGS += -fsanitize=address,undefined
+
+    # Enables memfd
+    DEFINES += ENABLE_MEMFD=1
+
     QMAKE_LFLAGS += -lm -Wl,-z,now -Wl,-z,relro
 }
 

@@ -72,6 +72,10 @@ void minivideo_print_infos(void)
 #endif
 
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
+
+#if ENABLE_DEBUG == 1
+    printf("* This is a " BLD_YELLOW "DEBUG" CLR_RESET " build\n" CLR_RESET);
+#endif
 }
 
 /* ************************************************************************** */
@@ -126,7 +130,9 @@ void minivideo_print_features(void)
 /* ************************************************************************** */
 
 void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivideo_patch,
-                         const char **minivideo_builddate, const char **minivideo_buildtime)
+                         const char **minivideo_builddate,
+                         const char **minivideo_buildtime,
+                         bool *minivideo_builddebug)
 {
     if (minivideo_major && minivideo_minor && minivideo_patch)
     {
@@ -139,6 +145,15 @@ void minivideo_get_infos(int *minivideo_major, int *minivideo_minor, int *minivi
     {
         *minivideo_builddate = __DATE__;
         *minivideo_buildtime = __TIME__;
+    }
+
+    if (minivideo_builddebug)
+    {
+#if ENABLE_DEBUG == 1
+        *minivideo_builddebug = true;
+#else
+        *minivideo_builddebug = false;
+#endif
     }
 }
 
