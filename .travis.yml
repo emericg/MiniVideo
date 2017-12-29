@@ -11,6 +11,9 @@ os:
 
 #osx_image: xcode9.1
 
+cache:
+  apt: true
+
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; fi
   # /usr/bin/gcc is v4.8 by default, but newer gcc package (gcc-X prefixed) is available.
@@ -19,6 +22,19 @@ install:
   # /usr/bin/clang is v3.9 by default, and newer clang package (clang-X.Y prefixed) is available.
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "clang++" ]]; then sudo apt-get install clang-5.0; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "clang++" ]]; then export CXX="clang++-5.0" CC="clang-5.0"; fi
+  # Generate the linux/memfd.h header
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo mkdir -p /usr/include/linux; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo printf "%s\n" \
+           "#ifndef _LINUX_MEMFD_H" \
+           "#define _LINUX_MEMFD_H" \
+           "" \
+           "#define __NR_memfd_create 319" \
+           "#define SYS_memfd_create __NR_memfd_create" \
+           "" \
+           "#define MFD_CLOEXEC             0x0001U" \
+           "#define MFD_ALLOW_SEALING       0x0002U" \
+           "" \
+           "#endif /* _LINUX_MEMFD_H */" > /usr/include/linux/memfd.h; fi
 
 addons:
   apt:
