@@ -24,6 +24,8 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "clang++" ]]; then export CXX="clang++-5.0" CC="clang-5.0"; fi
   # Generate the linux/memfd.h header
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo mkdir -p /usr/include/linux; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo touch /usr/include/linux/memfd.h; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo chmod 777 /usr/include/linux/memfd.h; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo printf "%s\n" \
            "#ifndef _LINUX_MEMFD_H" \
            "#define _LINUX_MEMFD_H" \
