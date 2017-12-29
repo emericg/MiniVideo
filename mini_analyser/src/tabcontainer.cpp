@@ -799,21 +799,18 @@ void tabContainer::clearContent()
 
 void tabContainer::clearPreviews()
 {
-    //qDebug() << "tabContainer::clearPreviews()";
+    //qDebug() << "tabContainer::clearPreviews(" << thumbnails.size() << ")";
 
-    for (std::map<unsigned, OutputSurface_t*>::iterator it = thumbnails.begin();
-         it != thumbnails.end();
-         ++it)
+    for (auto thumb: thumbnails)
     {
-        OutputSurface_t *s = (it->second);
+        OutputSurface_t *s = (thumb.second);
 
         free(s->surface);
         s->surface = NULL;
         delete s;
-        s = nullptr;
-
-        thumbnails.erase(it);
     }
+
+    thumbnails.clear();
 }
 
 /* ************************************************************************** */
