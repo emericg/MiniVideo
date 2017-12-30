@@ -197,8 +197,7 @@ set(minivideo_SRC
         src/utils.cpp src/thirdparty/simple_vector.c
     src/minitraces.cpp src/minitraces_conf.h
     src/bitstream.cpp
-        src/bitstream_utils.cpp
-        src/bitstream_map.cpp
+        src/bitstream_utils.cpp src/bitstream_map.cpp
     src/import.cpp
     src/export.cpp
         src/export_utils.cpp
