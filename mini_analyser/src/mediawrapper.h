@@ -100,6 +100,7 @@ public slots:
             {
                 qDebug() << "minivideo_open() failed with retcode: " << retcode;
             }
+
             end_parsing = std::chrono::steady_clock::now();
 
             qDebug() << "parsingFinished(" << mediaPath << ")";

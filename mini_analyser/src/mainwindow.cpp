@@ -316,6 +316,7 @@ void MainWindow::mediaReady(QString mediaPath)
                 }
             }
 
+#ifdef QT_DEBUG
             // Add it to the "dev" tab
             int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_parsing - wrap->start_parsing).count();
 
@@ -325,6 +326,7 @@ void MainWindow::mediaReady(QString mediaPath)
                 name += "." + QString::fromLocal8Bit(f->file_extension);
 
             ui->tab_dev->addFile(file, name, 0, tp, f->parsingMemory);
+#endif // QT_DEBUG
         }
     }
 }

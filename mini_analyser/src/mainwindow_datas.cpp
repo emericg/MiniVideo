@@ -212,10 +212,11 @@ int MainWindow::setActiveFile()
                 resizeEvent(nullptr);
             }
 
+#ifdef QT_DEBUG
             // Add the file to the dev tab
             {
                 int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_parsing - wrapper->start_parsing).count();
-                int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_ui - wrapper->start_ui).count() - tp;
+                int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_ui - wrapper->start_ui).count();
 
                 QString file = QString::fromLocal8Bit(media->file_path);
                 QString name = QString::fromLocal8Bit(media->file_name);
@@ -224,6 +225,7 @@ int MainWindow::setActiveFile()
 
                 ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
             }
+#endif // QT_DEBUG
         }
 
         retcode = 1;
