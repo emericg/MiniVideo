@@ -335,6 +335,8 @@ int minivideo_thumbnail(MediaFile_t *input_media,
         else
         {
             OutputFile_t out;
+            memset(&out, 0, sizeof (OutputFile_t));
+
             if (output_directory && strlen(output_directory))
                 strncpy(out.file_directory, output_directory, 254);
             else

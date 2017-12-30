@@ -592,7 +592,7 @@ static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
         mb_to_rgb(dc, buffer_rgb);
 
         // export to jpeg
-        retcode = stbi_write_jpg(PictureFile->file_name, img_width, img_height, 3, buffer_rgb, img_width*3);
+        retcode = stbi_write_jpg(PictureFile->file_path, img_width, img_height, 3, buffer_rgb, img_width*3);
 
         free(buffer_rgb);
     }
@@ -907,8 +907,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
 
     if (out->file_pointer == NULL)
     {
-        TRACE_1(IO, "* Picture file path   : '%s'", out->file_path);
-        TRACE_ERROR(IO, "* Unable to create/open file!");
+        TRACE_ERROR(IO, "* Unable to create/open file '%s'!", out->file_path);
 
         retcode = FAILURE;
     }
