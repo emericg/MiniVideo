@@ -29,9 +29,9 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 /* ************************************************************************** */
 /*
@@ -81,29 +81,29 @@ static void print8_tx8(int block[8][8]);
 
 static void derivChromaQP(DecodingContext_t *dc, const int iCbCr);
 
-static int transform_16x16_lumadc(DecodingContext_t *dc, int c[4][4], int dcY[4][4]);
+static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int dcY[4][4]);
 
-static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[2][2], int dcC[2][2]);
-    static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[2][2], int dcC[2][2]);
-    static void idct2x2_chromadc(int c[2][2], int f[2][2]);
+static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, const int c[2][2], int dcC[2][2]);
+    static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, const int f[2][2], int dcC[2][2]);
+    static void idct2x2_chromadc(const int c[2][2], int f[2][2]);
 
-static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[4][4], int dcC[4][4]);
-    static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[4][4], int dcC[4][4]);
-    static void idct4x4_chromadc(int c[4][4], int f[4][4]);
+static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, const int c[4][4], int dcC[4][4]);
+    static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, const int f[4][4], int dcC[4][4]);
+    static void idct4x4_chromadc(const int c[4][4], int f[4][4]);
 
-static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[4][4], int r[4][4]);
-    static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, int c[4][4], int d[4][4]);
-    static void idct4x4(int d[4][4], int r[4][4]);
+static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, const int c[4][4], int r[4][4]);
+    static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, const int c[4][4], int d[4][4]);
+    static void idct4x4(const int d[4][4], int r[4][4]);
 
-static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[8][8], int r[8][8]);
-    static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int r[8][8]);
-    static void idct8x8(int d[8][8], int r[8][8]);
+static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, const int c[8][8], int r[8][8]);
+    static void quant8x8(sps_t *sps, const int YCbCr, const int qP, const int c[8][8], int r[8][8]);
+    static void idct8x8(const int d[8][8], int r[8][8]);
 
-static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, int u[4][4]);
-static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[4][4]);
-static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx, int u[8][8]);
-static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[8][8]);
-static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][16]);
+static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, const int u[4][4]);
+static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, const int u[4][4]);
+static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx, const int u[8][8]);
+static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, const int u[8][8]);
+static int picture_construction_process_16x16(DecodingContext_t *dc, const int u[16][16]);
 
 static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag, int **r, int nW, int nH);
 
@@ -122,9 +122,9 @@ void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkId
 {
     TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_luma()" CLR_RESET);
 
-    int c[4][4] = {{0}};
-    int r[4][4] = {{0}};
-    int u[4][4] = {{0}};
+    int c[4][4];// = {{0}};
+    int r[4][4];// = {{0}};
+    int u[4][4];// = {{0}};
 
     // 1
     inverse_scan_4x4(mb->LumaLevel4x4[luma4x4BlkIdx], c);
@@ -170,11 +170,11 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
     TRACE_1(TRANS, "<> " BLD_GREEN "transform16x16_luma()" CLR_RESET);
 
     // 1 (DC coefficients)
-    int c1[4][4] = {{0}};
-    int dcY[4][4] = {{0}};
-    int rMb[16][16] = {{0}};
-    int u[16][16] = {{0}};
-    int lumaList[16] = {0};
+    int c1[4][4];// = {{0}};
+    int dcY[4][4];// = {{0}};
+    int rMb[16][16];// = {{0}};
+    int u[16][16];// = {{0}};
+    int lumaList[16];// = {0};
     int luma4x4BlkIdx = 0;
 
     inverse_scan_4x4(mb->Intra16x16DCLevel, c1);
@@ -189,8 +189,8 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
         for (k = 1; k < 16; k++)
             lumaList[k] = mb->Intra16x16ACLevel[luma4x4BlkIdx][k-1];
 
-        int c[4][4] = {{0}};
-        int r[4][4] = {{0}};
+        int c[4][4];// = {{0}};
+        int r[4][4];// = {{0}};
 
         inverse_scan_4x4(lumaList, c);
         transform_4x4_residual(dc, 0, c, r);
@@ -213,9 +213,8 @@ void transform16x16_luma(DecodingContext_t *dc, Macroblock_t *mb)
     }
 
     // 4
-    int i = 0, j = 0;
-    for (i = 0; i < 16; i++)
-        for (j = 0; j < 16; j++)
+    for (int i = 0; i < 16; i++)
+        for (int j = 0; j < 16; j++)
             u[i][j] = iClip1_YCbCr_8((int)mb->predL[j][i] + rMb[j][i]);
 
     // 5
@@ -237,9 +236,9 @@ void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkId
 {
     TRACE_1(TRANS, "<> " BLD_GREEN "transform8x8_luma()" CLR_RESET);
 
-    int c[8][8] = {{0}};
-    int r[8][8] = {{0}};
-    int u[8][8] = {{0}};
+    int c[8][8];// = {{0}};
+    int r[8][8];// = {{0}};
+    int u[8][8];// = {{0}};
 
     // 1
     inverse_scan_8x8(mb->LumaLevel8x8[luma8x8BlkIdx], c);
@@ -302,12 +301,12 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
         derivChromaQP(dc, iCbCr);
 
         // 1 (DC coefficients)
-        int u[8][8] = {{0}};
+        int u[8][8];// = {{0}};
 /*
         if (dc->ChromaArrayType == 1)
         {
-*/          int cc[2][2] = {{0}};
-            int dcC[2][2] = {{0}};
+*/          int cc[2][2];// = {{0}};
+            int dcC[2][2];// = {{0}};
 
             // c[2][2]
             cc[0][0] = mb->ChromaDCLevel[iCbCr][0];
@@ -442,8 +441,7 @@ void inverse_scan_4x4(int list[16], int matrix[4][4])
     TRACE_2(TRANS, " inverse_scan_4x4()");
 
     // Table transfer
-    int zz = 0;
-    for (zz = 0; zz < 16; zz++)
+    for (int zz = 0; zz < 16; zz++)
     {
         matrix[zigzag_4x4_2d[zz][0]][zigzag_4x4_2d[zz][1]] = list[zz];
     }
@@ -472,8 +470,7 @@ void inverse_scan_8x8(int list[64], int matrix[8][8])
     TRACE_2(TRANS, " inverse_scan_8x8()");
 
     // Table transfer
-    int zz = 0;
-    for (zz = 0; zz < 64; zz++)
+    for (int zz = 0; zz < 64; zz++)
     {
         matrix[zigzag_8x8_2d[zz][0]][zigzag_8x8_2d[zz][1]] = list[zz];
     }
@@ -755,7 +752,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
  *
  * Note: For DC coefficients, the quantization is done after the idct.
  */
-static int transform_16x16_lumadc(DecodingContext_t *dc, int c[4][4], int dcY[4][4])
+static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int dcY[4][4])
 {
     TRACE_2(TRANS, " transform_16x16_lumadc()");
     int retcode = SUCCESS;
@@ -826,7 +823,8 @@ static int transform_16x16_lumadc(DecodingContext_t *dc, int c[4][4], int dcY[4]
  *
  * Note: For DC coefficients, the quantization is done after the idct.
  */
-static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[2][2], int dcC[2][2])
+static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr,
+                                  const int c[2][2], int dcC[2][2])
 {
     TRACE_2(TRANS, " transform_2x2_chromadc()");
     int retcode = SUCCESS;
@@ -850,11 +848,8 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
     else
     {
         int f[2][2] = {{0}};
-
         idct2x2_chromadc(c, f);
-
         //print2x2(f); // DC transformed coefficients
-
         quant2x2_chromadc(sps, YCbCr, qP, f, dcC);
     }
 
@@ -874,7 +869,8 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
  *
  * Note: For DC coefficients, the quantization is done after the idct.
  */
-static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[4][4], int dcC[4][4])
+static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr,
+                                  const int c[4][4], int dcC[4][4])
 {
     TRACE_2(TRANS, " transform_4x4_chromadc()");
     int retcode = SUCCESS;
@@ -898,11 +894,8 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
     else
     {
         int f[4][4] = {{0}};
-
         idct4x4_chromadc(c, f);
-
         //print4x4(f); // DC transformed coefficients
-
         quant4x4_chromadc(sps, YCbCr, qP, f, dcC);
     }
 
@@ -923,7 +916,8 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, int c[
  *
  * Quantification for 2x2 chroma dc blocks, ChromaArrayType == 1, 4:2:0 subsampling.
  */
-static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[2][2], int dcC[2][2])
+static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP,
+                              const int f[2][2], int dcC[2][2])
 {
     TRACE_2(TRANS, "quant2x2_chromadc()");
     int i = 0, j = 0;
@@ -951,7 +945,8 @@ static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[2
  *
  * Quantification for 4x4 chroma dc blocks, ChromaArrayType == 2, 4:2:0 subsampling.
  */
-static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[4][4], int dcC[4][4])
+static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP,
+                              const int f[4][4], int dcC[4][4])
 {
     TRACE_2(TRANS, "quant4x4_chromadc()");
     int i = 0, j = 0;
@@ -987,7 +982,7 @@ static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, int f[4
  *
  * Transformation for 2x2 chroma dc blocks, ChromaArrayType == 1, 4:2:0 subsampling.
  */
-static void idct2x2_chromadc(int c[2][2], int f[2][2])
+static void idct2x2_chromadc(const int c[2][2], int f[2][2])
 {
     TRACE_2(TRANS, "idct2x2_chromadc()");
     int i = 0, j = 0, k = 0;
@@ -1017,7 +1012,7 @@ static void idct2x2_chromadc(int c[2][2], int f[2][2])
  *
  * Transformation for 4x4 chroma dc blocks, ChromaArrayType == 2, 4:2:2 subsampling.
  */
-static void idct4x4_chromadc(int c[4][4], int f[4][4])
+static void idct4x4_chromadc(const int c[4][4], int f[4][4])
 {
     TRACE_2(TRANS, "idct4x4_chromadc()");
     int i = 0, j = 0, k = 0;
@@ -1048,7 +1043,8 @@ static void idct4x4_chromadc(int c[4][4], int f[4][4])
  * From 'ITU-T H.264' recommendation:
  * 8.5.12 Scaling and transformation process for residual 4x4 blocks.
  */
-static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[4][4], int r[4][4])
+static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr,
+                                  const int c[4][4], int r[4][4])
 {
     TRACE_2(TRANS, " transform_4x4_residual()");
     int retcode = SUCCESS;
@@ -1074,12 +1070,9 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[
     }
     else
     {
-        int d[4][4] = {{0}};
-
+        int d[4][4];// = {{0}};
         quant4x4(sps, YCbCr, mb->MbPartPredMode[0], qP, c, d);
-
         //print4x4(d); // Print residual block
-
         idct4x4(d, r);
     }
 
@@ -1099,7 +1092,8 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, int c[
  * From 'ITU-T H.264' recommendation:
  * 8.5.12.1 Scaling process for residual 4x4 blocks.
  */
-static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, int c[4][4], int d[4][4])
+static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode,
+                     const int qP, const int c[4][4], int d[4][4])
 {
     TRACE_2(TRANS, " quant4x4()");
 
@@ -1144,14 +1138,14 @@ static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, cons
  * From 'ITU-T H.264' recommendation:
  * 8.5.12.2 Transformation process for residual 4x4 blocks.
  */
-static void idct4x4(int d[4][4], int r[4][4])
+static void idct4x4(const int d[4][4], int r[4][4])
 {
     TRACE_2(TRANS, " idct4x4()");
 
-    int e[4][4] = {{0}};
-    int f[4][4] = {{0}};
-    int g[4][4] = {{0}};
-    int h[4][4] = {{0}};
+    int e[4][4];// = {{0}};
+    int f[4][4];// = {{0}};
+    int g[4][4];// = {{0}};
+    int h[4][4];// = {{0}};
 
     int i = 0, j = 0;
 
@@ -1204,7 +1198,8 @@ static void idct4x4(int d[4][4], int r[4][4])
  * From 'ITU-T H.264' recommendation:
  * 8.5.13 Scaling and transformation process for residual 8x8 blocks.
  */
-static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[8][8], int r[8][8])
+static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr,
+                                  const int c[8][8], int r[8][8])
 {
     TRACE_2(TRANS, " transform_8x8_residual()");
     int retcode = SUCCESS;
@@ -1231,12 +1226,9 @@ static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[
     }
     else
     {
-        int d[8][8] = {{0}};
-
+        int d[8][8];// = {{0}};
         quant8x8(sps, YCbCr, qP, c, d);
-
         //print8_tx8(d); // Print residual block
-
         idct8x8(d, r);
     }
 
@@ -1255,7 +1247,8 @@ static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, int c[
  * From 'ITU-T H.264' recommendation:
  * 8.5.13.1 Scaling process for residual 8x8 blocks.
  */
-static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int d[8][8])
+static void quant8x8(sps_t *sps, const int YCbCr, const int qP,
+                     const int c[8][8], int d[8][8])
 {
     TRACE_2(TRANS, " quant8x8()");
 
@@ -1294,7 +1287,7 @@ static void quant8x8(sps_t *sps, const int YCbCr, const int qP, int c[8][8], int
  * From 'ITU-T H.264' recommendation:
  * 8.5.13.2 Transformation process for residual 8x8 blocks.
  */
-static void idct8x8(int d[8][8], int r[8][8])
+static void idct8x8(const int d[8][8], int r[8][8])
 {
     TRACE_2(TRANS, " idct8x8()");
 
@@ -1397,7 +1390,7 @@ static void idct8x8(int d[8][8], int r[8][8])
  *
  * Note that MbaffFrameFlag support has been removed from this function.
  */
-static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, int u[4][4])
+static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, const int u[4][4])
 {
     TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1439,7 +1432,8 @@ static int picture_construction_process_4x4(DecodingContext_t *dc, const int blk
  * Note that MbaffFrameFlag support has been removed from this function.
  * Note that ChromaArrayType == 3 support has been removed from this function.
  */
-static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[4][4])
+static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const int YCbCr,
+                                                  const int blkIdx, const int u[4][4])
 {
     TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_4x4chroma()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1488,7 +1482,8 @@ static int picture_construction_process_4x4chroma(DecodingContext_t *dc, const i
  *
  * Note that MbaffFrameFlag support has been removed from this function.
  */
-static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx, int u[8][8])
+static int picture_construction_process_8x8(DecodingContext_t *dc, const int blkIdx,
+                                            const int u[8][8])
 {
     TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1530,7 +1525,8 @@ static int picture_construction_process_8x8(DecodingContext_t *dc, const int blk
  * Note that MbaffFrameFlag support has been removed from this function.
  * Note that ChromaArrayType == 3 support has been removed from this function.
  */
-static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr, const int blkIdx, int u[8][8])
+static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const int YCbCr,
+                                                  const int blkIdx, const int u[8][8])
 {
     TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_8x8chroma()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1578,7 +1574,7 @@ static int picture_construction_process_8x8chroma(DecodingContext_t *dc, const i
  *
  * Note that MbaffFrameFlag and ChromaArrayType == 3 support has been removed from this function.
  */
-static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][16])
+static int picture_construction_process_16x16(DecodingContext_t *dc, const int u[16][16])
 {
     TRACE_1(TRANS, "> " BLD_GREEN "picture_construction_process_16x16()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1624,7 +1620,8 @@ static int picture_construction_process_16x16(DecodingContext_t *dc, int u[16][1
  * From 'ITU-T H.264' recommendation:
  * 8.5.15 Intra residual transform-bypass decoding process.
  */
-static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag, int **r, int nW, int nH)
+static int **transformbypass_decoding(DecodingContext_t *dc, bool horPredFlag,
+                                      int **r, int nW, int nH)
 {
     TRACE_2(TRANS, " transformbypass_decoding()");
 

@@ -29,6 +29,9 @@
 #include "../../utils.h"
 #include "../../minitraces.h"
 
+// C++ standard libraries
+#include <algorithm>
+
 /* ************************************************************************** */
 
 // 4x4
@@ -270,7 +273,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
     }
 
     // 4
-    unsigned predIntra4x4PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
+    unsigned predIntra4x4PredMode = std::min(intraMxMPredModeA, intraMxMPredModeB);
     TRACE_3(INTRA, "  > predIntra4x4PredMode: %u", predIntra4x4PredMode);
 
     if (mb->prev_intra4x4_pred_mode_flag[luma4x4BlkIdx] == true)
@@ -1062,7 +1065,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
     TRACE_3(INTRA, "  > intraMxMPredModeB: %u", intraMxMPredModeB);
 
     // 4
-    unsigned predIntra8x8PredMode = MIN(intraMxMPredModeA, intraMxMPredModeB);
+    unsigned predIntra8x8PredMode = std::min(intraMxMPredModeA, intraMxMPredModeB);
 
     TRACE_3(INTRA, "  > predIntra8x8PredMode: %u", predIntra8x8PredMode);
 

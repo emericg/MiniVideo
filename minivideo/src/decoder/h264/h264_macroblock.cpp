@@ -36,8 +36,11 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+
+// C++ standard libraries
+#include <algorithm>
 
 /* ************************************************************************** */
 
@@ -1137,9 +1140,9 @@ static void residual_luma(DecodingContext_t *dc, const int startIdx, const int e
                         TRACE_2(MB, "---- residual_luma 16x16 AC (mb %i - blk %i/15) ---------------- START - 16x16 AC", mb->mbAddr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
-                            residual_block_cabac(dc, mb->Intra16x16ACLevel[blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
+                            residual_block_cabac(dc, mb->Intra16x16ACLevel[blkIdx], std::max(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
                         else
-                            residual_block_cavlc(dc, mb->Intra16x16ACLevel[blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
+                            residual_block_cavlc(dc, mb->Intra16x16ACLevel[blkIdx], std::max(0, startIdx - 1), endIdx - 1, 15, blk_LUMA_16x16_AC, blkIdx);
                     }
                     else
                     {
@@ -1274,9 +1277,9 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
                         TRACE_2(MB, "---- residual_chroma 4x4 AC (mb %i - iCbCr %i - blk %i/3) ---------------- START", mb->mbAddr, iCbCr, blkIdx);
 
                         if (dc->entropy_coding_mode_flag)
-                            residual_block_cabac(dc, mb->ChromaACLevel[iCbCr][blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_CHROMA_AC_Cb + iCbCr, blkIdx);
+                            residual_block_cabac(dc, mb->ChromaACLevel[iCbCr][blkIdx], std::max(0, startIdx - 1), endIdx - 1, 15, blk_CHROMA_AC_Cb + iCbCr, blkIdx);
                         else
-                            residual_block_cavlc(dc, mb->ChromaACLevel[iCbCr][blkIdx], MAX(0, startIdx - 1), endIdx - 1, 15, blk_CHROMA_AC_Cb + iCbCr, blkIdx);
+                            residual_block_cavlc(dc, mb->ChromaACLevel[iCbCr][blkIdx], std::max(0, startIdx - 1), endIdx - 1, 15, blk_CHROMA_AC_Cb + iCbCr, blkIdx);
                     }
                     else
                     {

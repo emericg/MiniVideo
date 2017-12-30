@@ -569,7 +569,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
         /*const unsigned int reserved =*/ read_bits(bitstr, 16);
 
-        unsigned int pre_defined[3] = {0};
+        unsigned int pre_defined[3];
         pre_defined[0] = read_bits(bitstr, 32);
         pre_defined[1] = read_bits(bitstr, 32);
         pre_defined[2] = read_bits(bitstr, 32);

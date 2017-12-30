@@ -26,10 +26,10 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ int nalu_clean_sample(Bitstream_t *bitstr)
 
     unsigned int consecutive_zeros = 0;
     unsigned int current_byte = 0;
-    unsigned int current_byte_offset = ceil(bitstr->buffer_offset/8.0);
+    unsigned int current_byte_offset = std::ceil(bitstr->buffer_offset/8.0);
 
     // Search for start_code_prefix & emulation_prevention_three_byte
     while (current_byte_offset < bitstr->buffer_size)

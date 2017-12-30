@@ -27,9 +27,9 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
     unsigned int codeNum = 0;
     if (leadingZeroBits > 0)
     {
-        codeNum = (unsigned int)(pow(2, leadingZeroBits) - 1 + read_bits(bitstr, leadingZeroBits));
+        codeNum = std::pow(2, leadingZeroBits) - 1 + read_bits(bitstr, leadingZeroBits);
     }
 
     TRACE_1(EXPGO, "codeNum  = %i", codeNum);
@@ -107,7 +107,7 @@ int read_se(Bitstream_t *bitstr)
     TRACE_1(EXPGO, "read_se()");
 
     unsigned int codeNum = get_codeNum(bitstr);
-    int se = (int)(pow(-1.0, codeNum+1) * ceil(codeNum/2.0));
+    int se = std::pow(-1.0, codeNum+1) * std::ceil(codeNum/2.0);
 
     TRACE_1(EXPGO, "read_se(k:%i) = %i", codeNum, se);
     return se;
@@ -129,13 +129,12 @@ unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool int
 {
     TRACE_1(EXPGO, "read_me()");
 
-    unsigned coded_block_pattern = 0;
     unsigned cat = 1;
     if (ChromaArrayType == 0 || ChromaArrayType == 3)
         cat = 0;
 
     // Fetch syntax element 'coded_block_pattern' value
-    coded_block_pattern = NCBP[cat][get_codeNum(bitstr)][!intracoding_flag];
+    unsigned coded_block_pattern = NCBP[cat][get_codeNum(bitstr)][!intracoding_flag];
 
     TRACE_1(EXPGO, "coded_block_pattern = %i", coded_block_pattern);
     return coded_block_pattern;

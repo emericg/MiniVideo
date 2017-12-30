@@ -29,10 +29,13 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+
+// C++ standard libraries
+#include <algorithm>
 
 /* ************************************************************************** */
 /*
@@ -106,10 +109,10 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
         static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int binIdx);
 
     static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassFlag);
-    static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx);
+    static uint8_t DecodeDecision(DecodingContext_t *dc, const int ctxIdx);
     static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr);
-    static int DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr);
-    static int DecodeTerminate(CabacContext_t *cc, Bitstream_t *bitstr);
+    static uint8_t DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr);
+    static uint8_t DecodeTerminate(CabacContext_t *cc, Bitstream_t *bitstr);
 
 /* ************************************************************************** */
 
@@ -391,7 +394,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
         exit(EXIT_FAILURE);
     }
 
-    // Suffix ?
+    // Suffix?
     if (suffix.maxBinIdxCtx != -1)
     {
         if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &suffix) == FAILURE)
@@ -402,7 +405,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 
         if (seType == SE_coded_block_pattern)
         {
-            SyntaxElementValue = prefix.SyntaxElementValue + 16*suffix.SyntaxElementValue;
+            SyntaxElementValue = prefix.SyntaxElementValue + (16 * suffix.SyntaxElementValue);
         }
         else
         {
@@ -413,7 +416,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     {
         if (seType == SE_mb_qp_delta)
         {
-            SyntaxElementValue = (int)(pow(-1.0, prefix.SyntaxElementValue+1) * ceil(prefix.SyntaxElementValue/2.0));
+            SyntaxElementValue = std::pow(-1.0, prefix.SyntaxElementValue+1) * std::ceil(prefix.SyntaxElementValue/2.0);
         }
         else
         {
@@ -1098,8 +1101,8 @@ static int bp_UEGk(int k, const bool signedValFlag, const int uCoff)
  * From 'ITU-T H.264' recommendation:
  * 9.3.2.4 Fixed-length (FL) binarization process
  *
-Input to this process is a request for a FL binarization for a syntax element and cMax.
-Output of this process is the FL binarization of the syntax element.
+ * Input to this process is a request for a FL binarization for a syntax element and cMax.
+ * Output of this process is the FL binarization of the syntax element.
  */
 static int bp_FL(const int cMax)
 {
@@ -1211,7 +1214,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
     int match = 999;
 
     uint8_t decodedSE[32];
-    memset(decodedSE, 255, sizeof(decodedSE));
+    //memset(decodedSE, 255, sizeof(decodedSE));
 
     {
         // Print status
@@ -1232,7 +1235,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
 
         if (bin->bypassFlag == true)
         {
-            decodedSE[binIdx] = (uint8_t)DecodeBypass(dc->active_slice->cc, dc->bitstr);
+            decodedSE[binIdx] = DecodeBypass(dc->active_slice->cc, dc->bitstr);
         }
         else
         {
@@ -1248,7 +1251,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
             else if (ctxIdx == 276)
             {
                 // Use the special '9.3.3.2.1' process (DecodeTerminate) instead of regular 9.3.3.2.4 process (DecodeDecision)
-                decodedSE[binIdx] = (uint8_t)DecodeTerminate(dc->active_slice->cc, dc->bitstr);
+                decodedSE[binIdx] = DecodeTerminate(dc->active_slice->cc, dc->bitstr);
             }
 #if ENABLE_DEBUG
             else if (ctxIdx > 459)
@@ -1259,7 +1262,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
 #endif // ENABLE_DEBUG
             else
             {
-                decodedSE[binIdx] = (uint8_t)DecodeDecision(dc, ctxIdx);
+                decodedSE[binIdx] = DecodeDecision(dc, ctxIdx);
             }
         }
 
@@ -2280,7 +2283,7 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType
             sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
             int NumC8x8 = 4 / (sps->SubWidthC * sps->SubHeightC);
 
-            ctxIdxInc = MIN(levelListIdx / NumC8x8, 2);
+            ctxIdxInc = std::min(levelListIdx / NumC8x8, 2);
         }
         else if (blkType == blk_LUMA_8x8)
         {
@@ -2304,17 +2307,17 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType
 
         if (binIdx == 0)
         {
-            ctxIdxInc = ((Gt1 != 0) ? 0 : MIN(4, 1 + Eq1));
+            ctxIdxInc = ((Gt1 != 0) ? 0 : std::min(4, 1 + Eq1));
         }
         else
         {
             if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_DC_Cr)
             {
-                ctxIdxInc = 5 + MIN(3, Gt1);
+                ctxIdxInc = 5 + std::min(3, Gt1);
             }
             else
             {
-                ctxIdxInc = 5 + MIN(4, Gt1);
+                ctxIdxInc = 5 + std::min(4, Gt1);
             }
         }
     }
@@ -2380,9 +2383,9 @@ static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassF
  * Outputs of this process are the decoded value binVal, and the updated
  * variables codIRange and codIOffset.
  */
-static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
+static uint8_t DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 {
-    int binVal = 0;
+    uint8_t binVal = 0;
 
     // Shortcut
     CabacContext_t *cc = dc->active_slice->cc;
@@ -2396,14 +2399,14 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
 
     if (cc->codIOffset < cc->codIRange)
     {
-        binVal = (int)cc->valMPS[ctxIdx];
+        binVal = cc->valMPS[ctxIdx];
 
         // 9.3.3.2.1.1 State transition process
         cc->pStateIdx[ctxIdx] = transIdxMPS[cc->pStateIdx[ctxIdx]];
     }
     else
     {
-        binVal = 1 - (int)cc->valMPS[ctxIdx];
+        binVal = 1 - cc->valMPS[ctxIdx];
 
         cc->codIOffset -= cc->codIRange;
         cc->codIRange = codIRangeLPS;
@@ -2417,12 +2420,7 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
         cc->pStateIdx[ctxIdx] = transIdxLPS[cc->pStateIdx[ctxIdx]];
     }
 
-#if ENABLE_DEBUG == 0
-
-    RenormD(cc, dc->bitstr);
-
-#else /* ENABLE_DEBUG == 1 */
-
+#if ENABLE_DEBUG
     int frame_debug_range[2] = {-1, -1}; // Range of (idr) frame(s) to debug/analyse
     int mb_debug_range[2] = {-1, -1}; // Range of macroblock(s) to debug/analyse
 
@@ -2437,9 +2435,11 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
             printf("[CABAC] codIOffset : %i\n", dc->active_slice->cc->codIOffset);
         }
     }
+#endif // ENABLE_DEBUG
 
     RenormD(cc, dc->bitstr);
 
+#if ENABLE_DEBUG
     if ((int)(dc->idrCounter) >= frame_debug_range[0] && (int)(dc->idrCounter) <= frame_debug_range[1])
     {
         if ((int)(dc->CurrMbAddr) >= mb_debug_range[0] && (int)(dc->CurrMbAddr) <= mb_debug_range[1])
@@ -2452,6 +2452,7 @@ static int DecodeDecision(DecodingContext_t *dc, const int ctxIdx)
         }
     }
 #endif // ENABLE_DEBUG
+
     return binVal;
 }
 
@@ -2477,7 +2478,7 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
     {
         cc->codIRange <<= 1;
         cc->codIOffset <<= 1;
-        cc->codIOffset |= (int)read_bit(bitstr);
+        cc->codIOffset |= read_bit(bitstr);
     }
 
 #if ENABLE_DEBUG
@@ -2506,11 +2507,11 @@ static void RenormD(CabacContext_t *cc, Bitstream_t *bitstr)
  * Inputs to this process are bits from slice data and the variables codIRange and codIOffset.
  * Outputs of this process are the updated variable codIOffset and the decoded value binVal.
  */
-static int DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr)
+static uint8_t DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr)
 {
     TRACE_2(CABAC, BLD_GREEN "  DecodeBypass()" CLR_RESET);
 
-    int binVal = 0;
+    uint8_t binVal = 0;
 
     cc->codIOffset <<= 1;
     cc->codIOffset |= read_bit(bitstr);
@@ -2542,11 +2543,11 @@ static int DecodeBypass(CabacContext_t *cc, Bitstream_t *bitstr)
  * Outputs of this process are the updated variables codIRange and codIOffset,
  * and the decoded value binVal.
  */
-static int DecodeTerminate(CabacContext_t *cc, Bitstream_t *bitstr)
+static uint8_t DecodeTerminate(CabacContext_t *cc, Bitstream_t *bitstr)
 {
     TRACE_2(CABAC, BLD_GREEN "  DecodeTerminate()" CLR_RESET);
 
-    int binVal = 1;
+    uint8_t binVal = 1;
 
     // codIRange never goes under 25x, no need to check for integer underflow
     cc->codIRange -= 2;

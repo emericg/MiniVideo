@@ -21,10 +21,8 @@
  * \date      2010
  */
 
-// C standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "h264_cavlc.h"
+#include "h264_cavlc_tables.h"
 
 // minivideo headers
 #include "../../minitraces.h"
@@ -32,8 +30,13 @@
 #include "../../utils.h"
 #include "h264_spatial.h"
 
-#include "h264_cavlc.h"
-#include "h264_cavlc_tables.h"
+// C standard libraries
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+
+// C++ standard libraries
+#include <algorithm>
 
 /* ************************************************************************** */
 /*
@@ -242,7 +245,7 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
             else
             {
                 int level_prefix = read_ce_levelprefix(dc);
-                int levelCode = MIN(15, level_prefix) << suffixLength;
+                int levelCode = std::min(15, level_prefix) << suffixLength;
 
                 if (suffixLength > 0 || level_prefix >= 14)
                 {
