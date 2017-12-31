@@ -96,17 +96,17 @@ static int decodingProcessFlow(DecodingContext_t *dc,
                                SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx,
                                binarization_t *bin);
 
-static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset);
-        static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
+static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, const uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset);
+        static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
         static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset);
-        static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx);
-        static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx);
+        static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx);
+        static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx);
         static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkType, const int blkIdx);
-        static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
-        static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int binIdx);
+        static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
+        static int assign_ctxIdxInc_se(DecodingContext_t *dc, const SyntaxElementType_e seType, const BlockType_e blkType, const int binIdx);
 
     static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassFlag);
     static uint8_t DecodeDecision(DecodingContext_t *dc, const int ctxIdx);
@@ -390,7 +390,7 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     // Prefix
     if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process");
+        TRACE_ERROR(CABAC, "Fatal error during Arithmetic (prefix) decoding process");
         exit(EXIT_FAILURE);
     }
 
@@ -492,11 +492,11 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     // Prefix
     if (decodingProcessFlow(dc, seType, blkType, blkIdx, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic decoding process");
+        TRACE_ERROR(CABAC, "Fatal error during Arithmetic (prefix) decoding process");
         exit(EXIT_FAILURE);
     }
 
-    // Suffix
+    // Suffix?
     if (seType == SE_coeff_abs_level_minus1 && prefix.SyntaxElementValue >= 14)
     {
         if (decodingProcessFlow(dc, seType, blkType, blkIdx, &suffix) == FAILURE)
@@ -1341,11 +1341,12 @@ static int decodingProcessFlow(DecodingContext_t *dc,
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1 Derivation process for ctxIdx.
  */
-static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset)
+static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType,
+                     const int blkIdx, const uint8_t decodedSE[32],
+                     int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset)
 {
     TRACE_2(CABAC, BLD_GREEN " getCtxIdx()" CLR_RESET);
 
-    int i = -1;
     int ctxIdx = -1, ctxIdxInc = -1;
     bool ctxIdxOffset_intable_flag = false;
 
@@ -1355,6 +1356,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
         TRACE_3(CABAC, " binIdx > maxBinIdxCtx (%i < %i)", binIdx, maxBinIdxCtx);
     }
 
+    int i = -1;
     while (i < 21)
     {
         i++;
@@ -1431,7 +1433,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
 /*!
  * \return ctxIdxInc docme.
  */
-static int deriv_ctxIdxInc(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
+static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
 {
     TRACE_2(CABAC, BLD_GREEN "  ctxIdxInc()" CLR_RESET);
     int ctxIdxInc = -1;
@@ -1612,7 +1614,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
  */
-static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
+static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx)
 {
     TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
@@ -1701,7 +1703,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, uint8_t decodedSE[32]
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
  */
-static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, uint8_t decodedSE[32], const int binIdx)
+static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx)
 {
     TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
@@ -2211,7 +2213,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.2 Assignment process of ctxIdxInc using prior decoded bin values.
  */
-static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
+static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
 {
     TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()" CLR_RESET);
     int ctxIdxInc = -1;
@@ -2269,7 +2271,7 @@ static int assign_ctxIdxInc_priorvalues(uint8_t decodedSE[32], const int binIdx,
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.3 Assignment process of ctxIdxInc for syntax elements significant_coeff_flag, last_significant_coeff_flag, and coeff_abs_level_minus1.
  */
-static int assign_ctxIdxInc_se(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int binIdx)
+static int assign_ctxIdxInc_se(DecodingContext_t *dc, const SyntaxElementType_e seType, const BlockType_e blkType, const int binIdx)
 {
     TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_se()" CLR_RESET);
     int ctxIdxInc = -1;

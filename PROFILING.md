@@ -41,6 +41,11 @@ massive call graph that shows:
 
 http://valgrind.org/docs/manual/cl-manual.html
 
+> "--simulate-cache=yes" measure the cache behavior of your program  
+> "--branch-sim=yes" add branch prediction simulation  
+> "--collect-jumps=yes" add more details of the control flow inside of functions, i.e. (conditional) jumps  
+> "--dump-instr=yes" produce profile data at instruction granularity  
+
 ### GUIs
 - qtcreator (https://www.qt.io/ide/) Good integration of valgrind / cachegrind
 - kcachegrind (https://kcachegrind.github.io/) Very "visual" frontend to cachegrind and callgrind. Tied to the KDE framework.

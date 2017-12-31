@@ -24,6 +24,7 @@ TODOs
   - IDR detection
   - tag_descriptors
 - MPEG TS parser
+- Ogg parser
 - MXF parser (maybe)
 
 // Video decoder
@@ -48,8 +49,5 @@ PERFORMANCE IMPROVEMENTS
 - Stop the memcmp() if match > 1
 
 // TRANSFORMS
-- Change some int u[][] to uint8 u[][]
+- Change some int u[][] to uint8 u[][]?
 - Homogenize the idct code for luma/chroma DC
-- Reuse arrays within the idct code
-  - idct4x4() use e[4][4] instead of g[4][4]
-  - idct8x8() use e[8][8] instead of h[8][8] m[8][8] k[8][8]

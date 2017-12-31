@@ -375,10 +375,11 @@ int read_ce_coefftoken(DecodingContext_t *dc, const int nC, int *TotalCoeffs, in
     TRACE_3(CAVLC, BLD_GREEN "read_ce_coefftoken()" CLR_RESET);
     //bitstream_print_absolute_bit_offset(dc->bitstr);
 
-
     // VLC decoding
     ////////////////////////////////////////////////////////////////////////////
-    unsigned int coeff_token = 0; // Value of coeff_token will not be 100% accurate after reading: need to add 4, 8 or 16, but we do not use it so it's ok.
+
+    // Value of coeff_token will not be 100% accurate after reading: need to add 4, 8 or 16, but we do not use it so it's ok.
+    unsigned int coeff_token = 0;
     unsigned int b = 0;
     int leadingZeroBits = -1;
 
@@ -646,7 +647,6 @@ int read_ce_coefftoken(DecodingContext_t *dc, const int nC, int *TotalCoeffs, in
             *TrailingOnes = coefftoken_table[5][leadingZeroBits][b][2];
         }
     }
-
 
     // Print & return results
     ////////////////////////////////////////////////////////////////////////////

@@ -7,9 +7,9 @@ MiniVideo framework
 Introduction
 ------------
 
-MiniVideo is a **video framework developed from scratch** in C++, bundled with small testing programs and a media analyser.  
+MiniVideo is a **video framework developed from scratch** in C/C++, bundled with small testing programs and a neat media analyser.  
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
-The build system uses CMake. Both library and test programs can be installed into your system.  
+The project uses a dual CMake/QMake build system (CMake is prefered though). Both library and test programs can be installed into your system.  
 
 MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*, as a small **video decoding library developed from scratch** in C. Its goal was to generate video thumbnails, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
 
@@ -17,7 +17,7 @@ The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
 * Open H.264 compressed videos and decode/export intra-coded pictures.
 * Extract various metadata from container and elementary streams.
-* Map exact container structure to xml file.
+* Map exact container structure to xml file / GUI.
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
@@ -115,8 +115,7 @@ Using mini_analyser
 -------------------
 
 > $ cd mini_analyser/build/  
-> $ export LD_LIBRARY_PATH=../../minivideo/build
-> $ ./mini_analyser
+> $ ./mini_analyser  
 
 Then drag and drop files to analyse them!
 
@@ -145,7 +144,7 @@ Command line arguments:
 > -h : print help  
 > -i : path to the input video  
 > -o : path to the output folder, where generated thumbnails will be saved  
-> -f : export format for the thumbnails (can be 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')  
+> -f : export format for the thumbnails (can be 'webp' 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')  
 > -q : thumbnail quality (1 to 100 range)  
 > -n : number of thumbnail to generate (1 to 999 range)  
 > -m : extraction mode for the thumbnails (can be 'unfiltered', 'ordered' or 'distributed')  

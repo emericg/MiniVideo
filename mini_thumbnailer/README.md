@@ -37,7 +37,7 @@ Command line arguments:
 > -h : print help  
 > -i : path to the input video  
 > -o : path to the output folder, where generated thumbnails will be saved  
-> -f : export format for the thumbnails (can be 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')  
+> -f : export format for the thumbnails (can be 'webp' 'jpg' 'png' 'bmp' 'tga' 'yuv420' 'yuv444')  
 > -q : thumbnail quality (1 to 100 range)  
 > -n : number of thumbnail to generate (1 to 999 range)  
 > -m : extraction mode for the thumbnails (can be 'unfiltered', 'ordered' or 'distributed')  
