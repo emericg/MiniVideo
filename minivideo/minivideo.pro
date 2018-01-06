@@ -55,10 +55,14 @@ macx {
 }
 
 win32 {
+    VERSION =
+    DEFINES -= UNICODE
+    DEFINES += minivideo_EXPORT=__declspec(dllimport)
     QMAKE_LFLAGS += -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc
 }
 
 # minivideo files --------------------------------------------------------------
 
 SOURCES = $$files(src/*.cpp, true)
+SOURCES+= $$files(src/*.c, true)
 HEADERS = $$files(src/*.h, true)

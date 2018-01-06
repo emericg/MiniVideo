@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
     if (cli_enabled)
     {
-        // CLI /////////////////////////////////////////////////////////////////////
+        // CLI /////////////////////////////////////////////////////////////////
 
         MiniAnalyserCLI app(argc, argv);
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        // GUI /////////////////////////////////////////////////////////////////////
+        // GUI /////////////////////////////////////////////////////////////////
 
         std::cout << GREEN "mini_analyser(" BLUE << VERSION_STR << GREEN ")" RESET << std::endl;
 #ifdef QT_DEBUG
@@ -100,11 +100,16 @@ int main(int argc, char *argv[])
         minivideo_print_features();
         minivideo_endianness();
 
+#ifdef Q_OS_WIN32
+        // High DPI monitor? Use automatic scaling
+        qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+#endif
+
         // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
         MiniAnalyserGUI app(argc, argv);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-        // High DPI monitor?
+        // High DPI monitor? Use high quality pixmaps
         if (app.devicePixelRatio() > 1)
         {
             app.setAttribute(Qt::AA_UseHighDpiPixmaps);
