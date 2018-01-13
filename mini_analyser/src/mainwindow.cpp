@@ -377,6 +377,7 @@ void MainWindow::closeFile(const QString &fileToClose)
                 ui->tab_container->closeMedia();
                 minivideo_close(&mediaList.at(i)->media);
 
+                delete mediaList.at(i);
                 mediaList.erase(mediaList.begin() + i);
 
                 // Remove the entry from the comboBox
@@ -405,6 +406,7 @@ void MainWindow::closeFile()
             ui->tab_container->closeMedia();
 
             minivideo_close(&mediaList.at(fileIndex)->media);
+            delete mediaList.at(fileIndex);
 
             mediaList.erase(mediaList.begin() + fileIndex);
 
