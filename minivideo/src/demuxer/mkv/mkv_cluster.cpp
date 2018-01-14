@@ -71,7 +71,7 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
     //TRACE_1(MKV, "block track number: %u", stn);
     //TRACE_1(MKV, "block timecode: %u", stc + cluster.Timecode);
 
-    mkv_sample_t *s = (mkv_sample_t *)calloc(1, sizeof(mkv_sample_t));
+    mkv_sample_t *s = new mkv_sample_t;
     if (s)
     {
         if (type == sampletype_SimpleBlock)
@@ -92,10 +92,13 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
 
         if (lacing)
         {
-            TRACE_WARNING(MKV, "Lacing used, but not really supported...");
+            TRACE_WARNING(MKV, "Lacing used (track: %i, mode: %i), but not really supported...", stn, lacing);
 
             uint8_t frame_count_minus1 = read_bits(bitstr, 8);
-            if (lacing == 0x01 || lacing == 0x02)
+            
+            // Lace-coded size of each frame of the lace, except for the last one (multiple uint8). 
+            // This is not used with Fixed-size lacing as it is calculated automatically from (total size of lace) / (number of frames in lace).
+            if (lacing == MKV_LACING_XIPH || lacing == MKV_LACING_EBML)
             {
                 for (int i = 0; i < frame_count_minus1; i++)
                 {
@@ -107,16 +110,6 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
         s->offset = bitstream_get_absolute_byte_offset(bitstr);
         s->size = element->size;
         s->timecode = stc + cluster_timecode;
-
-        // Index sample
-        if ((unsigned)mkv->tracks_count >= stn && mkv->tracks[stn])
-        {
-            vector_add(&(mkv->tracks[stn]->sample_vector), s);
-        }
-        else
-        {
-            TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
-        }
 
         // Map sample
         if (mkv->xml)
@@ -144,6 +137,17 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
             fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
             fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
             fprintf(mkv->xml, "  </a>\n");
+        }
+
+        // Index sample
+        if (mkv->tracks_count >= stn && mkv->tracks[stn])
+        {
+            mkv->tracks[stn]->sample_vector.push_back(s);
+        }
+        else
+        {
+            delete s;
+            TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
         }
     }
 

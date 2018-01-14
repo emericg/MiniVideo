@@ -318,8 +318,8 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 
     // SPS
     track->sps_count = read_bits(bitstr, 5); // MAX_SPS = 32
-    track->sps_sample_offset = (int64_t*)calloc(track->sps_count, sizeof(int64_t));
-    track->sps_sample_size = (unsigned int*)calloc(track->sps_count, sizeof(unsigned int));
+    track->sps_sample_offset = new int64_t [track->sps_count];
+    track->sps_sample_size = new unsigned int[track->sps_count];
 
     for (i = 0; i < track->sps_count; i++)
     {
@@ -327,6 +327,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
 
         track->sps_array[i] = (sps_t *)calloc(1, sizeof(sps_t));
+        //track->sps_array[i] = new sps_t;
 
         skip_bits(bitstr, 8); // skip NAL header
         decodeSPS(bitstr, track->sps_array[i]);
@@ -344,8 +345,8 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 
     // PPS
     track->pps_count = read_bits(bitstr, 8); // MAX_PPS = 256
-    track->pps_sample_offset = (int64_t*)calloc(track->pps_count, sizeof(int64_t));
-    track->pps_sample_size = (unsigned int*)calloc(track->pps_count, sizeof(unsigned int));
+    track->pps_sample_offset = new int64_t[track->pps_count];
+    track->pps_sample_size = new unsigned int[track->pps_count];
 
     for (i = 0; i < track->pps_count; i++)
     {
@@ -353,6 +354,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
 
        track->pps_array[i] = (pps_t *)calloc(1, sizeof(pps_t));
+       //track->pps_array[i] = new pps_t;
 
        skip_bits(bitstr, 8); // skip NAL header
        decodePPS(bitstr, track->pps_array[i], track->sps_array);

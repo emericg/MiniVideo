@@ -53,7 +53,6 @@ static int mkv_parse_attachments_attachedfile(Bitstream_t *bitstr, EbmlElement_t
     write_ebml_element(element, mkv->xml, "Attached File");
 
     mkv_attachedfile_t file;
-    memset(&file, 0, sizeof(mkv_attachedfile_t));
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -96,10 +95,10 @@ static int mkv_parse_attachments_attachedfile(Bitstream_t *bitstr, EbmlElement_t
 
     if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
-    free(file.FileDescription);
-    free(file.FileName);
-    free(file.FileMimeType);
-    free(file.FileData);
+    delete [] file.FileDescription;
+    delete [] file.FileName;
+    delete [] file.FileMimeType;
+    delete [] file.FileData;
 
     return retcode;
 }
@@ -222,6 +221,8 @@ static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element,
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Edition Entry");
 
+    //mkv_editionentry_t ee;
+
     while (mkv->run == true &&
            retcode == SUCCESS &&
            bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
@@ -317,7 +318,7 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
     write_ebml_element(element, mkv->xml, "Tag");
 
     mkv_tag_t tag;
-/*
+
     while (mkv->run == true &&
            retcode == SUCCESS &&
            bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
@@ -339,7 +340,7 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
-*/
+
     if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
 
     return retcode;
@@ -737,7 +738,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
             {
             case eid_SeekId:
                 SeekID = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "SeekID");
-                free(SeekID);
+                delete [] SeekID;
                 break;
             case eid_SeekPosition:
                 SeekPosition = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "SeekPosition");
@@ -942,7 +943,6 @@ int mkv_fileParse(MediaFile_t *media)
     {
         // Init an MKV structure
         mkv_t mkv;
-        memset(&mkv, 0, sizeof(mkv_t));
 
         // A convenient way to stop the parser
         mkv.run = true;

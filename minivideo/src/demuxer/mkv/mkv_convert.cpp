@@ -67,7 +67,7 @@ int mkv_convert(MediaFile_t *media, mkv_t *mkv)
     }
     else // Convert tracks
     {
-        for (int i = 0; i < mkv->tracks_count; i++)
+        for (unsigned i = 0; i < mkv->tracks_count; i++)
         {
             if (mkv->tracks[i])
             {
@@ -105,7 +105,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
     if (retcode == SUCCESS)
     {
-        int sample_count = vector_count(&track->sample_vector);
+        int sample_count = track->sample_vector.size();
         if (sample_count <= 0)
             sample_count = 1;
 
@@ -276,12 +276,12 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         }
 
         // Track samples
-        map->sample_count = vector_count(&track->sample_vector);
+        map->sample_count = track->sample_vector.size();
         //TRACE_1(MKV, "sample_count: %i", sample_count);
 
         for (unsigned sid = 0; sid < map->sample_count; sid++)
         {
-            mkv_sample_t *s = (mkv_sample_t *)vector_get(&track->sample_vector, sid);
+            mkv_sample_t *s = track->sample_vector.at(sid);
 
             if (track->TrackType == MKV_TRACK_VIDEO)
             {
@@ -314,93 +314,91 @@ void mkv_clean(mkv_t *mkv)
     if (mkv)
     {
         // ebml_header_t
-        free(mkv->ebml.DocType);
+        delete [] mkv->ebml.DocType;
 
         // mkv_info_t
-        free(mkv->info.SegmentUID);
-        free(mkv->info.SegmentFilename);
-        free(mkv->info.PrevUID);
-        free(mkv->info.PrevFilename);
-        free(mkv->info.NextUID);
-        free(mkv->info.NextFilename);
-        free(mkv->info.SegmentFamily);
+        delete [] mkv->info.SegmentUID;
+        delete [] mkv->info.SegmentFilename;
+        delete [] mkv->info.PrevUID;
+        delete [] mkv->info.PrevFilename;
+        delete [] mkv->info.NextUID;
+        delete [] mkv->info.NextFilename;
+        delete [] mkv->info.SegmentFamily;
         for (int i = 0; i < mkv->info.chapter_count; i++)
         {
             // mkv_info_chapter_t // TODO
-            //free(mkv->info.chapter[i].ChapterTranslateID);
+            //delete  mkv->info.chapter[i].ChapterTranslateID;
         }
-        free(mkv->info.Title);
-        free(mkv->info.MuxingApp);
-        free(mkv->info.WritingApp);
+        delete [] mkv->info.Title;
+        delete [] mkv->info.MuxingApp;
+        delete [] mkv->info.WritingApp;
 
         // mkv_tracks_t
-        for (int i = 0; i < mkv->tracks_count; i++)
+        for (unsigned stream_id = 0; stream_id < mkv->tracks_count; stream_id++)
         {
-            if (mkv->tracks[i])
+            if (mkv->tracks[stream_id])
             {
-                free(mkv->tracks[i]->Name);
-                free(mkv->tracks[i]->Language);
-                free(mkv->tracks[i]->CodecID);
-                free(mkv->tracks[i]->CodecPrivate);
-                free(mkv->tracks[i]->CodecName);
+                delete [] mkv->tracks[stream_id]->Name;
+                delete [] mkv->tracks[stream_id]->Language;
+                delete [] mkv->tracks[stream_id]->CodecID;
+                delete [] mkv->tracks[stream_id]->CodecPrivate;
+                delete [] mkv->tracks[stream_id]->CodecName;
 
-                if (mkv->tracks[i]->video)
+                if (mkv->tracks[stream_id]->video)
                 {
-                    if (mkv->tracks[i]->video->Projection)
+                    if (mkv->tracks[stream_id]->video->Projection)
                     {
-                        free(mkv->tracks[i]->video->Projection->ProjectionPrivate);
-                        free(mkv->tracks[i]->video->Projection);
+                        delete [] mkv->tracks[stream_id]->video->Projection->ProjectionPrivate;
+                        delete mkv->tracks[stream_id]->video->Projection;
                     }
-                    if (mkv->tracks[i]->video->Colour)
+                    if (mkv->tracks[stream_id]->video->Colour)
                     {
-                        free(mkv->tracks[i]->video->Colour->MasteringMetadata);
-                        free(mkv->tracks[i]->video->Colour);
+                        delete [] mkv->tracks[stream_id]->video->Colour->MasteringMetadata;
+                        delete mkv->tracks[stream_id]->video->Colour;
                     }
-                    free(mkv->tracks[i]->video->ColourSpace);
-                    free(mkv->tracks[i]->video);
+                    delete [] mkv->tracks[stream_id]->video->ColourSpace;
+                    delete mkv->tracks[stream_id]->video;
                 }
-                if (mkv->tracks[i]->audio)
+                if (mkv->tracks[stream_id]->audio)
                 {
-                    free(mkv->tracks[i]->audio);
+                    delete mkv->tracks[stream_id]->audio;
                 }
-                if (mkv->tracks[i]->translate)
+                if (mkv->tracks[stream_id]->translate)
                 {
-                    free(mkv->tracks[i]->translate);
+                    delete mkv->tracks[stream_id]->translate;
                 }
-                if (mkv->tracks[i]->operation)
+                if (mkv->tracks[stream_id]->operation)
                 {
-                    free(mkv->tracks[i]->operation);
+                    delete mkv->tracks[stream_id]->operation;
                 }
-                if (mkv->tracks[i]->encodings)
+                if (mkv->tracks[stream_id]->encodings)
                 {
-                    free(mkv->tracks[i]->encodings->encoding);
-                    free(mkv->tracks[i]->encodings);
+                    delete mkv->tracks[stream_id]->encodings->encoding;
+                    delete mkv->tracks[stream_id]->encodings;
                 }
 
                 // SPS
-                for (unsigned sps_i = 0; sps_i < mkv->tracks[i]->sps_count && sps_i < MAX_SPS; sps_i++)
-                    freeSPS(&mkv->tracks[i]->sps_array[sps_i]);
-                free(*mkv->tracks[i]->sps_array);
-                free(mkv->tracks[i]->sps_sample_offset);
-                free(mkv->tracks[i]->sps_sample_size);
+                for (unsigned sps_id = 0; sps_id < mkv->tracks[stream_id]->sps_count && sps_id < MAX_SPS; sps_id++)
+                    freeSPS(&mkv->tracks[stream_id]->sps_array[sps_id]);
+                delete *mkv->tracks[stream_id]->sps_array;
+                delete [] mkv->tracks[stream_id]->sps_sample_offset;
+                delete [] mkv->tracks[stream_id]->sps_sample_size;
 
                 // PPS
-                for (unsigned pps_i = 0; pps_i < mkv->tracks[i]->pps_count && pps_i < MAX_PPS; pps_i++)
-                    freePPS(&mkv->tracks[i]->pps_array[pps_i]);
-                free(*mkv->tracks[i]->pps_array);
-                free(mkv->tracks[i]->pps_sample_offset);
-                free(mkv->tracks[i]->pps_sample_size);
+                for (unsigned pps_id = 0; pps_id < mkv->tracks[stream_id]->pps_count && pps_id < MAX_PPS; pps_id++)
+                    freePPS(&mkv->tracks[stream_id]->pps_array[pps_id]);
+                delete *mkv->tracks[stream_id]->pps_array;
+                delete [] mkv->tracks[stream_id]->pps_sample_offset;
+                delete [] mkv->tracks[stream_id]->pps_sample_size;
 
                 // Samples
-                int samplecount = vector_count(&mkv->tracks[i]->sample_vector);
-                for (int j = 0; j < samplecount; j++)
+                for (unsigned sample_id = 0; sample_id < mkv->tracks[stream_id]->sample_vector.size(); sample_id++)
                 {
-                    mkv_sample_t *s = (mkv_sample_t *)vector_get(&mkv->tracks[i]->sample_vector, j);
-                    free(s);
+                    delete mkv->tracks[stream_id]->sample_vector.at(sample_id);
                 }
-                vector_free(&mkv->tracks[i]->sample_vector);
+                mkv->tracks[stream_id]->sample_vector.clear();
 
-                free(mkv->tracks[i]);
+                delete mkv->tracks[stream_id];
             }
         }
     }

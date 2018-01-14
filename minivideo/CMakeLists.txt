@@ -192,9 +192,8 @@ set(minivideo_SRC
     src/minivideo.cpp
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
-        src/minivideo_codecs.cpp src/minivideo_avutils.h
+        src/minivideo_codecs.cpp src/utils.cpp src/minivideo_avutils.h
         src/minivideo_fourcc.cpp src/minivideo_twocc.cpp src/minivideo_uuid.cpp
-        src/utils.cpp src/thirdparty/simple_vector.c
     src/minitraces.cpp src/minitraces_conf.h
     src/bitstream.cpp
         src/bitstream_utils.cpp src/bitstream_map.cpp

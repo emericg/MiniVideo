@@ -27,7 +27,6 @@
 // minivideo headers
 #include "../../minivideo_typedef.h"
 #include "../../minivideo_codecs.h"
-#include "../../thirdparty/simple_vector.h"
 #include "../../decoder/h264/h264_parameterset.h"
 
 #include <cstdio>
@@ -37,53 +36,53 @@
 
 typedef struct ebml_header_t
 {
-    uint64_t EBMLVersion;
-    uint64_t EBMLReadVersion;
-    uint64_t EBMLMaxIDLength;
-    uint64_t EBMLMaxSizeLength;
-    char *DocType;
-    uint64_t DocTypeVersion;
-    uint64_t DocTypeReadVersion;
+    uint64_t EBMLVersion = 0;
+    uint64_t EBMLReadVersion = 0;
+    uint64_t EBMLMaxIDLength = 0;
+    uint64_t EBMLMaxSizeLength = 0;
+    char *DocType = nullptr;
+    uint64_t DocTypeVersion = 0;
+    uint64_t DocTypeReadVersion = 0;
 
 } ebml_header_t;
 
 typedef struct mkv_info_chapter_t
 {
-    uint64_t ChapterTranslateEditionUID;
-    uint64_t ChapterTranslateCodec;
-    uint8_t *ChapterTranslateID;
+    uint64_t ChapterTranslateEditionUID = 0;
+    uint64_t ChapterTranslateCodec = 0;
+    uint8_t *ChapterTranslateID = nullptr;
 
 } mkv_info_chapter_t;
 
 typedef struct mkv_info_t
 {
-    uint8_t *SegmentUID;
-    char *SegmentFilename;
-    uint8_t *PrevUID;
-    char *PrevFilename;
-    uint8_t *NextUID;
-    char *NextFilename;
-    uint8_t *SegmentFamily;
+    uint8_t *SegmentUID = nullptr;
+    char *SegmentFilename = nullptr;
+    uint8_t *PrevUID = nullptr;
+    char *PrevFilename = nullptr;
+    uint8_t *NextUID = nullptr;
+    char *NextFilename = nullptr;
+    uint8_t *SegmentFamily = nullptr;
 
-    int chapter_count;
-    mkv_info_chapter_t *chapter;
+    int chapter_count = 0;
+    mkv_info_chapter_t *chapter = nullptr;
 
-    uint64_t TimecodeScale;
-    double Duration;
-    uint64_t DateUTC;
-    char *Title;
-    char *MuxingApp;
-    char *WritingApp;
+    uint64_t TimecodeScale = 0;
+    double Duration = 0;
+    uint64_t DateUTC = 0;
+    char *Title = nullptr;
+    char *MuxingApp = nullptr;
+    char *WritingApp = nullptr;
 
 } mkv_info_t;
 
 typedef struct mkv_cluster_t
 {
-    uint64_t Timecode;
+    uint64_t Timecode = 0;
     //SilentTracks
     //SilentTrackNumber
-    uint64_t Position;
-    uint64_t PrevSize;
+    uint64_t Position = 0;
+    uint64_t PrevSize = 0;
     //uint8_t *SimpleBlock;
     //BlockGroup;
     //Block;
@@ -92,53 +91,53 @@ typedef struct mkv_cluster_t
 
 typedef struct mkv_tag_t
 {
-    uint64_t CueTrack;
-    uint64_t CueClusterPosition;
-    uint64_t CueRelativePosition;
-    uint64_t CueDuration;
-    uint64_t CueBlockNumber;
-    uint64_t CueCodecState;
+    uint64_t CueTrack = 0;
+    uint64_t CueClusterPosition = 0;
+    uint64_t CueRelativePosition = 0;
+    uint64_t CueDuration = 0;
+    uint64_t CueBlockNumber = 0;
+    uint64_t CueCodecState = 0;
 
 } mkv_tag_t;
 
 typedef struct mkv_tags_t
 {
-    mkv_tag_t *Tags;
+    mkv_tag_t *Tags = nullptr;
 
 } mkv_tags_t;
 
 typedef struct mkv_cuetrackpos_t
 {
-    uint64_t CueTrack;
-    uint64_t CueClusterPosition;
-    uint64_t CueRelativePosition;
-    uint64_t CueDuration;
-    uint64_t CueBlockNumber;
-    uint64_t CueCodecState;
+    uint64_t CueTrack = 0;
+    uint64_t CueClusterPosition = 0;
+    uint64_t CueRelativePosition = 0;
+    uint64_t CueDuration = 0;
+    uint64_t CueBlockNumber = 0;
+    uint64_t CueCodecState = 0;
 
 } mkv_cuetrackpos_t;
 
 typedef struct mkv_cuepoint_t
 {
-    uint64_t CueTime;
-    mkv_cuetrackpos_t *CueTrackPos;
+    uint64_t CueTime = 0;
+    mkv_cuetrackpos_t *CueTrackPos = nullptr;
 
 } mkv_cuepoint_t;
 
 typedef struct mkv_attachedfile_t
 {
-    char *FileDescription;
-    char *FileName;
-    char *FileMimeType;
-    uint64_t FileData_size;
-    uint8_t *FileData;
-    uint64_t FileUID;
+    char *FileDescription = nullptr;
+    char *FileName = nullptr;
+    char *FileMimeType = nullptr;
+    uint64_t FileData_size = 0;
+    uint8_t *FileData = nullptr;
+    uint64_t FileUID = 0;
 
 } mkv_attachedfile_t;
 
 typedef struct mkv_attachments_t
 {
-    mkv_attachedfile_t *file;
+    mkv_attachedfile_t *file = nullptr;
 
 } mkv_attachments_t;
 
@@ -153,13 +152,13 @@ typedef enum MkvSampleType_e
 
 typedef struct mkv_sample_t
 {
-    int64_t offset;
-    int64_t size;
-    int64_t timecode;
+    int64_t offset = 0;
+    int64_t size = 0;
+    int64_t timecode = 0;
 
-    bool idr;
-    bool visible;
-    bool discardable;
+    bool idr = false;
+    bool visible = false;
+    bool discardable = false;
 
 } mkv_sample_t;
 
@@ -213,7 +212,7 @@ typedef struct mkv_track_video_projection_t
 {
     uint64_t ProjectionType;
     int ProjectionPrivate_size;
-    uint8_t *ProjectionPrivate;
+    uint8_t *ProjectionPrivate = nullptr;
     uint64_t ProjectionPoseYaw;
     uint64_t ProjectionPosePitch;
     uint64_t ProjectionPoseRoll;
@@ -237,9 +236,9 @@ typedef struct mkv_track_video_t
     uint64_t DisplayUnit;
     uint64_t AspectRatioType;
     int ColourSpace_size;
-    uint8_t *ColourSpace;
-    mkv_track_video_colour_t *Colour;
-    mkv_track_video_projection_t *Projection;
+    uint8_t *ColourSpace = nullptr;
+    mkv_track_video_colour_t *Colour = nullptr;
+    mkv_track_video_projection_t *Projection = nullptr;
 
 } mkv_track_video_t;
 
@@ -263,15 +262,15 @@ typedef struct mkv_track_encoding_t
 
         uint64_t ContentCompAlgo;
         int ContentCompSettings_size;
-        uint8_t *ContentCompSettings;
+        uint8_t *ContentCompSettings = nullptr;
 
         uint64_t ContentEncAlgo;
         int ContentEncKeyID_size;
-        uint8_t *ContentEncKeyID;
+        uint8_t *ContentEncKeyID = nullptr;
         int ContentSignature_size;
-        uint8_t *ContentSignature;
+        uint8_t *ContentSignature = nullptr;
         int ContentSigKeyID_size;
-        uint8_t *ContentSigKeyID;
+        uint8_t *ContentSigKeyID = nullptr;
         uint64_t ContentSigAlgo;
         uint64_t ContentSigHashAlgo;
 
@@ -279,12 +278,15 @@ typedef struct mkv_track_encoding_t
 
 typedef struct mkv_track_encodings_t
 {
-    mkv_track_encoding_t *encoding;
+    mkv_track_encoding_t *encoding = nullptr;
 
 } mkv_track_encodings_t;
 
 typedef struct mkv_track_t
 {
+    mkv_track_t() {};
+    ~mkv_track_t() {};
+
     uint64_t TrackNumber;
     uint64_t TrackUID;
     uint64_t TrackType;
@@ -298,66 +300,79 @@ typedef struct mkv_track_t
     uint64_t DefaultDecodedFieldDuration;
     uint64_t TrackTimecodeScale;    //!< DEPRECATED
     uint64_t MaxBlockAdditionID;
-    char *Name;
-    char *Language;
-    char *CodecID;
+    char *Name = nullptr;
+    char *Language = nullptr;
+    char *CodecID = nullptr;
     int64_t CodecPrivate_offset;
     int CodecPrivate_size;
-    uint8_t *CodecPrivate;
-    char *CodecName;
+    uint8_t *CodecPrivate = nullptr;
+    char *CodecName = nullptr;
     uint64_t AttachmentLink;
     uint64_t CodecDecodeAll;
     uint64_t TrackOverlay;
     uint64_t CodecDelay;
     uint64_t SeekPreRoll;
 
-    mkv_track_audio_t *audio;
-    mkv_track_video_t *video;
-    mkv_track_translate_t *translate;
-    mkv_track_operation_t *operation;
-    mkv_track_encodings_t *encodings;
+    mkv_track_audio_t *audio = nullptr;
+    mkv_track_video_t *video = nullptr;
+    mkv_track_translate_t *translate = nullptr;
+    mkv_track_operation_t *operation = nullptr;
+    mkv_track_encodings_t *encodings = nullptr;
 
-    vector sample_vector;
+    std::vector<mkv_sample_t *> sample_vector;
 
     // AVC/HEVC specific parameters
-    unsigned int codec_profile;
-    unsigned int codec_level;
-    unsigned int ref_frames;
+    unsigned int codec_profile = 0;
+    unsigned int codec_level = 0;
+    unsigned int ref_frames = 0;
 
-    unsigned int sps_count;
-    sps_t *sps_array[MAX_SPS];
-    unsigned int *sps_sample_size;
-    int64_t *sps_sample_offset;
-    unsigned int pps_count;
-    pps_t *pps_array[MAX_PPS];
-    unsigned int *pps_sample_size;
-    int64_t *pps_sample_offset;
+    unsigned int sps_count = 0;
+    sps_t *sps_array[MAX_SPS] = { nullptr };
+    unsigned int *sps_sample_size = nullptr;
+    int64_t *sps_sample_offset = nullptr;
+    unsigned int pps_count = 0;
+    pps_t *pps_array[MAX_PPS] = { nullptr };
+    unsigned int *pps_sample_size = nullptr;
+    int64_t *pps_sample_offset = nullptr;
 
 } mkv_track_t;
+
+typedef struct mkv_chapter_entry_t
+{
+    int chapter_count = 0;
+    uint8_t *ChapterEditionEntry = nullptr;
+
+} mkv_chapter_entry_t;
+
+typedef struct mkv_chapter_t
+{
+    int chapter_count = 0;
+    mkv_chapter_entry_t *ChapterEditionEntry = nullptr;
+
+} mkv_chapter_t;
 
 /* ************************************************************************** */
 
 //! Structure for MKV video infos
 typedef struct mkv_t
 {
-    bool run;                   //!< A convenient way to stop the parser from any sublevel
+    bool run = false;           //!< A convenient way to stop the parser from any sublevel
 
     ContainerProfiles_e profile;//!< MKV variant
 
     ebml_header_t ebml;
     mkv_info_t info;
 
-    int tracks_count;
-    mkv_track_t *tracks[16];
+    uint32_t tracks_count = 0;
+    mkv_track_t *tracks[16] = { nullptr };
 
-    FILE *xml;                  //!< Temporary file used by the xmlMapper
+    FILE *xml = nullptr;        //!< Temporary file used by the xmlMapper
 
 } mkv_t;
 
 /* ************************************************************************** */
 
 /*!
- * \enum MkvTrackType_e
  * \brief Identifies the content of a track.
  */
 typedef enum MkvTrackType_e
@@ -370,10 +385,21 @@ typedef enum MkvTrackType_e
     MKV_TRACK_BUTTONS   = 0x12,
     MKV_TRACK_CONTROL   = 0x20,
 
-} Mp4HandlerType_e;
+} MkvTrackType_e;
 
 /*!
- * \enum EbmlDocType_e
+ * \brief Frame lacing mode.
+ */
+typedef enum MkvBlockLacing_e
+{
+    MKV_LACING_DISABLED = 0,
+    MKV_LACING_XIPH     = 1,
+    MKV_LACING_FIXED    = 2,
+    MKV_LACING_EBML     = 3,
+
+} MkvBlockLacing_e;
+
+/*!
  * \brief Identifies the doctype of the current EBML file.
  */
 typedef enum EbmlDocType_e
