@@ -37,13 +37,13 @@ extern "C" {
 /*!
  * \brief Get a printable GUID string
  * \param uuid_in[in]: A 16 characters UUID.
- * \param guid_out[in,out]: A 38 character C string.
- * \return A pointer to the provided guid_out[38] so this function can be used directly inside a printf().
+ * \param guid_out[in,out]: A 39 character C string.
+ * \return A pointer to the provided guid_out[39] so this function can be used directly inside a printf().
  *
  * A Microsoft "GUIDs" prints as follows:
  * {00112233-4455-6677-8899-aabbccddeeff}
  */
-minivideo_EXPORT char *getGuidString(const uint8_t uuid_in[16], char guid_out[38]);
+minivideo_EXPORT char *getGuidString(const uint8_t uuid_in[16], char guid_out[39]);
 
 /*!
  * \brief Get a printable URN string

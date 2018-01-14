@@ -166,7 +166,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
             //TRACE_1(WAV, "> wReserved          : %u", wave->fmt.wReserved);
             TRACE_1(WAV, "> dwChannelMask      : %u", wave->fmt.dwChannelMask);
 
-            char SubFormat_str[38];
+            char SubFormat_str[39];
             getGuidString(wave->fmt.SubFormat, SubFormat_str);
             TRACE_1(WAV, "> SubFormat: %s", SubFormat_str);
         }
@@ -196,7 +196,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     fprintf(wave->xml, "  <wValidBitsPerSample>%u</wValidBitsPerSample>\n", wave->fmt.wValidBitsPerSample);
                     fprintf(wave->xml, "  <dwChannelMask>%u</dwChannelMask>\n", wave->fmt.dwChannelMask);
 
-                    char SubFormat_str[38];
+                    char SubFormat_str[39];
                     getGuidString(wave->fmt.SubFormat, SubFormat_str);
                     fprintf(wave->xml, "  <SubFormat>%s</SubFormat>\n", SubFormat_str);
                 }
@@ -225,7 +225,7 @@ static int parse_fmt(Bitstream_t *bitstr, RiffChunk_t *fmt_header, wave_t *wave)
                     //fprintf(wave->xml, "  <wSamplesPerBlock>%u</wSamplesPerBlock>\n", wave->fmt.wSamplesPerBlock);
                     //fprintf(wave->xml, "  <wReserved>%u</wReserved>\n", wave->fmt.wReserved);
 
-                    char SubFormat_str[38];
+                    char SubFormat_str[39];
                     getGuidString(wave->fmt.SubFormat, SubFormat_str);
                     fprintf(wave->xml, "  <SubFormat>%s</SubFormat>\n", SubFormat_str);
                 }

@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-char *getGuidString(const uint8_t uuid_in[16], char guid_out[38])
+char *getGuidString(const uint8_t uuid_in[16], char guid_out[39])
 {
     if (guid_out)
     {

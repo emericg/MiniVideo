@@ -541,9 +541,9 @@ static int parse_strf(Bitstream_t *bitstr, RiffChunk_t *strf_header, avi_t *avi,
                         uint32_t dwChannelMask = endian_flip_32(read_bits(bitstr, 32));
 
                         uint8_t SubFormat_GUID[16];
-                        char SubFormat_GUID_str[38];
-
                         read_uuid_le(bitstr, SubFormat_GUID);
+
+                        char SubFormat_GUID_str[39];
                         getGuidString(SubFormat_GUID, SubFormat_GUID_str);
 
 #if ENABLE_DEBUG
