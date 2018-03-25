@@ -200,6 +200,7 @@ bool VideoBackendsVDPAU::load(VideoBackendInfos &infos)
         queryDecoderCaps(deviceI, infos);
 
         status = true;
+        delete deviceI;
     }
 
     return status;

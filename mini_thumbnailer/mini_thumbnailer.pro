@@ -25,7 +25,7 @@ LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 #LIBS        += ../minivideo/build/libminivideo.a # static linking
 
 unix {
-    QMAKE_CFLAGS += -fPIE
+    QMAKE_CXXFLAGS += -fPIE
 
     QMAKE_RPATHDIR += $${PWD}/../minivideo/build
 }
