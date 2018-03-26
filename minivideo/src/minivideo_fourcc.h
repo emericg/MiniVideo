@@ -31,18 +31,6 @@
 
 /* ************************************************************************** */
 
-#define MV_FOURCC_BE(a,b,c,d) ((uint32_t)((((uint32_t)((uint8_t)(a))) << 24) + \
-                                          (((uint32_t)((uint8_t)(b))) << 16) + \
-                                          (((uint32_t)((uint8_t)(c))) <<  8) + \
-                                          (((uint32_t)((uint8_t)(d)))      )))
-
-#define MV_FOURCC_LE(a,b,c,d) ((uint32_t)((((uint32_t)((uint8_t)(d))) << 24) + \
-                                          (((uint32_t)((uint8_t)(c))) << 16) + \
-                                          (((uint32_t)((uint8_t)(b))) <<  8) + \
-                                          (((uint32_t)((uint8_t)(a)))      )))
-
-/* ************************************************************************** */
-
 constexpr uint32_t fourcc_be(char const fcc[5])
 {
     return (fcc[0] << 24) | (fcc[1] << 16) | (fcc[2] << 8) | fcc[3];

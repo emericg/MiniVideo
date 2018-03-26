@@ -84,12 +84,12 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
         if (mp4->profile == 0)
         {
-            if (compatible_brands[i] == MV_FOURCC_BE('m','p','4','1') ||
-                compatible_brands[i] == MV_FOURCC_BE('m','p','4','2'))
+            if (compatible_brands[i] == fourcc_be("mp41") ||
+                compatible_brands[i] == fourcc_be("mp42"))
             {
                 mp4->profile = PROF_ISOBMF_MP4;
             }
-            else if (compatible_brands[i] == MV_FOURCC_BE('3','g','p','4'))
+            else if (compatible_brands[i] == fourcc_be("3gp4"))
             {
                 mp4->profile = PROF_ISOBMF_3GP;
             }
