@@ -25,7 +25,10 @@
 #define XML_MAPPER_H
 
 // minivideo headers
-#include "../import.h"
+#include "../minivideo_mediafile.h"
+
+// C standard libraries
+#include <cstdio>
 
 /* ************************************************************************** */
 

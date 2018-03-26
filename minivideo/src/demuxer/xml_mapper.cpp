@@ -23,7 +23,7 @@
 
 // minivideo headers
 #include "xml_mapper.h"
-#include "../minivideo_typedef.h"
+#include "../minivideo_containers.h"
 #include "../minitraces.h"
 
 // C POSIX library
