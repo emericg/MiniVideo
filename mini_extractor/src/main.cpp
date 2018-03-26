@@ -244,13 +244,13 @@ int main(int argc, char *argv[])
         MediaFile_t *input_video = NULL;
         minivideo_retcode = minivideo_open(input_filepath, &input_video);
 
-        if (minivideo_retcode == SUCCESS)
+        if (minivideo_retcode == 1)
         {
             // Start container parsing
             minivideo_retcode = minivideo_parse(input_video, false);
 
             // Export audio and video PES stream
-            if (minivideo_retcode == SUCCESS)
+            if (minivideo_retcode == 1)
             {
                 retcode = minivideo_extract(input_video,
                                             output_directory,
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
         }
 
         // Convert library return code into program exit code
-        if (minivideo_retcode == SUCCESS)
+        if (minivideo_retcode == 1)
         {
             retcode = EXIT_SUCCESS;
             std::cout << std::endl << YELLOW "mini_extractor exited without errors. Have a nice day." RESET << std::endl;

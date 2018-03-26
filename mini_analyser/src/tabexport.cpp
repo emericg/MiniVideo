@@ -169,7 +169,7 @@ void tabExport::saveDatas()
 
 int tabExport::loadMedia(const MediaWrapper *wrap)
 {
-    int retcode = 0;
+    int status = 1;
 
     if (wrap && wrap->media)
     {
@@ -179,18 +179,18 @@ int tabExport::loadMedia(const MediaWrapper *wrap)
         wrapper = (MediaWrapper *)wrap;
         media = (MediaFile_t *)wrap->media;
 
-        retcode = generateExportDatas();
+        status = generateExportDatas();
 
         ui->comboBox_export_modes->blockSignals(false);
         ui->comboBox_export_formats->blockSignals(false);
     }
 
-    return retcode;
+    return status;
 }
 
 int tabExport::generateExportDatas()
 {
-    int retcode = 0;
+    int status = 1;
 
     if (media)
     {
@@ -212,17 +212,17 @@ int tabExport::generateExportDatas()
             if (exportFormat == EXPORT_JSON)
             {
                 outputFilePath += ".json";
-                retcode = textExport::generateExportDatas_json(*media, exportDatas, exportMode);
+                status = textExport::generateExportDatas_json(*media, exportDatas, exportMode);
             }
             else if (exportFormat == EXPORT_XML)
             {
                 outputFilePath += ".xml";
-                retcode = textExport::generateExportDatas_xml(*media, exportDatas, exportMode);
+                status = textExport::generateExportDatas_xml(*media, exportDatas, exportMode);
             }
             else // if (exportFormat == EXPORT_TEXT)
             {
                 outputFilePath += ".txt";
-                retcode = textExport::generateExportDatas_text(*media, exportDatas, exportMode);
+                status = textExport::generateExportDatas_text(*media, exportDatas, exportMode);
             }
         }
         else if (exportMode == 2)
@@ -232,7 +232,7 @@ int tabExport::generateExportDatas()
 
             {
                 outputFilePath += ".xml";
-                retcode = textExport::generateExportMapping_xml(*media, exportDatas);
+                status = textExport::generateExportMapping_xml(*media, exportDatas);
             }
         }
 
@@ -241,5 +241,5 @@ int tabExport::generateExportDatas()
         ui->textBrowser_export->setText(exportDatas);
     }
 
-    return retcode;
+    return status;
 }

@@ -47,10 +47,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->statusLabel->hide();
-    statusTimer = new QTimer;
-    connect(statusTimer, SIGNAL(timeout()), this, SLOT(hideStatus()));
-
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(loadFileDialog()));
     connect(ui->actionReload, SIGNAL(triggered()), this, SLOT(reloadFile()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
@@ -126,7 +122,6 @@ MainWindow::~MainWindow()
 {
     cleanGui();
 
-    delete statusTimer;
     delete ui;
 }
 
@@ -215,12 +210,12 @@ void MainWindow::on_comboBox_sub_selector_currentIndexChanged(int index)
 
 int MainWindow::setAppPath(const QString &path)
 {
-    int status = 0;
+    int status = 1;
 
     if (path.isEmpty() == false)
     {
         applicationPath = path;
-        status = 1;
+        status = 0;
     }
 
     return status;
@@ -236,7 +231,7 @@ void MainWindow::loadFileDialog()
 
 int MainWindow::loadFile(const QString &file)
 {
-    int retcode = FAILURE;
+    int status = 1;
 
     if (file.isEmpty() == false)
     {
@@ -259,7 +254,7 @@ int MainWindow::loadFile(const QString &file)
 
         if (thread && media)
         {
-            retcode = SUCCESS;
+            status = 0;
 
             mediaList.push_back(media);
             media->mediaPath = file;
@@ -279,7 +274,7 @@ int MainWindow::loadFile(const QString &file)
         }
     }
 
-    return retcode;
+    return status;
 }
 
 /* ************************************************************************** */
@@ -706,37 +701,6 @@ void MainWindow::loadingTab()
     // Loading animation
     QString anim = ":/img/img/loading.svg";
     ui->widget_animation->load(anim);
-}
-
-/* ************************************************************************** */
-
-void MainWindow::setStatus(const QString &text, int status, int duration)
-{
-    if (status == FAILURE)
-    {
-        ui->statusLabel->setStyleSheet("QLabel { border: 1px solid rgb(255, 53, 3);\nbackground: rgba(255, 170, 0, 128); }");
-    }
-    else //if (type == SUCCESS)
-    {
-        ui->statusLabel->setStyleSheet("QLabel { border: 1px solid rgb(85, 170, 0);\nbackground: rgba(85, 200, 0, 128); }");
-    }
-
-    if (duration > 0)
-    {
-        statusTimer->setInterval(10000);
-        statusTimer->start();
-    }
-
-    ui->statusLabel->setText(text);
-    ui->statusLabel->show();
-
-    ui->statusLabel->repaint();
-    qApp->processEvents();
-}
-
-void MainWindow::hideStatus()
-{
-    ui->statusLabel->hide();
 }
 
 /* ************************************************************************** */

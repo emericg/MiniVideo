@@ -84,21 +84,21 @@ public slots:
             strncpy(input_filepath, mediaPath.toLocal8Bit(), 4095);
 
             // Create and open the media file
-            int retcode = minivideo_open(input_filepath, &media);
+            int minivideo_retcode = minivideo_open(input_filepath, &media);
 
-            if (retcode == SUCCESS)
+            if (minivideo_retcode == 1)
             {
-                retcode = minivideo_parse(media, true);
+                minivideo_retcode = minivideo_parse(media, true);
                 ready = true;
 
-                if (retcode != SUCCESS)
+                if (minivideo_retcode != 1)
                 {
-                    qDebug() << "minivideo_parse() failed with retcode: " << retcode;
+                    qDebug() << "minivideo_parse() failed with retcode: " << minivideo_retcode;
                 }
             }
             else
             {
-                qDebug() << "minivideo_open() failed with retcode: " << retcode;
+                qDebug() << "minivideo_open() failed with retcode: " << minivideo_retcode;
             }
 
             end_parsing = std::chrono::steady_clock::now();

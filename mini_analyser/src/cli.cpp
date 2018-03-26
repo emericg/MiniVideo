@@ -51,27 +51,27 @@ int CLI::printFile(const QString &file, bool details)
         strncpy(input_filepath, file.toLocal8Bit(), 4095);
 
         // Create and open the media file
-        int retcode = minivideo_open(input_filepath, &media);
-        if (retcode == SUCCESS)
+        int minivideo_retcode = minivideo_open(input_filepath, &media);
+        if (minivideo_retcode == 1)
         {
             // Parse media file
-            retcode = minivideo_parse(media, true);
-            if (retcode == SUCCESS)
+            minivideo_retcode = minivideo_parse(media, true);
+            if (minivideo_retcode == 1)
             {
                 // Generate text output and print it on console
                 QString exportDatas;
-                retcode = textExport::generateExportDatas_text(*media, exportDatas, details);
+                minivideo_retcode = textExport::generateExportDatas_text(*media, exportDatas, details);
 
                 QTextStream(stdout) << exportDatas << endl;
             }
             else
             {
-                qDebug() << "minivideo_parse() failed with retcode: " << retcode;
+                qDebug() << "minivideo_parse() failed with retcode: " << minivideo_retcode;
             }
         }
         else
         {
-            qDebug() << "minivideo_open() failed with retcode: " << retcode;
+            qDebug() << "minivideo_open() failed with retcode: " << minivideo_retcode;
         }
     }
 

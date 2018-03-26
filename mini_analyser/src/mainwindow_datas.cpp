@@ -184,7 +184,7 @@ void MainWindow::cleanDatas()
 
 int MainWindow::setActiveFile()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
     MediaWrapper *wrapper = currentMediaWrapper();
@@ -228,15 +228,15 @@ int MainWindow::setActiveFile()
 #endif // QT_DEBUG
         }
 
-        retcode = 1;
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 int MainWindow::printDatas()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
     MediaWrapper *wrapper = currentMediaWrapper();
@@ -579,18 +579,16 @@ int MainWindow::printDatas()
 
             printOtherDetails();
         }
-    }
-    else
-    {
-        retcode = 0;
+
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 int MainWindow::printAudioDetails()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
 
@@ -822,14 +820,16 @@ int MainWindow::printAudioDetails()
                 ui->audioBitrateGraph->replot();
             }
         }
+
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 int MainWindow::printVideoDetails()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
     MediaWrapper *wrapper = currentMediaWrapper();
@@ -1130,14 +1130,16 @@ int MainWindow::printVideoDetails()
                 ui->videoBitrateGraph->replot();
             }
         }
+
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 int MainWindow::printSubtitlesDetails()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
 
@@ -1187,14 +1189,16 @@ int MainWindow::printSubtitlesDetails()
             //ui->label_sub_encoding->setText();
             //ui->label_sub_size->setText();
         }
+
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 int MainWindow::printOtherDetails()
 {
-    int retcode = 0;
+    int status = 1;
 
     MediaFile_t *media = currentMediaFile();
 
@@ -1246,9 +1250,11 @@ int MainWindow::printOtherDetails()
         // Add new tags
         QLabel *tag = new QLabel(tr("No tags found..."));
         ui->verticalLayout_other2_tags->addWidget(tag);
+
+        status = 0;
     }
 
-    return retcode;
+    return status;
 }
 
 void MainWindow::xAxisRangeChanged(const QCPRange &newRange)

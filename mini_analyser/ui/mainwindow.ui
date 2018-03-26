@@ -49,7 +49,36 @@
     <property name="spacing">
      <number>4</number>
     </property>
-    <item row="0" column="0" colspan="3">
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_file_detach">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Launch a new instance of mini_analyser.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/resources.qrc">
+        <normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
      <widget class="QComboBox" name="comboBox_file">
       <property name="minimumSize">
        <size>
@@ -80,53 +109,7 @@
       </item>
      </widget>
     </item>
-    <item row="0" column="3">
-     <widget class="QPushButton" name="pushButton_file_detach">
-      <property name="maximumSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Launch a new instance of mini_analyser.</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="4">
-     <widget class="QLabel" name="statusLabel">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: 1px solid rgb(255, 53, 3);
-background: rgba(255, 170, 0, 128);</string>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="4">
+    <item row="1" column="0" colspan="3">
      <widget class="QTabWidget" name="tabWidget">
       <property name="acceptDrops">
        <bool>true</bool>
@@ -393,8 +376,8 @@ background: rgba(255, 170, 0, 128);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>622</width>
-             <height>711</height>
+             <width>618</width>
+             <height>709</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">

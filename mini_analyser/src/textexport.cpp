@@ -50,7 +50,7 @@ textExport::~textExport()
 
 int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportDatas, bool detailed)
 {
-    int retcode = 0;
+    int status = 1;
 
     exportDatas += "Full path     : ";
     exportDatas += media.file_path;
@@ -331,16 +331,16 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         exportDatas += QString::fromLocal8Bit(t->track_title);
         exportDatas += "\nLanguage      : ";
         exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+
+        status = 0;
     }
 
-    retcode = 1;
-
-    return retcode;
+    return status;
 }
 
 int textExport::generateExportDatas_json(MediaFile_t &media, QString &exportDatas, bool detailed)
 {
-    int retcode = 0;
+    int status = 1;
 
     Q_UNUSED(media);
     Q_UNUSED(exportDatas);
@@ -348,12 +348,12 @@ int textExport::generateExportDatas_json(MediaFile_t &media, QString &exportData
 
     // TODO
 
-    return retcode;
+    return status;
 }
 
 int textExport::generateExportDatas_xml(MediaFile_t &media, QString &exportDatas, bool detailed)
 {
-    int retcode = 0;
+    int status = 1;
 
     Q_UNUSED(media);
     Q_UNUSED(exportDatas);
@@ -361,12 +361,12 @@ int textExport::generateExportDatas_xml(MediaFile_t &media, QString &exportDatas
 
     // TODO
 
-    return retcode;
+    return status;
 }
 
 int textExport::generateExportMapping_xml(MediaFile_t &media, QString &exportDatas)
 {
-    int status = 1;
+    int status = 0;
 
     QFile xmlMapFile;
     QString filename;
@@ -375,7 +375,7 @@ int textExport::generateExportMapping_xml(MediaFile_t &media, QString &exportDat
     if (media.container_mapper_fd == nullptr ||
         xmlMapFile.open(media.container_mapper_fd, QIODevice::ReadOnly) == false)
     {
-        status = 0;
+        status = 1;
         qDebug() << "xmlFile.open(FILE*) > error";
     }
 
@@ -389,11 +389,11 @@ int textExport::generateExportMapping_xml(MediaFile_t &media, QString &exportDat
             xmlMapFile.open(QIODevice::ReadOnly) == false)
         {
             qDebug() << "xmlFile.open(" << filename << ") > error";
-            status = 0;
+            status = 1;
         }
     }
 
-    if (status == true)
+    if (status == 0)
     {
         xmlMapFile.seek(0);
         exportDatas = xmlMapFile.readAll();

@@ -74,8 +74,6 @@ private slots:
     void xAxisRangeChanged(const QCPRange &newRange);
     void yAxisRangeChanged(const QCPRange &newRange);
 
-    void hideStatus();
-
     void detachFile();
     void reloadFile();
     void closeFile(const QString &fileToClose);
@@ -103,7 +101,6 @@ private:
     AboutWindows *aboutwindows = nullptr;
     VideoBackendsUI *videobackends = nullptr;
 
-    QTimer *statusTimer = nullptr;
     QString applicationPath;
 
     bool mediaListEmpty = true;
@@ -144,7 +141,6 @@ private:
     MediaWrapper *namedMediaWrapper(QString &filePath);
     MediaFile_t *namedMediaFile(QString &filePath);
 
-    void setStatus(const QString &text, int type, int duration = 0);
     void handleComboBox();
     void handleComboBox(const QString &file);
     void handleTabWidget();
