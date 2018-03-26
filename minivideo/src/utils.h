@@ -24,8 +24,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-// minivideo headers
-#include "minivideo_typedef.h"
+// C standard libraries
+#include <cstdint>
 
 /* ************************************************************************** */
 

@@ -36,6 +36,7 @@
 #include <cstdlib>
 #include <climits>
 #include <cmath>
+#include <cinttypes>
 
 /* ************************************************************************** */
 

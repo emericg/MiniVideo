@@ -24,8 +24,8 @@
 #ifndef PARSER_RIFF_STRUCT_H
 #define PARSER_RIFF_STRUCT_H
 
-// minivideo headers
-#include "../../minivideo_typedef.h"
+// C standard libraries
+#include <cstdint>
 
 /* ************************************************************************** */
 

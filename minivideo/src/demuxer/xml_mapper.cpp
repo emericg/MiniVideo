@@ -23,8 +23,9 @@
 
 // minivideo headers
 #include "xml_mapper.h"
-#include "../minivideo_containers.h"
 #include "../minitraces.h"
+#include "../minivideo_containers.h"
+#include "../minivideo_typedef.h"
 
 // C POSIX library
 #ifndef _MSC_VER
@@ -35,6 +36,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cstdint>
+#include <cinttypes>
 
 #if defined(_MSC_VER)
 #include <windows.h>

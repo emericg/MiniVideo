@@ -24,7 +24,6 @@
 // minivideo headers
 #include "export_utils.h"
 #include "utils.h"
-#include "minivideo_typedef.h"
 #include "minitraces.h"
 
 // C standard libraries

@@ -38,12 +38,6 @@
 #define SUCCESS      1
 
 /* ************************************************************************** */
-// Types
-
-#include <cstdint>
-#include <cinttypes>
-
-/* ************************************************************************** */
 // Windows large file support
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)

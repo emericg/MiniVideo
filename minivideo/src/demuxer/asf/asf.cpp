@@ -32,7 +32,6 @@
 #include "../../bitstream_utils.h"
 #include "../../minivideo_twocc.h"
 #include "../../minivideo_fourcc.h"
-#include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries

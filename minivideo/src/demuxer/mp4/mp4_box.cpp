@@ -39,6 +39,7 @@
 #include <cstring>
 #include <cmath>
 #include <climits>
+#include <cinttypes>
 
 /* ************************************************************************** */
 

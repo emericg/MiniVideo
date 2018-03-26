@@ -25,7 +25,6 @@
 // minivideo headers
 #include "pes_packetizer.h"
 #include "../minitraces.h"
-#include "../minivideo_typedef.h"
 
 // C standard libraries
 #include <cstdio>

@@ -27,6 +27,9 @@
 // minivideo headers
 #include "../minivideo_typedef.h"
 
+// C standard libraries
+#include <cstdint>
+
 /* ************************************************************************** */
 
 typedef struct es_sample_t

@@ -26,8 +26,10 @@
 
 // minivideo headers
 #include "minivideo_codecs.h"
-#include "minivideo_typedef.h"
 #include "minivideo_export.h"
+
+// C standard libraries
+#include <cstdint>
 
 /* ************************************************************************** */
 

@@ -26,6 +26,7 @@
 #include "minivideo_codecs.h"
 #include "minivideo_fourcc.h"
 #include "minitraces.h"
+#include "minivideo_typedef.h"
 
 // C standard libraries
 #include <cstdlib>

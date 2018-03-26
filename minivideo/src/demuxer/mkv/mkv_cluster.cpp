@@ -36,6 +36,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cinttypes>
 
 /* ************************************************************************** */
 
@@ -95,8 +96,8 @@ mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
             TRACE_WARNING(MKV, "Lacing used (track: %i, mode: %i), but not really supported...", stn, lacing);
 
             uint8_t frame_count_minus1 = read_bits(bitstr, 8);
-            
-            // Lace-coded size of each frame of the lace, except for the last one (multiple uint8). 
+
+            // Lace-coded size of each frame of the lace, except for the last one (multiple uint8).
             // This is not used with Fixed-size lacing as it is calculated automatically from (total size of lace) / (number of frames in lace).
             if (lacing == MKV_LACING_XIPH || lacing == MKV_LACING_EBML)
             {

@@ -34,6 +34,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <climits>
+#include <cstdint>
+#include <cinttypes>
 
 /* ************************************************************************** */
 
