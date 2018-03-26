@@ -24,70 +24,10 @@
 #ifndef MINIVIDEO_CODECS_H
 #define MINIVIDEO_CODECS_H
 
-#include "minivideo_typedef.h"
 #include "minivideo_avutils.h"
 #include "minivideo_export.h"
 
 /* ************************************************************************** */
-
-//! Container file formats
-typedef enum Containers_e
-{
-    CONTAINER_UNKNOWN = 0,
-
-    // General purpose containers //////////////////////////////////////////////
-
-    CONTAINER_AVI       =  1,   //!< AVI "Audio Video Interleave" (.avi, ...)
-    CONTAINER_ASF       =  2,   //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
-    CONTAINER_MKV       =  3,   //!< Matroska (.mkv, .mka, .webm)
-    CONTAINER_MP4       =  4,   //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
-    CONTAINER_MPEG_PS   =  5,   //!< MPEG "Program Stream" (.mpg, .vob, ...)
-    CONTAINER_MPEG_TS   =  6,   //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
-    CONTAINER_MPEG_MT   =  7,   //!< MPEG "Media Transport" (.mt, .mmt)
-    CONTAINER_MXF       =  8,   //!< MXF "Material eXchange Format" (.mxf)
-    CONTAINER_FLV       =  9,   //!< SWF "Small Web Format" (.swf, .flv)
-    CONTAINER_OGG       = 10,   //!< OGG (.ogg, .ogv, .oga, ...)
-    CONTAINER_RM        = 11,   //!< RealMedia (.rm, .rmvb)
-    CONTAINER_R3D       = 12,   //!< REDCode RAW (.r3d)
-
-    // Audio containers ////////////////////////////////////////////////////////
-
-    CONTAINER_FLAC      = 64,   //!< FLAC "Free Lossless Audio Codec" (.flac)
-    CONTAINER_WAVE      = 65,   //!< WAVE "Waveform Audio File Format" (.wav)
-
-    // ES formats (not containers!) ////////////////////////////////////////////
-
-    CONTAINER_ES        = 128,  //!< Undefined "Elementary Stream"
-    CONTAINER_ES_AAC    = 129,  //!< AAC "Elementary Stream"
-    CONTAINER_ES_AC3    = 130,  //!< AC3 "Elementary Stream"
-    CONTAINER_ES_MP3    = 131   //!< MP3 "Elementary Stream"
-
-} Containers_e;
-
-typedef enum ContainerProfiles_e
-{
-    PROF_UNKNOWN        = 0,
-
-    PROF_AVI_OpenDML    = 2,
-
-    PROF_MPEG_PS_1      = 3,
-    PROF_MPEG_PS_2      = 4,
-
-    PROF_ISOBMF_MOV     = 8,
-    PROF_ISOBMF_MP4     = 9,
-    PROF_ISOBMF_3GP     = 10,
-    PROF_ISOBMF_MJP     = 11,
-
-    PROF_WAVE_AMB       = 16,
-    PROF_WAVE_RF64      = 17,
-    PROF_WAVE_BWFv1     = 18,
-    PROF_WAVE_BWFv2     = 19,
-    PROF_WAVE_BWF64     = 20,
-
-    PROF_MKV_MATROSKA   = 24,
-    PROF_MKV_WEBM       = 25
-
-} ContainerProfiles_e;
 
 //! Audio and Video compression standards (codecs)
 typedef enum Codecs_e
@@ -252,6 +192,8 @@ typedef enum Codecs_e
 
 typedef enum CodecProfiles_e
 {
+    CODEC_PROF_UNKNOWN  = 0,
+
     PROF_H262_SP        = 1,
     PROF_H262_MP,
     PROF_H262_SNR,
@@ -341,12 +283,10 @@ typedef enum Pictures_e
 
 /* ************************************************************************** */
 
-minivideo_EXPORT const char *getContainerString(const Containers_e container, const bool long_description = false);
 minivideo_EXPORT const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description = false);
-minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bool long_description = false);
-
-minivideo_EXPORT const char *getContainerProfileString(const ContainerProfiles_e profile, const bool long_description = false);
 minivideo_EXPORT const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description = false);
+
+minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bool long_description = false);
 
 /* ************************************************************************** */
 #endif // MINIVIDEO_CODECS_H

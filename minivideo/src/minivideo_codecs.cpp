@@ -22,6 +22,7 @@
  */
 
 #include "minivideo_codecs.h"
+#include "minitraces.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wswitch"
@@ -29,146 +30,6 @@
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wswitch"
 #endif
-
-/* ************************************************************************** */
-
-const char *getContainerString(const Containers_e container, const bool long_description)
-{
-    if (long_description)
-    {
-        switch (container)
-        {
-        case CONTAINER_AVI:
-            return "AVI (Audio Video Interleave) [.avi, ...]";
-            break;
-        case CONTAINER_ASF:
-            return "ASF (Advanced Systems Format) [.asf, .wma, .wmv]";
-            break;
-        case CONTAINER_MKV:
-            return "MKV (Matroska) [.mkv, .mka, .webm]";
-            break;
-        case CONTAINER_MP4:
-            return "MP4 (ISO Base Media format) [.mov, .mp4, .3gp, .f4v, ...]";
-            break;
-        case CONTAINER_MPEG_PS:
-            return "MPEG 'Program Stream' [.mpg, .vob, ...]";
-            break;
-        case CONTAINER_MPEG_TS:
-            return "MPEG 'Transport Stream' [.ts, .mts, .m2ts, ...]";
-            break;
-        case CONTAINER_MPEG_MT:
-            return "MPEG 'Media Transport'";
-            break;
-        case CONTAINER_MXF:
-            return "MXF Material eXchange Format [.mxf]";
-            break;
-        case CONTAINER_FLV:
-            return "SWF Small Web Format [.swf, .flv]";
-            break;
-        case CONTAINER_OGG:
-            return "OGG [.ogg, .ogv, ...]";
-            break;
-        case CONTAINER_RM:
-            return "RealMedia [.rm, .rmvb]";
-            break;
-        case CONTAINER_R3D:
-            return "Redcode RAW [.r3d]";
-            break;
-
-        case CONTAINER_FLAC:
-            return "FLAC (Free Lossless Audio Codec) [.flac]";
-            break;
-        case CONTAINER_WAVE:
-            return "WAVE (Waveform Audio File Format) [.wav]";
-            break;
-
-        case CONTAINER_ES:
-            return "Undefined 'Elementary Stream'";
-            break;
-        case CONTAINER_ES_AAC:
-            return "AAC 'Elementary Stream'";
-            break;
-        case CONTAINER_ES_AC3:
-            return "AC3 'Elementary Stream'";
-            break;
-        case CONTAINER_ES_MP3:
-            return "MP3 'Elementary Stream'";
-            break;
-
-        default:
-        case CONTAINER_UNKNOWN:
-            return "UNKNOWN";
-            break;
-        }
-    }
-    else // short description
-    {
-        switch (container)
-        {
-            case CONTAINER_AVI:
-                return "AVI";
-                break;
-            case CONTAINER_ASF:
-                return "ASF";
-                break;
-            case CONTAINER_MKV:
-                return "MKV";
-                break;
-            case CONTAINER_MP4:
-                return "MP4";
-                break;
-            case CONTAINER_MPEG_PS:
-                return "MPEG-PS";
-                break;
-            case CONTAINER_MPEG_TS:
-                return "MPEG-TS";
-                break;
-            case CONTAINER_MPEG_MT:
-                return "MPEG-MT";
-                break;
-            case CONTAINER_MXF:
-                return "MXF";
-                break;
-            case CONTAINER_FLV:
-                return "FLV";
-                break;
-            case CONTAINER_OGG:
-                return "OGG";
-                break;
-            case CONTAINER_RM:
-                return "RM";
-                break;
-            case CONTAINER_R3D:
-                return "R3D";
-                break;
-
-            case CONTAINER_FLAC:
-                return "FLAC";
-                break;
-            case CONTAINER_WAVE:
-                return "WAVE";
-                break;
-
-            case CONTAINER_ES:
-                return "ES";
-                break;
-            case CONTAINER_ES_AAC:
-                return "AAC ES";
-                break;
-            case CONTAINER_ES_AC3:
-                return "AC3 ES";
-                break;
-            case CONTAINER_ES_MP3:
-                return "MP3 ES";
-                break;
-
-            default:
-            case CONTAINER_UNKNOWN:
-                return "UNKNOWN";
-                break;
-        }
-    }
-}
 
 /* ************************************************************************** */
 
@@ -713,67 +574,6 @@ const char *getPictureString(const Pictures_e picture, const bool long_descripti
 }
 
 /* ************************************************************************** */
-/* ************************************************************************** */
-
-const char *getContainerProfileString(const ContainerProfiles_e profile, const bool long_description)
-{
-    switch (profile)
-    {
-        case PROF_AVI_OpenDML:
-            return "AVI v2 \"OpenDML\"";
-            break;
-
-        case PROF_MPEG_PS_1:
-            return "MPEG-PS v1";
-            break;
-        case PROF_MPEG_PS_2:
-            return "MPEG-PS v2";
-            break;
-
-        case PROF_ISOBMF_MOV:
-            return "QuickTime File Format";
-            break;
-        case PROF_ISOBMF_MP4:
-            return "ISO BMF MP4";
-            break;
-        case PROF_ISOBMF_3GP:
-            return "ISO BMF 3GP";
-            break;
-        case PROF_ISOBMF_MJP:
-            return "ISO BMF Motion Jpeg 2000";
-            break;
-
-        case PROF_WAVE_AMB:
-            return "WAVE ambisonic";
-            break;
-        case PROF_WAVE_RF64:
-            return "RF64";
-            break;
-        case PROF_WAVE_BWFv1:
-            return "Broadcast Wave Format v1";
-            break;
-        case PROF_WAVE_BWFv2:
-            return "Broadcast Wave Format v2";
-            break;
-        case PROF_WAVE_BWF64:
-            return "Broadcast Wave Format 64";
-            break;
-
-        case PROF_MKV_MATROSKA:
-            return "Matroska";
-            break;
-        case PROF_MKV_WEBM:
-            return "WebM";
-            break;
-
-        case PROF_UNKNOWN:
-        default:
-            return "UNKNOWN";
-            break;
-    }
-}
-
-/* ************************************************************************** */
 
 const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description)
 {
@@ -970,7 +770,7 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
             return "High Efficiency AAC Profile v2";
             break;
 
-        case PROF_UNKNOWN:
+        case CODEC_PROF_UNKNOWN:
         default:
             return "UNKNOWN";
             break;

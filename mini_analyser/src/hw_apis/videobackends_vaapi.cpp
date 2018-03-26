@@ -81,21 +81,21 @@ struct Desc
 
 Desc decoder_profiles_vaapi[] =
 {
-    { VAProfileNone,                        CODEC_UNKNOWN,  PROF_UNKNOWN, 0 },
+    { VAProfileNone,                        CODEC_UNKNOWN,  CODEC_PROF_UNKNOWN, 0 },
 
     { VAProfileMPEG2Simple,                 CODEC_MPEG2,    PROF_H262_SP, 8 },
     { VAProfileMPEG2Main,                   CODEC_MPEG2,    PROF_H262_MP, 8 },
     { VAProfileMPEG4Simple,                 CODEC_MPEG4_ASP,PROF_MPEG4_SP, 8 },
     { VAProfileMPEG4AdvancedSimple,         CODEC_MPEG4_ASP,PROF_MPEG4_ASP, 8 },
-    { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,PROF_UNKNOWN, 8 },
+    { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,CODEC_PROF_UNKNOWN, 8 },
     { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED from libva 2.0.0
     { VAProfileH264Main,                    CODEC_H264,     PROF_H264_MP, 8 },
     { VAProfileH264High,                    CODEC_H264,     PROF_H264_HiP, 8 },
     { VAProfileVC1Simple,                   CODEC_VC1,      PROF_VC1_SIMPLE, 8 },
     { VAProfileVC1Main,                     CODEC_VC1,      PROF_VC1_MAIN, 8 },
     { VAProfileVC1Advanced,                 CODEC_VC1,      PROF_VC1_ADVANCED, 8 },
-    { VAProfileH263Baseline,                CODEC_H263,     PROF_UNKNOWN, 8 },
-    { VAProfileJPEGBaseline,                CODEC_JPEG,     PROF_UNKNOWN, 8 },
+    { VAProfileH263Baseline,                CODEC_H263,     CODEC_PROF_UNKNOWN, 8 },
+    { VAProfileJPEGBaseline,                CODEC_JPEG,     CODEC_PROF_UNKNOWN, 8 },
     { VAProfileH264ConstrainedBaseline,     CODEC_H264,     PROF_H264_CBP, 8 },
 #if VA_CHECK_VERSION(0, 35, 0)
     { VAProfileVP8Version0_3,               CODEC_VP8,      PROF_VP8_0, 8 },

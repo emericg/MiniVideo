@@ -27,6 +27,7 @@
 // minivideo headers
 #include "minivideo_mediastream.h"
 #include "minivideo_codecs.h"
+#include "minivideo_containers.h"
 
 // C standard libraries
 #include <cstdio>
