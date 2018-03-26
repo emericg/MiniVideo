@@ -24,10 +24,6 @@
 #ifndef MINIVIDEO_UUID_H
 #define MINIVIDEO_UUID_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 // minivideo headers
 #include "bitstream.h"
 #include "minivideo_typedef.h"
@@ -84,8 +80,4 @@ void read_uuid_be(Bitstream_t *bitstr, uint8_t uuid[16]);
 void read_uuid_le(Bitstream_t *bitstr, uint8_t uuid[16]);
 
 /* ************************************************************************** */
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
 #endif // MINIVIDEO_UUID_H

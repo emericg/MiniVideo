@@ -29,9 +29,6 @@
 #include "../import.h"
 #include "../bitstream.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 /* ************************************************************************** */
 
 minivideo_EXPORT unsigned depack_file(MediaFile_t *media,
@@ -45,8 +42,4 @@ unsigned depack_loaded_sample(Bitstream_t *bitstr,
                               unsigned sample_index, es_sample_t *essample_list);
 
 /* ************************************************************************** */
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
 #endif // DEPACKETIZER_H

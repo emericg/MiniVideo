@@ -29,10 +29,6 @@
 #include "minivideo_fourcc.h"
 #include "minivideo_mediafile.h"
 
-// Needed in order to use this library from a C++ software without problems.
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 /* ************************************************************************** */
 
 /*!
@@ -161,8 +157,4 @@ minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
 minivideo_EXPORT int minivideo_close(MediaFile_t **input_media);
 
 /* ************************************************************************** */
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
 #endif // MINIVIDEO_H
