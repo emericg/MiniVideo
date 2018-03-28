@@ -218,6 +218,10 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
                 *codec = CODEC_VP6;
             }
         }
+        else if (strcmp(codec_str, "V_AV1") == 0)
+        {
+            *codec = CODEC_AV1;
+        }
         else if (strcmp(codec_str, "V_MPEG2") == 0)
         {
             *codec = CODEC_MPEG2;
