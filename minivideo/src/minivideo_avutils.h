@@ -52,9 +52,9 @@ typedef enum SampleType_e
     sample_AUDIO,
     sample_AUDIO_TAG,
 
-    sample_VIDEO_PARAM,
-    sample_VIDEO_SYNC,
     sample_VIDEO,
+    sample_VIDEO_SYNC,
+    sample_VIDEO_PARAM,
 
     sample_TEXT,
     sample_TEXT_FILE,

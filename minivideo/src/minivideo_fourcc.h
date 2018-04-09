@@ -33,14 +33,34 @@
 
 /* ************************************************************************** */
 
-constexpr uint32_t fourcc_be(char const fcc[5])
+/*!
+ * \brief Encode four ASCII C characters into a big endian FourCC.
+ * \param fcc_str[in]: The FourCC string (NULL terminated).
+ * \return An uint32_t big endian FourCC.
+ *
+ * - If the string argument is known at compile time, then the function is
+ * evaluated at compile time (no run-time overhead).
+ * - Doesn't depend on host endianness (i.e. the first character of the argument
+ *  will always be in the most significant byte of the FourCC).
+ */
+minivideo_EXPORT constexpr uint32_t fourcc_be(char const fcc_str[5])
 {
-    return (fcc[0] << 24) | (fcc[1] << 16) | (fcc[2] << 8) | fcc[3];
+    return static_cast<uint32_t>((fcc_str[0] << 24) | (fcc_str[1] << 16) | (fcc_str[2] << 8) | fcc_str[3]);
 }
 
-constexpr uint32_t fourcc_le(char const fcc[5])
+/*!
+ * \brief Encode four ASCII C characters into a little endian FourCC.
+ * \param fcc_str[in]: The FourCC string (NULL terminated).
+ * \return An uint32_t little endian FourCC.
+ *
+ * - If the string argument is known at compile time, then the function is
+ * evaluated at compile time (no run-time overhead).
+ * - Doesn't depend on host endianness (i.e. the first character of the argument
+ *  will always be in the most significant byte of the FourCC).
+ */
+minivideo_EXPORT constexpr uint32_t fourcc_le(char const fcc_str[5])
 {
-    return (fcc[3] << 24) | (fcc[2] << 16) | (fcc[1] << 8) | fcc[0];
+    return static_cast<uint32_t>((fcc_str[3] << 24) | (fcc_str[2] << 16) | (fcc_str[1] << 8) | fcc_str[0]);
 }
 
 /* ************************************************************************** */
@@ -77,10 +97,9 @@ minivideo_EXPORT char *getFccString_be(const uint32_t fcc_in, char fcc_out[5]);
  * - http://wiki.multimedia.cx/index.php?title=Category:Video_FourCCs
  * - https://support.microsoft.com/en-us/kb/281188
  *
- * Both upper and lower cases FourCC are present sometimes, because we encountered
- * in the wild...
- * These FourCC are set in big endian in this enum, so you may want to flip them
- * if you are reading them from Windows specific stuff (ex: WVF structures).
+ * These FourCC are set in big endian in this enum.
+ * Most of the time, both upper and lower cases FourCC are present, because we
+ * can encounter them in the wild...
  */
 typedef enum fourcc_list_e
 {

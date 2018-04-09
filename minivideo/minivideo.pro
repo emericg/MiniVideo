@@ -58,6 +58,7 @@ win32 {
     VERSION =
     DEFINES -= UNICODE
     DEFINES += minivideo_EXPORT=__declspec(dllimport)
+    DEFINES += _CRT_SECURE_NO_WARNINGS
     QMAKE_LFLAGS += -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc
 }
 

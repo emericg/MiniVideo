@@ -54,7 +54,7 @@ typedef struct DecodingContext_t
     unsigned errorCounter;          //!< The number of decoding error so far
 
     // NAL
-    nalu_t *active_nalu;            //!< Current NAL Unit
+    nalu_t *active_nalu;            //!< Current NAL Unit // FIXME should be local
 
     // SPS
     unsigned active_sps;            //!< ID of the last/current SPS. May be inaccurate!
@@ -77,7 +77,7 @@ typedef struct DecodingContext_t
     int normAdjust8x8[6][8][8];     //!< Used to build LevelScale8x8. Computed during decoder initialization.
 
     // Slice
-    bool IdrPicFlag;                //!< Current frame type (INTRA=1, INTER=0)
+    bool IdrPicFlag;                //!< Current frame type (INTRA=1, INTER=0) // FIXME this is not set nor reset correctly
     unsigned frame_num;             //!< Current frame number, set from slice
     slice_t *active_slice;          //!< Current Slice
 

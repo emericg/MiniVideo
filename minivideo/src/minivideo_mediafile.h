@@ -114,6 +114,8 @@ typedef struct OutputSurface_t
 {
     // Surface infos
     uint8_t *surface; //!< RGB24 surface
+
+    unsigned surface_fcc;
     unsigned width;
     unsigned height;
 

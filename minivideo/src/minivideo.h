@@ -80,6 +80,8 @@ minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
  */
 minivideo_EXPORT int minivideo_endianness(void);
 
+////////////////////////////////////////////////////////////////////////////////
+
 /*!
  * \brief Open a file and return a MediaFile_t context.
  * \param[in] *input_filepath: The file path of the video we want to open.

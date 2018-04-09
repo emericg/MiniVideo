@@ -54,7 +54,6 @@ void MiniTraces_print(const char *file, const int line, const char *func,
 /* ************************************************************************** */
 
 // TRACE LEVELS
-
 #define TRACE_LEVEL_ERR     (1 << 0)
 #define TRACE_LEVEL_WARN    (1 << 1)
 #define TRACE_LEVEL_INFO    (1 << 2)
