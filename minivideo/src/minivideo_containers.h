@@ -55,8 +55,9 @@ typedef enum Containers_e
 
     CONTAINER_FLAC      = 64,   //!< FLAC "Free Lossless Audio Codec" (.flac)
     CONTAINER_WAVE      = 65,   //!< WAVE "Waveform Audio File Format" (.wav)
-    CONTAINER_AIFF      = 66,   //!< AIFF "Audio Interchange File Format" (.aiff, .ai)
+    CONTAINER_AIFF      = 66,   //!< AIFF "Audio Interchange File Format" (.aiff, .aif, .aifc)
     CONTAINER_CAF       = 67,   //!< CAF "Core Audio Format" (.caf)
+    CONTAINER_AU        = 68,   //!< AU "Au file format" (.au, .snd)
 
     // ES formats (not containers!) ////////////////////////////////////////////
 

@@ -208,6 +208,10 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_VP9;
         break;
 
+    case fcc_av01:
+        codec = CODEC_AV1;
+        break;
+
     case fcc_WMV3:
     case fcc_WVC1:
         codec = CODEC_VC1;

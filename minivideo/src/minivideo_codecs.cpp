@@ -389,7 +389,10 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "Thor";
                 break;
             case CODEC_AV1:
-                return "AV1";
+                if (long_description)
+                    return "AV1 (AOMedia Video 1)";
+                else
+                    return "AV1";
                 break;
 
             case CODEC_CINEPAK:

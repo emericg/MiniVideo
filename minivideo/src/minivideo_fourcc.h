@@ -206,7 +206,8 @@ typedef enum fourcc_list_e
     fcc_VP72 = 0x56503732,
     fcc_VP80 = 0x56503830,
     fcc_VP90 = 0x56503930,
-    fcc_VP10 = 0x56503130,
+
+    fcc_av01 = 0x61763031,
 
     fcc_BBCD = 0x42424344, //!< Dirac / VC-2
 

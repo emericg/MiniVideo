@@ -382,6 +382,11 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
             TRACE_1(IO, "* File type      : CAF container detected");
             container = CONTAINER_CAF;
         }
+        else if (buffer[0] == 0x2E && buffer[1] == 0x73 && buffer[2] == 0x6E && buffer[3] == 0x64)
+        {
+            TRACE_1(IO, "* File type      : AU container detected");
+            container = CONTAINER_AU;
+        }
         else if (buffer[0] == 0xFF &&
                  (buffer[1] == 0xFE || buffer[1] == 0xFD ||buffer[1] == 0xFB))
         {
@@ -479,7 +484,7 @@ Containers_e getContainerUsingExtension(std::string ext)
             TRACE_1(IO, "* File extension  : WAVE container detected");
             container = CONTAINER_WAVE;
         }
-        else if (ext == "aiff" || ext == "aif")
+        else if (ext == "aiff" || ext == "aif" || ext == "aifc")
         {
             TRACE_1(IO, "* File extension  : AIFF container detected");
             container = CONTAINER_AIFF;
@@ -488,6 +493,11 @@ Containers_e getContainerUsingExtension(std::string ext)
         {
             TRACE_1(IO, "* File extension  : CAF container detected");
             container = CONTAINER_CAF;
+        }
+        else if (ext == "au" || ext == "snd")
+        {
+            TRACE_1(IO, "* File extension  : AU container detected");
+            container = CONTAINER_AU;
         }
         else if (ext == "flv" ||
                  ext == "f4v" || ext == "f4p" || ext == "f4a" || ext == "f4b")
