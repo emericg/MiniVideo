@@ -162,7 +162,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
         if (track->Name && strnlen(track->Name, 256) > 0)
         {
-            map->track_title = (char *)malloc(sizeof(track->Name));
+            map->track_title = (char *)malloc(strnlen(track->Name, 256) + 1);
             strcpy(map->track_title, track->Name);
         }
 
