@@ -203,7 +203,7 @@ typedef struct mkv_track_video_colour_t
     uint64_t Primaries;
     uint64_t MaxCLL;
     uint64_t MaxFALL;
-    mkv_track_video_colour_mastering_t *MasteringMetadata;
+    mkv_track_video_colour_mastering_t *MasteringMetadata = nullptr;
 
 } mkv_track_video_colour_t;
 
