@@ -11,7 +11,7 @@ CONFIG      -= qt
 
 # build artifacts
 OBJECTS_DIR  = build/artifacts
-DESTDIR      = build/
+DESTDIR      = bin/
 
 # build settings ---------------------------------------------------------------
 
@@ -66,3 +66,13 @@ win32 {
 
 SOURCES = $$files(src/*.cpp, true)
 HEADERS = $$files(src/*.h, true)
+
+# minivideo installation -------------------------------------------------------
+
+unix {
+    isEmpty(PREFIX) { PREFIX = /usr/local }
+    library.files   += $${OUT_PWD}/$${DESTDIR}/libminivideo.so*
+    library.path     = $${PREFIX}/lib/
+    headers.files   += $${OUT_PWD}/src/minivideo*.h
+    headers.path     = $${PREFIX}/include/
+}
