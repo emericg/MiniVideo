@@ -188,7 +188,6 @@ macx {
 linux {
     # Installation
     isEmpty(PREFIX) { PREFIX = /usr/local }
-    target_app.extra    = cp $${OUT_PWD}/$${DESTDIR}/$${TARGET} $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
     target_app.files   += $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
     target_app.path     = $${PREFIX}/bin/
     target_icon.files  += $${OUT_PWD}/assets/app/$$lower($${TARGET}).svg
@@ -198,7 +197,4 @@ linux {
     target_appdata.files   += $${OUT_PWD}/assets/app/$$lower($${TARGET}).appdata.xml
     target_appdata.path     = $${PREFIX}/share/appdata
     INSTALLS += target_app target_icon target_appentry target_appdata
-
-    # Clean bin/ directory
-    QMAKE_CLEAN += $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
 }
