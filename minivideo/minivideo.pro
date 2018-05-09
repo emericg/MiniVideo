@@ -75,4 +75,5 @@ unix {
     library.path     = $${PREFIX}/lib/
     headers.files   += $${OUT_PWD}/src/minivideo*.h
     headers.path     = $${PREFIX}/include/
+    INSTALLS += library headers
 }
