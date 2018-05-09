@@ -11,7 +11,7 @@ CONFIG      -= qt
 
 # build artifacts
 OBJECTS_DIR  = build/artifacts
-DESTDIR      = bin/
+DESTDIR      = build/
 
 # build settings ---------------------------------------------------------------
 
