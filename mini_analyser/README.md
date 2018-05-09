@@ -1,7 +1,7 @@
 mini_analyser
 =============
 
-[![License: GPL v3](https://img.shields.io/badge/license-GPL%20v3-brightgreen.svg)](http://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL%20v3-brightgreen.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-3.0)
 
 Introduction
 ------------
@@ -17,7 +17,12 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
 - H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
-- MP3 "elementary stream" (.mp3)
+- MP3 "elementary stream" [.mp3]
+
+![main screen](https://i.imgur.com/kDJ6NQx.png)
+![video screen](https://i.imgur.com/iuAl85j.png)
+![container explorer](https://i.imgur.com/cGtqXPu.png)
+![HW decoding checker](https://i.imgur.com/0qGcZxR.png)
 
 
 Building mini_analyser
@@ -44,7 +49,7 @@ Then:
 Using mini_analyser GUI
 -----------------------
 
-Just drag and drop files to analyse them!
+Just drag and drop multimedia files to analyse them!
 
 
 Using mini_analyser CLI

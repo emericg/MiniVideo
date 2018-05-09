@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/img/app/icon.png</normaloff>:/img/app/icon.png</iconset>
+    <normaloff>:/img/app/mini_analyser.png</normaloff>:/img/app/mini_analyser.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(245, 245, 245);</string>
@@ -405,7 +405,7 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../resources/resources.qrc">:/img/app/icon.png</pixmap>
+         <pixmap resource="../resources/resources.qrc">:/img/app/mini_analyser.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

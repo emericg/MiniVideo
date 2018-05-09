@@ -43,8 +43,8 @@
         <file>icons_material/ic_volume_up_48px.svg</file>
     </qresource>
     <qresource prefix="/img">
-        <file>app/icon.svg</file>
-        <file>app/icon.png</file>
+        <file>app/mini_analyser.svg</file>
+        <file>app/mini_analyser.png</file>
         <file>img/dragNdrop.svg</file>
         <file>img/loading.svg</file>
         <file>img/A.png</file>

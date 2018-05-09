@@ -24,7 +24,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/img/app/icon.png</normaloff>:/img/app/icon.png</iconset>
+    <normaloff>:/img/app/mini_analyser.png</normaloff>:/img/app/mini_analyser.png</iconset>
   </property>
   <property name="iconSize">
    <size>
@@ -178,7 +178,7 @@
              <string notr="true">color: rgb(100, 100, 100);</string>
             </property>
             <property name="text">
-             <string>drag &amp; drop files</string>
+             <string>drag &amp; drop files to start</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -376,8 +376,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>618</width>
-             <height>709</height>
+             <width>622</width>
+             <height>711</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">

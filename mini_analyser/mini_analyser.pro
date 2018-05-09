@@ -4,20 +4,18 @@
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
-DESTDIR      = bin/
-
 VERSION      = 44
-DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
-TEMPLATE     = app
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport
+DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 # build artifacts
 OBJECTS_DIR  = build/
 MOC_DIR      = build/
 RCC_DIR      = build/
 UI_DIR       = build/
+DESTDIR      = bin/
 
 # mini_analyser files
 SOURCES     += src/main.cpp \
@@ -60,8 +58,8 @@ FORMS       += ui/mainwindow.ui \
 RESOURCES   += resources/resources.qrc
 
 # mini_analyser OS icons (macOS and Windows)
-ICON         = resources/app/icon.icns
-RC_ICONS     = resources/app/icon.ico
+ICON         = resources/app/mini_analyser.icns
+RC_ICONS     = resources/app/mini_analyser.ico
 QMAKE_INFO_PLIST = resources/app/Info.plist
 
 # third party libraries
@@ -85,8 +83,7 @@ QMAKE_LIBDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 #LIBS        += ../minivideo/build/libminivideo.a # static linking
 
-#-------------------------------------------------------------------------------
-# OS specifics
+# OS specifics -----------------------------------------------------------------
 
 unix {
     QMAKE_CXXFLAGS += -fPIE
@@ -152,35 +149,56 @@ win32 {
     #
 }
 
-#-------------------------------------------------------------------------------
-# Deployment
+# Deployment -------------------------------------------------------------------
 
 win32 {
-    # 'automatic' application packaging
-    system(windeployqt bin/)
+    # Application packaging
+    #system(windeployqt $${OUT_PWD}/$${DESTDIR})
+
+    # Automatic application packaging
+    deploy.commands = $$quote(windeployqt $${OUT_PWD}/$${DESTDIR}/)
+    install.depends = deploy
+    QMAKE_EXTRA_TARGETS += install deploy
+
+    # Installation
+    # TODO?
+
+    # Clean bin/ directory
+    # TODO
 }
 
 macx {
-    # 'automatic' bundle packaging
-    system(macdeployqt bin/$${TARGET}.app)
+    # Bundle packaging
+    #system(macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app)
+
+    # Automatic bundle packaging
+    deploy.commands = macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app
+    install.depends = deploy
+    QMAKE_EXTRA_TARGETS += install deploy
+
+    # Installation
+    target.files += $${OUT_PWD}/${DESTDIR}/${TARGET}.app
+    target.path = $$(HOME)/Applications
+    INSTALLS += target
+
+    # Clean bin/ directory
+    QMAKE_DISTCLEAN += -r $${OUT_PWD}/${DESTDIR}/${TARGET}.app
 }
 
 linux {
-    # 'manual' application packaging (uncomment to enable)
+    # Installation
+    isEmpty(PREFIX) { PREFIX = /usr/local }
+    target_app.extra    = cp $${OUT_PWD}/$${DESTDIR}/$${TARGET} $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
+    target_app.files   += $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
+    target_app.path     = $${PREFIX}/bin/
+    target_icon.files  += $${OUT_PWD}/assets/app/$$lower($${TARGET}).svg
+    target_icon.path    = $${PREFIX}/share/pixmaps/
+    target_appentry.files  += $$OUT_PWD/assets/app/$$lower($${TARGET}).desktop
+    target_appentry.path    = $${PREFIX}/share/applications
+    target_appdata.files   += $${OUT_PWD}/assets/app/$$lower($${TARGET}).appdata.xml
+    target_appdata.path     = $${PREFIX}/share/appdata
+    INSTALLS += target_app target_icon target_appentry target_appdata
 
-#    isEmpty(PREFIX) {
-#        PREFIX = /usr
-#    }
-#    BINDIR = $${PREFIX}/bin
-#    DATADIR =$${PREFIX}/share
-
-#    INSTALLS += target desktop icon
-
-#    target.path = $${BINDIR}
-
-#    desktop.path = $${DATADIR}/applications
-#    desktop.files += resources/app/$${TARGET}.desktop
-
-#    icon.path = $${DATADIR}/icons/hicolor/scalable/apps
-#    icon.files += resources/app/$${TARGET}.svg
+    # Clean bin/ directory
+    QMAKE_CLEAN += $${OUT_PWD}/$${DESTDIR}/$$lower($${TARGET})
 }

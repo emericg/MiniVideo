@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2018 Emeric Grange <emeric.grange@gmail.com> -->
+<component type="desktop">
+ <id>mini_analyser.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0+</project_license>
+ <name>mini_analyser</name>
+ <summary>mini_analyser is a multimedia files metadata viewer</summary>
+ <description>
+   <p>
+   mini_analyser is a software designed to help you extract a maximum of
+   informations and metadata from multimedia files. It can also map container's
+   internal structure and let you visualize it.
+   </p>
+ </description>
+ <screenshots>
+  <screenshot type="default">
+   <image>https://i.imgur.com/kDJ6NQx.png</image>
+   <caption>Main screen</caption>
+  </screenshot>
+  <screenshot>
+   <image>https://i.imgur.com/iuAl85j.png</image>
+   <caption>Video screen</caption>
+  </screenshot>
+  <screenshot>
+   <image>https://i.imgur.com/cGtqXPu.png</image>
+   <caption>Container explorer</caption>
+  </screenshot>
+  <screenshot>
+   <image>https://i.imgur.com/0qGcZxR.png</image>
+   <caption>HW decoding checker</caption>
+  </screenshot>
+ </screenshots>
+ <url type="homepage">https://github.com/emericg/MiniVideo</url>
+ <updatecontact>emeric.grange@gmail.com</updatecontact>
+ <keywords>
+  <keyword>multimedia</keyword>
+  <keyword>metadata</keyword>
+  <keyword>video</keyword>
+  <keyword>audio</keyword>
+  <keyword>container</keyword>
+ </keywords>
+</component>

@@ -765,7 +765,7 @@ void MainWindow::About()
                          <p>Emeric Grange (emeric.grange@gmail.com)</p>"),
                          QMessageBox::Ok);
 
-    about.setIconPixmap(QPixmap(":/icons/app/icon.png"));
+    about.setIconPixmap(QPixmap(":/icons/app/mini_analyser.png"));
     about.exec();
 }
 
