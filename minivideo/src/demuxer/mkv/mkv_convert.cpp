@@ -176,7 +176,14 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         map->track_id = track->TrackNumber;
 
         if (track->DefaultDuration > 0)
+        {
             map->frame_duration = (double)(track->DefaultDuration) / 1000000.0;
+            map->stream_duration_ms = map->frame_duration * track->sample_vector.size();
+        }
+        else
+        {
+            map->stream_duration_ms = media->duration;
+        }
 
         if (track->TrackType == MKV_TRACK_VIDEO && track->video)
         {

@@ -168,8 +168,8 @@ typedef struct mkv_track_audio_t
 {
     double SamplingFrequency;
     double OutputSamplingFrequency;
-    uint64_t Channels;
-    uint64_t BitDepth;
+    uint64_t Channels = 0;
+    uint64_t BitDepth = 0;
 
 } mkv_track_audio_t;
 
@@ -284,34 +284,34 @@ typedef struct mkv_track_encodings_t
 
 typedef struct mkv_track_t
 {
-    mkv_track_t() {};
-    ~mkv_track_t() {};
+    mkv_track_t() = default;
+    ~mkv_track_t() = default;
 
-    uint64_t TrackNumber;
-    uint64_t TrackUID;
-    uint64_t TrackType;
-    uint64_t FlagEnabled;
-    uint64_t FlagDefault;
-    uint64_t FlagForced;
-    uint64_t FlagLacing;
-    uint64_t MinCache;
-    uint64_t MaxCache;
-    uint64_t DefaultDuration;
-    uint64_t DefaultDecodedFieldDuration;
-    uint64_t TrackTimecodeScale;    //!< DEPRECATED
-    uint64_t MaxBlockAdditionID;
+    uint64_t TrackNumber = 0;
+    uint64_t TrackUID = 0;
+    uint64_t TrackType = 0;
+    uint64_t FlagEnabled = 0;
+    uint64_t FlagDefault = 0;
+    uint64_t FlagForced = 0;
+    uint64_t FlagLacing = 0;
+    uint64_t MinCache = 0;
+    uint64_t MaxCache = 0;
+    uint64_t DefaultDuration = 0;
+    uint64_t DefaultDecodedFieldDuration = 0;
+    uint64_t TrackTimecodeScale = 0;    //!< DEPRECATED
+    uint64_t MaxBlockAdditionID = 0;
     char *Name = nullptr;
     char *Language = nullptr;
     char *CodecID = nullptr;
-    int64_t CodecPrivate_offset;
-    int CodecPrivate_size;
+    int64_t CodecPrivate_offset = 0;
+    int CodecPrivate_size = 0;
     uint8_t *CodecPrivate = nullptr;
     char *CodecName = nullptr;
-    uint64_t AttachmentLink;
-    uint64_t CodecDecodeAll;
-    uint64_t TrackOverlay;
-    uint64_t CodecDelay;
-    uint64_t SeekPreRoll;
+    uint64_t AttachmentLink = 0;
+    uint64_t CodecDecodeAll = 0;
+    uint64_t TrackOverlay = 0;
+    uint64_t CodecDelay = 0;
+    uint64_t SeekPreRoll = 0;
 
     mkv_track_audio_t *audio = nullptr;
     mkv_track_video_t *video = nullptr;
