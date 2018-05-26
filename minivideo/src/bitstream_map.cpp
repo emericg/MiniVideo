@@ -299,15 +299,23 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
                 frameinterval = track->sample_dts[1] - track->sample_dts[0];
         }
 
+        unsigned samplesizerefid = 10;
+        if (track->sample_count <= samplesizerefid)
+        {
+            if (track->sample_count > 1)
+                samplesizerefid = track->sample_count - 1;
+            else
+                samplesizerefid = 0;
+        }
+
         // Iterate on each sample
         for (j = 0; j < track->sample_count; j++)
         {
             totalbytes += track->sample_size[j];
 
-            if (track->sample_size[j] > (track->sample_size[10] + 1) || track->sample_size[j] < (track->sample_size[10] - 1))
-            {
-                cbr = false; // TODO find a reference // TODO not use TAGS
-            }
+            if (samplesizerefid)
+                if (track->sample_size[j] > (track->sample_size[samplesizerefid] + 1) || track->sample_size[j] < (track->sample_size[samplesizerefid] - 1))
+                    cbr = false; // TODO find a reference // TODO not use TAGS
 
             if (track->stream_packetized == true)
             {
