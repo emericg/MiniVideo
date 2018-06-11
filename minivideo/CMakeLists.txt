@@ -2,19 +2,22 @@
 # This file allows you to build shared & static library of MiniVideo
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(SET CMP0012 NEW)
-cmake_policy(SET CMP0054 NEW)
-
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 10)
 set(minivideo_VERSION_PATCH 0)
 
+cmake_minimum_required(VERSION 3.0)
+cmake_policy(SET CMP0012 NEW)
+cmake_policy(SET CMP0054 NEW)
+
 
 # Build settings
 ################################################################################
+
+option(BUILD_STATIC_LIBS "Build static library" ON)
+option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 set(ENABLE_COLORS 1)        # Toggle colored terminal output
 
@@ -249,29 +252,32 @@ set(minivideo_SRC
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
 
-# Build shared library
-message("** Building shared library")
-add_library(minivideo_shared SHARED ${minivideo_SRC})
-target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
-set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
+# Build library
+if (BUILD_SHARED_LIBS)
 
-if(CMAKE_BUILD_MODE STREQUAL "Static")
+    message("** Building shared library")
+    add_library(minivideo_shared SHARED ${minivideo_SRC})
+    target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
+
+    if(WIN32)
+    if(CMAKE_VERSION VERSION_GREATER "3.3")
+        message("* Generating symbols export header")
+        GENERATE_EXPORT_HEADER(minivideo_shared
+                               BASE_NAME minivideo_shared
+                               EXPORT_MACRO_NAME minivideo_EXPORT
+                               EXPORT_FILE_NAME "${CMAKE_SOURCE_DIR}/src/minivideo_export.h"
+                               STATIC_DEFINE minivideo_BUILT_AS_STATIC)
+    endif()
+    endif()
+endif (BUILD_SHARED_LIBS)
+
+if (BUILD_STATIC_LIBS)
     message("** Building static library")
     add_library(minivideo_static STATIC ${minivideo_SRC})
     target_link_libraries(minivideo_static ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
-endif(CMAKE_BUILD_MODE STREQUAL "Static")
-
-if(WIN32)
-if(CMAKE_VERSION VERSION_GREATER "3.3")
-    message("* Generating symbols export header")
-    GENERATE_EXPORT_HEADER(minivideo_shared
-                           BASE_NAME minivideo_shared
-                           EXPORT_MACRO_NAME minivideo_EXPORT
-                           EXPORT_FILE_NAME "${CMAKE_SOURCE_DIR}/src/minivideo_export.h"
-                           STATIC_DEFINE minivideo_BUILT_AS_STATIC)
-endif()
-endif()
+endif (BUILD_STATIC_LIBS)
 
 
 # Deployment
@@ -289,10 +295,13 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake ${CMAKE_CURRENT
 # Install the shared library and its header into the system (optional step, requires root credentials)
 # Relative to $<INSTALL_PREFIX>
 if(UNIX)
-    install(TARGETS minivideo_shared DESTINATION lib/)
-    install(TARGETS minivideo_static DESTINATION lib/)
+    if (BUILD_SHARED_LIBS)
+        install(TARGETS minivideo_shared DESTINATION lib/)
+    endif (BUILD_SHARED_LIBS)
+    if (BUILD_STATIC_LIBS)
+        install(TARGETS minivideo_static DESTINATION lib/)
+    endif (BUILD_STATIC_LIBS)
+
     install(FILES src/minivideo.h DESTINATION include/)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
-else(WIN32)
-    # TODO
-endif()
+endif(UNIX)
