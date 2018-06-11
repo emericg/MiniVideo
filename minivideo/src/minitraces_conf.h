@@ -30,12 +30,12 @@ extern "C" {
 #endif // __cplusplus
 /* ************************************************************************** */
 
-// Import setting macros from minivideo, and map them to the ones from MiniTraces.
-#include "minivideo_settings.h"
-
 // =============================================================================
 // GENERAL SETTINGS
 // =============================================================================
+
+// Import setting macros from minivideo, and map them to the ones from MiniTraces.
+#include "minivideo_settings.h"
 
 #if ENABLE_DEBUG == 1
 #define MINITRACES_LEVEL    2   // Enables all traces levels
@@ -66,7 +66,7 @@ extern "C" {
 /*!
  * This string will be used to easily identify from which program a trace comes
  * from if multiple program are outputting traces with MiniTraces at the same time.
- * You can use bracket, spaces, colors...
+ * You can use brackets, spaces, colors...
  * Example: #define PID OUT_BLUE "[MINITRACE]" CLR_RESET " "
  *
  * Leave it blank if you don't need this feature!

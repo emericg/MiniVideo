@@ -898,7 +898,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     // Picture absolute file path
     strncat(out->file_path, out->file_directory, 254);
     strncat(out->file_path, out->file_name, 254);
-    strncat(out->file_path, ".", 1);
+    strncat(out->file_path, ".", 2);
     strncat(out->file_path, out->file_extension, 254);
 
     // Open a write only (w) binary file (b)

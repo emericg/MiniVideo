@@ -41,10 +41,10 @@ typedef struct Mp4Box_t
 
     // Box parameters
     int64_t size;           //!< Box size in bytes, including all its fields and contained boxes
-    uint32_t boxtype;       //!< A fourCC identifying the box type, see ISO/IEC 14496-12 Table 1
-    uint8_t usertype[16];   //!< 16 bytes "extended type"
+    uint32_t boxtype;       //!< A FourCC identifying the box type, see ISO/IEC 14496-12 Table 1
+    uint8_t usertype[16];   //!< 16 bytes "extended type" (if applicable)
 
-    // FullBox parameters
+    // FullBox parameters (if applicable)
     uint8_t version;        //!< Specifies the version of the format used by this box (used for compatibility)
     uint32_t flags;         //!< 24b bitfield
 
