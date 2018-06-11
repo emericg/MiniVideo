@@ -1,6 +1,6 @@
 # MiniVideo "library" build system / CMake edition
 # This file allows you to build shared & static library of MiniVideo
-###############################################################################
+################################################################################
 
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0012 NEW)
@@ -14,7 +14,7 @@ set(minivideo_VERSION_PATCH 0)
 
 
 # Build settings
-###############################################################################
+################################################################################
 
 set(ENABLE_COLORS 1)        # Toggle colored terminal output
 
@@ -27,7 +27,7 @@ set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
 
 
 # Build dependencies
-###############################################################################
+################################################################################
 
 # custom memfd module
 if(ENABLE_MEMFD)
@@ -88,7 +88,7 @@ endif()
 
 
 # Build configuration
-###############################################################################
+################################################################################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -181,7 +181,7 @@ endif()
 
 
 # Source files
-###############################################################################
+################################################################################
 
 # Generate "minivideo_settings.h" file from a template
 configure_file("${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
@@ -244,7 +244,7 @@ set(minivideo_SRC
 
 
 # Build
-###############################################################################
+################################################################################
 
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
@@ -274,13 +274,25 @@ endif()
 endif()
 
 
+# Deployment
+################################################################################
+
+# pkg-config integration
+set(PROJECT_VERSION "${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}")
+set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name")
+set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix for executables and object code libraries" FORCE)
+set(BIN_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/bin CACHE PATH "Installation prefix for user executables" FORCE)
+set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH "Installation prefix for object code libraries" FORCE)
+set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/minivideo CACHE PATH "Installation prefix for header files" FORCE)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc)
+
 # Install the shared library and its header into the system (optional step, requires root credentials)
 # Relative to $<INSTALL_PREFIX>
-###############################################################################
-
 if(UNIX)
     install(TARGETS minivideo_shared DESTINATION lib/)
+    install(TARGETS minivideo_static DESTINATION lib/)
     install(FILES src/minivideo.h DESTINATION include/)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
 else(WIN32)
     # TODO
 endif()

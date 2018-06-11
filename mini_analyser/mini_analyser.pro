@@ -192,7 +192,7 @@ linux {
     target_app.path     = $${PREFIX}/bin/
     target_icon.files  += $${OUT_PWD}/resources/app/$$lower($${TARGET}).svg
     target_icon.path    = $${PREFIX}/share/pixmaps/
-    target_appentry.files  += $$OUT_PWD/resources/app/$$lower($${TARGET}).desktop
+    target_appentry.files  += $${OUT_PWD}/resources/app/$$lower($${TARGET}).desktop
     target_appentry.path    = $${PREFIX}/share/applications
     target_appdata.files   += $${OUT_PWD}/resources/app/$$lower($${TARGET}).appdata.xml
     target_appdata.path     = $${PREFIX}/share/appdata
