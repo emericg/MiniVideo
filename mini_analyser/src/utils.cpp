@@ -491,9 +491,27 @@ QString getProjectionString(const Projection_e projection)
     else if (projection == PROJECTION_MESH)
         projection_qstr = QObject::tr("3D Mesh");
     else
-        projection_qstr = QObject::tr("Unknown");
+        projection_qstr = QObject::tr("Rectangular"); // pretty safe to assumption...
 
     return projection_qstr;
+}
+
+QString getRotationString(const Rotation_e rotation)
+{
+    QString rotation_qstr;
+
+    if (rotation == ROTATION_0)
+        rotation_qstr = QObject::tr("No rotation");
+    else if (rotation == ROTATION_90)
+        rotation_qstr = QObject::tr("90°");
+    else if (rotation == ROTATION_180)
+        rotation_qstr = QObject::tr("180°");
+    else if (rotation == ROTATION_270)
+        rotation_qstr = QObject::tr("270°");
+    else
+        rotation_qstr = QObject::tr("Unknown");
+
+    return rotation_qstr;
 }
 
 QString getChannelModeString(const ChannelMode_e channelMode)

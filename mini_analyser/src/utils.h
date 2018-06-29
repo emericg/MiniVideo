@@ -128,6 +128,8 @@ QString getFramerateModeString(const FramerateMode_e framerateMode);
 
 QString getProjectionString(const Projection_e projection);
 
+QString getRotationString(const Rotation_e rotation);
+
 QString getChannelModeString(const ChannelMode_e channelMode);
 
 QString getStereoModeString(const StereoMode_e stereoMode);

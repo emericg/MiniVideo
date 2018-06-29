@@ -86,6 +86,7 @@ typedef struct MediaStream_t
     unsigned int color_matrix;      //!< Internal color encoding
     unsigned int color_range;       //!< Colors are in restricted or full range
     Projection_e video_projection;  //!< Projection
+    Rotation_e video_rotation;      //!< Rotation
     StereoMode_e stereo_mode;       //!< Stereo mode
     double display_aspect_ratio;    //!< Display aspect ratio (if set directly by the container, otherwise computed)
         unsigned int display_aspect_ratio_h;

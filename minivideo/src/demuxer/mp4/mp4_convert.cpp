@@ -216,6 +216,14 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 
             map->stereo_mode = (StereoMode_e)track->stereo;
             map->video_projection = (Projection_e)track->projection;
+            if (track->rotation == 90)
+                map->video_rotation = ROTATION_90;
+            else if (track->rotation == 180)
+                map->video_rotation = ROTATION_180;
+            else if (track->rotation == 270)
+                map->video_rotation = ROTATION_270;
+            else
+                map->video_rotation = ROTATION_0;
 
             map->frame_count_idr = track->stss_entry_count;
 

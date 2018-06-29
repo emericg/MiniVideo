@@ -31,6 +31,7 @@
 #include "mp4_convert.h"
 
 #include "../xml_mapper.h"
+#include "../../utils.h"
 #include "../../minivideo_fourcc.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
@@ -1037,8 +1038,25 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
         matrix[i] = read_bits(bitstr, 32);
     }
 
-    unsigned int width = read_bits(bitstr, 32);
-    unsigned int height = read_bits(bitstr, 32);
+    {
+        // scale factor; sx = scale[0] , sy = scale[1]
+        track->scale[0] = sqrt(fixed1616_to_double(matrix[0]) * fixed1616_to_double(matrix[0]) +
+                               fixed1616_to_double(matrix[3]) * fixed1616_to_double(matrix[3]));
+        track->scale[1] = sqrt(fixed1616_to_double(matrix[1]) * fixed1616_to_double(matrix[1]) +
+                               fixed1616_to_double(matrix[4]) * fixed1616_to_double(matrix[4]));
+
+        // rotation angle; in degrees to be rotated clockwise
+        if (track->scale[0] > 0.0 && track->scale[1] > 0.0)
+        {
+            track->rotation = atan2(fixed1616_to_double(matrix[1]) / track->scale[1],
+                                    fixed1616_to_double(matrix[0]) / track->scale[0]) * 180.0 / M_PI;
+            if (track->rotation < 0.0)
+                track->rotation += 360.0;
+        }
+    }
+
+    track->width_visible = read_bits(bitstr, 32);
+    track->height_visible = read_bits(bitstr, 32);
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
@@ -1052,8 +1070,8 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_1(MP4, "> matrix : [%i, %i, %i, %i, %i, %i, %i, %i, %i]",
             matrix[0], matrix[1], matrix[2], matrix[3], matrix[4],
             matrix[5], matrix[6], matrix[7], matrix[8]);
-    TRACE_1(MP4, "> width  : %u", width);
-    TRACE_1(MP4, "> height : %u", height);
+    TRACE_1(MP4, "> width  : %u", track->width_visible);
+    TRACE_1(MP4, "> height : %u", track->height_visible);
 #endif // ENABLE_DEBUG
 
     // xmlMapper

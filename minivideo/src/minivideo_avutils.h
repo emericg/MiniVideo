@@ -99,6 +99,16 @@ typedef enum Projection_e
 
 } Projection_e;
 
+//! Rotation
+typedef enum Rotation_e
+{
+    ROTATION_0      = 0,
+    ROTATION_90     = 1,
+    ROTATION_180    = 2,
+    ROTATION_270    = 3,
+
+} Rotation_e;
+
 //! Stereo mode
 typedef enum StereoMode_e
 {

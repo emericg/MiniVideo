@@ -86,6 +86,8 @@ typedef struct Mp4Track_t
         // Video specific parameters
         unsigned int width;
         unsigned int height;
+        unsigned int width_visible;
+        unsigned int height_visible;
         unsigned int color_depth;
         unsigned int color_space;
         unsigned int color_matrix;
@@ -94,6 +96,8 @@ typedef struct Mp4Track_t
         unsigned int par_v;
         unsigned int stereo;
         unsigned int projection;
+        double rotation;
+        double scale[2];
 
         // AVC/HEVC specific parameters
         unsigned int codec_profile;

@@ -443,16 +443,22 @@ int MainWindow::printDatas()
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
-            if (t->video_projection)
+            if (t->video_projection || t->video_rotation)
             {
                 ui->label_84->show();
                 ui->label_info_video_projection->show();
                 ui->label_info_video_projection->setText(getProjectionString(t->video_projection));
+
+                ui->label_88->show();
+                ui->label_info_video_rotation->show();
+                ui->label_info_video_rotation->setText(getRotationString(t->video_rotation));
             }
             else
             {
                 ui->label_84->hide();
                 ui->label_info_video_projection->hide();
+                ui->label_88->hide();
+                ui->label_info_video_rotation->hide();
             }
 
             if (media->tracks_video_count > 1)
@@ -932,6 +938,17 @@ int MainWindow::printVideoDetails()
             {
                 ui->label_5->setVisible(false);
                 ui->label_video_projection->setVisible(false);
+            }
+            if (t->video_rotation)
+            {
+                ui->label_87->setVisible(true);
+                ui->label_video_rotation->setVisible(true);
+                ui->label_video_rotation->setText(getRotationString(t->video_rotation));
+            }
+            else
+            {
+                ui->label_87->setVisible(false);
+                ui->label_video_rotation->setVisible(false);
             }
             if (t->stereo_mode)
             {

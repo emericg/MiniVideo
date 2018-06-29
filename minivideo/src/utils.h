@@ -112,6 +112,12 @@ int fast_div8(const int n);
 
 /* ************************************************************************** */
 
+float fixed1616_to_float(int fixed1616);
+
+double fixed1616_to_double(int fixed1616);
+
+/* ************************************************************************** */
+
 short smin(short a, short b);
 
 short smax(short a, short b);
