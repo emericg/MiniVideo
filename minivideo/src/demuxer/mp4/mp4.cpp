@@ -38,11 +38,10 @@
 #include "../../minitraces.h"
 
 // C standard libraries
-#define _USE_MATH_DEFINES
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 #include <climits>
 #include <cinttypes>
 

@@ -168,6 +168,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
     message(STATUS "Building on Windows plateform")
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES)
 
     # Turn on the ability to create folders to organize projects (.vcproj)
     # It creates "CMakePredefinedTargets" folder by default and adds CMake
@@ -251,13 +252,14 @@ set(minivideo_SRC
 
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
+set(EXTRA_LIBS ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
 
 # Build library
 if (BUILD_SHARED_LIBS)
 
     message("** Building shared library")
     add_library(minivideo_shared SHARED ${minivideo_SRC})
-    target_link_libraries(minivideo_shared ${WEBP_LIBRARIES} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    target_link_libraries(minivideo_shared ${EXTRA_LIBS})
     set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
 
     if(WIN32)
@@ -275,7 +277,7 @@ endif (BUILD_SHARED_LIBS)
 if (BUILD_STATIC_LIBS)
     message("** Building static library")
     add_library(minivideo_static STATIC ${minivideo_SRC})
-    target_link_libraries(minivideo_static ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+    target_link_libraries(minivideo_static ${EXTRA_LIBS})
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
 endif (BUILD_STATIC_LIBS)
 
