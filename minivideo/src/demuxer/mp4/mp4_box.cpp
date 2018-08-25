@@ -475,7 +475,7 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
             return SUCCESS;
         }
 
-        TRACE_WARNING(MP4, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        //TRACE_WARNING(MP4, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

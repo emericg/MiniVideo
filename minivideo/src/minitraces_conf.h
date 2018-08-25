@@ -18,8 +18,8 @@
  *
  * \file      minitraces_conf.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2017
- * \version   0.51
+ * \date      2018
+ * \version   0.52
  */
 
 #ifndef MINITRACES_CONF_H
@@ -88,6 +88,7 @@ extern "C" {
 enum TraceModule_e
 {
     MAIN,
+
     IO,
         BITS,
         BYTES,

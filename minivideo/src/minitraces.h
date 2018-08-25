@@ -18,8 +18,8 @@
  *
  * \file      minitraces.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2017
- * \version   0.51
+ * \date      2018
+ * \version   0.52
  */
 
 #ifndef MINITRACES_H
@@ -54,6 +54,7 @@ void MiniTraces_print(const char *file, const int line, const char *func,
 /* ************************************************************************** */
 
 // TRACE LEVELS
+
 #define TRACE_LEVEL_ERR     (1 << 0)
 #define TRACE_LEVEL_WARN    (1 << 1)
 #define TRACE_LEVEL_INFO    (1 << 2)
@@ -143,7 +144,7 @@ typedef struct TraceModule_t
 #define OUT_BLACK  "\e[1;37;40m"
 #define OUT_RED    "\e[1;37;41m"
 #define OUT_GREEN  "\e[1;37;42m"
-#define OUT_YELLOW "\e[1;37;43m"
+#define OUT_YELLOW "\e[1;30;43m"
 #define OUT_BLUE   "\e[1;37;44m"
 #define OUT_PURPLE "\e[1;37;45m"
 #define OUT_CYAN   "\e[1;37;46m"

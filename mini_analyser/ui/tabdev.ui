@@ -51,21 +51,11 @@
        <number>4</number>
       </property>
       <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_21">
-        <property name="horizontalSpacing">
-         <number>12</number>
+       <widget class="QLabel" name="label_stats_appversion">
+        <property name="text">
+         <string>apps versions</string>
         </property>
-        <property name="verticalSpacing">
-         <number>4</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_stats_filecount">
-          <property name="text">
-           <string>x media file(s) loaded.</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       </widget>
       </item>
      </layout>
     </widget>

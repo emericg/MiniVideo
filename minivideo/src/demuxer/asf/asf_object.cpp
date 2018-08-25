@@ -486,7 +486,7 @@ int jumpy_asf(Bitstream_t *bitstr, AsfObject_t *parent, AsfObject_t *current)
             return SUCCESS;
         }
 
-        TRACE_WARNING(ASF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        //TRACE_WARNING(ASF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

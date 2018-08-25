@@ -22,6 +22,9 @@
 #include "tabdev.h"
 #include "ui_tabdev.h"
 
+// minivideo library
+#include <minivideo.h>
+
 #include <cstdint>
 
 #include <QTableWidget>
@@ -42,6 +45,27 @@ tabDev::tabDev(QWidget *parent) :
 
     ui->tableWidget_stats->resizeColumnsToContents();
     ui->tableWidget_stats->horizontalHeader()->resizeSection(0, 200);
+
+    // Apps infos
+    int minivideo_major, minivideo_minor, minivideo_patch;
+    const char *minivideo_builddate, *minivideo_buildtime;
+    bool minivideo_builddebug;
+    minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
+                        &minivideo_builddate, &minivideo_buildtime, &minivideo_builddebug);
+
+    // Apps versions
+    QString text = "<html>";
+    text += tr("MiniAnalyser") + " " + QString::fromLocal8Bit(VERSION_STR);
+#ifdef QT_DEBUG
+    text += " / <b>DEBUG</b>";
+#endif
+    text += " / " + tr("builded on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
+
+    text += "<br>" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
+    if (minivideo_builddebug) text += " / <b>DEBUG</b>";
+    text += " / " + tr("builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
+    text += "</html>";
+    ui->label_stats_appversion->setText(text);
 }
 
 tabDev::~tabDev()
@@ -53,8 +77,7 @@ tabDev::~tabDev()
 
 void tabDev::clean()
 {
-    ui->label_stats_filecount->clear();
-
+    ui->groupBox_dev_stats->setTitle(tr("Stats"));
     ui->tableWidget_stats->clearContents();
     ui->tableWidget_stats->setRowCount(0);
 }
@@ -98,7 +121,7 @@ bool tabDev::addFile(const QString &path, const QString &name,
     {
         // File count
         fileCount++;
-        ui->label_stats_filecount->setText(QString::number(fileCount) + tr(" media file(s) loaded."));
+        ui->groupBox_dev_stats->setTitle(tr("Stats") + "  (" + QString::number(fileCount) + tr(" media file(s) loaded)"));
 
         // Table
         ui->tableWidget_stats->insertRow(row);
@@ -129,7 +152,7 @@ bool tabDev::removeFile(const QString &path)
         {
             // File count
             fileCount--;
-            ui->label_stats_filecount->setText(QString::number(fileCount) + tr(" media file(s) loaded."));
+            ui->groupBox_dev_stats->setTitle(tr("Stats") + "  (" + QString::number(fileCount) + tr(" media file(s) loaded)"));
 
             // Table
             ui->tableWidget_stats->removeRow(i);

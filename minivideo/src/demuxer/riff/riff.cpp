@@ -509,7 +509,7 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
             return SUCCESS;
         }
 
-        TRACE_WARNING(RIF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
+        //TRACE_WARNING(RIF, "JUMPY > going from %lli to %lli", current_pos, offset_end);
 
         // Now, do we need to go forward or backward to reach our goal?
         // Then, can we move in our current buffer or do we need to reload a new one?

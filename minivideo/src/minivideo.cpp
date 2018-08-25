@@ -69,6 +69,8 @@ void minivideo_print_infos(void)
     printf("* Library built with CLANG '%d.%d'\n", __clang_major__, __clang_minor__);
 #elif defined(__GNUC__) || defined(__GNUG__)
     printf("* Library built with GCC '%d.%d.%d'\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+#else
+    printf("* Library built with an unknown compiler\n");
 #endif
 
     printf("* Library built on '%s, %s'\n", __DATE__ , __TIME__);
@@ -76,6 +78,16 @@ void minivideo_print_infos(void)
 #if ENABLE_DEBUG == 1
     printf("* This is a " BLD_YELLOW "DEBUG" CLR_RESET " build\n" CLR_RESET);
 #endif
+
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+    printf(OUT_YELLOW "* Address Sanitizer is ENABLED\n" CLR_RESET);
+#endif
+#else
+#if defined(__SANITIZE_ADDRESS__)
+    printf(OUT_YELLOW "* Address Sanitizer is ENABLED\n" CLR_RESET);
+#endif
+#endif // defined(__has_feature)
 }
 
 /* ************************************************************************** */
