@@ -248,7 +248,7 @@ set(minivideo_SRC
 
 # MiniVideo public headers
 set(minivideo_HEADERS
-    src/minivideo.h src/minivideo_exports.h
+    src/minivideo.h src/minivideo_export.h
     src/minivideo_avutils.h
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h minivideo_uuid.h
