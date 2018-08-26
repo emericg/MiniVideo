@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
     int retcode = EXIT_FAILURE;
     bool printhelp = false;
 
-    char *input_filepath = NULL;
-    char *output_directory = NULL;
+    char *input_filepath = nullptr;
+    char *output_directory = nullptr;
 
     bool extract_audio = true;
     bool extract_video = true;
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
         if (strcmp(argv[i], "-i") == 0)
         {
-            if (argv[i+1] != NULL)
+            if (argv[i+1] != nullptr)
             {
                 //FIXME handle invalid intput file path
                 input_filepath = argv[i+1];
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "-o") == 0)
         {
-            if (argv[i+1] != NULL)
+            if (argv[i+1] != nullptr)
             {
                 //FIXME handle invalid output directory path
                 output_directory = argv[i+1];
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "-a") == 0)
         {
-            if (argv[i+1] != NULL)
+            if (argv[i+1] != nullptr)
             {
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "-v") == 0)
         {
-            if (argv[i+1] != NULL)
+            if (argv[i+1] != nullptr)
             {
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "-s") == 0)
         {
-            if (argv[i+1] != NULL)
+            if (argv[i+1] != nullptr)
             {
                 if (atoi(argv[i+1]) > 0 && atoi(argv[i+1]) < 17)
                 {
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
         int minivideo_retcode = 0;
 
         // Open the video file
-        MediaFile_t *input_video = NULL;
+        MediaFile_t *input_video = nullptr;
         minivideo_retcode = minivideo_open(input_filepath, &input_video);
 
         if (minivideo_retcode == 1)

@@ -118,37 +118,37 @@ typedef struct TraceModule_t
 
 #if MINITRACES_COLORS == 1
 
-#define CLR_RESET  "\e[0m" //!< Reset colored output to default color of the terminal
+#define CLR_RESET  "\033[0m" //!< Reset colored output to default color of the terminal
 
 // Regular colored text
-#define CLR_BLACK  "\e[0;30m"
-#define CLR_RED    "\e[0;31m"
-#define CLR_GREEN  "\e[0;32m"
-#define CLR_YELLOW "\e[0;33m"
-#define CLR_BLUE   "\e[0;34m"
-#define CLR_PURPLE "\e[0;35m"
-#define CLR_CYAN   "\e[0;36m"
-#define CLR_WHITE  "\e[0;37m"
+#define CLR_BLACK  "\033[0;30m"
+#define CLR_RED    "\033[0;31m"
+#define CLR_GREEN  "\033[0;32m"
+#define CLR_YELLOW "\033[0;33m"
+#define CLR_BLUE   "\033[0;34m"
+#define CLR_PURPLE "\033[0;35m"
+#define CLR_CYAN   "\033[0;36m"
+#define CLR_WHITE  "\033[0;37m"
 
 // Bold colored text
-#define BLD_BLACK  "\e[1;30m"
-#define BLD_RED    "\e[1;31m"
-#define BLD_GREEN  "\e[1;32m"
-#define BLD_YELLOW "\e[1;33m"
-#define BLD_BLUE   "\e[1;34m"
-#define BLD_PURPLE "\e[1;35m"
-#define BLD_CYAN   "\e[1;36m"
-#define BLD_WHITE  "\e[1;37m"
+#define BLD_BLACK  "\033[1;30m"
+#define BLD_RED    "\033[1;31m"
+#define BLD_GREEN  "\033[1;32m"
+#define BLD_YELLOW "\033[1;33m"
+#define BLD_BLUE   "\033[1;34m"
+#define BLD_PURPLE "\033[1;35m"
+#define BLD_CYAN   "\033[1;36m"
+#define BLD_WHITE  "\033[1;37m"
 
 // Bold white text, colored outline
-#define OUT_BLACK  "\e[1;37;40m"
-#define OUT_RED    "\e[1;37;41m"
-#define OUT_GREEN  "\e[1;37;42m"
-#define OUT_YELLOW "\e[1;30;43m"
-#define OUT_BLUE   "\e[1;37;44m"
-#define OUT_PURPLE "\e[1;37;45m"
-#define OUT_CYAN   "\e[1;37;46m"
-#define OUT_WHITE  "\e[1;30;47m"
+#define OUT_BLACK  "\033[1;37;40m"
+#define OUT_RED    "\033[1;37;41m"
+#define OUT_GREEN  "\033[1;37;42m"
+#define OUT_YELLOW "\033[1;30;43m"
+#define OUT_BLUE   "\033[1;37;44m"
+#define OUT_PURPLE "\033[1;37;45m"
+#define OUT_CYAN   "\033[1;37;46m"
+#define OUT_WHITE  "\033[1;30;47m"
 
 #else // MINITRACES_COLORS == 0
 

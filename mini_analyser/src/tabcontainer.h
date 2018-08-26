@@ -48,10 +48,10 @@ class tabContainer : public QWidget
     Q_OBJECT
 
 public:
-    explicit tabContainer(QWidget *parent = 0);
+    explicit tabContainer(QWidget *parent = nullptr);
     ~tabContainer();
 
-    void loadMedia(const MediaWrapper *wrapper);
+    void loadMedia(MediaWrapper *wrapper);
     void loadTracks();
     void closeMedia();
 

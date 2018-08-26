@@ -56,7 +56,7 @@ void make_path_absolute(const char *path, char *path_absolute)
     // Check if 'path' is absolute
     const char *pos_first_slash_p = strchr(path, '/');
 
-    if (pos_first_slash_p != NULL &&
+    if (pos_first_slash_p != nullptr &&
         (pos_first_slash_p - path) == 0)
     {
         TRACE_2(IO, "* path seems to be absolute already (first caracter is /)");
@@ -65,7 +65,7 @@ void make_path_absolute(const char *path, char *path_absolute)
     {
         char cwd[4096];
         char absolute_path_temp[4096];
-        FILE *temp = NULL;
+        FILE *temp = nullptr;
 
         // First attempt
         getcwd(cwd, sizeof(cwd));
@@ -73,7 +73,7 @@ void make_path_absolute(const char *path, char *path_absolute)
         TRACE_1(IO, "* t1            : '%s'", absolute_path_temp);
 
         temp = fopen(absolute_path_temp, "rb");
-        if (temp != NULL)
+        if (temp != nullptr)
         {
             TRACE_2(IO, "* New absolute path found, new using method 1: '%s'", absolute_path_temp);
             strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
@@ -88,7 +88,7 @@ void make_path_absolute(const char *path, char *path_absolute)
             TRACE_1(IO, "* t2            : '%s'", absolute_path_temp);
 
             temp = fopen(absolute_path_temp, "rb");
-            if (temp != NULL)
+            if (temp != nullptr)
             {
                 TRACE_2(IO, "* New absolute path found, new using method 2");
                 strncpy(path_absolute, absolute_path_temp, sizeof(*path_absolute) - 1);
@@ -116,16 +116,16 @@ void make_path_absolute(const char *path, char *path_absolute)
  *
  * Convert the YCbCr 4:2:0 macroblock array to an I420 surface.
  */
-int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
+unsigned mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 {
     TRACE_INFO(IO, " > " BLD_GREEN "mb_to_ycbcr()" CLR_RESET);
-    int missing_mbs = 0;
+    unsigned missing_mbs = 0;
 
     // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
-    int i = 0;
+    unsigned i = 0;
 
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
@@ -138,7 +138,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
 
     unsigned int mb_lines = 0, mb_columns = 0, mb_x = 0, mb_y = 0;
 
-    if (buffer_ycbcr == NULL)
+    if (buffer_ycbcr == nullptr)
     {
         TRACE_ERROR(IO, "YCbCr buffer is null!");
         missing_mbs = mb_lines_total * mb_columns_total;
@@ -152,7 +152,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
             {
                 for (mb_columns = 0; mb_columns < mb_columns_total; mb_columns++)
                 {
-                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != NULL)
+                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != nullptr)
                     {
                         for (mb_x = 0; mb_x < 16; mb_x++)
                         {
@@ -177,7 +177,7 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
             {
                 for (mb_columns = 0; mb_columns < mb_columns_total; mb_columns++)
                 {
-                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != NULL)
+                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != nullptr)
                     {
                         for (mb_x = 0; mb_x < 8; mb_x++)
                         {
@@ -208,16 +208,16 @@ int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
  *
  * Convert the YCbCr 4:2:0 macroblock array to YCbCr 4:4:4 planar, then to packed RGB24 buffer.
  */
-int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
+unsigned mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
 {
     TRACE_INFO(IO, " > " BLD_GREEN "mb_to_rgb()" CLR_RESET);
-    int missing_mbs = 0;
+    unsigned missing_mbs = 0;
 
     // Shortcut
     sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
-    unsigned int i = 0;
+    unsigned i = 0;
 
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
@@ -232,7 +232,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
     unsigned char *buffer_cb = (unsigned char *)calloc(img_width*img_height, sizeof(unsigned char));
     unsigned char *buffer_cr = (unsigned char *)calloc(img_width*img_height, sizeof(unsigned char));
 
-    if (buffer_y == NULL || buffer_cb == NULL || buffer_cr == NULL)
+    if (buffer_y == nullptr || buffer_cb == nullptr || buffer_cr == nullptr)
     {
         TRACE_ERROR(IO, "Y Cb Cr buffers allocation failure!");
         missing_mbs = mb_lines_total * mb_columns_total;
@@ -246,7 +246,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
             {
                 for (mb_columns = 0; mb_columns < mb_columns_total; mb_columns++)
                 {
-                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != NULL)
+                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != nullptr)
                     {
                         for (mb_x = 0; mb_x < 16; mb_x++)
                         {
@@ -270,7 +270,7 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
             {
                 for (mb_columns = 0; mb_columns < mb_columns_total; mb_columns++)
                 {
-                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != NULL)
+                    if (dc->mb_array[mb_columns + mb_columns_total*mb_lines] != nullptr)
                     {
                         for (mb_x = 0; mb_x < 8; mb_x++)
                         {
@@ -306,17 +306,17 @@ int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
     if (buffer_y)
     {
         free(buffer_y);
-        buffer_y = NULL;
+        buffer_y = nullptr;
     }
     if (buffer_cb)
     {
         free(buffer_cb);
-        buffer_cb = NULL;
+        buffer_cb = nullptr;
     }
     if (buffer_cr)
     {
         free(buffer_cr);
-        buffer_cr = NULL;
+        buffer_cr = nullptr;
     }
 
     return missing_mbs;

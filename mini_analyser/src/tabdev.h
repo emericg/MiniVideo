@@ -33,7 +33,7 @@ class tabDev : public QWidget
     Q_OBJECT
 
 public:
-    explicit tabDev(QWidget *parent = 0);
+    explicit tabDev(QWidget *parent = nullptr);
     ~tabDev();
 
 public slots:

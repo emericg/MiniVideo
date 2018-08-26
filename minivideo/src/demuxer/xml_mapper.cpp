@@ -99,7 +99,7 @@ int xmlMapperOpen(MediaFile_t *media, FILE **xml)
         // File path fallback: put the xmlMap next to its media file
         if (strlen(xmlMapPath) == 0)
         {
-            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s\%s_mapped.xml", media->file_directory, media->file_name);
+            snprintf(xmlMapPath, MAX_PATH_SIZE, "%s\\%s_mapped.xml", media->file_directory, media->file_name);
         }
 
         // File creation

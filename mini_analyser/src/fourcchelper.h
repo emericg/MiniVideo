@@ -37,7 +37,7 @@ class FourccHelper : public QDialog
     Q_OBJECT
 
 public:
-    explicit FourccHelper(QWidget *parent = 0);
+    explicit FourccHelper(QWidget *parent = nullptr);
     ~FourccHelper();
 
 private slots:

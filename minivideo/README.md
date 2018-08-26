@@ -16,6 +16,7 @@ The minivideo library can:
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
+  - I frames only...
   - please note that at still a few bugs inside CABAC decoding process being worked on...
 
 ### Supported container formats (import modules)

@@ -5,7 +5,7 @@
 
 TARGET       = mini_extractor
 TEMPLATE     = app
-CONFIG      += c++11
+CONFIG      += c++11 warn_off
 DESTDIR      = bin/
 
 # build artifacts

@@ -33,7 +33,7 @@ class AboutWindows : public QDialog
     Q_OBJECT
 
 public:
-    explicit AboutWindows(QWidget *parent = 0);
+    explicit AboutWindows(QWidget *parent = nullptr);
     ~AboutWindows();
 
     void setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,

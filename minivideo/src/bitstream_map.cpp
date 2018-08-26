@@ -50,7 +50,7 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uin
     TRACE_INFO(DEMUX, "<b> " BLD_BLUE "init_bitstream_map()" CLR_RESET);
     int retcode = SUCCESS;
 
-    if (*stream_ptr != NULL)
+    if (*stream_ptr != nullptr)
     {
         TRACE_ERROR(DEMUX, "<b> Unable to alloc a new bitstream_map: not null!");
         retcode = FAILURE;
@@ -58,7 +58,7 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uin
     else
     {
         *stream_ptr = (MediaStream_t*)calloc(1, sizeof(MediaStream_t));
-        if (*stream_ptr == NULL)
+        if (*stream_ptr == nullptr)
         {
             TRACE_ERROR(DEMUX, "<b> Unable to allocate a new bitstream_map!");
             retcode = FAILURE;
@@ -71,21 +71,21 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uin
                 (*stream_ptr)->parameter_size = (uint32_t*)calloc(parameter_count, sizeof(uint32_t));
                 (*stream_ptr)->parameter_offset = (int64_t*)calloc(parameter_count, sizeof(int64_t));
 
-                if ((*stream_ptr)->parameter_type == NULL ||
-                    (*stream_ptr)->parameter_size == NULL ||
-                    (*stream_ptr)->parameter_offset == NULL)
+                if ((*stream_ptr)->parameter_type == nullptr ||
+                    (*stream_ptr)->parameter_size == nullptr ||
+                    (*stream_ptr)->parameter_offset == nullptr)
                 {
                     TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!");
 
-                    if ((*stream_ptr)->parameter_type != NULL)
+                    if ((*stream_ptr)->parameter_type != nullptr)
                         free((*stream_ptr)->parameter_type);
-                    if ((*stream_ptr)->parameter_size != NULL)
+                    if ((*stream_ptr)->parameter_size != nullptr)
                         free((*stream_ptr)->parameter_size);
-                    if ((*stream_ptr)->parameter_offset != NULL)
+                    if ((*stream_ptr)->parameter_offset != nullptr)
                         free((*stream_ptr)->parameter_offset);
 
                     free(*stream_ptr);
-                    *stream_ptr = NULL;
+                    *stream_ptr = nullptr;
                     retcode = FAILURE;
                 }
             }
@@ -98,27 +98,27 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uin
                 (*stream_ptr)->sample_pts = (int64_t*)calloc(sample_count, sizeof(int64_t));
                 (*stream_ptr)->sample_dts = (int64_t*)calloc(sample_count, sizeof(int64_t));
 
-                if ((*stream_ptr)->sample_type == NULL ||
-                    (*stream_ptr)->sample_size == NULL ||
-                    (*stream_ptr)->sample_offset == NULL ||
-                    (*stream_ptr)->sample_pts == NULL ||
-                    (*stream_ptr)->sample_dts == NULL)
+                if ((*stream_ptr)->sample_type == nullptr ||
+                    (*stream_ptr)->sample_size == nullptr ||
+                    (*stream_ptr)->sample_offset == nullptr ||
+                    (*stream_ptr)->sample_pts == nullptr ||
+                    (*stream_ptr)->sample_dts == nullptr)
                 {
                     TRACE_ERROR(DEMUX, "<b> Unable to alloc bitstream_map > sample_type / sample_size / sample_offset / sample_timecode!");
 
-                    if ((*stream_ptr)->sample_type != NULL)
+                    if ((*stream_ptr)->sample_type != nullptr)
                         free((*stream_ptr)->sample_type);
-                    if ((*stream_ptr)->sample_size != NULL)
+                    if ((*stream_ptr)->sample_size != nullptr)
                         free((*stream_ptr)->sample_size);
-                    if ((*stream_ptr)->sample_offset != NULL)
+                    if ((*stream_ptr)->sample_offset != nullptr)
                         free((*stream_ptr)->sample_offset);
-                    if ((*stream_ptr)->sample_pts != NULL)
+                    if ((*stream_ptr)->sample_pts != nullptr)
                         free((*stream_ptr)->sample_pts);
-                    if ((*stream_ptr)->sample_dts != NULL)
+                    if ((*stream_ptr)->sample_dts != nullptr)
                         free((*stream_ptr)->sample_dts);
 
                     free(*stream_ptr);
-                    *stream_ptr = NULL;
+                    *stream_ptr = nullptr;
                     retcode = FAILURE;
                 }
             }
@@ -136,49 +136,49 @@ int init_bitstream_map(MediaStream_t **stream_ptr, uint32_t parameter_count, uin
  */
 void free_bitstream_map(MediaStream_t **stream_ptr)
 {
-    if ((*stream_ptr) != NULL)
+    if ((*stream_ptr) != nullptr)
     {
         TRACE_INFO(DEMUX, "<b> " BLD_BLUE "free_bitstream_map()" CLR_RESET);
 
         // Strings
         free((*stream_ptr)->stream_encoder);
-        (*stream_ptr)->stream_encoder = NULL;
+        (*stream_ptr)->stream_encoder = nullptr;
         free((*stream_ptr)->track_title);
-        (*stream_ptr)->track_title = NULL;
+        (*stream_ptr)->track_title = nullptr;
         free((*stream_ptr)->track_languagecode);
-        (*stream_ptr)->track_languagecode = NULL;
+        (*stream_ptr)->track_languagecode = nullptr;
         free((*stream_ptr)->subtitles_name);
-        (*stream_ptr)->subtitles_name = NULL;
+        (*stream_ptr)->subtitles_name = nullptr;
 
         // "Parameter sets" arrays
         free((*stream_ptr)->parameter_type);
-        (*stream_ptr)->parameter_type = NULL;
+        (*stream_ptr)->parameter_type = nullptr;
 
         free((*stream_ptr)->parameter_size);
-        (*stream_ptr)->parameter_size = NULL;
+        (*stream_ptr)->parameter_size = nullptr;
 
         free((*stream_ptr)->parameter_offset);
-        (*stream_ptr)->parameter_offset = NULL;
+        (*stream_ptr)->parameter_offset = nullptr;
 
         // Samples arrays
         free((*stream_ptr)->sample_type);
-        (*stream_ptr)->sample_type = NULL;
+        (*stream_ptr)->sample_type = nullptr;
 
         free((*stream_ptr)->sample_size);
-        (*stream_ptr)->sample_size = NULL;
+        (*stream_ptr)->sample_size = nullptr;
 
         free((*stream_ptr)->sample_offset);
-        (*stream_ptr)->sample_offset = NULL;
+        (*stream_ptr)->sample_offset = nullptr;
 
         free((*stream_ptr)->sample_pts);
-        (*stream_ptr)->sample_pts = NULL;
+        (*stream_ptr)->sample_pts = nullptr;
 
         free((*stream_ptr)->sample_dts);
-        (*stream_ptr)->sample_dts = NULL;
+        (*stream_ptr)->sample_dts = nullptr;
 
         // The MediaStream_t itself
         free(*stream_ptr);
-        *stream_ptr = NULL;
+        *stream_ptr = nullptr;
 
         TRACE_1(DEMUX, "<b> MediaStream_t freed");
     }
@@ -195,7 +195,7 @@ void print_bitstream_map(MediaStream_t *stream)
 {
 #if ENABLE_DEBUG
 
-    if (stream == NULL)
+    if (stream == nullptr)
     {
         TRACE_ERROR(DEMUX, "Invalid bitstream_map structure!");
     }

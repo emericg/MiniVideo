@@ -92,9 +92,9 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 {
     TRACE_INFO(MP4, BLD_GREEN "mp4_convert_track()" CLR_RESET);
     int retcode = SUCCESS;
-    MediaStream_t *map = NULL;
+    MediaStream_t *map = nullptr;
 
-    if (media == NULL || track == NULL)
+    if (media == nullptr || track == nullptr)
     {
         TRACE_ERROR(MP4, "Cannot access audio or video tracks from the MP4 parser!");
         retcode = FAILURE;
@@ -550,7 +550,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
  */
 void mp4_clean_track(Mp4Track_t **track_ptr)
 {
-    if (*track_ptr != NULL)
+    if (*track_ptr != nullptr)
     {
         // SPS
         for (unsigned i = 0; i < (*track_ptr)->sps_count && i < MAX_SPS; i++)
@@ -596,7 +596,7 @@ void mp4_clean_track(Mp4Track_t **track_ptr)
 
         // track
         free(*track_ptr);
-        *track_ptr = NULL;
+        *track_ptr = nullptr;
     }
 }
 

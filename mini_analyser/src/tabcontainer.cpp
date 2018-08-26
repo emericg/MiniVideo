@@ -130,7 +130,7 @@ void tabContainer::on_tabWidget_tracks_currentChanged(int index)
 
 /* ************************************************************************** */
 
-void tabContainer::loadMedia(const MediaWrapper *wrap)
+void tabContainer::loadMedia(MediaWrapper *wrap)
 {
     closeMedia();
 
@@ -141,8 +141,8 @@ void tabContainer::loadMedia(const MediaWrapper *wrap)
         ui->treeWidget->blockSignals(true);
         ui->listWidget->blockSignals(true);
 
-        wrapper = (MediaWrapper *)wrap;
-        media = (MediaFile_t *)wrap->media;
+        wrapper = static_cast<MediaWrapper *>(wrap);
+        media = static_cast<MediaFile_t *>(wrap->media);
 
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
@@ -447,7 +447,7 @@ void tabContainer::previewSample(int sid)
                 {
                     OutputSurface_t *s = thumbnails.begin()->second;
                     free(s->surface);
-                    s->surface = NULL;
+                    s->surface = nullptr;
                     delete s;
                     s = nullptr;
 
@@ -806,7 +806,7 @@ void tabContainer::clearPreviews()
         OutputSurface_t *s = (thumb.second);
 
         free(s->surface);
-        s->surface = NULL;
+        s->surface = nullptr;
         delete s;
     }
 
@@ -845,7 +845,7 @@ bool tabContainer::loadXmlFile()
     char *tempdir = getenv("TEMP");
     if (tempdir)
     {
-        snprintf(xmlMapPath, 256, "%s\%s", tempdir, media->file_name);
+        snprintf(xmlMapPath, 256, "%s\\%s", tempdir, media->file_name);
     }
 #endif // _MSC_VER
 

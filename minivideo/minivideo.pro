@@ -36,7 +36,10 @@ DEFINES += ENABLE_PNG=0
 unix {
     QMAKE_CXXFLAGS += -fPIC
     QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
-    QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable
+    QMAKE_CXXFLAGS_RELEASE += -O3
+
+    QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field
 }
 
 linux {

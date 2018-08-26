@@ -31,8 +31,8 @@
 
 void make_path_absolute(const char *path, char *path_absolute);
 
-int mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr);
-int mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb);
+unsigned mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr);
+unsigned mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb);
 
 /* ************************************************************************** */
 #endif // EXPORT_UTILS_H

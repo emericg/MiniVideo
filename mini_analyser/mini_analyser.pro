@@ -92,6 +92,9 @@ unix {
     #QMAKE_CXXFLAGS += -fsanitize=address,undefined
     #QMAKE_LFLAGS += -fsanitize=address,undefined
 
+    QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field
+
     linux {
         # Add videobackends # Link with video decoding APIs
         exists("/usr/lib/libva.so") {

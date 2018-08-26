@@ -50,7 +50,7 @@ class tabExport : public QWidget
     QFile exportFile;
 
 public:
-    explicit tabExport(QWidget *parent = 0);
+    explicit tabExport(QWidget *parent = nullptr);
     ~tabExport();
 
 public slots:
