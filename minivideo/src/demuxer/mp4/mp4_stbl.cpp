@@ -370,7 +370,7 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             track->codec = CODEC_LPCM;
             TRACE_1(MP4, "> Audio track is using PCM audio");
         }
-        else if (box_header->boxtype == BOX_ESDS)
+        else if (box_header->boxtype == BOX_ESDS || box_header->boxtype == fcc_mp4a)
         {
             track->codec = CODEC_UNKNOWN;
             TRACE_1(MP4, "> Audio track codec is driven by ESDS box content");
@@ -968,8 +968,14 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // Parse box content
     while (bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end))
     {
-        uint8_t tag = read_bits(bitstr, 8);
+        // hack // pre zeros?
+        while (next_bits(bitstr, 8) == 0x00)
+        {
+            skip_bits(bitstr, 8);
+        }
+
         int64_t tag_offset = bitstream_get_absolute_byte_offset(bitstr);
+        uint8_t tag = (uint8_t)read_bits(bitstr, 8);
         uint8_t tag_delimiters = 0;
 
         // tag_delimiters
@@ -981,12 +987,12 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
         uint8_t tag_datasize = (uint8_t)read_bits(bitstr, 8);
 
-        TRACE_2(MP4, "esds NEXT TAG %X @ %lli", tag, tag_offset);
+        TRACE_1(MP4, "esds NEXT TAG %X (size: %i) @ %lli", tag, tag_datasize, tag_offset);
 
         // datas
         if (tag == 0x03) // ESDescriptor TAG
         {
-            xmlSpacer(mp4->xml, "ESDescriptor", -1);
+            xmlSpacer(mp4->xml, "ESDescriptor (0x03)", -1);
 
             uint16_t esId = read_bits(bitstr, 16);
             bool streamDependenceFlag = read_bit(bitstr);
@@ -1033,7 +1039,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x04) // decoderConfigDescriptor TAG
         {
-            xmlSpacer(mp4->xml, "decoderConfigDescriptor", -1);
+            xmlSpacer(mp4->xml, "decoderConfigDescriptor (0x04)", -1);
 
             uint8_t objectTypeIndication = read_bits(bitstr, 8);
             uint8_t streamType = read_bits(bitstr, 6); // FIXME
@@ -1085,7 +1091,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x05) // decoderSpecificInfo TAG
         {
-            xmlSpacer(mp4->xml, "decoderSpecificInfo", -1);
+            xmlSpacer(mp4->xml, "decoderSpecificInfo (0x05)", -1);
 
             uint8_t audioObjectType = read_bits(bitstr, 5);
             uint8_t audioObjectTypeExt = 0;
@@ -1241,7 +1247,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
         else if (tag == 0x06) // SLConfigDescription TAG
         {
-            xmlSpacer(mp4->xml, "SLConfigDescription", -1);
+            xmlSpacer(mp4->xml, "SLConfigDescription (0x06)", -1);
 
             uint8_t predefined = read_bits(bitstr, 8);
 
@@ -1257,9 +1263,14 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             TRACE_WARNING(MP4, "esds UNKNOWN TAG %X", tag);
             if (mp4->xml) fprintf(mp4->xml, "  <UNKNOWN_TAG>0x%X</UNKNOWN_TAG>\n", tag);
 
-            if ((tag_offset + tag_delimiters + tag_datasize) <= box_header->offset_end)
+            // jumpy esds
+            if (bitstream_get_absolute_byte_offset(bitstr) < (tag_offset + 1 + tag_delimiters + tag_datasize) &&
+                (tag_offset + 1 + tag_delimiters + tag_datasize) <= box_header->offset_end)
             {
-                skip_bits(bitstr, tag_datasize * 8);
+                TRACE_1(MP4, "wrong position after esds tag %X", tag);
+                TRACE_1(MP4, "pos %lli", bitstream_get_absolute_byte_offset(bitstr));
+                TRACE_1(MP4, "instead of %lli", (tag_offset + 1 + tag_delimiters + tag_datasize));
+                skip_bits(bitstr, ((tag_offset + 1 +  tag_delimiters + tag_datasize) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
             }
         }
     }
