@@ -195,18 +195,21 @@ int minivideo_endianness(void)
 
 /* ************************************************************************** */
 
-int minivideo_open(const char *input_filepath, MediaFile_t **input_media)
+int minivideo_open(const char *input_filepath,
+                   MediaFile_t **input_media)
 {
     return import_fileOpen(input_filepath, input_media);
 }
 
 /* ************************************************************************** */
 
-int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
+int minivideo_parse(MediaFile_t *input_media,
+                    const bool compute_metadatas,
+                    const bool container_mapping)
 {
     int retcode = FAILURE;
 
-    if (input_media == NULL)
+    if (input_media == nullptr)
     {
         TRACE_ERROR(MAIN, "Unable to parse NULL MediaFile_t struct!");
     }
@@ -216,11 +219,8 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
     }
     else
     {
-        // Enable the container mapping
-        if (extract_metadata == true)
-        {
-            input_media->container_mapper = true;
-        }
+        // Container mapping
+        input_media->container_mapper = container_mapping;
 
         // Start container parsing
         switch (input_media->container)
@@ -254,18 +254,20 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
                 break;
             default:
                 TRACE_ERROR(MAIN, "Unable to parse given container format '%s': no parser available!",
-                            getContainerString(input_media->container, 0));
+                            getContainerString(input_media->container, false));
                 break;
         }
 
         // Compute some additional metadata
-        if (extract_metadata == true)
-        {
-            computeCodecs(input_media);
-            computeAspectRatios(input_media);
-            computeSamplesDatas(input_media);
+        computeCodecs(input_media);
+        computeAspectRatios(input_media);
 
+        if (compute_metadatas)
+        {
+            computeSamplesDatas(input_media);
+#if ENABLE_DEBUG
             computeMediaMemory(input_media);
+#endif
         }
     }
 
@@ -274,13 +276,15 @@ int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata)
 
 /* ************************************************************************** */
 
-int minivideo_decode(MediaFile_t *input_media, OutputSurface_t *out, int picture_number)
+int minivideo_decode(MediaFile_t *input_media,
+                     OutputSurface_t *out,
+                     int picture_number)
 {
     int retcode = FAILURE;
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()" CLR_RESET);
 
-    if (input_media != NULL)
+    if (input_media != nullptr)
     {
         // Print status
         //import_fileStatus(input_media);
@@ -328,7 +332,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
 
     TRACE_INFO(MAIN, BLD_GREEN "minivideo_thumbnail()" CLR_RESET);
 
-    if (input_media != NULL)
+    if (input_media != nullptr)
     {
         // Print status
         //import_fileStatus(input_media);

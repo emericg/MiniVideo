@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
         if (minivideo_retcode == 1)
         {
             // Start container parsing
-            minivideo_retcode = minivideo_parse(input_video, false);
+            minivideo_retcode = minivideo_parse(input_video, false, false);
 
             if (minivideo_retcode == 1)
             {

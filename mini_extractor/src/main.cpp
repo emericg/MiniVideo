@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
         if (minivideo_retcode == 1)
         {
             // Start container parsing
-            minivideo_retcode = minivideo_parse(input_video, false);
+            minivideo_retcode = minivideo_parse(input_video, false, false);
 
             // Export audio and video PES stream
             if (minivideo_retcode == 1)

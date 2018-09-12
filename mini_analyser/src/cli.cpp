@@ -55,7 +55,7 @@ int CLI::printFile(const QString &file, bool details)
         if (minivideo_retcode == 1)
         {
             // Parse media file
-            minivideo_retcode = minivideo_parse(media, true);
+            minivideo_retcode = minivideo_parse(media, true, true);
             if (minivideo_retcode == 1)
             {
                 // Generate text output and print it on console

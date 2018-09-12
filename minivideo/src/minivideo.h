@@ -97,14 +97,15 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath, MediaFile_t **in
 /*!
  * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
  * \param *input_media: The MediaFile_t context to use.
- * \param extract_metadata: Enable extensive metadata parsing.
+ * \param compute_metadatas: Enable extra metadatas computations.
+ * \param container_mapping: Enable container mapping to xml file.
  * \return TODO ERROR CODE (0 if container parsing is a success, 1 otherwise).
  *
  * The second step in the decoding process is to parse the file's container infos
  * (if appropriate parser is available) and fill the MediaFile_t structure with
  * the tracks samples informations.
  */
-minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media, const bool extract_metadata);
+minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media, const bool compute_metadatas, const bool container_mapping);
 
 /*!
  * \brief Decode a video file.

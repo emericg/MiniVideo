@@ -88,7 +88,7 @@ public slots:
 
             if (minivideo_retcode == 1)
             {
-                minivideo_retcode = minivideo_parse(media, true);
+                minivideo_retcode = minivideo_parse(media, true, true);
                 ready = true;
 
                 if (minivideo_retcode != 1)
