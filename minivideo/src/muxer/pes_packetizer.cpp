@@ -184,7 +184,7 @@ int pes_packetizer(FILE *f_src, FILE *f_dst, MediaStream_t *stream)
         {
             uint8_t *pes_data = (uint8_t *)malloc(size);
 
-            if (pes_data == NULL)
+            if (pes_data == nullptr)
             {
                 TRACE_ERROR(MUXER, "Unable to allocate pes_buffer!");
                 retcode = FAILURE;

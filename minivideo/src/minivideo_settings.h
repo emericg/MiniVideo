@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2016 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *

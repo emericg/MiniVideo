@@ -52,7 +52,7 @@ unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
                        unsigned sample_index, es_sample_t *essample_list)
 {
     TRACE_1(DEPAK, "depack_sample(dispatcher)");
-    Bitstream_t *bitstr = NULL;
+    Bitstream_t *bitstr = nullptr;
 
     // Check if the stream is indeed packetized
     if (track->stream_packetized == true)
@@ -86,7 +86,7 @@ unsigned depack_loaded_sample(Bitstream_t *bitstr,
     {
         essample_list[0].offset = track->sample_offset[sample_index];
         essample_list[0].size = track->sample_size[sample_index];
-        essample_list[0].type_str = NULL;
+        essample_list[0].type_str = nullptr;
         samplefound = 1;
     }
     else
