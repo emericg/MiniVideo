@@ -370,17 +370,6 @@ int parse_stsd_audio(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             track->codec = CODEC_LPCM;
             TRACE_1(MP4, "> Audio track is using PCM audio");
         }
-        else if (box_header->boxtype == BOX_ESDS || box_header->boxtype == fcc_mp4a)
-        {
-            track->codec = CODEC_UNKNOWN;
-            TRACE_1(MP4, "> Audio track codec is driven by ESDS box content");
-        }
-        else
-        {
-            track->codec = CODEC_UNKNOWN;
-            TRACE_WARNING(MP4, "> Unknown codec in audio track (%s)",
-                          getFccString_le(box_header->boxtype, fcc));
-        }
 
         unsigned int reserved0 = read_bits(bitstr, 32);
         unsigned int reserved1 = read_bits(bitstr, 32);
@@ -559,12 +548,6 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             track->codec = CODEC_VC5;
             TRACE_1(MP4, "> Video track is using CineForm codec");
         }
-        else
-        {
-            track->codec = CODEC_UNKNOWN;
-            TRACE_WARNING(MP4, "> Unknown codec in video track (%s)",
-                          getFccString_le(box_header->boxtype, fcc));
-        }
 
         /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
         /*const unsigned int reserved =*/ read_bits(bitstr, 16);
@@ -666,6 +649,9 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_SV3D:
                     retcode = parse_sv3d(bitstr, &box_subsubheader, track, mp4);
                     break;
+
+                case BOX_SV3D:
+                        track->codec = CODEC_VC5;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
                     break;
@@ -966,8 +952,14 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     write_box_header(box_header, mp4->xml, "Elementary Stream Descriptor");
 
     // Parse box content
-    while (bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end))
+    while (bitstream_get_absolute_byte_offset(bitstr) < box_header->offset_end)
     {
+        // hack // no more space for a 'real' esds tag
+        if (bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 3))
+        {
+            break;
+        }
+
         // hack // pre zeros?
         while (next_bits(bitstr, 8) == 0x00)
         {
@@ -978,8 +970,10 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         uint8_t tag = (uint8_t)read_bits(bitstr, 8);
         uint8_t tag_delimiters = 0;
 
-        // tag_delimiters
-        while (next_bits(bitstr, 8) == 0x80)
+        // tag_delimiters // optional extended descriptor type tag string
+        while (next_bits(bitstr, 8) == 0x80 ||
+               next_bits(bitstr, 8) == 0x81 ||
+               next_bits(bitstr, 8) == 0xFE)
         {
             skip_bits(bitstr, 8);
             tag_delimiters++;

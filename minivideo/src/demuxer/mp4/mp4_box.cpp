@@ -470,7 +470,9 @@ int jumpy_mp4(Bitstream_t *bitstr, Mp4Box_t *parent, Mp4Box_t *current)
         // The parser will pick that fact and finish up...
         if (offset_end >= file_size)
         {
-            TRACE_WARNING(MP4, "JUMPY > going EOF (%lli)", file_size);
+            if (offset_end > file_size)
+                TRACE_WARNING(MP4, "JUMPY > going EOF (%lli)", file_size);
+
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
         }
