@@ -129,6 +129,13 @@ static int mkv_parse_attachments(Bitstream_t *bitstr, EbmlElement_t *element, mk
                 retcode = mkv_parse_attachments_attachedfile(bitstr, &element_sub, mkv);
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -292,6 +299,13 @@ static int mkv_parse_chapters(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
                 retcode = mkv_parse_chapters_entry(bitstr, &element_sub, mkv);
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -332,6 +346,13 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
         {
             switch (element_sub.eid)
             {
+                case eid_Targets:
+                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                    break;
+                case eid_SimpleTag:
+                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                    break;
+
                 default:
                     retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                     break;
@@ -371,6 +392,13 @@ static int mkv_parse_tags(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
             {
             case eid_Tag:
                 retcode = mkv_parse_tag(bitstr, &element_sub, mkv);
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:
@@ -565,6 +593,13 @@ static int mkv_parse_cues(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
                 retcode = mkv_parse_cues_cuepoint(bitstr, &element_sub, mkv);
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -695,6 +730,13 @@ static int mkv_parse_info(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
                 mkv->info.WritingApp = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "WritingApp");
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -785,6 +827,13 @@ static int mkv_parse_seekhead(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
                 retcode = mkv_parse_seekhead_seek(bitstr, &element_sub, mkv);
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -847,8 +896,12 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
             case eid_Tags:
                 retcode = mkv_parse_tags(bitstr, &element_sub, mkv);
                 break;
+
             case eid_void:
                 retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:

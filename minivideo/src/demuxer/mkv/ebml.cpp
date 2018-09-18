@@ -432,6 +432,26 @@ int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 
 /* ************************************************************************** */
 
+int ebml_parse_crc32(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
+{
+    TRACE_INFO(MKV, "ebml_parse_crc32(%i bytes)", element->size);
+
+    print_ebml_element(element);
+    write_ebml_element(element, xml, "CRC32");
+
+    uint32_t crc = read_bits(bitstr, 32);
+
+    if (xml)
+    {
+        fprintf(xml, "  <%s>0x%04X</%s>\n", "CRC32", crc, "CRC32");
+        fprintf(xml, "  </a>\n");
+    }
+
+    return SUCCESS;
+}
+
+/* ************************************************************************** */
+
 int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
 {
     TRACE_WARNING(MKV, "ebml_parse_unknown(0x%X / %i bytes)", element->eid, element->size);

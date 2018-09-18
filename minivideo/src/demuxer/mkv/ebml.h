@@ -76,6 +76,7 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element, FILE *x
 /* ************************************************************************** */
 
 int ebml_parse_void(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml);
+int ebml_parse_crc32(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml);
 int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml);
 
 /* ************************************************************************** */

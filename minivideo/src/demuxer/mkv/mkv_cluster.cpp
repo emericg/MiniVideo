@@ -247,6 +247,15 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
             case eid_TimeCode:
                 cluster.Timecode = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Timecode");
                 break;
+            case eid_Position:
+                cluster.Position = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "Position");
+                break;
+            case eid_PrevSize:
+                cluster.PrevSize = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "PrevSize");
+                break;
+            case eid_SilentTracks:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
 
             case eid_BlockGroup:
                 retcode = mkv_parse_blockgroup(bitstr, &element_sub, mkv, cluster.Timecode);
@@ -254,6 +263,13 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 
             case eid_SimpleBlock:
                 mkv_parse_block(bitstr, &element_sub, mkv, sampletype_SimpleBlock, cluster.Timecode);
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:

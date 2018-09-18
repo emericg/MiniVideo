@@ -650,8 +650,6 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                     retcode = parse_sv3d(bitstr, &box_subsubheader, track, mp4);
                     break;
 
-                case BOX_SV3D:
-                        track->codec = CODEC_VC5;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subsubheader, mp4->xml);
                     break;
