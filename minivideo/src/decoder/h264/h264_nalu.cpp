@@ -124,11 +124,21 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
             TRACE_1(NALU, "  - nal_ref_idc   = 0x%02X", nalu->nal_ref_idc);
             TRACE_1(NALU, "  - nal_unit_type = 0x%02X", nalu->nal_unit_type);
 
-            if (nalu->nal_unit_type == 14 || nalu->nal_unit_type == 20)
+            if (nalu->nal_unit_type == 14 ||
+                nalu->nal_unit_type == 20 ||
+                nalu->nal_unit_type == 21)
             {
-                // Check reserved_one_bit
-                if (read_bit(bitstr) == 0)
+                bool svc_extension_flag = false;
+                bool avc_3d_extension_flag = false;
+
+                if (nalu->nal_unit_type != 21)
+                    svc_extension_flag = read_bit(bitstr);
+                else
+                    avc_3d_extension_flag = read_bit(bitstr);
+
+                if (svc_extension_flag)
                 {
+                    // nal_unit_header_svc_extension() // specified in Annex G
                     nalu->idr_flag = read_bit(bitstr);
                     nalu->priority_id = read_bits(bitstr, 6);
                     nalu->no_inter_layer_pred_flag = read_bit(bitstr);
@@ -139,6 +149,7 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
                     nalu->discardable_flag = read_bit(bitstr);
                     nalu->output_flag = read_bit(bitstr);
 
+                    TRACE_1(NALU, "  * nal_unit_header_svc_extension");
                     TRACE_1(NALU, "  - idr_flag      = %u", nalu->idr_flag);
                     TRACE_1(NALU, "  - priority_id   = %u", nalu->priority_id);
                     TRACE_1(NALU, "  - no_inter_layer_pred_flag = %u", nalu->no_inter_layer_pred_flag);
@@ -150,19 +161,52 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
                     TRACE_1(NALU, "  - output_flag      = %u", nalu->output_flag);
 
                     // Check reserved_three_2bits
-                    if (read_bits(bitstr, 2) == 3)
+                    if (read_bits(bitstr, 2) != 3)
                     {
-                        retcode = SUCCESS;
-                        TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
+                        TRACE_ERROR(NALU, "  * Invalid NAL Unit at byte offset %i (wrong reserved_three_2bits value)", nalu->nal_offset);
                     }
-                    else
-                    {
-                        TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_three_2bits value)", nalu->nal_offset);
-                    }
+                }
+                else if (avc_3d_extension_flag)
+                {
+                    // nal_unit_header_3davc_extension() // specified in Annex J
+                    nalu->view_idx = read_bits(bitstr, 8);
+                    nalu->depth_flag = read_bit(bitstr);
+                    nalu->non_idr_flag = read_bit(bitstr);
+                    nalu->temporal_id = read_bits(bitstr, 3);
+                    nalu->anchor_pic_flag = read_bit(bitstr);
+                    nalu->inter_view_flag = read_bit(bitstr);
+
+                    TRACE_1(NALU, "  * nal_unit_header_3davc_extension");
+                    TRACE_1(NALU, "  - view_idx     = %u", nalu->view_idx);
+                    TRACE_1(NALU, "  - depth_flag   = %u", nalu->depth_flag);
+                    TRACE_1(NALU, "  - non_idr_flag = %u", nalu->non_idr_flag);
+                    TRACE_1(NALU, "  - temporal_id  = %u", nalu->temporal_id);
+                    TRACE_1(NALU, "  - anchor_pic_flag = %u", nalu->anchor_pic_flag);
+                    TRACE_1(NALU, "  - inter_view_flag = %u", nalu->inter_view_flag);
                 }
                 else
                 {
-                    TRACE_ERROR(NALU, "  * There is no valid NAL Unit at byte offset %i (wrong reserved_one_bit value)", nalu->nal_offset);
+                    // nal_unit_header_mvc_extension() // specified in Annex H
+                    nalu->non_idr_flag = read_bit(bitstr);
+                    nalu->priority_id = read_bits(bitstr, 6);
+                    nalu->view_id = read_bits(bitstr, 10);
+                    nalu->temporal_id = read_bits(bitstr, 3);
+                    nalu->anchor_pic_flag = read_bit(bitstr);
+                    nalu->inter_view_flag = read_bit(bitstr);
+
+                    TRACE_1(NALU, "  * nal_unit_header_mvc_extension");
+                    TRACE_1(NALU, "  - non_idr_flag = %u", nalu->non_idr_flag);
+                    TRACE_1(NALU, "  - priority_id  = %u", nalu->priority_id);
+                    TRACE_1(NALU, "  - view_id      = %u", nalu->view_id);
+                    TRACE_1(NALU, "  - temporal_id  = %u", nalu->temporal_id);
+                    TRACE_1(NALU, "  - anchor_pic_flag = %u", nalu->anchor_pic_flag);
+                    TRACE_1(NALU, "  - inter_view_flag = %u", nalu->inter_view_flag);
+
+                    // Check reserved_one_bit
+                    if (read_bit(bitstr) != 1)
+                    {
+                        TRACE_ERROR(NALU, "  * Invalid NAL Unit at byte offset %i (wrong reserved_one_bit value)", nalu->nal_offset);
+                    }
                 }
             }
             else
@@ -279,6 +323,10 @@ const char *nalu_get_string_type1(unsigned nal_unit_type)
             return "SEI (Supplemental Enhancement Information)";
         case NALU_TYPE_SPS:
             return "SPS (Sequence Parameter Set)";
+        case NALU_TYPE_SPS_EXT:
+            return "SPS EXT (Sequence Parameter Set Extension)";
+        case NALU_TYPE_SPS_SUBSET:
+            return "SPS SUBSET (Subset Sequence Parameter Set)";
         case NALU_TYPE_PPS:
             return "PPS (Picture Parameter Set)";
         case NALU_TYPE_AUD:
@@ -289,11 +337,17 @@ const char *nalu_get_string_type1(unsigned nal_unit_type)
             return "END_STREAM (end of stream)";
         case NALU_TYPE_FILL:
             return "FILL (filler data)";
-/*
-            NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
-            NALU_TYPE_15           = 15,    //!< Reserved for future extensions
-            NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
-*/
+        case NALU_TYPE_PREFIX_NAL:
+            return "Prefix NAL unit";
+        case NALU_TYPE_DPS:
+            return "DPS (Depth Parameter Set)";
+        case NALU_TYPE_SLICE_AUX:
+            return "SLICE AUX(coded slice of an auxiliary coded picture)";
+        case NALU_TYPE_SLICE_EXT:
+            return "SLICE EXT(coded slice extension)";
+        case NALU_TYPE_SLICE_EXT_3D:
+            return "SLICE EXT 3D (coded slice extension for depth view / 3D-AVC texture view)";
+
         case NALU_TYPE_UNKNOWN:
         default:
             return "Unknown";

@@ -32,6 +32,7 @@
 
 int decodeSPS_legacy(DecodingContext_t *dc);
 int decodeSPS(Bitstream_t *bitstr, sps_t *sps);
+int checkSPScompat(sps_t *sps);
 void freeSPS(sps_t **sps_ptr);
 
 int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array);

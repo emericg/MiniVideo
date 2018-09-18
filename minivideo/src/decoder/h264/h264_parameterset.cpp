@@ -479,6 +479,15 @@ int decodeSPS_legacy(DecodingContext_t *dc)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+/*!
+ * \param *bitstr:
+ * \param *sps:
+ * \return 1 if SPS seems consistent, 0 otherwise.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 7.3.2.1 Sequence parameter set RBSP syntax.
+ * 7.4.2.1 Sequence parameter set RBSP semantics.
+ */
 int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS()" CLR_RESET);
@@ -526,8 +535,6 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 
             if (sps->chroma_format_idc == 0) // 4:0:0 subsampling
             {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 0, yuv 4:0:0)");
-
                 sps->SubHeightC = 0;
                 sps->SubWidthC = 0;
             }
@@ -538,22 +545,15 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             }
             else if (sps->chroma_format_idc == 2) // 4:2:2 subsampling
             {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 2, yuv 4:2:1)");
-
                 sps->SubHeightC = 1;
                 sps->SubWidthC = 2;
             }
             else if (sps->chroma_format_idc == 3) // 4:4:4 subsampling
             {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 3, yuv 4:4:4)");
-
                 sps->separate_colour_plane_flag = read_bit(bitstr);
                 if (sps->separate_colour_plane_flag)
                 {
-                    TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == 1)");
-
                     sps->ChromaArrayType = 0;
-
                     sps->SubHeightC = 0;
                     sps->SubWidthC = 0;
                 }
@@ -564,8 +564,10 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
                 }
             }
 
-            sps->MbWidthC = 16 / sps->SubWidthC;
-            sps->MbHeightC = 16 / sps->SubHeightC;
+            if (sps->SubWidthC)
+                sps->MbWidthC = 16 / sps->SubWidthC;
+            if (sps->SubHeightC)
+                sps->MbHeightC = 16 / sps->SubHeightC;
 
             sps->bit_depth_luma_minus8 = read_ue(bitstr);
             sps->BitDepthY = 8 + sps->bit_depth_luma_minus8;
@@ -711,13 +713,9 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
             sps->vui = decodeVUI(bitstr);
         }
 
-        // SPS check
-        ////////////////////////////////////////////////////////////////////////
-
-        if (retcode == SUCCESS)
-        {
-            retcode = checkSPS(sps);
-        }
+#if ENABLE_DEBUG
+        retcode = checkSPS(sps);
+#endif
     }
 
     return retcode;
@@ -752,6 +750,63 @@ void freeSPS(sps_t **sps_ptr)
 /* ************************************************************************** */
 
 /*!
+ * \brief Check if Minivideo H.264 decoder will be able to decode this video.
+ * \return 1 if SPS seems compatible, 0 otherwise.
+ */
+int checkSPScompat(sps_t *sps)
+{
+    TRACE_INFO(PARAM, "> " BLD_GREEN "checkSPS()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (sps->profile_idc != MAINP &&
+        sps->profile_idc != FREXT_HiP &&
+        sps->profile_idc != BASELINE)
+    {
+        TRACE_WARNING(PARAM, "  - profile_idc is %i", sps->profile_idc);
+        TRACE_WARNING(PARAM, "  <!> Only MAIN and HIGH profiles are supported by this decoder");
+
+        TRACE_ERROR(PARAM, ">>> UNSUPPORTED (profile_idc != 77 && profile_idc != 100)");
+        retcode = FAILURE;
+    }
+
+    // Handle parameters for profiles >= HIGH
+    if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
+        sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
+        sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
+        sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
+        sps->profile_idc == 134 || sps->profile_idc == 135)
+    {
+        if (sps->chroma_format_idc == 0)
+        {
+            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 0, 4:0:0 subsampling)");
+            retcode = FAILURE;
+        }
+        else if (sps->chroma_format_idc == 1)
+        {
+            // 4:2:0 subsampling
+        }
+        else if (sps->chroma_format_idc == 2)
+        {
+            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 2, 4:2:2 subsampling)");
+            retcode = FAILURE;
+        }
+        else if (sps->chroma_format_idc == 3)
+        {
+            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 3, 4:4:4 subsampling)");
+            retcode = FAILURE;
+        }
+    }
+
+    if (sps->separate_colour_plane_flag)
+    {
+        TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
+        retcode = FAILURE;
+    }
+
+    return retcode;
+}
+
+/*!
  * \param *sps (sequence_parameter_set) data structure.
  * \return 1 if SPS seems consistent, 0 otherwise.
  *
@@ -779,35 +834,17 @@ static int checkSPS(sps_t *sps)
             retcode = FAILURE;
         }
 
-        if (sps->profile_idc != MAINP && sps->profile_idc != FREXT_HiP && sps->profile_idc != BASELINE)
-        {
-            TRACE_WARNING(PARAM, "  - profile_idc is %i", sps->profile_idc);
-            TRACE_WARNING(PARAM, "  <!> Only MAIN and HIGH profiles are supported by this decoder");
-
-            TRACE_ERROR(PARAM, ">>> UNSUPPORTED (profile_idc != 77 && profile_idc != 100)");
-        }
-
+        // Handle parameters for profiles >= HIGH
         if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
             sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
-            sps->profile_idc == STEREO_HIGH)
+            sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
+            sps->profile_idc == 134 || sps->profile_idc == 135)
         {
             if (sps->chroma_format_idc > 3)
             {
                 TRACE_WARNING(PARAM, "  - chroma_format_idc is %i but should be in range [0,3]", sps->chroma_format_idc);
                 retcode = FAILURE;
-            }
-            else if (sps->chroma_format_idc > 1)
-            {
-                TRACE_WARNING(PARAM, "  - chroma_format_idc is %i", sps->chroma_format_idc);
-                TRACE_ERROR(PARAM, "  <!> Only 4:0:0 (0) and 4:2:0 (1) chroma_format_idc are supported by this decoder");
-
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc > 1)");
-            }
-
-            if (sps->separate_colour_plane_flag)
-            {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == true)");
             }
 
             if (sps->bit_depth_luma_minus8 > 6)
@@ -885,7 +922,7 @@ static int checkSPS(sps_t *sps)
         }
 
         // Check VUI content
-        if (retcode == SUCCESS && sps->vui_parameters_present_flag == true)
+        if (retcode == SUCCESS && sps->vui_parameters_present_flag)
         {
             retcode = checkVUI(sps->vui, sps);
         }
@@ -1228,13 +1265,9 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
 
         retcode = h264_rbsp_trailing_bits(bitstr);
 
-        // PPS check
-        ////////////////////////////////////////////////////////////////////////
-
-        if (retcode == SUCCESS)
-        {
-            retcode = checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
-        }
+#if ENABLE_DEBUG
+        retcode = checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
+#endif
     }
 
     return retcode;
@@ -1744,7 +1777,8 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
             vui->vcl_hrd = decodeHRD(bitstr);
         }
 
-        if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
+        if (vui->nal_hrd_parameters_present_flag ||
+            vui->vcl_hrd_parameters_present_flag)
         {
             vui->low_delay_hrd_flag = read_bit(bitstr);
         }
@@ -2005,11 +2039,12 @@ static void printVUI(vui_t *vui)
     TRACE_1(PARAM, "    - vcl_hrd_parameters_present_flag= %u", vui->vcl_hrd_parameters_present_flag);
 
     // HRD
-    if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
+    if (vui->nal_hrd_parameters_present_flag ||
+        vui->vcl_hrd_parameters_present_flag)
     {
-        if (vui->nal_hrd_parameters_present_flag == true)
+        if (vui->nal_hrd_parameters_present_flag)
             printHRD(vui->nal_hrd);
-        if (vui->vcl_hrd_parameters_present_flag == true)
+        if (vui->vcl_hrd_parameters_present_flag)
             printHRD(vui->vcl_hrd);
 
         TRACE_1(PARAM, "    - low_delay_hrd_flag        = %u", vui->low_delay_hrd_flag);
@@ -2089,11 +2124,12 @@ static void mapVUI(vui_t *vui, FILE *xml)
         fprintf(xml, "  <vcl_hrd_parameters_present_flag>%i</vcl_hrd_parameters_present_flag>\n", vui->vcl_hrd_parameters_present_flag);
 
         // HRD
-        if (vui->nal_hrd_parameters_present_flag == true || vui->vcl_hrd_parameters_present_flag == true)
+        if (vui->nal_hrd_parameters_present_flag ||
+            vui->vcl_hrd_parameters_present_flag)
         {
-            if (vui->nal_hrd_parameters_present_flag == true)
+            if (vui->nal_hrd_parameters_present_flag)
                 mapHRD(vui->nal_hrd, xml);
-            if (vui->vcl_hrd_parameters_present_flag == true)
+            if (vui->vcl_hrd_parameters_present_flag)
                 mapHRD(vui->vcl_hrd, xml);
             fprintf(xml, "  <vcl_hrd_parameters_present_flag>%i</vcl_hrd_parameters_present_flag>\n", vui->vcl_hrd_parameters_present_flag);
         }

@@ -42,6 +42,9 @@
  * From 'ITU-T H.264' recommendation:
  * - 7.3.1 NAL unit syntax.
  * - 7.4.1 NAL unit semantics.
+ * - G.7.3.1.1 NAL unit header SVC extension syntax.
+ * - H.7.3.1.1 NAL unit header MVC extension syntax.
+ * - J.7.3.1.1 NAL unit header 3D-AVC extension syntax.
  *
  * A NAL (Network Abstraction Layer) is specified to format that data and provide
  * header information in a manner appropriate for conveyance on a variety of
@@ -66,7 +69,7 @@ typedef struct nalu_t
     unsigned int nal_ref_idc;       //!< Define NAL Unit priority (see NALUnit_RefIdc enum)
     unsigned int nal_unit_type;     //!< Define NAL Unit content type (see NALUnit_Type enum)
 
-    // Header extension
+    // nal_unit_header_svc_extension
     unsigned int idr_flag;
     unsigned int priority_id;
     unsigned int no_inter_layer_pred_flag;
@@ -76,6 +79,23 @@ typedef struct nalu_t
     unsigned int use_ref_base_pic_flag;
     unsigned int discardable_flag;
     unsigned int output_flag;
+
+    // nal_unit_header_mvc_extension
+    unsigned int non_idr_flag;
+    //unsigned int priority_id;
+    unsigned int view_id;
+    //unsigned int temporal_id;
+    unsigned int anchor_pic_flag;
+    unsigned int inter_view_flag;
+
+    // nal_unit_header_3davc_extension
+    unsigned int view_idx;
+    unsigned int depth_flag;
+    //unsigned int non_idr_flag;
+    //unsigned int temporal_id;
+    //unsigned int anchor_pic_flag;
+    //unsigned int inter_view_flag;
+
 } nalu_t;
 
 //! NAL Unit content type
@@ -94,9 +114,13 @@ typedef enum NaluType_e
     NALU_TYPE_END_SEQUENCE = 10,    //!< Indicate end of sequence
     NALU_TYPE_END_STREAM   = 11,    //!< Indicate end of stream
     NALU_TYPE_FILL         = 12,    //!< Contain filler data
-    NALU_TYPE_14           = 14,    //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
-    NALU_TYPE_15           = 15,    //!< Reserved for future extensions
-    NALU_TYPE_20           = 20     //!< Reserved for future extensions (indicate the presence of three additional bytes in the NAL unit header)
+    NALU_TYPE_SPS_EXT      = 13,    //!< Sequence Parameter Set extension
+    NALU_TYPE_PREFIX_NAL   = 14,    //!< Prefix NAL unit
+    NALU_TYPE_SPS_SUBSET   = 15,    //!< Subset Sequence Parameter Set
+    NALU_TYPE_DPS          = 16,    //!< Depth Parameter Set
+    NALU_TYPE_SLICE_AUX    = 19,    //!< Coded slice of an auxiliary coded picture without partitioning
+    NALU_TYPE_SLICE_EXT    = 20,    //!< Coded slice extension
+    NALU_TYPE_SLICE_EXT_3D = 21,    //!< Coded slice extension for depth view / 3D-AVC texture view
 } NaluType_e;
 
 //! NAL Unit priority
