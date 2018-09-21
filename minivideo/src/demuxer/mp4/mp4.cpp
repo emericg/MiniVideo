@@ -652,6 +652,62 @@ static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /* ************************************************************************** */
 
 /*!
+ * \brief Alias Data Handler.
+ */
+static int parse_alis(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_alis()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read box content
+    uint32_t alis = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> AliasHandle : %u", alis);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "Alias Data Handler");
+        fprintf(mp4->xml, "  <AliasHandle>%u</AliasHandle>\n", alis);
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+/*!
+ * \brief URL Data Handler.
+ */
+static int parse_url(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_url()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    write_box_header(box_header, mp4->xml, "URL Data Handler");
+    read_mp4_string(bitstr, 1024, mp4->xml, "URL");
+    if (mp4->xml)fprintf(mp4->xml, "  </a>\n");
+
+    return retcode;
+}
+/*!
+ * \brief URN Data Handler.
+ */
+static int parse_urn(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_urn()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    write_box_header(box_header, mp4->xml, "URN Data Handler");
+    read_mp4_string(bitstr, 1024, mp4->xml, "URN");
+    if (mp4->xml)fprintf(mp4->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/*!
  * \brief Data Reference Box.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -690,8 +746,15 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
             switch (box_subheader.boxtype)
             {
                 case BOX_ALIS:
+                    retcode = parse_alis(bitstr, &box_subheader, track, mp4);
+                    break;
                 case BOX_URL:
+                    retcode = parse_url(bitstr, &box_subheader, track, mp4);
+                    break;
                 case BOX_URN:
+                    retcode = parse_urn(bitstr, &box_subheader, track, mp4);
+                    break;
+
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;

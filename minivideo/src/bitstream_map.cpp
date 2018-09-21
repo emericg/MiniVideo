@@ -406,7 +406,7 @@ bool computePCMSettings(MediaStream_t *track)
     // First, check if the hack is needed
     if (track->sample_count > 0 && track->sample_size[0] != sample_size_cbr)
     {
-        TRACE_ERROR(DEMUX, BLD_GREEN "computePCMSettings()" CLR_RESET);
+        TRACE_INFO(DEMUX, BLD_GREEN "computePCMSettings()" CLR_RESET);
 
         track->sample_per_frames = 1;
         track->stream_size = track->sample_count * sample_size_cbr;

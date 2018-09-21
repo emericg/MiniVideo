@@ -96,7 +96,7 @@ typedef struct TraceModule_t
 
 // TRACE MACROS, release config
 #define TRACE_ERROR( MODULE, ... )   MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_ERR,  MODULE, __VA_ARGS__ )
-#define TRACE_WARNING( MODULE, ... ) MiniTraces_print( __FILE__, __LINE__, __FUNCTION__, TRACE_LEVEL_WARN, MODULE, __VA_ARGS__ )
+#define TRACE_WARNING( MODULE, ... )
 #define TRACE_INFO( MODULE, ... )
 #define TRACE_1( MODULE, ... )
 #define TRACE_2( MODULE, ... )
