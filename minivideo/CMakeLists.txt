@@ -303,14 +303,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake ${CMAKE_CURRENT
 
 # Install the shared library and its header into the system (optional step, requires root credentials)
 # Relative to $<INSTALL_PREFIX>
-if(UNIX)
-    if (BUILD_SHARED_LIBS)
-        install(TARGETS minivideo_shared DESTINATION lib/)
-    endif (BUILD_SHARED_LIBS)
-    if (BUILD_STATIC_LIBS)
-        install(TARGETS minivideo_static DESTINATION lib/)
-    endif (BUILD_STATIC_LIBS)
+if (BUILD_SHARED_LIBS)
+    install(TARGETS minivideo_shared DESTINATION lib/)
+endif (BUILD_SHARED_LIBS)
+if (BUILD_STATIC_LIBS)
+    install(TARGETS minivideo_static DESTINATION lib/)
+endif (BUILD_STATIC_LIBS)
 
-    install(FILES ${minivideo_HEADERS} DESTINATION include/)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
-endif(UNIX)
+install(FILES ${minivideo_HEADERS} DESTINATION include/)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
