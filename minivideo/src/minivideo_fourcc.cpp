@@ -201,9 +201,11 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_VP72:
         codec = CODEC_VP7;
         break;
+    case fcc_vp08:
     case fcc_VP80:
         codec = CODEC_VP8;
         break;
+    case fcc_vp09:
     case fcc_VP90:
         codec = CODEC_VP9;
         break;

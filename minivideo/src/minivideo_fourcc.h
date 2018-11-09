@@ -206,6 +206,8 @@ typedef enum fourcc_list_e
     fcc_VP72 = 0x56503732,
     fcc_VP80 = 0x56503830,
     fcc_VP90 = 0x56503930,
+    fcc_vp08 = 0x76703038,
+    fcc_vp09 = 0x76703039,
 
     fcc_av01 = 0x61763031,
 
