@@ -180,6 +180,9 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->modification_time = ((double)track->modification_time / (double)track->timescale * 1000.0);
         }
 
+        if (track->stss_entry_count == 0)
+            map->stream_intracoded = true;
+
         map->stream_packetized = true;
         map->sample_count = track->stsz_sample_count;
 

@@ -254,15 +254,6 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
         bool cfr = true;
         unsigned j = 0;
 
-        if (track->stream_packetized == false)
-        {
-            track->frame_count = track->sample_count;
-        }
-        if (track->stream_intracoded)
-        {
-            track->frame_count_idr = track->frame_count;
-        }
-
         // Audio frame duration
         if (track->stream_type == stream_AUDIO)
         {
@@ -317,13 +308,17 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
                 if (track->sample_size[j] > (track->sample_size[samplesizerefid] + 1) || track->sample_size[j] < (track->sample_size[samplesizerefid] - 1))
                     cbr = false; // TODO find a reference // TODO not use TAGS
 
-            if (track->stream_packetized == true)
+            if (track->stream_packetized == true && track->stream_intracoded == false)
             {
                 if (track->sample_type[j] == sample_VIDEO_SYNC ||
                     track->sample_pts[j] || track->sample_dts[j])
                 {
                     track->frame_count++;
                 }
+            }
+            else
+            {
+                track->frame_count++;
             }
 /*
             if (j > 0)
@@ -384,6 +379,11 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
             track->bitrate_avg = (unsigned int)round(((double)track->stream_size / (double)(track->stream_duration_ms)));
             track->bitrate_avg *= 1000; // ms to s
             track->bitrate_avg *= 8; // B to b
+        }
+
+        if (track->stream_intracoded == true)
+        {
+            track->frame_count_idr = track->sample_count;
         }
     }
 }
