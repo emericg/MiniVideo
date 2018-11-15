@@ -96,8 +96,6 @@ Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint3
             }
 
             // Bitstream buffer allocation
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 4) to prevent some cases of invalid 32 bits reads near the end of the buffer
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 8) to prevent some cases of invalid 64 bits reads near the end of the buffer
             bitstr->buffer = (uint8_t*)calloc(bitstr->buffer_size_saved, sizeof(uint8_t));
 
             if (bitstr->buffer == NULL)
@@ -167,8 +165,6 @@ Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream)
             bitstr->sample_index = 0;
 
             // Bitstream buffer allocation
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 4) to prevent some cases of invalid 32 bits reads near the end of the buffer
-            //FIXME use realloc(bitstr->buffer, bitstr->buffer_size + 8) to prevent some cases of invalid 64 bits reads near the end of the buffer
             if ((bitstr->buffer = (uint8_t*)calloc(bitstr->buffer_size, sizeof(uint8_t))) == NULL)
             {
                 TRACE_ERROR(BITS, "<b> Unable to calloc the bitstream buffer!");
@@ -323,7 +319,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
     else
     {
         // Reset buffer size (necessary if some data have been dynamically removed from previous buffer)
-        bitstr->buffer_size = bitstr->buffer_size_saved;
+        bitstr->buffer_size += bitstr->buffer_discarded_bytes;
         bitstr->buffer_discarded_bytes = 0;
 
         // Cut buffer size if the end of file is almost reached
