@@ -394,16 +394,19 @@ uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *na
     return value;
 }
 
-char *read_mp4_string(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name)
+char *read_mp4_string(Bitstream_t *bitstr, int max_bytes, FILE *xml, const char *name)
 {
     TRACE_2(MP4, "read_mp4_string()");
 
-    char *value = (char *)malloc(bytes+1);
+    char *value = (char *)malloc(max_bytes+1);
     if (value)
     {
-        for (int i = 0; i < bytes; i++)
+        for (int i = 0; i < max_bytes; i++)
+        {
             value[i] = (char)read_bits(bitstr, 8);
-        value[bytes] = '\0';
+            if (value[i] == '\0') break;
+        }
+        value[max_bytes] = '\0'; // in any case...
 
         if (name)
         {
