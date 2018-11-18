@@ -989,7 +989,7 @@ int export_idr_surface(DecodingContext_t *dc, OutputSurface_t *out)
     out->height = sps->PicHeightInMapUnits * 16;
 
     // convert macroblocks to rgb buffer
-    out->surface = (unsigned char *)calloc(out->width*out->height*3, sizeof(unsigned char));
+    out->surface = (unsigned char *)malloc(out->width*out->height*3);
     if (out->surface)
     {
         mb_to_rgb(dc, out->surface);

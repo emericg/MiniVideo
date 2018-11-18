@@ -5,7 +5,7 @@
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 10)
+set(minivideo_VERSION_MINOR 11)
 set(minivideo_VERSION_PATCH 0)
 
 cmake_minimum_required(VERSION 3.0)

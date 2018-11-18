@@ -276,51 +276,6 @@ int minivideo_parse(MediaFile_t *input_media,
 
 /* ************************************************************************** */
 
-int minivideo_decode(MediaFile_t *input_media,
-                     OutputSurface_t *out,
-                     int picture_number)
-{
-    int retcode = FAILURE;
-
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode()" CLR_RESET);
-
-    if (input_media != nullptr)
-    {
-        // Print status
-        //import_fileStatus(input_media);
-
-        int tid = 0;
-
-        // Start video decoding
-        switch (input_media->tracks_video[tid]->stream_codec)
-        {
-            case CODEC_H264:
-            {
-                DecodingContext_t *dc = h264_init(input_media, tid);
-                retcode = h264_decode(dc, picture_number);
-                retcode = h264_export_surface(dc, out);
-                h264_cleanup(dc);
-            } break;
-
-            case CODEC_UNKNOWN:
-                TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!");
-                break;
-            default:
-                TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!",
-                            getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec, true));
-                break;
-        }
-    }
-    else
-    {
-        TRACE_ERROR(MAIN, "Unable to thumbnail from a NULL MediaFile_t struct!");
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
 int minivideo_thumbnail(MediaFile_t *input_media,
                         const char *output_directory,
                         const int picture_format,
@@ -432,6 +387,137 @@ int minivideo_extract(MediaFile_t *input_media,
 int minivideo_close(MediaFile_t **input_media)
 {
     return import_fileClose(input_media);
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+OutputSurface_t *minivideo_decode_frame(MediaFile_t *input_media,
+                                        const unsigned frame_id)
+{
+    OutputSurface_t *frame = nullptr;
+
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode_frame()" CLR_RESET);
+
+    if (input_media != nullptr)
+    {
+        int tid = 0;
+        int retcode = 0;
+
+        frame = new OutputSurface_t;
+
+        // Start video decoding
+        switch (input_media->tracks_video[tid]->stream_codec)
+        {
+            case CODEC_H264:
+            {
+                DecodingContext_t *dc = h264_init(input_media, tid);
+                retcode = h264_decode(dc, frame_id);
+                retcode &= h264_export_surface(dc, frame);
+                h264_cleanup(dc);
+            } break;
+
+            case CODEC_UNKNOWN:
+                TRACE_ERROR(MAIN, "Unknown video format: unable to decode this file!");
+                break;
+
+            default:
+                TRACE_ERROR(MAIN, "Unable to decode given file format '%s': no decoder available!",
+                            getCodecString(stream_VIDEO, input_media->tracks_video[0]->stream_codec, true));
+                break;
+        }
+
+        if (retcode != 1)
+            minivideo_destroy_frame(&frame);
+    }
+    else
+    {
+        TRACE_ERROR(MAIN, "Unable to extract a frame from a NULL MediaFile_t struct!");
+    }
+
+    return frame;
+}
+
+void minivideo_destroy_frame(OutputSurface_t **frame_ptr)
+{
+    if ((*frame_ptr) != nullptr)
+    {
+        // A malloc is performed by export_idr_surface()
+        free((*frame_ptr)->surface);
+
+        delete *frame_ptr;
+        *frame_ptr = nullptr;
+    }
+}
+
+/* ************************************************************************** */
+
+MediaSample_t *minivideo_get_sample(MediaFile_t *input_media,
+                                    MediaStream_t *input_stream,
+                                    const unsigned sample_id)
+{
+    MediaSample_t *sample = nullptr;
+
+    TRACE_INFO(MAIN, BLD_GREEN "minivideo_get_sample()" CLR_RESET);
+
+    if (input_media != nullptr && input_stream != nullptr)
+    {
+        if (sample_id < input_stream->sample_count)
+        {
+            sample = new MediaSample_t;
+            if (sample)
+            {
+                sample->type = input_stream->sample_type[sample_id];
+                sample->size = input_stream->sample_size[sample_id];
+                sample->offset = input_stream->sample_offset[sample_id];
+                sample->pts = input_stream->sample_pts[sample_id];
+                sample->dts = input_stream->sample_dts[sample_id];
+
+                sample->data = new uint8_t[sample->size];
+                if (sample->data)
+                {
+                    //TRACE_ERROR(MAIN, "error () sz: %u\n" , sample->size);
+                    //TRACE_ERROR(MAIN, "error () of: %u\n" , sample->offset);
+
+                    fseek(input_media->file_pointer, sample->offset, SEEK_SET);
+                    size_t sz = fread(sample->data, sizeof(uint8_t), sample->size, input_media->file_pointer);
+                    if (sz != sample->size)
+                    {
+                        TRACE_ERROR(MAIN, "error () sz: %u\n" , sz);
+                    }
+                }
+                else
+                {
+                    TRACE_ERROR(MAIN, BLD_GREEN "minivideo_get_sample()" CLR_RESET);
+                }
+            }
+            else
+            {
+                TRACE_ERROR(MAIN, "Unable to allocate sample!");
+            }
+        }
+        else
+        {
+            TRACE_ERROR(MAIN, "Sample ID is invalid!");
+        }
+    }
+    else
+    {
+        TRACE_ERROR(MAIN, "Unable to extract a sample from a NULL MediaFile_t or MediaStream_t struct!");
+    }
+
+    return sample;
+}
+
+void minivideo_destroy_sample(MediaSample_t **sample_ptr)
+{
+    if ((*sample_ptr) != nullptr)
+    {
+        delete [] (*sample_ptr)->data;
+
+        delete *sample_ptr;
+        *sample_ptr = nullptr;
+    }
 }
 
 /* ************************************************************************** */

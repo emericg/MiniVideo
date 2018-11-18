@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
-VERSION      = 44
+VERSION      = 45
 
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport

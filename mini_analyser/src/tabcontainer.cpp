@@ -434,23 +434,14 @@ void tabContainer::previewSample(int sid)
         }
         else
         {
-            out = new OutputSurface_t;
-            if (minivideo_decode(media, out, sid) == 0)
-            {
-                delete out;
-                out = nullptr;
-            }
-            else
+            out = minivideo_decode_frame(media, sid);
+            if (out)
             {
                 // Clean first thumbnail if we have more than x thumbnails already
                 if (thumbnails.size() > 4)
                 {
                     OutputSurface_t *s = thumbnails.begin()->second;
-                    free(s->surface);
-                    s->surface = nullptr;
-                    delete s;
-                    s = nullptr;
-
+                    minivideo_destroy_frame(&s);
                     thumbnails.erase(thumbnails.begin());
                 }
                 thumbnails.insert(std::make_pair(sid, out));

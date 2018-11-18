@@ -438,7 +438,6 @@ bool computeCodecs(MediaFile_t *media)
     {
         if (media->tracks_audio[i])
         {
-
             if (media->tracks_audio[i]->stream_codec == CODEC_UNKNOWN)
             {
                 media->tracks_audio[i]->stream_codec = getCodecFromFourCC(media->tracks_audio[i]->stream_fcc);
@@ -451,6 +450,28 @@ bool computeCodecs(MediaFile_t *media)
                 media->tracks_audio[i]->stream_codec == CODEC_ADPCM)
             {
                 computePCMSettings(media->tracks_audio[i]);
+            }
+        }
+    }
+
+    for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
+    {
+        if (media->tracks_subt[i])
+        {
+            if (media->tracks_subt[i]->stream_codec == CODEC_UNKNOWN)
+            {
+                media->tracks_subt[i]->stream_codec = getCodecFromFourCC(media->tracks_subt[i]->stream_fcc);
+            }
+        }
+    }
+
+    for (unsigned i = 0; i < media->tracks_others_count; i++)
+    {
+        if (media->tracks_others[i])
+        {
+            if (media->tracks_others[i]->stream_codec == CODEC_UNKNOWN)
+            {
+                media->tracks_others[i]->stream_codec = getCodecFromFourCC(media->tracks_others[i]->stream_fcc);
             }
         }
     }
@@ -521,11 +542,6 @@ bool computeAspectRatios(MediaFile_t *media)
         }
     }
 
-    for (unsigned i = 0; i < media->tracks_audio_count; i++)
-    {
-        //
-    }
-
     return retcode;
 }
 
@@ -549,6 +565,22 @@ bool computeSamplesDatas(MediaFile_t *media)
         if (media->tracks_audio[i])
         {
             computeSamplesDatasTrack(media->tracks_audio[i]);
+        }
+    }
+
+    for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
+    {
+        if (media->tracks_subt[i])
+        {
+            computeSamplesDatasTrack(media->tracks_subt[i]);
+        }
+    }
+
+    for (unsigned i = 0; i < media->tracks_others_count; i++)
+    {
+        if (media->tracks_others[i])
+        {
+            computeSamplesDatasTrack(media->tracks_others[i]);
         }
     }
 

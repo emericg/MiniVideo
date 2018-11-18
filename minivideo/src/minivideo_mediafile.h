@@ -112,12 +112,11 @@ typedef struct OutputFile_t
  */
 typedef struct OutputSurface_t
 {
-    // Surface infos
-    uint8_t *surface; //!< RGB24 surface
-
-    unsigned surface_fcc;
     unsigned width;
     unsigned height;
+    unsigned surface_fcc; // Only RGB24 for now anyway
+
+    uint8_t *surface = nullptr; //!< RGB24 surface
 
 } OutputSurface_t;
 

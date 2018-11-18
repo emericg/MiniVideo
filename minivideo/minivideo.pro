@@ -19,7 +19,7 @@ DESTDIR      = build/
 # we force MINIVIDEO_SETTINGS_H to make sure we never use the CMake settings file.
 DEFINES += MINIVIDEO_SETTINGS_H
 
-VERSION      = 0.10.0
+VERSION      = 0.11.0
 DEFINES     += minivideo_VERSION_MAJOR=0
 DEFINES     += minivideo_VERSION_MINOR=10
 DEFINES     += minivideo_VERSION_PATCH=0

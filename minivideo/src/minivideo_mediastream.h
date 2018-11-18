@@ -140,5 +140,17 @@ typedef struct MediaStream_t
 
 } MediaStream_t;
 
+typedef struct MediaSample_t
+{
+    uint32_t type;          //!< Sample type
+    uint32_t size;          //!< Size (in bytes)
+    int64_t offset;         //!< Offset (in bytes)
+    int64_t pts;            //!< Presentation timestamp (in µs)
+    int64_t dts;            //!< Decoding timestamp (in µs)
+
+    uint8_t *data = nullptr;
+
+} MediaSample_t;
+
 /* ************************************************************************** */
 #endif // MINIVIDEO_MEDIASTREAM_H

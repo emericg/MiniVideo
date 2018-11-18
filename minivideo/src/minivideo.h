@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018-2017 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2018 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -80,52 +80,47 @@ minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
  */
 minivideo_EXPORT int minivideo_endianness(void);
 
-////////////////////////////////////////////////////////////////////////////////
+/* ************************************************************************** */
 
 /*!
  * \brief Open a file and return a MediaFile_t context.
  * \param[in] *input_filepath: The file path of the video we want to open.
- * \param[out] **input_media: The MediaFile_t context to create.
- * \return TODO ERROR CODE (0 if file opening is a success, 1 otherwise).
+ * \param[in,out] **input_media: The MediaFile_t context to create.
+ * \return TODO ERROR CODE (1 if file opening is a success, 0 otherwise).
  *
  * The first step in the decoding process is to open the file with the given fileptath.
  * If the file is successfully opened, the program start gathering informations about
  * the file, print them if in debug mode.
  */
-minivideo_EXPORT int minivideo_open(const char *input_filepath, MediaFile_t **input_media);
+minivideo_EXPORT int minivideo_open(const char *input_filepath,
+                                    MediaFile_t **input_media);
 
 /*!
  * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
- * \param *input_media: The MediaFile_t context to use.
+ * \param[in] *input_media: The MediaFile_t context to use.
  * \param compute_metadatas: Enable extra metadatas computations.
  * \param container_mapping: Enable container mapping to xml file.
- * \return TODO ERROR CODE (0 if container parsing is a success, 1 otherwise).
+ * \return TODO ERROR CODE (1 if container parsing is a success, 0 otherwise).
  *
  * The second step in the decoding process is to parse the file's container infos
  * (if appropriate parser is available) and fill the MediaFile_t structure with
  * the tracks samples informations.
  */
-minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media, const bool compute_metadatas, const bool container_mapping);
-
-/*!
- * \brief Decode a video file.
- * \param *input_media: The MediaFile_t context to use.
- * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
- *
- * \todo This does nothing right now.
- * \todo Split minivideo_thumbnail() into filtering /decoding / extraction stages.
- */
-minivideo_EXPORT int minivideo_decode(MediaFile_t *input_media, OutputSurface_t *out, int picture_number);
+minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
+                                     const bool compute_metadatas,
+                                     const bool container_mapping);
 
 /*!
  * \brief Thumnbail a video file and export thumbnails.
- * \param *input_media: The MediaFile_t context to use.
+ * \param *input_media[in]: The MediaFile_t context to use.
  * \param *output_directory: The directory where we want to save decoded thumbnail(s).
  * \param picture_format: The picture format for thumbnail(s) we want to extract.
  * \param picture_quality: The quality of thumbnail(s) we want to extract.
  * \param picture_count: The number of thumbnail(s) we want to extract.
  * \param picture_extractionmode: The method of distribution for thumbnails extraction.
- * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
+ * \return TODO ERROR CODE (1 if picture(s) extraction is a success, 0 otherwise).
+ *
+ * \todo Split minivideo_thumbnail() into filtering /decoding / extraction stages.
  *
  * Start decoding one or more picture(s) from the video (if an appropriate decoder
  * is available). Pictures are exported into selected file format.
@@ -139,12 +134,12 @@ minivideo_EXPORT int minivideo_thumbnail(MediaFile_t *input_media,
 
 /*!
  * \brief Extract selected tracks from a video file and export in separated ES files.
- * \param *input_media: The MediaFile_t context to use.
+ * \param *input_media[in]: The MediaFile_t context to use.
  * \param *output_directory: The directory where we want to export track(s).
  * \param extract_audio: True to extract audio tracks.
  * \param extract_video: True to extract video tracks.
  * \param extract_subtitles: True to extract subtitles tracks.
- * \return TODO ERROR CODE (0 if picture(s) extraction is a success, 1 otherwise).
+ * \return TODO ERROR CODE (1 if picture(s) extraction is a success, 0 otherwise).
  */
 minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
                                        const char *output_directory,
@@ -154,10 +149,49 @@ minivideo_EXPORT int minivideo_extract(MediaFile_t *input_media,
 
 /*!
  * \brief Close a video file.
- * \param input_media: The MediaFile_t context to destroy.
+ * \param input_media[in,out]: The MediaFile_t context to destroy.
  * \return 1 if success, 0 otherwise.
  */
 minivideo_EXPORT int minivideo_close(MediaFile_t **input_media);
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Decode a video frame.
+ * \param *input_media[in]: The MediaFile_t context to use.
+ * \param frame_id: Frame ID.
+ * \return An allocated OutputSurface_t.
+ *
+ * MediaFile_t must be opened and parsed.
+ * Allocate an OutputSurface_t, which must be destroyed by minivideo_destroy_frame().
+ */
+minivideo_EXPORT OutputSurface_t *minivideo_decode_frame(MediaFile_t *input_media,
+                                                         const unsigned frame_id);
+
+/*!
+ * \brief Destroy a frame allocated by minivideo_decode_frame().
+ * \param frame_ptr: Address of an OutputSurface_t pointer.
+ */
+minivideo_EXPORT void minivideo_destroy_frame(OutputSurface_t **frame_ptr);
+
+/*!
+ * \brief Extract a sample.
+ * \param *input_media[in]: The MediaFile_t context to use.
+ * \param *input_stream[in]: The MediaStream_t context to use.
+ * \param sample_id: Sample ID.
+ * \return An allocated MediaSample_t.
+ *
+ * MediaFile_t must be opened and parsed.
+ * Allocate a MediaSample_t, which must be destroyed by minivideo_destroy_sample().
+ */
+minivideo_EXPORT MediaSample_t *minivideo_get_sample(MediaFile_t *input_media,
+                                                     MediaStream_t *input_stream,
+                                                     const unsigned sample_id);
+/*!
+ * \brief Destroy a sample allocated by minivideo_get_sample().
+ * \param sample_ptr:  Address of a MediaSample_t pointer.
+ */
+minivideo_EXPORT void minivideo_destroy_sample(MediaSample_t **sample_ptr);
 
 /* ************************************************************************** */
 #endif // MINIVIDEO_H
