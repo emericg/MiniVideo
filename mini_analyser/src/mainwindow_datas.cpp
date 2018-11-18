@@ -340,6 +340,8 @@ int MainWindow::printDatas()
                 ui->label_info_container_overhead->setText("<b>~0.01%</b>   >   " + getSizeString(overhead));
             else if (overheadpercent <= 100)
                 ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
+            else
+                ui->label_info_container_overhead->setText("<b>(ERR)</b>");
         }
 
         // AUDIO
@@ -1177,7 +1179,7 @@ int MainWindow::printSubtitlesDetails()
             if (track_title.isEmpty())
             {
                 ui->label_67->hide();
-                ui->label_video_title->hide();
+                ui->label_sub_title->hide();
             }
             else
             {
@@ -1202,9 +1204,46 @@ int MainWindow::printSubtitlesDetails()
             ui->label_sub_size->setText(getTrackSizeString(t, media->file_size, true));
             ui->label_sub_codec->setText(getCodecString(stream_TEXT, t->stream_codec, true));
 
-            // TODO // set subtitles text!
-            //ui->label_sub_encoding->setText();
-            //ui->label_sub_size->setText();
+            // TODO // set subtitles encoding!
+            ui->label_sub_encoding->setText("<b>?</b>");
+
+            QString text;
+
+            if (t->stream_codec == CODEC_SRT ||
+                t->stream_codec == CODEC_ASS ||
+                t->stream_codec == CODEC_MPEG4_TTXT)
+            {
+                for (unsigned i = 0; i < t->sample_count; i++)
+                {
+                    text += "[" + getTimestampPreciseString(t->sample_pts[i]) + "]\n";
+
+                    MediaSample_t *s = minivideo_get_sample(media, t, i);
+                    if (s)
+                    {
+                        if (t->stream_codec == CODEC_SRT)
+                            text += QString::fromLocal8Bit((const char *)(s->data), s->size);
+
+                        if (t->stream_codec == CODEC_ASS) // WIP
+                            text += QString::fromLocal8Bit((const char *)(s->data), s->size);
+
+                        if (t->stream_codec == CODEC_MPEG4_TTXT) // WIP
+                            text += QString::fromLocal8Bit((const char *)(s->data + 2), s->size - 2);
+
+                        minivideo_destroy_sample(&s);
+                        text += "\n\n";
+                    }
+                }
+            }
+
+            if (text.isEmpty())
+            {
+                //ui->textBrowser_sub->hide();
+            }
+            else
+            {
+                ui->textBrowser_sub->show();
+                ui->textBrowser_sub->setText(text);
+            }
         }
 
         status = 0;

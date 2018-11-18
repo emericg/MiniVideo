@@ -90,22 +90,26 @@ QString getTimestampPreciseString(const uint64_t timestamp)
 
         if (hours > 0)
         {
-            timestamp_qstr += QString::number(hours) + " h ";
+            timestamp_qstr += QString::number(hours) + " h";
         }
         if (minutes > 0)
         {
-            timestamp_qstr += QString::number(minutes) + " m ";
+            if (hours > 0) timestamp_qstr += " ";
+            timestamp_qstr += QString::number(minutes) + " m";
         }
         if (seconds > 0)
         {
-            timestamp_qstr += QString::number(seconds) + " s ";
+            if (minutes > 0) timestamp_qstr += " ";
+            timestamp_qstr += QString::number(seconds) + " s";
         }
         if (ms > 0)
         {
-            timestamp_qstr += QString::number(ms) + " ms ";
+            if (seconds > 0) timestamp_qstr += " ";
+            timestamp_qstr += QString::number(ms) + " ms";
         }
         if (us > 0)
         {
+            if (ms > 0) timestamp_qstr += " ";
             timestamp_qstr += QString::number(us) + " µs";
         }
     }
@@ -607,10 +611,13 @@ QString getLanguageString(const char *languageCode)
 
         if (strncmp(languageCode, "und", lng_size) == 0)
             langage_qstr = "";
+        else if (strncmp(languageCode, "```", lng_size) == 0)
+            langage_qstr = "";
         else if (strncmp(languageCode, "mis", lng_size) == 0)
             langage_qstr = "mis"; // the language has no code
         else if (strncmp(languageCode, "mul", lng_size) == 0)
             langage_qstr = QObject::tr("Multilingual content");
+
         else if (strncmp(languageCode, "chi", lng_size) == 0 ||
                  strncmp(languageCode, "zho", lng_size) == 0 ||
                  strncmp(languageCode, "zh", lng_size) == 0)
@@ -686,8 +693,31 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "th", lng_size) == 0 ||
                  strncmp(languageCode, "tha", lng_size) == 0)
             langage_qstr = QObject::tr("Thai");
-        else if (strncmp(languageCode, "```", lng_size) == 0)
-            langage_qstr = "";
+
+        else if (strncmp(languageCode, "sv", lng_size) == 0 ||
+                 strncmp(languageCode, "swe", lng_size) == 0)
+            langage_qstr = QObject::tr("Swedish");
+        else if (strncmp(languageCode, "pl", lng_size) == 0 ||
+                 strncmp(languageCode, "pol", lng_size) == 0)
+            langage_qstr = QObject::tr("Polish");
+        else if (strncmp(languageCode, "ro", lng_size) == 0 ||
+                 strncmp(languageCode, "ron", lng_size) == 0 ||
+                 strncmp(languageCode, "rum", lng_size) == 0)
+            langage_qstr = QObject::tr("Romanian");
+        else if (strncmp(languageCode, "nl", lng_size) == 0 ||
+                 strncmp(languageCode, "nld", lng_size) == 0 ||
+                 strncmp(languageCode, "dut", lng_size) == 0)
+            langage_qstr = QObject::tr("Dutch");
+        else if (strncmp(languageCode, "no", lng_size) == 0 ||
+                 strncmp(languageCode, "nor", lng_size) == 0)
+            langage_qstr = QObject::tr("Norwegian");
+        else if (strncmp(languageCode, "fi", lng_size) == 0 ||
+                 strncmp(languageCode, "fin", lng_size) == 0)
+            langage_qstr = QObject::tr("Finnish");
+        else if (strncmp(languageCode, "da", lng_size) == 0 ||
+                 strncmp(languageCode, "dan", lng_size) == 0)
+            langage_qstr = QObject::tr("Danish");
+
         else
             langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));
     }

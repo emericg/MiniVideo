@@ -3530,8 +3530,15 @@
              </item>
             </layout>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QTextBrowser" name="textBrowser_sub"/>
+           </item>
+           <item row="3" column="0">
+            <spacer name="verticalSpacer_sub">
+             <property name="sizeType">
+              <enum>QSizePolicy::Ignored</enum>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
