@@ -7,7 +7,7 @@ MiniVideo framework
 Introduction
 ------------
 
-MiniVideo is a **video framework developed from scratch** in C/C++, bundled with small testing programs and a neat media analyser.  
+MiniVideo is a **multimedia framework developed from scratch** in C/C++, bundled with small testing programs and a neat [media analyser](mini_analyser/).  
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The project uses a dual CMake/QMake build system (CMake is prefered though). Both library and test programs can be installed into your system.  
 
