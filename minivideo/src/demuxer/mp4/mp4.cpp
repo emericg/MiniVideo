@@ -652,6 +652,39 @@ static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /* ************************************************************************** */
 
 /*!
+ * \brief Null Media Header Box - Fullbox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.11.5 Null Media Header Box.
+ */
+static int parse_nmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_nmhd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // No box content
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "Null Media Header");
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief Alias Data Handler.
  */
 static int parse_alis(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
@@ -863,6 +896,9 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
                     break;
                 case BOX_HMHD:
                     retcode = parse_hmhd(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_NMHD:
+                    retcode = parse_nmhd(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_HDLR:
                     retcode = parse_hdlr(bitstr, &box_subheader, NULL, mp4);

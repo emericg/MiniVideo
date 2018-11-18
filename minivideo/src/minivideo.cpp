@@ -397,7 +397,7 @@ OutputSurface_t *minivideo_decode_frame(MediaFile_t *input_media,
 {
     OutputSurface_t *frame = nullptr;
 
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_decode_frame()" CLR_RESET);
+    TRACE_1(MAIN, BLD_GREEN "minivideo_decode_frame()" CLR_RESET);
 
     if (input_media != nullptr)
     {
@@ -458,7 +458,7 @@ MediaSample_t *minivideo_get_sample(MediaFile_t *input_media,
 {
     MediaSample_t *sample = nullptr;
 
-    TRACE_INFO(MAIN, BLD_GREEN "minivideo_get_sample()" CLR_RESET);
+    TRACE_1(MAIN, BLD_GREEN "minivideo_get_sample()" CLR_RESET);
 
     if (input_media != nullptr && input_stream != nullptr)
     {
