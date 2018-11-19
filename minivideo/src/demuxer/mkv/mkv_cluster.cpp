@@ -40,121 +40,204 @@
 
 /* ************************************************************************** */
 
-uint32_t read_ebmllike_value(Bitstream_t *bitstr)
+int mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                    MkvSampleType_e type, int64_t cluster_timecode)
 {
-    uint32_t leadingZeroBits = 0;
-    uint32_t elementSize = 0;
-    uint32_t elementValue = 0;
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_block()" CLR_RESET);
+    int retcode = SUCCESS;
 
-    while (read_bit(bitstr) == 0 && leadingZeroBits < 4)
-        leadingZeroBits++;
+    uint32_t stn = static_cast<uint32_t>(read_ebml_size(bitstr) - 1);
+    uint32_t stc = read_bits(bitstr, 16);
 
-    elementSize = (leadingZeroBits + 1) * 7;
-    elementValue = read_bits(bitstr, elementSize);
-/*
-    TRACE_WARNING(MKV, "read_ebml()");
-    TRACE_WARNING(MKV, "- leadingZeroBits = %u", leadingZeroBits);
-    TRACE_WARNING(MKV, "- elementSize     = %u", elementSize);
-    TRACE_WARNING(MKV, "- elementValue    = 0x%0X", elementValue);
-*/
-    return elementValue;
-}
-
-/* ************************************************************************** */
-
-mkv_sample_t *mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
-                              MkvSampleType_e type, int64_t cluster_timecode)
-{
-    uint32_t stn = read_ebmllike_value(bitstr) - 1;
-    int16_t stc = static_cast<int16_t>(read_bits(bitstr, 16));
-    uint8_t lacing = 0;
+    if (mkv->tracks_count < stn && !mkv->tracks[stn])
+    {
+        TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
+        return FAILURE;
+    }
 
     //TRACE_1(MKV, "block track number: %u", stn);
     //TRACE_1(MKV, "block timecode: %u", stc + cluster.Timecode);
 
-    mkv_sample_t *s = new mkv_sample_t;
-    if (s)
+    bool idr = false;
+    bool visible;
+    uint8_t lacing;
+    bool discardable = false;
+
+    if (type == sampletype_SimpleBlock)
+    {
+        idr = read_bit(bitstr);
+        skip_bits(bitstr, 3);
+        visible = read_bit(bitstr);
+        lacing = read_bits(bitstr, 2);
+        discardable = read_bit(bitstr);
+    }
+    else // if (type == sampletype_Block)
+    {
+        skip_bits(bitstr, 4);
+        visible = read_bit(bitstr);
+        lacing = read_bits(bitstr, 2);
+        skip_bits(bitstr, 1);
+    }
+
+    // Map block
+    if (mkv->xml)
     {
         if (type == sampletype_SimpleBlock)
         {
-            s->idr = read_bit(bitstr);
-            skip_bits(bitstr, 3);
-            s->visible = read_bit(bitstr);
-            lacing = read_bits(bitstr, 2);
-            s->discardable = read_bit(bitstr);
+            write_ebml_element(element, mkv->xml, "SimpleBlock");
+            fprintf(mkv->xml, "  <track>%u</track>\n", stn);
+
+            fprintf(mkv->xml, "  <idr>%u</idr>\n", idr);
+            fprintf(mkv->xml, "  <visible>%u</visible>\n", visible);
+            fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
+            fprintf(mkv->xml, "  <discardable>%u</discardable>\n", discardable);
         }
-        else // if (type == sampletype_Block)
+        else
         {
-            skip_bits(bitstr, 4);
-            s->visible = read_bit(bitstr);
-            lacing = read_bits(bitstr, 2);
-            skip_bits(bitstr, 1);
-        }
+            write_ebml_element(element, mkv->xml, "Block");
+            fprintf(mkv->xml, "  <track>%u</track>\n", stn);
 
-        if (lacing)
+            fprintf(mkv->xml, "  <visible>%u</visible>\n", visible);
+            fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
+        }
+    }
+
+    if (!lacing)
+    {
+        mkv_sample_t *s = new mkv_sample_t;
+        if (s)
         {
-            TRACE_WARNING(MKV, "Lacing used (track: %i, mode: %i), but not really supported...", stn, lacing);
-
-            uint8_t frame_count_minus1 = read_bits(bitstr, 8);
-
-            // Lace-coded size of each frame of the lace, except for the last one (multiple uint8).
-            // This is not used with Fixed-size lacing as it is calculated automatically from (total size of lace) / (number of frames in lace).
-            if (lacing == MKV_LACING_XIPH || lacing == MKV_LACING_EBML)
-            {
-                for (int i = 0; i < frame_count_minus1; i++)
-                {
-                    uint8_t frame_x_size = read_bits(bitstr, 8);
-                }
-            }
+            s->idr = idr;
+            s->visible = visible;
+            s->discardable = discardable;
         }
 
+        // Parse sample
         s->offset = bitstream_get_absolute_byte_offset(bitstr);
-        s->size = element->size;
+            int block_size_overhead = s->offset - element->offset_start - 2;
+            TRACE_2(MKV, "> block size overhead > %i", block_size_overhead);
+        s->size = element->size - block_size_overhead;
         s->timecode = stc + cluster_timecode;
+
+        // Index sample
+        mkv->tracks[stn]->sample_vector.push_back(s);
 
         // Map sample
         if (mkv->xml)
         {
-            if (type == sampletype_SimpleBlock)
-            {
-                write_ebml_element(element, mkv->xml, "SimpleBlock");
-                fprintf(mkv->xml, "  <track>%u</track>\n", stn);
-
-                fprintf(mkv->xml, "  <idr>%u</idr>\n", s->idr);
-                fprintf(mkv->xml, "  <visible>%u</visible>\n", s->visible);
-                fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
-                fprintf(mkv->xml, "  <discardable>%u</discardable>\n", s->discardable);
-            }
-            else
-            {
-                write_ebml_element(element, mkv->xml, "Block");
-                fprintf(mkv->xml, "  <track>%u</track>\n", stn);
-
-                fprintf(mkv->xml, "  <visible>%u</visible>\n", s->visible);
-                fprintf(mkv->xml, "  <lacing>%u</lacing>\n", lacing);
-            }
-
+            xmlSpacer(mkv->xml, "Block", 0);
             fprintf(mkv->xml, "  <offset>%" PRId64 "</offset>\n", s->offset);
             fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
             fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
-            fprintf(mkv->xml, "  </a>\n");
-        }
-
-        // Index sample
-        if (mkv->tracks_count >= stn && mkv->tracks[stn])
-        {
-            mkv->tracks[stn]->sample_vector.push_back(s);
-        }
-        else
-        {
-            delete s;
-            TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
         }
     }
+    else
+    {
+        // Parse sample(s)
+        uint8_t frame_count_minus1 = read_bits(bitstr, 8);
+        uint8_t frame_count = frame_count_minus1 + 1;
 
-    return s;
+        uint32_t *frame_x_size = new uint32_t[frame_count];
+        uint64_t *frame_x_offset = new uint64_t[frame_count];
+
+        uint64_t frame_0_offset = bitstream_get_absolute_byte_offset(bitstr);
+
+        int lacing_cumulated = 0;
+
+        // Lace-coded size of each frame of the lace, except for the last one (multiple uint8).
+        // This is not used with Fixed-size lacing as it is calculated automatically from (total size of lace) / (number of frames in lace).
+
+        TRACE_1(MKV, "> LACING (%u) > frame_count: %i > block size: %i", lacing, frame_count, element->size);
+
+        for (int i = 0; i < frame_count; i++)
+        {
+            if (i == 0)
+                frame_x_offset[0] = frame_0_offset;
+            else
+                frame_x_offset[i] = frame_x_offset[i-1] + frame_x_size[i-1];
+
+            if (lacing == MKV_LACING_XIPH)
+            {
+                if (i < frame_count_minus1)
+                {
+                    frame_x_size[i] = 0;
+
+                    uint8_t next = 255;
+                    while (next == 255 && lacing_cumulated < element->size)
+                    {
+                        next = read_bits(bitstr, 8);
+                        frame_x_size[i] += next;
+                        lacing_cumulated += next;
+                    }
+                }
+                else // last frame
+                {
+                    frame_x_size[i] = element->size - lacing_cumulated;
+                }
+
+                TRACE_2(MKV, "frame xiph [%u] : %i", i, frame_x_size[i]);
+            }
+            else if (lacing == MKV_LACING_EBML)
+            {
+                if (i == 0)
+                {
+                    frame_x_size[i] = read_ebml_size(bitstr);
+                    lacing_cumulated += frame_x_size[i];
+                }
+                else if (i < frame_count_minus1)
+                {
+                    frame_x_size[i] = frame_x_size[i-1] + read_ebml_lacing_size(bitstr);
+                    lacing_cumulated += frame_x_size[i];
+                }
+                else // last frame
+                {
+                    frame_x_size[i] = element->size - lacing_cumulated;
+                }
+
+                TRACE_2(MKV, "frame ebml [%u] : %i", i, frame_x_size[i]);
+            }
+            else if (lacing == MKV_LACING_FIXED)
+            {
+                int block_size_overhead = frame_0_offset - element->offset_start - 2;
+                frame_x_size[i] = (element->size - block_size_overhead) / (double)(frame_count);
+
+                TRACE_2(MKV, "frame fixed [%u] : %i", i, frame_x_size[i]);
+            }
+
+            mkv_sample_t *s = new mkv_sample_t;
+            if (s)
+            {
+                s->idr = idr;
+                s->visible = visible;
+                s->discardable = discardable;
+
+                // Parse sample
+                s->offset = frame_x_offset[i];
+                s->size = frame_x_size[i];
+                s->timecode = stc + cluster_timecode;
+            }
+
+            // Index sample
+            mkv->tracks[stn]->sample_vector.push_back(s);
+
+            // Map sample
+            if (mkv->xml)
+            {
+                xmlSpacer(mkv->xml, "Block", i);
+                fprintf(mkv->xml, "  <offset>%" PRId64 "</offset>\n", s->offset);
+                fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
+                fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
+            }
+        }
+
+        delete [] frame_x_size;
+        delete [] frame_x_offset;
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
 }
-
 
 /* ************************************************************************** */
 /* ************************************************************************** */

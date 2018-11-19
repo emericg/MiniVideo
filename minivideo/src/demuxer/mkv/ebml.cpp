@@ -58,6 +58,7 @@ uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime)
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
  * \brief Read an EBML element ID.
@@ -92,25 +93,28 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
  * \param *bitstr The bitstream to read.
  * \return The element size.
  */
-int64_t read_ebml_size(Bitstream_t *bitstr)
+uint64_t read_ebml_size(Bitstream_t *bitstr)
 {
-    int32_t leadingZeroBits = 0;
-    int32_t sizeSize = 0;
-    int64_t sizeValue = 0;
+    uint32_t leadingZeroBits = 0;
+    uint32_t sizeSize = 0;
+    uint64_t sizeValue = 0;
 
     while (read_bit(bitstr) == 0 && leadingZeroBits < 8)
         leadingZeroBits++;
 
     sizeSize = (leadingZeroBits + 1) * 7;
-    sizeValue = (int64_t)read_bits_64(bitstr, sizeSize);
+    sizeValue = read_bits_64(bitstr, sizeSize);
 
     TRACE_2(MKV, "read_ebml_size()");
-    TRACE_3(MKV, "- leadingZeroBits = %i", leadingZeroBits);
-    TRACE_2(MKV, "- sizeSize        = %i", sizeSize);
-    TRACE_2(MKV, "- sizeValue       = %lli", sizeValue);
+    TRACE_3(MKV, "- leadingZeroBits = %u", leadingZeroBits);
+    TRACE_2(MKV, "- sizeSize        = %u", sizeSize);
+    TRACE_2(MKV, "- sizeValue       = %llu", sizeValue);
 
     return sizeValue;
 }
+
+/* ************************************************************************** */
+/* ************************************************************************** */
 
 /*!
  * \brief parse_ebml_element
@@ -552,6 +556,28 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
     }
 
     return retcode;
+}
+
+int32_t read_ebml_lacing_size(Bitstream_t *bitstr)
+{
+    uint32_t leadingZeroBits = 0;
+    uint32_t elementSize = 0;
+    int32_t elementValue = 0;
+
+    while (read_bit(bitstr) == 0 && leadingZeroBits < 6)
+        leadingZeroBits++;
+
+    elementSize = (leadingZeroBits + 1) * 7;
+    elementValue = read_bits(bitstr, elementSize);
+
+    elementValue -= std::pow(2, elementSize-1) - 1;
+/*
+    TRACE_WARNING(MKV, "read_ebmllacing_value()");
+    TRACE_WARNING(MKV, "- leadingZeroBits = %u", leadingZeroBits);
+    TRACE_WARNING(MKV, "- elementSize     = %u", elementSize);
+    TRACE_WARNING(MKV, "- elementValue    = %i", elementValue);
+*/
+    return elementValue;
 }
 
 /* ************************************************************************** */

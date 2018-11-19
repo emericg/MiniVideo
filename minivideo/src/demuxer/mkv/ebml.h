@@ -52,6 +52,8 @@ uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime);
 
 /* ************************************************************************** */
 
+uint64_t read_ebml_size(Bitstream_t *bitstr);
+
 int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element);
 void print_ebml_element(EbmlElement_t *element);
 void write_ebml_element(EbmlElement_t *element, FILE *xml,
@@ -72,6 +74,8 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element, FILE
 uint8_t *read_ebml_data_binary_guid(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
 
 int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml, const char *name);
+
+int32_t read_ebml_lacing_size(Bitstream_t *bitstr);
 
 /* ************************************************************************** */
 
