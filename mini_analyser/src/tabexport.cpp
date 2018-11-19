@@ -72,7 +72,6 @@ void tabExport::clean()
     media = nullptr;
     wrapper = nullptr;
 
-    exportFormat = EXPORT_TEXT;
     exportDatas.clear();
     //exportFile.close(); // ?
 

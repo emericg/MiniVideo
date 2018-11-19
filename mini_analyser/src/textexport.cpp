@@ -380,7 +380,7 @@ int textExport::generateExportMapping_xml(MediaFile_t &media, QString &exportDat
     }
 
     // Load XML file (fallback from file path / DEPRECATED)
-    if (status == 0)
+    if (status == 1)
     {
         filename = "/tmp/" + QString::fromLocal8Bit(media.file_name) + "_mapped.xml";
         xmlMapFile.setFileName(filename);

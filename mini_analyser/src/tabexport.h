@@ -45,7 +45,6 @@ class tabExport : public QWidget
     MediaWrapper *wrapper = nullptr;
 
     // Datas export feature
-    int exportFormat = 0;
     QString exportDatas;
     QFile exportFile;
 
