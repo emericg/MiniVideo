@@ -470,7 +470,7 @@ int MainWindow::printDatas()
                 {
                     if (media->tracks_video[i])
                     {
-                        QString text = "Video track #" + QString::number(i);
+                        QString text = "Video track #" + QString::number(i + 1);
                         if (i != media->tracks_video[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_video[i]->track_id) + ")";
                         ui->comboBox_video_selector->addItem(text);
@@ -497,7 +497,7 @@ int MainWindow::printDatas()
                 {
                     if (media->tracks_subt[i])
                     {
-                        QString text = "Subtitles track #" + QString::number(i);
+                        QString text = "Subtitles track #" + QString::number(i + 1);
                         if (i != media->tracks_subt[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_subt[i]->track_id) + ")";
                         ui->comboBox_sub_selector->addItem(text);
