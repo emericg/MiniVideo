@@ -103,7 +103,7 @@ public slots:
 
             end_parsing = std::chrono::steady_clock::now();
 
-            qDebug() << "parsingFinished(" << mediaPath << ")";
+            //qDebug() << "parsingFinished(" << mediaPath << ")";
             emit parsingFinished(mediaPath);
         }
     }

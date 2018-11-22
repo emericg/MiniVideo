@@ -408,6 +408,9 @@ int MainWindow::printDatas()
                         QString text = "Audio track #" + QString::number(i + 1);
                         if (i != media->tracks_audio[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_audio[i]->track_id) + ")";
+                        QString track_language = getLanguageString(media->tracks_audio[i]->track_languagecode);
+                        if (!track_language.isEmpty())
+                            text += " [" + track_language + "]";
                         ui->comboBox_audio_selector->addItem(text);
                     }
                 }
@@ -500,6 +503,9 @@ int MainWindow::printDatas()
                         QString text = "Subtitles track #" + QString::number(i + 1);
                         if (i != media->tracks_subt[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_subt[i]->track_id) + ")";
+                        QString track_language = getLanguageString(media->tracks_subt[i]->track_languagecode);
+                        if (!track_language.isEmpty())
+                            text += " [" + track_language + "]";
                         ui->comboBox_sub_selector->addItem(text);
                     }
                 }
@@ -559,7 +565,17 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_subt[i])
                 {
-                    QLabel *track = new QLabel("▸ " + tr("Subtitles track #") + QString::number(i+1));
+                    QString text = "▸ " + tr("Subtitles track #") + QString::number(i+1) + "  /  ";
+                    text += getCodecString(stream_TEXT, media->tracks_subt[i]->stream_codec, false);
+                    QString lng = getLanguageString(media->tracks_subt[i]->track_languagecode);
+                    if (lng.isEmpty() == false)
+                    {
+                        text += "  /  ";
+                        text += lng;
+                    }
+
+                    QLabel *track = new QLabel(text);
+
                     ui->verticalLayout_other->addWidget(track);
                 }
             }

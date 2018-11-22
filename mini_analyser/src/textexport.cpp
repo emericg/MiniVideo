@@ -95,12 +95,12 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         // Section title
         if (media.tracks_video_count == 1)
         {
-            exportDatas += "\n\nVIDEO\n-----";
+            exportDatas += "\n\nVIDEO";
+            exportDatas += "\n-----";
         }
         else
         {
-            exportDatas += "\nVIDEO TRACK #";
-            exportDatas += QString::number(i);
+            exportDatas += "\n\nVIDEO TRACK #" + QString::number(i);
             exportDatas += "\n--------------";
         }
 
@@ -199,9 +199,16 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
             break;
 
         // Section title
-        exportDatas += "\n\nAUDIO TRACK #";
-        exportDatas += QString::number(i);
-        exportDatas += "\n--------------";
+        if (media.tracks_audio_count == 1)
+        {
+            exportDatas += "\n\nAUDIO";
+            exportDatas += "\n-----";
+        }
+        else
+        {
+            exportDatas += "\n\nAUDIO TRACK #" + QString::number(i);
+            exportDatas += "\n--------------";
+        }
 
         // Datas
         if (detailed == true)
@@ -276,8 +283,7 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
             break;
 
         // Section title
-        exportDatas += "\n\nSUBTITLES TRACK #";
-        exportDatas += QString::number(i);
+        exportDatas += "\n\nSUBTITLES TRACK #"+ QString::number(i);
         exportDatas += "\n------------------";
 
         // Datas
