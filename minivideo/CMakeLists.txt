@@ -7,6 +7,7 @@ project(minivideo)
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 11)
 set(minivideo_VERSION_PATCH 0)
+set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
 
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0012 NEW)
@@ -268,6 +269,8 @@ if (BUILD_SHARED_LIBS)
     add_library(minivideo_shared SHARED ${minivideo_SRC})
     target_link_libraries(minivideo_shared ${EXTRA_LIBS})
     set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
+    set_target_properties(minivideo_shared PROPERTIES VERSION ${minivideo_VERSION_STRING}
+                                                      SOVERSION ${minivideo_VERSION_MAJOR})
 
     if(WIN32)
     if(CMAKE_VERSION VERSION_GREATER "3.3")
@@ -286,6 +289,8 @@ if (BUILD_STATIC_LIBS)
     add_library(minivideo_static STATIC ${minivideo_SRC})
     target_link_libraries(minivideo_static ${EXTRA_LIBS})
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
+    set_target_properties(minivideo_static PROPERTIES VERSION ${minivideo_VERSION_STRING}
+                                                      SOVERSION ${minivideo_VERSION_MAJOR})
 endif (BUILD_STATIC_LIBS)
 
 
