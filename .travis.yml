@@ -25,7 +25,7 @@ install:
       sudo apt-get install linux-headers-generic -y;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew install cmake qt;
+      brew install qt;
     fi
   # Generate the linux/memfd.h header
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo mkdir -p /usr/include/linux; fi
@@ -50,7 +50,7 @@ before_script:
   - make
 
 script:
-  - cd mini_analyser/
+  - cd ../../mini_analyser/
   - qmake
   - make
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
