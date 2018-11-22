@@ -50,6 +50,8 @@ before_script:
   - make
 
 script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt510/bin/qt510-env.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$PATH:/usr/local/opt/qt5/bin:/usr/local/bin; fi
   - cd ../../mini_analyser/
   - qmake
   - make
