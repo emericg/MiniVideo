@@ -56,28 +56,30 @@ script:
   - qmake CONFIG+=release PREFIX=/usr
   - make
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-     make INSTALL_ROOT=appdir -j$(nproc) install; find appdir/;
-     wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage";
-     chmod a+x linuxdeployqt-continuous-x86_64.AppImage;
-     unset QTDIR; unset QT_PLUGIN_PATH; unset LD_LIBRARY_PATH;
-     export VERSION=$(git rev-parse --short HEAD);
-     mkdir -p appdir/usr/plugins/imageformats/ appdir/usr/plugins/iconengines/;
-     cp /opt/qt510/plugins/imageformats/libqsvg.so appdir/usr/plugins/imageformats/;
-     cp /opt/qt510/plugins/iconengines/libqsvgicon.so appdir/usr/plugins/iconengines/;
-     ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -extra-plugins=imageformats/libqsvg.so,iconengines/libqsvgicon.so;
-     ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage;
+      make INSTALL_ROOT=appdir -j$(nproc) install; find appdir/;
+      wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage";
+      chmod a+x linuxdeployqt-continuous-x86_64.AppImage;
+      unset QTDIR; unset QT_PLUGIN_PATH; unset LD_LIBRARY_PATH;
+      export VERSION=$(git rev-parse --short HEAD);
+      mkdir -p appdir/usr/plugins/imageformats/ appdir/usr/plugins/iconengines/;
+      cp /opt/qt510/plugins/imageformats/libqsvg.so appdir/usr/plugins/imageformats/;
+      cp /opt/qt510/plugins/iconengines/libqsvgicon.so appdir/usr/plugins/iconengines/;
+      ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -extra-plugins=imageformats/libqsvg.so,iconengines/libqsvgicon.so;
+      ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage;
    fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-     make install;
+      make install;
     fi
 
 after_success:
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
      find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq;
+     find appdir;
      curl --upload-file mini_analyser*.AppImage https://transfer.sh/mini_analyser-git.$(git rev-parse --short HEAD)-linux64.AppImage;
    fi
  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
      cd bin/;
+     find bin/;
      zip -r -X mini_analyser.zip mini_analyser.app;
      curl --upload-file mini_analyser*.zip https://transfer.sh/mini_analyser-git.$(git rev-parse --short HEAD)-macOS.zip;
    fi
