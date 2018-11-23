@@ -28,8 +28,11 @@
 #include "minivideo_export.h"
 #include "minivideo_codecs.h"
 
-// C standard libraries
+// C standard library
 #include <cstdint>
+
+// C++ standard library
+#include <string>
 
 /* ************************************************************************** */
 
@@ -37,6 +40,8 @@
  * \brief Encode four ASCII C characters into a big endian FourCC.
  * \param fcc_str[in]: The FourCC string (NULL terminated).
  * \return An uint32_t big endian FourCC.
+ *
+ * Usage: int fcc = fourcc_be("abcd");
  *
  * - If the string argument is known at compile time, then the function is
  * evaluated at compile time (no run-time overhead).
@@ -52,6 +57,8 @@ minivideo_EXPORT constexpr uint32_t fourcc_be(char const fcc_str[5])
  * \brief Encode four ASCII C characters into a little endian FourCC.
  * \param fcc_str[in]: The FourCC string (NULL terminated).
  * \return An uint32_t little endian FourCC.
+ *
+ * Usage: int fcc = fourcc_be("abcd");
  *
  * - If the string argument is known at compile time, then the function is
  * evaluated at compile time (no run-time overhead).
@@ -87,6 +94,20 @@ minivideo_EXPORT char *getFccString_le(const uint32_t fcc_in, char fcc_out[5]);
  * \return A pointer to the provided fcc_out[5] so this function can be used directly inside a printf().
  */
 minivideo_EXPORT char *getFccString_be(const uint32_t fcc_in, char fcc_out[5]);
+
+/*!
+ * \brief Get a printable FourCC (from packed little endian FourCC).
+ * \param fcc_in[in]: uint32_t packed FourCC (little endian).
+ * \return An std::string.
+ */
+minivideo_EXPORT std::string getFccString_le(const uint32_t fcc_in);
+
+/*!
+ * \brief Get a printable FourCC (from packed big endian FourCC).
+ * \param fcc_in[in]: uint32_t packed FourCC (big endian).
+ * \return An std::string.
+ */
+minivideo_EXPORT std::string getFccString_be(const uint32_t fcc_in);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
