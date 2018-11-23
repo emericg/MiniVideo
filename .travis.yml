@@ -53,6 +53,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt510/bin/qt510-env.sh; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$PATH:/usr/local/opt/qt5/bin:/usr/local/bin; fi
   - cd ../../mini_analyser/
+  - qmake --version
   - qmake CONFIG+=release PREFIX=/usr
   - make
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -64,9 +65,9 @@ script:
       mkdir -p appdir/usr/plugins/imageformats/ appdir/usr/plugins/iconengines/;
       cp /opt/qt510/plugins/imageformats/libqsvg.so appdir/usr/plugins/imageformats/;
       cp /opt/qt510/plugins/iconengines/libqsvgicon.so appdir/usr/plugins/iconengines/;
-      ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs -extra-plugins=imageformats/libqsvg.so,iconengines/libqsvgicon.so;
+      ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -no-translations -bundle-non-qt-libs -extra-plugins=imageformats/libqsvg.so,iconengines/libqsvgicon.so;
       ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage;
-   fi
+    fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       make install;
     fi
@@ -74,12 +75,16 @@ script:
 after_success:
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
      find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq;
-     find appdir;
+     find .;
+     echo '---- Uploading to transfer.sh'
      curl --upload-file mini_analyser*.AppImage https://transfer.sh/mini_analyser-git.$(git rev-parse --short HEAD)-linux64.AppImage;
+     echo '---- Uploading to transfer.sh finish???'
    fi
  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
      cd bin/;
-     find bin/;
      zip -r -X mini_analyser.zip mini_analyser.app;
+     find bin/;
+     echo '---- Uploading to transfer.sh'
      curl --upload-file mini_analyser*.zip https://transfer.sh/mini_analyser-git.$(git rev-parse --short HEAD)-macOS.zip;
+     echo '---- Uploading to transfer.sh finish???'
    fi
