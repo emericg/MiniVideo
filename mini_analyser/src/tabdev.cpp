@@ -59,11 +59,11 @@ tabDev::tabDev(QWidget *parent) :
 #ifdef QT_DEBUG
     text += " / <b>DEBUG</b>";
 #endif
-    text += " / " + tr("builded on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
+    text += " / " + tr("built on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
 
     text += "<br>" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
     if (minivideo_builddebug) text += " / <b>DEBUG</b>";
-    text += " / " + tr("builded on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
+    text += " / " + tr("built on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
     text += "</html>";
     ui->label_stats_appversion->setText(text);
 }
