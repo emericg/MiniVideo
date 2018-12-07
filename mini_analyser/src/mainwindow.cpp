@@ -656,7 +656,7 @@ void MainWindow::handleTabWidget()
                 // Add the export tab
                 ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
 #ifdef QT_DEBUG
-                // Add the developer tab (when builded in DEBUG mode)
+                // Add the developer tab (when built in DEBUG mode)
                 ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
 #endif
             }

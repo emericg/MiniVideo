@@ -3,7 +3,7 @@ Profiling "mini manual"
 
 Valgrind is a free software, very useful for debugging massive software.
 We are going to use it to perform code profiling and highlight memory leaks.
-The code must be builded with debug directive (-g) and unstripped for optimal results.
+The code must be built with debug directive (-g) and unstripped for optimal results.
 
 http://valgrind.org/
 http://valgrind.org/docs/manual/manual.html
