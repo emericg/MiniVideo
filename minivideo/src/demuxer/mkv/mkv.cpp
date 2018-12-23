@@ -762,7 +762,7 @@ static int mkv_parse_seekhead_seek(Bitstream_t *bitstr, EbmlElement_t *element, 
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Seek");
 
-    uint8_t *SeekID = NULL;
+    uint8_t *SeekID = nullptr;
     uint64_t SeekPosition = 0;
 
     while (mkv->run == true &&
@@ -990,9 +990,9 @@ int mkv_fileParse(MediaFile_t *media)
     int retcode = SUCCESS;
 
     // Init bitstream to parse container infos
-    Bitstream_t *bitstr = init_bitstream(media, NULL);
+    Bitstream_t *bitstr = init_bitstream(media, nullptr);
 
-    if (bitstr != NULL)
+    if (bitstr != nullptr)
     {
         // Init an MKV structure
         mkv_t mkv;
@@ -1031,7 +1031,7 @@ int mkv_fileParse(MediaFile_t *media)
                     break;
                 }
 
-                retcode = jumpy_mkv(bitstr, NULL, &element);
+                retcode = jumpy_mkv(bitstr, nullptr, &element);
             }
         }
 

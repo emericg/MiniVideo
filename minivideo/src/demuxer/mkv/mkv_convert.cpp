@@ -92,9 +92,9 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_convert_track()" CLR_RESET);
     int retcode = SUCCESS;
-    MediaStream_t *map = NULL;
+    MediaStream_t *map = nullptr;
 
-    if (media == NULL || track == NULL)
+    if (media == nullptr || track == nullptr)
     {
         TRACE_ERROR(MKV, "Cannot access audio or video tracks from the MKV parser!");
         retcode = FAILURE;

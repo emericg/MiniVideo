@@ -51,7 +51,7 @@ static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *
 
     uint64_t TrackTranslateEditionUID = 0;
     uint64_t TrackTranslateCodec = 0;
-    uint8_t *TrackTranslateTrackID = NULL;
+    uint8_t *TrackTranslateTrackID = nullptr;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -104,7 +104,7 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
     write_ebml_element(element, mkv->xml, "Mastering Metadata");
 
     track->video->Colour->MasteringMetadata = new mkv_track_video_colour_mastering_t;
-    if (track->video->Colour->MasteringMetadata == NULL)
+    if (track->video->Colour->MasteringMetadata == nullptr)
         retcode = FAILURE;
     mkv_track_video_colour_mastering_t *mastering = track->video->Colour->MasteringMetadata;
 
@@ -187,7 +187,7 @@ static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElem
     write_ebml_element(element, mkv->xml, "Projection");
 
     track->video->Projection = new mkv_track_video_projection_t;
-    if (track->video->Projection == NULL)
+    if (track->video->Projection == nullptr)
         retcode = FAILURE;
     mkv_track_video_projection_t *projection = track->video->Projection;
 
@@ -244,7 +244,7 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
     write_ebml_element(element, mkv->xml, "Colour");
 
     track->video->Colour = new mkv_track_video_colour_t;
-    if (track->video->Colour == NULL)
+    if (track->video->Colour == nullptr)
         retcode = FAILURE;
     mkv_track_video_colour_t *colour = track->video->Colour;
 
@@ -328,7 +328,7 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
     write_ebml_element(element, mkv->xml, "Video");
 
     track->video = new mkv_track_video_t;
-    if (track->video == NULL)
+    if (track->video == nullptr)
         retcode = FAILURE;
 
     while (mkv->run == true &&
@@ -425,7 +425,7 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
     write_ebml_element(element, mkv->xml, "Audio");
 
     track->audio = new mkv_track_audio_t;
-    if (track->audio == NULL)
+    if (track->audio == nullptr)
         retcode = FAILURE;
 
     while (mkv->run == true &&
@@ -480,7 +480,7 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
     write_ebml_element(element, mkv->xml, "Entry Operation");
 
     track->operation = new mkv_track_operation_t;
-    if (track->operation == NULL)
+    if (track->operation == nullptr)
         retcode = FAILURE;
 
     while (mkv->run == true &&
@@ -522,7 +522,7 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
     write_ebml_element(element, mkv->xml, "Content Encoding");
 
     track->encodings->encoding = new mkv_track_encoding_t;
-    if (track->encodings->encoding == NULL)
+    if (track->encodings->encoding == nullptr)
         retcode = FAILURE;
     mkv_track_encoding_t *encoding = track->encodings->encoding;
 
@@ -654,7 +654,7 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
     write_ebml_element(element, mkv->xml, "Content Encodings");
 
     track->encodings = new mkv_track_encodings_t;
-    if (track->encodings == NULL)
+    if (track->encodings == nullptr)
         retcode = FAILURE;
 
     while (mkv->run == true &&

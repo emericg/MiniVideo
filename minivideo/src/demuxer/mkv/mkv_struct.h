@@ -166,8 +166,8 @@ typedef struct mkv_sample_t
 
 typedef struct mkv_track_audio_t
 {
-    double SamplingFrequency;
-    double OutputSamplingFrequency;
+    double SamplingFrequency = 0.0;
+    double OutputSamplingFrequency = 0.0;
     uint64_t Channels = 0;
     uint64_t BitDepth = 0;
 
@@ -175,34 +175,34 @@ typedef struct mkv_track_audio_t
 
 typedef struct mkv_track_video_colour_mastering_t
 {
-    double PrimaryRChromaticityX;
-    double PrimaryRChromaticityY;
-    double PrimaryGChromaticityX;
-    double PrimaryGChromaticityY;
-    double PrimaryBChromaticityX;
-    double PrimaryBChromaticityY;
-    double WhitePointChromaticityX;
-    double WhitePointChromaticityY;
-    double LuminanceMax;
-    double LuminanceMin;
+    double PrimaryRChromaticityX = 0.0;
+    double PrimaryRChromaticityY = 0.0;
+    double PrimaryGChromaticityX = 0.0;
+    double PrimaryGChromaticityY = 0.0;
+    double PrimaryBChromaticityX = 0.0;
+    double PrimaryBChromaticityY = 0.0;
+    double WhitePointChromaticityX = 0.0;
+    double WhitePointChromaticityY = 0.0;
+    double LuminanceMax = 0.0;
+    double LuminanceMin = 0.0;
 
 } mkv_track_video_colour_mastering_t;
 
 typedef struct mkv_track_video_colour_t
 {
-    uint64_t MatrixCoefficients;
-    uint64_t BitsPerChannel;
-    uint64_t ChromaSubsamplingHorz;
-    uint64_t ChromaSubsamplingVert;
-    uint64_t CbSubsamplingHorz;
-    uint64_t CbSubsamplingVert;
-    uint64_t ChromaSitingHorz;
-    uint64_t ChromaSitingVert;
-    uint64_t Range;
-    uint64_t TransferCharacteristics;
-    uint64_t Primaries;
-    uint64_t MaxCLL;
-    uint64_t MaxFALL;
+    uint64_t MatrixCoefficients = 0;
+    uint64_t BitsPerChannel = 0;
+    uint64_t ChromaSubsamplingHorz = 0;
+    uint64_t ChromaSubsamplingVert = 0;
+    uint64_t CbSubsamplingHorz = 0;
+    uint64_t CbSubsamplingVert = 0;
+    uint64_t ChromaSitingHorz = 0;
+    uint64_t ChromaSitingVert = 0;
+    uint64_t Range = 0;
+    uint64_t TransferCharacteristics = 0;
+    uint64_t Primaries = 0;
+    uint64_t MaxCLL = 0;
+    uint64_t MaxFALL = 0;
     mkv_track_video_colour_mastering_t *MasteringMetadata = nullptr;
 
 } mkv_track_video_colour_t;
@@ -210,32 +210,32 @@ typedef struct mkv_track_video_colour_t
 //! Google spatial media support (https://github.com/google/spatial-media/blob/master/docs/spherical-video-v2-rfc.md)
 typedef struct mkv_track_video_projection_t
 {
-    uint64_t ProjectionType;
-    int ProjectionPrivate_size;
+    uint64_t ProjectionType = 0;
+    int ProjectionPrivate_size = 0;
     uint8_t *ProjectionPrivate = nullptr;
-    uint64_t ProjectionPoseYaw;
-    uint64_t ProjectionPosePitch;
-    uint64_t ProjectionPoseRoll;
+    uint64_t ProjectionPoseYaw = 0;
+    uint64_t ProjectionPosePitch = 0;
+    uint64_t ProjectionPoseRoll = 0;
 
 } mkv_track_video_projection_t;
 
 typedef struct mkv_track_video_t
 {
-    uint64_t FlagInterlaced;
-    uint64_t FieldOrder;
-    uint64_t StereoMode;
-    uint64_t AlphaMode;
-    uint64_t PixelWidth;
-    uint64_t PixelHeight;
-    uint64_t PixelCropBottom;
-    uint64_t PixelCropTop;
-    uint64_t PixelCropLeft;
-    uint64_t PixelCropRight;
-    uint64_t DisplayWidth;
-    uint64_t DisplayHeight;
-    uint64_t DisplayUnit;
-    uint64_t AspectRatioType;
-    int ColourSpace_size;
+    uint64_t FlagInterlaced = 0;
+    uint64_t FieldOrder = 0;
+    uint64_t StereoMode = 0;
+    uint64_t AlphaMode = 0;
+    uint64_t PixelWidth = 0;
+    uint64_t PixelHeight = 0;
+    uint64_t PixelCropBottom = 0;
+    uint64_t PixelCropTop = 0;
+    uint64_t PixelCropLeft = 0;
+    uint64_t PixelCropRight = 0;
+    uint64_t DisplayWidth = 0;
+    uint64_t DisplayHeight = 0;
+    uint64_t DisplayUnit = 0;
+    uint64_t AspectRatioType = 0;
+    int ColourSpace_size = 0;
     uint8_t *ColourSpace = nullptr;
     mkv_track_video_colour_t *Colour = nullptr;
     mkv_track_video_projection_t *Projection = nullptr;
@@ -256,23 +256,23 @@ typedef struct mkv_track_operation_t
 
 typedef struct mkv_track_encoding_t
 {
-    uint64_t ContentEncodingOrder;
-    uint64_t ContentEncodingScope;
-    uint64_t ContentEncodingType;
+    uint64_t ContentEncodingOrder = 0;
+    uint64_t ContentEncodingScope = 0;
+    uint64_t ContentEncodingType = 0;
 
-        uint64_t ContentCompAlgo;
-        int ContentCompSettings_size;
+        uint64_t ContentCompAlgo = 0;
+        int ContentCompSettings_size = 0;
         uint8_t *ContentCompSettings = nullptr;
 
-        uint64_t ContentEncAlgo;
-        int ContentEncKeyID_size;
+        uint64_t ContentEncAlgo = 0;
+        int ContentEncKeyID_size = 0;
         uint8_t *ContentEncKeyID = nullptr;
-        int ContentSignature_size;
+        int ContentSignature_size = 0;
         uint8_t *ContentSignature = nullptr;
-        int ContentSigKeyID_size;
+        int ContentSigKeyID_size = 0;
         uint8_t *ContentSigKeyID = nullptr;
-        uint64_t ContentSigAlgo;
-        uint64_t ContentSigHashAlgo;
+        uint64_t ContentSigAlgo = 0;
+        uint64_t ContentSigHashAlgo = 0;
 
 } mkv_track_encoding_t;
 
