@@ -541,7 +541,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
     pugi::xml_node eSelected;
     pugi::xml_node root = xmlMapDatas.document_element();
 
-    if (findAtom(root.child("structure"), "off", selected_offset, eSelected) == true)
+    if (findAtom(root.child("structure"), "off", selected_offset, eSelected))
     {
         //QString selected_title = eSelected.attributeNode("tt").value();
         QString selected_fcc = QString::fromLatin1(eSelected.attribute("fcc").value());

@@ -21,16 +21,6 @@
 
 #include "videobackends.h"
 
-VideoBackendInfos::VideoBackendInfos()
-{
-    //
-}
-
-VideoBackendInfos::~VideoBackendInfos()
-{
-    //
-}
-
 //GLubyte *vendor=glGetString(GL_VENDOR);
 //GLubyte *renderer=glGetString(GL_RENDERER);
 //GLubyte *version=glGetString(GL_VERSION);

@@ -236,11 +236,11 @@ int MainWindow::loadFile(const QString &file)
     if (file.isEmpty() == false)
     {
         // Check if this is a duplicate
-        for (unsigned i = 0; i < mediaList.size(); i++)
+        for (auto const &wrapper: mediaList)
         {
-            if (mediaList.at(i)->media)
+            if (wrapper->media)
             {
-                if (file == mediaList.at(i)->media->file_path)
+                if (file == wrapper->media->file_path)
                 {
                     closeFile(file);
                     break;
@@ -340,13 +340,13 @@ void MainWindow::closeFiles()
 {
     if (mediaList.empty() == false)
     {
-        for (unsigned i = 0; i < mediaList.size(); i++)
+        for (auto & wrapper: mediaList)
         {
-            ui->tab_dev->removeFile(mediaList.at(i)->media->file_path);
+            ui->tab_dev->removeFile(wrapper->media->file_path);
             ui->tab_container->closeMedia();
-            minivideo_close(&mediaList.at(i)->media);
+            minivideo_close(&wrapper->media);
 
-            delete mediaList.at(i);
+            delete wrapper;
         }
     }
 

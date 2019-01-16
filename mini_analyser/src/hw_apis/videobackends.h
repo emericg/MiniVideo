@@ -43,8 +43,8 @@ typedef struct CodecSupport
 class VideoBackendInfos
 {
 public:
-    VideoBackendInfos();
-    ~VideoBackendInfos();
+    VideoBackendInfos() = default;
+    ~VideoBackendInfos() = default;
 
     QString api_name;
     QString api_info;

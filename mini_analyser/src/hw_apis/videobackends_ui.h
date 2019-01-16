@@ -38,7 +38,7 @@ class VideoBackendsUI : public QWidget
 
     Ui::VideoBackendsUI *ui;
 
-    void removeTab(QString tabName);
+    void removeTab(const QString &tabName);
     void setInfosTable(VideoBackendInfos &infos, QTableWidget *tabDec, QTableWidget *tabEnc);
 
 public:

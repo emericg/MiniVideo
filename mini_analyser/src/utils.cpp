@@ -780,8 +780,7 @@ uint32_t bitrateMinMax::pushSampleSize(const uint32_t sampleSize)
 {
     uint32_t bitrate = 0;
 
-    if (sampleCounter >= fps &&
-        samplesData.size() > 0)
+    if (sampleCounter >= fps && !samplesData.empty())
     {
         samplesData.pop_front();
         sampleCounter--;

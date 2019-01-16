@@ -100,7 +100,7 @@ void AboutWindows::tabLicense()
     ui->textBrowser_copyright->hide();
     ui->textBrowser_thirdparties->hide();
 
-    if (licenseLoaded == false)
+    if (!licenseLoaded)
     {
         QFile file(":/licenses/LICENSE");
         if (file.open(QFile::ReadOnly | QFile::Text))

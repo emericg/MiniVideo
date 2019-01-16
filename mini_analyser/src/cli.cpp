@@ -43,7 +43,7 @@ CLI::~CLI()
 
 int CLI::printFile(const QString &file, bool details)
 {
-    if (file.isEmpty() == false)
+    if (!file.isEmpty())
     {
         MediaFile_t *media = nullptr;
 

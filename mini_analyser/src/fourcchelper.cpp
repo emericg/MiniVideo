@@ -132,7 +132,7 @@ void FourccHelper::hexEdited()
 void FourccHelper::int32LEEdited()
 {
     QString string = ui->lineEdit_int32_LE->text();
-    unsigned i32 = string.toUInt(0, 10);
+    unsigned i32 = string.toUInt();
 
     internal_hex.clear();
     for (int i = 0; i < 4; i++)
@@ -233,7 +233,7 @@ void FourccHelper::findCodec()
         int32_field = ui->lineEdit_int32_LE->text();
     else
         int32_field = ui->lineEdit_int32_BE->text();
-    unsigned fcc = int32_field.toUInt(0, 10);
+    unsigned fcc = int32_field.toUInt();
 
     if (fcc)
     {

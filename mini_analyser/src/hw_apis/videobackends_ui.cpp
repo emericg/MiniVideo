@@ -137,7 +137,7 @@ void VideoBackendsUI::setInfos()
     ui->tabWidget->setCurrentIndex(0);
 }
 
-void VideoBackendsUI::removeTab(QString tabName)
+void VideoBackendsUI::removeTab(const QString &tabName)
 {
     for (int tabId = 0; tabId < ui->tabWidget->count(); tabId++)
     {
