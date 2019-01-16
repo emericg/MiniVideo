@@ -64,7 +64,18 @@ typedef enum Containers_e
     CONTAINER_ES        = 128,  //!< Undefined "Elementary Stream"
     CONTAINER_ES_AAC    = 129,  //!< AAC "Elementary Stream"
     CONTAINER_ES_AC3    = 130,  //!< AC3 "Elementary Stream"
-    CONTAINER_ES_MP3    = 131   //!< MP3 "Elementary Stream"
+    CONTAINER_ES_MP3    = 131,  //!< MP3 "Elementary Stream"
+
+    // Image containers ////////////////////////////////////////////////////////
+
+    CONTAINER_JPEG      = 256,
+    CONTAINER_JPEG2K    = 257,
+    CONTAINER_PNG       = 258,
+    CONTAINER_GIF       = 259,
+    CONTAINER_BMP       = 260,
+    CONTAINER_TGA       = 261,
+    CONTAINER_TIFF      = 262,
+    CONTAINER_WEBP      = 263,
 
 } Containers_e;
 

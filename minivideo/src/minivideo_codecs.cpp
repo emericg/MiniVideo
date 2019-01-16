@@ -468,12 +468,6 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "Apple QuickTime Graphics";
                 break;
 
-            case CODEC_CorePNG:
-                if (long_description)
-                    return "CorePNG (image)";
-                else
-                    return "PNG";
-                break;
             case CODEC_JPEG:
                 if (long_description)
                     return "JPEG (image)";
@@ -481,16 +475,56 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "JPEG";
                 break;
             case CODEC_MJPEG:
+                return "Motion JPEG";
+                break;
+            case CODEC_JPEG2K:
                 if (long_description)
-                    return "Motion JPEG (image)";
+                    return "JPEG 2000 (image)";
                 else
-                    return "Motion JPEG";
+                    return "JPEG 2000";
                 break;
             case CODEC_MJPEG2K:
+                return "Motion JPEG 2000";
+                break;
+            case CODEC_PNG:
                 if (long_description)
-                    return "Motion JPEG 2000 (image)";
+                    return "PNG (image)";
                 else
-                    return "Motion JPEG 2000";
+                    return "PNG";
+                break;
+            case CODEC_CorePNG:
+                return "CorePNG";
+                break;
+
+            case CODEC_GIF:
+                if (long_description)
+                    return "Graphic Interchange Format (image)";
+                else
+                    return "GIF";
+                break;
+            case CODEC_BMP:
+                if (long_description)
+                    return "Windows Bitmap (image)";
+                else
+                    return "BMP";
+                break;
+            case CODEC_TGA:
+                if (long_description)
+                    return "Truevision Targa (image)";
+                else
+                    return "TGA";
+                break;
+            case CODEC_TIFF:
+                if (long_description)
+                    return "Tagged Image File Format (image)";
+                else
+                    return "TIFF";
+                break;
+            case CODEC_WEBP:
+                if (long_description)
+                    return "WebP (image)";
+                else
+                    return "WebP";
                 break;
 
             case CODEC_FFV1:

@@ -99,6 +99,31 @@ const char *getContainerString(const Containers_e container, const bool long_des
             return "MP3 'Elementary Stream'";
             break;
 
+        case CONTAINER_JPEG:
+            return "JPEG";
+            break;
+        case CONTAINER_JPEG2K:
+            return "JPEG 2000";
+            break;
+        case CONTAINER_PNG:
+            return "PNG";
+            break;
+        case CONTAINER_GIF:
+            return "GIF";
+            break;
+        case CONTAINER_BMP:
+            return "BMP";
+            break;
+        case CONTAINER_TGA:
+            return "TGA";
+            break;
+        case CONTAINER_TIFF:
+            return "TIFF";
+            break;
+        case CONTAINER_WEBP:
+            return "WebP";
+            break;
+
         default:
         case CONTAINER_UNKNOWN:
             return "UNKNOWN";

@@ -157,8 +157,16 @@ typedef enum Codecs_e
 
     CODEC_JPEG          = 350,  //!< JPEG
     CODEC_MJPEG         = 351,  //!< Motion JPEG
-    CODEC_MJPEG2K       = 352,  //!< Motion JPEG 2000
-    CODEC_CorePNG       = 399,  //!< CorePNG
+    CODEC_JPEG2K        = 352,  //!< JPEG 2000
+    CODEC_MJPEG2K       = 353,  //!< Motion JPEG 2000
+    CODEC_PNG           = 354,  //!< PNG
+    CODEC_CorePNG       = 355,  //!< Video PNG
+
+    CODEC_GIF           = 356,  //!< Graphic Interchange Format
+    CODEC_BMP           = 357,  //!< Windows Bitmap
+    CODEC_TGA           = 358,  //!< Truevision Targa
+    CODEC_TIFF          = 359,  //!< Tagged Image File Format
+    CODEC_WEBP          = 360,  //!< WebP
 
     // Lossless video codecs ///////////////////////////////////////////////////
 

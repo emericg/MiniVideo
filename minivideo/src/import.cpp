@@ -489,6 +489,50 @@ static Containers_e getContainerUsingExtension(MediaFile_t *media)
             container = CONTAINER_ES_MP3;
             //codec = CODEC_MP3;
         }
+        else if (strncmp(media->file_extension, "jpg", 255) == 0 ||
+                 strncmp(media->file_extension, "jpeg", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : JPEG detected");
+            //container = CONTAINER_;
+            //codec = CODEC_JPEG;
+        }
+        else if (strncmp(media->file_extension, "png", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : PNG detected");
+            //container = CONTAINER_;
+            //codec = CODEC_PNG;
+        }
+        else if (strncmp(media->file_extension, "gif", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : GIF detected");
+            //container = CONTAINER_;
+            //codec = CODEC_GIF;
+        }
+        else if (strncmp(media->file_extension, "bmp", 255) == 0 ||
+                 strncmp(media->file_extension, "dib", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : BMP detected");
+            //container = CONTAINER_;
+            //codec = CODEC_BMP;
+        }
+        else if (strncmp(media->file_extension, "tga", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : TGA detected");
+            //container = CONTAINER_;
+            //codec = CODEC_TGA;
+        }
+        else if (strncmp(media->file_extension, "tiff", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : TIFF detected");
+            //container = CONTAINER_;
+            //codec = CODEC_TIFF;
+        }
+        else if (strncmp(media->file_extension, "webp", 255) == 0)
+        {
+            TRACE_1(IO, "* File extension  : WebP detected");
+            //container = CONTAINER_;
+            //codec = CODEC_WEBP;
+        }
     }
 
     return container;
