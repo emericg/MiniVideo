@@ -100,21 +100,13 @@ int main(int argc, char *argv[])
         minivideo_print_features();
         minivideo_endianness();
 
-#ifdef Q_OS_WIN32
-        // High DPI monitor? Use automatic scaling
-        qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
-#endif
-
         // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
         MiniAnalyserGUI app(argc, argv);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-        // High DPI monitor? Use high quality pixmaps
-        if (app.devicePixelRatio() > 1)
-        {
-            app.setAttribute(Qt::AA_UseHighDpiPixmaps);
-        }
-#endif
+        QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+        QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+        QApplication::setApplicationName("MiniAnalyser");
+        QApplication::setApplicationDisplayName("MiniAnalyser");
 
         // Launch program window
         app.gui.show();
