@@ -759,7 +759,7 @@ bitrateMinMax::bitrateMinMax(const double fps)
 {
     if (fps > 0.0 && fps <= 240.0)
     {
-        this->fps = static_cast<uint32_t>(std::round(fps));
+        m_fps = static_cast<uint32_t>(std::round(fps));
     }
 }
 
@@ -767,7 +767,7 @@ bitrateMinMax::bitrateMinMax(const uint32_t fps)
 {
     if (fps > 0 && fps <= 240)
     {
-        this->fps = fps;
+        m_fps = fps;
     }
 }
 
@@ -780,26 +780,26 @@ uint32_t bitrateMinMax::pushSampleSize(const uint32_t sampleSize)
 {
     uint32_t bitrate = 0;
 
-    if (sampleCounter >= fps && !samplesData.empty())
+    if (m_sampleCounter >= m_fps && !m_samplesData.empty())
     {
-        samplesData.pop_front();
-        sampleCounter--;
+        m_samplesData.pop_front();
+        m_sampleCounter--;
     }
 
-    samplesData.push_back(sampleSize*8);
-    sampleCounter++;
+    m_samplesData.push_back(sampleSize*8);
+    m_sampleCounter++;
 
-    if (sampleCounter >= fps)
+    if (m_sampleCounter >= m_fps)
     {
-        for (int i = 0; i < samplesData.size(); i++)
+        for (int i = 0; i < m_samplesData.size(); i++)
         {
-            bitrate += samplesData.at(i);
+            bitrate += m_samplesData.at(i);
         }
 
-        if (bitrate > bitrateMax)
-            bitrateMax = bitrate;
-        else if (bitrate < bitrateMin)
-            bitrateMin = bitrate;
+        if (bitrate > m_bitrateMax)
+            m_bitrateMax = bitrate;
+        else if (bitrate < m_bitrateMin)
+            m_bitrateMin = bitrate;
     }
 
     return bitrate;
@@ -807,6 +807,6 @@ uint32_t bitrateMinMax::pushSampleSize(const uint32_t sampleSize)
 
 void bitrateMinMax::getMinMax(uint32_t &min, uint32_t &max)
 {
-    min = bitrateMin;
-    max = bitrateMax;
+    min = m_bitrateMin;
+    max = m_bitrateMax;
 }

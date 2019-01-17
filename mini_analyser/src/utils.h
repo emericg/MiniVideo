@@ -162,12 +162,12 @@ QString getSampleTypeString(const unsigned sampleType);
  */
 class bitrateMinMax
 {
-    uint32_t fps = 24;
-    uint32_t sampleCounter = 0;
-    QVector<uint32_t> samplesData;
+    uint32_t m_fps = 24;
+    uint32_t m_sampleCounter = 0;
+    QVector<uint32_t> m_samplesData;
 
-    uint32_t bitrateMin = UINT32_MAX;
-    uint32_t bitrateMax = 0;
+    uint32_t m_bitrateMin = UINT32_MAX;
+    uint32_t m_bitrateMax = 0;
 
 public:
     bitrateMinMax(const double fps);

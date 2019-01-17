@@ -99,7 +99,7 @@ void tabContainer::resizeEvent(QResizeEvent *event)
     Q_UNUSED(event)
 
     // Make sure the scrollAreas don't get wider than our windows
-    int newwidth = this->width() - ui->tabWidget->width() - 12;
+    int newwidth = width() - ui->tabWidget->width() - 12;
     ui->scrollAreaWidgetContents_2->setMaximumWidth(newwidth);
     ui->labelTitle->setMaximumWidth(newwidth);
 
