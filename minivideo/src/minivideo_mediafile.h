@@ -73,10 +73,10 @@ typedef struct MediaFile_t
     MediaStream_t *tracks_video[16];    //!< A list of parsed video tracks
 
     unsigned int tracks_subtitles_count;
-    MediaStream_t *tracks_subt[16];     //!< A list of parsed subtitles tracks
+    MediaStream_t *tracks_subt[32];     //!< A list of parsed subtitles tracks
 
     unsigned int tracks_others_count;
-    MediaStream_t *tracks_others[16];   //!< Other "unknown" tracks found in the container (metadata, timecodes, ...)
+    MediaStream_t *tracks_others[32];   //!< Other "unknown" tracks found in the container (metadata, timecodes, ...)
 
     // Parsing statistics
     uint64_t parsingTime;               //!< Parsing time (in milliseconds) (only available in debug mode)

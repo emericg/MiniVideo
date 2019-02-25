@@ -364,7 +364,7 @@ typedef struct mkv_t
     mkv_info_t info;
 
     uint32_t tracks_count = 0;
-    mkv_track_t *tracks[16] = { nullptr };
+    mkv_track_t *tracks[32] = { nullptr };
 
     FILE *xml = nullptr;        //!< Temporary file used by the xmlMapper
 
