@@ -114,7 +114,7 @@ int QHexEdit::addressWidth()
     if (size > Q_INT64_C(0x100000000)){ n += 8; size /= Q_INT64_C(0x100000000);}
     if (size > 0x10000){ n += 4; size /= 0x10000;}
     if (size > 0x100){ n += 2; size /= 0x100;}
-    if (size > 0x10){ n += 1; size /= 0x10;}
+    if (size > 0x10){ n += 1;}
 
     if (n > _addressWidth)
         return n;
@@ -421,6 +421,12 @@ QString QHexEdit::selectionToReadableString()
 {
     QByteArray ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin());
     return toReadable(ba);
+}
+
+QString QHexEdit::selectedData()
+{
+    QByteArray ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin()).toHex();
+    return ba;
 }
 
 void QHexEdit::setFont(const QFont &font)
@@ -812,7 +818,8 @@ void QHexEdit::mousePressEvent(QMouseEvent * event)
     qint64 cPos = cursorPosition(event->pos());
     if (cPos >= 0)
     {
-        resetSelection(cPos);
+        if (event->button() != Qt::RightButton)
+            resetSelection(cPos);
         setCursorPosition(cPos);
     }
 }
@@ -897,7 +904,7 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                 if (_asciiArea)
                 {
                     int ch = (uchar)_dataShown.at(bPosLine + colIdx);
-                    if ( ch < 0x20 )
+                    if ( ch < ' ' || ch > '~' )
                         ch = '.';
                     r.setRect(pxPosAsciiX2, pxPosY - _pxCharHeight + _pxSelectionSub, _pxCharWidth, _pxCharHeight);
                     painter.fillRect(r, c);
@@ -910,23 +917,38 @@ void QHexEdit::paintEvent(QPaintEvent *event)
         painter.setPen(viewport()->palette().color(QPalette::WindowText));
     }
 
-    // paint cursor
-    if (_blink && !_readOnly && hasFocus())
-        painter.fillRect(_cursorRect, this->palette().color(QPalette::WindowText));
-    else
+	// _cursorPosition counts in 2, _bPosFirst counts in 1
+	int hexPositionInShowData = _cursorPosition - 2 * _bPosFirst;
+
+	// due to scrolling the cursor can go out of the currently displayed data
+	if ((hexPositionInShowData >= 0) && (hexPositionInShowData < _hexDataShown.size()))
     {
-        painter.fillRect(QRect(_pxCursorX - pxOfsX, _pxCursorY - _pxCharHeight, _pxCharWidth, _pxCharHeight), viewport()->palette().color(QPalette::Base));
-        if (_editAreaIsAscii) {
-            QByteArray ba = _dataShown.mid((_cursorPosition - _bPosFirst) / 2, 1);
-            if (ba != "")
+            // paint cursor
+            if (_readOnly)
             {
-                if (ba.at(0) <= ' ')
-                    ba[0] = '.';
-                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, ba);
+                // make the background stick out
+                QColor color = viewport()->palette().dark().color();
+                painter.fillRect(QRect(_pxCursorX - pxOfsX, _pxCursorY - _pxCharHeight + _pxSelectionSub, _pxCharWidth, _pxCharHeight), color);
             }
-        } else {
-            painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, _hexDataShown.mid(_cursorPosition - _bPosFirst, 1));
-        }
+            else
+            {
+                if (_blink && hasFocus())
+                    painter.fillRect(_cursorRect, this->palette().color(QPalette::WindowText));
+            }
+
+            if (_editAreaIsAscii)
+            {
+                // every 2 hex there is 1 ascii
+                int asciiPositionInShowData = hexPositionInShowData / 2;
+                int ch = (uchar)_dataShown.at(asciiPositionInShowData);
+                if (ch < ' ' || ch > '~')
+                    ch = '.';
+                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, QChar(ch));
+            }
+            else
+            {
+                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, _hexDataShown.mid(hexPositionInShowData, 1));
+            }
     }
 
     // emit event, if size has changed
@@ -1013,12 +1035,12 @@ void QHexEdit::setSelection(qint64 pos)
     }
 }
 
-int QHexEdit::getSelectionBegin()
+qint64 QHexEdit::getSelectionBegin()
 {
     return _bSelectionBegin;
 }
 
-int QHexEdit::getSelectionEnd()
+qint64 QHexEdit::getSelectionEnd()
 {
     return _bSelectionEnd;
 }
