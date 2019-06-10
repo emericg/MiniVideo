@@ -255,7 +255,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
 
     case fcc_CFHD:
     case fcc_cfhd:
-        codec = CODEC_VC5;
+        codec = CODEC_CINEFORM;
         break;
 
     case fcc_apco:
@@ -367,6 +367,31 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         break;
     case fcc_CLLC:
         codec = CODEC_CanopusLL;
+        break;
+
+    case fcc_dvsd:
+    case fcc_DVSD:
+        codec = CODEC_DV_SONY;
+        break;
+    case fcc_CDVC:
+    case fcc_CDVH:
+    case fcc_CUV5:
+        codec = CODEC_DV_CANOPUS;
+        break;
+    case fcc_dvc:
+    case fcc_dvcp:
+        codec = CODEC_DV_APPLE;
+        break;
+    case fcc_dvh2:
+    case fcc_dvh3:
+    case fcc_dvh5:
+    case fcc_dvh6:
+    case fcc_dvhq:
+    case fcc_dvhp:
+    case fcc_dv5p:
+    case fcc_dv5n:
+    case fcc_dvpp:
+        codec = CODEC_DV_PANASONIC;
         break;
 
 ////////////////////////////////////////////////////////////////////////////////

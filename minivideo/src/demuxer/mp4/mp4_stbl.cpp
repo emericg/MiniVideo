@@ -545,7 +545,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         }
         else if (box_header->boxtype == fcc_CFHD)
         {
-            track->codec = CODEC_VC5;
+            track->codec = CODEC_CINEFORM;
             TRACE_1(MP4, "> Video track is using CineForm codec");
         }
 

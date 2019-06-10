@@ -329,9 +329,13 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 break;
             case CODEC_VC5:
                 if (long_description)
-                    return "VC-5 (CineForm)";
+                    return "VC-5 (CineForm variant)";
                 else
                     return "VC-5";
+                break;
+
+            case CODEC_CINEFORM:
+                return "CineForm";
                 break;
 
             case CODEC_PRORES_422_PROXY:
@@ -355,6 +359,19 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
 
             case CODEC_REDCode:
                 return "REDCode";
+                break;
+
+            case CODEC_DV_SONY:
+                return "Sony DV";
+                break;
+            case CODEC_DV_CANOPUS:
+                return "Canopus DV";
+                break;
+            case CODEC_DV_APPLE:
+                return "Apple DV";
+                break;
+            case CODEC_DV_PANASONIC:
+                return "Panasonic DV";
                 break;
 
             case CODEC_VP3:
@@ -525,6 +542,18 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "WebP (image)";
                 else
                     return "WebP";
+                break;
+            case CODEC_HEIF:
+                if (long_description)
+                    return "HEIF (High Efficiency Image Format)";
+                else
+                    return "HEIF";
+                break;
+            case CODEC_AVIF:
+                if (long_description)
+                    return "AVIF (AV1 Image Format)";
+                else
+                    return "AVIF";
                 break;
 
             case CODEC_FFV1:

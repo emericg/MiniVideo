@@ -741,6 +741,9 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "hi", lng_size) == 0 ||
                  strncmp(languageCode, "hin", lng_size) == 0)
             langage_qstr = QObject::tr("Hindi");
+        else if (strncmp(languageCode, "id", lng_size) == 0 ||
+                 strncmp(languageCode, "ind", lng_size) == 0)
+            langage_qstr = QObject::tr("Indonesian");
 
 
         else

@@ -236,7 +236,7 @@ typedef enum fourcc_list_e
 
     fcc_AVdn = 0x4156646E, //!< DNxHD / VC-3
 
-    fcc_CFHD = 0x43464844, //!< CineForm / VC-5
+    fcc_CFHD = 0x43464844, //!< CineForm
     fcc_cfhd = 0x63666864,
 
     fcc_apco = 0x6170636f, //!< Apple ProRes 422 (Proxy)
@@ -285,7 +285,7 @@ typedef enum fourcc_list_e
     fcc_rle  = 0x726C6520, //!< Apple QuickTime Animation
     fcc_smc  = 0x736D6320, //!< Apple QuickTime Graphics
 
-    fcc_dvsd = 0x64767364, //!< DV
+    fcc_dvsd = 0x64767364, //!< Sony DV (?)
     fcc_DVSD = 0x44565344,
     fcc_CDVC = 0x43564443, //!< Canopus DV
     fcc_CDVH = 0x43555648,
@@ -296,7 +296,7 @@ typedef enum fourcc_list_e
     fcc_dvh3 = 0x64766833, //!< Panasonic DVCPro-HD 1080p30 format
     fcc_dvh5 = 0x64766835, //!< Panasonic DVCPro-HD 1080i60 format
     fcc_dvh6 = 0x64766836, //!< Panasonic DVCPro-HD 1080i60 format
-    fcc_dvhq = 0x64766870, //!< Panasonic DVCPro-HD 720p50 format
+    fcc_dvhq = 0x64766871, //!< Panasonic DVCPro-HD 720p50 format
     fcc_dvhp = 0x64766870, //!< Panasonic DVCPro-HD 720p60 format
     fcc_dv5p = 0x64763570, //!< Panasonic DVCPro-50 PAL format
     fcc_dv5n = 0x6476356E, //!< Panasonic DVCPro-50 NTSC format

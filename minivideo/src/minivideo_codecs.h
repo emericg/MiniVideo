@@ -109,16 +109,7 @@ typedef enum Codecs_e
     CODEC_VC1           = 273,  //!< VC-1 or Windows Media Video 9
     CODEC_VC2           = 274,  //!< VC-2 or Dirac is an open and royalty-free video compression format developed by BBC Research
     CODEC_VC3           = 275,  //!< VC-3, Avid DNxHD is a popular implementation
-    CODEC_VC5           = 276,  //!< VC-5 or CineForm
-
-    CODEC_PRORES_422_PROXY  = 277,  //!< Apple ProRes 422 (Proxy)
-    CODEC_PRORES_422_LT     = 278,  //!< Apple ProRes 422 (LT)
-    CODEC_PRORES_422        = 279,  //!< Apple ProRes 422
-    CODEC_PRORES_422_HQ     = 280,  //!< Apple ProRes 422 (HQ)
-    CODEC_PRORES_4444       = 281,  //!< Apple ProRes 4444
-    CODEC_PRORES_4444_XQ    = 282,  //!< Apple ProRes 4444 (XQ)
-
-    CODEC_REDCode       = 283,  //!< REDCode
+    CODEC_VC5           = 276,  //!< VC-5 (CineForm variant)
 
     CODEC_VP3           = 284,  //!< On2 VP3 Video
     CODEC_VP4           = 285,  //!< On2 VP4 Video / Xiph Ogg Theora
@@ -153,25 +144,45 @@ typedef enum Codecs_e
     CODEC_QtAnimation   = 316,  //!< Apple QuickTime Animation
     CODEC_QtGraphics    = 317,  //!< Apple QuickTime Graphics
 
-    // Images codecs ///////////////////////////////////////////////////////////
+    // Lossy video codecs //////////////////////////////////////////////////////
 
-    CODEC_JPEG          = 350,  //!< JPEG
-    CODEC_MJPEG         = 351,  //!< Motion JPEG
-    CODEC_JPEG2K        = 352,  //!< JPEG 2000
-    CODEC_MJPEG2K       = 353,  //!< Motion JPEG 2000
-    CODEC_PNG           = 354,  //!< PNG
-    CODEC_CorePNG       = 355,  //!< Video PNG
+    CODEC_CINEFORM      = 350,  //!< CineForm
 
-    CODEC_GIF           = 356,  //!< Graphic Interchange Format
-    CODEC_BMP           = 357,  //!< Windows Bitmap
-    CODEC_TGA           = 358,  //!< Truevision Targa
-    CODEC_TIFF          = 359,  //!< Tagged Image File Format
-    CODEC_WEBP          = 360,  //!< WebP
+    CODEC_PRORES_422_PROXY  = 351,  //!< Apple ProRes 422 (Proxy)
+    CODEC_PRORES_422_LT     = 352,  //!< Apple ProRes 422 (LT)
+    CODEC_PRORES_422        = 353,  //!< Apple ProRes 422
+    CODEC_PRORES_422_HQ     = 354,  //!< Apple ProRes 422 (HQ)
+    CODEC_PRORES_4444       = 355,  //!< Apple ProRes 4444
+    CODEC_PRORES_4444_XQ    = 356,  //!< Apple ProRes 4444 (XQ)
+
+    CODEC_REDCode       = 357,  //!< REDCode
+
+    CODEC_DV_SONY       = 360,  //!< Sony DV
+    CODEC_DV_CANOPUS    = 361,  //!< Canopus DV
+    CODEC_DV_APPLE      = 362,  //!< Apple DV
+    CODEC_DV_PANASONIC  = 363,  //!< Panasonic DV
 
     // Lossless video codecs ///////////////////////////////////////////////////
 
-    CODEC_FFV1          = 400,  //!< FFV1
-    CODEC_CanopusLL     = 401,  //!< Canopus Lossless
+    CODEC_FFV1          = 390,  //!< FFV1
+    CODEC_CanopusLL     = 391,  //!< Canopus Lossless
+
+    // Images codecs ///////////////////////////////////////////////////////////
+
+    CODEC_JPEG          = 400,  //!< JPEG
+    CODEC_MJPEG         = 401,  //!< Motion JPEG
+    CODEC_JPEG2K        = 402,  //!< JPEG 2000
+    CODEC_MJPEG2K       = 403,  //!< Motion JPEG 2000
+    CODEC_PNG           = 404,  //!< PNG
+    CODEC_CorePNG       = 405,  //!< Video PNG
+
+    CODEC_GIF           = 406,  //!< Graphic Interchange Format
+    CODEC_BMP           = 407,  //!< Windows Bitmap
+    CODEC_TGA           = 408,  //!< Truevision Targa
+    CODEC_TIFF          = 409,  //!< Tagged Image File Format
+    CODEC_WEBP          = 410,  //!< WebP
+    CODEC_HEIF          = 411,  //!< High Efficiency Image Format
+    CODEC_AVIF          = 412,  //!< AV1 Image Format
 
     // Subtitles codecs ////////////////////////////////////////////////////////
 
