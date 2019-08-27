@@ -74,11 +74,16 @@ void VideoBackendsUI::setInfos()
 #if defined(VIDEOBACKEND_VDPAU)
     VideoBackendsVDPAU vdpau;
     VideoBackendInfos infos_vdpau;
-    vdpau.load(infos_vdpau);
-
-    ui->label_vdpau_string->setText(infos_vdpau.api_info);
-    ui->label_vdpau_version->setText(infos_vdpau.api_version);
-    setInfosTable(infos_vdpau, ui->tableWidget_vdpau_decoding, nullptr);
+    if (vdpau.load(infos_vdpau))
+    {
+        ui->label_vdpau_string->setText(infos_vdpau.api_info);
+        ui->label_vdpau_version->setText(infos_vdpau.api_version);
+        setInfosTable(infos_vdpau, ui->tableWidget_vdpau_decoding, nullptr);
+    }
+    else
+    {
+        removeTab("VDPAU");
+    }
 #else
     removeTab("VDPAU");
 #endif
@@ -86,11 +91,16 @@ void VideoBackendsUI::setInfos()
 #if defined(VIDEOBACKEND_VAAPI)
     VideoBackendsVAAPI vaapi;
     VideoBackendInfos infos_vaapi;
-    vaapi.load(infos_vaapi);
-
-    ui->label_vaapi_string->setText(infos_vaapi.api_info);
-    ui->label_vaapi_version->setText(infos_vaapi.api_version);
-    setInfosTable(infos_vaapi, ui->tableWidget_vaapi_decoding, nullptr);
+    if (vaapi.load(infos_vaapi))
+    {
+        ui->label_vaapi_string->setText(infos_vaapi.api_info);
+        ui->label_vaapi_version->setText(infos_vaapi.api_version);
+        setInfosTable(infos_vaapi, ui->tableWidget_vaapi_decoding, nullptr);
+    }
+    else
+    {
+        removeTab("VA-API");
+    }
 #else
     removeTab("VA-API");
 #endif
@@ -98,9 +108,14 @@ void VideoBackendsUI::setInfos()
 #if defined(VIDEOBACKEND_VDA)
     VideoBackendsVDA vda;
     VideoBackendInfos infos_vda;
-    vda.load(infos_vda);
-
-    setInfosTable(infos_vda, ui->tableWidget_vda_decoding, nullptr);
+    if (vda.load(infos_vda))
+    {
+        setInfosTable(infos_vda, ui->tableWidget_vda_decoding, nullptr);
+    }
+    else
+    {
+        removeTab("Video Decode Acceleration");
+    }
 #else
     removeTab("Video Decode Acceleration");
 #endif
@@ -108,9 +123,14 @@ void VideoBackendsUI::setInfos()
 #if defined(VIDEOBACKEND_VTB)
     VideoBackendsVideoToolBox vtb;
     VideoBackendInfos infos_vtb;
-    vtb.load(infos_vtb);
-
-    setInfosTable(infos_vtb, ui->tableWidget_vtb_decoding, nullptr);
+    if (vtb.load(infos_vtb))
+    {
+        setInfosTable(infos_vtb, ui->tableWidget_vtb_decoding, nullptr);
+    }
+    else
+    {
+        removeTab("VideoToolBox");
+    }
 #else
     removeTab("VideoToolBox");
 #endif
