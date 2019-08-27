@@ -1052,7 +1052,10 @@ int MainWindow::printVideoDetails()
                 framecount += QString::number(t->frame_count - t->frame_count_idr) + " others)";
 
                 double idr_ratio = static_cast<double>(t->frame_count_idr) / static_cast<double>(t->sample_count) * 100.0;
-                samplerepartition = tr("IDR frames makes <b>") + QString::number(idr_ratio, 'g', 2) + "%</b> " + tr("of the samples");
+                QString idr_string = QString::number(idr_ratio, 'g', 2);
+                if (t->frame_count_idr == t->sample_count) idr_string = QString::number(idr_ratio);
+
+                samplerepartition = tr("IDR frames makes <b>") + idr_string + "%</b> " + tr("of the samples");
                 samplerepartition += "<br>Statistically, one every <b>";
                 samplerepartition += QString::number(t->stream_duration_ms / 1000.0 / static_cast<double>(t->frame_count_idr), 'g', 2);
                 samplerepartition += "</b> s";
