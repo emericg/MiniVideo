@@ -329,7 +329,7 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
             bitstr->buffer_size = (unsigned int)(bitstr->bitstream_size - bitstr->bitstream_offset);
             bitstr->buffer = (uint8_t*)realloc(bitstr->buffer, bitstr->buffer_size);
 
-            if (bitstr->buffer == NULL)
+            if (bitstr->buffer == nullptr)
             {
                 TRACE_ERROR(BITS, "<b> Unable to realloc bitstream buffer!");
                 retcode = FAILURE;

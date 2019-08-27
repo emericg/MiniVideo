@@ -1326,7 +1326,6 @@ static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ippri
             if (ip->sample_up)
             {
                 ipprime->pv[0] = ipprime->ph[0] = (3 * ip->pv[0] + ip->ph[0 +1] + 2) >> 2;
-
             }
             else if (!ip->sample_up && ip->sample_left)
             {

@@ -1563,7 +1563,6 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                         retcode = FAILURE;
                 }
             }
-
         }
         else
             retcode = FAILURE;

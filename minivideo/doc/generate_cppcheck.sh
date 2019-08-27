@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 if [[ $(which cppcheck) && $(which cppcheck-htmlreport) ]]; then
