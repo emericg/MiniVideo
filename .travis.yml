@@ -20,9 +20,9 @@ before_install:
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      sudo apt-get install g++-7 -y;
       sudo apt-get install qt512base qt512svg qt512imageformats qt512tools -y;
       sudo apt-get install linux-headers-generic -y;
+      sudo apt-get install libgl1-mesa-dev -y;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew install qt;
