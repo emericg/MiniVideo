@@ -65,6 +65,8 @@ typedef enum SampleType_e
 
 } SampleType_e;
 
+/* ************************************************************************** */
+
 //! Bitrate mode
 typedef enum BitrateMode_e
 {
@@ -76,6 +78,8 @@ typedef enum BitrateMode_e
     BITRATE_CVBR    = 4  //!< Constrained Variable BitRate
 
 } BitrateMode_e;
+
+/* ************************************************************************** */
 
 //! Framerate mode
 typedef enum FramerateMode_e
@@ -98,6 +102,16 @@ typedef enum Projection_e
     PROJECTION_MESH             = 4,
 
 } Projection_e;
+
+//! Scan type
+typedef enum ScanType_e
+{
+    SCAN_UNKNOWN        = 0,
+
+    SCAN_PROGRESSIVE    = 1,
+    SCAN_INTERLACED     = 2,
+
+} ScanType_e;
 
 //! Rotation
 typedef enum Rotation_e
@@ -131,6 +145,51 @@ typedef enum StereoMode_e
     // both eyes laced in one Block     //!< (right eye is first)
 
 } StereoMode_e;
+
+//! The color model used by the video
+typedef enum ColorModel_e
+{
+    CLR_UNKNOWN = 0,     //!< Unknown color model
+
+    CLR_RGB     = 1,
+    CLR_YCbCr   = 2,
+    CLR_YCgCo   = 3,
+
+} ColorModel_e;
+
+//! The color matrix used by the video
+typedef enum ColorMatrix_e
+{
+    CM_UNKNOWN = 0,
+
+    CM_sRGB,
+    CM_sYCC,
+    CM_xvYCC,
+    CM_XYZ,
+    CM_PAL,
+    CM_NTSC,
+    CM_SMPTE170M,
+    CM_SMPTE240M,
+    CM_bt470,
+    CM_bt601,
+    CM_bt709,
+    CM_bt2020,
+
+} ColorMatrix_e;
+
+//! The subsampling format used by the video
+typedef enum SubSampling_e
+{
+    SS_UNKNOWN = 0,     //!< Unknown subsampling
+
+    SS_400     = 1,     //!< 4:0:0 greyscale subsampling
+    SS_411     = 2,     //!< 4:1:1 subsampling
+    SS_420     = 3,     //!< 4:2:0 subsampling
+    SS_422     = 4,     //!< 4:2:2 subsampling
+    SS_444     = 5,     //!< 4:4:4 subsampling
+    SS_4444    = 6      //!< 4:4:4:4 subsampling
+
+} SubSampling_e;
 
 /* ************************************************************************** */
 
@@ -224,51 +283,6 @@ typedef enum PictureRepartition_e
     PICTURE_DISTRIBUTED = 2
 
 } PictureRepartition_e;
-
-//! The color model used by the video
-typedef enum ColorModel_e
-{
-    CLR_UNKNOWN = 0,     //!< Unknown color model
-
-    CLR_RGB     = 1,
-    CLR_YCbCr   = 2,
-    CLR_YCgCo   = 3,
-
-} ColorModel_e;
-
-//! The color matrix used by the video
-typedef enum ColorMatrix_e
-{
-    CM_UNKNOWN = 0,
-
-    CM_sRGB,
-    CM_sYCC,
-    CM_xvYCC,
-    CM_XYZ,
-    CM_PAL,
-    CM_NTSC,
-    CM_SMPTE170M,
-    CM_SMPTE240M,
-    CM_bt470,
-    CM_bt601,
-    CM_bt709,
-    CM_bt2020,
-
-} ColorMatrix_e;
-
-//! The subsampling format used by the video
-typedef enum SubSampling_e
-{
-    SS_UNKNOWN = 0,     //!< Unknown subsampling
-
-    SS_400     = 1,     //!< 4:0:0 greyscale subsampling
-    SS_411     = 2,     //!< 4:1:1 subsampling
-    SS_420     = 3,     //!< 4:2:0 subsampling
-    SS_422     = 4,     //!< 4:2:2 subsampling
-    SS_444     = 5,     //!< 4:4:4 subsampling
-    SS_4444    = 6      //!< 4:4:4:4 subsampling
-
-} SubSampling_e;
 
 /* ************************************************************************** */
 #endif // MINIVIDEO_AVUTILS_H

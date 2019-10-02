@@ -40,50 +40,50 @@ const char *getContainerString(const Containers_e container, const bool long_des
         switch (container)
         {
         case CONTAINER_AVI:
-            return "AVI (Audio Video Interleave) [.avi, ...]";
+            return "AVI (Audio Video Interleave)"; // [.avi, ...]
             break;
         case CONTAINER_ASF:
-            return "ASF (Advanced Systems Format) [.asf, .wma, .wmv]";
+            return "ASF (Advanced Systems Format)"; // [.asf, .wma, .wmv]
             break;
         case CONTAINER_MKV:
-            return "MKV (Matroska) [.mkv, .mka, .webm]";
+            return "MKV (Matroska)"; // [.mkv, .mka, .webm]
             break;
         case CONTAINER_MP4:
-            return "MP4 (ISO Base Media format) [.mov, .mp4, .3gp, .f4v, ...]";
+            return "MP4 (ISO Base Media format)"; // [.mov, .mp4, .3gp, .f4v, ...]
             break;
         case CONTAINER_MPEG_PS:
-            return "MPEG 'Program Stream' [.mpg, .vob, ...]";
+            return "MPEG 'Program Stream'"; // [.mpg, .vob, ...]
             break;
         case CONTAINER_MPEG_TS:
-            return "MPEG 'Transport Stream' [.ts, .mts, .m2ts, ...]";
+            return "MPEG 'Transport Stream'"; // [.ts, .mts, .m2ts, ...]
             break;
         case CONTAINER_MPEG_MT:
             return "MPEG 'Media Transport'";
             break;
         case CONTAINER_MXF:
-            return "MXF Material eXchange Format [.mxf]";
+            return "MXF Material eXchange Format"; // [.mxf]
             break;
         case CONTAINER_FLV:
-            return "SWF Small Web Format [.swf, .flv]";
+            return "SWF Small Web Format"; // [.swf, .flv]
             break;
         case CONTAINER_OGG:
-            return "OGG [.ogg, .ogv, ...]";
+            return "OGG"; // [.ogg, .ogv, ...]
             break;
         case CONTAINER_RM:
-            return "RealMedia [.rm, .rmvb]";
+            return "RealMedia"; // [.rm, .rmvb]
             break;
         case CONTAINER_R3D:
-            return "Redcode RAW [.r3d]";
+            return "Redcode RAW"; // [.r3d]
             break;
 
         case CONTAINER_FLAC:
-            return "FLAC (Free Lossless Audio Codec) [.flac]";
+            return "FLAC (Free Lossless Audio Codec)"; // [.flac]
             break;
         case CONTAINER_WAVE:
-            return "WAVE (Waveform Audio File Format) [.wav]";
+            return "WAVE (Waveform Audio File Format)"; // [.wav]
             break;
         case CONTAINER_CAF:
-            return "CAF (Core Audio Format) [.caf]";
+            return "CAF (Core Audio Format)"; // [.caf]
             break;
 
         case CONTAINER_ES:
@@ -126,7 +126,7 @@ const char *getContainerString(const Containers_e container, const bool long_des
 
         default:
         case CONTAINER_UNKNOWN:
-            return "UNKNOWN";
+            return "";
             break;
         }
     }
@@ -199,7 +199,7 @@ const char *getContainerString(const Containers_e container, const bool long_des
 
             default:
             case CONTAINER_UNKNOWN:
-                return "UNKNOWN";
+                return "";
                 break;
         }
     }

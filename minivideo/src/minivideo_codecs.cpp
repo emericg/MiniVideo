@@ -602,7 +602,7 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
         }
     }
 
-    return "Unknown";
+    return "";
 }
 
 /* ************************************************************************** */
@@ -634,7 +634,7 @@ const char *getPictureString(const Pictures_e picture, const bool long_descripti
             break;
         case PICTURE_UNKNOWN:
         default:
-            return "UNKNOWN";
+            return "";
             break;
     }
 }
@@ -757,7 +757,7 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
             return "Multiview Depth High Profile";
             break;
         case PROF_H264_:
-            return "Unknown profile...";
+            return "Unknown H.264 profile...";
             break;
 
         case PROF_H265_Main:
@@ -776,7 +776,7 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
             return "Main 444 Profile";
             break;
         case PROF_H265_:
-            return "Unknown profile...";
+            return "Unknown H.265 profile...";
             break;
 
         case PROF_VP8_0:
@@ -838,7 +838,7 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 
         case CODEC_PROF_UNKNOWN:
         default:
-            return "UNKNOWN";
+            return "";
             break;
     }
 }

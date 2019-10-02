@@ -347,7 +347,7 @@ QString getAspectRatioString(double ar_d, const bool detailed)
         aspectratio_qstr = "5:3";
 
         if (detailed)
-            aspectratio_qstr += " (35mm film)";
+            aspectratio_qstr += " (35 mm film)";
     }
     else if (ar_d > 1.767 && ar_d < 1.787)
     {
