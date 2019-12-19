@@ -100,13 +100,13 @@ int main(int argc, char *argv[])
         minivideo_print_features();
         minivideo_endianness();
 
-        // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
-        MiniAnalyserGUI app(argc, argv);
-
         QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
         QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-        QApplication::setApplicationName("MiniAnalyser");
-        QApplication::setApplicationDisplayName("MiniAnalyser");
+
+        // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
+        MiniAnalyserGUI app(argc, argv);
+        app.setApplicationName("MiniAnalyser");
+        app.setApplicationDisplayName("MiniAnalyser");
 
         // Launch program window
         app.gui.show();
