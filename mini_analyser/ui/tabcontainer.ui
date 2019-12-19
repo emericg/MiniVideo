@@ -311,7 +311,7 @@
   <customwidget>
    <class>QHexEdit</class>
    <extends>QWidget</extends>
-   <header>../src/thirdparty/qhexedit2/qhexedit.h</header>
+   <header>src/thirdparty/qhexedit2/qhexedit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

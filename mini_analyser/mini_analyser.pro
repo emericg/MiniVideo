@@ -52,15 +52,10 @@ FORMS       += ui/mainwindow.ui \
                ui/about.ui \
                ui/tabcontainer.ui \
                ui/tabexport.ui \
-               ui/tabdev.ui \
+               ui/tabdev.ui
 
 # mini_analyser resources
 RESOURCES   += resources/resources.qrc
-
-# mini_analyser OS icons (macOS and Windows)
-ICON         = resources/app/mini_analyser.icns
-RC_ICONS     = resources/app/mini_analyser.ico
-QMAKE_INFO_PLIST = resources/app/Info.plist
 
 # third party libraries
 SOURCES     += src/thirdparty/qcustomplot/qcustomplot.cpp \
@@ -93,7 +88,7 @@ unix {
     #QMAKE_LFLAGS += -fsanitize=address,undefined
 
     QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
-    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-private-field
 
     linux {
         # Add videobackends # Link with video decoding APIs
@@ -102,8 +97,7 @@ unix {
             SOURCES += src/hw_apis/videobackends_vaapi.cpp
             HEADERS += src/hw_apis/videobackends_vaapi.h
             LIBS    += -lva -lva-drm -lva-x11 -lX11
-        }
-        !exists("/usr/lib/libva.so") {
+        } else {
             message("You can install 'libva' on your system to enable VA-API decoding/encoding capabilities checker")
         }
 
@@ -112,8 +106,7 @@ unix {
             SOURCES += src/hw_apis/videobackends_vdpau.cpp
             HEADERS += src/hw_apis/videobackends_vdpau.h src/hw_apis/vdpau/VDPDeviceImpl.h
             LIBS    += -lvdpau -lX11
-        }
-        !exists("/usr/lib/libvdpau.so") {
+        } else {
             message("You can install 'libvdpau' on your system to enable VADPAU decoding capabilities checker")
         }
 
@@ -125,6 +118,10 @@ unix {
     }
 
     macx {
+        # macOS resources
+        ICON = resources/app/mini_analyser.icns
+        QMAKE_INFO_PLIST = resources/app/Info.plist
+
         # Add videobackends
         DEFINES += VIDEOBACKEND_VDA
         DEFINES += VIDEOBACKEND_VTB
@@ -139,17 +136,21 @@ unix {
         LIBS += -Wl,-framework,VideoToolbox -Wl,-framework,VideoDecodeAcceleration
 
         # Force compiler to use available macOS SDK version (with automatic detection)
-        XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
-        QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
+        #XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
+        #QMAKE_MAC_SDK = "macosx$${XCODE_SDK_VERSION}"
         #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
 
         # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
-        #QMAKE_RPATHDIR += @executable_path/../Frameworks
+        QMAKE_RPATHDIR += @executable_path/../Frameworks
+
+        #
+        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/bin/mini_analyser)
     }
 }
 
 win32 {
-    #
+    # OS icon
+    RC_ICONS = resources/app/mini_analyser.ico
 }
 
 # Deployment -------------------------------------------------------------------

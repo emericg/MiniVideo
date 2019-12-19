@@ -3838,25 +3838,25 @@
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header>../src/thirdparty/qcustomplot/qcustomplot.h</header>
+   <header>src/thirdparty/qcustomplot/qcustomplot.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>tabDev</class>
    <extends>QWidget</extends>
-   <header>../src/tabdev.h</header>
+   <header>src/tabdev.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>tabExport</class>
    <extends>QWidget</extends>
-   <header>../src/tabexport.h</header>
+   <header>src/tabexport.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>tabContainer</class>
    <extends>QWidget</extends>
-   <header>../src/tabcontainer.h</header>
+   <header>src/tabcontainer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
