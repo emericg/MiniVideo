@@ -34,8 +34,12 @@
 
 #include <QDebug>
 
+#ifdef VIDEOBACKEND_VTB
+
 #include <CoreMedia/CoreMedia.h>
 #include <VideoToolbox/VideoToolbox.h>
+
+/* ************************************************************************** */
 
 // Generic description structure
 struct Desc
@@ -247,6 +251,8 @@ static OSStatus CreateDecoderVTB (Desc &prof)
     return vtb_status;
 }
 
+#endif // VIDEOBACKEND_VTB
+
 /* ************************************************************************** */
 
 VideoBackendsVideoToolBox::VideoBackendsVideoToolBox()
@@ -264,6 +270,7 @@ bool VideoBackendsVideoToolBox::load(VideoBackendInfos &infos)
     bool status = true;
     infos.api_name = "VideoToolBox";
 
+#ifdef VIDEOBACKEND_VTB
     for (size_t x = 0; x < decoder_profile_count; x++)
     {
         OSStatus vtb_status = CreateDecoderVTB(decoder_profiles_vtb[x]);
@@ -304,6 +311,7 @@ bool VideoBackendsVideoToolBox::load(VideoBackendInfos &infos)
                 break;
         }
     }
+#endif // VIDEOBACKEND_VTB
 
     return status;
 }

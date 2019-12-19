@@ -34,6 +34,8 @@
 
 #include <QDebug>
 
+#ifdef VIDEOBACKEND_VDA
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreVideo/CoreVideo.h>
 #include <VideoDecodeAcceleration/VDADecoder.h>
@@ -178,6 +180,8 @@ OSStatus CreateDecoderVDA(Desc &prof)
     return status;
 }
 
+#endif // VIDEOBACKEND_VDA
+
 /* ************************************************************************** */
 
 VideoBackendsVDA::VideoBackendsVDA()
@@ -195,6 +199,7 @@ bool VideoBackendsVDA::load(VideoBackendInfos &infos)
     bool status = true;
     infos.api_name = "VDA (Video Decode Acceleration)";
 
+#ifdef VIDEOBACKEND_VDA
     for (size_t x = 0; x < decoder_profile_count; x++)
     {
         OSStatus vda_status = CreateDecoderVDA(decoder_profiles_vda[x]);
@@ -244,6 +249,7 @@ bool VideoBackendsVDA::load(VideoBackendInfos &infos)
                 break;
         }
     }
+#endif // VIDEOBACKEND_VDA
 
     return status;
 }

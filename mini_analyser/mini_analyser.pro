@@ -123,7 +123,7 @@ unix {
         QMAKE_INFO_PLIST = resources/app/Info.plist
 
         # Add videobackends
-        DEFINES += VIDEOBACKEND_VDA
+        #DEFINES += VIDEOBACKEND_VDA
         DEFINES += VIDEOBACKEND_VTB
 
         SOURCES += src/hw_apis/videobackends_vda.cpp \
