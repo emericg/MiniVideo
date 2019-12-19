@@ -831,7 +831,7 @@ int MainWindow::printAudioDetails()
                 //ui->audioBitrateGraph->yAxis->setPadding(0);
                 //ui->audioBitrateGraph->xAxis->setPadding(0);
                 //ui->audioBitrateGraph->setBackground(QColor(0,0,0,0));
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
                 ui->audioBitrateGraph->setBackground(QColor(218, 218, 218));
 #endif
 
@@ -1157,7 +1157,7 @@ int MainWindow::printVideoDetails()
                 //ui->videoBitrateGraph->yAxis->setPadding(0);
                 //ui->videoBitrateGraph->xAxis->setPadding(0);
                 //ui->videoBitrateGraph->setBackground(QColor(0,0,0,0));
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
                 ui->videoBitrateGraph->setBackground(QColor(218, 218, 218));
 #endif
 

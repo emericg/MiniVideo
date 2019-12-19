@@ -106,14 +106,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->removeAction(ui->actionVideoBackends);
 #endif
 #endif
-#ifdef Q_OS_OSX
+
+#ifdef Q_OS_MACOS
 #if !defined(VIDEOBACKEND_VDA) && !defined(VIDEOBACKEND_VTB)
     ui->mainToolBar->removeAction(ui->actionVideoBackends);
 #endif
-    ui->comboBox_file->setIconSize(QSize(16,16));
+    ui->comboBox_file->setIconSize(QSize(16, 16));
     ui->mainToolBar->setStyleSheet("");
 #endif
-#ifdef Q_OS_WIN32
+
+#ifdef Q_OS_WINDOWS
     ui->mainToolBar->removeAction(ui->actionVideoBackends);
 #endif
 }
