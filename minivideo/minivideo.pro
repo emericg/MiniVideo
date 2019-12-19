@@ -39,7 +39,7 @@ unix {
     QMAKE_CXXFLAGS_RELEASE += -O3
 
     QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
-    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-private-field
 }
 
 linux {

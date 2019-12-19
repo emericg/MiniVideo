@@ -1332,14 +1332,14 @@ int MainWindow::printOtherDetails()
 
 void MainWindow::xAxisRangeChanged(const QCPRange &newRange)
 {
-    Q_UNUSED(newRange);
+    Q_UNUSED(newRange)
 
     // TODO
 }
 
 void MainWindow::yAxisRangeChanged(const QCPRange &newRange)
 {
-    Q_UNUSED(newRange);
+    Q_UNUSED(newRange)
 
     // TODO
 }

@@ -156,7 +156,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    Q_UNUSED(e);
+    Q_UNUSED(e)
 
     // Make sure the info tab scrollArea don't get wider than our main window
     ui->groupBox_infos->setMaximumWidth(ui->tab_infos->width() - 8);
@@ -164,7 +164,7 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    Q_UNUSED(index);
+    Q_UNUSED(index)
 
     // Make sure the info tab scrollArea don't get wider than our main window
     ui->groupBox_infos->setMaximumWidth(ui->tab_infos->width() - 8);

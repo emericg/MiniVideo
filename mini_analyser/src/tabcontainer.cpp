@@ -458,7 +458,8 @@ void tabContainer::previewSample(int sid)
             ui->label_pic->show();
         }
     }
-
+#else
+    Q_UNUSED(sid)
 #endif //THUMBNAILS_ENABLED
 }
 
@@ -507,7 +508,7 @@ void tabContainer::containerSelectionChanged()
 
 void tabContainer::containerSelection(QTreeWidgetItem *item, int column)
 {
-    Q_UNUSED(column);
+    Q_UNUSED(column)
     if (!item) return;
 
     int64_t selected_offset = item->data(0, Qt::UserRole).toLongLong();
@@ -1004,7 +1005,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
                     if (fcc != "trak" && fcc != "moof" &&
                         title != "Cluster" && title != "Cues" && title != "Tags")
                     {
-                        ui->treeWidget->setItemExpanded(child_item, true);
+                        child_item->setExpanded(true);
                     }
 
                     if (add == "track")

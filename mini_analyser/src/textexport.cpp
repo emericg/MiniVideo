@@ -348,9 +348,9 @@ int textExport::generateExportDatas_json(MediaFile_t &media, QString &exportData
 {
     int status = 1;
 
-    Q_UNUSED(media);
-    Q_UNUSED(exportDatas);
-    Q_UNUSED(detailed);
+    Q_UNUSED(media)
+    Q_UNUSED(exportDatas)
+    Q_UNUSED(detailed)
 
     // TODO
 
@@ -361,9 +361,9 @@ int textExport::generateExportDatas_xml(MediaFile_t &media, QString &exportDatas
 {
     int status = 1;
 
-    Q_UNUSED(media);
-    Q_UNUSED(exportDatas);
-    Q_UNUSED(detailed);
+    Q_UNUSED(media)
+    Q_UNUSED(exportDatas)
+    Q_UNUSED(detailed)
 
     // TODO
 
