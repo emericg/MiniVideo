@@ -1,6 +1,3 @@
-# Stash folder and its content
-stash/
-
 # Build directories
 mini_analyser/bin/*
 mini_analyser/build/*
@@ -37,3 +34,7 @@ minivideo/doc/doxygen_temp/latex/*
 
 # cppcheck temporary files
 minivideo/doc/cppcheck_temp/
+
+# Others
+stash/*
+.DS_Store
