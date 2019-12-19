@@ -48,15 +48,14 @@ tabExport::tabExport(QWidget *parent) :
     connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
 
     // Monospace fonts for the export tab
-#ifdef Q_OS_LINUX
-    /*int id =*/ QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
-#endif
-#ifdef Q_OS_OSX
-    ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
-#endif
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WINDOWS)
     ui->textBrowser_export->setFont(QFont("Lucida Console", 12));
+#elif defined(Q_OS_MACOS)
+    ui->textBrowser_export->setFont(QFont("Andale Mono", 12));
+#else
+    //int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    //ui->textBrowser_export->setFont(QFont("DejaVu Sans Mono", 12));
+    ui->textBrowser_export->setFont(QFont("Monospace", 12));
 #endif
 }
 

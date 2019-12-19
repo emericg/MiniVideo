@@ -73,15 +73,14 @@ tabContainer::tabContainer(QWidget *parent) :
     ui->widget_hex->setBytesPerLine(16);
     ui->widget_hex->setHexCaps(true);
 
-#ifdef Q_OS_LINUX
-    /*int id =*/ QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 12));
-#endif
-#ifdef Q_OS_OSX
-    ui->widget_hex->setFont(QFont("Andale Mono", 14));
-#endif
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WINDOWS)
     ui->widget_hex->setFont(QFont("Lucida Console", 12));
+#elif defined(Q_OS_MACOS)
+    ui->widget_hex->setFont(QFont("Andale Mono", 12));
+#else
+    //int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
+    //ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 12));
+    ui->widget_hex->setFont(QFont("Monospace", 12));
 #endif
 }
 
