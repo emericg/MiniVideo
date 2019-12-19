@@ -105,21 +105,6 @@ void VideoBackendsUI::setInfos()
     removeTab("VA-API");
 #endif
 
-#if defined(VIDEOBACKEND_VDA)
-    VideoBackendsVDA vda;
-    VideoBackendInfos infos_vda;
-    if (vda.load(infos_vda))
-    {
-        setInfosTable(infos_vda, ui->tableWidget_vda_decoding, nullptr);
-    }
-    else
-    {
-        removeTab("Video Decode Acceleration");
-    }
-#else
-    removeTab("Video Decode Acceleration");
-#endif
-
 #if defined(VIDEOBACKEND_VTB)
     VideoBackendsVideoToolBox vtb;
     VideoBackendInfos infos_vtb;
@@ -133,6 +118,21 @@ void VideoBackendsUI::setInfos()
     }
 #else
     removeTab("VideoToolBox");
+#endif
+
+#if defined(VIDEOBACKEND_VDA)
+    VideoBackendsVDA vda;
+    VideoBackendInfos infos_vda;
+    if (vda.load(infos_vda))
+    {
+        setInfosTable(infos_vda, ui->tableWidget_vda_decoding, nullptr);
+    }
+    else
+    {
+        removeTab("Video Decode Acceleration");
+    }
+#else
+    removeTab("Video Decode Acceleration");
 #endif
 
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
