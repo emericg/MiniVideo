@@ -15,7 +15,7 @@
    height="102.4"
    id="svg2408"
    style="display:inline"
-   inkscape:version="0.92.1 r"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"
    sodipodi:docname="applications-fonts.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -26,17 +26,17 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1023"
+     inkscape:window-width="3440"
+     inkscape:window-height="1364"
      id="namedview3327"
      showgrid="false"
      inkscape:zoom="4.3489584"
-     inkscape:cx="-20.76871"
-     inkscape:cy="8.4900085"
-     inkscape:window-x="1680"
+     inkscape:cx="-61.549969"
+     inkscape:cy="17.687613"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer4" />
+     inkscape:current-layer="svg2408" />
   <defs
      id="defs2410">
     <linearGradient
@@ -431,18 +431,6 @@
   </g>
   <g
      id="layer4">
-    <text
-       x="-71.563293"
-       y="72"
-       transform="matrix(1.0666667,0,0,1.0666667,106.66667,0)"
-       clip-path="url(#clipPath3729-0)"
-       id="text3717"
-       xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.84326935px;line-height:0%;font-family:'DejaVu Serif';-inkscape-font-specification:'Abandoned Bitplane Italic';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;opacity:0.6;fill:none;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter3733-3)"><tspan
-         x="-71.563293"
-         y="72"
-         id="tspan3719"
-         style="fill:none;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">A</tspan></text>
     <rect
        width="76.800003"
        height="1.0666667"
@@ -473,15 +461,18 @@
        transform="rotate(90)"
        id="rect3698"
        style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.15;fill:url(#linearGradient3702-4);fill-opacity:1;stroke:none;stroke-width:2.13333344;marker:none;enable-background:accumulate" />
-    <text
-       x="22.041424"
-       y="66.801704"
-       id="text2907"
-       xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70.2328186px;line-height:0%;font-family:'DejaVu Serif';-inkscape-font-specification:'Abandoned Bitplane Italic';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient3689-3);fill-opacity:1;stroke:none;stroke-width:1.06666672"><tspan
-         x="22.041424"
-         y="66.801704"
-         id="tspan2909"
-         style="font-size:42.66666794px;fill:url(#linearGradient3689-3);fill-opacity:1;stroke-width:1.06666672">AV</tspan></text>
+    <g
+       aria-label="AV"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70.2328186px;line-height:0%;font-family:'DejaVu Serif';-inkscape-font-specification:'Abandoned Bitplane Italic';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient3689-3);fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       id="text2907">
+      <path
+         d="M 29.770591,55.530871 H 41.187258 L 38.353924,40.739204 Z M 18.791424,66.801704 19.20809,64.593371 h 2.729167 L 38.645591,35.697537 h 3.5 l 5.5,28.895834 h 3.041667 l -0.416667,2.208333 h -11.3125 l 0.416667,-2.208333 h 3.458333 L 41.562258,57.760037 H 28.478924 l -3.9375,6.833334 h 3.416667 l -0.416667,2.208333 z"
+         style="font-size:42.66666794px;fill:url(#linearGradient3689-3);fill-opacity:1;stroke-width:1.06666672"
+         id="path885" />
+      <path
+         d="m 60.770591,37.926704 4.5625,23.875 13.791667,-23.875 h -3.5 l 0.4375,-2.229167 h 9.125 l -0.4375,2.229167 h -3.020833 l -16.708334,28.875 h -3.583334 l -5.4375,-28.875 h -3.104166 l 0.4375,-2.229167 h 11.333333 l -0.4375,2.229167 z"
+         style="font-size:42.66666794px;fill:url(#linearGradient3689-3);fill-opacity:1;stroke-width:1.06666672"
+         id="path887" />
+    </g>
   </g>
 </svg>

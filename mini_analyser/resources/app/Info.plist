@@ -24,8 +24,8 @@
 				<string>MP4</string>
 				<string>MPEG</string>
 				<string>MPG</string>
-                <string>MPG2</string>
-                <string>WEBM</string>
+				<string>MPG2</string>
+				<string>WEBM</string>
 				<string>QT</string>
 				<string>VCD</string>
 				<string>VOB</string>
@@ -47,9 +47,9 @@
 				<string>mpg2</string>
 				<string>mpg4</string>
 				<string>qt</string>
-                <string>vcd</string>
-                <string>vob</string>
-                <string>webm</string>
+				<string>vcd</string>
+				<string>vob</string>
+				<string>webm</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Movie file</string>
@@ -66,23 +66,23 @@
 				<string>AIFF</string>
 				<string>M4A</string>
 				<string>MKA</string>
-                <string>MP1</string>
-                <string>MP2</string>
+				<string>MP1</string>
+				<string>MP2</string>
 				<string>MP3</string>
-                <string>OGG</string>
-                <string>OPUS</string>
+				<string>OGG</string>
+				<string>OPUS</string>
 				<string>PCM</string>
 				<string>WAV</string>
 				<string>aac</string>
 				<string>ac3</string>
 				<string>aiff</string>
 				<string>m4a</string>
-                <string>mka</string>
-                <string>mp1</string>
-                <string>mp2</string>
-                <string>mp3</string>
-                <string>ogg</string>
-                <string>opus</string>
+				<string>mka</string>
+				<string>mp1</string>
+				<string>mp2</string>
+				<string>mp3</string>
+				<string>ogg</string>
+				<string>opus</string>
 				<string>pcm</string>
 				<string>wav</string>
 			</array>

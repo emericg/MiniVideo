@@ -15,11 +15,11 @@
    viewBox="0 0 16.933333 16.933333"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"
    sodipodi:docname="mini_analyser.svg"
    inkscape:export-filename="mini_analyser.png"
-   inkscape:export-xdpi="384"
-   inkscape:export-ydpi="384">
+   inkscape:export-xdpi="768"
+   inkscape:export-ydpi="768">
   <title
      id="title4542">mini_analyser icon</title>
   <defs
@@ -82,11 +82,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.7999609"
-     inkscape:cx="-9.8993631"
-     inkscape:cy="14.957052"
+     inkscape:zoom="12.445024"
+     inkscape:cx="-21.639079"
+     inkscape:cy="29.42754"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="g4584"
      showgrid="true"
      inkscape:pagecheckerboard="true"
      fit-margin-top="0"
@@ -104,10 +104,10 @@
      inkscape:snap-smooth-nodes="true"
      inkscape:snap-midpoints="true"
      inkscape:snap-global="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="1016"
-     inkscape:window-y="-8"
+     inkscape:window-width="3440"
+     inkscape:window-height="1364"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -226,9 +226,9 @@
          y="66.675003"
          x="1.0583333"
          height="0.26458332"
-         width="14.816667"
+         width="15.345833"
          id="rect4546"
-         style="fill:#ececec;fill-opacity:0.41089113;stroke-width:0.26458332" />
+         style="fill:#ececec;fill-opacity:0.41089113;stroke-width:0.26926658" />
     </g>
     <g
        id="g4650"
