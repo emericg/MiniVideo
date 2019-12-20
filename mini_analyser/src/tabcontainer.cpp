@@ -1064,7 +1064,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
                     if (fcc != "trak" && fcc != "moof" &&
                         title != "Cluster" && title != "Cues" && title != "Tags")
                     {
-                        ui->treeWidget_structure->setItemExpanded(child_item, true);
+                        child_item->setExpanded(true);
                     }
 
                     if (add == "track")
