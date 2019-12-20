@@ -651,17 +651,20 @@ void MainWindow::handleTabWidget()
                 ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
             }
 
+            if (media->tracks_video_count || media->tracks_audio_count ||
+                media->tracks_subtitles_count || media->tracks_others_count)
             {
                 // Add the container tab
                 ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
 
                 // Add the export tab
                 ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
-#ifdef QT_DEBUG
-                // Add the developer tab (when built in DEBUG mode)
-                ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
-#endif
             }
+
+#ifdef QT_DEBUG
+            // Add the developer tab (when built in DEBUG mode)
+            ui->tabWidget->addTab(ui->tab_dev, tabDevIcon, tabDevText);
+#endif
 
             // Restore the focus (if the same tab is available)
             bool sameTabFound = false;

@@ -204,7 +204,7 @@ bool tabContainer::loadMedia(MediaWrapper *wrap)
         }
 
         ui->tabWidget->setCurrentIndex(wrapper->containerMode);
-        ui->tabWidget->setVisible(structure_loaded && tracks_loaded);
+        ui->tabWidget->setVisible(structure_loaded || tracks_loaded);
 
         if (wrapper->containerMode == 0)
         {

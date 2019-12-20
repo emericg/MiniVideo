@@ -33,7 +33,7 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
       <size>
-       <width>256</width>
+       <width>240</width>
        <height>0</height>
       </size>
      </property>
