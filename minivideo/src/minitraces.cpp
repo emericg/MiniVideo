@@ -88,11 +88,9 @@ static void print_trace_tick(void)
  */
 static void print_trace_time(void)
 {
-    time_t timer;
-    struct tm* tm_info;
-
-    time(&timer);
-    tm_info = localtime(&timer);
+    time_t t = time(NULL);
+    struct tm result;
+    struct tm *tm_info = localtime_r(&t, &result);
 
     if (tm_info != NULL)
     {
