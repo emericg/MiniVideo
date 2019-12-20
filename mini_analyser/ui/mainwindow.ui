@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>800</height>
+    <height>875</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -376,8 +376,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>622</width>
-             <height>711</height>
+             <width>628</width>
+             <height>752</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -3535,8 +3535,17 @@
            </item>
            <item row="3" column="0">
             <spacer name="verticalSpacer_sub">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
              <property name="sizeType">
               <enum>QSizePolicy::Ignored</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
              </property>
             </spacer>
            </item>
@@ -3742,7 +3751,7 @@
      <normaloff>:/icons/icons/package-upgrade.svg</normaloff>:/icons/icons/package-upgrade.svg</iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string/>
    </property>
    <property name="toolTip">
     <string>Open a multimedia file and analyze it!</string>
@@ -3766,10 +3775,10 @@
      <normaloff>:/icons/icons/package-remove.svg</normaloff>:/icons/icons/package-remove.svg</iconset>
    </property>
    <property name="text">
-    <string>Close</string>
+    <string/>
    </property>
    <property name="toolTip">
-    <string>Close the current file</string>
+    <string>Close current file</string>
    </property>
   </action>
   <action name="actionAboutQt">
@@ -3802,7 +3811,7 @@
      <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
    </property>
    <property name="text">
-    <string>FourCC's</string>
+    <string>FCC</string>
    </property>
    <property name="toolTip">
     <string>Open the FourCC helper</string>
@@ -3814,7 +3823,7 @@
      <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
    </property>
    <property name="text">
-    <string>Reload</string>
+    <string/>
    </property>
    <property name="toolTip">
     <string>Reload current file</string>
@@ -3829,7 +3838,10 @@
      <normaloff>:/icons/icons/sysprof-icon.svg</normaloff>:/icons/icons/sysprof-icon.svg</iconset>
    </property>
    <property name="text">
-    <string>Backends</string>
+    <string>HW</string>
+   </property>
+   <property name="toolTip">
+    <string>Open hardware video decoding panel</string>
    </property>
   </action>
  </widget>

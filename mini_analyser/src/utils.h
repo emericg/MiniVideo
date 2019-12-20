@@ -39,7 +39,7 @@
  *
  * Prints a duration in hours/min/sec/ms.
  */
-QString getDurationString(const uint32_t duration);
+QString getDurationString(const uint64_t duration);
 
 /*!
  * \brief Get a timestamp string from a duration in milliseconds.

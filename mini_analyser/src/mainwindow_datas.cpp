@@ -565,13 +565,26 @@ int MainWindow::printDatas()
             {
                 if (media->tracks_subt[i])
                 {
-                    QString text = "▸ " + tr("Subtitles track #") + QString::number(i+1) + "  /  ";
-                    text += getCodecString(stream_TEXT, media->tracks_subt[i]->stream_codec, false);
+                    QString text = "▸ " + tr("Subtitles track #") + QString::number(i+1);
+
+                    if (media->tracks_subt[i]->stream_codec)
+                    {
+                        text += "  /  ";
+                        text += getCodecString(stream_TEXT, media->tracks_subt[i]->stream_codec, false);
+                    }
+
                     QString lng = getLanguageString(media->tracks_subt[i]->track_languagecode);
                     if (lng.isEmpty() == false)
                     {
                         text += "  /  ";
                         text += lng;
+                    }
+
+                    QString title = QString::fromUtf8(media->tracks_subt[i]->track_title);
+                    if (title.isEmpty() == false)
+                    {
+                        text += "  /  ";
+                        text += title;
                     }
 
                     QLabel *track = new QLabel(text);

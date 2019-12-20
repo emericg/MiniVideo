@@ -131,15 +131,15 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         {
             if (t->pixel_aspect_ratio_h || t->pixel_aspect_ratio_v)
             {
-                exportDatas += "\nPixel Aspect ratio   : ";
+                exportDatas += "\nPixel Aspect Ratio   : ";
                 exportDatas += QString::number(t->pixel_aspect_ratio_h) + ":" + QString::number(t->pixel_aspect_ratio_v);
             }
             if (t->video_aspect_ratio > 0.0)
             {
-                exportDatas += "\nVideo Aspect ratio   : ";
+                exportDatas += "\nVideo Aspect Ratio   : ";
                 exportDatas += getAspectRatioString(t->video_aspect_ratio, false);
             }
-            exportDatas += "\nDisplay Aspect ratio : ";
+            exportDatas += "\nDisplay Aspect Ratio : ";
             exportDatas += getAspectRatioString(t->display_aspect_ratio, true);
         }
         else
@@ -287,11 +287,20 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         exportDatas += "\n------------------";
 
         // Datas
-        exportDatas += "\nFormat        : sub";
+        if (detailed == true)
+        {
+            exportDatas += "\nTrack ID      : ";
+            exportDatas += QString::number(t->track_id);
+        }
+        exportDatas += "\nFormat        : ";
+        exportDatas += getCodecString(stream_TEXT, t->stream_codec, true);
         exportDatas += "\nSize          : ";
         exportDatas += getTrackSizeString(t, media.file_size, detailed);
-        exportDatas += "\nTitle         : ";
-        exportDatas += QString::fromLocal8Bit(t->track_title);
+        if (t->track_title)
+        {
+            exportDatas += "\nTitle         : ";
+            exportDatas += QString::fromLocal8Bit(t->track_title);
+        }
         if (t->track_languagecode && strcmp(t->track_languagecode, "und") != 0)
         {
             exportDatas += "\nLanguage code : ";
@@ -331,10 +340,18 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         exportDatas += "\n-------------";
 
         // Datas
+        if (detailed == true)
+        {
+            exportDatas += "\nTrack ID      : ";
+            exportDatas += QString::number(t->track_id);
+        }
         exportDatas += "\nSize          : ";
         exportDatas += getTrackSizeString(t, media.file_size, detailed);
-        exportDatas += "\nTitle         : ";
-        exportDatas += QString::fromLocal8Bit(t->track_title);
+        if (t->track_title)
+        {
+            exportDatas += "\nTitle         : ";
+            exportDatas += QString::fromLocal8Bit(t->track_title);
+        }
         exportDatas += "\nLanguage      : ";
         exportDatas += QString::fromLocal8Bit(t->track_languagecode);
 

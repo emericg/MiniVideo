@@ -58,8 +58,8 @@ tabContainer::tabContainer(QWidget *parent) :
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSwitch(int)));
     connect(ui->tabWidget_tracks, SIGNAL(currentChanged(int)), this, SLOT(loadSamples(int)));
 
-    connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
-    connect(ui->treeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
+    connect(ui->listWidget_samples, SIGNAL(currentRowChanged(int)), this, SLOT(sampleSelection(int)));
+    connect(ui->treeWidget_structure, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
 
     // Preload icons
     icon_atom.addFile(":/img/img/A.png");
@@ -105,7 +105,7 @@ void tabContainer::resizeEvent(QResizeEvent *event)
     // Resize thumbnail (if needed)
     if (ui->label_pic->isVisible())
     {
-        previewSample(ui->listWidget->currentRow());
+        previewSample(ui->listWidget_samples->currentRow());
     }
 }
 
@@ -129,33 +129,82 @@ void tabContainer::on_tabWidget_tracks_currentChanged(int index)
 
 /* ************************************************************************** */
 
-void tabContainer::loadMedia(MediaWrapper *wrap)
+bool tabContainer::loadMedia(MediaWrapper *wrap)
 {
+    bool status = false;
+
     closeMedia();
 
     if (wrap && wrap->media)
     {
         ui->tabWidget->blockSignals(true);
         ui->tabWidget_tracks->blockSignals(true);
-        ui->treeWidget->blockSignals(true);
-        ui->listWidget->blockSignals(true);
+        ui->treeWidget_structure->blockSignals(true);
+        ui->listWidget_samples->blockSignals(true);
 
         wrapper = static_cast<MediaWrapper *>(wrap);
         media = static_cast<MediaFile_t *>(wrap->media);
 
         mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
 
-        if (!ui->widget_hex->setData(mediaFile))
+        bool structure_loaded = loadXmlFile();
+        bool tracks_loaded = loadTracks();
+
+        if (structure_loaded)
         {
-            return;
+            // make sure tab is visible
+            bool found = false;
+            for (int tabId = 0; tabId < ui->tabWidget->count(); tabId++)
+            {
+                if (ui->tabWidget->tabText(tabId) == "Structure")
+                {
+                    found = true;
+                }
+            }
+            if (found == false) ui->tabWidget->addTab(ui->tabStructure, "Structure");
+        }
+        else
+        {
+            // delete tab
+            for (int tabId = 0; tabId < ui->tabWidget->count(); tabId++)
+            {
+                if (ui->tabWidget->tabText(tabId) == "Structure")
+                {
+                    ui->tabWidget->removeTab(tabId);
+                }
+            }
         }
 
-        loadXmlFile();
-        loadTracks();
-        loadSamples(wrapper->containerTrack);
+        if (tracks_loaded)
+        {
+            // make sure tab is visible
+            bool found = false;
+            for (int tabId = 0; tabId < ui->tabWidget->count(); tabId++)
+            {
+                if (ui->tabWidget->tabText(tabId) == "Samples")
+                {
+                    found = true;
+                }
+            }
+            if (found == false) ui->tabWidget->addTab(ui->tabSamples, "Samples");
+
+            loadSamples(wrapper->containerTrack);
+            ui->tabWidget_tracks->setCurrentIndex(wrapper->containerTrack);
+        }
+        else
+        {
+            // delete tab
+            for (int tabId = 0; tabId < ui->tabWidget->count(); tabId++)
+            {
+                if (ui->tabWidget->tabText(tabId) == "Samples")
+                {
+                    ui->tabWidget->removeTab(tabId);
+                }
+            }
+        }
 
         ui->tabWidget->setCurrentIndex(wrapper->containerMode);
-        ui->tabWidget_tracks->setCurrentIndex(wrapper->containerTrack);
+        ui->tabWidget->setVisible(structure_loaded && tracks_loaded);
 
         if (wrapper->containerMode == 0)
         {
@@ -167,21 +216,23 @@ void tabContainer::loadMedia(MediaWrapper *wrap)
         else if (wrapper->containerMode == 1)
         {
             if (wrapper->containerTrackSample >= 0)
-                ui->listWidget->setCurrentRow(wrapper->containerTrackSample);
+                ui->listWidget_samples->setCurrentRow(wrapper->containerTrackSample);
             else
-                ui->listWidget->setCurrentRow(0);
+                ui->listWidget_samples->setCurrentRow(0);
 
             sampleSelection();
         }
 
         ui->tabWidget->blockSignals(false);
         ui->tabWidget_tracks->blockSignals(false);
-        ui->treeWidget->blockSignals(false);
-        ui->listWidget->blockSignals(false);
+        ui->treeWidget_structure->blockSignals(false);
+        ui->listWidget_samples->blockSignals(false);
 
         // Force a resize event, so the scrollAreas don't get wider than our windows
         resizeEvent(nullptr);
     }
+
+    return status;
 }
 
 void tabContainer::closeMedia()
@@ -196,18 +247,18 @@ void tabContainer::closeMedia()
     ui->tabWidget_tracks->clear();
 
     // Clean the TreeWidget content
-    while (QWidget *item = ui->treeWidget->childAt(0,0))
+    while (QWidget *item = ui->treeWidget_structure->childAt(0,0))
     {
         delete item;
     }
-    ui->treeWidget->clear();
+    ui->treeWidget_structure->clear();
 
     // Clean the ListWidget content
-    while (QWidget *item = ui->listWidget->childAt(0,0))
+    while (QWidget *item = ui->listWidget_samples->childAt(0,0))
     {
         delete item;
     }
-    ui->listWidget->clear();
+    ui->listWidget_samples->clear();
 
     // Clean thumbnails
     clearPreviews();
@@ -227,9 +278,11 @@ void tabContainer::tabSwitch(int index)
     }
 }
 
-void tabContainer::loadTracks()
+unsigned tabContainer::loadTracks()
 {
     ui->tabWidget_tracks->clear();
+
+    unsigned track_loaded = 0;
 
     if (media)
     {
@@ -237,52 +290,58 @@ void tabContainer::loadTracks()
 
         for (unsigned i = 0; i < media->tracks_video_count; i++)
         {
-            if (media->tracks_video[i])
+            if (media->tracks_video[i] && media->tracks_video[i]->sample_count > 0)
             {
                 QWidget *placeholder = new QWidget();
 
                 ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_video[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_video[i];
+                track_loaded++;
             }
         }
         for (unsigned i = 0; i < media->tracks_audio_count; i++)
         {
-            if (media->tracks_audio[i])
+            if (media->tracks_audio[i] && media->tracks_audio[i]->sample_count > 0)
             {
                 QWidget *placeholder = new QWidget();
 
                 ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_audio[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_audio[i];
+                track_loaded++;
             }
         }
         for (unsigned i = 0; i < media->tracks_subtitles_count; i++)
         {
-            if (media->tracks_subt[i])
+            if (media->tracks_subt[i] && media->tracks_subt[i]->sample_count > 0)
             {
                 QWidget *placeholder = new QWidget();
 
                 ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_subt[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_subt[i];
+                track_loaded++;
             }
         }
         for (unsigned i = 0; i < media->tracks_others_count; i++)
         {
-            if (media->tracks_others[i])
+            if (media->tracks_others[i] && media->tracks_others[i]->sample_count > 0)
             {
                 QWidget *placeholder = new QWidget();
 
                 ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_others[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_others[i];
+                track_loaded++;
             }
         }
     }
+
+    return track_loaded;
 }
 
 void tabContainer::loadSamples(int tid)
 {
     //qDebug() << "loadSamples(track #" << tid << ")";
 
-    ui->listWidget->clear();
+    ui->listWidget_samples->clear();
 
     if (media && tracks[tid])
     {
@@ -297,18 +356,18 @@ void tabContainer::loadSamples(int tid)
         for (i = 0; i < sample_to_load; i++)
         {
             if (track->sample_type && track->sample_type[i] != sample_OTHER)
-                ui->listWidget->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
+                ui->listWidget_samples->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
             else
-                ui->listWidget->addItem(tr("Sample #") + QString::number(i));
+                ui->listWidget_samples->addItem(tr("Sample #") + QString::number(i));
         }
 
         if (i == sample_to_load_max)
         {
-            ui->listWidget->addItem(tr("Maximum of 512k samples reached!"));
+            ui->listWidget_samples->addItem(tr("Maximum of 512k samples reached!"));
         }
 
         // Force initial selection
-        ui->listWidget->setCurrentRow(0);
+        ui->listWidget_samples->setCurrentRow(0);
     }
     else
     {
@@ -318,7 +377,7 @@ void tabContainer::loadSamples(int tid)
 
 void tabContainer::sampleSelection()
 {
-    sampleSelection(ui->listWidget->currentRow());
+    sampleSelection(ui->listWidget_samples->currentRow());
 }
 
 void tabContainer::sampleSelection(int sid)
@@ -487,12 +546,12 @@ void tabContainer::containerSelectionEmpty()
     ui->widgetSamples->hide();
 
     // HexEditor
-    ui->widget_hex->setData(mediaFile);
+    //ui->widget_hex->setData(mediaFile);
 }
 
 void tabContainer::containerSelectionChanged()
 {
-    QTreeWidgetItem *item = ui->treeWidget->currentItem();
+    QTreeWidgetItem *item = ui->treeWidget_structure->currentItem();
     if (!item) return;
 
     int64_t selected_offset = item->data(0, Qt::UserRole).toLongLong();
@@ -523,14 +582,14 @@ void tabContainer::containerSelection(int64_t selected_offset)
     clearContent();
 
     // we find the item with given offset
-    if (ui->treeWidget->currentItem() == nullptr)
+    if (ui->treeWidget_structure->currentItem() == nullptr)
     {
-        QTreeWidgetItemIterator it(ui->treeWidget);
+        QTreeWidgetItemIterator it(ui->treeWidget_structure);
         while (*it)
         {
           if ((*it)->data(0, Qt::UserRole).toLongLong() == selected_offset)
           {
-              ui->treeWidget->setCurrentItem((*it));
+              ui->treeWidget_structure->setCurrentItem((*it));
             break;
           }
           ++it;
@@ -811,7 +870,7 @@ bool tabContainer::loadXmlFile()
     //qDebug() << "loadXmlFile()";
     bool status = true;
 
-    ui->treeWidget->clear();
+    ui->treeWidget_structure->clear();
     xmlMapFile.close();
 
     if (!media)
@@ -976,7 +1035,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
     if (item)
         child_item = new QTreeWidgetItem(item);
     else
-        child_item = new QTreeWidgetItem(ui->treeWidget);
+        child_item = new QTreeWidgetItem(ui->treeWidget_structure);
 
     if (child_item)
     {
@@ -1005,7 +1064,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
                     if (fcc != "trak" && fcc != "moof" &&
                         title != "Cluster" && title != "Cues" && title != "Tags")
                     {
-                        child_item->setExpanded(true);
+                        ui->treeWidget_structure->setItemExpanded(child_item, true);
                     }
 
                     if (add == "track")

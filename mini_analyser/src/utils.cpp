@@ -29,16 +29,16 @@
 
 #include <QDebug>
 
-QString getDurationString(const uint32_t duration)
+QString getDurationString(const uint64_t duration)
 {
     QString duration_qstr;
 
     if (duration > 0)
     {
-        unsigned hours = duration / 3600000;
-        unsigned minutes = (duration - (hours * 3600000)) / 60000;
-        unsigned seconds = (duration - (hours * 3600000) - (minutes * 60000)) / 1000;
-        unsigned ms = (duration - (hours * 3600000) - (minutes * 60000)) - (seconds * 1000);
+        uint64_t hours = duration / 3600000;
+        uint64_t minutes = (duration - (hours * 3600000)) / 60000;
+        uint64_t seconds = (duration - (hours * 3600000) - (minutes * 60000)) / 1000;
+        uint64_t ms = (duration - (hours * 3600000) - (minutes * 60000)) - (seconds * 1000);
 
         if (hours > 0)
         {
@@ -134,7 +134,7 @@ QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate
         uint64_t seconds = (timestamp - (hours * 3600000000) - (minutes * 60000000)) / 1000000;
 
         double us = (timestamp - (hours * 3600000000) - (minutes * 60000000) - (seconds * 1000000));
-        uint64_t frames = std::floor(us / std::floor(1000000.0 / framerate));
+        uint64_t frames = static_cast<uint64_t>(std::floor(us / std::floor(1000000.0 / framerate)));
 
         timestamp_qstr = QString::number(hours) + ":" + QString::number(minutes) + ":" + QString::number(seconds) + "-" + QString::number(frames);
         timestamp_qstr = QString("%1:%2:%3-%4")\
@@ -251,8 +251,8 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
                 if (detailed)
                 {
                     size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB  /  "
-                              + QString::number(size_int / 1000.0, 'f', 2) + " KB  /  "
-                              + QString::number(size_int) + " bytes";
+                              + QString::number(size_int / 1000.0, 'f', 2) + " KB  ("
+                              + QString::number(size_int) + " bytes)";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0, 'f', 2) + " KiB";
@@ -262,8 +262,8 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
                 if (detailed)
                 {
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB  /  "
-                              + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB  /  "
-                              + QString::number(size_int) + " bytes";
+                              + QString::number(size_int / 1000.0 / 1000.0, 'f', 2) + " MB  ("
+                              + QString::number(size_int) + " bytes)";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0, 'f', 2) + " MiB";
@@ -273,8 +273,8 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
                 if (detailed)
                 {
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB  /  "
-                              + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB  /  "
-                              + QString::number(size_int) + " bytes";
+                              + QString::number(size_int / 1000.0 / 1000.0 / 1000.0, 'f', 2) + " GB  ("
+                              + QString::number(size_int) + " bytes)";
                 }
                 else
                     size_qstr = QString::number(size_int / 1024.0 / 1024.0 / 1024.0, 'f', 2) + " GiB";
@@ -744,7 +744,6 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "id", lng_size) == 0 ||
                  strncmp(languageCode, "ind", lng_size) == 0)
             langage_qstr = QObject::tr("Indonesian");
-
 
         else
             langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));

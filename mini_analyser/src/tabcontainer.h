@@ -51,8 +51,8 @@ public:
     explicit tabContainer(QWidget *parent = nullptr);
     ~tabContainer();
 
-    void loadMedia(MediaWrapper *wrapper);
-    void loadTracks();
+    bool loadMedia(MediaWrapper *wrapper);
+    unsigned loadTracks();
     void closeMedia();
 
 private slots:

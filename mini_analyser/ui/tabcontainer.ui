@@ -67,7 +67,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTreeWidget" name="treeWidget">
+        <widget class="QTreeWidget" name="treeWidget_structure">
          <property name="indentation">
           <number>16</number>
          </property>
@@ -115,7 +115,7 @@
         <number>0</number>
        </property>
        <item row="1" column="0">
-        <widget class="QListWidget" name="listWidget"/>
+        <widget class="QListWidget" name="listWidget_samples"/>
        </item>
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget_tracks">
