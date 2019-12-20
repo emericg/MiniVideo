@@ -144,9 +144,9 @@ unix {
         #QMAKE_RPATHDIR += @executable_path/../Frameworks
         #QMAKE_RPATHDIR += $${PWD}/../minivideo/build
 
-        #
+        # Rewrite minivideo rpath
         #QMAKE_POST_LINK = (install_name_tool -add_rpath @executable_path/../Frameworks/. "bin/mini_analyser.app/Contents/MacOS/mini_analyser")
-        QMAKE_POST_LINK = (install_name_tool -change libminivideo.0.dylib @executable_path/../Frameworks/libminivideo.dylib "bin/mini_analyser.app/Contents/MacOS/mini_analyser")
+        #QMAKE_POST_LINK = (install_name_tool -change libminivideo.0.dylib @executable_path/../Frameworks/libminivideo.dylib "bin/mini_analyser.app/Contents/MacOS/mini_analyser")
     }
 }
 
@@ -174,6 +174,7 @@ macx {
     # Automatic bundle packaging
     deploy.commands = macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app
     deploy.commands += && ($${QMAKE_COPY_FILE} $${OUT_PWD}/../minivideo/build/libminivideo.dylib $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app/Contents/Frameworks/libminivideo.dylib)
+    deploy.commands += && (install_name_tool -change libminivideo.0.dylib @executable_path/../Frameworks/libminivideo.dylib $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app/Contents/MacOS/mini_analyser)
     install.depends = deploy
     QMAKE_EXTRA_TARGETS += install deploy
 
