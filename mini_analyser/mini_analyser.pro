@@ -173,7 +173,7 @@ win32 {
 macx {
     # Automatic bundle packaging
     deploy.commands = macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app
-    deploy.commands += && ($${QMAKE_COPY_FILE} $${OUT_PWD}/minivideo/build/libminivideo.dylib $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app/Contents/Frameworks/libminivideo.dylib)
+    deploy.commands += && ($${QMAKE_COPY_FILE} $${OUT_PWD}/../minivideo/build/libminivideo.dylib $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app/Contents/Frameworks/libminivideo.dylib)
     install.depends = deploy
     QMAKE_EXTRA_TARGETS += install deploy
 
