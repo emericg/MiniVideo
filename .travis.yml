@@ -1,17 +1,14 @@
 language: cpp
-sudo: required
+dist: xenial
+osx_image: xcode11.2
 
 os:
   - linux
   - osx
 
-cache:
-  apt: true
-
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      sudo apt-add-repository ppa:beineri/opt-qt-5.12.3-xenial -y;
-      sudo apt-add-repository ppa:ubuntu-toolchain-r/test -y;
+      sudo apt-add-repository ppa:beineri/opt-qt-5.12.6-xenial -y;
       sudo apt-get update -q;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -27,35 +24,20 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew install qt;
     fi
-  # Generate the linux/memfd.h header
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo mkdir -p /usr/include/linux; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo touch /usr/include/linux/memfd.h; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo chmod 777 /usr/include/linux/memfd.h; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo printf "%s\n" \
-           "#ifndef _LINUX_MEMFD_H" \
-           "#define _LINUX_MEMFD_H" \
-           "" \
-           "#define __NR_memfd_create 319" \
-           "#define SYS_memfd_create __NR_memfd_create" \
-           "" \
-           "#define MFD_CLOEXEC             0x0001U" \
-           "#define MFD_ALLOW_SEALING       0x0002U" \
-           "" \
-           "#endif /* _LINUX_MEMFD_H */" > /usr/include/linux/memfd.h; fi
 
 before_script:
-  - cd minivideo/build/
-  - cmake --version
-  - cmake ..
-  - make
-
-script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt512/bin/qt512-env.sh; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$PATH:/usr/local/opt/qt5/bin:/usr/local/bin; fi
-  - cd ../../mini_analyser/
   - qmake --version
+  - cmake --version
+
+script:
+  - cd minivideo/build/
+  - cmake ..
+  - make -j$(nproc)
+  - cd ../../mini_analyser/
   - qmake CONFIG+=release PREFIX=/usr
-  - make
+  - make -j$(nproc)
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       make INSTALL_ROOT=appdir -j$(nproc) install; find appdir/;
       wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdeployqt-6-x86_64.AppImage";
