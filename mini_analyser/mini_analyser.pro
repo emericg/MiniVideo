@@ -141,10 +141,12 @@ unix {
         #QMAKE_MACOSX_DEPLOYMENT_TARGET = $${XCODE_SDK_VERSION}
 
         # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
-        QMAKE_RPATHDIR += @executable_path/../Frameworks
+        #QMAKE_RPATHDIR += @executable_path/../Frameworks
+        #QMAKE_RPATHDIR += $${PWD}/../minivideo/build
 
         #
-        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/bin/mini_analyser)
+        #QMAKE_POST_LINK = (install_name_tool -add_rpath @executable_path/../Frameworks/. "bin/mini_analyser.app/Contents/MacOS/mini_analyser")
+        QMAKE_POST_LINK = (install_name_tool -change libminivideo.0.dylib @executable_path/../Frameworks/libminivideo.dylib "bin/mini_analyser.app/Contents/MacOS/mini_analyser")
     }
 }
 
@@ -156,9 +158,6 @@ win32 {
 # Deployment -------------------------------------------------------------------
 
 win32 {
-    # Application packaging
-    #system(windeployqt $${OUT_PWD}/$${DESTDIR})
-
     # Automatic application packaging
     deploy.commands = $$quote(windeployqt $${OUT_PWD}/$${DESTDIR}/)
     install.depends = deploy
@@ -172,11 +171,9 @@ win32 {
 }
 
 macx {
-    # Bundle packaging
-    #system(macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app)
-
     # Automatic bundle packaging
     deploy.commands = macdeployqt $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app
+    deploy.commands += && ($${QMAKE_COPY_FILE} $${OUT_PWD}/minivideo/build/libminivideo.dylib $${OUT_PWD}/$${DESTDIR}/$${TARGET}.app/Contents/Frameworks/libminivideo.dylib)
     install.depends = deploy
     QMAKE_EXTRA_TARGETS += install deploy
 
