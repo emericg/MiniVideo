@@ -776,6 +776,10 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                         {
                             parse_h264_private(bitstr, mkv_track, mkv);
                         }
+                        else if (mkv_track->CodecID && strcmp(mkv_track->CodecID, "V_MPEGH/ISO/HEVC") == 0)
+                        {
+                            parse_h265_private(bitstr, mkv_track, mkv);
+                        }
 
                         bitstream_goto_offset(bitstr, saveOffset);
                     }

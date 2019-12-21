@@ -44,7 +44,7 @@
 
 /* ************************************************************************** */
 
-void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
+void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
 {
     if (!codec_str || !codec || !profile)
         return;
@@ -57,17 +57,49 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
         if (strncmp(codec_str, "A_AAC", 5) == 0)
         {
             *codec = CODEC_AAC;
-/*
-            A_AAC/MPEG2/MAIN
-            A_AAC/MPEG2/LC
-            A_AAC/MPEG2/LC/SBR
-            A_AAC/MPEG2/SSR
-            A_AAC/MPEG4/MAIN
-            A_AAC/MPEG4/LC
-            A_AAC/MPEG4/LC/SBR
-            A_AAC/MPEG4/SSR
-            A_AAC/MPEG4/LTP
-*/
+
+            if (strncmp(codec_str, "A_AAC/MPEG2", 11) == 0)
+            {
+                if (strcmp(codec_str, "A_AAC/MPEG2/MAIN") == 0)
+                {
+                    *profile = PROF_AAC_Main;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG2/LC") == 0)
+                {
+                    *profile = PROF_AAC_LC;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG2/LC/SBR") == 0)
+                {
+                    *profile = PROF_AAC_HE;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG2/SSR") == 0)
+                {
+                    *profile = PROF_AAC_SSR;
+                }
+            }
+            else if (strncmp(codec_str, "A_AAC/MPEG4", 11) == 0)
+            {
+                if (strcmp(codec_str, "A_AAC/MPEG4/MAIN") == 0)
+                {
+                    *profile = PROF_AAC_Main;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG4/LC") == 0)
+                {
+                    *profile = PROF_AAC_LC;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG4/LC/SBR") == 0)
+                {
+                    *profile = PROF_AAC_HE;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG4/SSR") == 0)
+                {
+                    *profile = PROF_AAC_SSR;
+                }
+                else if (strcmp(codec_str, "A_AAC/MPEG4/LTP") == 0)
+                {
+                    //*profile = PROF_AAC_HQ;
+                }
+            }
         }
         else if (strncmp(codec_str, "A_MPEG", 6) == 0)
         {
@@ -234,21 +266,24 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
         {
             *codec = CODEC_MSMPEG4;
         }
-        else if (strcmp(codec_str, "V_REAL/RV10") == 0)
+        else if (strncmp(codec_str, "V_REAL", 6) == 0)
         {
-            *codec = CODEC_RV10;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV20") == 0)
-        {
-            *codec = CODEC_RV20;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV30") == 0)
-        {
-            *codec = CODEC_RV30;
-        }
-        else if (strcmp(codec_str, "V_REAL/RV40") == 0)
-        {
-            *codec = CODEC_RV40;
+            if (strcmp(codec_str, "V_REAL/RV10") == 0)
+            {
+                *codec = CODEC_RV10;
+            }
+            else if (strcmp(codec_str, "V_REAL/RV20") == 0)
+            {
+                *codec = CODEC_RV20;
+            }
+            else if (strcmp(codec_str, "V_REAL/RV30") == 0)
+            {
+                *codec = CODEC_RV30;
+            }
+            else if (strcmp(codec_str, "V_REAL/RV40") == 0)
+            {
+                *codec = CODEC_RV40;
+            }
         }
         else if (strcmp(codec_str, "V_THEORA") == 0)
         {
@@ -303,30 +338,30 @@ void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile)
  *
  * This subclause specifies the decoder configuration information for ISO/IEC
  * 14496-10 video content.
- * Contain AVCDecoderConfigurationRecord data structure (5.2.4.1.1 Syntax, 5.2.4.1.2 Semantics).
+ * Contain AVCDecoderConfigurationRecord data structure (5.2.4.1.2 Syntax, 5.2.4.1.2 Semantics).
  */
 int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 {
-    TRACE_INFO(MP4, BLD_GREEN "parse_h264_private()" CLR_RESET);
+    TRACE_INFO(MKV, BLD_GREEN "parse_h264_private()" CLR_RESET);
     int retcode = SUCCESS;
 
     // Parse box content
-    unsigned int i = 0;
+    unsigned i = 0;
 
-    unsigned int configurationVersion = read_bits(bitstr, 8);
-    unsigned int AVCProfileIndication = read_bits(bitstr, 8);
-    unsigned int profile_compatibility = read_bits(bitstr, 8);
-    unsigned int AVCLevelIndication = read_bits(bitstr, 8);
+    unsigned configurationVersion = read_bits(bitstr, 8);
+    unsigned AVCProfileIndication = read_bits(bitstr, 8);
+    unsigned profile_compatibility = read_bits(bitstr, 8);
+    unsigned AVCLevelIndication = read_bits(bitstr, 8);
     /*int reserved =*/ read_bits(bitstr, 6);
-    unsigned int lengthSizeMinusOne = read_bits(bitstr, 2);
+    unsigned lengthSizeMinusOne = read_bits(bitstr, 2);
     /*int reserved =*/ read_bits(bitstr, 3);
 
     // SPS
-    track->sps_count = read_bits(bitstr, 5); // MAX_SPS = 32
+    track->sps_count = read_bits(bitstr, 5);
     track->sps_sample_offset = new int64_t [track->sps_count];
     track->sps_sample_size = new unsigned int[track->sps_count];
 
-    for (i = 0; i < track->sps_count; i++)
+    for (i = 0; i < track->sps_count; i++) // MAX_SPS = 32
     {
         track->sps_sample_size[i] = read_bits(bitstr, 16);
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -340,7 +375,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 
         if (bitstream_get_absolute_byte_offset(bitstr) != (track->sps_sample_offset[i] + track->sps_sample_size[i]))
         {
-            TRACE_WARNING(MP4, "SPS OFFSET ERROR  %lli vs %lli",
+            TRACE_WARNING(MKV, "SPS OFFSET ERROR  %lli vs %lli",
                           bitstream_get_absolute_byte_offset(bitstr),
                           (track->sps_sample_offset[i] + track->sps_sample_size[i]));
 
@@ -349,11 +384,11 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     }
 
     // PPS
-    track->pps_count = read_bits(bitstr, 8); // MAX_PPS = 256
+    track->pps_count = read_bits(bitstr, 8);
     track->pps_sample_offset = new int64_t[track->pps_count];
     track->pps_sample_size = new unsigned int[track->pps_count];
 
-    for (i = 0; i < track->pps_count; i++)
+    for (i = 0; i < track->pps_count; i++) // MAX_PPS = 256
     {
        track->pps_sample_size[i] = read_bits(bitstr, 16);
        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -367,82 +402,43 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 
        if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
        {
-           TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
+           TRACE_WARNING(MKV, "PPS OFFSET ERROR  %lli vs %lli",
                          bitstream_get_absolute_byte_offset(bitstr),
                          (track->pps_sample_offset[i] + track->pps_sample_size[i]));
            skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
        }
     }
 
-    // Handle H.264 profiles
-    switch (AVCProfileIndication)
-    {
-    case 66:
-        track->codec_profile = PROF_H264_CBP;
-        break;
-    case 77:
-        track->codec_profile = PROF_H264_MP;
-        break;
-    case 88:
-        track->codec_profile = PROF_H264_XP;
-        break;
-    case 100:
-        track->codec_profile = PROF_H264_HiP;
-        break;
-    case 110:
-        track->codec_profile = PROF_H264_Hi10P;
-        break;
-    case 122:
-        track->codec_profile = PROF_H264_Hi422P;
-        break;
-    case 244:
-        track->codec_profile = PROF_H264_Hi444PP;
-        break;
-
-    case 44:
-        track->codec_profile = PROF_H264_M444It;
-        break;
-    case 86:
-        track->codec_profile = PROF_H264_ScHiP;
-        break;
-    case 118:
-        track->codec_profile = PROF_H264_MvHiP;
-        break;
-    case 128:
-        track->codec_profile = PROF_H264_StHiP;
-        break;
-
-    default:
-        track->codec_profile = PROF_H264_;
-        break;
-    }
+    // Handle H.264 profile & level
+    track->codec_profile = getH264CodecProfile(AVCProfileIndication);
+    track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
 
 #if ENABLE_DEBUG
-    TRACE_1(MP4, "> configurationVersion  : %u", configurationVersion);
-    TRACE_1(MP4, "> AVCProfileIndication  : %u", AVCProfileIndication);
-    TRACE_1(MP4, "> profile_compatibility : %u", profile_compatibility);
-    TRACE_1(MP4, "> AVCLevelIndication    : %u", AVCLevelIndication);
-    TRACE_1(MP4, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
+    TRACE_1(MKV, "> configurationVersion  : %u", configurationVersion);
+    TRACE_1(MKV, "> AVCProfileIndication  : %u", AVCProfileIndication);
+    TRACE_1(MKV, "> profile_compatibility : %u", profile_compatibility);
+    TRACE_1(MKV, "> AVCLevelIndication    : %u", AVCLevelIndication);
+    TRACE_1(MKV, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
 
-    TRACE_1(MP4, "> numOfSequenceParameterSets    = %u", track->sps_count);
+    TRACE_1(MKV, "> numOfSequenceParameterSets    = %u", track->sps_count);
     for (i = 0; i < track->sps_count; i++)
     {
-        TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
-        TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
+        TRACE_1(MKV, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
+        TRACE_1(MKV, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
     }
 
-    TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->pps_count);
+    TRACE_1(MKV, "> numOfPictureParameterSets     = %u", track->pps_count);
     for (i = 0; i < track->pps_count; i++)
     {
-        TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
-        TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
+        TRACE_1(MKV, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
+        TRACE_1(MKV, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
     }
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (mkv->xml)
     {
-        xmlSpacer(mkv->xml, "CodecPrivate parsing:", -1);
+        xmlSpacer(mkv->xml, "AVC Configuration:", -1);
         fprintf(mkv->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
         fprintf(mkv->xml, "  <AVCProfileIndication>%u</AVCProfileIndication>\n", AVCProfileIndication);
         fprintf(mkv->xml, "  <profile_compatibility>%u</profile_compatibility>\n", profile_compatibility);
@@ -483,6 +479,123 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
                    track->pps_sample_offset[i],
                    track->pps_sample_size[i],
                    mkv->xml);
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief HEVC Configuration Box.
+ *
+ * From 'ISO/IEC 14496-15' specification:
+ * 8.3.3 Decoder configuration information.
+ *
+ * This subclause specifies the decoder configuration information for ISO/IEC
+ * 23008-2 video content.
+ * Contain HEVCDecoderConfigurationRecord data structure (8.3.3.1.2 Syntax, 8.3.3.1.3 Semantics).
+ */
+int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
+{
+    TRACE_INFO(MKV, BLD_GREEN "parse_h265_private()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+    unsigned i = 0;
+
+    unsigned configurationVersion = read_bits(bitstr, 8);
+    unsigned general_profile_space = read_bits(bitstr, 2);
+    bool general_tier_flag = read_bits(bitstr, 1);
+    unsigned general_profile_idc = read_bits(bitstr, 5);
+    uint32_t general_profile_compatibility_flags = read_bits(bitstr, 32);
+    uint64_t general_constraint_indicator_flags = read_bits_64(bitstr, 48);
+
+    unsigned general_level_idc = read_bits(bitstr, 8);
+    skip_bits(bitstr, 4); // reserved
+    unsigned min_spatial_segmentation_idc = read_bits(bitstr, 12);
+    skip_bits(bitstr, 6); // reserved
+    unsigned parallelismType = read_bits(bitstr, 2);
+    skip_bits(bitstr, 6); // reserved
+    unsigned chromaFormat = read_bits(bitstr, 2);
+    skip_bits(bitstr, 5); // reserved
+    unsigned bitDepthLumaMinus8 = read_bits(bitstr, 3);
+    skip_bits(bitstr, 5); // reserved
+    unsigned bitDepthChromaMinus8 = read_bits(bitstr, 3);
+
+    unsigned avgFrameRate = read_bits(bitstr, 16);
+    unsigned constantFrameRate = read_bits(bitstr, 2);
+    unsigned numTemporalLayers = read_bits(bitstr, 3);
+    bool temporalIdNested = read_bits(bitstr, 1);
+    unsigned lengthSizeMinusOne = read_bits(bitstr, 1);
+
+    unsigned numOfArrays = read_bits(bitstr, 1);
+    for (i = 0; i < numOfArrays; i++)
+    {
+        // TODO // NAL unit table
+    }
+
+    // Handle H.265 profile & level
+    track->codec_profile = getH265CodecProfile(general_profile_idc);
+    track->codec_level = static_cast<double>(general_level_idc) / 30.0;
+
+#if ENABLE_DEBUG
+    TRACE_1(MKV, "> configurationVersion    : %u", configurationVersion);
+    TRACE_1(MKV, "> general_profile_space   : %u", general_profile_space);
+    TRACE_1(MKV, "> general_tier_flag       : %u", general_tier_flag);
+    TRACE_1(MKV, "> general_profile_idc     : %u", general_profile_idc);
+    TRACE_1(MKV, "> general_profile_compatibility_flags : %u", general_profile_compatibility_flags);
+    TRACE_1(MKV, "> general_constraint_indicator_flags  : %lu", general_constraint_indicator_flags);
+    TRACE_1(MKV, "> general_level_idc       : %u", general_level_idc);
+
+    TRACE_1(MKV, "> min_spatial_segmentation_idc: %u", min_spatial_segmentation_idc);
+    TRACE_1(MKV, "> parallelismType         : %u", parallelismType);
+    TRACE_1(MKV, "> chromaFormat            : %u", chromaFormat);
+    TRACE_1(MKV, "> bitDepthLumaMinus8      : %u", bitDepthLumaMinus8);
+    TRACE_1(MKV, "> bitDepthChromaMinus8    : %u", bitDepthChromaMinus8);
+
+    TRACE_1(MKV, "> avgFrameRate            : %u", avgFrameRate);
+    TRACE_1(MKV, "> constantFrameRate       : %u", constantFrameRate);
+    TRACE_1(MKV, "> numTemporalLayers       : %u", numTemporalLayers);
+    TRACE_1(MKV, "> temporalIdNested        : %u", temporalIdNested);
+    TRACE_1(MKV, "> lengthSizeMinusOne      : %u", lengthSizeMinusOne);
+    TRACE_1(MKV, "> numOfArrays             : %u", numOfArrays);
+
+    for (unsigned j = 0; j < numOfArrays; j++)
+    {
+        // TODO // NAL unit table
+    }
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mkv->xml)
+    {
+        xmlSpacer(mkv->xml, "HEVC Configuration:", -1);
+        fprintf(mkv->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
+        fprintf(mkv->xml, "  <general_profile_space>%u</general_profile_space>\n", general_profile_space);
+        fprintf(mkv->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
+        fprintf(mkv->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
+        fprintf(mkv->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
+        fprintf(mkv->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mkv->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
+
+        fprintf(mkv->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", min_spatial_segmentation_idc);
+        fprintf(mkv->xml, "  <parallelismType>%u</parallelismType>\n", parallelismType);
+        fprintf(mkv->xml, "  <chromaFormat>%u</chromaFormat>\n", chromaFormat);
+        fprintf(mkv->xml, "  <bitDepthLumaMinus8>%u</bitDepthLumaMinus8>\n", bitDepthLumaMinus8);
+        fprintf(mkv->xml, "  <bitDepthChromaMinus8>%u</bitDepthChromaMinus8>\n", bitDepthChromaMinus8);
+
+        fprintf(mkv->xml, "  <avgFrameRate>%u</avgFrameRate>\n", avgFrameRate);
+        fprintf(mkv->xml, "  <constantFrameRate>%u</constantFrameRate>\n", constantFrameRate);
+        fprintf(mkv->xml, "  <numTemporalLayers>%u</numTemporalLayers>\n", numTemporalLayers);
+        fprintf(mkv->xml, "  <temporalIdNested>%u</temporalIdNested>\n", temporalIdNested);
+        fprintf(mkv->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
+
+        fprintf(mkv->xml, "  <numOfArrays>%u</numOfArrays>\n", numOfArrays);
+        for (unsigned j = 0; j < numOfArrays; j++)
+        {
+            // TODO // NAL unit table
         }
     }
 

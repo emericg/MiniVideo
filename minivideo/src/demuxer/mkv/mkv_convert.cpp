@@ -158,7 +158,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
     {
         // Track parameters
 
-        mkv_codec(track->CodecID, &map->stream_codec, &map->stream_codec_profile);
+        mkv_codec_from_string(track->CodecID, &map->stream_codec, &map->stream_codec_profile);
 
         if (track->Name && strnlen(track->Name, 256) > 0)
         {
@@ -184,6 +184,9 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         {
             map->stream_duration_ms = media->duration;
         }
+
+        // Codec private
+        map->stream_codec_profile = (CodecProfiles_e)track->codec_profile;
 
         if (track->TrackType == MKV_TRACK_VIDEO && track->video)
         {

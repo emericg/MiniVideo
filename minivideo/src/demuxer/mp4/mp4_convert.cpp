@@ -292,7 +292,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
 
         // Set samples details into the bitstream map
-        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
 
         // Bitrate mode
         uint32_t sample_size_cbr = 0;

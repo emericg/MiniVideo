@@ -101,7 +101,7 @@ typedef struct Mp4Track_t
 
         // AVC/HEVC specific parameters
         unsigned int codec_profile;
-        unsigned int codec_level;
+        double codec_level;
         unsigned int ref_frames;
 
         unsigned int sps_count;

@@ -31,11 +31,12 @@
 
 /* ************************************************************************** */
 
-void mkv_codec(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile);
+void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *profile);
 
 /* ************************************************************************** */
 
 int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
 
 /* ************************************************************************** */
 #endif // PARSER_MKV_CODEC_H
