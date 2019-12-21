@@ -206,6 +206,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             }
             map->color_depth *= 3;
             map->framerate = 1000000000.0 / track->DefaultDuration;
+            map->video_level = track->codec_level;
 
             if (track->video->StereoMode)
             {

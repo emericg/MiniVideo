@@ -938,6 +938,18 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_profile->setVisible(false);
             }
 
+            if (t->video_level > 0)
+            {
+                ui->label_89->setVisible(true);
+                ui->label_video_level->setVisible(true);
+                ui->label_video_level->setText(QString::number(t->video_level, 'g', 2));
+            }
+            else
+            {
+                ui->label_89->setVisible(false);
+                ui->label_video_level->setVisible(false);
+            }
+
             if (t->stream_fcc)
             {
                 ui->label_14->setVisible(true);
@@ -958,6 +970,8 @@ int MainWindow::printVideoDetails()
             ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
+            ui->label_video_definition_visible->setVisible(false);
+            ui->label_10->setVisible(false);
             ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, true));
             if (t->video_projection)
             {

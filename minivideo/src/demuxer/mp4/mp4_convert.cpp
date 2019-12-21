@@ -217,6 +217,8 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 map->pixel_aspect_ratio_v = 1;
             }
 
+            map->video_level = track->codec_level;
+
             map->stereo_mode = (StereoMode_e)track->stereo;
             map->video_projection = (Projection_e)track->projection;
             if (track->rotation == 90)
