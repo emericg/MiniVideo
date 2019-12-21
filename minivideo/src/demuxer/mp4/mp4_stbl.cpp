@@ -1499,9 +1499,9 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     nalUnit[j] = (uint8_t **)malloc(numNalus[j]);
                     if (nalUnitLength[j] && nalUnit[j])
                     {
-                        for (unsigned i = 0; i < numNalus[j]; i++)
+                        for (unsigned k = 0; k < numNalus[j]; k++)
                         {
-                            nalUnitLength[j][i] = read_bits(bitstr, 16);
+                            nalUnitLength[j][k] = read_bits(bitstr, 16);
 /*
                             // TODO register SPS & PPS
                             if (NAL_unit_type[j] == SPS)

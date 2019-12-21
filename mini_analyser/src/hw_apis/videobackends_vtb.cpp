@@ -105,8 +105,6 @@ static void session_output_callback (void *decompression_output_ref_con,
     //
 }
 
-CMFormatDescriptionRef format_description = nullptr;
-
 void dict_set_boolean (CFMutableDictionaryRef dict, CFStringRef key, bool value)
 {
     CFDictionarySetValue (dict, key, value ? kCFBooleanTrue : kCFBooleanFalse);
