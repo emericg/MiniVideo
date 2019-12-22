@@ -346,8 +346,6 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     int retcode = SUCCESS;
 
     // Parse box content
-    unsigned i = 0;
-
     unsigned configurationVersion = read_bits(bitstr, 8);
     unsigned AVCProfileIndication = read_bits(bitstr, 8);
     unsigned profile_compatibility = read_bits(bitstr, 8);
@@ -361,7 +359,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     track->sps_sample_offset = new int64_t [track->sps_count];
     track->sps_sample_size = new unsigned int[track->sps_count];
 
-    for (i = 0; i < track->sps_count; i++) // MAX_SPS = 32
+    for (unsigned i = 0; i < track->sps_count && i < MAX_SPS; i++) // MAX_SPS = 32
     {
         track->sps_sample_size[i] = read_bits(bitstr, 16);
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -388,7 +386,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     track->pps_sample_offset = new int64_t[track->pps_count];
     track->pps_sample_size = new unsigned int[track->pps_count];
 
-    for (i = 0; i < track->pps_count; i++) // MAX_PPS = 256
+    for (unsigned i = 0; i < track->pps_count && i < MAX_PPS; i++) // MAX_PPS = 256
     {
        track->pps_sample_size[i] = read_bits(bitstr, 16);
        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -410,8 +408,39 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     }
 
     // Handle H.264 profile & level
-    track->codec_profile = getH264CodecProfile(AVCProfileIndication);
-    track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+    if (track->sps_count > 0 && track->sps_array[0])
+    {
+        track->codec_profile = getH264CodecProfile(track->sps_array[0]->profile_idc,
+                                                   track->sps_array[0]->constraint_setX_flag[0],
+                                                   track->sps_array[0]->constraint_setX_flag[1],
+                                                   track->sps_array[0]->constraint_setX_flag[2],
+                                                   track->sps_array[0]->constraint_setX_flag[3],
+                                                   track->sps_array[0]->constraint_setX_flag[4],
+                                                   track->sps_array[0]->constraint_setX_flag[5]);
+        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+
+        track->max_ref_frames = track->sps_array[0]->max_num_ref_frames;
+        //track->color_depth = track->sps_array[0]->BitDepthY;
+
+        if (track->sps_array[0]->vui)
+        {
+            //track->color_range = track->sps_array[0]->vui->video_full_range_flag;
+
+            //track->sps_array[0]->vui->colour_primaries;
+            //track->sps_array[0]->vui->transfer_characteristics;
+            //track->sps_array[0]->vui->matrix_coefficients;
+        }
+
+        if (track->pps_count && track->pps_array[0])
+        {
+            track->use_cabac = track->pps_array[0]->entropy_coding_mode_flag;
+        }
+    }
+    else
+    {
+        track->codec_profile = getH264CodecProfile(AVCProfileIndication);
+        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+    }
 
 #if ENABLE_DEBUG
     TRACE_1(MKV, "> configurationVersion  : %u", configurationVersion);
@@ -421,14 +450,14 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     TRACE_1(MKV, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
 
     TRACE_1(MKV, "> numOfSequenceParameterSets    = %u", track->sps_count);
-    for (i = 0; i < track->sps_count; i++)
+    for (unsigned i = 0; i < track->sps_count; i++)
     {
         TRACE_1(MKV, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
         TRACE_1(MKV, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
     }
 
     TRACE_1(MKV, "> numOfPictureParameterSets     = %u", track->pps_count);
-    for (i = 0; i < track->pps_count; i++)
+    for (unsigned i = 0; i < track->pps_count; i++)
     {
         TRACE_1(MKV, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
         TRACE_1(MKV, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
@@ -446,7 +475,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         fprintf(mkv->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
 
         fprintf(mkv->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
-        for (i = 0; i < track->sps_count; i++)
+        for (unsigned i = 0; i < track->sps_count; i++)
         {
             xmlSpacer(mkv->xml, "SequenceParameterSet infos", i);
             fprintf(mkv->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
@@ -454,14 +483,14 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         }
 
         fprintf(mkv->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
-        for (i = 0; i < track->pps_count; i++)
+        for (unsigned i = 0; i < track->pps_count; i++)
         {
             xmlSpacer(mkv->xml, "PictureParameterSet", i);
             fprintf(mkv->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
             fprintf(mkv->xml, "  <pictureParameterSetOffset index=\"%u\">%" PRId64 "</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }
 
-        for (i = 0; i < track->sps_count; i++)
+        for (unsigned i = 0; i < track->sps_count; i++)
         {
             printPPS(track->pps_array[i], track->sps_array);
 
@@ -470,7 +499,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
                    track->sps_sample_size[i],
                    mkv->xml);
         }
-        for (i = 0; i < track->pps_count; i++)
+        for (unsigned i = 0; i < track->pps_count; i++)
         {
             printPPS(track->pps_array[i], track->sps_array);
 
@@ -503,8 +532,6 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     int retcode = SUCCESS;
 
     // Parse box content
-    unsigned i = 0;
-
     unsigned configurationVersion = read_bits(bitstr, 8);
     unsigned general_profile_space = read_bits(bitstr, 2);
     bool general_tier_flag = read_bits(bitstr, 1);
@@ -531,7 +558,7 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     unsigned lengthSizeMinusOne = read_bits(bitstr, 1);
 
     unsigned numOfArrays = read_bits(bitstr, 1);
-    for (i = 0; i < numOfArrays; i++)
+    for (unsigned i = 0; i < numOfArrays; i++)
     {
         // TODO // NAL unit table
     }

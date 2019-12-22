@@ -218,6 +218,8 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             }
 
             map->video_level = track->codec_level;
+            map->max_ref_frames = track->max_ref_frames;
+            map->use_cabac = track->use_cabac;
 
             map->stereo_mode = (StereoMode_e)track->stereo;
             map->video_projection = (Projection_e)track->projection;

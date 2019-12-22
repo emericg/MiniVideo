@@ -1290,26 +1290,23 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
 
     // Parse box content
-    unsigned i = 0;
-
     unsigned configurationVersion = read_bits(bitstr, 8);
     unsigned AVCProfileIndication = read_bits(bitstr, 8);
     unsigned profile_compatibility = read_bits(bitstr, 8);
     unsigned AVCLevelIndication = read_bits(bitstr, 8);
-    /*int reserved =*/ read_bits(bitstr, 6);
+    skip_bits(bitstr, 6); // reserved
     unsigned lengthSizeMinusOne = read_bits(bitstr, 2);
-    /*int reserved =*/ read_bits(bitstr, 3);
+    skip_bits(bitstr, 3); // reserved
 
     // SPS
     track->sps_count = read_bits(bitstr, 5);
-    track->sps_sample_offset = (int64_t*)calloc(track->sps_count, sizeof(int64_t));
-    track->sps_sample_size = (unsigned int*)calloc(track->sps_count, sizeof(unsigned int));
+    track->sps_sample_offset = (int64_t *)calloc(track->sps_count, sizeof(int64_t));
+    track->sps_sample_size = (unsigned int *)calloc(track->sps_count, sizeof(unsigned int));
 
-    for (i = 0; i < track->sps_count; i++) // MAX_SPS = 32
+    for (unsigned i = 0; i < track->sps_count && i < MAX_SPS; i++) // MAX_SPS = 32
     {
         track->sps_sample_size[i] = read_bits(bitstr, 16);
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
-
         track->sps_array[i] = (sps_t *)calloc(1, sizeof(sps_t));
 
         skip_bits(bitstr, 8); // skip NAL header
@@ -1328,32 +1325,62 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     // PPS
     track->pps_count = read_bits(bitstr, 8);
-    track->pps_sample_offset = (int64_t*)calloc(track->pps_count, sizeof(int64_t));
-    track->pps_sample_size = (unsigned int*)calloc(track->pps_count, sizeof(unsigned int));
+    track->pps_sample_offset = (int64_t *)calloc(track->pps_count, sizeof(int64_t));
+    track->pps_sample_size = (unsigned int *)calloc(track->pps_count, sizeof(unsigned int));
 
-    for (i = 0; i < track->pps_count; i++) // MAX_PPS = 256
+    for (unsigned i = 0; i < track->pps_count && i < MAX_PPS; i++) // MAX_PPS = 256
     {
-       track->pps_sample_size[i] = read_bits(bitstr, 16);
-       track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+        track->pps_sample_size[i] = read_bits(bitstr, 16);
+        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+        track->pps_array[i] = (pps_t *)calloc(1, sizeof(pps_t));
 
-       track->pps_array[i] = (pps_t *)calloc(1, sizeof(pps_t));
+        skip_bits(bitstr, 8); // skip NAL header
+        decodePPS(bitstr, track->pps_array[i], track->sps_array);
+        bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
 
-       skip_bits(bitstr, 8); // skip NAL header
-       decodePPS(bitstr, track->pps_array[i], track->sps_array);
-       bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
-
-       if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
-       {
-           TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
-                         bitstream_get_absolute_byte_offset(bitstr),
-                         (track->pps_sample_offset[i] + track->pps_sample_size[i]));
-           skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
-       }
+        if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
+        {
+            TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
+                          bitstream_get_absolute_byte_offset(bitstr),
+                          (track->pps_sample_offset[i] + track->pps_sample_size[i]));
+            skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+        }
     }
 
     // Handle H.264 profile & level
-    track->codec_profile = getH264CodecProfile(AVCProfileIndication);
-    track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+    if (track->sps_count > 0 && track->sps_array[0])
+    {
+        track->codec_profile = getH264CodecProfile(track->sps_array[0]->profile_idc,
+                                                   track->sps_array[0]->constraint_setX_flag[0],
+                                                   track->sps_array[0]->constraint_setX_flag[1],
+                                                   track->sps_array[0]->constraint_setX_flag[2],
+                                                   track->sps_array[0]->constraint_setX_flag[3],
+                                                   track->sps_array[0]->constraint_setX_flag[4],
+                                                   track->sps_array[0]->constraint_setX_flag[5]);
+        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+
+        track->max_ref_frames = track->sps_array[0]->max_num_ref_frames;
+        track->color_depth = track->sps_array[0]->BitDepthY;
+
+        if (track->sps_array[0]->vui)
+        {
+            track->color_range = track->sps_array[0]->vui->video_full_range_flag;
+
+            //track->sps_array[0]->vui->colour_primaries;
+            //track->sps_array[0]->vui->transfer_characteristics;
+            //track->sps_array[0]->vui->matrix_coefficients;
+        }
+
+        if (track->pps_count && track->pps_array[0])
+        {
+            track->use_cabac = track->pps_array[0]->entropy_coding_mode_flag;
+        }
+    }
+    else
+    {
+        track->codec_profile = getH264CodecProfile(AVCProfileIndication);
+        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
+    }
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
@@ -1364,14 +1391,14 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
 
     TRACE_1(MP4, "> numOfSequenceParameterSets    = %u", track->sps_count);
-    for (i = 0; i < track->sps_count; i++)
+    for (unsigned i = 0; i < track->sps_count; i++)
     {
         TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
         TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
     }
 
     TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->pps_count);
-    for (i = 0; i < track->pps_count; i++)
+    for (unsigned i = 0; i < track->pps_count; i++)
     {
         TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
         TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
@@ -1389,7 +1416,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
 
         fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
-        for (i = 0; i < track->sps_count; i++)
+        for (unsigned i = 0; i < track->sps_count; i++)
         {
             xmlSpacer(mp4->xml, "SequenceParameterSet infos", i);
             fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
@@ -1397,14 +1424,14 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         }
 
         fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
-        for (i = 0; i < track->pps_count; i++)
+        for (unsigned i = 0; i < track->pps_count; i++)
         {
             xmlSpacer(mp4->xml, "PictureParameterSet", i);
             fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
             fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%" PRId64 "</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
         }
 
-        for (i = 0; i < track->sps_count; i++)
+        for (unsigned i = 0; i < track->sps_count; i++)
         {
             printPPS(track->pps_array[i], track->sps_array);
 
@@ -1413,7 +1440,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                    track->sps_sample_size[i],
                    mp4->xml);
         }
-        for (i = 0; i < track->pps_count; i++)
+        for (unsigned i = 0; i < track->pps_count; i++)
         {
             printPPS(track->pps_array[i], track->sps_array);
 

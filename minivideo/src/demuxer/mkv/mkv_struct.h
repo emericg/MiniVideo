@@ -324,7 +324,8 @@ typedef struct mkv_track_t
     // AVC/HEVC specific parameters
     unsigned int codec_profile = 0;
     double codec_level = 0;
-    unsigned int ref_frames = 0;
+    unsigned int max_ref_frames = 0;
+    bool use_cabac = false;
 
     unsigned int sps_count = 0;
     sps_t *sps_array[MAX_SPS] = { nullptr };

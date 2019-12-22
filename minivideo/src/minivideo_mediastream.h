@@ -80,7 +80,9 @@ typedef struct MediaStream_t
     unsigned int visible_width;             //!< Horizontal size (in pixels, without alignment)
     unsigned int visible_height;            //!< Vertical size (in pixels, without alignment)
     double video_level;                     //!< Codec video level set by the encoder
+    bool use_cabac;                         //!< CABAC compression (for H.264 tracks only)
     unsigned int max_ref_frames;            //!< Maximum reference frames
+    unsigned int planes;                    //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
     unsigned int color_depth;               //!< Color resolution per channel
     unsigned int color_subsampling;         //!< Chroma sub-sampling
     unsigned int color_encoding;            //!< Internal color encoding
