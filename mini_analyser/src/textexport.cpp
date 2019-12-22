@@ -231,12 +231,12 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         if (t->track_title)
         {
             exportDatas += "\nTitle         : ";
-            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += QString::fromUtf8(t->track_title);
         }
         if (t->track_languagecode && strcmp(t->track_languagecode, "und") != 0)
         {
             exportDatas += "\nLanguage code : ";
-            exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+            exportDatas += QString::fromUtf8(t->track_languagecode);
 
             QString track_language = getLanguageString(t->track_languagecode);
             if (!track_language.isEmpty())
@@ -299,12 +299,12 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         if (t->track_title)
         {
             exportDatas += "\nTitle         : ";
-            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += QString::fromUtf8(t->track_title);
         }
         if (t->track_languagecode && strcmp(t->track_languagecode, "und") != 0)
         {
             exportDatas += "\nLanguage code : ";
-            exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+            exportDatas += QString::fromUtf8(t->track_languagecode);
 
             QString track_language = getLanguageString(t->track_languagecode);
             if (!track_language.isEmpty())
@@ -350,10 +350,10 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         if (t->track_title)
         {
             exportDatas += "\nTitle         : ";
-            exportDatas += QString::fromLocal8Bit(t->track_title);
+            exportDatas += QString::fromUtf8(t->track_title);
         }
         exportDatas += "\nLanguage      : ";
-        exportDatas += QString::fromLocal8Bit(t->track_languagecode);
+        exportDatas += QString::fromUtf8(t->track_languagecode);
 
         status = 0;
     }
@@ -405,7 +405,7 @@ int textExport::generateExportMapping_xml(MediaFile_t &media, QString &exportDat
     // Load XML file (fallback from file path / DEPRECATED)
     if (status == 1)
     {
-        filename = "/tmp/" + QString::fromLocal8Bit(media.file_name) + "_mapped.xml";
+        filename = "/tmp/" + QString::fromUtf8(media.file_name) + "_mapped.xml";
         xmlMapFile.setFileName(filename);
 
         if (xmlMapFile.exists() == false ||

@@ -55,11 +55,11 @@ tabDev::tabDev(QWidget *parent) :
 
     // Apps versions
     QString text = "<html>";
-    text += tr("MiniAnalyser") + " " + QString::fromLocal8Bit(VERSION_STR);
+    text += tr("MiniAnalyser") + " " + QString::fromUtf8(VERSION_STR);
 #ifdef QT_DEBUG
     text += " / <b>DEBUG</b>";
 #endif
-    text += " / " + tr("built on:") + " " + QString::fromLocal8Bit(__DATE__) + " at " + QString::fromLocal8Bit(__TIME__);
+    text += " / " + tr("built on:") + " " + QString::fromUtf8(__DATE__) + " at " + QString::fromUtf8(__TIME__);
 
     text += "<br>" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
     if (minivideo_builddebug) text += " / <b>DEBUG</b>";

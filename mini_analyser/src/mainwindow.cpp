@@ -317,10 +317,10 @@ void MainWindow::mediaReady(QString mediaPath)
             // Add it to the "dev" tab
             int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrap->end_parsing - wrap->start_parsing).count();
 
-            QString file = QString::fromLocal8Bit(f->file_path);
-            QString name = QString::fromLocal8Bit(f->file_name);
+            QString file = QString::fromUtf8(f->file_path);
+            QString name = QString::fromUtf8(f->file_name);
             if (strlen(f->file_extension) > 0)
-                name += "." + QString::fromLocal8Bit(f->file_extension);
+                name += "." + QString::fromUtf8(f->file_extension);
 
             ui->tab_dev->addFile(file, name, 0, tp, f->parsingMemory);
 #endif // QT_DEBUG

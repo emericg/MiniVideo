@@ -113,7 +113,7 @@ bool queryBaseInfo(VDPDeviceImpl *device, VideoBackendInfos &infos)
     else
     {
         infos.api_version = QString::number(api);
-        infos.api_info = QString::fromLocal8Bit(info);
+        infos.api_info = QString::fromUtf8(info);
     }
 
     return true;

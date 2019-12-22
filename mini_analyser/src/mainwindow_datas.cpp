@@ -218,10 +218,10 @@ int MainWindow::setActiveFile()
                 int64_t tp = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_parsing - wrapper->start_parsing).count();
                 int64_t tt = std::chrono::duration_cast<std::chrono::milliseconds>(wrapper->end_ui - wrapper->start_ui).count();
 
-                QString file = QString::fromLocal8Bit(media->file_path);
-                QString name = QString::fromLocal8Bit(media->file_name);
+                QString file = QString::fromUtf8(media->file_path);
+                QString name = QString::fromUtf8(media->file_name);
                 if (strlen(media->file_extension) > 0)
-                    name += "." + QString::fromLocal8Bit(media->file_extension);
+                    name += "." + QString::fromUtf8(media->file_extension);
 
                 ui->tab_dev->addFile(file, name, tt, tp, media->parsingMemory);
             }
@@ -233,6 +233,8 @@ int MainWindow::setActiveFile()
 
     return status;
 }
+
+/* ************************************************************************** */
 
 int MainWindow::printDatas()
 {
@@ -252,14 +254,14 @@ int MainWindow::printDatas()
             ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_error);
 
         // General infos
-        QString name = QString::fromLocal8Bit(media->file_name);
+        QString name = QString::fromUtf8(media->file_name);
         if (strlen(media->file_extension) > 0)
-            name += "." + QString::fromLocal8Bit(media->file_extension);
+            name += "." + QString::fromUtf8(media->file_extension);
 
         ui->label_info_filename->setText(name);
-        ui->label_info_filename->setToolTip(QString::fromLocal8Bit(media->file_name));
-        ui->label_info_fullpath->setText(QString::fromLocal8Bit(media->file_path));
-        ui->label_info_fullpath->setToolTip(QString::fromLocal8Bit(media->file_path));
+        ui->label_info_filename->setToolTip(QString::fromUtf8(media->file_name));
+        ui->label_info_fullpath->setText(QString::fromUtf8(media->file_path));
+        ui->label_info_fullpath->setToolTip(QString::fromUtf8(media->file_path));
         ui->label_info_container->setText(getContainerString(media->container, true));
         if (media->container_profile)
         {
@@ -279,7 +281,7 @@ int MainWindow::printDatas()
         {
             ui->label_ca->setVisible(true);
             ui->label_info_creation_app->setVisible(true);
-            ui->label_info_creation_app->setText(QString::fromLocal8Bit(media->creation_app));
+            ui->label_info_creation_app->setText(QString::fromUtf8(media->creation_app));
         }
         else
         {
@@ -291,7 +293,7 @@ int MainWindow::printDatas()
         {
             ui->label_cl->setVisible(true);
             ui->label_info_creation_lib->setVisible(true);
-            ui->label_info_creation_lib->setText(QString::fromLocal8Bit(media->creation_lib));
+            ui->label_info_creation_lib->setText(QString::fromUtf8(media->creation_lib));
         }
         else
         {
@@ -623,6 +625,8 @@ int MainWindow::printDatas()
     return status;
 }
 
+/* ************************************************************************** */
+
 int MainWindow::printAudioDetails()
 {
     int status = 1;
@@ -642,7 +646,7 @@ int MainWindow::printAudioDetails()
 
             ui->label_audio_id->setText(QString::number(t->track_id));
 
-            QString track_title = QString::fromLocal8Bit(t->track_title);
+            QString track_title = QString::fromUtf8(t->track_title);
             if (track_title.isEmpty())
             {
                 ui->label_64->hide();
@@ -655,7 +659,7 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_title->setText(track_title);
             }
 
-            QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+            QString stream_encoder = QString::fromUtf8(t->stream_encoder);
             if (stream_encoder.isEmpty())
             {
                 ui->label_61->hide();
@@ -772,8 +776,7 @@ int MainWindow::printAudioDetails()
             else
                 ui->label_audio_frameduration->setText(QString::number(t->frame_duration) + " ms");
 
-            // Audio bitrate graph
-            ////////////////////////////////////////////////////////////////////
+            // Audio bitrate graph /////////////////////////////////////////////
 
             if (t->bitrate_mode == BITRATE_CBR)
             {
@@ -864,6 +867,8 @@ int MainWindow::printAudioDetails()
     return status;
 }
 
+/* ************************************************************************** */
+
 int MainWindow::printVideoDetails()
 {
     int status = 1;
@@ -884,7 +889,7 @@ int MainWindow::printVideoDetails()
 
             ui->label_video_id->setText(QString::number(t->track_id));
 
-            QString track_title = QString::fromLocal8Bit(t->track_title);
+            QString track_title = QString::fromUtf8(t->track_title);
             if (track_title.isEmpty())
             {
                 ui->label_63->hide();
@@ -897,7 +902,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_title->setText(track_title);
             }
 
-            QString stream_encoder = QString::fromLocal8Bit(t->stream_encoder);
+            QString stream_encoder = QString::fromUtf8(t->stream_encoder);
             if (stream_encoder.isEmpty())
             {
                 ui->label_62->hide();
@@ -1104,8 +1109,7 @@ int MainWindow::printVideoDetails()
                 ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
             ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
 
-            // Video bitrate graph
-            ////////////////////////////////////////////////////////////////////
+            // Video bitrate graph /////////////////////////////////////////////
 
             if (t->bitrate_mode == BITRATE_CBR)
             {
@@ -1204,6 +1208,8 @@ int MainWindow::printVideoDetails()
     return status;
 }
 
+/* ************************************************************************** */
+
 int MainWindow::printSubtitlesDetails()
 {
     int status = 1;
@@ -1223,7 +1229,7 @@ int MainWindow::printSubtitlesDetails()
 
             ui->label_sub_id->setText(QString::number(t->track_id));
 
-            QString track_title = QString::fromLocal8Bit(t->track_title);
+            QString track_title = QString::fromUtf8(t->track_title);
             if (track_title.isEmpty())
             {
                 ui->label_67->hide();
@@ -1269,13 +1275,13 @@ int MainWindow::printSubtitlesDetails()
                     if (s)
                     {
                         if (t->stream_codec == CODEC_SRT)
-                            text += QString::fromLocal8Bit((const char *)(s->data), s->size);
+                            text += QString::fromUtf8((const char *)(s->data), s->size);
 
                         if (t->stream_codec == CODEC_ASS) // WIP
-                            text += QString::fromLocal8Bit((const char *)(s->data), s->size);
+                            text += QString::fromUtf8((const char *)(s->data), s->size);
 
                         if (t->stream_codec == CODEC_MPEG4_TTXT) // WIP
-                            text += QString::fromLocal8Bit((const char *)(s->data + 2), s->size - 2);
+                            text += QString::fromUtf8((const char *)(s->data + 2), s->size - 2);
 
                         minivideo_destroy_sample(&s);
                         text += "\n\n";
@@ -1295,6 +1301,8 @@ int MainWindow::printSubtitlesDetails()
 
     return status;
 }
+
+/* ************************************************************************** */
 
 int MainWindow::printOtherDetails()
 {
@@ -1357,6 +1365,8 @@ int MainWindow::printOtherDetails()
     return status;
 }
 
+/* ************************************************************************** */
+
 void MainWindow::xAxisRangeChanged(const QCPRange &newRange)
 {
     Q_UNUSED(newRange)
@@ -1370,3 +1380,5 @@ void MainWindow::yAxisRangeChanged(const QCPRange &newRange)
 
     // TODO
 }
+
+/* ************************************************************************** */

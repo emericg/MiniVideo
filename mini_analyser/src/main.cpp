@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
         {
             std::cout << "> " << argv[i] << std::endl;
 
-            if (QString::fromLocal8Bit(argv[i]) == "--cli")
+            if (QString::fromUtf8(argv[i]) == "--cli")
                 cli_enabled = true;
-            else if (QString::fromLocal8Bit(argv[i]) == "--details")
+            else if (QString::fromUtf8(argv[i]) == "--details")
                 cli_details_enabled = true;
             else
             {
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
         // Used to launch new detached instances
         if (argv[0])
         {
-            app.gui.setAppPath(QString::fromLocal8Bit(argv[0]));
+            app.gui.setAppPath(QString::fromUtf8(argv[0]));
         }
 
         // If files have been passed as arguments, load them

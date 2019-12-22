@@ -216,7 +216,7 @@ bool VideoBackendsVAAPI::load(VideoBackendInfos &infos)
 
             const char *vendor_string = vaQueryVendorString(display);
             if (vendor_string)
-                infos.api_info = QString::fromLocal8Bit(vendor_string);
+                infos.api_info = QString::fromUtf8(vendor_string);
 
             dump_profiles(display, infos);
 

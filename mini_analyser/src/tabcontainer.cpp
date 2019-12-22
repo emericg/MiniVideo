@@ -145,7 +145,7 @@ bool tabContainer::loadMedia(MediaWrapper *wrap)
         wrapper = static_cast<MediaWrapper *>(wrap);
         media = static_cast<MediaFile_t *>(wrap->media);
 
-        mediaFile.setFileName(QString::fromLocal8Bit(media->file_path));
+        mediaFile.setFileName(QString::fromUtf8(media->file_path));
 
         bool structure_loaded = loadXmlFile();
         bool tracks_loaded = loadTracks();
@@ -446,7 +446,7 @@ void tabContainer::sampleSelection(int sid)
             for (int i = 0; i < essample_count && i < 16; i++)
             {
                 QLabel *a = new QLabel("Sample #" + QString::number(i) + " @ " + QString::number(essample_list[i].offset - track->sample_offset[sid]) + " / " + QString::number(essample_list[i].size) + " bytes");
-                QLineEdit *b = new QLineEdit(QString::fromLocal8Bit(essample_list[i].type_str));
+                QLineEdit *b = new QLineEdit(QString::fromUtf8(essample_list[i].type_str));
                 b->setReadOnly(true);
 
                 ui->gridLayout_samples->addWidget(a, i, 0);
@@ -530,9 +530,9 @@ void tabContainer::containerSelectionEmpty()
         return;
 
     // Header infos
-    ui->labelTitle->setText(QString::fromLocal8Bit(media->file_name) + "." + QString::fromLocal8Bit(media->file_extension));
+    ui->labelTitle->setText(QString::fromUtf8(media->file_name) + "." + QString::fromUtf8(media->file_extension));
     QLabel *fpl = new QLabel(tr("File path:"));
-    QLabel *fp = new QLabel(QString::fromLocal8Bit(media->file_path));
+    QLabel *fp = new QLabel(QString::fromUtf8(media->file_path));
     QLabel *fsl = new QLabel(tr("File size:"));
     QLineEdit *fs = new QLineEdit(QString::number(media->file_size));
     fs->setReadOnly(true);
@@ -922,7 +922,7 @@ bool tabContainer::loadXmlFile()
     // Load XML file (fallback from file path / DEPRECATED)
     if (status == false)
     {
-        QString filename = "/tmp/" + QString::fromLocal8Bit(media->file_name) + "_mapped.xml";
+        QString filename = "/tmp/" + QString::fromUtf8(media->file_name) + "_mapped.xml";
         xmlMapFile.setFileName(filename);
 
         if (xmlMapFile.exists() == false ||
