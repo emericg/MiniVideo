@@ -933,9 +933,12 @@ int MainWindow::printVideoDetails()
 
             if (t->stream_codec_profile)
             {
+                QString str = "<b>" + QString::fromUtf8(getCodecProfileString(t->stream_codec_profile, true)) + "</b>";
+                if (t->video_level > 0) str += " @ <b>L" + QString::number(t->video_level, 'g', 2) + "</b>";
+
                 ui->label_71->setVisible(true);
                 ui->label_video_codec_profile->setVisible(true);
-                ui->label_video_codec_profile->setText(getCodecProfileString(t->stream_codec_profile, true));
+                ui->label_video_codec_profile->setText(str);
             }
             else
             {
@@ -943,16 +946,28 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_profile->setVisible(false);
             }
 
-            if (t->video_level > 0)
+            if (t->use_cabac || t->max_ref_frames > 0)
             {
-                ui->label_89->setVisible(true);
-                ui->label_video_level->setVisible(true);
-                ui->label_video_level->setText(QString::number(t->video_level, 'g', 2));
+                QString str;
+                if (t->stream_codec == CODEC_H264)
+                {
+                    if (t->use_cabac) str = "CABAC";
+                    else str = "CAVLC";
+                }
+                if (t->max_ref_frames > 0)
+                {
+                    if (!str.isEmpty()) str += " / ";
+                    str += QString::number(t->max_ref_frames) + " " + tr("reference frames");
+                }
+
+                ui->label_90->setVisible(true);
+                ui->label_video_codec_infos->setVisible(true);
+                ui->label_video_codec_infos->setText(str);
             }
             else
             {
-                ui->label_89->setVisible(false);
-                ui->label_video_level->setVisible(false);
+                ui->label_90->setVisible(false);
+                ui->label_video_codec_infos->setVisible(false);
             }
 
             if (t->stream_fcc)
