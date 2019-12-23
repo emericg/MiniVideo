@@ -208,7 +208,8 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->framerate = 1000000000.0 / track->DefaultDuration;
             map->video_level = track->codec_level;
             map->max_ref_frames = track->max_ref_frames;
-            map->use_cabac = track->use_cabac;
+            map->h264_feature_cabac = track->use_cabac;
+            map->h264_feature_8x8 = track->use_8x8_blocks;
 
             if (track->video->StereoMode)
             {

@@ -40,16 +40,17 @@ typedef enum Containers_e
 
     CONTAINER_AVI       =  1,   //!< AVI "Audio Video Interleave" (.avi, ...)
     CONTAINER_ASF       =  2,   //!< ASF "Advanced Systems Format" (.asf, .wma, .wmv, ...)
-    CONTAINER_MKV       =  3,   //!< Matroska (.mkv, .mka, .webm)
+    CONTAINER_MKV       =  3,   //!< Matroska (.mkv, .mka, .mks, .mk3d, .webm)
     CONTAINER_MP4       =  4,   //!< ISOM "ISO Base Media" format (.mov, .mp4, .3gp, .f4v, ...)
     CONTAINER_MPEG_PS   =  5,   //!< MPEG "Program Stream" (.mpg, .vob, ...)
     CONTAINER_MPEG_TS   =  6,   //!< MPEG "Transport Stream" (.ts, .mts, .m2ts, ...)
     CONTAINER_MPEG_MT   =  7,   //!< MPEG "Media Transport" (.mt, .mmt)
     CONTAINER_MXF       =  8,   //!< MXF "Material eXchange Format" (.mxf)
-    CONTAINER_FLV       =  9,   //!< SWF "Small Web Format" (.swf, .flv)
-    CONTAINER_OGG       = 10,   //!< OGG (.ogg, .ogv, .oga, ...)
-    CONTAINER_RM        = 11,   //!< RealMedia (.rm, .rmvb)
-    CONTAINER_R3D       = 12,   //!< REDCode RAW (.r3d)
+    CONTAINER_FLV       =  9,   //!< FLV "Flash Video" file format (.flv)
+    CONTAINER_SWF       = 10,   //!< SWF "Small Web Format" (.swf)
+    CONTAINER_OGG       = 11,   //!< OGG (.ogg, .ogv, .oga, .opus, ...)
+    CONTAINER_RM        = 12,   //!< RealMedia (.rm, .rmvb)
+    CONTAINER_R3D       = 13,   //!< REDCode RAW (.r3d)
 
     // Audio containers ////////////////////////////////////////////////////////
 
@@ -69,13 +70,22 @@ typedef enum Containers_e
     // Image containers ////////////////////////////////////////////////////////
 
     CONTAINER_JPEG      = 256,
-    CONTAINER_JPEG2K    = 257,
-    CONTAINER_PNG       = 258,
+    CONTAINER_JPEG_XR   = 257,
+    CONTAINER_JPEG_2K   = 258,
     CONTAINER_GIF       = 259,
     CONTAINER_BMP       = 260,
     CONTAINER_TGA       = 261,
     CONTAINER_TIFF      = 262,
-    CONTAINER_WEBP      = 263,
+    CONTAINER_ICNS      = 263,
+    CONTAINER_ICO       = 264,
+    CONTAINER_PNG       = 265,
+    CONTAINER_DNG       = 266,
+    CONTAINER_DPX       = 267,
+    CONTAINER_CIFF      = 268,
+    CONTAINER_CR2       = 269,
+    CONTAINER_WEBP      = 270,
+    CONTAINER_BPG       = 271,
+    CONTAINER_FLIF      = 272
 
 } Containers_e;
 
@@ -83,24 +93,28 @@ typedef enum ContainerProfiles_e
 {
     PROF_UNKNOWN        = 0,
 
+    PROF_AVI            = 1,
     PROF_AVI_OpenDML    = 2,
+    PROF_AVI_DMF        = 3,
 
-    PROF_MPEG_PS_1      = 3,
-    PROF_MPEG_PS_2      = 4,
+    PROF_MPEG_PS_1      = 8,
+    PROF_MPEG_PS_2      = 9,
 
-    PROF_ISOBMF_MOV     = 8,
-    PROF_ISOBMF_MP4     = 9,
-    PROF_ISOBMF_3GP     = 10,
-    PROF_ISOBMF_MJP     = 11,
+    PROF_ISOBMF_MOV     = 16,
+    PROF_ISOBMF_MP4     = 17,
+    PROF_ISOBMF_3GP     = 18,
+    PROF_ISOBMF_MJP     = 19,
+    PROF_ISOBMF_HEIF    = 20,
+    PROF_ISOBMF_AVIF    = 21,
 
-    PROF_WAVE_AMB       = 16,
-    PROF_WAVE_RF64      = 17,
-    PROF_WAVE_BWFv1     = 18,
-    PROF_WAVE_BWFv2     = 19,
-    PROF_WAVE_BWF64     = 20,
+    PROF_MKV_MATROSKA   = 32,
+    PROF_MKV_WEBM       = 33,
 
-    PROF_MKV_MATROSKA   = 24,
-    PROF_MKV_WEBM       = 25
+    PROF_WAVE_AMB       = 128,
+    PROF_WAVE_RF64      = 129,
+    PROF_WAVE_BWFv1     = 130,
+    PROF_WAVE_BWFv2     = 131,
+    PROF_WAVE_BWF64     = 132
 
 } ContainerProfiles_e;
 
@@ -110,7 +124,7 @@ minivideo_EXPORT const char *getContainerString(const Containers_e container, co
 minivideo_EXPORT const char *getContainerProfileString(const ContainerProfiles_e profile, const bool long_description = false);
 
 Containers_e getContainerUsingStartcodes(uint8_t buffer[16]);
-Containers_e getContainerUsingExtension(std::string ext);
+Containers_e getContainerUsingExtension(const std::string &ext);
 
 /* ************************************************************************** */
 #endif // MINIVIDEO_CONTAINERS_H

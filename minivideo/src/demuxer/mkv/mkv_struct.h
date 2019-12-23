@@ -326,6 +326,7 @@ typedef struct mkv_track_t
     double codec_level = 0;
     unsigned int max_ref_frames = 0;
     bool use_cabac = false;
+    bool use_8x8_blocks = false;
 
     unsigned int sps_count = 0;
     sps_t *sps_array[MAX_SPS] = { nullptr };

@@ -1374,6 +1374,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         if (track->pps_count && track->pps_array[0])
         {
             track->use_cabac = track->pps_array[0]->entropy_coding_mode_flag;
+            track->use_8x8_blocks = track->pps_array[0]->transform_8x8_mode_flag;
         }
     }
     else

@@ -434,6 +434,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         if (track->pps_count && track->pps_array[0])
         {
             track->use_cabac = track->pps_array[0]->entropy_coding_mode_flag;
+            track->use_8x8_blocks = track->pps_array[0]->transform_8x8_mode_flag;
         }
     }
     else

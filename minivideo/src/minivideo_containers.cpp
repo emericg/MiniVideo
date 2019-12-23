@@ -35,173 +35,145 @@
 
 const char *getContainerString(const Containers_e container, const bool long_description)
 {
-    if (long_description)
+    switch (container)
     {
-        switch (container)
-        {
         case CONTAINER_AVI:
-            return "AVI (Audio Video Interleave)"; // [.avi, ...]
-            break;
+            if (long_description)
+                return "AVI (Audio Video Interleave)";
+            else
+                return "AVI";
+
         case CONTAINER_ASF:
-            return "ASF (Advanced Systems Format)"; // [.asf, .wma, .wmv]
-            break;
+            if (long_description)
+                return "ASF (Advanced Systems Format)";
+            else
+                return "ASF";
+
         case CONTAINER_MKV:
-            return "MKV (Matroska)"; // [.mkv, .mka, .webm]
-            break;
+            if (long_description)
+                return "MKV (Matroska)";
+            else
+                return "MKV";
+
         case CONTAINER_MP4:
-            return "MP4 (ISO Base Media format)"; // [.mov, .mp4, .3gp, .f4v, ...]
-            break;
+            if (long_description)
+                return "MP4 (ISO Base Media format)";
+            else
+                return "MP4";
+
         case CONTAINER_MPEG_PS:
-            return "MPEG 'Program Stream'"; // [.mpg, .vob, ...]
-            break;
+            if (long_description)
+                return "MPEG 'Program Stream'";
+            else
+                return "MPEG-PS";
         case CONTAINER_MPEG_TS:
-            return "MPEG 'Transport Stream'"; // [.ts, .mts, .m2ts, ...]
-            break;
+            if (long_description)
+                return "MPEG 'Transport Stream'";
+            else
+                return "MPEG-TS";
         case CONTAINER_MPEG_MT:
-            return "MPEG 'Media Transport'";
-            break;
+            if (long_description)
+                return "MPEG 'Media Transport'";
+            else
+                return "MPEG-MT";
+
         case CONTAINER_MXF:
-            return "MXF Material eXchange Format"; // [.mxf]
-            break;
+            if (long_description)
+                return "MXF Material eXchange Format";
+            else
+                return "MXF";
+
         case CONTAINER_FLV:
-            return "SWF Small Web Format"; // [.swf, .flv]
-            break;
+            if (long_description)
+                return "Flash Video file format";
+            else
+                return "FLV";
+
+        case CONTAINER_SWF:
+            if (long_description)
+                return "SWF (Small Web Format)";
+            else
+                return "SWF";
+
         case CONTAINER_OGG:
-            return "OGG"; // [.ogg, .ogv, ...]
-            break;
+            return "OGG";
+
         case CONTAINER_RM:
-            return "RealMedia"; // [.rm, .rmvb]
-            break;
+            return "RealMedia";
+
         case CONTAINER_R3D:
-            return "Redcode RAW"; // [.r3d]
-            break;
+            return "Redcode RAW";
 
         case CONTAINER_FLAC:
-            return "FLAC (Free Lossless Audio Codec)"; // [.flac]
-            break;
+            if (long_description)
+                return "FLAC (Free Lossless Audio Codec)";
+            else
+                return "FLAC";
+
         case CONTAINER_WAVE:
-            return "WAVE (Waveform Audio File Format)"; // [.wav]
-            break;
+            if (long_description)
+                return "WAVE (Waveform Audio File Format)";
+            else
+                return "WAVE";
+
         case CONTAINER_CAF:
-            return "CAF (Core Audio Format)"; // [.caf]
-            break;
+            if (long_description)
+                return "CAF (Core Audio Format)";
+            else
+                return "CAF";
+
+        case CONTAINER_AU:
+            if (long_description)
+                return "AU (Au file format)";
+            else
+                return "AU";
 
         case CONTAINER_ES:
             return "Undefined 'Elementary Stream'";
-            break;
         case CONTAINER_ES_AAC:
             return "AAC 'Elementary Stream'";
-            break;
         case CONTAINER_ES_AC3:
             return "AC3 'Elementary Stream'";
-            break;
         case CONTAINER_ES_MP3:
             return "MP3 'Elementary Stream'";
-            break;
 
         case CONTAINER_JPEG:
             return "JPEG";
-            break;
-        case CONTAINER_JPEG2K:
+        case CONTAINER_JPEG_XR:
+            return "JPEG XR";
+        case CONTAINER_JPEG_2K:
             return "JPEG 2000";
-            break;
-        case CONTAINER_PNG:
-            return "PNG";
-            break;
         case CONTAINER_GIF:
             return "GIF";
-            break;
         case CONTAINER_BMP:
             return "BMP";
-            break;
         case CONTAINER_TGA:
             return "TGA";
-            break;
         case CONTAINER_TIFF:
             return "TIFF";
-            break;
+        case CONTAINER_ICNS:
+            return "ICNS";
+        case CONTAINER_ICO:
+            return "ICO";
+        case CONTAINER_PNG:
+            return "PNG";
+        case CONTAINER_DNG:
+            return "DNG";
+        case CONTAINER_DPX:
+            return "DPX";
+        case CONTAINER_CIFF:
+            return "CIFF";
+        case CONTAINER_CR2:
+            return "CR2";
         case CONTAINER_WEBP:
             return "WebP";
-            break;
+        case CONTAINER_BPG:
+            return "BPG";
+        case CONTAINER_FLIF:
+            return "FLIF";
 
         default:
-        case CONTAINER_UNKNOWN:
             return "";
-            break;
-        }
-    }
-    else // short description
-    {
-        switch (container)
-        {
-            case CONTAINER_AVI:
-                return "AVI";
-                break;
-            case CONTAINER_ASF:
-                return "ASF";
-                break;
-            case CONTAINER_MKV:
-                return "MKV";
-                break;
-            case CONTAINER_MP4:
-                return "MP4";
-                break;
-            case CONTAINER_MPEG_PS:
-                return "MPEG-PS";
-                break;
-            case CONTAINER_MPEG_TS:
-                return "MPEG-TS";
-                break;
-            case CONTAINER_MPEG_MT:
-                return "MPEG-MT";
-                break;
-            case CONTAINER_MXF:
-                return "MXF";
-                break;
-            case CONTAINER_FLV:
-                return "FLV";
-                break;
-            case CONTAINER_OGG:
-                return "OGG";
-                break;
-            case CONTAINER_RM:
-                return "RM";
-                break;
-            case CONTAINER_R3D:
-                return "R3D";
-                break;
-
-            case CONTAINER_FLAC:
-                return "FLAC";
-                break;
-            case CONTAINER_WAVE:
-                return "WAVE";
-                break;
-            case CONTAINER_AIFF:
-                return "AIFF";
-                break;
-            case CONTAINER_CAF:
-                return "CAF";
-                break;
-
-            case CONTAINER_ES:
-                return "ES";
-                break;
-            case CONTAINER_ES_AAC:
-                return "AAC ES";
-                break;
-            case CONTAINER_ES_AC3:
-                return "AC3 ES";
-                break;
-            case CONTAINER_ES_MP3:
-                return "MP3 ES";
-                break;
-
-            default:
-            case CONTAINER_UNKNOWN:
-                return "";
-                break;
-        }
     }
 }
 
@@ -211,57 +183,49 @@ const char *getContainerProfileString(const ContainerProfiles_e profile, const b
 {
     switch (profile)
     {
+        case PROF_AVI:
+            return "AVI v1";
         case PROF_AVI_OpenDML:
             return "AVI v2 \"OpenDML\"";
-            break;
+        case PROF_AVI_DMF:
+            return "AVI DMF \"DivX Media Format\"";
 
         case PROF_MPEG_PS_1:
             return "MPEG-PS v1";
-            break;
         case PROF_MPEG_PS_2:
             return "MPEG-PS v2";
-            break;
 
         case PROF_ISOBMF_MOV:
             return "QuickTime File Format";
-            break;
         case PROF_ISOBMF_MP4:
             return "ISO BMF MP4";
-            break;
         case PROF_ISOBMF_3GP:
             return "ISO BMF 3GP";
-            break;
         case PROF_ISOBMF_MJP:
             return "ISO BMF Motion Jpeg 2000";
-            break;
-
-        case PROF_WAVE_AMB:
-            return "WAVE ambisonic";
-            break;
-        case PROF_WAVE_RF64:
-            return "RF64";
-            break;
-        case PROF_WAVE_BWFv1:
-            return "Broadcast Wave Format v1";
-            break;
-        case PROF_WAVE_BWFv2:
-            return "Broadcast Wave Format v2";
-            break;
-        case PROF_WAVE_BWF64:
-            return "Broadcast Wave Format 64";
-            break;
+        case PROF_ISOBMF_HEIF:
+            return "High Efficiency Image File Format";
+        case PROF_ISOBMF_AVIF:
+            return "AV1 Image File Format";
 
         case PROF_MKV_MATROSKA:
             return "Matroska";
-            break;
         case PROF_MKV_WEBM:
             return "WebM";
-            break;
 
-        case PROF_UNKNOWN:
+        case PROF_WAVE_AMB:
+            return "WAVE ambisonic";
+        case PROF_WAVE_RF64:
+            return "RF64";
+        case PROF_WAVE_BWFv1:
+            return "Broadcast Wave Format v1";
+        case PROF_WAVE_BWFv2:
+            return "Broadcast Wave Format v2";
+        case PROF_WAVE_BWF64:
+            return "Broadcast Wave Format 64";
+
         default:
-            return "UNKNOWN";
-            break;
+            return "";
     }
 }
 
@@ -409,11 +373,12 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
         }
         else if (buffer[0] == 0x2E && buffer[1] == 0x73 && buffer[2] == 0x6E && buffer[3] == 0x64)
         {
+            // AU magic number:  2E 73 6E 64 // . s n d
             TRACE_1(IO, "* File type      : AU container detected");
             container = CONTAINER_AU;
         }
         else if (buffer[0] == 0xFF &&
-                 (buffer[1] == 0xFE || buffer[1] == 0xFD ||buffer[1] == 0xFB))
+                 (buffer[1] == 0xFE || buffer[1] == 0xFD || buffer[1] == 0xFB))
         {
             TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected");
             container = CONTAINER_ES_MP3;
@@ -437,134 +402,220 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
  * make mistakes) this code is here mostly for fun. And to list extensions for
  * whoever is interested.
  */
-Containers_e getContainerUsingExtension(std::string ext)
+Containers_e getContainerUsingExtension(const std::string &ext)
 {
     TRACE_2(IO, "getContainerUsingExtension()");
 
     // Set container to unknown
     Containers_e container = CONTAINER_UNKNOWN;
 
-    if (ext.size() > 0 && ext.size() < 16)
+    if (ext.size() > 0 && ext.size() < 8)
     {
-        if (ext == "avi" || ext == "divx")
+        if (ext == "mov" || ext == "qt" || // QuickTime file format
+            ext == "mp4" || // ISO Base Media file format
+            ext == "m4v" || ext == "m4a" || ext == "m4p" || ext == "m4b" ||
+            ext == "m4s" || ext == "mp4v" || ext == "mp4a" ||
+            ext == "3gp" || ext == "3g2" || ext == "3gpp" || // ISO BMF / 3GP profile
+            ext == "f4v" || ext == "f4p" || ext == "f4a" || ext == "f4b" || // ISO BMF / Flash Video
+            ext == "mj2" ||  ext == "mjp2") // ISO BMF / Motion JPEG2000 profile
         {
-            TRACE_1(IO, "* File extension  : AVI container detected");
-            container = CONTAINER_AVI;
+            container = CONTAINER_MP4;
         }
         else if (ext == "webm" ||
                  ext == "mkv" || ext == "mka" || ext == "mks" || ext == "mk3d")
         {
-            TRACE_1(IO, "* File extension  : MKV container detected");
             container = CONTAINER_MKV;
         }
-        else if (ext == "mov" || ext == "qt" || // QuickTime file format
-                 ext == "mp4" || // ISO Base Media file format
-                 ext == "m4v" || ext == "m4a" || ext == "m4p" || ext == "m4b" ||
-                 ext == "m4s" || ext == "mp4v" || ext == "mp4a" ||
-                 ext == "3gp" || ext == "3g2" || ext == "3gpp" || // ISO BMF / 3GP profile
-                 ext == "f4v" || // ISO BMF / Flash Video
-                 ext == "mj2" ||  ext == "mjp2") // ISO BMF / Motion JPEG2000 profile
+        else if (ext == "avi" || ext == "divx")
         {
-            TRACE_1(IO, "* File extension  : ISO BMF (MOV,MP4, ...) container detected");
-            container = CONTAINER_MP4;
+            container = CONTAINER_AVI;
+        }
+        else if (ext == "asf" || ext == "wma" || ext == "wmv")
+        {
+            container = CONTAINER_ASF;
         }
         else if (ext == "ps"  || ext == "vob" || ext == "evo" ||
                  ext == "m2p" || ext == "m2v" || ext == "mpg" || ext == "mpeg")
         {
-            TRACE_1(IO, "* File extension  : PS (MPEG 'Program Stream') container detected");
             container = CONTAINER_MPEG_PS;
         }
         else if (ext == "ts"  || ext == "trp" ||
                  ext == "mts" || ext == "m2ts")
         {
-            TRACE_1(IO, "* File extension  : TS (MPEG 'Transport Stream') container detected");
             container = CONTAINER_MPEG_TS;
         }
-        else if (ext == "asf" ||
-                 ext == "wma" || ext == "wmv")
+        else if (ext == "mt"  || ext == "mmt")
         {
-            TRACE_1(IO, "* File extension  : ASF container detected");
-            container = CONTAINER_ASF;
+            container = CONTAINER_MPEG_MT;
         }
         else if (ext == "ogg" || ext == "ogv" || ext == "oga" ||
                  ext == "ogx" || ext == "ogm" || ext == "spx" ||
                  ext == "opus")
         {
-            TRACE_1(IO, "* File extension  : OGG container detected");
             container = CONTAINER_OGG;
         }
         else if (ext == "mxf")
         {
-            TRACE_1(IO, "* File extension  : MXF container detected");
             container = CONTAINER_MXF;
         }
+        else if (ext == "flv" || ext == "f4v" || ext == "f4p" || ext == "f4a" || ext == "f4b")
+        {
+            container = CONTAINER_FLV;
+        }
+        else if (ext == "swf")
+        {
+            container = CONTAINER_SWF;
+        }
+        else if (ext == "rm" || ext == "rmvb")
+        {
+            container = CONTAINER_RM;
+        }
+        else if (ext == "r3d")
+        {
+            container = CONTAINER_R3D;
+        }
+
         else if (ext == "flac")
         {
-            TRACE_1(IO, "* File extension  : FLAC container detected");
             container = CONTAINER_FLAC;
         }
-        else if (ext == "wav" || ext == "wave" ||
-                 ext == "amb")
+        else if (ext == "wav" || ext == "wave" || ext == "amb")
         {
-            TRACE_1(IO, "* File extension  : WAVE container detected");
             container = CONTAINER_WAVE;
         }
         else if (ext == "aiff" || ext == "aif" || ext == "aifc")
         {
-            TRACE_1(IO, "* File extension  : AIFF container detected");
             container = CONTAINER_AIFF;
         }
         else if (ext == "caf")
         {
-            TRACE_1(IO, "* File extension  : CAF container detected");
             container = CONTAINER_CAF;
         }
         else if (ext == "au" || ext == "snd")
         {
-            TRACE_1(IO, "* File extension  : AU container detected");
             container = CONTAINER_AU;
         }
-        else if (ext == "flv" ||
-                 ext == "f4v" || ext == "f4p" || ext == "f4a" || ext == "f4b")
-        {
-            TRACE_1(IO, "* File extension  : FLV container detected");
-            container = CONTAINER_FLV;
-        }
-        else if (ext == "rm" || ext == "rmvb")
-        {
-            TRACE_1(IO, "* File extension  : RealMedia container detected");
-            container = CONTAINER_RM;
-        }
+
         else if (ext == "264" || ext == "h264")
         {
-            TRACE_1(IO, "* File extension  : H.264 ES detected");
             container = CONTAINER_ES;
             //codec = CODEC_H264;
         }
         else if (ext == "265" || ext == "h265")
         {
-            TRACE_1(IO, "* File extension  : H.265 ES detected");
             container = CONTAINER_ES;
             //codec = CODEC_H265;
         }
         else if (ext == "aac")
         {
-            TRACE_1(IO, "* File extension  : AAC ES detected");
             container = CONTAINER_ES_AAC;
             //codec = CODEC_AAC;
         }
         else if (ext == "ac3")
         {
-            TRACE_1(IO, "* File extension  : AC3 ES detected");
             container = CONTAINER_ES_AC3;
             //codec = CODEC_AC3;
         }
         else if (ext == "mp1" || ext == "mp2" || ext == "mp3")
         {
-            TRACE_1(IO, "* File extension  : MP3 ES detected");
             container = CONTAINER_ES_MP3;
             //codec = CODEC_MP3;
         }
+
+        else if (ext == "jpg" || ext == "jpeg" || ext == "jpe" ||
+                 ext == "jif" || ext == "jfif" || ext == "jfi")
+        {
+            container = CONTAINER_JPEG;
+            //codec = CODEC_JPEG;
+        }
+        else if (ext == "jxr" || ext == "hdp" || ext == "wdp")
+        {
+            container = CONTAINER_JPEG_XR;
+            //codec = CODEC_JPEG_XR;
+        }
+        else if (ext == "jp2" || ext == "j2k" || ext == "jpf" ||
+                 ext == "jpx" || ext == "jpm" || ext == "mj2")
+        {
+            container = CONTAINER_JPEG_2K;
+            //codec = CODEC_JPEG_2K;
+        }
+        else if (ext == "gif")
+        {
+            container = CONTAINER_GIF;
+            //codec = CODEC_GIF;
+        }
+        else if (ext == "bmp" || ext == "dib")
+        {
+            container = CONTAINER_BMP;
+            //codec = CODEC_BMP;
+        }
+        else if (ext == "tga" || ext == "icb" || ext == "vda" || ext == "vst")
+        {
+            container = CONTAINER_TGA;
+            //codec = CODEC_TGA;
+        }
+        else if (ext == "tif" || ext == "tiff")
+        {
+            container = CONTAINER_TIFF;
+            //codec = CODEC_TIFF;
+        }
+        else if (ext == "ico")
+        {
+            container = CONTAINER_ICO;
+        }
+        else if (ext == "icns")
+        {
+            container = CONTAINER_ICNS;
+        }
+        else if (ext == "png")
+        {
+            container = CONTAINER_PNG;
+            //codec = CODEC_PNG;
+        }
+        else if (ext == "dng")
+        {
+            container = CONTAINER_DNG;
+            //codec = CODEC_DNG;
+        }
+        else if (ext == "dpx")
+        {
+            container = CONTAINER_DPX;
+        }
+        else if (ext == "crw")
+        {
+            container = CONTAINER_CIFF;
+        }
+        else if (ext == "cr2")
+        {
+            container = CONTAINER_CR2;
+        }
+        else if (ext == "webp")
+        {
+            container = CONTAINER_WEBP;
+            //codec = CODEC_VP8;
+        }
+        else if (ext == "bpg")
+        {
+            container = CONTAINER_BPG;
+            //codec = CODEC_H265;
+        }
+        else if (ext == "flif")
+        {
+            container = CONTAINER_FLIF;
+            //codec = CODEC_FLIF16;
+        }
+        else if (ext == "heif" || ext == "heic")
+        {
+            container = CONTAINER_MP4;
+            //codec = CODEC_H265;
+        }
+        else if (ext == "avif")
+        {
+            container = CONTAINER_MP4;
+            //codec = CODEC_AV1;
+        }
+
+        TRACE_1(IO, "* File extension : '%s' detected", getContainerString(container));
     }
     else
     {

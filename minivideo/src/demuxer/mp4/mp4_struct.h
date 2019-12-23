@@ -104,6 +104,7 @@ typedef struct Mp4Track_t
         double codec_level;
         unsigned int max_ref_frames;
         bool use_cabac;
+        bool use_8x8_blocks;
 
         unsigned int sps_count;
         sps_t *sps_array[MAX_SPS];

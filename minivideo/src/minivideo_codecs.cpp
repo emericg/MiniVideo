@@ -40,76 +40,76 @@ CodecProfiles_e getH264CodecProfile(const unsigned profil_idc,
 {
     switch (profil_idc)
     {
-    // Annex A Profiles
-    case 66:
-        if (constraint_set1_flag)
-            return PROF_H264_CBP;
-        else
-            return PROF_H264_BP;
-    case 77:
-        return PROF_H264_MP;
-    case 88:
-        return PROF_H264_XP;
-    case 100:
-        if (constraint_set4_flag && constraint_set5_flag)
-            return PROF_H264_CHiP;
-        else if (constraint_set4_flag)
-            return PROF_H264_PHiP;
-        else
-            return PROF_H264_HiP;
-    case 110:
-        if (constraint_set4_flag)
-            return PROF_H264_PHi10P;
-        else if (constraint_set3_flag)
-            return PROF_H264_Hi10IntraP;
-        else
-            return PROF_H264_Hi10P;
-    case 122:
-        if (constraint_set3_flag)
-            return PROF_H264_Hi422IntraP;
-        else
-            return PROF_H264_Hi422P;
-    case 244:
-        if (constraint_set5_flag)
-            return PROF_H264_Hi444IntraP;
-        else
-            return PROF_H264_Hi444P;
-    case 44:
-        return PROF_H264_M444IntraP;
+        // Annex A Profiles
+        case 66:
+            if (constraint_set1_flag)
+                return PROF_H264_CBP;
+            else
+                return PROF_H264_BP;
+        case 77:
+            return PROF_H264_MP;
+        case 88:
+            return PROF_H264_XP;
+        case 100:
+            if (constraint_set4_flag && constraint_set5_flag)
+                return PROF_H264_CHiP;
+            else if (constraint_set4_flag)
+                return PROF_H264_PHiP;
+            else
+                return PROF_H264_HiP;
+        case 110:
+            if (constraint_set4_flag)
+                return PROF_H264_PHi10P;
+            else if (constraint_set3_flag)
+                return PROF_H264_Hi10IntraP;
+            else
+                return PROF_H264_Hi10P;
+        case 122:
+            if (constraint_set3_flag)
+                return PROF_H264_Hi422IntraP;
+            else
+                return PROF_H264_Hi422P;
+        case 244:
+            if (constraint_set5_flag)
+                return PROF_H264_Hi444IntraP;
+            else
+                return PROF_H264_Hi444P;
+        case 44:
+            return PROF_H264_M444IntraP;
 
-    // Annex G Profiles
-    case 83:
-        if (constraint_set5_flag)
-            return PROF_H264_ScCBP;
-        else
-            return PROF_H264_ScBP;
-    case 86:
-        if (constraint_set5_flag)
-            return PROF_H264_ScCHiP;
-        else if (constraint_set3_flag)
-            return PROF_H264_ScHiIntraP;
-        else
-            return PROF_H264_ScHiP;
+        // Annex G Profiles
+        case 83:
+            if (constraint_set5_flag)
+                return PROF_H264_ScCBP;
+            else
+                return PROF_H264_ScBP;
+        case 86:
+            if (constraint_set5_flag)
+                return PROF_H264_ScCHiP;
+            else if (constraint_set3_flag)
+                return PROF_H264_ScHiIntraP;
+            else
+                return PROF_H264_ScHiP;
 
-    // Annex H Profiles
-    case 118:
-        return PROF_H264_MvHiP;
-    case 128:
-        return PROF_H264_StHiP;
-    case 134:
-        return PROF_H264_MfcHiP;
+        // Annex H Profiles
+        case 118:
+            return PROF_H264_MvHiP;
+        case 128:
+            return PROF_H264_StHiP;
+        case 134:
+            return PROF_H264_MfcHiP;
 
-    // Annex I Profiles
-    case 138:
-        return PROF_H264_MvDHiP;
-    case 135:
-        return PROF_H264_MfcDHiP;
-    // Annex J Profiles
-    case 139:
-        return PROF_H264_EMvDHiP;
+        // Annex I Profiles
+        case 138:
+            return PROF_H264_MvDHiP;
+        case 135:
+            return PROF_H264_MfcDHiP;
+        // Annex J Profiles
+        case 139:
+            return PROF_H264_EMvDHiP;
 
-    default:
-        return PROF_H264_unknown;
+        default:
+            return PROF_H264_unknown;
     }
 }
 
@@ -120,46 +120,46 @@ CodecProfiles_e getH265CodecProfile(const unsigned profil_idc,
 {
     switch (profil_idc)
     {
-    // Annex A Profiles
-    case 1:
-        return PROF_H265_Main;
-    case 2:
-        if (general_one_picture_only_constraint_flag)
-            return PROF_H265_Main10Still;
-        else
-            return PROF_H265_Main10;
-    case 3:
-        return PROF_H265_MainStill;
+        // Annex A Profiles
+        case 1:
+            return PROF_H265_Main;
+        case 2:
+            if (general_one_picture_only_constraint_flag)
+                return PROF_H265_Main10Still;
+            else
+                return PROF_H265_Main10;
+        case 3:
+            return PROF_H265_MainStill;
 
-    case 4: // TODO everything else Main and Monochrome
-        return PROF_H265_unknown;
+        case 4: // TODO everything else Main and Monochrome
+            return PROF_H265_unknown;
 
-    // Annex G Profiles
-    case 6:
-        return PROF_H265_MvMain;
+        // Annex G Profiles
+        case 6:
+            return PROF_H265_MvMain;
 
-    // Annex H Profiles
-    case 7:
-        if (general_max_8bit_constraint_flag == false)
-            return PROF_H265_ScMain10;
-        else
-            return PROF_H265_ScMain;
+        // Annex H Profiles
+        case 7:
+            if (general_max_8bit_constraint_flag == false)
+                return PROF_H265_ScMain10;
+            else
+                return PROF_H265_ScMain;
 
-    // Annex I Profiles
-    case 8:
-        return PROF_H265_3DMain;
+        // Annex I Profiles
+        case 8:
+            return PROF_H265_3DMain;
 
-    case 10:
-        if (chroma_format_idc == 0)
-            return PROF_H265_ScMonochrome; // TODO 12/16 bits
-        else
-            return PROF_H265_ScMain444;
+        case 10:
+            if (chroma_format_idc == 0)
+                return PROF_H265_ScMonochrome; // TODO 12/16 bits
+            else
+                return PROF_H265_ScMain444;
 
-    case 5: // TODO High Throughput
-    case 11: // TODO High Throughput
+        case 5: // TODO High Throughput
+        case 11: // TODO High Throughput
 
-    default:
-        return PROF_H265_unknown;
+        default:
+            return PROF_H265_unknown;
     }
 }
 

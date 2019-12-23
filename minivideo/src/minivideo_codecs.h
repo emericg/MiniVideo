@@ -80,9 +80,9 @@ typedef enum Codecs_e
 
     // Lossless audio codecs ///////////////////////////////////////////////////
 
-    CODEC_APE           = 128,   //!< Monkey's Audio
-    CODEC_FLAC          = 129,   //!< Free Lossless Audio Codec
-    CODEC_ALAC          = 130,   //!< Apple Lossless Audio Codec
+    CODEC_APE           = 128,  //!< Monkey's Audio
+    CODEC_FLAC          = 129,  //!< Free Lossless Audio Codec
+    CODEC_ALAC          = 130,  //!< Apple Lossless Audio Codec
 
     // Video codecs ////////////////////////////////////////////////////////////
 
@@ -121,7 +121,7 @@ typedef enum Codecs_e
 
     CODEC_DAALA         = 291,  //!< Xiph Daala
     CODEC_THOR          = 292,  //!< Cisco Thor
-    CODEC_AV1           = 293,  //!< AOMedia Video 1
+    CODEC_AV1           = 293,  //!< AOM (Alliance for Open Media) Video 1
 
     // Uncommon video codecs ///////////////////////////////////////////////////
 
@@ -178,7 +178,7 @@ typedef enum Codecs_e
 
     CODEC_GIF           = 406,  //!< Graphic Interchange Format
     CODEC_BMP           = 407,  //!< Windows Bitmap
-    CODEC_TGA           = 408,  //!< Truevision Targa
+    CODEC_TGA           = 408,  //!< Truevision Graphics Adapter
     CODEC_TIFF          = 409,  //!< Tagged Image File Format
     CODEC_WEBP          = 410,  //!< WebP
     CODEC_HEIF          = 411,  //!< High Efficiency Image Format
@@ -213,7 +213,7 @@ typedef enum CodecProfiles_e
 {
     CODEC_PROF_UNKNOWN  = 0,
 
-    PROF_H262_SP        = 1,
+    PROF_H262_SP,
     PROF_H262_MP,
     PROF_H262_SNR,
     PROF_H262_Spatial,
