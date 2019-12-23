@@ -946,13 +946,18 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_profile->setVisible(false);
             }
 
-            if (t->use_cabac || t->max_ref_frames > 0)
+            if (t->h264_feature_cabac || t->h264_feature_8x8 || t->max_ref_frames > 0)
             {
                 QString str;
                 if (t->stream_codec == CODEC_H264)
                 {
-                    if (t->use_cabac) str = "CABAC";
+                    if (t->h264_feature_cabac) str = "CABAC";
                     else str = "CAVLC";
+                }
+                if (t->h264_feature_8x8 == true)
+                {
+                    if (!str.isEmpty()) str += " / ";
+                    str += tr("8x8 blocks");
                 }
                 if (t->max_ref_frames > 0)
                 {
@@ -1274,7 +1279,9 @@ int MainWindow::printSubtitlesDetails()
             ui->label_sub_codec->setText(getCodecString(stream_TEXT, t->stream_codec, true));
 
             // TODO // set subtitles encoding!
-            ui->label_sub_encoding->setText("<b>?</b>");
+            ui->label_80->setVisible(false);
+            ui->label_sub_encoding->setVisible(false);
+            //ui->label_sub_encoding->setText("<b>?</b>");
 
             QString text;
 
