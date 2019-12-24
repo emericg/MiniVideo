@@ -446,9 +446,20 @@ int MainWindow::printDatas()
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
             ui->label_info_video_dar->setText(getAspectRatioString(t->display_aspect_ratio));
             ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
-            ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+
+            if (t->framerate_mode)
+            {
+                ui->label_7->show();
+                ui->label_info_video_framerate_mode->show();
+                ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+            }
+            else
+            {
+                ui->label_7->hide();
+                ui->label_info_video_framerate_mode->hide();
+            }
 
             if (t->video_projection || t->video_rotation)
             {
@@ -771,6 +782,12 @@ int MainWindow::printAudioDetails()
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
             ui->label_audio_framecount->setText(QString::number(t->frame_count));
 
+            if (t->sample_duration > 0.0)
+                ui->label_audio_sampleduration->setText(QString::number(t->sample_duration) + " µs");
+
+            if (t->sample_per_frames > 0)
+                ui->label_audio_sampleperframe->setText(QString::number(t->sample_per_frames));
+
             if (t->frame_duration < 1.0)
                 ui->label_audio_frameduration->setText(QString::number(t->frame_duration*1000000.0) + " µs");
             else
@@ -1051,12 +1068,18 @@ int MainWindow::printVideoDetails()
             ui->label_video_color_depth->setText(QString::number(t->color_depth) + " bits");
             ui->label_video_color_subsampling->setText(QString::number(t->color_subsampling));
 
-            if (t->color_encoding == CLR_RGB)
+            if (t->color_space == CLR_RGB)
                 ui->label_video_color_space->setText("RGB");
-            else if (t->color_encoding == CLR_YCgCo)
-                ui->label_video_color_space->setText("YCgCo");
-            else if (t->color_encoding == CLR_YCbCr)
+            else if (t->color_space == CLR_xvYCC)
+                ui->label_video_color_space->setText("xvYCC");
+            else if (t->color_space == CLR_YPbPr)
+                ui->label_video_color_space->setText("YPbPr");
+            else if (t->color_space == CLR_YCbCr)
                 ui->label_video_color_space->setText("YCbCr");
+            else if (t->color_space == CLR_YCgCo)
+                ui->label_video_color_space->setText("YCgCo");
+            else if (t->color_space == CLR_ICtCp)
+                ui->label_video_color_space->setText("YICtCp");
             else
                 ui->label_video_color_space->setText("YCbCr (best guess)");
 
@@ -1068,6 +1091,8 @@ int MainWindow::printVideoDetails()
                 ui->label_video_color_matrix->setText("Rec. 709");
             else if (t->color_matrix == CM_bt2020)
                 ui->label_video_color_matrix->setText("Rec. 2020");
+            else
+                ui->label_video_color_matrix->setText("Rec. 709 (best guess)");
 
             if (t->color_subsampling == SS_4444)
                 ui->label_video_color_subsampling->setText("4:4:4:4");
@@ -1083,6 +1108,11 @@ int MainWindow::printVideoDetails()
                 ui->label_video_color_subsampling->setText("4:0:0");
             else
                 ui->label_video_color_subsampling->setText("4:2:0 (best guess)");
+
+            if (t->color_range == 1)
+                ui->label_video_color_range->setText(tr("Full range"));
+            else
+                ui->label_video_color_range->setText(tr("Limited range"));
 
             double framerate = t->framerate;
             if (framerate < 1.0)
@@ -1119,10 +1149,23 @@ int MainWindow::printVideoDetails()
             ui->label_video_framecount->setText(framecount);
 
             ui->label_video_framerate->setText(QString::number(framerate) + " fps");
-            ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+            if (t->framerate_mode)
+            {
+                ui->label_77->show();
+                ui->label_video_framerate_mode->show();
+                ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+            }
+            else
+            {
+                ui->label_77->hide();
+                ui->label_video_framerate_mode->hide();
+            }
+
             ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
 
-            uint64_t rawsize = t->width * t->height * (t->color_depth / 8);
+            if (t->color_planes == 0) t->color_planes = 3;
+            if (t->color_depth == 0) t->color_depth = 8;
+            uint64_t rawsize = t->width * t->height * (t->color_depth / 8) * t->color_planes;
             rawsize *= t->sample_count;
             uint64_t ratio = 1;
             if (rawsize && t->stream_size)
