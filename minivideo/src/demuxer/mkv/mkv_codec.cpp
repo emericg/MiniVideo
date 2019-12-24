@@ -420,15 +420,56 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
 
         track->max_ref_frames = track->sps_array[0]->max_num_ref_frames;
-        //track->color_depth = track->sps_array[0]->BitDepthY;
+        track->color_depth = track->sps_array[0]->BitDepthY;
 
         if (track->sps_array[0]->vui)
         {
-            //track->color_range = track->sps_array[0]->vui->video_full_range_flag;
+            track->color_range = track->sps_array[0]->vui->video_full_range_flag;
 
-            //track->sps_array[0]->vui->colour_primaries;
-            //track->sps_array[0]->vui->transfer_characteristics;
-            //track->sps_array[0]->vui->matrix_coefficients;
+            if (track->sps_array[0]->vui->colour_primaries == 1)
+                track->color_primaries = COLORS_BT709_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 4 ||
+                     track->sps_array[0]->vui->colour_primaries == 5)
+                track->color_primaries = COLORS_BT470_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 6)
+                track->color_primaries = COLORS_BT601_7;
+            else if (track->sps_array[0]->vui->colour_primaries == 7)
+                track->color_primaries = COLORS_SMPTE_240M;
+            else if (track->sps_array[0]->vui->colour_primaries == 9)
+                track->color_primaries = COLORS_BT2020_2;
+            else if (track->sps_array[0]->vui->colour_primaries == 10)
+                track->color_primaries = COLORS_CIE_1931XYZ;
+            else if (track->sps_array[0]->vui->colour_primaries == 11)
+                track->color_primaries = COLORS_SMPTE_DCIP3;
+            else if (track->sps_array[0]->vui->colour_primaries == 12)
+                track->color_primaries = COLORS_SMPTE_D65P3;
+            else if (track->sps_array[0]->vui->colour_primaries == 22)
+                track->color_primaries = COLORS_EBUTech_3213E;
+
+            if (track->sps_array[0]->vui->transfer_characteristics == 1)
+                track->color_transfer = COLORS_BT709_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 4 ||
+                     track->sps_array[0]->vui->colour_primaries == 5)
+                track->color_transfer = COLORS_BT470_6;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 6)
+                track->color_transfer = COLORS_BT601_7;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 7)
+                track->color_transfer = COLORS_SMPTE_240M;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 14 ||
+                     track->sps_array[0]->vui->transfer_characteristics == 15)
+                track->color_transfer = COLORS_BT2020_2;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 16 ||
+                     track->sps_array[0]->vui->transfer_characteristics == 18)
+                track->color_transfer = COLORS_BT2100_2;
+
+            if (track->sps_array[0]->vui->matrix_coefficients == 0)
+                track->color_space = CLR_RGB;
+            else if (track->sps_array[0]->vui->matrix_coefficients == 8)
+                track->color_space = CLR_YCgCo;
+            else if (track->sps_array[0]->vui->matrix_coefficients == 14)
+                track->color_space = CLR_ICtCp;
+            else
+                track->color_space = CLR_YCbCr;
         }
 
         if (track->pps_count && track->pps_array[0])
@@ -567,6 +608,7 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     // Handle H.265 profile & level
     track->codec_profile = getH265CodecProfile(general_profile_idc);
     track->codec_level = static_cast<double>(general_level_idc) / 30.0;
+    track->color_depth = bitDepthLumaMinus8 + 8;
 
 #if ENABLE_DEBUG
     TRACE_1(MKV, "> configurationVersion    : %u", configurationVersion);

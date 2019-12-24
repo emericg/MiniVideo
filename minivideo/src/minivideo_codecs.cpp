@@ -34,9 +34,9 @@
 /* ************************************************************************** */
 
 CodecProfiles_e getH264CodecProfile(const unsigned profil_idc,
-                                    const bool constraint_set1_flag, const bool constraint_set2_flag,
-                                    const bool constraint_set3_flag, const bool constraint_set4_flag,
-                                    const bool constraint_set5_flag, const bool constraint_set6_flag)
+                                    const bool constraint_set0_flag, const bool constraint_set1_flag,
+                                    const bool constraint_set2_flag, const bool constraint_set3_flag,
+                                    const bool constraint_set4_flag, const bool constraint_set5_flag)
 {
     switch (profil_idc)
     {

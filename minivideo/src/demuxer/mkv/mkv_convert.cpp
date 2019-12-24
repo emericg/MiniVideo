@@ -197,19 +197,26 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->height = track->video->PixelHeight;
             map->visible_width = track->video->DisplayWidth;
             map->visible_height = track->video->DisplayHeight;
-            map->color_depth = 8; // default
+            map->framerate = 1000000000.0 / track->DefaultDuration;
+
+            map->color_depth = track->color_depth;
+            map->color_range = track->color_range;
+            map->color_space = track->color_space;
+            map->color_primaries = track->color_primaries;
+            map->color_matrix = track->color_matrix;
+            map->color_transfert = track->color_transfer;
             if (track->video->Colour)
             {
                 if (track->video->Colour->BitsPerChannel != 0)
                     map->color_depth = track->video->Colour->BitsPerChannel;
                 map->color_range = track->video->Colour->Range;
             }
-            map->color_depth *= 3;
-            map->framerate = 1000000000.0 / track->DefaultDuration;
+
             map->video_level = track->codec_level;
             map->max_ref_frames = track->max_ref_frames;
             map->h264_feature_cabac = track->use_cabac;
             map->h264_feature_8x8 = track->use_8x8_blocks;
+            //map->h264_feature_Bframes = track->use_Bframes;
 
             if (track->video->StereoMode)
             {

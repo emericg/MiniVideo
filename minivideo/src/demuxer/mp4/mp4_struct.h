@@ -88,12 +88,14 @@ typedef struct Mp4Track_t
         unsigned int height;
         unsigned int width_visible;
         unsigned int height_visible;
-        unsigned int color_depth;
-        unsigned int color_space;
-        unsigned int color_matrix;
-        unsigned int color_range;
         unsigned int par_h;
         unsigned int par_v;
+        unsigned int color_depth;
+        unsigned int color_range;
+        unsigned int color_space;
+        unsigned int color_primaries;
+        unsigned int color_matrix;
+        unsigned int color_transfer;
         unsigned int stereo;
         unsigned int projection;
         double rotation;
@@ -105,6 +107,7 @@ typedef struct Mp4Track_t
         unsigned int max_ref_frames;
         bool use_cabac;
         bool use_8x8_blocks;
+        bool use_Bframes;
 
         unsigned int sps_count;
         sps_t *sps_array[MAX_SPS];

@@ -152,10 +152,28 @@ typedef enum ColorModel_e
     CLR_UNKNOWN = 0,     //!< Unknown color model
 
     CLR_RGB     = 1,
-    CLR_YCbCr   = 2,
-    CLR_YCgCo   = 3,
+    CLR_xvYCC   = 2,
+    CLR_YPbPr   = 3,
+    CLR_YCbCr   = 4,
+    CLR_YCgCo   = 5,
+    CLR_ICtCp   = 6
 
 } ColorModel_e;
+
+typedef enum ColorsRec_e
+{
+    COLORS_BT470_6,
+    COLORS_BT601_7,
+    COLORS_BT709_6,
+    COLORS_BT2020_2,
+    COLORS_BT2100_2,
+    COLORS_SMPTE_170M,
+    COLORS_SMPTE_240M,
+    COLORS_SMPTE_DCIP3,
+    COLORS_SMPTE_D65P3,
+    COLORS_CIE_1931XYZ,
+    COLORS_EBUTech_3213E
+} ColorsRec_e;
 
 //! The color matrix used by the video
 typedef enum ColorMatrix_e
@@ -182,7 +200,7 @@ typedef enum SubSampling_e
 {
     SS_UNKNOWN = 0,     //!< Unknown subsampling
 
-    SS_400     = 1,     //!< 4:0:0 greyscale subsampling
+    SS_400     = 1,     //!< 4:0:0 monochrome subsampling
     SS_411     = 2,     //!< 4:1:1 subsampling
     SS_420     = 3,     //!< 4:2:0 subsampling
     SS_422     = 4,     //!< 4:2:2 subsampling

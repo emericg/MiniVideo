@@ -37,52 +37,6 @@
 
 /* ************************************************************************** */
 
-//! H.264 Profiles IDC definitions, see http://en.wikipedia.org/wiki/H264#Profiles
-typedef enum H264Profiles_e
-{
-    BASELINE            = 66,   //!< YUV 4:2:0/8  "Baseline profile"
-    MAINP               = 77,   //!< YUV 4:2:0/8  "Main profile"
-    UNKNOWN1            = 83,   //!< Unknown profile
-    UNKNOWN2            = 86,   //!< Unknown profile
-    EXTENDED            = 88,   //!< YUV 4:2:0/8  "Extended profile"
-
-    FREXT_CAVLC444      = 44,   //!< YUV 4:4:4/14 "CAVLC 4:4:4"
-    FREXT_HiP           = 100,  //!< YUV 4:2:0/8  "High"
-    FREXT_Hi10P         = 110,  //!< YUV 4:2:0/10 "High 10"
-    FREXT_Hi422         = 122,  //!< YUV 4:2:2/10 "High 4:2:2"
-    FREXT_Hi444         = 244,  //!< YUV 4:4:4/14 "High 4:4:4"
-
-    MVC_HIGH            = 118,  //!< YUV 4:2:0/8  "Multiview High"
-    MVC_FIELDHIGH       = 119,  //!< YUV 4:2:0/8  "Multiview Field High"
-    STEREO_HIGH         = 128   //!< YUV 4:2:0/8  "Stereo High"
-} H264Profiles_e;
-
-/*
-//! AVC Level IDC definitions
-//! Examples for high resolution @ frame rate (max stored frames)
-typedef enum LevelIDC_e
-{
-    LEVEL_1     = ,     //!< 128×96@30.9 (8)
-    LEVEL_1B    = ,     //!< 128×96@30.9 (8)
-    LEVEL_11    = 9,    //!< 176×144@30.3 (9)
-    LEVEL_12    = ,     //!< 320×240@20.0 (7)
-    LEVEL_13    = ,     //!< 352×288@30.0 (6)
-    LEVEL_2     = ,     //!< 352×288@30.0 (6)
-    LEVEL_21    = ,     //!< 352×480@30.0 (7)
-    LEVEL_22    = ,     //!< 352×480@30.7 (10)
-    LEVEL_3     = ,     //!< 720×480@30.0 (6)
-    LEVEL_31    = ,     //!< 1280×720@30.0 (5)
-    LEVEL_32    = ,     //!< 1,280×720@60.0 (5)
-    LEVEL_4     = ,     //!< 1,280×720@68.3 (9)
-    LEVEL_41    = ,     //!< 1,280×720@68.3 (9)
-    LEVEL_42    = ,     //!< 1,920×1,080@64.0 (4)
-    LEVEL_5     = ,     //!< 1,920×1,080@72.3 (13)
-    LEVEL_51    =       //!< 1,920×1,080@120.5 (16)
-} LevelIDC_e;
-*/
-
-/* ************************************************************************** */
-
 /*!
  * \struct hrd_t
  * \brief HRD - Hypothetical Reference Decoder.

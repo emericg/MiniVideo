@@ -83,12 +83,14 @@ typedef struct MediaStream_t
     bool h264_feature_cabac;                //!< CABAC compression (for H.264 only)
     bool h264_feature_8x8;                  //!< 8x8 blocks (for H.264 only)
     unsigned int max_ref_frames;            //!< Maximum reference frames
-    unsigned int planes;                    //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
-    unsigned int color_depth;               //!< Color resolution per channel
+    unsigned int color_planes;              //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
     unsigned int color_subsampling;         //!< Chroma sub-sampling
-    unsigned int color_encoding;            //!< Internal color encoding
-    unsigned int color_matrix;              //!< Internal color encoding
+    unsigned int color_depth;               //!< Color resolution per channel
     unsigned int color_range;               //!< Colors are in restricted or full range
+    unsigned int color_space;               //!< Internal color encoding
+    unsigned int color_primaries;           //!< Color primaries
+    unsigned int color_transfert;           //!< Color transfert
+    unsigned int color_matrix;              //!< Color matrix
     Projection_e video_projection;          //!< Projection
     Rotation_e video_rotation;              //!< Rotation
     StereoMode_e stereo_mode;               //!< Stereo mode
@@ -115,6 +117,7 @@ typedef struct MediaStream_t
     unsigned int sampling_rate;             //!< Sampling rate (in Hz)
     unsigned int bit_per_sample;            //!< Bit per sample (in bits)
     unsigned int sample_per_frames;         //!< Audio samples per audio frame
+    double sample_duration;                 //!< Audio sample duration (in µs)
 
     // Subtitles specific metadata
     char *subtitles_name;                   //!< Subtitles name?

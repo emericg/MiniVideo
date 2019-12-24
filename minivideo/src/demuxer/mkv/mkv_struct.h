@@ -321,12 +321,21 @@ typedef struct mkv_track_t
 
     std::vector<mkv_sample_t *> sample_vector;
 
+    // Video specific parameters
+    unsigned int color_depth;
+    unsigned int color_range;
+    unsigned int color_space;
+    unsigned int color_primaries;
+    unsigned int color_matrix;
+    unsigned int color_transfer;
+
     // AVC/HEVC specific parameters
     unsigned int codec_profile = 0;
     double codec_level = 0;
     unsigned int max_ref_frames = 0;
     bool use_cabac = false;
     bool use_8x8_blocks = false;
+    bool use_Bframes = false;
 
     unsigned int sps_count = 0;
     sps_t *sps_array[MAX_SPS] = { nullptr };

@@ -40,6 +40,27 @@
 
 /* ************************************************************************** */
 
+//! H.264 Profiles IDC definitions, see http://en.wikipedia.org/wiki/H264#Profiles
+typedef enum H264Profiles_e
+{
+    BASELINE            = 66,   //!< YUV 4:2:0/8  "Baseline profile"
+    MAINP               = 77,   //!< YUV 4:2:0/8  "Main profile"
+    EXTENDED            = 88,   //!< YUV 4:2:0/8  "Extended profile"
+
+    CAVLC444_INTRA      = 44,   //!< YUV 4:4:4/14 "CAVLC 4:4:4"
+    HIGHP               = 100,  //!< YUV 4:2:0/8  "High"
+    HIGH10              = 110,  //!< YUV 4:2:0/10 "High 10"
+    HIGH422             = 122,  //!< YUV 4:2:2/10 "High 4:2:2"
+    HIGH444             = 244,  //!< YUV 4:4:4/14 "High 4:4:4"
+
+    MVC_HIGH            = 118,  //!< YUV 4:2:0/8  "Multiview High"
+    MVC_FIELDHIGH       = 119,  //!< YUV 4:2:0/8  "Multiview Field High"
+    STEREO_HIGH         = 128   //!< YUV 4:2:0/8  "Stereo High"
+
+} H264Profiles_e;
+
+/* ************************************************************************** */
+
 //! Assignment of mnemonic names to scaling list indices (Table 7-2)
 typedef enum ScalingList_e
 {
@@ -55,6 +76,7 @@ typedef enum ScalingList_e
     Sl_8x8_Inter_Cb  = 9,
     Sl_8x8_Intra_Cr  = 10,
     Sl_8x8_Inter_Cr  = 11
+
 } ScalingList_e;
 
 //! SEI payload type
@@ -84,6 +106,7 @@ typedef enum SEI_payloadType_e
     SEI_STEREO_VIDEO_INFO,
     SEI_POST_FILTER_HINTS,
     SEI_TONE_MAPPING
+
 } SEI_payloadType_e;
 
 //! pic_struct in picture timing SEI message
@@ -98,6 +121,7 @@ typedef enum SEI_PicStructType_e
     SEI_PIC_STRUCT_BOTTOM_TOP_BOTTOM = 6, //!< bottom field, top field, bottom field repeated, in that order
     SEI_PIC_STRUCT_FRAME_DOUBLING    = 7, //!< frame doubling
     SEI_PIC_STRUCT_FRAME_TRIPLING    = 8  //!< frame tripling
+
 } SEI_PicStructType_e;
 
 /* ************************************************************************** */
@@ -253,8 +277,8 @@ int decodeSPS_legacy(DecodingContext_t *dc)
         dc->active_sps = sps->seq_parameter_set_id;
 
         // Handle parameters for profiles >= HIGH
-        if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
-            sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
+        if (sps->profile_idc == HIGHP || sps->profile_idc == HIGH10 ||
+            sps->profile_idc == HIGH422 || sps->profile_idc == HIGH444 || sps->profile_idc == CAVLC444_INTRA ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
             sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
             sps->profile_idc == 134 || sps->profile_idc == 135)
@@ -524,8 +548,8 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
         sps->separate_colour_plane_flag = false;
 
         // Handle parameters for profiles >= HIGH
-        if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
-            sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
+        if (sps->profile_idc == HIGHP || sps->profile_idc == HIGH10 ||
+            sps->profile_idc == HIGH422 || sps->profile_idc == HIGH444 || sps->profile_idc == CAVLC444_INTRA ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
             sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
             sps->profile_idc == 134 || sps->profile_idc == 135)
@@ -759,7 +783,7 @@ int checkSPScompat(sps_t *sps)
     int retcode = SUCCESS;
 
     if (sps->profile_idc != MAINP &&
-        sps->profile_idc != FREXT_HiP &&
+        sps->profile_idc != HIGHP &&
         sps->profile_idc != BASELINE)
     {
         TRACE_WARNING(PARAM, "  - profile_idc is %i", sps->profile_idc);
@@ -770,8 +794,8 @@ int checkSPScompat(sps_t *sps)
     }
 
     // Handle parameters for profiles >= HIGH
-    if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
-        sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
+    if (sps->profile_idc == HIGHP || sps->profile_idc == HIGH10 ||
+        sps->profile_idc == HIGH422 || sps->profile_idc == HIGH444 || sps->profile_idc == CAVLC444_INTRA ||
         sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
         sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
         sps->profile_idc == 134 || sps->profile_idc == 135)
@@ -835,8 +859,8 @@ static int checkSPS(sps_t *sps)
         }
 
         // Handle parameters for profiles >= HIGH
-        if (sps->profile_idc == FREXT_HiP || sps->profile_idc == FREXT_Hi10P ||
-            sps->profile_idc == FREXT_Hi422 || sps->profile_idc == FREXT_Hi444 || sps->profile_idc == FREXT_CAVLC444 ||
+        if (sps->profile_idc == HIGHP || sps->profile_idc == HIGH10 ||
+            sps->profile_idc == HIGH422 || sps->profile_idc == HIGH444 || sps->profile_idc == CAVLC444_INTRA ||
             sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
             sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
             sps->profile_idc == 134 || sps->profile_idc == 135)
@@ -1228,7 +1252,7 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
         pps->redundant_pic_cnt_present_flag = read_bit(bitstr);
 
         if (h264_more_rbsp_data(bitstr) == true &&
-            sps_array[pps->seq_parameter_set_id]->profile_idc >= FREXT_HiP)
+            sps_array[pps->seq_parameter_set_id]->profile_idc >= HIGHP)
         {
             pps->transform_8x8_mode_flag = read_bit(bitstr);
 

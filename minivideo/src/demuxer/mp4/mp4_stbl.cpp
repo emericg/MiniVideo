@@ -528,7 +528,6 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_stsd_video()" CLR_RESET);
     int retcode = SUCCESS;
-    char fcc[5];
 
     // VisualSampleEntry
     {
@@ -549,8 +548,8 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             TRACE_1(MP4, "> Video track is using CineForm codec");
         }
 
-        /*unsigned int pre_defined =*/ read_bits(bitstr, 16);
-        /*const unsigned int reserved =*/ read_bits(bitstr, 16);
+        skip_bits(bitstr, 16); // pre_defined
+        skip_bits(bitstr, 16); // reserved
 
         unsigned int pre_defined[3];
         pre_defined[0] = read_bits(bitstr, 32);
@@ -564,7 +563,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         unsigned int horizresolution = read_bits(bitstr, 32);
         unsigned int vertresolution = read_bits(bitstr, 32);
 
-        /*const unsigned int reserved =*/ read_bits(bitstr, 32);
+        skip_bits(bitstr, 32); // reserved
 
         unsigned int frame_count = read_bits(bitstr, 16);
 
@@ -575,8 +574,9 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         }
         track->compressorname[compressorsize] = '\0';
 
-        track->color_depth = read_bits(bitstr, 16);
-        /*int pre_defined = */ read_bits(bitstr, 16);
+        unsigned int color_depth = read_bits(bitstr, 16);
+        track->color_depth = color_depth / 3;
+        skip_bits(bitstr, 16); // pre_defined
 
 #if ENABLE_DEBUG
         TRACE_1(MP4, "> width  : %u", track->width);
@@ -585,7 +585,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
         TRACE_1(MP4, "> vertresolution  : 0x%X", vertresolution);
         TRACE_1(MP4, "> frame_count     : %u", frame_count);
         TRACE_1(MP4, "> compressor      : '%s'", track->compressorname);
-        TRACE_1(MP4, "> color depth     : %u", track->color_depth);
+        TRACE_1(MP4, "> color depth     : %u", color_depth);
 #endif // ENABLE_DEBUG
 
         // xmlMapper
@@ -598,7 +598,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             fprintf(mp4->xml, "  <vertresolution>%u</vertresolution>\n", vertresolution);
             fprintf(mp4->xml, "  <frame_count>%u</frame_count>\n", frame_count);
             fprintf(mp4->xml, "  <compressorname>%s</compressorname>\n", track->compressorname);
-            fprintf(mp4->xml, "  <color_depth>%u</color_depth>\n", track->color_depth);
+            fprintf(mp4->xml, "  <color_depth>%u</color_depth>\n", color_depth);
         }
     }
 
@@ -677,12 +677,12 @@ int parse_stsd_tmcd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
     int retcode = SUCCESS;
 
     {
-        /*unsigned int reserved =*/ read_bits(bitstr, 32);
+        skip_bits(bitstr, 32); // reserved
         unsigned int flags = read_bits(bitstr, 32);
         unsigned int time_scale = read_bits(bitstr, 32);
         unsigned int frame_duration = read_bits(bitstr, 32);
         track->number_of_frames = read_bits(bitstr, 8);
-        /*uint8_t reserved =*/ read_bits(bitstr, 8);
+        skip_bits(bitstr, 8); // reserved
 
 #if ENABLE_DEBUG
         TRACE_1(MP4, "> flags  : %u", flags);
@@ -1366,9 +1366,50 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         {
             track->color_range = track->sps_array[0]->vui->video_full_range_flag;
 
-            //track->sps_array[0]->vui->colour_primaries;
-            //track->sps_array[0]->vui->transfer_characteristics;
-            //track->sps_array[0]->vui->matrix_coefficients;
+            if (track->sps_array[0]->vui->colour_primaries == 1)
+                track->color_primaries = COLORS_BT709_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 4 ||
+                     track->sps_array[0]->vui->colour_primaries == 5)
+                track->color_primaries = COLORS_BT470_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 6)
+                track->color_primaries = COLORS_BT601_7;
+            else if (track->sps_array[0]->vui->colour_primaries == 7)
+                track->color_primaries = COLORS_SMPTE_240M;
+            else if (track->sps_array[0]->vui->colour_primaries == 9)
+                track->color_primaries = COLORS_BT2020_2;
+            else if (track->sps_array[0]->vui->colour_primaries == 10)
+                track->color_primaries = COLORS_CIE_1931XYZ;
+            else if (track->sps_array[0]->vui->colour_primaries == 11)
+                track->color_primaries = COLORS_SMPTE_DCIP3;
+            else if (track->sps_array[0]->vui->colour_primaries == 12)
+                track->color_primaries = COLORS_SMPTE_D65P3;
+            else if (track->sps_array[0]->vui->colour_primaries == 22)
+                track->color_primaries = COLORS_EBUTech_3213E;
+
+            if (track->sps_array[0]->vui->transfer_characteristics == 1)
+                track->color_transfer = COLORS_BT709_6;
+            else if (track->sps_array[0]->vui->colour_primaries == 4 ||
+                     track->sps_array[0]->vui->colour_primaries == 5)
+                track->color_transfer = COLORS_BT470_6;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 6)
+                track->color_transfer = COLORS_BT601_7;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 7)
+                track->color_transfer = COLORS_SMPTE_240M;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 14 ||
+                     track->sps_array[0]->vui->transfer_characteristics == 15)
+                track->color_transfer = COLORS_BT2020_2;
+            else if (track->sps_array[0]->vui->transfer_characteristics == 16 ||
+                     track->sps_array[0]->vui->transfer_characteristics == 18)
+                track->color_transfer = COLORS_BT2100_2;
+
+            if (track->sps_array[0]->vui->matrix_coefficients == 0)
+                track->color_space = CLR_RGB;
+            else if (track->sps_array[0]->vui->matrix_coefficients == 8)
+                track->color_space = CLR_YCgCo;
+            else if (track->sps_array[0]->vui->matrix_coefficients == 14)
+                track->color_space = CLR_ICtCp;
+            else
+                track->color_space = CLR_YCbCr;
         }
 
         if (track->pps_count && track->pps_array[0])
@@ -1560,6 +1601,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // Handle H.265 profile & level
     track->codec_profile = getH265CodecProfile(general_profile_idc);
     track->codec_level = static_cast<double>(general_level_idc) / 30.0;
+    track->color_depth = bitDepthLumaMinus8 + 8;
 
 #if ENABLE_DEBUG
     print_box_header(box_header);

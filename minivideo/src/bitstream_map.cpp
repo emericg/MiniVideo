@@ -254,7 +254,6 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
         bool cfr = true;
         unsigned j = 0;
 
-        // Audio frame duration
         if (track->stream_type == stream_AUDIO)
         {
             if (track->stream_codec == CODEC_LPCM ||
@@ -262,30 +261,52 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
                 track->stream_codec == CODEC_DPCM ||
                 track->stream_codec == CODEC_ADPCM)
             {
+                // PCM
                 if (track->sampling_rate)
                 {
                     track->frame_duration = (1.0 / static_cast<double>(track->sampling_rate));
+                    track->sample_duration = (1000000.0 / static_cast<double>(track->sampling_rate));
+                    track->sample_per_frames = 1;
                 }
             }
             else
             {
+                // Audio frame duration
                 if (track->sample_dts && track->sample_count >= 2)
                 {
                     track->frame_duration = static_cast<double>(track->sample_dts[1] - track->sample_dts[0]);
-                    track->frame_duration /= 1000; // µs to  ms
+                    track->frame_duration /= 1000.0; // µs to ms
+                }
+
+                if (track->frame_duration <= 0.0)
+                {
+                    // backup method
+                    track->frame_duration = (track->stream_duration_ms) / track->sample_count;
+                }
+
+                // Audio sample duration
+                if (track->sampling_rate)
+                {
+                    track->sample_duration = (1000000.0 / static_cast<double>(track->sampling_rate));
+                }
+
+                // Audio sample per frames
+                if (track->frame_duration > 0.0 && track->sample_duration > 0.0)
+                {
+                    track->sample_per_frames = static_cast<unsigned>((track->sample_duration * 1000.0) / track->frame_duration);
                 }
             }
         }
-        // Video frame duration
-        if (track->stream_type == stream_VIDEO && track->frame_duration == 0 && track->framerate != 0)
-        {
-            track->frame_duration = 1000.0 / track->framerate;
-        }
 
-        // Video frame interval
         if (track->stream_type == stream_VIDEO)
         {
-            // FIXME this is not reliable whenever using B frames
+            // Video frame duration
+            if (track->frame_duration == 0 && track->framerate > 0.0)
+            {
+                track->frame_duration = 1000.0 / track->framerate;
+            }
+
+            // Video frame interval // FIXME this is not reliable whenever using B frames
             if (track->sample_dts && track->sample_count >= 2)
                 frameinterval = track->sample_dts[1] - track->sample_dts[0];
         }

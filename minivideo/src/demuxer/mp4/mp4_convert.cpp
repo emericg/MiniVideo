@@ -193,9 +193,8 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->stream_type = stream_AUDIO;
             map->sampling_rate = track->sample_rate_hz;
             map->channel_count = track->channel_count;
-            map->bit_per_sample = track->sample_size_bits;
-
             map->channel_mode = (ChannelMode_e)track->channel_mode;
+            map->bit_per_sample = track->sample_size_bits;
         }
         else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
@@ -203,8 +202,11 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->width = track->width;
             map->height = track->height;
             map->color_depth = track->color_depth;
-            map->color_matrix = track->color_matrix;
             map->color_range = track->color_range;
+            map->color_space = track->color_space;
+            map->color_primaries = track->color_primaries;
+            map->color_matrix = track->color_matrix;
+            map->color_transfert = track->color_transfer;
 
             if (track->par_h && track->par_v)
             {
@@ -221,6 +223,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->max_ref_frames = track->max_ref_frames;
             map->h264_feature_cabac = track->use_cabac;
             map->h264_feature_8x8 = track->use_8x8_blocks;
+            //map->h264_feature_Bframes = track->use_Bframes;
 
             map->stereo_mode = (StereoMode_e)track->stereo;
             map->video_projection = (Projection_e)track->projection;
