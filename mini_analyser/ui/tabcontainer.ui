@@ -115,7 +115,11 @@
         <number>0</number>
        </property>
        <item row="1" column="0">
-        <widget class="QListWidget" name="listWidget_samples"/>
+        <widget class="QListWidget" name="listWidget_samples">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget_tracks">
@@ -144,6 +148,9 @@
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="bottomMargin">
+      <number>1</number>
+     </property>
      <item>
       <widget class="QLabel" name="labelTitle">
        <property name="maximumSize">
