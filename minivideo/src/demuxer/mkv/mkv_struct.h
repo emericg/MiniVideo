@@ -322,12 +322,12 @@ typedef struct mkv_track_t
     std::vector<mkv_sample_t *> sample_vector;
 
     // Video specific parameters
-    unsigned int color_depth;
-    unsigned int color_range;
-    unsigned int color_space;
-    unsigned int color_primaries;
-    unsigned int color_matrix;
-    unsigned int color_transfer;
+    unsigned int color_depth = 8;
+    unsigned int color_range = 0;
+    unsigned int color_space = 0;
+    unsigned int color_primaries = 0;
+    unsigned int color_matrix = 0;
+    unsigned int color_transfer = 0;
 
     // AVC/HEVC specific parameters
     unsigned int codec_profile = 0;

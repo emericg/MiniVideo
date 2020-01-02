@@ -204,7 +204,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->color_space = track->color_space;
             map->color_primaries = track->color_primaries;
             map->color_matrix = track->color_matrix;
-            map->color_transfert = track->color_transfer;
+            map->color_transfer = track->color_transfer;
             if (track->video->Colour)
             {
                 if (track->video->Colour->BitsPerChannel != 0)

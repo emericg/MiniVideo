@@ -400,11 +400,11 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
 
        if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
        {
-           TRACE_WARNING(MKV, "PPS OFFSET ERROR  %lli vs %lli",
-                         bitstream_get_absolute_byte_offset(bitstr),
-                         (track->pps_sample_offset[i] + track->pps_sample_size[i]));
-           skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
-       }
+            TRACE_WARNING(MKV, "PPS OFFSET ERROR  %lli vs %lli",
+                          bitstream_get_absolute_byte_offset(bitstr),
+                          (track->pps_sample_offset[i] + track->pps_sample_size[i]));
+            skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+        }
     }
 
     // Handle H.264 profile & level

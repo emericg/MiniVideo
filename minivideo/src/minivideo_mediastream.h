@@ -89,7 +89,7 @@ typedef struct MediaStream_t
     unsigned int color_range;               //!< Colors are in restricted or full range
     unsigned int color_space;               //!< Internal color encoding
     unsigned int color_primaries;           //!< Color primaries
-    unsigned int color_transfert;           //!< Color transfert
+    unsigned int color_transfer;            //!< Color transfer function
     unsigned int color_matrix;              //!< Color matrix
     Projection_e video_projection;          //!< Projection
     Rotation_e video_rotation;              //!< Rotation

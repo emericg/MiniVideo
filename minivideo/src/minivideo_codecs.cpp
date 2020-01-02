@@ -805,6 +805,13 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
         case PROF_VP9_3:
             return "Profile 3";
 
+        case PROF_AV1_Main:
+            return "Main";
+        case PROF_AV1_High:
+            return "High";
+        case PROF_AV1_Professional:
+            return "Professional";
+
         case PROF_AAC_LC:
             return "Low Complexity Profile";
         case PROF_AAC_Main:

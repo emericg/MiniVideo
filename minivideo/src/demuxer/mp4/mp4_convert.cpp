@@ -206,7 +206,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->color_space = track->color_space;
             map->color_primaries = track->color_primaries;
             map->color_matrix = track->color_matrix;
-            map->color_transfert = track->color_transfer;
+            map->color_transfer = track->color_transfer;
 
             if (track->par_h && track->par_v)
             {

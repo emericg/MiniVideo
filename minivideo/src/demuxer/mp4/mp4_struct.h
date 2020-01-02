@@ -251,9 +251,13 @@ typedef enum Mp4BoxType_e
                         BOX_STSD = 0x73747364,          //!< (*) sample descriptions (codec types, initialization, etc)
                             BOX_AVCC = 0x61766343,      //!< (v) AVC configuration box
                             BOX_HVCC = 0x68766343,      //!< (v) HEVC configuration box
+                            BOX_VPCC = 0x76706343,      //!< (v) VPx configuration box
+                            BOX_AV1C = 0x61763143,      //!< (v) AV1 configuration box
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box
+                            BOX_COLL = 0x436F4C4C,      //!< Content Light Level Box
+                            BOX_SMDM = 0x536D446D,      //!< SMPTE-2086 Mastering Display Metadata Box
                             BOX_FIEL = 0x6669656C,      //!<
                             BOX_GAMA = 0x67616D61,      //!<
                             BOX_PASP = 0x70617370,      //!< pixel aspect ratio box

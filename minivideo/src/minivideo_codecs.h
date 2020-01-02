@@ -300,7 +300,11 @@ typedef enum CodecProfiles_e
     PROF_VP9_2,
     PROF_VP9_3,
 
-    PROF_AAC_LC,
+    PROF_AV1_Main,
+    PROF_AV1_High,
+    PROF_AV1_Professional,
+
+    PROF_AAC_LC = 256,
     PROF_AAC_Main,
     PROF_AAC_SSR,
     PROF_AAC_MainAudio,

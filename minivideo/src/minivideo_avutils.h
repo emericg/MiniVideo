@@ -99,7 +99,7 @@ typedef enum Projection_e
     PROJECTION_EQUIRECTANGULAR  = 1,
     PROJECTION_EAC              = 2,
     PROJECTION_CUBEMAP_A        = 3,
-    PROJECTION_MESH             = 4,
+    PROJECTION_MESH             = 4
 
 } Projection_e;
 
@@ -109,7 +109,7 @@ typedef enum ScanType_e
     SCAN_UNKNOWN        = 0,
 
     SCAN_PROGRESSIVE    = 1,
-    SCAN_INTERLACED     = 2,
+    SCAN_INTERLACED     = 2
 
 } ScanType_e;
 
@@ -119,7 +119,7 @@ typedef enum Rotation_e
     ROTATION_0      = 0,
     ROTATION_90     = 1,
     ROTATION_180    = 2,
-    ROTATION_270    = 3,
+    ROTATION_270    = 3
 
 } Rotation_e;
 
@@ -140,7 +140,7 @@ typedef enum StereoMode_e
     STEREO_ROWINTERLEAVED_LEFT     =  9,//!< (left eye is first)
     STEREO_ROWINTERLEAVED_RIGHT    = 10,//!< (right eye is first)
     STEREO_COLUMNINTERLEAVED_LEFT  = 11,//!< (left eye is first)
-    STEREO_COLUMNINTERLEAVED_RIGHT = 12,//!< (right eye is first)
+    STEREO_COLUMNINTERLEAVED_RIGHT = 12 //!< (right eye is first)
     // both eyes laced in one Block     //!< (left eye is first)
     // both eyes laced in one Block     //!< (right eye is first)
 
@@ -153,10 +153,12 @@ typedef enum ColorModel_e
 
     CLR_RGB     = 1,
     CLR_xvYCC   = 2,
-    CLR_YPbPr   = 3,
-    CLR_YCbCr   = 4,
-    CLR_YCgCo   = 5,
-    CLR_ICtCp   = 6
+    CLR_YUV     = 3,
+    CLR_YDbDr   = 4,
+    CLR_YPbPr   = 5,
+    CLR_YCbCr   = 6,
+    CLR_YCgCo   = 7,
+    CLR_ICtCp   = 8
 
 } ColorModel_e;
 

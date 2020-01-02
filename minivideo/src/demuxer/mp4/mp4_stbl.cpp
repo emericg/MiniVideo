@@ -542,6 +542,16 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
             track->codec = CODEC_H265;
             TRACE_1(MP4, "> Video track is using H.265 codec");
         }
+        else if (box_header->boxtype == fcc_vp08)
+        {
+            track->codec = CODEC_VP8;
+            TRACE_1(MP4, "> Video track is using VP8 codec");
+        }
+        else if (box_header->boxtype == fcc_vp09)
+        {
+            track->codec = CODEC_VP9;
+            TRACE_1(MP4, "> Video track is using VP9 codec");
+        }
         else if (box_header->boxtype == fcc_CFHD)
         {
             track->codec = CODEC_CINEFORM;
@@ -625,6 +635,12 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_HVCC:
                     retcode = parse_hvcC(bitstr, &box_subsubheader, track, mp4);
                     break;
+                case BOX_VPCC:
+                    retcode = parse_vpcC(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_AV1C:
+                    retcode = parse_av1C(bitstr, &box_subsubheader, track, mp4);
+                    break;
                 case BOX_BTRT:
                     retcode = parse_btrt(bitstr, &box_subsubheader, track, mp4);
                     break;
@@ -648,6 +664,12 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                     break;
                 case BOX_SV3D:
                     retcode = parse_sv3d(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_COLL:
+                    retcode = parse_coll(bitstr, &box_subsubheader, track, mp4);
+                    break;
+                case BOX_SMDM:
+                    retcode = parse_smdm(bitstr, &box_subsubheader, track, mp4);
                     break;
 
                 default:
@@ -1610,7 +1632,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> general_tier_flag    : %u", general_tier_flag);
     TRACE_1(MP4, "> general_profile_idc  : %u", general_profile_idc);
     TRACE_1(MP4, "> general_profile_compatibility_flags: %u", general_profile_compatibility_flags);
-    TRACE_1(MP4, "> general_constraint_indicator_flags : %lu", general_constraint_indicator_flags);
+    TRACE_1(MP4, "> general_constraint_indicator_flags : %u", general_constraint_indicator_flags);
     TRACE_1(MP4, "> general_level_idc    : %u", general_level_idc);
 
     TRACE_1(MP4, "> min_spatial_segmentation_idc: %u", min_spatial_segmentation_idc);
@@ -1641,7 +1663,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
         fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
         fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
-        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%u</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
         fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
 
         fprintf(mp4->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", min_spatial_segmentation_idc);
@@ -1685,6 +1707,236 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         free(numNalus);
         free(nalUnitLength);
         free(nalUnit);
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief vpcC Configuration Box.
+ *
+ * From 'VP Codec ISO Media File Format Binding':
+ * VP Codec Sample Entry Box
+ * - https://www.webmproject.org/vp9/mp4/
+ */
+int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_vpcC()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Parse box content
+    unsigned profile = read_bits(bitstr, 8);
+    unsigned level = read_bits(bitstr, 8);
+    unsigned bitDepth = read_bits(bitstr, 4);
+    unsigned chromaSubsampling = read_bits(bitstr, 3);
+    bool videoFullRangeFlag = read_bits(bitstr, 1);
+    unsigned colourPrimaries = read_bits(bitstr, 8);
+    unsigned transferCharacteristics = read_bits(bitstr, 8);
+    unsigned matrixCoefficients = read_bits(bitstr, 8);
+
+    unsigned codecIntializationDataSize = read_bits(bitstr, 16);
+    if (codecIntializationDataSize > 0)
+    {
+        // Note: must be 0 for VP8 and VP9
+        // TODO // unsigned codecIntializationData = read_bits(bitstr, 8);
+    }
+
+    // Handle VPx profile & level
+    if (track->codec == CODEC_VP8)
+    {
+        if (profile == 0)
+            track->codec_profile = PROF_VP8_0;
+        else if (profile == 1)
+            track->codec_profile = PROF_VP8_1;
+    }
+    if (track->codec == CODEC_VP9)
+    {
+        if (profile == 0)
+            track->codec_profile = PROF_VP9_0;
+        else if (profile == 1)
+            track->codec_profile = PROF_VP9_1;
+        else if (profile == 2)
+            track->codec_profile = PROF_VP9_2;
+        else if (profile == 3)
+            track->codec_profile = PROF_VP9_3;
+    }
+
+    track->codec_level = static_cast<double>(level) / 10.0;
+
+    track->color_depth = bitDepth;
+    track->color_range = videoFullRangeFlag;
+
+    track->color_primaries = colourPrimaries;
+    track->color_transfer = transferCharacteristics;
+    track->color_matrix = matrixCoefficients;
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> profile : %u", profile);
+    TRACE_1(MP4, "> level: %u", level);
+    TRACE_1(MP4, "> bitDepth: %u", bitDepth);
+    TRACE_1(MP4, "> chromaSubsampling: %u", chromaSubsampling);
+    TRACE_1(MP4, "> videoFullRangeFlag: %u", videoFullRangeFlag);
+    TRACE_1(MP4, "> colourPrimaries: %u", colourPrimaries);
+    TRACE_1(MP4, "> transferCharacteristics: %u", transferCharacteristics);
+    TRACE_1(MP4, "> matrixCoefficients: %u", matrixCoefficients);
+
+    TRACE_1(MP4, "> codecIntializationDataSize: %u", codecIntializationDataSize);
+    if (codecIntializationDataSize)
+    {
+        // TODO
+    }
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "vpcC Configuration");
+        fprintf(mp4->xml, "  <profile>%u</profile>\n", profile);
+        fprintf(mp4->xml, "  <level>%u</level>\n", level);
+        fprintf(mp4->xml, "  <bitDepth>%u</bitDepth>\n", bitDepth);
+        fprintf(mp4->xml, "  <chromaSubsampling>%u</chromaSubsampling>\n", chromaSubsampling);
+        fprintf(mp4->xml, "  <videoFullRangeFlag>%u</videoFullRangeFlag>\n", videoFullRangeFlag);
+        fprintf(mp4->xml, "  <colourPrimaries>%u</colourPrimaries>\n", colourPrimaries);
+        fprintf(mp4->xml, "  <transferCharacteristics>%u</transferCharacteristics>\n", transferCharacteristics);
+        fprintf(mp4->xml, "  <matrixCoefficients>%u</matrixCoefficients>\n", matrixCoefficients);
+
+        fprintf(mp4->xml, "  <codecIntializationDataSize>%u</codecIntializationDataSize>\n", codecIntializationDataSize);
+        if (codecIntializationDataSize)
+        {
+            // TODO
+        }
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief AV1C Configuration Box.
+ *
+ * From 'AV1 Codec ISO Media File Format Binding':
+ * v1.2.0, 12 December 2019
+ * 2.3. AV1 Codec Configuration Box
+ * - https://aomediacodec.github.io/av1-isobmff/#av1codecconfigurationbox
+ */
+int parse_av1C(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_av1C()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+    bool marker = read_bit(bitstr);
+    unsigned version = read_bits(bitstr, 7);
+    unsigned seq_profile = read_bits(bitstr, 3);
+    unsigned seq_level_idx_0 = read_bits(bitstr, 5);
+    bool seq_tier_0 = read_bit(bitstr);
+    bool high_bitdepth = read_bit(bitstr);
+    bool twelve_bit = read_bit(bitstr);
+    bool monochrome = read_bit(bitstr);
+    bool chroma_subsampling_x = read_bit(bitstr);
+    bool chroma_subsampling_y = read_bit(bitstr);
+    unsigned chroma_sample_position = read_bits(bitstr, 2);
+    read_bits(bitstr, 3); // reserved
+
+    bool initial_presentation_delay_present = read_bit(bitstr);
+    unsigned int initial_presentation_delay_minus_one = 0;
+    if (initial_presentation_delay_present)
+    {
+        initial_presentation_delay_minus_one = read_bits(bitstr, 4);
+    }
+    else
+    {
+        read_bits(bitstr, 4); // reserved
+    }
+
+    // TODO // Parse OBUs
+    //unsigned int (8)[] configOBUs = read_bits(bitstr, 8);
+
+    // Handle AV1 profile & level
+    if (seq_profile == 0)
+        track->codec_profile = PROF_AV1_Main;
+    else if (seq_profile == 1)
+        track->codec_profile = PROF_AV1_High;
+    else if (seq_profile == 2)
+        track->codec_profile = PROF_AV1_Professional;
+
+    if (seq_level_idx_0 == 0) track->codec_level = 2.0;
+    if (seq_level_idx_0 == 1) track->codec_level = 2.1;
+    if (seq_level_idx_0 == 2) track->codec_level = 2.2;
+    if (seq_level_idx_0 == 3) track->codec_level = 2.3;
+    if (seq_level_idx_0 == 4) track->codec_level = 3.0;
+    if (seq_level_idx_0 == 5) track->codec_level = 3.1;
+    if (seq_level_idx_0 == 6) track->codec_level = 3.1;
+    if (seq_level_idx_0 == 7) track->codec_level = 3.1;
+    if (seq_level_idx_0 == 8) track->codec_level = 4.0;
+    if (seq_level_idx_0 == 9) track->codec_level = 4.1;
+    if (seq_level_idx_0 == 10) track->codec_level = 4.2;
+    if (seq_level_idx_0 == 11) track->codec_level = 4.3;
+    if (seq_level_idx_0 == 12) track->codec_level = 5.0;
+    if (seq_level_idx_0 == 13) track->codec_level = 5.1;
+    if (seq_level_idx_0 == 14) track->codec_level = 5.2;
+    if (seq_level_idx_0 == 15) track->codec_level = 5.3;
+    if (seq_level_idx_0 == 16) track->codec_level = 6.0;
+    if (seq_level_idx_0 == 17) track->codec_level = 6.1;
+    if (seq_level_idx_0 == 18) track->codec_level = 6.2;
+    if (seq_level_idx_0 == 19) track->codec_level = 6.3;
+    if (seq_level_idx_0 == 20) track->codec_level = 7.0;
+    if (seq_level_idx_0 == 21) track->codec_level = 7.1;
+    if (seq_level_idx_0 == 22) track->codec_level = 7.2;
+    if (seq_level_idx_0 == 23) track->codec_level = 7.3;
+
+    if (high_bitdepth) track->color_depth = 10;
+    else if (twelve_bit) track->color_depth = 12;
+    else track->color_depth = 8;
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> version : %u", version);
+    TRACE_1(MP4, "> seq_profile: %u", seq_profile);
+    TRACE_1(MP4, "> seq_level_idx_0: %u", seq_level_idx_0);
+    TRACE_1(MP4, "> seq_tier_0: %u", seq_tier_0);
+    TRACE_1(MP4, "> high_bitdepth: %u", high_bitdepth);
+    TRACE_1(MP4, "> twelve_bit: %u", twelve_bit);
+    TRACE_1(MP4, "> monochrome: %u", monochrome);
+    TRACE_1(MP4, "> chroma_subsampling_x: %u", chroma_subsampling_x);
+    TRACE_1(MP4, "> chroma_subsampling_y: %u", chroma_subsampling_y);
+    TRACE_1(MP4, "> chroma_sample_position: %u", chroma_sample_position);
+    TRACE_1(MP4, "> initial_presentation_delay_present: %u", initial_presentation_delay_present);
+    if (initial_presentation_delay_present)
+    {
+        TRACE_1(MP4, "> initial_presentation_delay_minus_one: %u", initial_presentation_delay_minus_one);
+    }
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "AV1C Configuration");
+        fprintf(mp4->xml, "  <version>%u</version>\n", version);
+        fprintf(mp4->xml, "  <seq_profile>%u</seq_profile>\n", seq_profile);
+        fprintf(mp4->xml, "  <seq_level_idx_0>%u</seq_level_idx_0>\n", seq_level_idx_0);
+        fprintf(mp4->xml, "  <seq_tier_0>%u</seq_tier_0>\n", seq_tier_0);
+        fprintf(mp4->xml, "  <high_bitdepth>%u</high_bitdepth>\n", high_bitdepth);
+        fprintf(mp4->xml, "  <twelve_bit>%i</twelve_bit>\n", twelve_bit);
+        fprintf(mp4->xml, "  <monochrome>%u</monochrome>\n", monochrome);
+        fprintf(mp4->xml, "  <chroma_subsampling_x>%u</chroma_subsampling_x>\n", chroma_subsampling_x);
+        fprintf(mp4->xml, "  <chroma_subsampling_y>%u</chroma_subsampling_y>\n", chroma_subsampling_y);
+        fprintf(mp4->xml, "  <chroma_sample_position>%u</chroma_sample_position>\n", chroma_sample_position);
+        fprintf(mp4->xml, "  <initial_presentation_delay_present>%u</initial_presentation_delay_present>\n", initial_presentation_delay_present);
+        if (initial_presentation_delay_present)
+        {
+            fprintf(mp4->xml, "  <initial_presentation_delay_minus_one>%u</initial_presentation_delay_minus_one>\n", initial_presentation_delay_minus_one);
+        }
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1813,6 +2065,7 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned int colour_primaries = 0;
     unsigned int transfer_characteristics = 0;
     unsigned int matrix_coefficients = 0;
+    bool colour_range = 0;
 
     if (colour_type == fourcc_be("nclc") || colour_type == fourcc_be("nclx"))
     {
@@ -1822,8 +2075,10 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
         if (colour_type == fourcc_be("nclx"))
         {
-            track->color_range = read_bit(bitstr);
+            colour_range = read_bit(bitstr);
             /*unsigned int reserved =*/ read_bits(bitstr, 7);
+
+            if (track->color_range) track->color_range = colour_range;
         }
 
         if (matrix_coefficients == 1)
@@ -1882,6 +2137,113 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
             fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
         }
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Content Light Level Box.
+ *
+ * From 'VP Codec ISO Media File Format Binding' specification:
+ * Carriage of HDR Metadata
+ * Content Light Level Box
+ *
+ * - https://www.webmproject.org/vp9/mp4/
+ */
+int parse_coll(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_coll()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Parse box content
+    unsigned int maxCLL = read_bits(bitstr, 16);
+    unsigned int maxFALL = read_bits(bitstr, 16);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> maxCLL : %u", maxCLL);
+    TRACE_1(MP4, "> maxFALL: %u", maxFALL);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "Content Light Level");
+        fprintf(mp4->xml, "  <maxCLL>%u</maxCLL>\n", maxCLL);
+        fprintf(mp4->xml, "  <maxFALL>%u</maxFALL>\n", maxFALL);
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+/* ************************************************************************** */
+
+/*!
+ * \brief SMPTE-2086 Mastering Display Metadata Box.
+ *
+ * From 'VP Codec ISO Media File Format Binding' specification:
+ * Carriage of HDR Metadata
+ * SMPTE-2086 Mastering Display Metadata Box
+ *
+ * - https://www.webmproject.org/vp9/mp4/
+ */
+int parse_smdm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_smdm()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    // Parse box content
+    unsigned primaryRChromaticity_x = read_bits(bitstr, 16);
+    unsigned primaryRChromaticity_y = read_bits(bitstr, 16);
+    unsigned primaryGChromaticity_x = read_bits(bitstr, 16);
+    unsigned primaryGChromaticity_y = read_bits(bitstr, 16);
+    unsigned primaryBChromaticity_x = read_bits(bitstr, 16);
+    unsigned primaryBChromaticity_y = read_bits(bitstr, 16);
+    unsigned whitePointChromaticity_x = read_bits(bitstr, 16);
+    unsigned whitePointChromaticity_y = read_bits(bitstr, 16);
+    unsigned luminanceMax = read_bits(bitstr, 32);
+    unsigned luminanceMin = read_bits(bitstr, 32);
+
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    TRACE_1(MP4, "> primaryRChromaticity_x: %u", primaryRChromaticity_x);
+    TRACE_1(MP4, "> primaryRChromaticity_y: %u", primaryRChromaticity_y);
+    TRACE_1(MP4, "> primaryGChromaticity_x: %u", primaryGChromaticity_x);
+    TRACE_1(MP4, "> primaryGChromaticity_y: %u", primaryGChromaticity_y);
+    TRACE_1(MP4, "> primaryBChromaticity_x: %u", primaryBChromaticity_x);
+    TRACE_1(MP4, "> primaryBChromaticity_y: %u", primaryBChromaticity_y);
+    TRACE_1(MP4, "> whitePointChromaticity_x: %u", whitePointChromaticity_x);
+    TRACE_1(MP4, "> whitePointChromaticity_y: %u", whitePointChromaticity_y);
+    TRACE_1(MP4, "> luminanceMax: %u", luminanceMax);
+    TRACE_1(MP4, "> luminanceMin: %u", luminanceMin);
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "SMPTE-2086 Mastering Display Metadata");
+        fprintf(mp4->xml, "  <primaryRChromaticity_x>%u</primaryRChromaticity_x>\n", primaryRChromaticity_x);
+        fprintf(mp4->xml, "  <primaryRChromaticity_y>%u</primaryRChromaticity_y>\n", primaryRChromaticity_y);
+        fprintf(mp4->xml, "  <primaryGChromaticity_x>%u</primaryGChromaticity_x>\n", primaryGChromaticity_x);
+        fprintf(mp4->xml, "  <primaryGChromaticity_y>%u</primaryGChromaticity_y>\n", primaryGChromaticity_y);
+        fprintf(mp4->xml, "  <primaryBChromaticity_x>%u</primaryBChromaticity_x>\n", primaryBChromaticity_x);
+        fprintf(mp4->xml, "  <primaryBChromaticity_y>%u</primaryBChromaticity_y>\n", primaryBChromaticity_y);
+        fprintf(mp4->xml, "  <whitePointChromaticity_x>%u</whitePointChromaticity_x>\n", whitePointChromaticity_x);
+        fprintf(mp4->xml, "  <whitePointChromaticity_y>%u</whitePointChromaticity_y>\n", whitePointChromaticity_y);
+        fprintf(mp4->xml, "  <luminanceMax>%u</luminanceMax>\n", luminanceMax);
+        fprintf(mp4->xml, "  <luminanceMin>%u</luminanceMin>\n", luminanceMin);
         fprintf(mp4->xml, "  </a>\n");
     }
 
