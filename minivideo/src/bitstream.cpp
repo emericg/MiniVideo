@@ -494,7 +494,7 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
     {
         TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!", n);
         return FAILURE;
-    } else
+    }
 #endif // ENABLE_DEBUG
 
     if (n == 1)
@@ -615,7 +615,7 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
     {
         TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 64 bits!", n);
         return FAILURE;
-    } else
+    }
 #endif // ENABLE_DEBUG
 
     if (n == 1)
@@ -887,7 +887,6 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
         TRACE_WARNING(BITS, "You want to read %i bits, but this function can only read up to 32 bits!", n);
         return FAILURE;
     }
-    else
 #endif // ENABLE_DEBUG
 
     if (n == 1)

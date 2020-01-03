@@ -54,7 +54,7 @@
  */
 uint64_t EbmlTimeToUnixSeconds(int64_t ebmlTime)
 {
-     return (uint64_t)(ebmlTime / EBML_TICK + SEC_TO_UNIX_EPOCH);
+     return static_cast<uint64_t>(ebmlTime / EBML_TICK + SEC_TO_UNIX_EPOCH);
 }
 
 /* ************************************************************************** */
@@ -75,7 +75,7 @@ uint32_t read_ebml_eid(Bitstream_t *bitstr)
         leadingZeroBits++;
 
     elementSize = (leadingZeroBits + 1) * 7;
-    elementValue = read_bits(bitstr, elementSize) + pow(2, elementSize);
+    elementValue = read_bits(bitstr, elementSize) + std::pow(2, elementSize);
 /*
     TRACE_2(MKV, "read_ebml_eid()");
     bitstream_print_absolute_bit_offset(bitstr);
@@ -128,7 +128,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
     TRACE_3(MKV, "parse_ebml_element()");
     int retcode = SUCCESS;
 
-    if (element == NULL)
+    if (element == nullptr)
     {
         TRACE_ERROR(MKV, "Invalid EbmlElement_t structure!");
         retcode = FAILURE;
@@ -148,7 +148,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
 
             ebml_size = (ebml_leadingZeroBits + 1) * 7;
             element->eid_size = (ebml_size + ebml_leadingZeroBits + 1) / 8;
-            element->eid = read_bits_64(bitstr, ebml_size) + pow(2, ebml_size);
+            element->eid = read_bits_64(bitstr, ebml_size) + std::pow(2, ebml_size);
         }
 
         // Read element size
@@ -241,7 +241,7 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr, EbmlElement_t *element,
                              FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_uint(%i bits)", element->size*8);
-    uint64_t value = read_bits_64(bitstr, element->size * 8);
+    uint64_t value = read_bits_64(bitstr, element->size*8);
 
     if (name)
     {
@@ -259,7 +259,7 @@ uint64_t read_ebml_data_uint_UID(Bitstream_t *bitstr, EbmlElement_t *element,
                                  FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_uint_UID(%i bits)", element->size*8);
-    uint64_t value = read_bits_64(bitstr, element->size * 8);
+    uint64_t value = read_bits_64(bitstr, element->size*8);
 
     if (name)
     {
@@ -279,7 +279,7 @@ int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
                            FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_int2(%i bits)", element->size*8);
-    int64_t value = (int64_t)read_bits_64(bitstr, element->size*8);
+    int64_t value = static_cast<int64_t>(read_bits_64(bitstr, 64));
 
     if (name)
     {
@@ -299,7 +299,7 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
                             FILE *xml, const char *name)
 {
     TRACE_2(MKV, "read_ebml_data_date2(%i bits)", element->size*8);
-    int64_t value = (int64_t)read_bits_64(bitstr, 64);
+    int64_t value = static_cast<int64_t>(read_bits_64(bitstr, 64));
 
     if (name)
     {
@@ -326,14 +326,14 @@ double read_ebml_data_float(Bitstream_t *bitstr, EbmlElement_t *element,
     {
         char buf[4];
         for (int i = 3; i >= 0; i--)
-            buf[i] = read_bits(bitstr, 8);
+            buf[i] = static_cast<char>(read_bits(bitstr, 8));
         x = *((float *)buf);
     }
     else if (element->size == 8)
     {
         char buf[8];
         for (int i = 7; i >= 0; i--)
-            buf[i] = read_bits(bitstr, 8);
+            buf[i] = static_cast<char>(read_bits(bitstr, 8));
         x = *((double *)buf);
     }
 
@@ -360,7 +360,7 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
     if (string)
     {
         for (int i = 0; i < element->size; i++)
-            string[i] = (char)read_bits(bitstr, 8);
+            string[i] = static_cast<char>(read_bits(bitstr, 8));
         string[element->size] = '\0';
 
         if (name)
@@ -406,7 +406,7 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element,
     if (value)
     {
         for (int i = 0; i < element->size; i++)
-            value[i] = read_bits(bitstr, 8);
+            value[i] = static_cast<uint8_t>(read_bits(bitstr, 8));
         value[element->size] = '\0';
 
         if (name)
@@ -479,7 +479,7 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
     TRACE_WARNING(MKV, "ebml_parse_unknown(0x%X / %i bytes)", element->eid, element->size);
 
     print_ebml_element(element);
-    write_ebml_element(element, xml, NULL);
+    write_ebml_element(element, xml, nullptr);
     if (xml) fprintf(xml, "  </a>\n");
 
     return SUCCESS;

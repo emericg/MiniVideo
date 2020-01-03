@@ -69,7 +69,7 @@ typedef struct mkv_info_t
 
     uint64_t TimecodeScale = 0;
     double Duration = 0;
-    uint64_t DateUTC = 0;
+    int64_t DateUTC = 0;
     char *Title = nullptr;
     char *MuxingApp = nullptr;
     char *WritingApp = nullptr;

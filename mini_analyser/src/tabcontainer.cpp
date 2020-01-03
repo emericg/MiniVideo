@@ -508,7 +508,7 @@ void tabContainer::previewSample(int sid)
 
         if (out)
         {
-            QImage img((uchar*)out->surface, out->width, out->height, QImage::Format_RGB888);
+            QImage img((uchar *)out->surface, out->width, out->height, QImage::Format_RGB888);
 
             double w = (ui->scrollArea_2->width() - 24);
             int h = out->height / (out->width / w);
@@ -947,7 +947,7 @@ bool tabContainer::loadXmlFile()
     if (status == true)
     {
         xmlMapFile.seek(0);
-        char *b = static_cast<char*>(pugi::get_memory_allocation_function()(xmlMapFile.size()));
+        char *b = static_cast<char *>(pugi::get_memory_allocation_function()(xmlMapFile.size()));
         xmlMapFile.read(b, xmlMapFile.size());
 
         pugi::xml_parse_result result = xmlMapDatas.load_buffer_inplace_own(b, xmlMapFile.size());
