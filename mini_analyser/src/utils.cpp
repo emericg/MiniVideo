@@ -597,7 +597,7 @@ QString getStereoModeString(const StereoMode_e stereoMode)
 QString getFourccString(const unsigned fourcc)
 {
     char fcc_str[5];
-    return QString::fromLatin1(getFccString_le(fourcc, fcc_str));
+    return QString::fromUtf8(getFccString_le(fourcc, fcc_str));
 }
 
 QString getLanguageString(const char *languageCode)
@@ -746,7 +746,7 @@ QString getLanguageString(const char *languageCode)
             langage_qstr = QObject::tr("Indonesian");
 
         else
-            langage_qstr = QString::fromLatin1(languageCode, static_cast<int>(lng_size));
+            langage_qstr = QString::fromUtf8(languageCode, static_cast<int>(lng_size));
     }
 
     return langage_qstr;

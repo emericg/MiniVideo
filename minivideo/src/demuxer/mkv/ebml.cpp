@@ -356,25 +356,43 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
 {
     TRACE_2(MKV, "read_ebml_data_string(%i bytes)", element->size);
 
-    char *value = new char [element->size+1];
-    if (value)
+    char *string = new char [element->size+1];
+    if (string)
     {
         for (int i = 0; i < element->size; i++)
-            value[i] = read_bits(bitstr, 8);
-        value[element->size] = '\0';
+            string[i] = (char)read_bits(bitstr, 8);
+        string[element->size] = '\0';
 
         if (name)
         {
-            TRACE_1(MKV, "* %s  = '%s'", name, value);
+            TRACE_1(MKV, "* %s  = '%s'", name, string);
 
             if (xml)
             {
-                fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+                //fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+
+                fprintf(xml, "  <%s string=\"utf8\">", name);
+                for (int i = 0; i < element->size; i++)
+                {
+                    if (string[i] == '\"')
+                        fprintf(xml, "&quot");
+                    else if (string[i] == '\'')
+                        fprintf(xml, "&apos");
+                    else if (string[i] == '<')
+                        fprintf(xml, "&lt");
+                    else if (string[i] == '>')
+                        fprintf(xml, "&gt");
+                    else if (string[i] == '&')
+                        fprintf(xml, "&amp");
+                    else
+                        fprintf(xml, "%c", string[i]);
+                }
+                fprintf(xml, "</%s>\n", name);
             }
         }
     }
 
-    return value;
+    return string;
 }
 
 /* ************************************************************************** */

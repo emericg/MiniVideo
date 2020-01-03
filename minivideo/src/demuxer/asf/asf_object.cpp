@@ -254,7 +254,25 @@ char *read_asf_string_ascii(Bitstream_t *bitstr, const int sizeChar,
 
                 if (xml)
                 {
-                    fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+                    //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
+
+                    fprintf(xml, "  <%s string=\"ascii\">", name);
+                    for (int i = 0; i < sizeChar; i++)
+                    {
+                        if (string[i] == '\"')
+                            fprintf(xml, "&quot");
+                        else if (string[i] == '\'')
+                            fprintf(xml, "&apos");
+                        else if (string[i] == '<')
+                            fprintf(xml, "&lt");
+                        else if (string[i] == '>')
+                            fprintf(xml, "&gt");
+                        else if (string[i] == '&')
+                            fprintf(xml, "&amp");
+                        else
+                            fprintf(xml, "%c", string[i]);
+                    }
+                    fprintf(xml, "</%s>\n", name);
                 }
             }
         }
@@ -292,7 +310,25 @@ char *read_asf_string_utf16(Bitstream_t *bitstr, const int sizeChar,
 
                 if (xml)
                 {
-                    fprintf(xml, "  <%s>%s</%s>\n", name, string,name);
+                    //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
+
+                    fprintf(xml, "  <%s string=\"utf16\">", name);
+                    for (int i = 0; i < sizeChar; i++)
+                    {
+                        if (string[i] == '\"')
+                            fprintf(xml, "&quot");
+                        else if (string[i] == '\'')
+                            fprintf(xml, "&apos");
+                        else if (string[i] == '<')
+                            fprintf(xml, "&lt");
+                        else if (string[i] == '>')
+                            fprintf(xml, "&gt");
+                        else if (string[i] == '&')
+                            fprintf(xml, "&amp");
+                        else
+                            fprintf(xml, "%c", string[i]);
+                    }
+                    fprintf(xml, "</%s>\n", name);
                 }
             }
         }

@@ -398,28 +398,46 @@ char *read_mp4_string(Bitstream_t *bitstr, int max_bytes, FILE *xml, const char 
 {
     TRACE_2(MP4, "read_mp4_string()");
 
-    char *value = (char *)malloc(max_bytes+1);
-    if (value)
+    char *string = (char *)malloc(max_bytes+1);
+    if (string)
     {
         for (int i = 0; i < max_bytes; i++)
         {
-            value[i] = (char)read_bits(bitstr, 8);
-            if (value[i] == '\0') break;
+            string[i] = (char)read_bits(bitstr, 8);
+            if (string[i] == '\0') break;
         }
-        value[max_bytes] = '\0'; // in any case...
+        string[max_bytes] = '\0'; // in any case...
 
         if (name)
         {
-            TRACE_1(MKV, "* %s  = '%s'", name, value);
+            TRACE_1(MKV, "* %s  = '%s'", name, string);
 
             if (xml)
             {
-                fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+                //fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+
+                fprintf(xml, "  <%s string=\"utf8\">", name);
+                for (int i = 0; i < max_bytes; i++)
+                {
+                    if (string[i] == '\"')
+                        fprintf(xml, "&quot");
+                    else if (string[i] == '\'')
+                        fprintf(xml, "&apos");
+                    else if (string[i] == '<')
+                        fprintf(xml, "&lt");
+                    else if (string[i] == '>')
+                        fprintf(xml, "&gt");
+                    else if (string[i] == '&')
+                        fprintf(xml, "&amp");
+                    else
+                        fprintf(xml, "%c", string[i]);
+                }
+                fprintf(xml, "</%s>\n", name);
             }
         }
     }
 
-    return value;
+    return string;
 }
 
 /* ************************************************************************** */

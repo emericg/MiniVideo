@@ -744,15 +744,25 @@ void tabContainer::containerSelection(int64_t selected_offset)
             }
             else if (strcmp(e.name(), "a"))
             {
-                QLabel *fl = new QLabel(QString::fromLatin1(e.name()));
+                QLabel *fl = new QLabel(QString::fromUtf8(e.name()));
                 if (e.attribute("index"))
-                    fl->setText(fl->text() + " #" + QString::fromLatin1(e.attribute("index").value()));
+                    fl->setText(fl->text() + " #" + QString::fromUtf8(e.attribute("index").value()));
 
-                QLineEdit *fv = new QLineEdit(QString::fromLatin1(e.child_value()));
+                QString value = QString::fromUtf8(e.child_value());
+                if (e.attribute("string"))
+                {
+                    value.replace("&quot", "\"");
+                    value.replace("&apos", "'");
+                    value.replace("&lt", "<");
+                    value.replace("&gt", ">");
+                    value.replace("&amp", "&");
+                }
+
+                QLineEdit *fv = new QLineEdit(value);
                 if (e.attribute("unit"))
-                    fv->setText(fv->text() + "  (unit: " + QString::fromLatin1(e.attribute("unit").value()) + ")");
+                    fv->setText(fv->text() + "  (unit: " + QString::fromUtf8(e.attribute("unit").value()) + ")");
                 if (e.attribute("note"))
-                    fv->setText(fv->text() + "  (note: " + QString::fromLatin1(e.attribute("note").value()) + ")");
+                    fv->setText(fv->text() + "  (note: " + QString::fromUtf8(e.attribute("note").value()) + ")");
 
                 fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                 fv->setReadOnly(true);
