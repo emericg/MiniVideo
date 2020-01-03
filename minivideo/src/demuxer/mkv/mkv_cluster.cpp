@@ -128,7 +128,7 @@ int mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
             xmlSpacer(mkv->xml, "Block", 0);
             fprintf(mkv->xml, "  <offset>%" PRId64 "</offset>\n", s->offset);
             fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
-            fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
+            fprintf(mkv->xml, "  <timecode>%" PRIu64 "</timecode>\n", s->timecode);
         }
     }
     else
@@ -226,7 +226,7 @@ int mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
                 xmlSpacer(mkv->xml, "Block", i);
                 fprintf(mkv->xml, "  <offset>%" PRId64 "</offset>\n", s->offset);
                 fprintf(mkv->xml, "  <size>%" PRId64 "</size>\n", s->size);
-                fprintf(mkv->xml, "  <timecode>%" PRId64 "</timecode>\n", s->timecode);
+                fprintf(mkv->xml, "  <timecode>%" PRIu64 "</timecode>\n", s->timecode);
             }
         }
 

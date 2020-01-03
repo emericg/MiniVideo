@@ -248,7 +248,7 @@ uint64_t read_ebml_data_uint(Bitstream_t *bitstr, EbmlElement_t *element,
         TRACE_1(MKV, "* %s  = %llu", name, value);
         if (xml)
         {
-            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
+            fprintf(xml, "  <%s>%" PRIu64 "</%s>\n", name, value, name);
         }
     }
 

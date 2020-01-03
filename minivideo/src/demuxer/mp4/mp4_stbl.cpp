@@ -802,7 +802,7 @@ int parse_stsd_text(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track
             fprintf(mp4->xml, "  <text_justification>%u</text_justification>\n", text_justification);
             fprintf(mp4->xml, "  <background_color>0x%X%X%X</background_color>\n",
                     backgroundcolor_r, backgroundcolor_g, backgroundcolor_b);
-            fprintf(mp4->xml, "  <default_text_box>%" PRId64 "</default_text_box>\n", default_text_box);
+            fprintf(mp4->xml, "  <default_text_box>%" PRIu64 "</default_text_box>\n", default_text_box);
             fprintf(mp4->xml, "  <font_number>%u</font_number>\n", font_number);
             fprintf(mp4->xml, "  <font_face>%u</font_face>\n", font_face);
             fprintf(mp4->xml, "  <foreground_color>0x%X%X%X</foreground_color>\n",
@@ -1632,7 +1632,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> general_tier_flag    : %u", general_tier_flag);
     TRACE_1(MP4, "> general_profile_idc  : %u", general_profile_idc);
     TRACE_1(MP4, "> general_profile_compatibility_flags: %u", general_profile_compatibility_flags);
-    TRACE_1(MP4, "> general_constraint_indicator_flags : %u", general_constraint_indicator_flags);
+    TRACE_1(MP4, "> general_constraint_indicator_flags : %lu", general_constraint_indicator_flags);
     TRACE_1(MP4, "> general_level_idc    : %u", general_level_idc);
 
     TRACE_1(MP4, "> min_spatial_segmentation_idc: %u", min_spatial_segmentation_idc);
@@ -1663,7 +1663,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
         fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
         fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
-        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%u</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
         fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
 
         fprintf(mp4->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", min_spatial_segmentation_idc);

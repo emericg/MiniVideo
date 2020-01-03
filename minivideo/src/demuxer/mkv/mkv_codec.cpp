@@ -647,7 +647,7 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         fprintf(mkv->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
         fprintf(mkv->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
         fprintf(mkv->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
-        fprintf(mkv->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
+        fprintf(mkv->xml, "  <general_constraint_indicator_flags>%" PRIu64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
         fprintf(mkv->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
 
         fprintf(mkv->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", min_spatial_segmentation_idc);
