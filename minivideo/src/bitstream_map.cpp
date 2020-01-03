@@ -277,10 +277,9 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
                     track->frame_duration = static_cast<double>(track->sample_dts[1] - track->sample_dts[0]);
                     track->frame_duration /= 1000.0; // µs to ms
                 }
-
-                if (track->frame_duration <= 0.0)
+                // Audio frame duration (backup method)
+                if (track->frame_duration <= 0.0 && track->sample_count > 0)
                 {
-                    // backup method
                     track->frame_duration = (track->stream_duration_ms) / track->sample_count;
                 }
 
