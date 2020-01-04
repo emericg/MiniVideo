@@ -414,10 +414,10 @@ char *read_mp4_string(Bitstream_t *bitstr, int max_bytes, FILE *xml, const char 
 
             if (xml)
             {
-                //fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+                //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
 
                 fprintf(xml, "  <%s string=\"utf8\">", name);
-                for (int i = 0; i < max_bytes; i++)
+                for (unsigned i = 0; i < strlen(string); i++)
                 {
                     if (string[i] == '\"')
                         fprintf(xml, "&quot");

@@ -722,7 +722,7 @@ static int parse_url(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
     write_box_header(box_header, mp4->xml, "URL Data Handler");
     char *str = read_mp4_string(bitstr, box_header->size, mp4->xml, "URL");
     free(str);
-    if (mp4->xml)fprintf(mp4->xml, "  </a>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
@@ -738,7 +738,7 @@ static int parse_urn(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
     write_box_header(box_header, mp4->xml, "URN Data Handler");
     char *str = read_mp4_string(bitstr, box_header->size, mp4->xml, "URN");
     free(str);
-    if (mp4->xml)fprintf(mp4->xml, "  </a>\n");
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }

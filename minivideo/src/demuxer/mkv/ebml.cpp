@@ -369,7 +369,7 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
 
             if (xml)
             {
-                //fprintf(xml, "  <%s>%s</%s>\n", name, value, name);
+                //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
 
                 fprintf(xml, "  <%s string=\"utf8\">", name);
                 for (int i = 0; i < element->size; i++)

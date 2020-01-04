@@ -1903,7 +1903,7 @@ int parse_av1C(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief BitrateBox.
+ * \brief Bitrate Box.
  *
  * From 'ISO/IEC 14496-12' specification:
  * 8.5.2 Sample Description Box
