@@ -1065,54 +1065,103 @@ int MainWindow::printVideoDetails()
                 ui->label_video_par->setVisible(false);
             }
 
-            ui->label_video_color_depth->setText(QString::number(t->color_depth) + " bits");
-            ui->label_video_color_subsampling->setText(QString::number(t->color_subsampling));
+            if (t->color_space > 0 && t->color_subsampling > 0)
+            {
+                ui->label_50->setVisible(true);
+                ui->label_60->setVisible(true);
+                ui->label_video_color_space->setVisible(true);
+                ui->label_video_color_subsampling->setVisible(true);
 
-            if (t->color_space == CLR_RGB)
-                ui->label_video_color_space->setText("RGB");
-            else if (t->color_space == CLR_xvYCC)
-                ui->label_video_color_space->setText("xvYCC");
-            else if (t->color_space == CLR_YPbPr)
-                ui->label_video_color_space->setText("YPbPr");
-            else if (t->color_space == CLR_YCbCr)
-                ui->label_video_color_space->setText("YCbCr");
-            else if (t->color_space == CLR_YCgCo)
-                ui->label_video_color_space->setText("YCgCo");
-            else if (t->color_space == CLR_ICtCp)
-                ui->label_video_color_space->setText("YICtCp");
-            else
-                ui->label_video_color_space->setText("YCbCr (best guess)");
+                if (t->color_space == CLR_RGB)
+                    ui->label_video_color_space->setText("RGB");
+                else if (t->color_space == CLR_xvYCC)
+                    ui->label_video_color_space->setText("xvYCC");
+                else if (t->color_space == CLR_YPbPr)
+                    ui->label_video_color_space->setText("YPbPr");
+                else if (t->color_space == CLR_YCbCr)
+                    ui->label_video_color_space->setText("YCbCr");
+                else if (t->color_space == CLR_YCgCo)
+                    ui->label_video_color_space->setText("YCgCo");
+                else if (t->color_space == CLR_ICtCp)
+                    ui->label_video_color_space->setText("YICtCp");
+                else
+                    ui->label_video_color_space->setText("YCbCr (best guess)");
 
-            if (t->color_matrix == CM_bt470)
-                ui->label_video_color_matrix->setText("Rec. 470");
-            else if (t->color_matrix == CM_bt601)
-                ui->label_video_color_matrix->setText("Rec. 601");
-            else if (t->color_matrix == CM_bt709)
-                ui->label_video_color_matrix->setText("Rec. 709");
-            else if (t->color_matrix == CM_bt2020)
-                ui->label_video_color_matrix->setText("Rec. 2020");
+                if (t->color_subsampling == SS_4444)
+                    ui->label_video_color_subsampling->setText("4:4:4:4");
+                else if (t->color_subsampling == SS_444)
+                    ui->label_video_color_subsampling->setText("4:4:4");
+                else if (t->color_subsampling == SS_422)
+                    ui->label_video_color_subsampling->setText("4:2:2");
+                else if (t->color_subsampling == SS_420)
+                    ui->label_video_color_subsampling->setText("4:2:0");
+                else if (t->color_subsampling == SS_411)
+                    ui->label_video_color_subsampling->setText("4:1:1");
+                else if (t->color_subsampling == SS_400)
+                    ui->label_video_color_subsampling->setText("4:0:0");
+                else
+                    ui->label_video_color_subsampling->setText("4:2:0 (best guess)");
+            }
             else
-                ui->label_video_color_matrix->setText("Rec. 709 (best guess)");
+            {
+                ui->label_50->setVisible(false);
+                ui->label_60->setVisible(false);
+                ui->label_video_color_space->setVisible(false);
+                ui->label_video_color_subsampling->setVisible(false);
+            }
 
-            if (t->color_subsampling == SS_4444)
-                ui->label_video_color_subsampling->setText("4:4:4:4");
-            else if (t->color_subsampling == SS_444)
-                ui->label_video_color_subsampling->setText("4:4:4");
-            else if (t->color_subsampling == SS_422)
-                ui->label_video_color_subsampling->setText("4:2:2");
-            else if (t->color_subsampling == SS_420)
-                ui->label_video_color_subsampling->setText("4:2:0");
-            else if (t->color_subsampling == SS_411)
-                ui->label_video_color_subsampling->setText("4:1:1");
-            else if (t->color_subsampling == SS_400)
-                ui->label_video_color_subsampling->setText("4:0:0");
-            else
-                ui->label_video_color_subsampling->setText("4:2:0 (best guess)");
+            if (t->color_depth > 0)
+            {
+                ui->label_58->setVisible(true);
+                ui->label_89->setVisible(true);
+                ui->label_video_color_range->setVisible(true);
+                ui->label_video_color_depth->setVisible(true);
 
-            if (t->color_range == 1)
-                ui->label_video_color_range->setText(tr("Full range"));
+                ui->label_video_color_depth->setText(QString::number(t->color_depth) + " bits");
+
+                if (t->color_range == 1)
+                    ui->label_video_color_range->setText(tr("Full range"));
+                else
+                    ui->label_video_color_range->setText(tr("Limited range"));
+            }
             else
-                ui->label_video_color_range->setText(tr("Limited range"));
+            {
+                ui->label_58->setVisible(false);
+                ui->label_89->setVisible(false);
+                ui->label_video_color_range->setVisible(false);
+                ui->label_video_color_depth->setVisible(false);
+            }
+
+            if (t->color_primaries && t->color_primaries)
+            {
+                ui->label_65->setVisible(true);
+                ui->label_92->setVisible(true);
+                ui->label_94->setVisible(true);
+                ui->label_video_color_primaries->setVisible(true);
+                ui->label_video_color_transfer->setVisible(true);
+                ui->label_video_color_matrix->setVisible(true);
+
+                QString prim = getColorPrimariesString((ColorPrimaries_e)t->color_primaries);
+                if (prim.isEmpty()) prim = "Rec. 709 " + tr("(best guess)");
+                ui->label_video_color_primaries->setText(prim);
+
+                QString tra = getColorTransferCharacteristicString((ColorTransferCharacteristic_e)t->color_transfer);
+                if (tra.isEmpty()) tra = "Rec. 709 " + tr("(best guess)");
+                ui->label_video_color_transfer->setText(tra);
+
+                QString mat = getColorMatrixString((ColorSpace_e)t->color_matrix);
+                if (mat.isEmpty()) mat = "Rec. 709 " + tr("(best guess)");
+                ui->label_video_color_matrix->setText(mat);
+            }
+            else
+            {
+                ui->label_65->setVisible(false);
+                ui->label_92->setVisible(false);
+                ui->label_94->setVisible(false);
+                ui->label_video_color_primaries->setVisible(false);
+                ui->label_video_color_transfer->setVisible(false);
+                ui->label_video_color_matrix->setVisible(false);
+            }
 
             double framerate = t->framerate;
             if (framerate < 1.0)
@@ -1409,7 +1458,7 @@ int MainWindow::printOtherDetails()
                 text += QString::number(t->sample_count);
                 text += tr(" samples");
 
-                text += tr("<br>");
+                if (i < media->tracks_others_count-1) text += tr("<br>");
 
                 QLabel *track = new QLabel(text);
                 ui->verticalLayout_other2_track->addWidget(track);

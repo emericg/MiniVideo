@@ -213,6 +213,74 @@ typedef enum SubSampling_e
 
 /* ************************************************************************** */
 
+//! Chromaticity coordinates of the source primaries
+typedef enum ColorPrimaries_e
+{
+    COLOR_PRI_RESERVED0 = 0,
+    COLOR_PRI_BT709 = 1,
+    COLOR_PRI_UNSPECIFIED = 2,
+    COLOR_PRI_RESERVED3 = 3,
+    COLOR_PRI_BT470M = 4,
+    COLOR_PRI_BT470BG = 5,
+    COLOR_PRI_SMPTE170M = 6, // Or BT601
+    COLOR_PRI_SMPTE240M = 7,
+    COLOR_PRI_FILM = 8, // Generic film (color filters using illuminant C)
+    COLOR_PRI_BT2020 = 9,
+    COLOR_PRI_SMPTE428 = 10,
+    COLOR_PRI_SMPTE431 = 11,
+    COLOR_PRI_SMPTE432 = 12,
+    COLOR_PRI_JEDEC_P22 = 22
+
+} ColorPrimaries_e;
+
+//! Color Transfer Characteristic
+typedef enum ColorTransferCharacteristic_e
+{
+    COLOR_TRC_RESERVED0 = 0,
+    COLOR_TRC_BT709 = 1,
+    COLOR_TRC_UNSPECIFIED = 2,
+    COLOR_TRC_RESERVED3 = 3,
+    COLOR_TRC_GAMMA22 = 4,
+    COLOR_TRC_GAMMA28 = 5,
+    COLOR_TRC_SMPTE170M = 6,
+    COLOR_TRC_SMPTE240M = 7,
+    COLOR_TRC_LINEAR = 8,
+    COLOR_TRC_LOG = 9,
+    COLOR_TRC_LOG_SQRT = 10,
+    COLOR_TRC_IEC61966_2_4 = 11,
+    COLOR_TRC_BT1361_ECG = 12,
+    COLOR_TRC_IEC61966_2_1 = 13, // sRGB or sYCC
+    COLOR_TRC_BT2020_10 = 14,
+    COLOR_TRC_BT2020_12 = 15,
+    COLOR_TRC_SMPTE2084 = 16,
+    COLOR_TRC_SMPTE428 = 17,
+    COLOR_TRC_ARIB_STD_B67 = 18 // BT.2100 HLG, ARIB STD-B67
+
+} ColorTransferCharacteristic_e;
+
+//! Color spaces
+typedef enum ColorSpace_e
+{
+    COLOR_SPC_RGB = 0,
+    COLOR_SPC_BT709 = 1,
+    COLOR_SPC_UNSPECIFIED = 2,
+    COLOR_SPC_RESERVED3 = 3,
+    COLOR_SPC_FCC = 4,
+    COLOR_SPC_BT470BG = 5,
+    COLOR_SPC_SMPTE170M = 6,
+    COLOR_SPC_SMPTE240M = 7,
+    COLOR_SPC_YCGCO = 8,
+    COLOR_SPC_BT2020_NCL = 9,
+    COLOR_SPC_BT2020_CL = 10,
+    COLOR_SPC_SMPTE2085 = 11,
+    COLOR_SPC_CHROMA_DERIVED_NCL = 12,
+    COLOR_SPC_CHROMA_DERIVED_CL = 13,
+    COLOR_SPC_ICTCP = 14
+
+} ColorSpace_e;
+
+/* ************************************************************************** */
+
 /*!
  * \brief Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field.
  *

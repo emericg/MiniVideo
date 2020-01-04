@@ -209,7 +209,16 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             {
                 if (track->video->Colour->BitsPerChannel != 0)
                     map->color_depth = track->video->Colour->BitsPerChannel;
-                map->color_range = track->video->Colour->Range;
+
+                if (track->video->Colour->Range != 0)
+                    map->color_range = track->video->Colour->Range;
+
+                if (track->video->Colour->Primaries != 0)
+                    map->color_primaries = track->video->Colour->Primaries;
+                if (track->video->Colour->MatrixCoefficients != 0)
+                    map->color_matrix = track->video->Colour->MatrixCoefficients;
+                if (track->video->Colour->TransferCharacteristics != 0)
+                    map->color_transfer = track->video->Colour->TransferCharacteristics;
             }
 
             map->video_level = track->codec_level;

@@ -355,4 +355,10 @@ minivideo_EXPORT const char *getCodecProfileString(const CodecProfiles_e profile
 minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bool long_description = false);
 
 /* ************************************************************************** */
+
+minivideo_EXPORT const char *getColorPrimariesString(const ColorPrimaries_e primaries);
+minivideo_EXPORT const char *getColorTransferCharacteristicString(const ColorTransferCharacteristic_e transfert);
+minivideo_EXPORT const char *getColorMatrixString(const ColorSpace_e space);
+
+/* ************************************************************************** */
 #endif // MINIVIDEO_CODECS_H

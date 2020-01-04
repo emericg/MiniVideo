@@ -308,6 +308,16 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
             // Video frame interval // FIXME this is not reliable whenever using B frames
             if (track->sample_dts && track->sample_count >= 2)
                 frameinterval = track->sample_dts[1] - track->sample_dts[0];
+
+            // Color space
+            if (track->color_matrix == 0)
+                track->color_space = CLR_RGB;
+            else if (track->color_matrix == 8)
+                track->color_space = CLR_YCgCo;
+            else if (track->color_matrix == 14)
+                track->color_space = CLR_ICtCp;
+            else
+                track->color_space = CLR_YCbCr;
         }
 
         unsigned samplesizerefid = 10;

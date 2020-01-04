@@ -843,3 +843,115 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 }
 
 /* ************************************************************************** */
+
+minivideo_EXPORT const char *getColorPrimariesString(const ColorPrimaries_e primaries)
+{
+    switch (primaries)
+    {
+        case COLOR_PRI_BT709:
+            return "Rec. 709";
+        case COLOR_PRI_BT470M:
+            return "BT470M";
+        case COLOR_PRI_BT470BG:
+            return "BT470BG";
+        case COLOR_PRI_SMPTE170M:
+            return "SMPTE 170M";
+        case COLOR_PRI_SMPTE240M:
+            return "SMPTE 240M";
+        case COLOR_PRI_FILM:
+            return "FILM";
+        case COLOR_PRI_BT2020:
+            return "Rec. 2020";
+        case COLOR_PRI_SMPTE428:
+            return "SMPTE 428";
+        case COLOR_PRI_SMPTE431:
+            return "SMPTE 431";
+        case COLOR_PRI_SMPTE432:
+            return "SMPTE 432";
+        case COLOR_PRI_JEDEC_P22:
+            return "JEDEC P22";
+
+        default:
+            return "";
+    }
+}
+
+minivideo_EXPORT const char *getColorTransferCharacteristicString(const ColorTransferCharacteristic_e transfer)
+{
+    switch (transfer)
+    {
+        case COLOR_TRC_BT709:
+            return "Rec. 709";
+        case COLOR_TRC_GAMMA22:
+            return "GAMMA 22";
+        case COLOR_TRC_GAMMA28:
+            return "GAMMA 28";
+        case COLOR_TRC_SMPTE170M:
+            return "SMPTE 170M";
+        case COLOR_TRC_SMPTE240M:
+            return "SMPTE 240M";
+        case COLOR_TRC_LINEAR:
+            return "LINEAR";
+        case COLOR_TRC_LOG:
+            return "LOG";
+        case COLOR_TRC_LOG_SQRT:
+            return "LOG SQRT";
+        case COLOR_TRC_IEC61966_2_4:
+            return "IEC 61966_2_4";
+        case COLOR_TRC_BT1361_ECG:
+            return "BT 1361_ECG";
+        case COLOR_TRC_IEC61966_2_1:
+            return "IEC 61966_2_1";
+        case COLOR_TRC_BT2020_10:
+            return "BT 2020_1";
+        case COLOR_TRC_BT2020_12:
+            return "BT 2020_12";
+        case COLOR_TRC_SMPTE2084:
+            return "SMPTE 2084";
+        case COLOR_TRC_SMPTE428:
+            return "SMPTE 428";
+        case COLOR_TRC_ARIB_STD_B67:
+            return "ARIB_STD_B6";
+
+        default:
+            return "";
+    }
+}
+
+minivideo_EXPORT const char *getColorMatrixString(const ColorSpace_e space)
+{
+    switch (space)
+    {
+        case COLOR_SPC_RGB:
+            return "RGB";
+        case COLOR_SPC_BT709:
+            return "Rec. 709";
+        case COLOR_SPC_FCC:
+            return "FCC";
+        case COLOR_SPC_BT470BG:
+            return "BT 470BG";
+        case COLOR_SPC_SMPTE170M:
+            return "SMPTE 170M";
+        case COLOR_SPC_SMPTE240M:
+            return "SMPTE 240M";
+        case COLOR_SPC_YCGCO:
+            return "YCgCo";
+        case COLOR_SPC_BT2020_NCL:
+            return "YCgCo";
+        case COLOR_SPC_BT2020_CL:
+            return "YCgCo";
+        case COLOR_SPC_SMPTE2085:
+            return "SMPTE 2085";
+        case COLOR_SPC_CHROMA_DERIVED_NCL:
+            return "CHROMA_DERIVED_NCL";
+        case COLOR_SPC_CHROMA_DERIVED_CL:
+            return "CHROMA_DERIVED_CL";
+        case COLOR_SPC_ICTCP:
+            return "ICtCp";
+
+        default:
+            return "";
+    }
+}
+
+/* ************************************************************************** */
