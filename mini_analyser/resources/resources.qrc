@@ -52,9 +52,6 @@
         <file>img/T.png</file>
         <file>img/P.png</file>
     </qresource>
-    <qresource prefix="/fonts">
-        <file>fonts/DejaVuSansMono.ttf</file>
-    </qresource>
     <qresource prefix="/licenses">
         <file>../LICENSE</file>
     </qresource>
