@@ -89,20 +89,92 @@ typedef struct mkv_cluster_t
 
 } mkv_cluster_t;
 
+typedef struct mkv_chapter_atom_process_t
+{
+    uint64_t ChapProcessCodecID = 0;
+    uint8_t *ChapProcessPrivate = nullptr;
+    //ChapProcessCommand
+        //ChapProcessTime
+        //ChapProcessData
+
+} mkv_chapter_atom_process_t;
+
+typedef struct mkv_chapter_atom_display_t
+{
+    char *ChapString = nullptr;
+    char *ChapLanguage = nullptr;
+    char *ChapLanguageIETF = nullptr;
+    char *ChapCountry = nullptr;
+
+} mkv_chapter_atom_display_t;
+
+typedef struct mkv_chapter_atom_t
+{
+    uint64_t ChapterUID = 0;
+    char *ChapterStringUID = nullptr;
+    uint64_t ChapterTimeStart = 0;
+    uint64_t ChapterTimeEnd = 0;
+    uint64_t ChapterFlagHidden = 0;
+    uint64_t ChapterFlagEnabled = 0;
+    uint8_t *ChapterSegmentUID = nullptr;
+    uint8_t *ChapterSegmentEditionUID = nullptr;
+    uint64_t ChapterPhysicalEquiv = 0;
+
+    std::vector <uint64_t> ChapterTrackNumbers;
+    std::vector <mkv_chapter_atom_display_t *> ChapterDisplays;
+    std::vector <mkv_chapter_atom_process_t *> ChapterProcesses;
+
+} mkv_chapter_atom_t;
+
+typedef struct mkv_chapter_editionentry_t
+{
+    uint64_t EditionUID = 0;
+    uint64_t EditionFlagHidden = 0;
+    uint64_t EditionFlagDefault = 0;
+    uint64_t EditionFlagOrdered	 = 0;
+
+    std::vector <mkv_chapter_atom_t *> atoms;
+
+} mkv_chapter_editionentry_t;
+
+typedef struct mkv_chapters_t
+{
+    std::vector <mkv_chapter_editionentry_t *> ChapterEditionEntry;
+
+} mkv_chapter_t;
+
+typedef struct mkv_tag_target_t
+{
+    uint64_t TargetTypeValue = 0;
+    char *TargetType = nullptr;
+    uint64_t TagTrackUID = 0;
+    uint64_t TagEditionUID = 0;
+    uint64_t TagChapterUID = 0;
+    uint64_t TagAttachmentUID = 0;
+
+} mkv_tag_target_t;
+
+typedef struct mkv_tag_simpletag_t
+{
+    char *TagName = nullptr;
+    char *TagLanguage = nullptr;
+    char *TagLanguageIETF = nullptr;
+    uint64_t TagDefault = 0;
+    char *TagString = nullptr;
+    uint8_t *TagBinary = nullptr;
+
+} mkv_tag_simpletag_t;
+
 typedef struct mkv_tag_t
 {
-    uint64_t CueTrack = 0;
-    uint64_t CueClusterPosition = 0;
-    uint64_t CueRelativePosition = 0;
-    uint64_t CueDuration = 0;
-    uint64_t CueBlockNumber = 0;
-    uint64_t CueCodecState = 0;
+    mkv_tag_target_t target;
+    std::vector<mkv_tag_simpletag_t *> simpletags;
 
 } mkv_tag_t;
 
 typedef struct mkv_tags_t
 {
-    mkv_tag_t *Tags = nullptr;
+    std::vector<mkv_tag_t *> tags;
 
 } mkv_tags_t;
 
@@ -114,6 +186,8 @@ typedef struct mkv_cuetrackpos_t
     uint64_t CueDuration = 0;
     uint64_t CueBlockNumber = 0;
     uint64_t CueCodecState = 0;
+
+    std::vector<uint64_t> CueRefTimes;
 
 } mkv_cuetrackpos_t;
 
@@ -173,6 +247,7 @@ typedef struct mkv_track_audio_t
 
 } mkv_track_audio_t;
 
+//! SMPTE 2086 mastering data
 typedef struct mkv_track_video_colour_mastering_t
 {
     double PrimaryRChromaticityX = 0.0;
@@ -244,7 +319,9 @@ typedef struct mkv_track_video_t
 
 typedef struct mkv_track_translate_t
 {
-    uint64_t todo; // TODO
+    std::vector <uint64_t> TrackTranslateEditionUID;
+    uint64_t TrackTranslateCodec = 0;
+    uint8_t *TrackTranslateTrackID = nullptr;
 
 } mkv_track_translate_t;
 
@@ -348,20 +425,6 @@ typedef struct mkv_track_t
 
 } mkv_track_t;
 
-typedef struct mkv_chapter_entry_t
-{
-    int chapter_count = 0;
-    uint8_t *ChapterEditionEntry = nullptr;
-
-} mkv_chapter_entry_t;
-
-typedef struct mkv_chapter_t
-{
-    int chapter_count = 0;
-    mkv_chapter_entry_t *ChapterEditionEntry = nullptr;
-
-} mkv_chapter_t;
-
 /* ************************************************************************** */
 
 //! Structure for MKV video infos
@@ -373,6 +436,7 @@ typedef struct mkv_t
 
     ebml_header_t ebml;
     mkv_info_t info;
+    mkv_chapters_t chapters;
 
     uint32_t tracks_count = 0;
     mkv_track_t *tracks[256] = { nullptr };
@@ -381,6 +445,7 @@ typedef struct mkv_t
 
 } mkv_t;
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /*!
@@ -636,6 +701,7 @@ typedef enum EbmlElement_e
                 eid_ChapterDisplay = 0x80,
                     eid_ChapString = 0x85,
                     eid_ChapLanguage = 0x437C,
+                    eid_ChapLanguageIETF = 0x437D,
                     eid_ChapCountry = 0x437E,
                 eid_ChapProcess = 0x6944,
                     eid_ChapProcessCodecID = 0x6955,
@@ -656,6 +722,7 @@ typedef enum EbmlElement_e
             eid_SimpleTag = 0x67C8,
                 eid_TagName = 0x45A3,
                 eid_TagLanguage = 0x447A,
+                eid_TagLanguageIETF = 0x447B,
                 eid_TagDefault = 0x4484,
                 eid_TagString = 0x4487,
                 eid_TagBinary = 0x4485,

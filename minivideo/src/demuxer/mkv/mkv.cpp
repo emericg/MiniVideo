@@ -153,7 +153,149 @@ static int mkv_parse_attachments(Bitstream_t *bitstr, EbmlElement_t *element, mk
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_chapters_atom(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_chaptertrack(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                  std::vector <uint64_t> *ChapterTrackNumbers)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_chaptertrack()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Chapter Track");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse sub element content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_ChapterTrackNumber:
+                ChapterTrackNumbers->push_back(read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterTrackNumber"));
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+        }
+
+        retcode = jumpy_mkv(bitstr, element, &element_sub);
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+static int mkv_parse_chapterdisplay(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                    mkv_chapter_atom_display_t *display)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_chapterdisplay()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Chapter Display");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse sub element content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_ChapString:
+                display->ChapString = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapString");
+                break;
+            case eid_ChapLanguage:
+                display->ChapLanguage = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapLanguage");
+                break;
+            case eid_ChapLanguageIETF:
+                display->ChapLanguageIETF = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapLanguage");
+                break;
+            case eid_ChapCountry:
+                display->ChapCountry = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapCountry");
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+        }
+
+        retcode = jumpy_mkv(bitstr, element, &element_sub);
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+static int mkv_parse_chapterprocess(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                    mkv_chapter_atom_process_t *process)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_chapterprocess()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Chapter Process");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse sub element content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_ChapProcessCodecID:
+                process->ChapProcessCodecID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapProcessCodecID");
+                break;
+            case eid_ChapProcessPrivate:
+                process->ChapProcessCodecID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapProcessPrivate");
+                break;
+            //case eid_ChapProcessCommand:
+            //    // TODO
+            //    break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+        }
+
+        retcode = jumpy_mkv(bitstr, element, &element_sub);
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+static int mkv_parse_chapters_atom(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                   mkv_chapter_atom_t *atom)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_chapters_atom()" CLR_RESET);
     int retcode = SUCCESS;
@@ -175,34 +317,46 @@ static int mkv_parse_chapters_atom(Bitstream_t *bitstr, EbmlElement_t *element, 
             switch (element_sub.eid)
             {
             case eid_ChapterUID:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterUID");
+                atom->ChapterUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterUID");
                 break;
             case eid_ChapterStringUID:
-                read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapterStringUID");
+                atom->ChapterStringUID = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "ChapterStringUID");
                 break;
             case eid_ChapterTimeStart:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterTimeStart");
+                atom->ChapterTimeStart = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterTimeStart");
                 break;
             case eid_ChapterTimeEnd:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterTimeEnd");
+                atom->ChapterTimeEnd = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterTimeEnd");
                 break;
             case eid_ChapterFlagHidden:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterFlagHidden");
+                atom->ChapterFlagHidden = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterFlagHidden");
                 break;
             case eid_ChapterFlagEnabled:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterFlagEnabled");
+                atom->ChapterFlagEnabled = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterFlagEnabled");
                 break;
             case eid_ChapterSegmentUID:
-                read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ChapterSegmentUID");
+                atom->ChapterSegmentUID = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ChapterSegmentUID");
                 break;
             case eid_ChapterSegmentEditionUID:
-                read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ChapterSegmentEditionUID");
+                atom->ChapterSegmentEditionUID = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "ChapterSegmentEditionUID");
                 break;
             case eid_ChapterPhysicalEquiv:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterPhysicalEquiv");
+                atom->ChapterPhysicalEquiv = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ChapterPhysicalEquiv");
                 break;
 
-            // TODO stuff still missing here
+            case eid_ChapterTrack:
+                retcode = mkv_parse_chaptertrack(bitstr, &element_sub, mkv, &atom->ChapterTrackNumbers);
+                break;
+            case eid_ChapterDisplay: {
+                mkv_chapter_atom_display_t *dd = new mkv_chapter_atom_display_t;
+                atom->ChapterDisplays.push_back(dd);
+                retcode = mkv_parse_chapterdisplay(bitstr, &element_sub, mkv, dd);
+                } break;
+            case eid_ChapProcess: {
+                mkv_chapter_atom_process_t *pp = new mkv_chapter_atom_process_t;
+                atom->ChapterProcesses.push_back(pp);
+                retcode = mkv_parse_chapterprocess(bitstr, &element_sub, mkv, pp);
+                } break;
 
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
@@ -220,15 +374,14 @@ static int mkv_parse_chapters_atom(Bitstream_t *bitstr, EbmlElement_t *element, 
 
 /* ************************************************************************** */
 
-static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                    mkv_chapter_editionentry_t *entry)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_chapters_entry()" CLR_RESET);
     int retcode = SUCCESS;
 
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Edition Entry");
-
-    //mkv_editionentry_t ee;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -244,21 +397,23 @@ static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element,
             switch (element_sub.eid)
             {
             case eid_EditionUID:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionUID");
+                entry->EditionUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionUID");
                 break;
             case eid_EditionFlagHidden:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagHidden");
+                entry->EditionFlagHidden = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagHidden");
                 break;
             case eid_EditionFlagDefault:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagDefault");
+                entry->EditionFlagDefault = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagDefault");
                 break;
             case eid_EditionFlagOrdered:
-                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagOrdered");
+                entry->EditionFlagOrdered = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "EditionFlagOrdered");
                 break;
 
-            case eid_ChapterAtom:
-                mkv_parse_chapters_atom(bitstr, &element_sub, mkv);
-                break;
+            case eid_ChapterAtom: {
+                mkv_chapter_atom_t *atom = new mkv_chapter_atom_t;
+                entry->atoms.push_back(atom);
+                mkv_parse_chapters_atom(bitstr, &element_sub, mkv, atom);
+                } break;
 
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
@@ -273,6 +428,8 @@ static int mkv_parse_chapters_entry(Bitstream_t *bitstr, EbmlElement_t *element,
 
     return retcode;
 }
+
+/* ************************************************************************** */
 
 static int mkv_parse_chapters(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
@@ -295,20 +452,23 @@ static int mkv_parse_chapters(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
         {
             switch (element_sub.eid)
             {
-            case eid_EditionEntry:
-                retcode = mkv_parse_chapters_entry(bitstr, &element_sub, mkv);
-                break;
+                case eid_EditionEntry:
+                {
+                    mkv_chapter_editionentry_t *ee = new mkv_chapter_editionentry_t;
+                    mkv->chapters.ChapterEditionEntry.push_back(ee);
+                    retcode = mkv_parse_chapters_entry(bitstr, &element_sub, mkv, ee);
+                } break;
 
-            case eid_void:
-                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
-                break;
-            case eid_crc32:
-                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
-                break;
+                case eid_void:
+                    retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                    break;
+                case eid_crc32:
+                    retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                    break;
 
-            default:
-                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
-                break;
+                default:
+                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                    break;
             }
         }
 
@@ -322,6 +482,116 @@ static int mkv_parse_chapters(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t
 
 /* ************************************************************************** */
 /* ************************************************************************** */
+
+static int mkv_parse_simpletag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                               mkv_tag_simpletag_t *simpletag)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_simpletag()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "SimpleTag");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_TagName:
+                simpletag->TagName = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "TagName");
+                break;
+            case eid_TagLanguage:
+                simpletag->TagLanguage = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "TagLanguage");
+                break;
+            case eid_TagLanguageIETF:
+                simpletag->TagLanguageIETF = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "TagLanguageIETF");
+                break;
+            case eid_TagDefault:
+                simpletag->TagDefault = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TagDefault");
+                break;
+            case eid_TagString:
+                simpletag->TagString = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "TagString");
+                break;
+            case eid_TagBinary:
+                simpletag->TagBinary = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "TagBinary");
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
+        }
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
+static int mkv_parse_target(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                            mkv_tag_target_t *tagtarget)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_target()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Targets");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_TargetTypeValue:
+                tagtarget->TargetTypeValue = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TargetTypeValue");
+                break;
+            case eid_TargetType:
+                tagtarget->TargetType = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "TargetType");
+                break;
+            case eid_TagTrackUID:
+                tagtarget->TagTrackUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TagTrackUID");
+                break;
+            case eid_TagEditionUID:
+                tagtarget->TagEditionUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TagEditionUID");
+                break;
+            case eid_TagChapterUID:
+                tagtarget->TagChapterUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TagChapterUID");
+                break;
+            case eid_TagAttachmentUID:
+                tagtarget->TagAttachmentUID = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "TagAttachmentUID");
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
+        }
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
 
 static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
 {
@@ -347,11 +617,13 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             switch (element_sub.eid)
             {
                 case eid_Targets:
-                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                    retcode = mkv_parse_target(bitstr, &element_sub, mkv, &tag.target);
                     break;
-                case eid_SimpleTag:
-                    retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
-                    break;
+                case eid_SimpleTag: {
+                    mkv_tag_simpletag_t *st = new mkv_tag_simpletag_t;
+                    tag.simpletags.push_back(st);
+                    retcode = mkv_parse_simpletag(bitstr, &element_sub, mkv, st);
+                    } break;
 
                 default:
                     retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
@@ -363,6 +635,18 @@ static int mkv_parse_tag(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
     }
 
     if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    delete [] tag.target.TargetType;
+    for (unsigned i = 0; i < tag.simpletags.size(); i++)
+    {
+        delete [] tag.simpletags.at(i)->TagName;
+        delete [] tag.simpletags.at(i)->TagBinary;
+        delete [] tag.simpletags.at(i)->TagString;
+        delete [] tag.simpletags.at(i)->TagLanguage;
+        delete [] tag.simpletags.at(i)->TagLanguageIETF;
+        delete tag.simpletags.at(i);
+    }
+    tag.simpletags.clear();
 
     return retcode;
 }
@@ -418,15 +702,14 @@ static int mkv_parse_tags(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mk
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-static int mkv_parse_cues_cuepoint_pos_ref(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
+static int mkv_parse_cues_cuepoint_pos_ref(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
+                                           std::vector<uint64_t> *cueposref)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_cues_cuepoint_pos_ref()" CLR_RESET);
     int retcode = SUCCESS;
 
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Cue Reference");
-
-    uint64_t CueRefTime = 0;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -442,7 +725,7 @@ static int mkv_parse_cues_cuepoint_pos_ref(Bitstream_t *bitstr, EbmlElement_t *e
             switch (element_sub.eid)
             {
                 case eid_CueRefTime:
-                    CueRefTime = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueTrack");
+                    cueposref->push_back(read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueRefTime"));
                     break;
 
                 default:
@@ -468,7 +751,7 @@ static int mkv_parse_cues_cuepoint_pos(Bitstream_t *bitstr, EbmlElement_t *eleme
     print_ebml_element(element);
     write_ebml_element(element, mkv->xml, "Cue Track Positions");
 
-    mkv_cuetrackpos_t pos;
+    mkv_cuetrackpos_t cuepos;
 
     while (mkv->run == true &&
            retcode == SUCCESS &&
@@ -484,26 +767,26 @@ static int mkv_parse_cues_cuepoint_pos(Bitstream_t *bitstr, EbmlElement_t *eleme
             switch (element_sub.eid)
             {
                 case eid_CueTrack:
-                    pos.CueTrack = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueTrack");
+                    cuepos.CueTrack = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueTrack");
                     break;
                 case eid_CueClusterPosition:
-                    pos.CueClusterPosition = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueClusterPosition");
+                    cuepos.CueClusterPosition = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueClusterPosition");
                     break;
                 case eid_CueRelativePosition:
-                    pos.CueRelativePosition = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueRelativePosition");
+                    cuepos.CueRelativePosition = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueRelativePosition");
                     break;
                 case eid_CueDuration:
-                    pos.CueDuration = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueDuration");
+                    cuepos.CueDuration = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueDuration");
                     break;
                 case eid_CueBlockNumber:
-                    pos.CueBlockNumber = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueBlockNumber");
+                    cuepos.CueBlockNumber = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueBlockNumber");
                     break;
                 case eid_CueCodecState:
-                    pos.CueCodecState = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueCodecState");
+                    cuepos.CueCodecState = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "CueCodecState");
                     break;
 
                 case eid_CueReference:
-                    retcode = mkv_parse_cues_cuepoint_pos_ref(bitstr, &element_sub, mkv);
+                    retcode = mkv_parse_cues_cuepoint_pos_ref(bitstr, &element_sub, mkv, &cuepos.CueRefTimes);
                     break;
 
                 default:
@@ -658,6 +941,10 @@ static int mkv_parse_info_chapter(Bitstream_t *bitstr, EbmlElement_t *element, m
 
         retcode = jumpy_mkv(bitstr, element, &element_sub);
     }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    delete [] chap.ChapterTranslateID;
 
     return retcode;
 }

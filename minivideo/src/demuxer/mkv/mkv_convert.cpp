@@ -354,6 +354,39 @@ void mkv_clean(mkv_t *mkv)
         delete [] mkv->info.MuxingApp;
         delete [] mkv->info.WritingApp;
 
+        // mkv_chapters_t
+        for (unsigned i = 0; i < mkv->chapters.ChapterEditionEntry.size(); i++)
+        {
+            for (unsigned j = 0; j < mkv->chapters.ChapterEditionEntry.at(i)->atoms.size(); j++)
+            {
+                mkv_chapter_atom_t *atom = mkv->chapters.ChapterEditionEntry.at(i)->atoms.at(j);
+
+                delete [] atom->ChapterStringUID;
+                delete [] atom->ChapterSegmentUID;
+                delete [] atom->ChapterSegmentEditionUID;
+                for (unsigned k = 0; k < atom->ChapterDisplays.size(); k++)
+                {
+                    delete [] atom->ChapterDisplays.at(k)->ChapString;
+                    delete [] atom->ChapterDisplays.at(k)->ChapLanguage;
+                    delete [] atom->ChapterDisplays.at(k)->ChapLanguageIETF;
+                    delete [] atom->ChapterDisplays.at(k)->ChapCountry;
+                    delete atom->ChapterDisplays.at(k);
+                }
+                atom->ChapterDisplays.clear();
+                for (unsigned k = 0; k < atom->ChapterProcesses.size(); k++)
+                {
+                    delete [] atom->ChapterProcesses.at(k)->ChapProcessPrivate;
+                    delete atom->ChapterProcesses.at(k);
+                }
+                atom->ChapterProcesses.clear();
+
+                delete atom;
+            }
+            mkv->chapters.ChapterEditionEntry.at(i)->atoms.clear();
+            delete mkv->chapters.ChapterEditionEntry.at(i);
+        }
+        mkv->chapters.ChapterEditionEntry.clear();
+
         // mkv_tracks_t
         for (unsigned stream_id = 0; stream_id < mkv->tracks_count; stream_id++)
         {
