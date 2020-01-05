@@ -30,6 +30,7 @@
 #include <QTimer>
 #include <QSvgWidget>
 
+#include <QStandardPaths>
 #include <QDropEvent>
 #include <QFile>
 #include <QUrl>
@@ -225,8 +226,10 @@ int MainWindow::setAppPath(const QString &path)
 
 void MainWindow::loadFileDialog()
 {
+    QString startFolder = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first();
+
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open a multimedia file"),
-                                                    "", tr("Files (*.*)"));
+                                                    startFolder, tr("Files (*.*)"));
 
     loadFile(fileName);
 }
