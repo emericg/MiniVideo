@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018-2017 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2020 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      minivideo.c
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */

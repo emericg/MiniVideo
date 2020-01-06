@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2020 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      export_utils.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2010
  */
 
 #ifndef EXPORT_UTILS_H
 #define EXPORT_UTILS_H
+/* ************************************************************************** */
 
 // minivideo headers
 #include "decoder/h264/h264_decodingcontext.h"

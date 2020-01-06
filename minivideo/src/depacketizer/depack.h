@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2020 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      depack.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2017
  */
 
 #ifndef DEPACKETIZER_H
 #define DEPACKETIZER_H
+/* ************************************************************************** */
 
 // minivideo headers
 #include "depack_struct.h"

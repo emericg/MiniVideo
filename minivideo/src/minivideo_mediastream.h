@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2020 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniVideo.
  *
@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      minivideo_mediastream.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2014
  */
 
 #ifndef MINIVIDEO_MEDIASTREAM_H
 #define MINIVIDEO_MEDIASTREAM_H
+/* ************************************************************************** */
 
 // minivideo headers
 #include "minivideo_codecs.h"
