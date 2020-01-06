@@ -1,5 +1,7 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2020 Emeric Grange - All Rights Reserved
+ *
+ * This file is part of mini_analyser.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      tabexport.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2016
  */
@@ -25,7 +26,7 @@
 // minivideo library
 #include <minivideo.h>
 
-// minianalyser
+// mini_analyser
 #include "minivideo_textexport_qt.h"
 #include "minivideo_utils_qt.h"
 

@@ -97,7 +97,7 @@
 	<key>CFBundleName</key>
 	<string>mini_analyser</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.mini-analyser</string>
+    <string>com.minivideo.minianalyser</string>
 	<key>CFBundleShortVersionString</key>
 	<string>@SHORT_VERSION@</string>
 	<key>CFBundlePackageType</key>
