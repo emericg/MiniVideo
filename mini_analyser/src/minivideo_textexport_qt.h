@@ -1,5 +1,6 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * This file is part of MiniVideo.
+ * COPYRIGHT (C) 2019 Emeric Grange - All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      textexport.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2017
  */
 
-#ifndef TEXT_EXPORT_H
-#define TEXT_EXPORT_H
+#ifndef MINIVIDEO_TEXTEXPORT_H
+#define MINIVIDEO_TEXTEXPORT_H
+/* ************************************************************************** */
 
 // minivideo library
 #include "minivideo_mediafile.h"
 
 #include <QString>
+
+/* ************************************************************************** */
 
 typedef enum TextExportFormat_e
 {
@@ -47,4 +50,5 @@ public:
     static int generateExportMapping_xml(MediaFile_t &media, QString &exportDatas);
 };
 
-#endif // TEXT_EXPORT_H
+/* ************************************************************************** */
+#endif // MINIVIDEO_TEXTEXPORT_H

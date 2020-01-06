@@ -23,7 +23,7 @@
 #include "ui_tabcontainer.h"
 
 // minianalyser
-#include "utils.h"
+#include "minivideo_utils_qt.h"
 
 // minivideo library
 #include <minivideo.h>

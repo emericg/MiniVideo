@@ -1,5 +1,6 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * This file is part of MiniVideo.
+ * COPYRIGHT (C) 2019 Emeric Grange - All Rights Reserved
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      utils.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2014
+ * \date      2019
  */
 
-#include "utils.h"
+#include "minivideo_utils_qt.h"
 
 #include "minivideo_fourcc.h"
 
@@ -28,6 +28,8 @@
 #include <cmath>
 
 #include <QDebug>
+
+/* ************************************************************************** */
 
 QString getDurationString(const uint64_t duration)
 {
@@ -782,6 +784,8 @@ QString getSampleTypeString(const unsigned sampleType)
     return sample_type_qstr;
 }
 
+/* ************************************************************************** */
+
 bitrateMinMax::bitrateMinMax(const double fps)
 {
     if (fps > 0.0 && fps <= 240.0)
@@ -837,3 +841,5 @@ void bitrateMinMax::getMinMax(uint32_t &min, uint32_t &max)
     min = m_bitrateMin;
     max = m_bitrateMax;
 }
+
+/* ************************************************************************** */

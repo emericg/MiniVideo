@@ -21,7 +21,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "utils.h"
+#include "minivideo_utils_qt.h"
 
 // QCustomPlot widgets
 #include "thirdparty/qcustomplot/qcustomplot.h"
@@ -1132,7 +1132,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_color_depth->setVisible(false);
             }
 
-            if (t->color_primaries && t->color_primaries)
+            if (t->color_primaries && t->color_transfer)
             {
                 ui->label_65->setVisible(true);
                 ui->label_92->setVisible(true);

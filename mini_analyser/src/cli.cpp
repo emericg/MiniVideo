@@ -21,7 +21,7 @@
 
 #include "cli.h"
 #include "utils.h"
-#include "textexport.h"
+#include "minivideo_textexport_qt.h"
 
 #include <QFile>
 #include <QDebug>

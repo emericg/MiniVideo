@@ -22,10 +22,10 @@ SOURCES     += src/main.cpp \
                src/cli.cpp \
                src/mainwindow.cpp \
                src/mainwindow_datas.cpp \
-               src/utils.cpp \
+               src/minivideo_utils_qt.cpp \
+               src/minivideo_textexport_qt.cpp \
                src/about.cpp \
                src/fourcchelper.cpp \
-               src/textexport.cpp \
                src/tabexport.cpp \
                src/tabdev.cpp \
                src/tabcontainer.cpp \
@@ -36,10 +36,10 @@ HEADERS     += src/main.h \
                src/cli.h \
                src/mainwindow.h \
                src/mediawrapper.h \
-               src/utils.h \
+               src/minivideo_utils_qt.h \
+               src/minivideo_textexport_qt.h \
                src/about.h \
                src/fourcchelper.h \
-               src/textexport.h \
                src/tabexport.h \
                src/tabdev.h \
                src/tabcontainer.h \
