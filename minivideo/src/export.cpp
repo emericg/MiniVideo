@@ -912,6 +912,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     else
     {
         sps_t *sps = dc->sps_array[dc->active_sps];
+        if (!sps) return retcode;
 
         TRACE_1(IO, "* Picture file name   : '%s'", out->file_name);
         TRACE_1(IO, "* Picture file dir    : '%s'", out->file_directory);
@@ -984,6 +985,8 @@ int export_idr_surface(DecodingContext_t *dc, OutputSurface_t *out)
     int retcode = FAILURE;
 
     sps_t *sps = dc->sps_array[dc->active_sps];
+    if (!sps) return retcode;
+
     out->width = sps->PicWidthInMbs * 16;
     out->height = sps->PicHeightInMapUnits * 16;
 
