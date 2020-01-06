@@ -1171,7 +1171,11 @@ int MainWindow::printVideoDetails()
                     framerate = static_cast<double>(t->sample_count / (static_cast<double>(t->stream_duration_ms) / 1000.0));
                 }
             }
-            double frameduration = 1000.0 / framerate; // in ms
+            double frameduration = 0.0;
+            if (framerate > 0.0)
+            {
+                frameduration = 1000.0 / framerate; // in ms
+            }
 
             QString samplecount = "<b>" + QString::number(t->sample_count) + "</b>";
             QString framecount = "<b>" + QString::number(t->frame_count) + "</b>";
@@ -1210,7 +1214,17 @@ int MainWindow::printVideoDetails()
                 ui->label_video_framerate_mode->hide();
             }
 
-            ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
+            if (frameduration > 0)
+            {
+                ui->label_34->setVisible(true);
+                ui->label_video_frameduration->setVisible(true);
+                ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
+            }
+            else
+            {
+                ui->label_34->setVisible(false);
+                ui->label_video_frameduration->setVisible(false);
+            }
 
             if (t->color_planes == 0) t->color_planes = 3;
             if (t->color_depth == 0) t->color_depth = 8;
