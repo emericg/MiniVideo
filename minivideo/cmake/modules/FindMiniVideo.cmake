@@ -9,21 +9,15 @@
 find_path(MINIVIDEO_INCLUDE_DIR
     NAME minivideo.h
     PATHS
-    ../minivideo/src
     /usr/include
     /usr/local/include
-    /opt/local/include
-    /home/your_user/you_can_add_your_custom_path_here
 )
 
 find_library(MINIVIDEO_LIBRARY
     NAME minivideo
     PATHS
-    ../minivideo/build
     /usr/lib
     /usr/local/lib
-    /opt/local/lib
-    /home/your_user/you_can_add_your_custom_path_here
 )
 
 if(MINIVIDEO_INCLUDE_DIR AND EXISTS "${MINIVIDEO_INCLUDE_DIR}/minivideo_settings.h")

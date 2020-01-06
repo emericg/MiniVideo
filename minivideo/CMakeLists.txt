@@ -269,8 +269,7 @@ if (BUILD_SHARED_LIBS)
     add_library(minivideo_shared SHARED ${minivideo_SRC})
     target_link_libraries(minivideo_shared ${EXTRA_LIBS})
     set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
-    set_target_properties(minivideo_shared PROPERTIES VERSION ${minivideo_VERSION_STRING}
-                                                      SOVERSION ${minivideo_VERSION_MAJOR})
+    set_target_properties(minivideo_shared PROPERTIES VERSION ${minivideo_VERSION_STRING} SOVERSION ${minivideo_VERSION_MAJOR})
 
     if(WIN32)
     if(CMAKE_VERSION VERSION_GREATER "3.3")
@@ -289,8 +288,7 @@ if (BUILD_STATIC_LIBS)
     add_library(minivideo_static STATIC ${minivideo_SRC})
     target_link_libraries(minivideo_static ${EXTRA_LIBS})
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
-    set_target_properties(minivideo_static PROPERTIES VERSION ${minivideo_VERSION_STRING}
-                                                      SOVERSION ${minivideo_VERSION_MAJOR})
+    set_target_properties(minivideo_static PROPERTIES VERSION ${minivideo_VERSION_STRING} SOVERSION ${minivideo_VERSION_MAJOR})
 endif (BUILD_STATIC_LIBS)
 
 

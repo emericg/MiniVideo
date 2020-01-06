@@ -87,8 +87,11 @@ unix {
     #QMAKE_CXXFLAGS += -fsanitize=address,undefined
     #QMAKE_LFLAGS += -fsanitize=address,undefined
 
-    QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
-    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-private-field
+    QMAKE_CXXFLAGS += -Wall -Wextra
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable
+    COMPILER_BASENAME = $$basename(QMAKE_CXX)
+    contains(COMPILER_BASENAME, "g++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-but-set-variable } # GCC only
+    contains(COMPILER_BASENAME, "clang++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-private-field } # Clang only
 
     linux {
         # Add videobackends # Link with video decoding APIs

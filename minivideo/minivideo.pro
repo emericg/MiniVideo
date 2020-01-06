@@ -37,19 +37,21 @@ unix {
     QMAKE_CXXFLAGS += -fPIC
     QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
     QMAKE_CXXFLAGS_RELEASE += -O3
+    QMAKE_CXXFLAGS_RELEASE += -fstack-protector-strong -D_FORTIFY_SOURCE=2
 
     QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow
-    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-private-field
-}
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable
+    COMPILER_BASENAME = $$basename(QMAKE_CXX)
+    contains(COMPILER_BASENAME, "g++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-but-set-variable } # GCC only
+    contains(COMPILER_BASENAME, "clang++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-private-field } # Clang only
 
-linux {
     # Enables AddressSanitizer
     #QMAKE_CXXFLAGS += -fsanitize=address,undefined
     #QMAKE_LFLAGS += -fsanitize=address,undefined
+}
 
-    # Enables memfd
-    DEFINES += ENABLE_MEMFD=1
-
+linux {
+    DEFINES += ENABLE_MEMFD=1 # Enables memfd
     QMAKE_LFLAGS += -lm -Wl,-z,now -Wl,-z,relro
 }
 
