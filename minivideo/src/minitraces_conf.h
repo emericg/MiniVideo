@@ -1,5 +1,5 @@
 /*!
- * COPYRIGHT (C) 2018 Emeric Grange - All Rights Reserved
+ * COPYRIGHT (C) 2010-2020 Emeric Grange - All Rights Reserved
  *
  * This file is part of MiniTraces.
  *
@@ -19,11 +19,12 @@
  * \file      minitraces_conf.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2018
- * \version   0.52
+ * \version   0.53
  */
 
 #ifndef MINITRACES_CONF_H
 #define MINITRACES_CONF_H
+/* ************************************************************************** */
 
 #ifdef __cplusplus
 extern "C" {
