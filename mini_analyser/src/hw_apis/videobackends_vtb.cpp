@@ -54,7 +54,7 @@ struct Desc
     const uint8_t *privateDatas;
 };
 
-Desc decoder_profiles_vtb[] =
+static Desc decoder_profiles_vtb[] =
 {
     { CODEC_MPEG1,  0,              4096, 4096, 8, nullptr },
     { CODEC_MPEG1,  0,              4096, 4096, 8, nullptr },

@@ -5,7 +5,7 @@
 
 struct VDPDeviceImpl
 {
-    VDPDeviceImpl(VdpDevice device, VdpGetProcAddress *get_proc_address);
+    VDPDeviceImpl(VdpDevice dev, VdpGetProcAddress *get_proc_address);
     VdpDevice device;
 
     VdpGetErrorString *GetErrorString;
@@ -74,70 +74,70 @@ struct VDPDeviceImpl
 #define GETADDR(device, function_id, function_pointer) \
     assert(get_proc_address(device, function_id, function_pointer) == VDP_STATUS_OK)
 
-VDPDeviceImpl::VDPDeviceImpl(VdpDevice device, VdpGetProcAddress *get_proc_address):
-    device(device)
+VDPDeviceImpl::VDPDeviceImpl(VdpDevice dev, VdpGetProcAddress *get_proc_address):
+    device(dev)
 {
-    GETADDR(device, VDP_FUNC_ID_GET_ERROR_STRING, (void**)&GetErrorString);
-    GETADDR(device, VDP_FUNC_ID_GET_PROC_ADDRESS, (void**)&GetProcAddress);
-    GETADDR(device, VDP_FUNC_ID_GET_API_VERSION, (void**)&GetApiVersion);
-    GETADDR(device, VDP_FUNC_ID_GET_INFORMATION_STRING, (void**)&GetInformationString);
-    GETADDR(device, VDP_FUNC_ID_DEVICE_DESTROY, (void**)&DeviceDestroy);
-    GETADDR(device, VDP_FUNC_ID_GENERATE_CSC_MATRIX, (void**)&GenerateCSCMatrix);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_QUERY_CAPABILITIES, (void**)&VideoSurfaceQueryCapabilities);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_QUERY_GET_PUT_BITS_Y_CB_CR_CAPABILITIES, (void**)&VideoSurfaceQueryGetPutBitsYCbCrCapabilities);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_CREATE, (void**)&VideoSurfaceCreate);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_DESTROY, (void**)&VideoSurfaceDestroy);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_GET_PARAMETERS, (void**)&VideoSurfaceGetParameters);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_GET_BITS_Y_CB_CR, (void**)&VideoSurfaceGetBitsYCbCr);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_SURFACE_PUT_BITS_Y_CB_CR, (void**)&VideoSurfacePutBitsYCbCr);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_CAPABILITIES, (void**)&OutputSurfaceQueryCapabilities);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_GET_PUT_BITS_NATIVE_CAPABILITIES, (void**)&OutputSurfaceQueryGetPutBitsNativeCapabilities);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_PUT_BITS_INDEXED_CAPABILITIES, (void**)&OutputSurfaceQueryPutBitsIndexedCapabilities);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_PUT_BITS_Y_CB_CR_CAPABILITIES, (void**)&OutputSurfaceQueryPutBitsYCbCrCapabilities);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_CREATE, (void**)&OutputSurfaceCreate);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_DESTROY, (void**)&OutputSurfaceDestroy);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_GET_PARAMETERS, (void**)&OutputSurfaceGetParameters);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_GET_BITS_NATIVE, (void**)&OutputSurfaceGetBitsNative);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_NATIVE, (void**)&OutputSurfacePutBitsNative);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_INDEXED, (void**)&OutputSurfacePutBitsIndexed);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_Y_CB_CR, (void**)&OutputSurfacePutBitsYCbCr);
-    GETADDR(device, VDP_FUNC_ID_BITMAP_SURFACE_QUERY_CAPABILITIES, (void**)&BitmapSurfaceQueryCapabilities);
-    GETADDR(device, VDP_FUNC_ID_BITMAP_SURFACE_CREATE, (void**)&BitmapSurfaceCreate);
-    GETADDR(device, VDP_FUNC_ID_BITMAP_SURFACE_DESTROY, (void**)&BitmapSurfaceDestroy);
-    GETADDR(device, VDP_FUNC_ID_BITMAP_SURFACE_GET_PARAMETERS, (void**)&BitmapSurfaceGetParameters);
-    GETADDR(device, VDP_FUNC_ID_BITMAP_SURFACE_PUT_BITS_NATIVE, (void**)&BitmapSurfacePutBitsNative);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_RENDER_OUTPUT_SURFACE, (void**)&OutputSurfaceRenderOutputSurface);
-    GETADDR(device, VDP_FUNC_ID_OUTPUT_SURFACE_RENDER_BITMAP_SURFACE, (void**)&OutputSurfaceRenderBitmapSurface);
-    GETADDR(device, VDP_FUNC_ID_DECODER_QUERY_CAPABILITIES, (void**)&DecoderQueryCapabilities);
-    GETADDR(device, VDP_FUNC_ID_DECODER_CREATE, (void**)&DecoderCreate);
-    GETADDR(device, VDP_FUNC_ID_DECODER_DESTROY, (void**)&DecoderDestroy);
-    GETADDR(device, VDP_FUNC_ID_DECODER_GET_PARAMETERS, (void**)&DecoderGetParameters);
-    GETADDR(device, VDP_FUNC_ID_DECODER_RENDER, (void**)&DecoderRender);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_QUERY_FEATURE_SUPPORT, (void**)&VideoMixerQueryFeatureSupport);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_QUERY_PARAMETER_SUPPORT, (void**)&VideoMixerQueryParameterSupport);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_QUERY_ATTRIBUTE_SUPPORT, (void**)&VideoMixerQueryAttributeSupport);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_QUERY_PARAMETER_VALUE_RANGE, (void**)&VideoMixerQueryParameterValueRange);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_QUERY_ATTRIBUTE_VALUE_RANGE, (void**)&VideoMixerQueryAttributeValueRange);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_CREATE, (void**)&VideoMixerCreate);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_SET_FEATURE_ENABLES, (void**)&VideoMixerSetFeatureEnables);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_SET_ATTRIBUTE_VALUES, (void**)&VideoMixerSetAttributeValues);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_GET_FEATURE_SUPPORT, (void**)&VideoMixerGetFeatureSupport);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_GET_FEATURE_ENABLES, (void**)&VideoMixerGetFeatureEnables);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_GET_PARAMETER_VALUES, (void**)&VideoMixerGetParameterValues);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_GET_ATTRIBUTE_VALUES, (void**)&VideoMixerGetAttributeValues);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_DESTROY, (void**)&VideoMixerDestroy);
-    GETADDR(device, VDP_FUNC_ID_VIDEO_MIXER_RENDER, (void**)&VideoMixerRender);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_DESTROY, (void**)&PresentationQueueTargetDestroy);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_CREATE, (void**)&PresentationQueueCreate);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_DESTROY, (void**)&PresentationQueueDestroy);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_SET_BACKGROUND_COLOR, (void**)&PresentationQueueSetBackgroundColor);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_GET_BACKGROUND_COLOR, (void**)&PresentationQueueGetBackgroundColor);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_GET_TIME, (void**)&PresentationQueueGetTime);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_DISPLAY, (void**)&PresentationQueueDisplay);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_BLOCK_UNTIL_SURFACE_IDLE, (void**)&PresentationQueueBlockUntilSurfaceIdle);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_QUERY_SURFACE_STATUS, (void**)&PresentationQueueQuerySurfaceStatus);
-    GETADDR(device, VDP_FUNC_ID_PREEMPTION_CALLBACK_REGISTER, (void**)&PreemptionCallbackRegister);
-    GETADDR(device, VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_CREATE_X11, (void**)&PresentationQueueTargetCreateX11);
+    GETADDR(dev, VDP_FUNC_ID_GET_ERROR_STRING, (void**)&GetErrorString);
+    GETADDR(dev, VDP_FUNC_ID_GET_PROC_ADDRESS, (void**)&GetProcAddress);
+    GETADDR(dev, VDP_FUNC_ID_GET_API_VERSION, (void**)&GetApiVersion);
+    GETADDR(dev, VDP_FUNC_ID_GET_INFORMATION_STRING, (void**)&GetInformationString);
+    GETADDR(dev, VDP_FUNC_ID_DEVICE_DESTROY, (void**)&DeviceDestroy);
+    GETADDR(dev, VDP_FUNC_ID_GENERATE_CSC_MATRIX, (void**)&GenerateCSCMatrix);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_QUERY_CAPABILITIES, (void**)&VideoSurfaceQueryCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_QUERY_GET_PUT_BITS_Y_CB_CR_CAPABILITIES, (void**)&VideoSurfaceQueryGetPutBitsYCbCrCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_CREATE, (void**)&VideoSurfaceCreate);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_DESTROY, (void**)&VideoSurfaceDestroy);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_GET_PARAMETERS, (void**)&VideoSurfaceGetParameters);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_GET_BITS_Y_CB_CR, (void**)&VideoSurfaceGetBitsYCbCr);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_SURFACE_PUT_BITS_Y_CB_CR, (void**)&VideoSurfacePutBitsYCbCr);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_CAPABILITIES, (void**)&OutputSurfaceQueryCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_GET_PUT_BITS_NATIVE_CAPABILITIES, (void**)&OutputSurfaceQueryGetPutBitsNativeCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_PUT_BITS_INDEXED_CAPABILITIES, (void**)&OutputSurfaceQueryPutBitsIndexedCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_QUERY_PUT_BITS_Y_CB_CR_CAPABILITIES, (void**)&OutputSurfaceQueryPutBitsYCbCrCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_CREATE, (void**)&OutputSurfaceCreate);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_DESTROY, (void**)&OutputSurfaceDestroy);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_GET_PARAMETERS, (void**)&OutputSurfaceGetParameters);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_GET_BITS_NATIVE, (void**)&OutputSurfaceGetBitsNative);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_NATIVE, (void**)&OutputSurfacePutBitsNative);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_INDEXED, (void**)&OutputSurfacePutBitsIndexed);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_PUT_BITS_Y_CB_CR, (void**)&OutputSurfacePutBitsYCbCr);
+    GETADDR(dev, VDP_FUNC_ID_BITMAP_SURFACE_QUERY_CAPABILITIES, (void**)&BitmapSurfaceQueryCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_BITMAP_SURFACE_CREATE, (void**)&BitmapSurfaceCreate);
+    GETADDR(dev, VDP_FUNC_ID_BITMAP_SURFACE_DESTROY, (void**)&BitmapSurfaceDestroy);
+    GETADDR(dev, VDP_FUNC_ID_BITMAP_SURFACE_GET_PARAMETERS, (void**)&BitmapSurfaceGetParameters);
+    GETADDR(dev, VDP_FUNC_ID_BITMAP_SURFACE_PUT_BITS_NATIVE, (void**)&BitmapSurfacePutBitsNative);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_RENDER_OUTPUT_SURFACE, (void**)&OutputSurfaceRenderOutputSurface);
+    GETADDR(dev, VDP_FUNC_ID_OUTPUT_SURFACE_RENDER_BITMAP_SURFACE, (void**)&OutputSurfaceRenderBitmapSurface);
+    GETADDR(dev, VDP_FUNC_ID_DECODER_QUERY_CAPABILITIES, (void**)&DecoderQueryCapabilities);
+    GETADDR(dev, VDP_FUNC_ID_DECODER_CREATE, (void**)&DecoderCreate);
+    GETADDR(dev, VDP_FUNC_ID_DECODER_DESTROY, (void**)&DecoderDestroy);
+    GETADDR(dev, VDP_FUNC_ID_DECODER_GET_PARAMETERS, (void**)&DecoderGetParameters);
+    GETADDR(dev, VDP_FUNC_ID_DECODER_RENDER, (void**)&DecoderRender);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_QUERY_FEATURE_SUPPORT, (void**)&VideoMixerQueryFeatureSupport);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_QUERY_PARAMETER_SUPPORT, (void**)&VideoMixerQueryParameterSupport);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_QUERY_ATTRIBUTE_SUPPORT, (void**)&VideoMixerQueryAttributeSupport);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_QUERY_PARAMETER_VALUE_RANGE, (void**)&VideoMixerQueryParameterValueRange);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_QUERY_ATTRIBUTE_VALUE_RANGE, (void**)&VideoMixerQueryAttributeValueRange);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_CREATE, (void**)&VideoMixerCreate);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_SET_FEATURE_ENABLES, (void**)&VideoMixerSetFeatureEnables);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_SET_ATTRIBUTE_VALUES, (void**)&VideoMixerSetAttributeValues);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_GET_FEATURE_SUPPORT, (void**)&VideoMixerGetFeatureSupport);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_GET_FEATURE_ENABLES, (void**)&VideoMixerGetFeatureEnables);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_GET_PARAMETER_VALUES, (void**)&VideoMixerGetParameterValues);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_GET_ATTRIBUTE_VALUES, (void**)&VideoMixerGetAttributeValues);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_DESTROY, (void**)&VideoMixerDestroy);
+    GETADDR(dev, VDP_FUNC_ID_VIDEO_MIXER_RENDER, (void**)&VideoMixerRender);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_DESTROY, (void**)&PresentationQueueTargetDestroy);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_CREATE, (void**)&PresentationQueueCreate);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_DESTROY, (void**)&PresentationQueueDestroy);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_SET_BACKGROUND_COLOR, (void**)&PresentationQueueSetBackgroundColor);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_GET_BACKGROUND_COLOR, (void**)&PresentationQueueGetBackgroundColor);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_GET_TIME, (void**)&PresentationQueueGetTime);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_DISPLAY, (void**)&PresentationQueueDisplay);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_BLOCK_UNTIL_SURFACE_IDLE, (void**)&PresentationQueueBlockUntilSurfaceIdle);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_QUERY_SURFACE_STATUS, (void**)&PresentationQueueQuerySurfaceStatus);
+    GETADDR(dev, VDP_FUNC_ID_PREEMPTION_CALLBACK_REGISTER, (void**)&PreemptionCallbackRegister);
+    GETADDR(dev, VDP_FUNC_ID_PRESENTATION_QUEUE_TARGET_CREATE_X11, (void**)&PresentationQueueTargetCreateX11);
 }
 #undef GETADDR
 

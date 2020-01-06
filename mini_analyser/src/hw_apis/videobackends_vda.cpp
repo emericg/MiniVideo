@@ -55,7 +55,7 @@ struct Desc
     const uint8_t *privateDatas;
 };
 
-Desc decoder_profiles_vda[] =
+static Desc decoder_profiles_vda[] =
 {
     { CODEC_H264,   PROF_H264_CBP,  1280,  720, 8, nullptr },
     { CODEC_H264,   PROF_H264_XP,   1280,  720, 8, nullptr },

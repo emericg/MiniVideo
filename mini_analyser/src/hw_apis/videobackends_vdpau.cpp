@@ -48,7 +48,7 @@ struct Desc
     uint32_t bitdepth;
 };
 
-Desc decoder_profiles_vdpau[] =
+static Desc decoder_profiles_vdpau[] =
 {
     { VDP_DECODER_PROFILE_MPEG1,                        CODEC_MPEG1,    PROF_H262_SP, 8 },
     { VDP_DECODER_PROFILE_MPEG2_SIMPLE,                 CODEC_MPEG2,    PROF_H262_SP, 8 },
@@ -140,9 +140,9 @@ bool queryDecoderCaps(VDPDeviceImpl *device, VideoBackendInfos &infos)
             c.codec = decoder_profiles_vdpau[x].codec;
             c.profile = decoder_profiles_vdpau[x].profile;
 
-            c.max_width = max_width;
-            c.max_height = max_height;
-            c.max_bitdepth = decoder_profiles_vdpau[x].bitdepth;
+            c.max_width = static_cast<int>(max_width);
+            c.max_height = static_cast<int>(max_height);
+            c.max_bitdepth = static_cast<int>(decoder_profiles_vdpau[x].bitdepth);
 
             infos.decodingSupport.push_back(c);
         }

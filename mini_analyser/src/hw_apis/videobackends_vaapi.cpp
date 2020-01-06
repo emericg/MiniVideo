@@ -79,7 +79,7 @@ struct Desc
     uint32_t bitdepth;
 };
 
-Desc decoder_profiles_vaapi[] =
+static Desc decoder_profiles_vaapi[] =
 {
     { VAProfileNone,                        CODEC_UNKNOWN,  CODEC_PROF_UNKNOWN, 0 },
 
@@ -156,7 +156,7 @@ bool dump_profiles(VADisplay display, VideoBackendInfos &infos)
         c.profile = decoder_profiles_vaapi[j].profile;
         c.max_width = -1;
         c.max_height = -1;
-        c.max_bitdepth = decoder_profiles_vaapi[j].bitdepth;
+        c.max_bitdepth = static_cast<int>(decoder_profiles_vaapi[j].bitdepth);
 
         infos.decodingSupport.push_back(c);
 
@@ -185,8 +185,8 @@ bool VideoBackendsVAAPI::load(VideoBackendInfos &infos)
     bool status = false;
 
     VADisplay display;
-    const char *drm_device  = 0;
-    const char *x11_display = 0;
+    const char *drm_device  = nullptr;
+    const char *x11_display = nullptr;
 
     // Open a display
     if (drm_device)
