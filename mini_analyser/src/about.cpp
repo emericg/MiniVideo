@@ -53,7 +53,7 @@ void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor,
     QString title = "<p align=\"left\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Cantarell'; font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-family:'Cantarell'; font-size:16pt; font-weight:600;\"> (" + QString::fromUtf8(VERSION_STR) + ")</span></p></body></html>";
 
     QString text = "<html>";
-    text += tr("Mini Analyser") + " " + QString::fromUtf8(VERSION_STR);
+    text += tr("MiniAnalyser") + " " + QString::fromUtf8(VERSION_STR);
 #ifdef QT_DEBUG
     text += " / <b>DEBUG</b>";
 #endif
