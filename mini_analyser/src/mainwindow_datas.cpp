@@ -377,17 +377,9 @@ int MainWindow::printDatas()
                 ui->label_info_audio_lng->setText(lng);
             }
 
-            if (t->channel_mode)
-            {
-                ui->label_86->show();
-                ui->label_info_audio_channelmode->show();
-                ui->label_info_audio_channelmode->setText(getChannelModeString(t->channel_mode));
-            }
-            else
-            {
-                ui->label_86->hide();
-                ui->label_info_audio_channelmode->hide();
-            }
+            ui->label_86->setVisible(t->channel_mode);
+            ui->label_info_audio_channelmode->setVisible(t->channel_mode);
+            ui->label_info_audio_channelmode->setText(getChannelModeString(t->channel_mode));
 
             ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate_avg));
             ui->label_info_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
@@ -450,35 +442,17 @@ int MainWindow::printDatas()
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
-            if (t->framerate_mode)
-            {
-                ui->label_7->show();
-                ui->label_info_video_framerate_mode->show();
-                ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
-            }
-            else
-            {
-                ui->label_7->hide();
-                ui->label_info_video_framerate_mode->hide();
-            }
+            ui->label_7->setVisible(t->framerate_mode);
+            ui->label_info_video_framerate_mode->setVisible(t->framerate_mode);
+            ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
 
-            if (t->video_projection || t->video_rotation)
-            {
-                ui->label_84->show();
-                ui->label_info_video_projection->show();
-                ui->label_info_video_projection->setText(getProjectionString(t->video_projection));
+            ui->label_84->setVisible(t->video_projection);
+            ui->label_info_video_projection->setVisible(t->video_projection);
+            ui->label_info_video_projection->setText(getProjectionString(t->video_projection));
 
-                ui->label_88->show();
-                ui->label_info_video_rotation->show();
-                ui->label_info_video_rotation->setText(getRotationString(t->video_rotation));
-            }
-            else
-            {
-                ui->label_84->hide();
-                ui->label_info_video_projection->hide();
-                ui->label_88->hide();
-                ui->label_info_video_rotation->hide();
-            }
+            ui->label_88->setVisible(t->video_rotation);
+            ui->label_info_video_rotation->setVisible(t->video_rotation);
+            ui->label_info_video_rotation->setText(getRotationString(t->video_rotation));
 
             if (media->tracks_video_count > 1)
             {
@@ -993,18 +967,13 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_infos->setVisible(false);
             }
 
+            ui->label_14->setVisible(t->stream_fcc);
+            ui->label_video_fcc->setVisible(t->stream_fcc);
+
             if (t->stream_fcc)
             {
-                ui->label_14->setVisible(true);
-                ui->label_video_fcc->setVisible(true);
-
                 char fcc_str[5];
                 ui->label_video_fcc->setText(QString::fromLatin1(getFccString_le(t->stream_fcc, fcc_str), 4));
-            }
-            else
-            {
-                ui->label_14->setVisible(false);
-                ui->label_video_fcc->setVisible(false);
             }
 
             ui->label_video_duration->setText(getDurationString(t->stream_duration_ms));

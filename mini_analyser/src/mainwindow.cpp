@@ -115,6 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
     ui->comboBox_file->setIconSize(QSize(16, 16));
     ui->mainToolBar->setStyleSheet("");
+    QWidget::setWindowTitle("MiniAnalyser");
 #endif
 
 #ifdef Q_OS_WINDOWS
