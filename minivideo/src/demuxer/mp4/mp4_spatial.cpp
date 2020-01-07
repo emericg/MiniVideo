@@ -244,8 +244,8 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    char *metadata_source = NULL;
-    // TODO read 'metadata_source' string
+    char *metadata_source = read_mp4_string(bitstr, box_header->size, mp4->xml, nullptr);
+    free(metadata_source);
 
 #if ENABLE_DEBUG
     print_box_header(box_header);

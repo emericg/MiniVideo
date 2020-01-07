@@ -2080,13 +2080,9 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
             fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);
             fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
-            fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
         }
         if (colour_type == fourcc_be("nclx"))
         {
-            fprintf(mp4->xml, "  <colour_primaries>%u</colour_primaries>\n", colour_primaries);
-            fprintf(mp4->xml, "  <transfer_characteristics>%u</transfer_characteristics>\n", transfer_characteristics);
-            fprintf(mp4->xml, "  <matrix_coefficients>%u</matrix_coefficients>\n", matrix_coefficients);
             fprintf(mp4->xml, "  <full_range_flag>%u</full_range_flag>\n", track->color_range);
         }
         fprintf(mp4->xml, "  </a>\n");
