@@ -151,6 +151,8 @@ QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate
     return timestamp_qstr;
 }
 
+/* ************************************************************************** */
+
 QString getSizeString(const int64_t size)
 {
     QString size_qstr;
@@ -188,50 +190,6 @@ QString getSizeString(const int64_t size)
     //qDebug() << "getDurationString(" << size << ") >" << size_qstr;
 
     return size_qstr;
-}
-
-QString getTrackTypeString(const MediaStream_t *track)
-{
-    QString type_qstr;
-
-    if (track)
-    {
-        switch (track->stream_type)
-        {
-        case stream_UNKNOWN:
-            type_qstr = QObject::tr("Unknown");
-            break;
-
-        case stream_AUDIO:
-            type_qstr = QObject::tr("Audio");
-            break;
-        case stream_VIDEO:
-            type_qstr = QObject::tr("Video");
-            break;
-        case stream_TEXT:
-            type_qstr = QObject::tr("Text");
-            break;
-
-        case stream_MENU:
-            type_qstr = QObject::tr("Menu");
-            break;
-        case stream_TMCD:
-            type_qstr = QObject::tr("TimeCode Record");
-            break;
-        case stream_META:
-            type_qstr = QObject::tr("Metadata");
-            break;
-        case stream_HINT:
-            type_qstr = QObject::tr("Hint");
-            break;
-        }
-    }
-    else
-    {
-        type_qstr = QObject::tr("NULL track");
-    }
-
-    return type_qstr;
 }
 
 QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, const bool detailed)
@@ -311,6 +269,82 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
     }
 
     return size_qstr;
+}
+
+/* ************************************************************************** */
+
+QString getTrackTypeString(const MediaStream_t *track)
+{
+    QString type_qstr;
+
+    if (track)
+    {
+        switch (track->stream_type)
+        {
+        case stream_UNKNOWN:
+            type_qstr = QObject::tr("Unknown");
+            break;
+
+        case stream_AUDIO:
+            type_qstr = QObject::tr("Audio");
+            break;
+        case stream_VIDEO:
+            type_qstr = QObject::tr("Video");
+            break;
+        case stream_TEXT:
+            type_qstr = QObject::tr("Text");
+            break;
+
+        case stream_MENU:
+            type_qstr = QObject::tr("Menu");
+            break;
+        case stream_TMCD:
+            type_qstr = QObject::tr("TimeCode Record");
+            break;
+        case stream_META:
+            type_qstr = QObject::tr("Metadata");
+            break;
+        case stream_HINT:
+            type_qstr = QObject::tr("Hint");
+            break;
+        }
+    }
+    else
+    {
+        type_qstr = QObject::tr("NULL track");
+    }
+
+    return type_qstr;
+}
+
+QString getSampleTypeString(const unsigned sampleType)
+{
+    QString sample_type_qstr;
+
+    if (sampleType == sample_AUDIO)
+        sample_type_qstr = QObject::tr("Audio sample");
+    else if (sampleType == sample_AUDIO_TAG)
+        sample_type_qstr = QObject::tr("Audio tag");
+    else if (sampleType == sample_VIDEO)
+        sample_type_qstr = QObject::tr("Video sample");
+    else if (sampleType == sample_VIDEO_SYNC)
+        sample_type_qstr = QObject::tr("Video sync sample");
+    else if (sampleType == sample_VIDEO_PARAM)
+        sample_type_qstr = QObject::tr("Video parameter");
+    else if (sampleType == sample_TEXT)
+        sample_type_qstr = QObject::tr("Text sample");
+    else if (sampleType == sample_TEXT_FILE)
+        sample_type_qstr = QObject::tr("Text file");
+    else if (sampleType == sample_RAW_DATA)
+        sample_type_qstr = QObject::tr("RAW datas");
+    else if (sampleType == sample_TMCD)
+        sample_type_qstr = QObject::tr("TimeCode Reference");
+    else if (sampleType == sample_OTHER)
+        sample_type_qstr = QObject::tr("Other sample");
+    else
+        sample_type_qstr = QObject::tr("Unknown sample type");
+
+    return sample_type_qstr;
 }
 
 QString getAspectRatioString(const unsigned x, const unsigned y, const bool detailed)
@@ -602,11 +636,15 @@ QString getStereoModeString(const StereoMode_e stereoMode)
     return channel_mode_qstr;
 }
 
+/* ************************************************************************** */
+
 QString getFourccString(const unsigned fourcc)
 {
     char fcc_str[5];
     return QString::fromUtf8(getFccString_le(fourcc, fcc_str));
 }
+
+/* ************************************************************************** */
 
 QString getLanguageString(const char *languageCode)
 {
@@ -758,36 +796,6 @@ QString getLanguageString(const char *languageCode)
     }
 
     return langage_qstr;
-}
-
-QString getSampleTypeString(const unsigned sampleType)
-{
-    QString sample_type_qstr;
-
-    if (sampleType == sample_AUDIO)
-        sample_type_qstr = QObject::tr("Audio sample");
-    else if (sampleType == sample_AUDIO_TAG)
-        sample_type_qstr = QObject::tr("Audio tag");
-    else if (sampleType == sample_VIDEO)
-        sample_type_qstr = QObject::tr("Video sample");
-    else if (sampleType == sample_VIDEO_SYNC)
-        sample_type_qstr = QObject::tr("Video sync sample");
-    else if (sampleType == sample_VIDEO_PARAM)
-        sample_type_qstr = QObject::tr("Video parameter");
-    else if (sampleType == sample_TEXT)
-        sample_type_qstr = QObject::tr("Text sample");
-    else if (sampleType == sample_TEXT_FILE)
-        sample_type_qstr = QObject::tr("Text file");
-    else if (sampleType == sample_RAW_DATA)
-        sample_type_qstr = QObject::tr("RAW datas");
-    else if (sampleType == sample_TMCD)
-        sample_type_qstr = QObject::tr("TimeCode Reference");
-    else if (sampleType == sample_OTHER)
-        sample_type_qstr = QObject::tr("Other sample");
-    else
-        sample_type_qstr = QObject::tr("Unknown sample type");
-
-    return sample_type_qstr;
 }
 
 /* ************************************************************************** */
