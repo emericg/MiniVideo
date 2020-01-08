@@ -54,7 +54,7 @@
  */
 uint64_t LabVIEWTimeToUnixSeconds(int64_t LabVIEWTime)
 {
-    return (uint64_t)(LabVIEWTime - SEC_TO_UNIX_EPOCH);
+    return static_cast<uint64_t>(LabVIEWTime - SEC_TO_UNIX_EPOCH);
 }
 
 /* ************************************************************************** */
@@ -83,7 +83,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
         box_header->offset_start = bitstream_get_absolute_byte_offset(bitstr);
 
         // Read box size
-        box_header->size = (int64_t)read_bits(bitstr, 32);
+        box_header->size = read_bits(bitstr, 32);
 
         // Read box type
         box_header->boxtype = read_bits(bitstr, 32);
@@ -96,7 +96,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
         else if (box_header->size == 1)
         {
             // the size is actually a 64b field coded right after the box type
-            box_header->size = (int64_t)read_bits_64(bitstr, 64);
+            box_header->size = static_cast<int64_t>(read_bits_64(bitstr, 64));
         }
 
         // Set end offset
@@ -137,7 +137,7 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
     else
     {
         // Read FullBox attributs
-        box_header->version = (uint8_t)read_bits(bitstr, 8);
+        box_header->version = static_cast<uint8_t>(read_bits(bitstr, 8));
         box_header->flags = read_bits(bitstr, 24);
     }
 
@@ -398,13 +398,16 @@ char *read_mp4_string(Bitstream_t *bitstr, int max_bytes, FILE *xml, const char 
 {
     TRACE_2(MP4, "read_mp4_string()");
 
+    if (max_bytes <= 0) return nullptr;
+
     char *string = (char *)malloc(max_bytes+1);
     if (string)
     {
-        for (int i = 0; i < max_bytes; i++)
+        int stringsize = 0;
+        for (stringsize = 0; stringsize < max_bytes; stringsize++)
         {
-            string[i] = (char)read_bits(bitstr, 8);
-            if (string[i] == '\0') break;
+            string[stringsize] = static_cast<char>(read_bits(bitstr, 8));
+            if (string[stringsize] == '\0') break;
         }
         string[max_bytes] = '\0'; // in any case...
 
@@ -417,7 +420,7 @@ char *read_mp4_string(Bitstream_t *bitstr, int max_bytes, FILE *xml, const char 
                 //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
 
                 fprintf(xml, "  <%s string=\"utf8\">", name);
-                for (unsigned i = 0; i < strlen(string); i++)
+                for (int i = 0; i < stringsize; i++)
                 {
                     if (string[i] == '\"')
                         fprintf(xml, "&quot");

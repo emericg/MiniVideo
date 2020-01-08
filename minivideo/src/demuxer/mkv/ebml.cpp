@@ -35,8 +35,9 @@
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
-#include <climits>
+#include <cstring>
 #include <cmath>
+#include <climits>
 #include <cinttypes>
 
 /* ************************************************************************** */
@@ -45,8 +46,8 @@
 #define SEC_TO_UNIX_EPOCH 978264000LL // 978285600LL
 
 /*!
- * \param ebmlTime: Seconds since January 1, 2000
- * \return Unix time
+ * \param ebmlTime: Seconds since January 1, 2000.
+ * \return Unix time.
  *
  * For infos on "EBML time":
  * - https://www.matroska.org/technical/specs/index.html
@@ -117,7 +118,7 @@ uint64_t read_ebml_size(Bitstream_t *bitstr)
 /* ************************************************************************** */
 
 /*!
- * \brief parse_ebml_element
+ * \brief parse_ebml_element.
  * \note 'bitstr' pointer is not checked for performance reasons.
  *
  * https://matroska.org/technical/specs/index.html
@@ -179,7 +180,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
 void print_ebml_element(EbmlElement_t *element)
 {
 #if ENABLE_DEBUG
-    if (element == NULL)
+    if (element == nullptr)
     {
         TRACE_ERROR(RIF, "Invalid EbmlElement_t structure!");
     }
@@ -359,9 +360,13 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
     char *string = new char [element->size+1];
     if (string)
     {
-        for (int i = 0; i < element->size; i++)
-            string[i] = static_cast<char>(read_bits(bitstr, 8));
-        string[element->size] = '\0';
+        int stringsize = 0;
+        for (stringsize = 0; stringsize < element->size; stringsize++)
+        {
+            string[stringsize] = static_cast<char>(read_bits(bitstr, 8));
+            if (string[stringsize] == '\0') break;
+        }
+        string[element->size] = '\0'; // in any case...
 
         if (name)
         {
@@ -372,7 +377,7 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
                 //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
 
                 fprintf(xml, "  <%s string=\"utf8\">", name);
-                for (int i = 0; i < element->size; i++)
+                for (int i = 0; i < stringsize; i++)
                 {
                     if (string[i] == '\"')
                         fprintf(xml, "&quot");
@@ -400,7 +405,7 @@ char *read_ebml_data_string(Bitstream_t *bitstr, EbmlElement_t *element,
 uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element,
                                FILE *xml, const char *name)
 {
-    TRACE_2(MKV, "read_ebml_data_binary2(%i bytes)", element->size);
+    TRACE_2(MKV, "read_ebml_data_binary(%i bytes)", element->size);
 
     uint8_t *value = new uint8_t [element->size+1];
     if (value)

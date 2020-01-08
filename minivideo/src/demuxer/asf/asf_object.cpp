@@ -233,47 +233,44 @@ char *read_asf_string_ascii(Bitstream_t *bitstr, const int sizeChar,
 {
     TRACE_2(ASF, "read_asf_string_ascii(%i ASCII char)", sizeChar);
 
-    char *string = NULL;
+    if (sizeChar <= 0) return NULL;
 
-    if (sizeChar > 0)
+    char *string = (char *)malloc(sizeChar+1);
+    if (string)
     {
-        string = (char *)malloc(sizeChar+1);
-        if (string)
+        int stringsize = 0;
+        for (stringsize = 0; stringsize < sizeChar; stringsize++)
         {
-            for (int i = 0; i < sizeChar; i++)
-            {
-                string[i] = read_bits(bitstr, 8);
-            }
-            string[sizeChar] = '\0';
+            string[stringsize] = static_cast<char>(read_bits(bitstr, 8));
+            if (string[stringsize] == '\0') break;
+        }
+        string[sizeChar] = '\0'; // in any case...
 
-            if (name)
-            {
-#if ENABLE_DEBUG
-                TRACE_1(ASF, "* %s  = '%s'", name, string);
-#endif // ENABLE_DEBUG
+        if (name)
+        {
+            TRACE_1(ASF, "* %s  = '%s'", name, string);
 
-                if (xml)
+            if (xml)
+            {
+                //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
+
+                fprintf(xml, "  <%s string=\"ascii\">", name);
+                for (int i = 0; i < stringsize; i++)
                 {
-                    //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
-
-                    fprintf(xml, "  <%s string=\"ascii\">", name);
-                    for (int i = 0; i < sizeChar; i++)
-                    {
-                        if (string[i] == '\"')
-                            fprintf(xml, "&quot");
-                        else if (string[i] == '\'')
-                            fprintf(xml, "&apos");
-                        else if (string[i] == '<')
-                            fprintf(xml, "&lt");
-                        else if (string[i] == '>')
-                            fprintf(xml, "&gt");
-                        else if (string[i] == '&')
-                            fprintf(xml, "&amp");
-                        else
-                            fprintf(xml, "%c", string[i]);
-                    }
-                    fprintf(xml, "</%s>\n", name);
+                    if (string[i] == '\"')
+                        fprintf(xml, "&quot");
+                    else if (string[i] == '\'')
+                        fprintf(xml, "&apos");
+                    else if (string[i] == '<')
+                        fprintf(xml, "&lt");
+                    else if (string[i] == '>')
+                        fprintf(xml, "&gt");
+                    else if (string[i] == '&')
+                        fprintf(xml, "&amp");
+                    else
+                        fprintf(xml, "%c", string[i]);
                 }
+                fprintf(xml, "</%s>\n", name);
             }
         }
     }
@@ -286,50 +283,46 @@ char *read_asf_string_utf16(Bitstream_t *bitstr, const int sizeChar,
 {
     TRACE_2(ASF, "read_asf_string_utf16(%i UTF16 char)", sizeChar);
 
-    char *string = NULL;
+    if (sizeChar <= 0) return NULL;
 
-    if (sizeChar > 0)
+    int sizeBytes = sizeChar * 2;
+
+    char *string = (char *)malloc(sizeBytes+1);
+    if (string)
     {
-        //int sizeBytes = sizeChar * 2;
-
-        string = (char *)malloc(sizeChar+1);
-        if (string)
+        int stringsize = 0;
+        for (stringsize = 0; stringsize < sizeBytes; stringsize++)
         {
-            for (int i = 0; i < sizeChar; i++)
-            {
-                string[i] = (char)read_bits(bitstr, 8);
-                skip_bits(bitstr, 8);
-            }
-            string[sizeChar] = '\0';
+            string[stringsize] = static_cast<char>(read_bits(bitstr, 8));
+            if (string[stringsize] == '\0') break;
+        }
+        string[sizeBytes] = '\0'; // in any case...
 
-            if (name)
-            {
-#if ENABLE_DEBUG
-                TRACE_1(ASF, "* %s  = '%s'", name, string);
-#endif // ENABLE_DEBUG
+        if (name)
+        {
+            TRACE_1(ASF, "* %s  = '%s'", name, string);
 
-                if (xml)
+            if (xml)
+            {
+                //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
+
+                fprintf(xml, "  <%s string=\"utf16\">", name);
+                for (int i = 0; i < stringsize; i++)
                 {
-                    //fprintf(xml, "  <%s>%s</%s>\n", name, string, name);
-
-                    fprintf(xml, "  <%s string=\"utf16\">", name);
-                    for (int i = 0; i < sizeChar; i++)
-                    {
-                        if (string[i] == '\"')
-                            fprintf(xml, "&quot");
-                        else if (string[i] == '\'')
-                            fprintf(xml, "&apos");
-                        else if (string[i] == '<')
-                            fprintf(xml, "&lt");
-                        else if (string[i] == '>')
-                            fprintf(xml, "&gt");
-                        else if (string[i] == '&')
-                            fprintf(xml, "&amp");
-                        else
-                            fprintf(xml, "%c", string[i]);
-                    }
-                    fprintf(xml, "</%s>\n", name);
+                    if (string[i] == '\"')
+                        fprintf(xml, "&quot");
+                    else if (string[i] == '\'')
+                        fprintf(xml, "&apos");
+                    else if (string[i] == '<')
+                        fprintf(xml, "&lt");
+                    else if (string[i] == '>')
+                        fprintf(xml, "&gt");
+                    else if (string[i] == '&')
+                        fprintf(xml, "&amp");
+                    else
+                        fprintf(xml, "%c", string[i]);
                 }
+                fprintf(xml, "</%s>\n", name);
             }
         }
     }
