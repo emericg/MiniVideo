@@ -254,7 +254,7 @@ int MainWindow::printDatas()
         else
             ui->comboBox_file->setItemIcon(ui->comboBox_file->currentIndex(), icon_error);
 
-        // General infos
+        // General file infos
         QString name = QString::fromUtf8(media->file_name);
         if (strlen(media->file_extension) > 0)
             name += "." + QString::fromUtf8(media->file_extension);
@@ -263,44 +263,33 @@ int MainWindow::printDatas()
         ui->label_info_filename->setToolTip(QString::fromUtf8(media->file_name));
         ui->label_info_fullpath->setText(QString::fromUtf8(media->file_path));
         ui->label_info_fullpath->setToolTip(QString::fromUtf8(media->file_path));
-        ui->label_info_container->setText(getContainerString(media->container, true));
-        if (media->container_profile)
-        {
-            ui->label_83->setVisible(true);
-            ui->label_info_container_profile->setVisible(true);
-            ui->label_info_container_profile->setText(getContainerProfileString(media->container_profile, true));
-        }
-        else
-        {
-            ui->label_83->setVisible(false);
-            ui->label_info_container_profile->setVisible(false);
-        }
         ui->label_info_filesize->setText(getSizeString(media->file_size));
+
+        ui->label_3->setVisible(media->duration);
+        ui->label_info_duration->setVisible(media->duration);
         ui->label_info_duration->setText(getDurationString(media->duration));
 
-        if (media->creation_app)
-        {
-            ui->label_ca->setVisible(true);
-            ui->label_info_creation_app->setVisible(true);
-            ui->label_info_creation_app->setText(QString::fromUtf8(media->creation_app));
-        }
-        else
-        {
-            ui->label_ca->setVisible(false);
-            ui->label_info_creation_app->setVisible(false);
-        }
+        // Container infos
+        ui->label_info_container->setText(getContainerString(media->container, true));
 
-        if (media->creation_lib)
-        {
-            ui->label_cl->setVisible(true);
-            ui->label_info_creation_lib->setVisible(true);
-            ui->label_info_creation_lib->setText(QString::fromUtf8(media->creation_lib));
-        }
-        else
-        {
-            ui->label_cl->setVisible(false);
-            ui->label_info_creation_lib->setVisible(false);
-        }
+        ui->label_83->setVisible(media->container_profile);
+        ui->label_info_container_profile->setVisible(media->container_profile);
+        ui->label_info_container_profile->setText(getContainerProfileString(media->container_profile, true));
+
+        // mismatch?
+        ui->label_info_container_mismatch->setVisible(false);
+
+        ui->label_3->setVisible(media->duration);
+        ui->label_info_duration->setVisible(media->duration);
+        ui->label_info_duration->setText(getDurationString(media->duration));
+
+        ui->label_ca->setVisible(media->creation_app);
+        ui->label_info_creation_app->setVisible(media->creation_app);
+        ui->label_info_creation_app->setText(QString::fromUtf8(media->creation_app));
+
+        ui->label_cl->setVisible(media->creation_lib);
+        ui->label_info_creation_lib->setVisible(media->creation_lib);
+        ui->label_info_creation_lib->setText(QString::fromUtf8(media->creation_lib));
 
         if (media->creation_time)
         {
@@ -322,8 +311,13 @@ int MainWindow::printDatas()
         }
 
         // Container efficiency
+        if (media->tracks_audio_count > 0 || media->tracks_video_count > 0 ||
+            media->tracks_subtitles_count > 0 || media->tracks_others_count > 0)
         {
-            uint64_t trackssize = 0;
+            ui->label_8->setVisible(true);
+            ui->label_info_container_overhead->setVisible(true);
+
+            int64_t trackssize = 0;
             for (int i = 0; i < 16; i++)
             {
                 if (media->tracks_audio[i])
@@ -336,7 +330,7 @@ int MainWindow::printDatas()
                     trackssize += media->tracks_others[i]->stream_size;
             }
 
-            uint64_t overhead = media->file_size - trackssize;
+            int64_t overhead = media->file_size - trackssize;
             double overheadpercent = (static_cast<double>(overhead) / static_cast<double>(media->file_size)) * 100.0;
 
             if (overheadpercent < 0.01)
@@ -345,6 +339,11 @@ int MainWindow::printDatas()
                 ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
             else
                 ui->label_info_container_overhead->setText("<b>(ERR)</b>");
+        }
+        else
+        {
+            ui->label_8->setVisible(false);
+            ui->label_info_container_overhead->setVisible(false);
         }
 
         // AUDIO
@@ -745,14 +744,15 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_bitpersample->setText(QString::number(t->bit_per_sample) + " bits");
             }
 
-            uint64_t rawsize = t->sampling_rate * t->channel_count * (t->bit_per_sample / 8);
-            rawsize *= t->stream_duration_ms;
-            rawsize /= 1024.0;
+            if (t->stream_size)
+            {
+                uint64_t rawsize = t->sampling_rate * t->channel_count * (t->bit_per_sample / 8);
+                rawsize *= t->stream_duration_ms;
+                rawsize /= 1000;
 
-            uint64_t ratio = 1;
-            if (rawsize && t->stream_size)
-                ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
-            ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
+                uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
+                ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
+            }
 
             ui->label_audio_samplecount->setText(QString::number(t->sample_count));
             ui->label_audio_framecount->setText(QString::number(t->frame_count));
@@ -1171,39 +1171,31 @@ int MainWindow::printVideoDetails()
             ui->label_video_samplecount->setText(samplecount);
             ui->label_video_framecount->setText(framecount);
 
+            // Framerate
             ui->label_video_framerate->setText(QString::number(framerate) + " fps");
-            if (t->framerate_mode)
-            {
-                ui->label_77->show();
-                ui->label_video_framerate_mode->show();
-                ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
-            }
-            else
-            {
-                ui->label_77->hide();
-                ui->label_video_framerate_mode->hide();
-            }
 
-            if (frameduration > 0)
-            {
-                ui->label_34->setVisible(true);
-                ui->label_video_frameduration->setVisible(true);
+            // Framerate mode
+            ui->label_77->setVisible(t->framerate_mode);
+            ui->label_video_framerate_mode->setVisible(t->framerate_mode);
+            ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+
+            // Frame duration
+                ui->label_34->setVisible(frameduration > 0);
+                ui->label_video_frameduration->setVisible(frameduration > 0);
                 ui->label_video_frameduration->setText(QString::number(frameduration, 'g', 4) + " ms");
-            }
-            else
-            {
-                ui->label_34->setVisible(false);
-                ui->label_video_frameduration->setVisible(false);
-            }
 
-            if (t->color_planes == 0) t->color_planes = 3;
-            if (t->color_depth == 0) t->color_depth = 8;
-            uint64_t rawsize = t->width * t->height * (t->color_depth / 8) * t->color_planes;
-            rawsize *= t->sample_count;
-            uint64_t ratio = 1;
-            if (rawsize && t->stream_size)
-                ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
-            ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
+            // Compression ratio
+            if (t->stream_size)
+            {
+                if (t->color_planes == 0) t->color_planes = 3;
+                if (t->color_depth == 0) t->color_depth = 8;
+
+                uint64_t rawsize = t->width * t->height * (t->color_depth / 8) * t->color_planes;
+                rawsize *= t->sample_count;
+
+                uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
+                ui->label_video_compression_ratio->setText(QString::number(ratio) + ":1");
+            }
 
             // Video bitrate graph /////////////////////////////////////////////
 

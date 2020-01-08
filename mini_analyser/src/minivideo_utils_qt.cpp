@@ -502,8 +502,6 @@ QString getBitrateModeString(const BitrateMode_e bitrateMode)
         bitrate_mode_qstr = "ABR";
     else if (bitrateMode == BITRATE_CVBR)
         bitrate_mode_qstr = "CVBR";
-    else
-        bitrate_mode_qstr = QObject::tr("Unknown");
 
     return bitrate_mode_qstr;
 }
@@ -516,8 +514,6 @@ QString getFramerateModeString(const FramerateMode_e framerateMode)
         framerate_mode_qstr = "CFR";
     else if (framerateMode == FRAMERATE_VFR)
         framerate_mode_qstr = "VFR";
-    else
-        framerate_mode_qstr = QObject::tr("Unknown");
 
     return framerate_mode_qstr;
 }
