@@ -76,6 +76,13 @@ static int mkv_parse_tracks_entry_translate(Bitstream_t *bitstr, EbmlElement_t *
                 TrackTranslateTrackID = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "TrackTranslateTrackID");
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -152,6 +159,13 @@ static int mkv_parse_tracks_entry_video_colour_mastering(Bitstream_t *bitstr, Eb
                 mastering->LuminanceMin = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "LuminanceMin");
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -219,6 +233,13 @@ static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElem
                 break;
             case eid_spatial_ProjectionPoseRoll:
                 projection->ProjectionPoseRoll = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:
@@ -303,6 +324,13 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
 
             case eid_MasteringMetadata:
                 retcode = mkv_parse_tracks_entry_video_colour_mastering(bitstr, element, mkv, track);
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:
@@ -399,6 +427,13 @@ static int mkv_parse_tracks_entry_video(Bitstream_t *bitstr, EbmlElement_t *elem
                 retcode = mkv_parse_tracks_entry_video_colour(bitstr, &element_sub, mkv, track);
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -454,6 +489,13 @@ static int mkv_parse_tracks_entry_audio(Bitstream_t *bitstr, EbmlElement_t *elem
                 track->audio->BitDepth = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BitDepth");
                 break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -496,6 +538,13 @@ static int mkv_parse_tracks_entry_operation(Bitstream_t *bitstr, EbmlElement_t *
         {
             switch (element_sub.eid)
             {
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -629,6 +678,13 @@ static int mkv_parse_tracks_entry_contentencoding(Bitstream_t *bitstr, EbmlEleme
                 }
             } break;
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
@@ -672,6 +728,13 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
             {
             case eid_ContentEncoding:
                 retcode = mkv_parse_tracks_entry_contentencoding(bitstr, &element_sub, mkv, track);
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:
@@ -818,6 +881,13 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                 break;
             case eid_ContentEncodings:
                 retcode = mkv_parse_tracks_entry_contentencodings(bitstr, &element_sub, mkv, mkv_track);
+                break;
+
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
                 break;
 
             default:

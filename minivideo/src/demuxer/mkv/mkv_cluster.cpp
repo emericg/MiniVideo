@@ -286,6 +286,13 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             // TODO BlockAdditions
             // TODO slices
 
+            case eid_void:
+                retcode = ebml_parse_void(bitstr, &element_sub, mkv->xml);
+                break;
+            case eid_crc32:
+                retcode = ebml_parse_crc32(bitstr, &element_sub, mkv->xml);
+                break;
+
             default:
                 retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
                 break;
