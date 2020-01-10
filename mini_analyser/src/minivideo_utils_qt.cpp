@@ -786,6 +786,28 @@ QString getLanguageString(const char *languageCode)
         else if (strncmp(languageCode, "id", lng_size) == 0 ||
                  strncmp(languageCode, "ind", lng_size) == 0)
             langage_qstr = QObject::tr("Indonesian");
+        else if (strncmp(languageCode, "et", lng_size) == 0 ||
+                 strncmp(languageCode, "est", lng_size) == 0)
+            langage_qstr = QObject::tr("Estonian");
+        else if (strncmp(languageCode, "bg", lng_size) == 0 ||
+                 strncmp(languageCode, "bul", lng_size) == 0)
+            langage_qstr = QObject::tr("Bulgarian");
+        else if (strncmp(languageCode, "lv", lng_size) == 0 ||
+                 strncmp(languageCode, "lav", lng_size) == 0)
+            langage_qstr = QObject::tr("Latvian");
+        else if (strncmp(languageCode, "lt", lng_size) == 0 ||
+                 strncmp(languageCode, "lit", lng_size) == 0)
+            langage_qstr = QObject::tr("Lithuanian");
+        else if (strncmp(languageCode, "sk", lng_size) == 0 ||
+                 strncmp(languageCode, "slo", lng_size) == 0 ||
+                 strncmp(languageCode, "slk", lng_size) == 0)
+            langage_qstr = QObject::tr("Slovak");
+        else if (strncmp(languageCode, "sl", lng_size) == 0 ||
+                 strncmp(languageCode, "slv", lng_size) == 0)
+            langage_qstr = QObject::tr("Slovenian");
+        else if (strncmp(languageCode, "uk", lng_size) == 0 ||
+                 strncmp(languageCode, "ukr", lng_size) == 0)
+            langage_qstr = QObject::tr("Ukrainian");
 
         else
             langage_qstr = QString::fromUtf8(languageCode, static_cast<int>(lng_size));

@@ -152,8 +152,11 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         {
             exportDatas += "\nFramerate      : ";
             exportDatas += QString::number(t->framerate) + " fps";
-            exportDatas += "\nFramerate mode:  ";
-            exportDatas += getFramerateModeString(t->framerate_mode);
+            if (t->framerate_mode)
+            {
+                exportDatas += "\nFramerate mode : ";
+                exportDatas += getFramerateModeString(t->framerate_mode);
+            }
 
             exportDatas += "\nBitrate        : ";
             exportDatas += getBitrateString(t->bitrate_avg);
@@ -170,9 +173,11 @@ int textExport::generateExportDatas_text(MediaFile_t &media, QString &exportData
         else
         {
             exportDatas += "\nFramerate      : ";
-            exportDatas += QString::number(t->framerate) + " fps (";
-            exportDatas += getFramerateModeString(t->framerate_mode) + ")";
-
+            exportDatas += QString::number(t->framerate) + " fps";
+            if (t->framerate_mode)
+            {
+                exportDatas += " (" + getFramerateModeString(t->framerate_mode) + ")";
+            }
             exportDatas += "\nBitrate        : ";
             exportDatas += getBitrateString(t->bitrate_avg);
             exportDatas += " (" + getBitrateModeString(t->bitrate_mode) + ")";
