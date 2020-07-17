@@ -434,9 +434,16 @@ QString QHexEdit::selectedData()
 
 void QHexEdit::setFont(const QFont &font)
 {
-    QWidget::setFont(font);
-    _pxCharWidth = fontMetrics().horizontalAdvance(QLatin1Char('2'));
-    _pxCharHeight = fontMetrics().height();
+    QFont theFont(font);
+    theFont.setStyleHint(QFont::Monospace);
+    QWidget::setFont(theFont);
+    QFontMetrics metrics = fontMetrics();
+#if QT_VERSION > QT_VERSION_CHECK(5, 11, 0)
+    _pxCharWidth = metrics.horizontalAdvance(QLatin1Char('2'));
+#else
+    _pxCharWidth = metrics.width(QLatin1Char('2'));
+#endif
+    _pxCharHeight = metrics.height();
     _pxGapAdr = _pxCharWidth / 2;
     _pxGapAdrHex = _pxCharWidth;
     _pxGapHexAscii = 2 * _pxCharWidth;
@@ -800,6 +807,7 @@ void QHexEdit::keyPressEvent(QKeyEvent *event)
     }
 
     refresh();
+    QAbstractScrollArea::keyPressEvent(event);
 }
 
 void QHexEdit::mouseMoveEvent(QMouseEvent * event)
@@ -856,7 +864,7 @@ void QHexEdit::paintEvent(QPaintEvent *event)
             for (int row=0, pxPosY = _pxCharHeight; row <= (_dataShown.size()/_bytesPerLine); row++, pxPosY +=_pxCharHeight)
             {
                 address = QString("%1").arg(_bPosFirst + row*_bytesPerLine + _addressOffset, _addrDigits, 16, QChar('0'));
-                painter.drawText(_pxPosAdrX - pxOfsX, pxPosY, address);
+                painter.drawText(_pxPosAdrX - pxOfsX, pxPosY, hexCaps() ? address.toUpper() : address);
             }
         }
 
@@ -920,11 +928,11 @@ void QHexEdit::paintEvent(QPaintEvent *event)
         painter.setPen(viewport()->palette().color(QPalette::WindowText));
     }
 
-	// _cursorPosition counts in 2, _bPosFirst counts in 1
-	int hexPositionInShowData = _cursorPosition - 2 * _bPosFirst;
+    // _cursorPosition counts in 2, _bPosFirst counts in 1
+    int hexPositionInShowData = _cursorPosition - 2 * _bPosFirst;
 
-	// due to scrolling the cursor can go out of the currently displayed data
-	if ((hexPositionInShowData >= 0) && (hexPositionInShowData < _hexDataShown.size()))
+    // due to scrolling the cursor can go out of the currently displayed data
+    if ((hexPositionInShowData >= 0) && (hexPositionInShowData < _hexDataShown.size()))
     {
             // paint cursor
             if (_readOnly)
@@ -950,7 +958,7 @@ void QHexEdit::paintEvent(QPaintEvent *event)
             }
             else
             {
-                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, _hexDataShown.mid(hexPositionInShowData, 1));
+                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, hexCaps() ? _hexDataShown.mid(hexPositionInShowData, 1).toUpper() : _hexDataShown.mid(hexPositionInShowData, 1));
             }
     }
 
@@ -974,11 +982,11 @@ void QHexEdit::resizeEvent(QResizeEvent *)
             pxFixGaps += _pxGapHexAscii;
 
         // +1 because the last hex value do not have space. so it is effective one char more
-        int charWidth = (viewport()->width() - pxFixGaps ) / _pxCharWidth + 1; 
+        int charWidth = (viewport()->width() - pxFixGaps ) / _pxCharWidth + 1;
 
         // 2 hex alfa-digits 1 space 1 ascii per byte = 4; if ascii is disabled then 3
         // to prevent devision by zero use the min value 1
-        setBytesPerLine(std::max(charWidth / (_asciiArea ? 4 : 3),1));  
+        setBytesPerLine(std::max(charWidth / (_asciiArea ? 4 : 3),1));
     }
     adjust();
 }
