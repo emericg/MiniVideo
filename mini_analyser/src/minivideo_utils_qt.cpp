@@ -336,7 +336,7 @@ QString getSampleTypeString(const unsigned sampleType)
     else if (sampleType == sample_TEXT_FILE)
         sample_type_qstr = QObject::tr("Text file");
     else if (sampleType == sample_RAW_DATA)
-        sample_type_qstr = QObject::tr("RAW datas");
+        sample_type_qstr = QObject::tr("RAW data");
     else if (sampleType == sample_TMCD)
         sample_type_qstr = QObject::tr("TimeCode Reference");
     else if (sampleType == sample_OTHER)
@@ -433,6 +433,13 @@ QString getAspectRatioString(double ar_d, const bool detailed)
     else if (ar_d > 2.38 && ar_d < 2.40)
     {
         aspectratio_qstr = "2.39:1";
+
+        if (detailed)
+            aspectratio_qstr += " (35 mm modern anamorphic)";
+    }
+    else if (ar_d < 2.41)
+    {
+        aspectratio_qstr = "2.4:1";
 
         if (detailed)
             aspectratio_qstr += " (35 mm modern anamorphic)";

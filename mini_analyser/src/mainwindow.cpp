@@ -264,6 +264,7 @@ int MainWindow::loadFile(const QString &file)
             status = 0;
 
             mediaList.push_back(media);
+
             media->mediaPath = file;
 
             handleComboBox(file);
@@ -656,12 +657,12 @@ void MainWindow::handleTabWidget()
                 ui->tabWidget->addTab(ui->tab_other, tabOtherIcon, tabOtherText);
             }
 
+            // Add the container tab
+            ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
+
             if (media->tracks_video_count || media->tracks_audio_count ||
                 media->tracks_subtitles_count || media->tracks_others_count)
             {
-                // Add the container tab
-                ui->tabWidget->addTab(ui->tab_container, tabContainerIcon, tabContainerText);
-
                 // Add the export tab
                 ui->tabWidget->addTab(ui->tab_export, tabExportIcon, tabExportText);
             }

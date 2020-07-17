@@ -61,7 +61,7 @@ int CLI::printFile(const QString &file, bool details)
             {
                 // Generate text output and print it on console
                 QString exportDatas;
-                minivideo_retcode = textExport::generateExportDatas_text(*media, exportDatas, details);
+                minivideo_retcode = textExport::generateExportData_text(*media, exportDatas, details);
 
                 QTextStream(stdout) << exportDatas << endl;
             }

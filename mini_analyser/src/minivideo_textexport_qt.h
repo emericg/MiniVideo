@@ -45,9 +45,9 @@ public:
     textExport();
     ~textExport();
 
-    static int generateExportDatas_text(MediaFile_t &media, QString &exportDatas, bool detailed);
-    static int generateExportDatas_json(MediaFile_t &media, QString &exportDatas, bool detailed);
-    static int generateExportDatas_xml(MediaFile_t &media, QString &exportDatas, bool detailed);
+    static int generateExportData_text(MediaFile_t &media, QString &exportDatas, bool detailed);
+    static int generateExportData_json(MediaFile_t &media, QString &exportDatas, bool detailed);
+    static int generateExportData_xml(MediaFile_t &media, QString &exportDatas, bool detailed);
     static int generateExportMapping_xml(MediaFile_t &media, QString &exportDatas);
 };
 

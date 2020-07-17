@@ -211,17 +211,17 @@ int tabExport::generateExportDatas()
             if (exportFormat == EXPORT_JSON)
             {
                 outputFilePath += ".json";
-                status = textExport::generateExportDatas_json(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_json(*media, exportDatas, exportMode);
             }
             else if (exportFormat == EXPORT_XML)
             {
                 outputFilePath += ".xml";
-                status = textExport::generateExportDatas_xml(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_xml(*media, exportDatas, exportMode);
             }
             else // if (exportFormat == EXPORT_TEXT)
             {
                 outputFilePath += ".txt";
-                status = textExport::generateExportDatas_text(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_text(*media, exportDatas, exportMode);
             }
         }
         else if (exportMode == 2)
