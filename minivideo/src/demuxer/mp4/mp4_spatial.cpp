@@ -245,7 +245,6 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->flags = read_bits(bitstr, 24);
 
     char *metadata_source = read_mp4_string(bitstr, box_header->size, mp4->xml, nullptr);
-    free(metadata_source);
 
 #if ENABLE_DEBUG
     print_box_header(box_header);
@@ -259,6 +258,8 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <metadata_source>%s</metadata_source>\n", metadata_source);
         fprintf(mp4->xml, "  </a>\n");
     }
+
+    free(metadata_source);
 
     return retcode;
 }

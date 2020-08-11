@@ -614,8 +614,8 @@ void tabContainer::containerSelection(int64_t selected_offset)
         QString selected_guid = QString::fromLatin1(eSelected.attribute("guid").value());
         QString selected_title = QString::fromLatin1(eSelected.attribute("tt").value());
         int selected_size = eSelected.attribute("sz").as_int();
-        int selected_version = eSelected.attribute("version").as_int();
-        int selected_flag = eSelected.attribute("flag").as_int();
+        int selected_version = eSelected.attribute("v").as_int();
+        int selected_flag = eSelected.attribute("f").as_int();
         QString selected_uuid = QString::fromLatin1(eSelected.attribute("uuid").value());
 
         //qDebug() << "Atom :" << selected_title << "@" << selected_offset << "clicked";

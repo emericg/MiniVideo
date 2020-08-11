@@ -209,6 +209,7 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml,
             char boxtype[20];
             char boxtypeadd[16];
             char fcc[5];
+            char fullbox[24];
 
             if (title != nullptr)
                 snprintf(boxtitle, 63, "tt=\"%s\" ", title);
@@ -216,20 +217,25 @@ void write_box_header(Mp4Box_t *box_header, FILE *xml,
                 boxtitle[0] = '\0';
 
             if (box_header->version == 0xFF && box_header->flags == 0xFFFFFFFF)
+            {
                 strcpy(boxtype, "tp=\"MP4 box\" ");
+                fullbox[0] = '\0';
+            }
             else
+            {
                 strcpy(boxtype, "tp=\"MP4 fullbox\" ");
+                snprintf(fullbox, 23, " v=\"%i\" f=\"%i\"", box_header->version, box_header->flags);
+            }
 
             if (additional != nullptr)
                 snprintf(boxtypeadd, 15, "add=\"%s\" ", additional);
             else
                 boxtypeadd[0] = '\0';
 
-            fprintf(xml, "  <a %s%s%sfcc=\"%s\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+            fprintf(xml, "  <a %s%s%sfcc=\"%s\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\"%s>\n",
                     boxtitle, boxtype, boxtypeadd,
                     getFccString_le(box_header->boxtype, fcc),
-                    box_header->offset_start,
-                    box_header->size);
+                    box_header->offset_start, box_header->size, fullbox);
 
             if (box_header->boxtype == BOX_UUID)
             {
@@ -354,6 +360,31 @@ uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *nam
 
     return value;
 }
+
+uint32_t read_mp4_fcc(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_fcc()");
+    uint32_t fcc_in = read_bits(bitstr, 32);
+
+    char fcc_out[5];
+    fcc_out[0] = static_cast<char>((fcc_in >> 24) & 0xFF);
+    fcc_out[1] = static_cast<char>((fcc_in >> 16) & 0xFF);
+    fcc_out[2] = static_cast<char>((fcc_in >>  8) & 0xFF);
+    fcc_out[3] = static_cast<char>((fcc_in      ) & 0xFF);
+    fcc_out[4] = '\0';
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, fcc_out);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%s</%s>\n", name, fcc_out, name);
+        }
+    }
+
+    return fcc_in;
+}
+
 uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *name)
 {
     TRACE_2(MP4, "read_mp4_data()");
