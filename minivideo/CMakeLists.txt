@@ -204,25 +204,25 @@ set(minivideo_SRC
     src/export.cpp
         src/export_utils.cpp
         src/thirdparty/stb_image_write.h
-    src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4_box.cpp
-        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
-    src/demuxer/mp3/mp3.cpp src/demuxer/mp3/mp3_struct.h
-    src/demuxer/mkv/mkv.cpp src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/ebml.cpp
+    src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp
+        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
+    src/demuxer/mp3/mp3_struct.h src/demuxer/mp3/mp3.cpp
+    src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/mkv.cpp src/demuxer/mkv/ebml.cpp
         src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp src/demuxer/mkv/mkv_convert.cpp
     src/demuxer/esparser/esparser.cpp
     src/demuxer/idr_filter.cpp
     src/demuxer/xml_mapper.cpp
-    src/demuxer/mpeg/pes/pes.cpp src/demuxer/mpeg/pes/pes_struct.h
+    src/demuxer/mpeg/pes/pes_struct.h src/demuxer/mpeg/pes/pes.cpp
         src/demuxer/mpeg/descriptor_struct.h
-        src/demuxer/mpeg/ps/ps.cpp src/demuxer/mpeg/ps/ps_struct.h
-        src/demuxer/mpeg/ts/ts.cpp src/demuxer/mpeg/ts/ts_struct.h
-    src/demuxer/riff/riff.cpp src/demuxer/riff/riff_common.cpp src/demuxer/riff/riff_struct.h
-        src/demuxer/avi/avi.cpp src/demuxer/avi/avi_convert.cpp src/demuxer/avi/avi_struct.h
-        src/demuxer/wave/wave.cpp src/demuxer/wave/wave_convert.cpp src/demuxer/wave/wave_struct.h
-    src/demuxer/asf/asf.cpp src/demuxer/asf/asf_object.cpp src/demuxer/asf/asf_convert.cpp src/demuxer/asf/asf_struct.h
+        src/demuxer/mpeg/ps/ps_struct.h src/demuxer/mpeg/ps/ps.cpp
+        src/demuxer/mpeg/ts/ts_struct.h src/demuxer/mpeg/ts/ts.cpp
+    src/demuxer/riff/riff_struct.h src/demuxer/riff/riff.cpp src/demuxer/riff/riff_common.cpp
+        src/demuxer/avi/avi_struct.h src/demuxer/avi/avi.cpp src/demuxer/avi/avi_convert.cpp
+        src/demuxer/wave/wave_struct.h src/demuxer/wave/wave.cpp src/demuxer/wave/wave_convert.cpp
+    src/demuxer/asf/asf_struct.h src/demuxer/asf/asf.cpp src/demuxer/asf/asf_object.cpp src/demuxer/asf/asf_convert.cpp
     src/muxer/muxer.cpp
         src/muxer/pes_packetizer.cpp
-    src/depacketizer/depack.cpp src/depacketizer/depack_struct.h
+    src/depacketizer/depack_struct.h src/depacketizer/depack.cpp
         src/depacketizer/h264/depack_h264.cpp
     src/decoder/h264/h264.cpp
         src/decoder/h264/h264_decodingcontext.h
