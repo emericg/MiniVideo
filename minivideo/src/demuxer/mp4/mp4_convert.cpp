@@ -123,6 +123,15 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 media->tracks_video_count++;
             }
         }
+        else if (track->handlerType == MP4_HANDLER_PICT)
+        {
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->stsz_sample_count);
+            if (retcode == SUCCESS)
+            {
+                map = media->tracks_video[media->tracks_video_count];
+                media->tracks_video_count++;
+            }
+        }
         else if (track->handlerType == MP4_HANDLER_SUBT ||
                  track->handlerType == MP4_HANDLER_SBTL ||
                  track->handlerType == MP4_HANDLER_TEXT)
@@ -279,6 +288,35 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         else if (track->handlerType == MP4_HANDLER_PICT)
         {
             map->stream_type = stream_IMAGE;
+            map->width = track->width;
+            map->height = track->height;
+
+            map->color_depth = track->color_depth;
+            map->color_range = track->color_range;
+            map->color_space = track->color_space;
+            map->color_primaries = track->color_primaries;
+            map->color_matrix = track->color_matrix;
+            map->color_transfer = track->color_transfer;
+
+            if (track->par_h && track->par_v)
+            {
+                map->pixel_aspect_ratio_h = track->par_h;
+                map->pixel_aspect_ratio_v = track->par_v;
+            }
+            else
+            {
+                map->pixel_aspect_ratio_h = 1;
+                map->pixel_aspect_ratio_v = 1;
+            }
+
+            if (track->rotation == 90)
+                map->video_rotation = ROTATION_90;
+            else if (track->rotation == 180)
+                map->video_rotation = ROTATION_180;
+            else if (track->rotation == 270)
+                map->video_rotation = ROTATION_270;
+            else
+                map->video_rotation = ROTATION_0;
         }
         else if (track->handlerType == MP4_HANDLER_SUBT ||
                  track->handlerType == MP4_HANDLER_SBTL ||
@@ -536,6 +574,10 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         else if (map->stream_type == stream_AUDIO)
         {
             TRACE_1(MP4, "Audio Stream");
+        }
+        else if (map->stream_type == stream_IMAGE)
+        {
+            TRACE_1(MP4, "Image Stream");
         }
 
         TRACE_1(MP4, "sample_count     : %u", map->sample_count);

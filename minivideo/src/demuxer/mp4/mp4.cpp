@@ -25,6 +25,7 @@
 #include "mp4.h"
 #include "mp4_struct.h"
 #include "mp4_box.h"
+#include "mp4_meta.h"
 #include "mp4_stbl.h"
 #include "mp4_spatial.h"
 #include "mp4_gopro.h"
@@ -44,6 +45,10 @@
 #include <cmath>
 #include <climits>
 #include <cinttypes>
+
+/* ************************************************************************** */
+
+static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4);
 
 /* ************************************************************************** */
 
@@ -279,46 +284,6 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
 /* ************************************************************************** */
 
 /*!
- * \brief Apple item list box.
- */
-static int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
-{
-    TRACE_INFO(MP4, BLD_GREEN "parse_ilst()" CLR_RESET);
-    int retcode = SUCCESS;
-
-    print_box_header(box_header);
-    write_box_header(box_header, mp4->xml, "Apple item list");
-
-    while (mp4->run == true &&
-           retcode == SUCCESS &&
-           bitstream_get_absolute_byte_offset(bitstr) < (box_header->offset_end - 8))
-    {
-        // Parse subbox header
-        Mp4Box_t box_subheader;
-        retcode = parse_box_header(bitstr, &box_subheader);
-
-        // Then parse subbox content
-        if (mp4->run == true && retcode == SUCCESS)
-        {
-            switch (box_subheader.boxtype)
-            {
-                default:
-                    retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
-                    break;
-            }
-
-            jumpy_mp4(bitstr, box_header, &box_subheader);
-        }
-    }
-
-    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
  * \brief Meta Box - FullBox.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -358,9 +323,35 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                 case BOX_HDLR:
                     retcode = parse_hdlr(bitstr, &box_subheader, NULL, mp4);
                     break;
+                case BOX_DINF:
+                    retcode = parse_dinf(bitstr, &box_subheader, NULL, mp4);
+                    break;
+
                 case BOX_ILST:
                     retcode = parse_ilst(bitstr, &box_subheader, NULL, mp4);
-                break;
+                    break;
+                case BOX_KEYS:
+                    retcode = parse_keys(bitstr, &box_subheader, NULL, mp4);
+                    break;
+
+                case BOX_PITM:
+                    retcode = parse_pitm(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_IINF:
+                    retcode = parse_iinf(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_IREF:
+                    retcode = parse_iref(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_IPRP:
+                    retcode = parse_iprp(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_IDAT:
+                    retcode = parse_idat(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_ILOC:
+                    retcode = parse_iloc(bitstr, &box_subheader, mp4);
+                    break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;
@@ -1702,6 +1693,9 @@ int mp4_fileParse(MediaFile_t *media)
                         break;
                     case BOX_MOOF:
                         retcode = parse_moof(bitstr, &box_header, &mp4);
+                        break;
+                    case BOX_META:
+                        retcode = parse_meta(bitstr, &box_header, &mp4);
                         break;
                     case BOX_MDAT:
                         retcode = parse_mdat(bitstr, &box_header, mp4.xml);
