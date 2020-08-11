@@ -40,7 +40,7 @@
  * That capability is requiered to extract compressed data that aren't aligned
  * with bytes boundaries.
  *
- * Data can be read from 1 to 64 unaligned bits from a file. These datas are
+ * Data can be read from 1 to 64 unaligned bits from a file. These data are
  * bufferized by slices of size defined by the "BITSTREAM_BUFFER_SIZE" variable.
  *
  * Size and offset of the bitstream are stored using int64_t. This structure

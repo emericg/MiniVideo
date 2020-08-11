@@ -62,7 +62,7 @@ private slots:
     void loadFileDialog();
 
     int setActiveFile();
-    int printDatas();
+    int printData();
         int printAudioDetails();
         int printVideoDetails();
         int printSubtitlesDetails();
@@ -146,7 +146,7 @@ private:
     void handleComboBox(const QString &file);
     void handleTabWidget();
     void loadingTab();
-    void cleanDatas();
+    void cleanData();
     void cleanGui();
 };
 

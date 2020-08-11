@@ -92,8 +92,8 @@ typedef struct factChunk_t
  */
 typedef struct dataChunk_t
 {
-    int64_t datasOffset;            //!< Offset of the first sample of this data chunk
-    int64_t datasSize;              //!< Size of all the samples of this data chunk (in bytes)
+    int64_t dataOffset;             //!< Offset of the first sample of this data chunk
+    int64_t dataSize;               //!< Size of all the samples of this data chunk (in bytes)
 
 } dataChunk_t;
 

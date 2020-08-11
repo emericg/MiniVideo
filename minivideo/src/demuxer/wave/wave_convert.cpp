@@ -48,7 +48,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
     if (wave->fmt.wFormatTag == WAVE_FORMAT_MS_PCM ||
         wave->fmt.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
-        pcm_samples_count = (wave->data.datasSize) / (wave->fmt.nChannels * (wave->fmt.wBitsPerSample / 8));
+        pcm_samples_count = (wave->data.dataSize) / (wave->fmt.nChannels * (wave->fmt.wBitsPerSample / 8));
         if (pcm_samples_count > UINT32_MAX)
             pcm_samples_count = UINT32_MAX;
 
@@ -75,16 +75,16 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             {
                 track->stream_size = wave->fact.dwSampleLength * (wave->fmt.wBitsPerSample*8) * wave->fmt.nChannels;
 
-                if (track->stream_size != (uint64_t)wave->data.datasSize)
-                    TRACE_WARNING(WAV, "track->stream_size != wave->data.datasSize (%d vs %d)",
-                                  track->stream_size, wave->data.datasSize);
+                if (track->stream_size != (uint64_t)wave->data.dataSize)
+                    TRACE_WARNING(WAV, "track->stream_size != wave->data.dataSize (%d vs %d)",
+                                  track->stream_size, wave->data.dataSize);
 
                 if (wave->fmt.nSamplesPerSec)
                     track->stream_duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
             }
             else
             {
-                track->stream_size = wave->data.datasSize; // may not be necessary
+                track->stream_size = wave->data.dataSize; // may not be necessary
 
                 if (wave->fmt.wBitsPerSample)
                 {
@@ -101,12 +101,12 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
         {
             if (track->stream_duration_ms == 0 && wave->fmt.nAvgBytesPerSec)
             {
-                track->stream_duration_ms = ((double)wave->data.datasSize / (double)wave->fmt.nAvgBytesPerSec) * 1000.0;
+                track->stream_duration_ms = ((double)wave->data.dataSize / (double)wave->fmt.nAvgBytesPerSec) * 1000.0;
             }
 
             if (track->stream_size == 0)
             {
-                track->stream_size = wave->data.datasSize;
+                track->stream_size = wave->data.dataSize;
             }
         }
 
@@ -126,7 +126,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             uint32_t pcm_frame_size = media->tracks_audio[0]->channel_count * (media->tracks_audio[0]->bit_per_sample / 8);
             double pcm_frame_tick_ns = (1000000.0 / (double)track->sampling_rate);
 
-            for (int64_t i = 0; i < wave->data.datasSize; i += pcm_frame_size)
+            for (int64_t i = 0; i < wave->data.dataSize; i += pcm_frame_size)
             {
                 // Set PCM frame into the MediaStream_t
                 sid = media->tracks_audio[0]->sample_count;
@@ -134,7 +134,7 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
                 {
                     media->tracks_audio[0]->sample_type[sid] = sample_AUDIO;
                     media->tracks_audio[0]->sample_size[sid] = pcm_frame_size;
-                    media->tracks_audio[0]->sample_offset[sid] = wave->data.datasOffset + i;
+                    media->tracks_audio[0]->sample_offset[sid] = wave->data.dataOffset + i;
                     media->tracks_audio[0]->sample_pts[sid] = (int64_t)(sid * pcm_frame_tick_ns);
                     media->tracks_audio[0]->sample_dts[sid] = 0;
                     media->tracks_audio[0]->sample_count++;
@@ -150,8 +150,8 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
             track->bitrate_mode = BITRATE_UNKNOWN;
 
             track->sample_type[0] = sample_RAW_DATA;
-            track->sample_size[0] = wave->data.datasSize;
-            track->sample_offset[0] = wave->data.datasOffset;
+            track->sample_size[0] = wave->data.dataSize;
+            track->sample_offset[0] = wave->data.dataOffset;
             track->sample_pts[0] = 0;
             track->sample_dts[0] = 0;
         }

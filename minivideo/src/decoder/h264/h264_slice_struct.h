@@ -228,7 +228,7 @@ typedef struct slice_t
     //if (num_slice_groups_minus1 > 0 && slice_group_map_type >= 3 && slice_group_map_type <= 5)
         unsigned int slice_group_change_cycle;
 
-    //  Slice datas
+    //  Slice data
     ////////////////////////////////////////////////////////////////////////////
 
     bool moreDataFlag;

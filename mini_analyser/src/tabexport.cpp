@@ -43,10 +43,10 @@ tabExport::tabExport(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->comboBox_export_modes, SIGNAL(activated(int)), this, SLOT(generateExportDatas()));
+    connect(ui->comboBox_export_modes, SIGNAL(activated(int)), this, SLOT(generateExportData()));
 
     connect(ui->pushButton_export_filechooser, SIGNAL(clicked(bool)), this, SLOT(saveFileDialog()));
-    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveDatas()));
+    connect(ui->pushButton_export, SIGNAL(clicked(bool)), this, SLOT(saveData()));
 
     // Monospace fonts for the export tab
 #if defined(Q_OS_WINDOWS)
@@ -72,7 +72,7 @@ void tabExport::clean()
     media = nullptr;
     wrapper = nullptr;
 
-    exportDatas.clear();
+    exportData.clear();
     //exportFile.close(); // ?
 
     ui->comboBox_export_modes->setCurrentIndex(0);
@@ -131,9 +131,9 @@ void tabExport::saveFileDialog()
     }
 }
 
-void tabExport::saveDatas()
+void tabExport::saveData()
 {
-    if (exportDatas.isEmpty() == false)
+    if (exportData.isEmpty() == false)
     {
         exportFile.setFileName(ui->lineEdit_export_filename->text());
 
@@ -158,7 +158,7 @@ void tabExport::saveDatas()
         if (exportFile.open(QIODevice::WriteOnly) == true &&
             exportFile.isWritable() == true)
         {
-            exportFile.write(exportDatas.toLocal8Bit());
+            exportFile.write(exportData.toLocal8Bit());
             exportFile.close();
         }
     }
@@ -178,7 +178,7 @@ int tabExport::loadMedia(const MediaWrapper *wrap)
         wrapper = (MediaWrapper *)wrap;
         media = (MediaFile_t *)wrap->media;
 
-        status = generateExportDatas();
+        status = generateExportData();
 
         ui->comboBox_export_modes->blockSignals(false);
         ui->comboBox_export_formats->blockSignals(false);
@@ -187,14 +187,14 @@ int tabExport::loadMedia(const MediaWrapper *wrap)
     return status;
 }
 
-int tabExport::generateExportDatas()
+int tabExport::generateExportData()
 {
     int status = 1;
 
     if (media)
     {
-        // Clear datas
-        exportDatas.clear();
+        // Clear data
+        exportData.clear();
 
         // Output path is file path + another extension
         QString outputFilePath = media->file_path;
@@ -211,17 +211,17 @@ int tabExport::generateExportDatas()
             if (exportFormat == EXPORT_JSON)
             {
                 outputFilePath += ".json";
-                status = textExport::generateExportData_json(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_json(*media, exportData, exportMode);
             }
             else if (exportFormat == EXPORT_XML)
             {
                 outputFilePath += ".xml";
-                status = textExport::generateExportData_xml(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_xml(*media, exportData, exportMode);
             }
             else // if (exportFormat == EXPORT_TEXT)
             {
                 outputFilePath += ".txt";
-                status = textExport::generateExportData_text(*media, exportDatas, exportMode);
+                status = textExport::generateExportData_text(*media, exportData, exportMode);
             }
         }
         else if (exportMode == 2)
@@ -231,13 +231,13 @@ int tabExport::generateExportDatas()
 
             {
                 outputFilePath += ".xml";
-                status = textExport::generateExportMapping_xml(*media, exportDatas);
+                status = textExport::generateExportMapping_xml(*media, exportData);
             }
         }
 
         // Print it
         ui->lineEdit_export_filename->setText(outputFilePath);
-        ui->textBrowser_export->setText(exportDatas);
+        ui->textBrowser_export->setText(exportData);
     }
 
     return status;

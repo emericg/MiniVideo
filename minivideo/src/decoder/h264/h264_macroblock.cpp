@@ -240,7 +240,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
                 mb->CodedBlockPatternChroma > 0 ||
                 mb->MbPartPredMode[0] == Intra_16x16)
             {
-                TRACE_3(MB, "---- macroblock_layer - quantization parameter & residual datas");
+                TRACE_3(MB, "---- macroblock_layer - quantization parameter & residual data");
 
                 // Read QP delta
                 if (pps->entropy_coding_mode_flag)
@@ -259,7 +259,7 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
             }
             else
             {
-                TRACE_3(MB, "---- macroblock_layer - No residual datas to decode in this macroblock");
+                TRACE_3(MB, "---- macroblock_layer - No residual data to decode in this macroblock");
             }
 
             // Compute luma Quantization Parameters

@@ -77,8 +77,8 @@ void xmlSpacer(FILE *xml, const char *name, const int index = -1);
           <wBitsPerSample unit="bit">16</wBitsPerSample>
     </a>
     <a fcc="data" tp="RIFF chunk" off="36" sz="3211776">
-      <datasOffset>44</datasOffset>
-      <datasSize>3211776</datasSize>
+      <dataOffset>44</dataOffset>
+      <dataSize>3211776</dataSize>
     </a>
   </a>
 </structure>
@@ -106,8 +106,8 @@ void xmlSpacer(FILE *xml, const char *name, const int index = -1);
           <wBitsPerSample unit="bit">16</wBitsPerSample>
     </atom>
     <atom fcc="data" type="RIFF chunk" offset="36" size="3211776">
-      <datasOffset>44</datasOffset>
-      <datasSize>3211776</datasSize>
+      <dataOffset>44</dataOffset>
+      <dataSize>3211776</dataSize>
     </atom>
   </atom>
 </structure>

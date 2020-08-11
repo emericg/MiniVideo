@@ -64,7 +64,7 @@ tabContainer::tabContainer(QWidget *parent) :
 
     // Preload icons
     icon_atom.addFile(":/img/img/A.png");
-    icon_datas.addFile(":/img/img/P.png");
+    icon_data.addFile(":/img/img/P.png");
     icon_ext.addFile(":/img/img/E.png");
     icon_track.addFile(":/img/img/T.png");
 
@@ -604,7 +604,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
     // we need to find the atom with given offset
     pugi::xml_node eSelected;
-    pugi::xml_node root = xmlMapDatas.document_element();
+    pugi::xml_node root = xmlMapData.document_element();
 
     if (findAtom(root.child("structure"), "off", selected_offset, eSelected))
     {
@@ -667,9 +667,9 @@ void tabContainer::containerSelection(int64_t selected_offset)
         {
             atom_title = new QLabel(tr("<b>> ASF Object</b>"));
         }
-        else if (type == "datas")
+        else if (type == "data")
         {
-            atom_title = new QLabel(tr("<b>> Raw datas</b>"));
+            atom_title = new QLabel(tr("<b>> Raw data</b>"));
         }
         else
         {
@@ -959,7 +959,7 @@ bool tabContainer::loadXmlFile()
         char *b = static_cast<char *>(pugi::get_memory_allocation_function()(xmlMapFile.size()));
         xmlMapFile.read(b, xmlMapFile.size());
 
-        pugi::xml_parse_result result = xmlMapDatas.load_buffer_inplace_own(b, xmlMapFile.size());
+        pugi::xml_parse_result result = xmlMapData.load_buffer_inplace_own(b, xmlMapFile.size());
         if (!result)
         {
             qDebug() << "xmlFile parsed with errors";
@@ -967,9 +967,9 @@ bool tabContainer::loadXmlFile()
         }
 
         // Actual XML data parsing
-        pugi::xml_node root = xmlMapDatas.document_element();
+        pugi::xml_node root = xmlMapData.document_element();
 
-        pugi::xml_node fileNode = xmlMapDatas.child("file");
+        pugi::xml_node fileNode = xmlMapData.child("file");
         xmlFileParser(fileNode);
 
         pugi::xml_node headerNode = root.child("header");
@@ -1060,7 +1060,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
     {
         child_item->setData(0, Qt::UserRole, offset);
         if (add == "private")
-            child_item->setIcon(0, icon_datas);
+            child_item->setIcon(0, icon_data);
         else if (add == "track")
             child_item->setIcon(0, icon_track);
         else

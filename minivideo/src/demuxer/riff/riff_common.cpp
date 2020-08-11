@@ -61,7 +61,7 @@ int parse_JUNK(Bitstream_t *bitstr, RiffChunk_t *JUNK_header, FILE *xml)
         if (xml)
         {
             write_chunk_header(JUNK_header, xml);
-            fprintf(xml, "  <title>JUNK (filler datas)</title>\n");
+            fprintf(xml, "  <title>JUNK (filler data)</title>\n");
             fprintf(xml, "  </a>\n");
         }
     }
@@ -94,7 +94,7 @@ int parse_PAD(Bitstream_t *bitstr, RiffChunk_t *PAD_header, FILE *xml)
         if (xml)
         {
             write_chunk_header(PAD_header, xml);
-            fprintf(xml, "  <title>PAD (padding datas)</title>\n");
+            fprintf(xml, "  <title>PAD (padding data)</title>\n");
             fprintf(xml, "  </a>\n");
         }
     }

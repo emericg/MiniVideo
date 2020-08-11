@@ -1005,7 +1005,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
         TRACE_1(MP4, "esds NEXT TAG %X (size: %i) @ %lli", tag, tag_datasize, tag_offset);
 
-        // datas
+        // data
         if (tag == 0x03) // ESDescriptor TAG
         {
             xmlSpacer(mp4->xml, "ESDescriptor (0x03)", -1);

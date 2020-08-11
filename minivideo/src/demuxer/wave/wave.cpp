@@ -595,20 +595,20 @@ static int parse_data(Bitstream_t *bitstr, RiffChunk_t *data_header, wave_t *wav
     }
     else
     {
-        wave->data.datasOffset = bitstream_get_absolute_byte_offset(bitstr);
-        wave->data.datasSize = data_header->dwSize;
+        wave->data.dataOffset = bitstream_get_absolute_byte_offset(bitstr);
+        wave->data.dataSize = data_header->dwSize;
 
 #if ENABLE_DEBUG
         print_chunk_header(data_header);
-        TRACE_1(WAV, "> datasOffset     : %lli", wave->data.datasOffset);
-        TRACE_1(WAV, "> datasSize       : %lli", wave->data.datasSize);
+        TRACE_1(WAV, "> dataOffset     : %lli", wave->data.dataOffset);
+        TRACE_1(WAV, "> dataSize       : %lli", wave->data.dataSize);
 #endif
         // xmlMapper
         if (wave->xml)
         {
             write_chunk_header(data_header, wave->xml);
-            fprintf(wave->xml, "  <datasOffset>%" PRId64 "</datasOffset>\n", wave->data.datasOffset);
-            fprintf(wave->xml, "  <datasSize>%" PRId64 "</datasSize>\n", wave->data.datasSize);
+            fprintf(wave->xml, "  <dataOffset>%" PRId64 "</dataOffset>\n", wave->data.dataOffset);
+            fprintf(wave->xml, "  <dataSize>%" PRId64 "</dataSize>\n", wave->data.dataSize);
             fprintf(wave->xml, "  </a>\n");
         }
     }

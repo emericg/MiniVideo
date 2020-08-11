@@ -35,7 +35,7 @@
 
 /* ************************************************************************** */
 
-void MainWindow::cleanDatas()
+void MainWindow::cleanData()
 {
     //QString unknown = tr("Unknown");
     //QString unknown_bold = tr("<b>Unknown</b>");
@@ -192,7 +192,7 @@ int MainWindow::setActiveFile()
 
     if (media && wrapper)
     {
-        // Don't reload the datas if the file was already selected
+        // Don't reload the data if the file was already selected
         if (currentMediaLoaded != media->file_path)
         {
             // Set the file in the UI
@@ -201,8 +201,8 @@ int MainWindow::setActiveFile()
 
                 handleTabWidget();
 
-                cleanDatas();
-                printDatas();
+                cleanData();
+                printData();
                 ui->tab_container->loadMedia(wrapper);
                 ui->tab_export->loadMedia(wrapper);
 
@@ -237,7 +237,7 @@ int MainWindow::setActiveFile()
 
 /* ************************************************************************** */
 
-int MainWindow::printDatas()
+int MainWindow::printData()
 {
     int status = 1;
 
@@ -277,6 +277,8 @@ int MainWindow::printDatas()
         ui->label_info_container_profile->setText(getContainerProfileString(media->container_profile, true));
 
         // mismatch?
+        QString ext = media->file_extension;
+        bool mismatch = (media->file_extension);
         ui->label_info_container_mismatch->setVisible(false);
 
         ui->label_3->setVisible(media->duration);
@@ -791,7 +793,7 @@ int MainWindow::printAudioDetails()
                 bitrateMinMax btc(fps);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // Generate datas (bitrate) from A/V samples
+                // Generate data (bitrate) from A/V samples
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
@@ -808,7 +810,7 @@ int MainWindow::printAudioDetails()
                     }
                 }
 
-                // Generate datas (average bitrate)
+                // Generate data (average bitrate)
                 QVector<double> xx(2), yy(2);
                 xx[0] = 0;
                 xx[1] = entries;
@@ -821,7 +823,7 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_bitrate_lowest->setText(getBitrateString(bitratemin));
                 ui->label_audio_bitrate_highest->setText(getBitrateString(bitratemax));
 
-                // Create graphs and assign datas
+                // Create graphs and assign data
                 ui->audioBitrateGraph->addGraph();
                 ui->audioBitrateGraph->graph(0)->setData(x, y);
                 ui->audioBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
@@ -1218,7 +1220,7 @@ int MainWindow::printVideoDetails()
                 bitrateMinMax btc(t->framerate);
                 uint32_t bitratemin = 0, bitratemax = 0, bitratemax_instant = 0;
 
-                // Generate datas (bitrate) from A/V samples
+                // Generate data (bitrate) from A/V samples
                 uint32_t entries = t->sample_count;
                 QVector<double> x(entries), y(entries);
                 for (uint32_t i = 0; i < entries; i++)
@@ -1235,7 +1237,7 @@ int MainWindow::printVideoDetails()
                     }
                 }
 
-                // Generate datas (average bitrate)
+                // Generate data (average bitrate)
                 QVector<double> xx(2), yy(2);
                 xx[0] = 0;
                 xx[1] = entries;
@@ -1251,7 +1253,7 @@ int MainWindow::printVideoDetails()
                 wrapper->xRangeMax = static_cast<double>(entries);
                 wrapper->yRangeMax = static_cast<double>(bitratemax_instant);
 
-                // Create graphs and assign datas
+                // Create graphs and assign data
                 ui->videoBitrateGraph->addGraph();
                 ui->videoBitrateGraph->graph(0)->setData(x, y);
                 ui->videoBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));

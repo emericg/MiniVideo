@@ -60,10 +60,10 @@ int CLI::printFile(const QString &file, bool details)
             if (minivideo_retcode == 1)
             {
                 // Generate text output and print it on console
-                QString exportDatas;
-                minivideo_retcode = textExport::generateExportData_text(*media, exportDatas, details);
+                QString exportData;
+                minivideo_retcode = textExport::generateExportData_text(*media, exportData, details);
 
-                QTextStream(stdout) << exportDatas << endl;
+                QTextStream(stdout) << exportData << endl;
             }
             else
             {

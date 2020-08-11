@@ -45,8 +45,8 @@ class tabExport : public QWidget
     MediaFile_t *media = nullptr;
     MediaWrapper *wrapper = nullptr;
 
-    // Datas export feature
-    QString exportDatas;
+    // Data export feature
+    QString exportData;
     QFile exportFile;
 
 public:
@@ -56,11 +56,11 @@ public:
 public slots:
     void clean();
     int loadMedia(const MediaWrapper *wrapper);
-    int generateExportDatas();
+    int generateExportData();
 
 private slots:
     void saveFileDialog();
-    void saveDatas();
+    void saveData();
 
     void on_comboBox_export_modes_currentIndexChanged(int index);
     void on_comboBox_export_formats_currentIndexChanged(int index);

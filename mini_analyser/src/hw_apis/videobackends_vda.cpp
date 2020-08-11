@@ -53,7 +53,7 @@ struct Desc
     uint32_t height;
     uint32_t bitdepth;
 
-    const uint8_t *privateDatas;
+    const uint8_t *privateData;
 };
 
 static Desc decoder_profiles_vda[] =
@@ -110,7 +110,7 @@ OSStatus CreateDecoderVDA(Desc &prof)
     SInt32 inHeight = (SInt32)prof.height;
     OSType inSourceFormat = 'avc1'; // VDA will only decode H.264
     OSType cvPixelFormatType = kCVPixelFormatType_422YpCbCr8;
-    const UInt8 *privateData = prof.privateDatas;
+    const UInt8 *privateData = prof.privateData;
 
     MyUserData myUserData;
     CFMutableDictionaryRef decoderConfiguration = nullptr;

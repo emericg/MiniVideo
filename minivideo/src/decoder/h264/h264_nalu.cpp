@@ -270,7 +270,7 @@ int nalu_clean_sample(Bitstream_t *bitstr)
                 //bitstream_print_stats(bitstr);
                 //bitstream_print_buffer(bitstr);
 
-                // Move datas
+                // Move data
                 memmove((bitstr->buffer + current_byte_offset), (bitstr->buffer + current_byte_offset + 1), (bitstr->buffer_size - current_byte_offset - 1));
 
                 // Discard byte(s)

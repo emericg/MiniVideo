@@ -1077,7 +1077,7 @@ void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (sps && xml)
     {
-        fprintf(xml, "  <a tt=\"SPS\" add=\"private\" tp=\"datas\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+        fprintf(xml, "  <a tt=\"SPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                 offset, size);
 
         xmlSpacer(xml, "Sequence Parameter Set", -1);
@@ -1499,7 +1499,7 @@ void mapPPS(pps_t *pps, sps_t **sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (pps && sps && xml)
     {
-        fprintf(xml, "  <a tt=\"PPS\" add=\"private\" tp=\"datas\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+        fprintf(xml, "  <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                 offset, size);
 
         xmlSpacer(xml, "Picture Parameter Set", -1);

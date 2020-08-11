@@ -52,7 +52,7 @@ struct Desc
     uint32_t height;
     uint32_t bitdepth;
 
-    const uint8_t *privateDatas;
+    const uint8_t *privateData;
 };
 
 static Desc decoder_profiles_vtb[] =
@@ -219,7 +219,7 @@ static OSStatus CreateDecoderVTB (Desc &prof)
 
     if (prof.codec == CODEC_H264 || prof.codec == CODEC_H265)
         format_description = create_format_description_from_codec_data(prof.width, prof.height, prof.bitdepth,
-                                                                       cm_format, prof.privateDatas);
+                                                                       cm_format, prof.privateData);
     else
         format_description = create_format_description(prof.width, prof.height, cm_format);
 

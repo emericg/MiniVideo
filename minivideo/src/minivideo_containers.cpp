@@ -301,13 +301,13 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
                 }
                 else if (buffer[3] == 0xB3)
                 {
-                    TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)");
+                    TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video data)");
                     container = CONTAINER_ES;
                     //media->codec_video = CODEC_MPEG12;
                 }
                 else if (buffer[3] == 0x67)
                 {
-                    TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)");
+                    TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video data)");
                     container = CONTAINER_ES;
                     //media->codec_video = CODEC_H264;
                 }
@@ -321,13 +321,13 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
                 }
                 else if (buffer[4] == 0xB3)
                 {
-                    TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video datas)");
+                    TRACE_1(IO, "* File type      : MPEG-1/2 / H.262 Elementary Stream detected (raw video data)");
                     container = CONTAINER_ES;
                     //media->codec_video = CODEC_MPEG12;
                 }
                 else if (buffer[4] == 0x67)
                 {
-                    TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video datas)");
+                    TRACE_1(IO, "* File type      : H.264 'Annex B' Elementary Stream detected (raw video data)");
                     container = CONTAINER_ES;
                     //media->codec_video = CODEC_H264;
                 }

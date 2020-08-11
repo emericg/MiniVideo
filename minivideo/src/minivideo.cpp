@@ -203,7 +203,7 @@ int minivideo_open(const char *input_filepath,
 /* ************************************************************************** */
 
 int minivideo_parse(MediaFile_t *input_media,
-                    const bool compute_metadatas,
+                    const bool compute_metadata,
                     const bool container_mapping)
 {
     int retcode = FAILURE;
@@ -261,7 +261,7 @@ int minivideo_parse(MediaFile_t *input_media,
         computeCodecs(input_media);
         computeAspectRatios(input_media);
 
-        if (compute_metadatas)
+        if (compute_metadata)
         {
             computeSamplesDatas(input_media);
 #if ENABLE_DEBUG

@@ -770,7 +770,7 @@ static int parse_odml(Bitstream_t *bitstr, RiffList_t *odml_header, avi_t *avi)
 /* ************************************************************************** */
 
 /*!
- * \brief Movie Datas.
+ * \brief Movie Data.
  *
  * The Movi - Lists contain Video, Audio, Subtitle and (secondary) index data.
  * Those can be grouped into rec - Lists.

@@ -61,7 +61,7 @@ minivideo_EXPORT void minivideo_print_features(void);
 /*!
  * \brief Get informations about the library (version and build date/time).
  *
- * The date and time strings are static datas and do not need to be freed.
+ * The date and time strings are static data and do not need to be freed.
  */
 minivideo_EXPORT void minivideo_get_infos(int *minivideo_major,
                                           int *minivideo_minor,
@@ -98,7 +98,7 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath,
 /*!
  * \brief Parse a media file and fill the MediaFile_t context with the extracted infos.
  * \param[in] *input_media: The MediaFile_t context to use.
- * \param compute_metadatas: Enable extra metadatas computations.
+ * \param compute_metadata: Enable extra metadata computations.
  * \param container_mapping: Enable container mapping to xml file.
  * \return TODO ERROR CODE (1 if container parsing is a success, 0 otherwise).
  *
@@ -107,7 +107,7 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath,
  * the tracks samples informations.
  */
 minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
-                                     const bool compute_metadatas,
+                                     const bool compute_metadata,
                                      const bool container_mapping);
 
 /*!

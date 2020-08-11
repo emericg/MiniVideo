@@ -86,7 +86,7 @@ int decode_slice(DecodingContext_t *dc)
             printSliceHeader(dc);
         }
 
-        // Slice datas
+        // Slice data
         if (retcode == SUCCESS)
         {
             retcode = decodeSliceData(dc, dc->active_slice);
@@ -981,7 +981,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
 /*!
  * \param *dc The current DecodingContext.
  * \param *slice The current Slice.
- * \return 0 if an error occurred while decoding slice datas, 1 otherwise.
+ * \return 0 if an error occurred while decoding slice data, 1 otherwise.
  */
 static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
 {

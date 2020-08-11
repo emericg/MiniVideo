@@ -34,7 +34,7 @@
  *
  * There are 2 types of atoms in RIFF formated files:
  * - LIST can only contains other LIST or CHUNK.
- * - CHUNK can only contains datas.
+ * - CHUNK can only contains data.
  *
  * Common value of dwList can be 'RIFF' ('RIFF-List') or 'LIST' ('List').
  */
@@ -55,7 +55,7 @@ typedef struct RiffList_t
  *
  * There are 2 types of atoms in RIFF formated files:
  * - LIST can only contains other LIST or CHUNK.
- * - CHUNK can only contains datas.
+ * - CHUNK can only contains data.
  */
 typedef struct RiffChunk_t
 {

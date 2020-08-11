@@ -50,13 +50,13 @@ typedef struct MediaStream_t
     CodecProfiles_e stream_codec_profile;   //!< Codec profile (if applicable)
 
     uint32_t stream_fcc;                    //!< FourCC
-    char *stream_codec_name;                //!< Encoder used to generate the stream's datas
+    char *stream_codec_name;                //!< Encoder used to generate the stream's data
 
     unsigned int stream_duration_ms;        //!< Stream duration (rounded in ms)
     int stream_delay;                       //!< Stream initial delay (in µs)
 
     // Generic metadata
-    char *stream_encoder;                   //!< Encoder used to generate the stream's datas
+    char *stream_encoder;                   //!< Encoder used to generate the stream's data
     unsigned int creation_time;             //!< Stream creation time (in ms)
     unsigned int modification_time;         //!< Stream modification time (in ms)
     uint8_t time_reference[4];              //!< SMPTE timecode reference (hh:mm:ss-fff)
@@ -124,7 +124,7 @@ typedef struct MediaStream_t
     unsigned int subtitles_encoding;        //!< Text encoding
 
     // Datas infos
-    uint64_t stream_size;                   //!< Size (in bytes) of the raw datas of this stream
+    uint64_t stream_size;                   //!< Size (in bytes) of the raw data of this stream
     bool stream_intracoded;                 //!< True if the stream is intra coded
     bool stream_packetized;                 //!< True if a container sample isn't a complete audio/video/... frame
 

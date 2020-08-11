@@ -65,7 +65,7 @@ typedef struct MediaFile_t
     char *creation_app;                 //!< Container creation application (C string) (if available)
     char *creation_lib;                 //!< Container creation library (C string) (if available)
 
-    // A/V track(s) datas and infos
+    // A/V track(s) data and infos
     unsigned int tracks_audio_count;
     MediaStream_t *tracks_audio[48];    //!< A list of parsed audio tracks
 

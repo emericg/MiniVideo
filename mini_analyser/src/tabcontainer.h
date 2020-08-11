@@ -93,13 +93,13 @@ private:
     std::map <unsigned, OutputSurface_t *> thumbnails;
 
     QFile mediaFile;
-    QByteArray mediaDatas;
+    QByteArray mediaData;
 
     QFile xmlMapFile;
-    pugi::xml_document xmlMapDatas;
+    pugi::xml_document xmlMapData;
 
     QIcon icon_atom;
-    QIcon icon_datas;
+    QIcon icon_data;
     QIcon icon_ext;
     QIcon icon_track;
 
