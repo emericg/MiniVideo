@@ -31,12 +31,13 @@ typedef enum StreamType_e
 
     stream_AUDIO   = 1,
     stream_VIDEO   = 2,
-    stream_TEXT    = 3,
+    stream_IMAGE   = 3,
+    stream_TEXT    = 4,
 
-    stream_MENU    = 4,
-    stream_TMCD    = 5,
-    stream_META    = 6,
-    stream_HINT    = 7
+    stream_MENU    = 5,
+    stream_TMCD    = 6,
+    stream_META    = 7,
+    stream_HINT    = 8
 
 } StreamType_e;
 
@@ -53,6 +54,10 @@ typedef enum SampleType_e
     sample_VIDEO,
     sample_VIDEO_SYNC,
     sample_VIDEO_PARAM,
+
+    sample_IMAGE,
+    sample_IMAGE_THUMB,
+    sample_IMAGE_TAG,
 
     sample_TEXT,
     sample_TEXT_FILE,

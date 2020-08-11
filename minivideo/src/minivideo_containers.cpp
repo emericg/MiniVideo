@@ -198,14 +198,22 @@ const char *getContainerProfileString(const ContainerProfiles_e profile, const b
             return "QuickTime File Format";
         case PROF_ISOBMF_MP4:
             return "ISO BMF MP4";
+        case PROF_ISOBMF_M4A:
+            return "QuickTime Audio, AAC Codec";
+        case PROF_ISOBMF_F4V:
+            return "Flash Video";
         case PROF_ISOBMF_3GP:
             return "ISO BMF 3GP";
-        case PROF_ISOBMF_MJP:
-            return "ISO BMF Motion Jpeg 2000";
-        case PROF_ISOBMF_HEIF:
-            return "High Efficiency Image File Format";
+        case PROF_ISOBMF_DASH:
+            return "MPEG-DASH";
         case PROF_ISOBMF_AVIF:
             return "AV1 Image File Format";
+        case PROF_ISOBMF_HEIF:
+            return "High Efficiency Image File Format";
+        case PROF_ISOBMF_MJP2:
+            return "ISO BMF Motion Jpeg 2000";
+        case PROF_ISOBMF_PIFF:
+            return "Protected Interoperable File Format";
 
         case PROF_MKV_MATROSKA:
             return "Matroska";
@@ -603,7 +611,7 @@ Containers_e getContainerUsingExtension(const std::string &ext)
             container = CONTAINER_FLIF;
             //codec = CODEC_FLIF16;
         }
-        else if (ext == "heif" || ext == "heic")
+        else if (ext == "heif" || ext == "heic" || ext == "avci")
         {
             container = CONTAINER_MP4;
             //codec = CODEC_H265;

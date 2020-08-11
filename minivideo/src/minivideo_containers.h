@@ -102,10 +102,14 @@ typedef enum ContainerProfiles_e
 
     PROF_ISOBMF_MOV     = 16,
     PROF_ISOBMF_MP4     = 17,
-    PROF_ISOBMF_3GP     = 18,
-    PROF_ISOBMF_MJP     = 19,
-    PROF_ISOBMF_HEIF    = 20,
-    PROF_ISOBMF_AVIF    = 21,
+    PROF_ISOBMF_M4A     = 18,
+    PROF_ISOBMF_F4V     = 19,
+    PROF_ISOBMF_3GP     = 20,
+    PROF_ISOBMF_DASH    = 21,
+    PROF_ISOBMF_AVIF    = 22,
+    PROF_ISOBMF_HEIF    = 23,
+    PROF_ISOBMF_PIFF    = 24,
+    PROF_ISOBMF_MJP2    = 25,
 
     PROF_MKV_MATROSKA   = 32,
     PROF_MKV_WEBM       = 33,

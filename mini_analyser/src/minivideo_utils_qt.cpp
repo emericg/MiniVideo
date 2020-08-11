@@ -291,6 +291,9 @@ QString getTrackTypeString(const MediaStream_t *track)
         case stream_VIDEO:
             type_qstr = QObject::tr("Video");
             break;
+        case stream_IMAGE:
+            type_qstr = QObject::tr("Image");
+            break;
         case stream_TEXT:
             type_qstr = QObject::tr("Text");
             break;

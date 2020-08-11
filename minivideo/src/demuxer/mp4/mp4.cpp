@@ -66,6 +66,21 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
         mp4->profile = PROF_ISOBMF_MOV;
     else if (major_brand == fourcc_be("3gp4"))
         mp4->profile = PROF_ISOBMF_3GP;
+    else if (major_brand == fourcc_be("M4A "))
+        mp4->profile = PROF_ISOBMF_M4A;
+    else if (major_brand == fourcc_be("avif"))
+        mp4->profile = PROF_ISOBMF_AVIF;
+    else if (major_brand == fourcc_be("dash"))
+        mp4->profile = PROF_ISOBMF_DASH;
+    else if (major_brand == fourcc_be("heic") ||
+             major_brand == fourcc_be("mif1") ||
+             major_brand == fourcc_be("msf1"))
+        mp4->profile = PROF_ISOBMF_HEIF;
+    else if (major_brand == fourcc_be("mj2p") ||
+             major_brand == fourcc_be("mj2s"))
+        mp4->profile = PROF_ISOBMF_MJP2;
+    else if (major_brand == fourcc_be("piff"))
+        mp4->profile = PROF_ISOBMF_PIFF;
 
     // Read informative integer for the minor version of the major brand
     unsigned int minor_version = read_bits(bitstr, 32);
@@ -164,8 +179,8 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 #if ENABLE_DEBUG
         TRACE_1(MP4, "[i] > rate          : %u", i, rate);
         TRACE_1(MP4, "    > initial_delay : %u", initial_delay);
-
 #endif
+
         // xmlMapper
         if (mp4->xml)
         {

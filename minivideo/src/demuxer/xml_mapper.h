@@ -53,7 +53,7 @@ int xmlMapperClose(FILE **xml);
 
 /* ************************************************************************** */
 
-void xmlSpacer(FILE *xml, const char *name, const int index);
+void xmlSpacer(FILE *xml, const char *name, const int index = -1);
 
 /* ************************************************************************** */
 /*

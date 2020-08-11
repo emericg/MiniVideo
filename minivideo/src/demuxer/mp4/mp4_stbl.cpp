@@ -629,6 +629,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_ESDS:
                     retcode = parse_esds(bitstr, &box_subsubheader, track, mp4);
                     break;
+
                 case BOX_AVCC:
                     retcode = parse_avcC(bitstr, &box_subsubheader, track, mp4);
                     break;
@@ -641,6 +642,7 @@ int parse_stsd_video(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
                 case BOX_AV1C:
                     retcode = parse_av1C(bitstr, &box_subsubheader, track, mp4);
                     break;
+
                 case BOX_BTRT:
                     retcode = parse_btrt(bitstr, &box_subsubheader, track, mp4);
                     break;

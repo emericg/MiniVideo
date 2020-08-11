@@ -276,6 +276,10 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 }
             }
         }
+        else if (track->handlerType == MP4_HANDLER_PICT)
+        {
+            map->stream_type = stream_IMAGE;
+        }
         else if (track->handlerType == MP4_HANDLER_SUBT ||
                  track->handlerType == MP4_HANDLER_SBTL ||
                  track->handlerType == MP4_HANDLER_TEXT)

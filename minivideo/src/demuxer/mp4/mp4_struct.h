@@ -180,21 +180,6 @@ typedef struct Mp4_t
 /* ************************************************************************** */
 
 /*!
- * \brief Identifies ISO Base Media File Format variants.
- */
-typedef enum IsoBmfVariant_e
-{
-    ISOBMF_UNKNOWN  = 0,
-
-    ISOBMF_MOV      = 1,
-    ISOBMF_MP4      = 2,
-    ISOBMF_3GPP     = 3,
-    ISOBMF_JPEG2k   = 4,
-    ISOBMF_MPG21    = 5
-
-} IsoBmfVariant_e;
-
-/*!
  * \brief Identifies the box type.
  *
  * The field 'type' in a box header identifies the box type; standard boxes use
@@ -253,6 +238,7 @@ typedef enum Mp4BoxType_e
                             BOX_HVCC = 0x68766343,      //!< (v) HEVC configuration box
                             BOX_VPCC = 0x76706343,      //!< (v) VPx configuration box
                             BOX_AV1C = 0x61763143,      //!< (v) AV1 configuration box
+                            BOX_JPGC = 0x6A706743,      //!< (v) JPEG 2k configuration box
                             BOX_BTRT = 0x62747274,      //!< bitrate box
                             BOX_CLAP = 0x636C6170,      //!< clean aperture box
                             BOX_COLR = 0x636f6C72,      //!< color infos box
@@ -313,7 +299,24 @@ typedef enum Mp4BoxType_e
     BOX_MDAT = 0x6D646174,                      //!< media data container
 
     BOX_META = 0x6D657461,                      //!< metadata
+        BOX_KEYS = 0x6B657973,                  //!< (v) Apple item keys box
+            BOX_MDTA = 0x6D647461,              //!< (v) Apple item key
         BOX_ILST = 0x696C7374,                  //!< (v) Apple item list box
+            BOX_DATA = 0x64617461,              //!< (v) Apple item data
+        BOX_PITM = 0x7069746D,                  //!< (v) Primary item reference
+        BOX_ILOC = 0x696C6F63,                  //!< (v) Item location
+        BOX_IINF = 0x69696E66,                  //!< (v) Item information entries
+            BOX_INFE = 0x696E6665,              //!< (v) information entry
+        BOX_IREF = 0x69726566,                  //!< (v) Item reference
+        BOX_IPRP = 0x69707270,                  //!< (v) Item Property
+            BOX_IPCO = 0x6970636F,              //!< (v) Item Property Container
+            BOX_IPMA = 0x69706D61,              //!< (v) Item Property Association
+        BOX_IDAT = 0x69646174,                  //!< (v) Item data
+        BOX_IPRO = 0x697072706F,                //!< (v) Item protection
+            BOX_SINF = 0x73696E66,              //!< (v) Protection scheme information box
+
+    BOX_BEAM = 0x6265616D,                      //!< (v) WhatsApp?
+        BOX_LOOP = 0x6C6F6F70,                  //!< (v)
 
     BOX_MECO = 0x6D65636F,                      //!< additional metadata container
         BOX_MERE = 0x6D657265,                  //!< metabox relation
@@ -322,6 +325,7 @@ typedef enum Mp4BoxType_e
     BOX_SSIX = 0x73736978,                      //!< subsegment index
     BOX_PRFT = 0x70726674,                      //!< producer reference time
 
+    BOX_WIDE = 0x77696465,                      //!< padding space
     BOX_FREE = 0x66726565,                      //!< free space
     BOX_SKIP = 0x736B6970,                      //!< free space
     BOX_UUID = 0x75756964                       //!< user data box
@@ -339,13 +343,15 @@ typedef enum Mp4HandlerType_e
 {
     MP4_HANDLER_AUDIO = 0x736F756E, //!< 'soun'
     MP4_HANDLER_VIDEO = 0x76696465, //!< 'vide'
-    MP4_HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
-    MP4_HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
-    MP4_HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
+    MP4_HANDLER_PICT  = 0x70696374, //!< 'pict'
 
+    MP4_HANDLER_TEXT  = 0x74657874, //!< 'text'
     MP4_HANDLER_SUBT  = 0x73756274, //!< 'subt'
     MP4_HANDLER_SBTL  = 0x7362746c, //!< 'sbtl' // QuickTime Subtitle track
-    MP4_HANDLER_TEXT  = 0x74657874  //!< 'text'
+
+    MP4_HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
+    MP4_HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
+    MP4_HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
 
     // sdsm // SceneDescriptionStream
     // odsm // ObjectDescriptorStream
