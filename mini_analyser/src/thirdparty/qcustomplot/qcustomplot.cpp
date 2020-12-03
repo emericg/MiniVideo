@@ -19,8 +19,8 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 25.06.18                                             **
-**          Version: 2.0.1                                                **
+**             Date: 03.12.20                                             **
+**          Version: 2.1.0 (git)                                          **
 ****************************************************************************/
 
 #include "qcustomplot.h"
@@ -259,8 +259,8 @@ QCPVector2D &QCPVector2D::operator-=(const QCPVector2D &vector)
 /* end of 'src/vector2d.cpp' */
 
 
-/* including file 'src/painter.cpp', size 8670                               */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/painter.cpp', size 8656                               */
+/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPPainter
@@ -283,7 +283,6 @@ QCPVector2D &QCPVector2D::operator-=(const QCPVector2D &vector)
   Creates a new QCPPainter instance and sets default values
 */
 QCPPainter::QCPPainter() :
-  QPainter(),
   mModes(pmDefault),
   mIsAntialiasing(false)
 {
@@ -477,8 +476,8 @@ void QCPPainter::makeNonCosmetic()
 /* end of 'src/painter.cpp' */
 
 
-/* including file 'src/paintbuffer.cpp', size 18502                          */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/paintbuffer.cpp', size 18819                          */
+/* commit 2cf29cf8cb32b9c01a022abf6db25f984c716636 2019-12-14 01:26:50 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAbstractPaintBuffer
@@ -845,9 +844,16 @@ QCPPaintBufferGlFbo::~QCPPaintBufferGlFbo()
 /* inherits documentation from base class */
 QCPPainter *QCPPaintBufferGlFbo::startPainting()
 {
-  if (mGlPaintDevice.isNull())
+  QSharedPointer<QOpenGLPaintDevice> paintDevice = mGlPaintDevice.toStrongRef();
+  QSharedPointer<QOpenGLContext> context = mGlContext.toStrongRef();
+  if (!paintDevice)
   {
     qDebug() << Q_FUNC_INFO << "OpenGL paint device doesn't exist";
+    return 0;
+  }
+  if (!context)
+  {
+    qDebug() << Q_FUNC_INFO << "OpenGL context doesn't exist";
     return 0;
   }
   if (!mGlFrameBuffer)
@@ -856,10 +862,10 @@ QCPPainter *QCPPaintBufferGlFbo::startPainting()
     return 0;
   }
   
-  if (QOpenGLContext::currentContext() != mGlContext.data())
-    mGlContext.data()->makeCurrent(mGlContext.data()->surface());
+  if (QOpenGLContext::currentContext() != context.data())
+    context->makeCurrent(context->surface());
   mGlFrameBuffer->bind();
-  QCPPainter *result = new QCPPainter(mGlPaintDevice.data());
+  QCPPainter *result = new QCPPainter(paintDevice.data());
   result->setRenderHint(QPainter::HighQualityAntialiasing);
   return result;
 }
@@ -892,7 +898,8 @@ void QCPPaintBufferGlFbo::draw(QCPPainter *painter) const
 /* inherits documentation from base class */
 void QCPPaintBufferGlFbo::clear(const QColor &color)
 {
-  if (mGlContext.isNull())
+  QSharedPointer<QOpenGLContext> context = mGlContext.toStrongRef();
+  if (!context)
   {
     qDebug() << Q_FUNC_INFO << "OpenGL context doesn't exist";
     return;
@@ -903,8 +910,8 @@ void QCPPaintBufferGlFbo::clear(const QColor &color)
     return;
   }
   
-  if (QOpenGLContext::currentContext() != mGlContext.data())
-    mGlContext.data()->makeCurrent(mGlContext.data()->surface());
+  if (QOpenGLContext::currentContext() != context.data())
+    context->makeCurrent(context->surface());
   mGlFrameBuffer->bind();
   glClearColor(color.redF(), color.greenF(), color.blueF(), color.alphaF());
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -923,35 +930,37 @@ void QCPPaintBufferGlFbo::reallocateBuffer()
     mGlFrameBuffer = 0;
   }
   
-  if (mGlContext.isNull())
-  {
-    qDebug() << Q_FUNC_INFO << "OpenGL context doesn't exist";
-    return;
-  }
-  if (mGlPaintDevice.isNull())
+  QSharedPointer<QOpenGLPaintDevice> paintDevice = mGlPaintDevice.toStrongRef();
+  QSharedPointer<QOpenGLContext> context = mGlContext.toStrongRef();
+  if (!paintDevice)
   {
     qDebug() << Q_FUNC_INFO << "OpenGL paint device doesn't exist";
     return;
   }
+  if (!context)
+  {
+    qDebug() << Q_FUNC_INFO << "OpenGL context doesn't exist";
+    return;
+  }
   
   // create new fbo with appropriate size:
-  mGlContext.data()->makeCurrent(mGlContext.data()->surface());
+  context->makeCurrent(context->surface());
   QOpenGLFramebufferObjectFormat frameBufferFormat;
-  frameBufferFormat.setSamples(mGlContext.data()->format().samples());
+  frameBufferFormat.setSamples(context->format().samples());
   frameBufferFormat.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
   mGlFrameBuffer = new QOpenGLFramebufferObject(mSize*mDevicePixelRatio, frameBufferFormat);
-  if (mGlPaintDevice.data()->size() != mSize*mDevicePixelRatio)
-    mGlPaintDevice.data()->setSize(mSize*mDevicePixelRatio);
+  if (paintDevice->size() != mSize*mDevicePixelRatio)
+    paintDevice->setSize(mSize*mDevicePixelRatio);
 #ifdef QCP_DEVICEPIXELRATIO_SUPPORTED
-  mGlPaintDevice.data()->setDevicePixelRatio(mDevicePixelRatio);
+  paintDevice->setDevicePixelRatio(mDevicePixelRatio);
 #endif
 }
 #endif // QCP_OPENGL_FBO
 /* end of 'src/paintbuffer.cpp' */
 
 
-/* including file 'src/layer.cpp', size 37304                                */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/layer.cpp', size 37560                                */
+/* commit d8f7e39c83a569e702793686a97af3fe1b86e311 2020-05-16 13:49:29 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPLayer
@@ -1059,7 +1068,7 @@ QCPLayer::~QCPLayer()
   // call QCustomPlot::removeLayer, which moves all layerables off this layer before deleting it.)
   
   while (!mChildren.isEmpty())
-    mChildren.last()->setLayer(0); // removes itself from mChildren via removeChild()
+    mChildren.last()->setLayer(nullptr); // removes itself from mChildren via removeChild()
   
   if (mParentPlot->currentLayer() == this)
     qDebug() << Q_FUNC_INFO << "The parent plot's mCurrentLayer will be a dangling pointer. Should have been set to a valid layer or 0 beforehand.";
@@ -1104,8 +1113,8 @@ void QCPLayer::setMode(QCPLayer::LayerMode mode)
   if (mMode != mode)
   {
     mMode = mode;
-    if (!mPaintBuffer.isNull())
-      mPaintBuffer.toStrongRef().data()->setInvalidated();
+    if (QSharedPointer<QCPAbstractPaintBuffer> pb = mPaintBuffer.toStrongRef())
+      pb->setInvalidated();
   }
 }
 
@@ -1140,16 +1149,16 @@ void QCPLayer::draw(QCPPainter *painter)
 */
 void QCPLayer::drawToPaintBuffer()
 {
-  if (!mPaintBuffer.isNull())
+  if (QSharedPointer<QCPAbstractPaintBuffer> pb = mPaintBuffer.toStrongRef())
   {
-    if (QCPPainter *painter = mPaintBuffer.toStrongRef().data()->startPainting())
+    if (QCPPainter *painter = pb->startPainting())
     {
       if (painter->isActive())
         draw(painter);
       else
         qDebug() << Q_FUNC_INFO << "paint buffer returned inactive painter";
       delete painter;
-      mPaintBuffer.toStrongRef().data()->donePainting();
+      pb->donePainting();
     } else
       qDebug() << Q_FUNC_INFO << "paint buffer returned zero painter";
   } else
@@ -1161,11 +1170,12 @@ void QCPLayer::drawToPaintBuffer()
   the layerables on this specific layer, without the need to replot all other layers (as a call to
   \ref QCustomPlot::replot would do).
 
+  QCustomPlot also makes sure to replot all layers instead of only this one, if the layer ordering
+  or any layerable-layer-association has changed since the last full replot and any other paint
+  buffers were thus invalidated.
+
   If the layer mode is \ref lmLogical however, this method simply calls \ref QCustomPlot::replot on
   the parent QCustomPlot instance.
-
-  QCustomPlot also makes sure to replot all layers instead of only this one, if the layer ordering
-  has changed since the last full replot and the other paint buffers were thus invalidated.
 
   \see draw
 */
@@ -1173,15 +1183,15 @@ void QCPLayer::replot()
 {
   if (mMode == lmBuffered && !mParentPlot->hasInvalidatedPaintBuffers())
   {
-    if (!mPaintBuffer.isNull())
+    if (QSharedPointer<QCPAbstractPaintBuffer> pb = mPaintBuffer.toStrongRef())
     {
-      mPaintBuffer.toStrongRef().data()->clear(Qt::transparent);
+      pb->clear(Qt::transparent);
       drawToPaintBuffer();
-      mPaintBuffer.toStrongRef().data()->setInvalidated(false);
+      pb->setInvalidated(false); // since layer is lmBuffered, we know only this layer is on buffer and we can reset invalidated flag
       mParentPlot->update();
     } else
       qDebug() << Q_FUNC_INFO << "no valid paint buffer associated with this layer";
-  } else if (mMode == lmLogical)
+  } else
     mParentPlot->replot();
 }
 
@@ -1203,8 +1213,8 @@ void QCPLayer::addChild(QCPLayerable *layerable, bool prepend)
       mChildren.prepend(layerable);
     else
       mChildren.append(layerable);
-    if (!mPaintBuffer.isNull())
-      mPaintBuffer.toStrongRef().data()->setInvalidated();
+    if (QSharedPointer<QCPAbstractPaintBuffer> pb = mPaintBuffer.toStrongRef())
+      pb->setInvalidated();
   } else
     qDebug() << Q_FUNC_INFO << "layerable is already child of this layer" << reinterpret_cast<quintptr>(layerable);
 }
@@ -1222,8 +1232,8 @@ void QCPLayer::removeChild(QCPLayerable *layerable)
 {
   if (mChildren.removeOne(layerable))
   {
-    if (!mPaintBuffer.isNull())
-      mPaintBuffer.toStrongRef().data()->setInvalidated();
+    if (QSharedPointer<QCPAbstractPaintBuffer> pb = mPaintBuffer.toStrongRef())
+      pb->setInvalidated();
   } else
     qDebug() << Q_FUNC_INFO << "layerable is not child of this layer" << reinterpret_cast<quintptr>(layerable);
 }
@@ -1341,7 +1351,7 @@ QCPLayerable::QCPLayerable(QCustomPlot *plot, QString targetLayer, QCPLayerable 
   mVisible(true),
   mParentPlot(plot),
   mParentLayerable(parentLayerable),
-  mLayer(0),
+  mLayer(nullptr),
   mAntialiased(true)
 {
   if (mParentPlot)
@@ -1358,7 +1368,7 @@ QCPLayerable::~QCPLayerable()
   if (mLayer)
   {
     mLayer->removeChild(this);
-    mLayer = 0;
+    mLayer = nullptr;
   }
 }
 
@@ -1467,7 +1477,8 @@ bool QCPLayerable::realVisibility() const
   In the case of 1D Plottables (\ref QCPAbstractPlottable1D, like \ref QCPGraph or \ref QCPBars) \a
   details will be set to a \ref QCPDataSelection, describing the closest data point to \a pos.
   
-  You may pass 0 as \a details to indicate that you are not interested in those selection details.
+  You may pass \c nullptr as \a details to indicate that you are not interested in those selection
+  details.
   
   \see selectEvent, deselectEvent, mousePressEvent, wheelEvent, QCustomPlot::setInteractions,
   QCPAbstractPlottable1D::selectTestRect
@@ -1628,7 +1639,7 @@ QRect QCPLayerable::clipRect() const
   if (mParentPlot)
     return mParentPlot->viewport();
   else
-    return QRect();
+    return {};
 }
 
 /*! \internal
@@ -1791,10 +1802,10 @@ void QCPLayerable::mouseDoubleClickEvent(QMouseEvent *event, const QVariant &det
   The current pixel position of the cursor on the QCustomPlot widget is accessible via \c
   event->pos().
 
-  The \c event->delta() indicates how far the mouse wheel was turned, which is usually +/- 120 for
-  single rotation steps. However, if the mouse wheel is turned rapidly, multiple steps may
-  accumulate to one event, making \c event->delta() larger. On the other hand, if the wheel has
-  very smooth steps or none at all, the delta may be smaller.
+  The \c event->angleDelta() indicates how far the mouse wheel was turned, which is usually +/- 120
+  for single rotation steps. However, if the mouse wheel is turned rapidly, multiple steps may
+  accumulate to one event, making the delta larger. On the other hand, if the wheel has very smooth
+  steps or none at all, the delta may be smaller.
 
   The default implementation does nothing.
 
@@ -2129,8 +2140,8 @@ bool QCPRange::validRange(const QCPRange &range)
 /* end of 'src/axis/range.cpp' */
 
 
-/* including file 'src/selection.cpp', size 21941                            */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/selection.cpp', size 21875                            */
+/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPDataRange
@@ -2271,7 +2282,7 @@ QCPDataRange QCPDataRange::bounded(const QCPDataRange &other) const
 */
 QCPDataRange QCPDataRange::expanded(const QCPDataRange &other) const
 {
-  return QCPDataRange(qMin(mBegin, other.mBegin), qMax(mEnd, other.mEnd));
+  return {qMin(mBegin, other.mBegin), qMax(mEnd, other.mEnd)};
 }
 
 /*!
@@ -2290,7 +2301,7 @@ QCPDataRange QCPDataRange::intersection(const QCPDataRange &other) const
   if (result.isValid())
     return result;
   else
-    return QCPDataRange();
+    return {};
 }
 
 /*!
@@ -2501,8 +2512,8 @@ QCPDataSelection &QCPDataSelection::operator-=(const QCPDataRange &other)
 int QCPDataSelection::dataPointCount() const
 {
   int result = 0;
-  for (int i=0; i<mDataRanges.size(); ++i)
-    result += mDataRanges.at(i).length();
+  foreach (QCPDataRange dataRange, mDataRanges)
+    result += dataRange.length();
   return result;
 }
 
@@ -2522,7 +2533,7 @@ QCPDataRange QCPDataSelection::dataRange(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of range:" << index;
-    return QCPDataRange();
+    return {};
   }
 }
 
@@ -2533,9 +2544,9 @@ QCPDataRange QCPDataSelection::dataRange(int index) const
 QCPDataRange QCPDataSelection::span() const
 {
   if (isEmpty())
-    return QCPDataRange();
+    return {};
   else
-    return QCPDataRange(mDataRanges.first().begin(), mDataRanges.last().end());
+    return {mDataRanges.first().begin(), mDataRanges.last().end()};
 }
 
 /*!
@@ -2681,8 +2692,8 @@ bool QCPDataSelection::contains(const QCPDataSelection &other) const
 QCPDataSelection QCPDataSelection::intersection(const QCPDataRange &other) const
 {
   QCPDataSelection result;
-  for (int i=0; i<mDataRanges.size(); ++i)
-    result.addDataRange(mDataRanges.at(i).intersection(other), false);
+  foreach (QCPDataRange dataRange, mDataRanges)
+    result.addDataRange(dataRange.intersection(other), false);
   result.simplify();
   return result;
 }
@@ -2731,8 +2742,8 @@ QCPDataSelection QCPDataSelection::inverse(const QCPDataRange &outerRange) const
 /* end of 'src/selection.cpp' */
 
 
-/* including file 'src/selectionrect.cpp', size 9224                         */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/selectionrect.cpp', size 9206                         */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionRect
@@ -2838,13 +2849,13 @@ QCPRange QCPSelectionRect::range(const QCPAxis *axis) const
   if (axis)
   {
     if (axis->orientation() == Qt::Horizontal)
-      return QCPRange(axis->pixelToCoord(mRect.left()), axis->pixelToCoord(mRect.left()+mRect.width()));
+      return {axis->pixelToCoord(mRect.left()), axis->pixelToCoord(mRect.left()+mRect.width())};
     else
-      return QCPRange(axis->pixelToCoord(mRect.top()+mRect.height()), axis->pixelToCoord(mRect.top()));
+      return {axis->pixelToCoord(mRect.top()+mRect.height()), axis->pixelToCoord(mRect.top())};
   } else
   {
     qDebug() << Q_FUNC_INFO << "called with axis zero";
-    return QCPRange();
+    return {};
   }
 }
 
@@ -2878,7 +2889,7 @@ void QCPSelectionRect::cancel()
   if (mActive)
   {
     mActive = false;
-    emit canceled(mRect, 0);
+    emit canceled(mRect, nullptr);
   }
 }
 
@@ -2960,8 +2971,8 @@ void QCPSelectionRect::draw(QCPPainter *painter)
 /* end of 'src/selectionrect.cpp' */
 
 
-/* including file 'src/layout.cpp', size 79139                               */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/layout.cpp', size 78799                               */
+/* commit 3616b887936dcb5c44be74b667424c1c2af77a0d 2020-05-16 15:34:58 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPMarginGroup
@@ -3055,7 +3066,7 @@ void QCPMarginGroup::clear()
     it.next();
     const QList<QCPLayoutElement*> elements = it.value();
     for (int i=elements.size()-1; i>=0; --i)
-      elements.at(i)->setMarginGroup(it.key(), 0); // removes itself from mChildren via removeChild
+      elements.at(i)->setMarginGroup(it.key(), nullptr); // removes itself from mChildren via removeChild
   }
 }
 
@@ -3073,12 +3084,11 @@ int QCPMarginGroup::commonMargin(QCP::MarginSide side) const
 {
   // query all automatic margins of the layout elements in this margin group side and find maximum:
   int result = 0;
-  const QList<QCPLayoutElement*> elements = mChildren.value(side);
-  for (int i=0; i<elements.size(); ++i)
+  foreach (QCPLayoutElement *el, mChildren.value(side))
   {
-    if (!elements.at(i)->autoMargins().testFlag(side))
+    if (!el->autoMargins().testFlag(side))
       continue;
-    int m = qMax(elements.at(i)->calculateAutoMargin(side), QCP::getMarginValue(elements.at(i)->minimumMargins(), side));
+    int m = qMax(el->calculateAutoMargin(side), QCP::getMarginValue(el->minimumMargins(), side));
     if (m > result)
       result = m;
   }
@@ -3180,7 +3190,7 @@ void QCPMarginGroup::removeChild(QCP::MarginSide side, QCPLayoutElement *element
 */
 QCPLayoutElement::QCPLayoutElement(QCustomPlot *parentPlot) :
   QCPLayerable(parentPlot), // parenthood is changed as soon as layout element gets inserted into a layout (except for top level layout)
-  mParentLayout(0),
+  mParentLayout(nullptr),
   mMinimumSize(),
   mMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX),
   mSizeConstraintRect(scrInnerRect),
@@ -3194,7 +3204,7 @@ QCPLayoutElement::QCPLayoutElement(QCustomPlot *parentPlot) :
 
 QCPLayoutElement::~QCPLayoutElement()
 {
-  setMarginGroup(QCP::msAll, 0); // unregister at margin groups, if there are any
+  setMarginGroup(QCP::msAll, nullptr); // unregister at margin groups, if there are any
   // unregister at layout:
   if (qobject_cast<QCPLayout*>(mParentLayout)) // the qobject_cast is just a safeguard in case the layout forgets to call clear() in its dtor and this dtor is called by QObject dtor
     mParentLayout->take(this);
@@ -3375,9 +3385,8 @@ void QCPLayoutElement::setMarginGroup(QCP::MarginSides sides, QCPMarginGroup *gr
   if (sides.testFlag(QCP::msTop)) sideVector.append(QCP::msTop);
   if (sides.testFlag(QCP::msBottom)) sideVector.append(QCP::msBottom);
   
-  for (int i=0; i<sideVector.size(); ++i)
+  foreach (QCP::MarginSide side, sideVector)
   {
-    QCP::MarginSide side = sideVector.at(i);
     if (marginGroup(side) != group)
     {
       QCPMarginGroup *oldGroup = marginGroup(side);
@@ -3416,7 +3425,7 @@ void QCPLayoutElement::update(UpdatePhase phase)
     {
       // set the margins of this layout element according to automatic margin calculation, either directly or via a margin group:
       QMargins newMargins = mMargins;
-      QList<QCP::MarginSide> allMarginSides = QList<QCP::MarginSide>() << QCP::msLeft << QCP::msRight << QCP::msTop << QCP::msBottom;
+      const QList<QCP::MarginSide> allMarginSides = QList<QCP::MarginSide>() << QCP::msLeft << QCP::msRight << QCP::msTop << QCP::msBottom;
       foreach (QCP::MarginSide side, allMarginSides)
       {
         if (mAutoMargins.testFlag(side)) // this side's margin shall be calculated automatically
@@ -3451,7 +3460,7 @@ void QCPLayoutElement::update(UpdatePhase phase)
 */
 QSize QCPLayoutElement::minimumOuterSizeHint() const
 {
-  return QSize(mMargins.left()+mMargins.right(), mMargins.top()+mMargins.bottom());
+  return {mMargins.left()+mMargins.right(), mMargins.top()+mMargins.bottom()};
 }
 
 /*!
@@ -3470,7 +3479,7 @@ QSize QCPLayoutElement::minimumOuterSizeHint() const
 */
 QSize QCPLayoutElement::maximumOuterSizeHint() const
 {
-  return QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+  return {QWIDGETSIZE_MAX, QWIDGETSIZE_MAX};
 }
 
 /*!
@@ -3524,7 +3533,7 @@ double QCPLayoutElement::selectTest(const QPointF &pos, bool onlySelectable, QVa
 */
 void QCPLayoutElement::parentPlotInitialized(QCustomPlot *parentPlot)
 {
-  foreach (QCPLayoutElement* el, elements(false))
+  foreach (QCPLayoutElement *el, elements(false))
   {
     if (!el->parentPlot())
       el->initializeParentPlot(parentPlot);
@@ -3830,8 +3839,8 @@ void QCPLayout::releaseElement(QCPLayoutElement *el)
 {
   if (el)
   {
-    el->mParentLayout = 0;
-    el->setParentLayerable(0);
+    el->mParentLayout = nullptr;
+    el->setParentLayerable(nullptr);
     el->setParent(mParentPlot);
     // Note: Don't initializeParentPlot(0) here, because layout element will stay in same parent plot
   } else
@@ -3909,9 +3918,8 @@ QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes, QVector<int> minS
       // find section that hits its maximum next:
       int nextId = -1;
       double nextMax = 1e12;
-      for (int i=0; i<unfinishedSections.size(); ++i)
+      foreach (int secId, unfinishedSections)
       {
-        int secId = unfinishedSections.at(i);
         double hitsMaxAt = (maxSizes.at(secId)-sectionSizes.at(secId))/stretchFactors.at(secId);
         if (hitsMaxAt < nextMax)
         {
@@ -3922,21 +3930,21 @@ QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes, QVector<int> minS
       // check if that maximum is actually within the bounds of the total size (i.e. can we stretch all remaining sections so far that the found section
       // actually hits its maximum, without exceeding the total size when we add up all sections)
       double stretchFactorSum = 0;
-      for (int i=0; i<unfinishedSections.size(); ++i)
-        stretchFactorSum += stretchFactors.at(unfinishedSections.at(i));
+      foreach (int secId, unfinishedSections)
+        stretchFactorSum += stretchFactors.at(secId);
       double nextMaxLimit = freeSize/stretchFactorSum;
       if (nextMax < nextMaxLimit) // next maximum is actually hit, move forward to that point and fix the size of that section
       {
-        for (int i=0; i<unfinishedSections.size(); ++i)
+        foreach (int secId, unfinishedSections)
         {
-          sectionSizes[unfinishedSections.at(i)] += nextMax*stretchFactors.at(unfinishedSections.at(i)); // increment all sections
-          freeSize -= nextMax*stretchFactors.at(unfinishedSections.at(i));
+          sectionSizes[secId] += nextMax*stretchFactors.at(secId); // increment all sections
+          freeSize -= nextMax*stretchFactors.at(secId);
         }
         unfinishedSections.removeOne(nextId); // exclude the section that is now at maximum from further changes
       } else // next maximum isn't hit, just distribute rest of free space on remaining sections
       {
-        for (int i=0; i<unfinishedSections.size(); ++i)
-          sectionSizes[unfinishedSections.at(i)] += nextMaxLimit*stretchFactors.at(unfinishedSections.at(i)); // increment all sections
+        foreach (int secId, unfinishedSections)
+          sectionSizes[secId] += nextMaxLimit*stretchFactors.at(secId); // increment all sections
         unfinishedSections.clear();
       }
     }
@@ -3967,8 +3975,8 @@ QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes, QVector<int> minS
           freeSize -= sectionSizes.at(i); // remove size of minimum locked sections from available space in next round
       }
       // reset all section sizes to zero that are in unfinished sections (all others have been set to their minimum):
-      for (int i=0; i<unfinishedSections.size(); ++i)
-        sectionSizes[unfinishedSections.at(i)] = 0;
+      foreach (int secId, unfinishedSections)
+        sectionSizes[secId] = 0;
     }
   }
   if (outerIterations == sectionCount*2)
@@ -4001,8 +4009,8 @@ QSize QCPLayout::getFinalMinimumOuterSize(const QCPLayoutElement *el)
   if (minOuter.height() > 0 && el->sizeConstraintRect() == QCPLayoutElement::scrInnerRect)
     minOuter.rheight() += el->margins().top() + el->margins().bottom();
   
-  return QSize(minOuter.width() > 0 ? minOuter.width() : minOuterHint.width(),
-               minOuter.height() > 0 ? minOuter.height() : minOuterHint.height());;
+  return {minOuter.width() > 0 ? minOuter.width() : minOuterHint.width(),
+               minOuter.height() > 0 ? minOuter.height() : minOuterHint.height()};
 }
 
 /*! \internal
@@ -4026,8 +4034,8 @@ QSize QCPLayout::getFinalMaximumOuterSize(const QCPLayoutElement *el)
   if (maxOuter.height() < QWIDGETSIZE_MAX && el->sizeConstraintRect() == QCPLayoutElement::scrInnerRect)
     maxOuter.rheight() += el->margins().top() + el->margins().bottom();
   
-  return QSize(maxOuter.width() < QWIDGETSIZE_MAX ? maxOuter.width() : maxOuterHint.width(),
-               maxOuter.height() < QWIDGETSIZE_MAX ? maxOuter.height() : maxOuterHint.height());
+  return {maxOuter.width() < QWIDGETSIZE_MAX ? maxOuter.width() : maxOuterHint.width(),
+               maxOuter.height() < QWIDGETSIZE_MAX ? maxOuter.height() : maxOuterHint.height()};
 }
 
 
@@ -4113,7 +4121,7 @@ QCPLayoutElement *QCPLayoutGrid::element(int row, int column) const
       qDebug() << Q_FUNC_INFO << "Invalid column. Row:" << row << "Column:" << column;
   } else
     qDebug() << Q_FUNC_INFO << "Invalid row. Row:" << row << "Column:" << column;
-  return 0;
+  return nullptr;
 }
 
 
@@ -4394,8 +4402,8 @@ void QCPLayoutGrid::setFillOrder(FillOrder order, bool rearrange)
   // if rearranging, re-insert via linear index according to new fill order:
   if (rearrange)
   {
-    for (int i=0; i<tempElements.size(); ++i)
-      addElement(tempElements.at(i));
+    foreach (QCPLayoutElement *tempElement, tempElements)
+      addElement(tempElement);
   }
 }
 
@@ -4426,7 +4434,7 @@ void QCPLayoutGrid::expandTo(int newRowCount, int newColumnCount)
   for (int i=0; i<rowCount(); ++i)
   {
     while (mElements.at(i).size() < newColCount)
-      mElements[i].append(0);
+      mElements[i].append(nullptr);
   }
   while (mColumnStretchFactors.size() < newColCount)
     mColumnStretchFactors.append(1);
@@ -4454,7 +4462,7 @@ void QCPLayoutGrid::insertRow(int newIndex)
   mRowStretchFactors.insert(newIndex, 1);
   QList<QCPLayoutElement*> newRow;
   for (int col=0; col<columnCount(); ++col)
-    newRow.append((QCPLayoutElement*)0);
+    newRow.append(nullptr);
   mElements.insert(newIndex, newRow);
 }
 
@@ -4480,7 +4488,7 @@ void QCPLayoutGrid::insertColumn(int newIndex)
   
   mColumnStretchFactors.insert(newIndex, 1);
   for (int row=0; row<rowCount(); ++row)
-    mElements[row].insert(newIndex, (QCPLayoutElement*)0);
+    mElements[row].insert(newIndex, nullptr);
 }
 
 /*!
@@ -4605,7 +4613,7 @@ QCPLayoutElement *QCPLayoutGrid::elementAt(int index) const
     indexToRowCol(index, row, col);
     return mElements.at(row).at(col);
   } else
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -4623,12 +4631,12 @@ QCPLayoutElement *QCPLayoutGrid::takeAt(int index)
     releaseElement(el);
     int row, col;
     indexToRowCol(index, row, col);
-    mElements[row][col] = 0;
+    mElements[row][col] = nullptr;
     return el;
   } else
   {
     qDebug() << Q_FUNC_INFO << "Attempt to take invalid index:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -4725,10 +4733,10 @@ QSize QCPLayoutGrid::minimumOuterSizeHint() const
   QVector<int> minColWidths, minRowHeights;
   getMinimumRowColSizes(&minColWidths, &minRowHeights);
   QSize result(0, 0);
-  for (int i=0; i<minColWidths.size(); ++i)
-    result.rwidth() += minColWidths.at(i);
-  for (int i=0; i<minRowHeights.size(); ++i)
-    result.rheight() += minRowHeights.at(i);
+  foreach (int w, minColWidths)
+    result.rwidth() += w;
+  foreach (int h, minRowHeights)
+    result.rheight() += h;
   result.rwidth() += qMax(0, columnCount()-1) * mColumnSpacing;
   result.rheight() += qMax(0, rowCount()-1) * mRowSpacing;
   result.rwidth() += mMargins.left()+mMargins.right();
@@ -4743,10 +4751,10 @@ QSize QCPLayoutGrid::maximumOuterSizeHint() const
   getMaximumRowColSizes(&maxColWidths, &maxRowHeights);
   
   QSize result(0, 0);
-  for (int i=0; i<maxColWidths.size(); ++i)
-    result.setWidth(qMin(result.width()+maxColWidths.at(i), QWIDGETSIZE_MAX));
-  for (int i=0; i<maxRowHeights.size(); ++i)
-    result.setHeight(qMin(result.height()+maxRowHeights.at(i), QWIDGETSIZE_MAX));
+  foreach (int w, maxColWidths)
+    result.setWidth(qMin(result.width()+w, QWIDGETSIZE_MAX));
+  foreach (int h, maxRowHeights)
+    result.setHeight(qMin(result.height()+h, QWIDGETSIZE_MAX));
   result.rwidth() += qMax(0, columnCount()-1) * mColumnSpacing;
   result.rheight() += qMax(0, rowCount()-1) * mRowSpacing;
   result.rwidth() += mMargins.left()+mMargins.right();
@@ -4895,7 +4903,11 @@ Qt::Alignment QCPLayoutInset::insetAlignment(int index) const
   else
   {
     qDebug() << Q_FUNC_INFO << "Invalid element index:" << index;
-    return 0;
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
+    return nullptr;
+#else
+    return {};
+#endif
   }
 }
 
@@ -4910,7 +4922,7 @@ QRectF QCPLayoutInset::insetRect(int index) const
   else
   {
     qDebug() << Q_FUNC_INFO << "Invalid element index:" << index;
-    return QRectF();
+    return {};
   }
 }
 
@@ -4973,10 +4985,10 @@ void QCPLayoutInset::updateLayout()
     QSize finalMaxSize = getFinalMaximumOuterSize(el);
     if (mInsetPlacement.at(i) == ipFree)
     {
-      insetRect = QRect(rect().x()+rect().width()*mInsetRect.at(i).x(),
-                        rect().y()+rect().height()*mInsetRect.at(i).y(),
-                        rect().width()*mInsetRect.at(i).width(),
-                        rect().height()*mInsetRect.at(i).height());
+      insetRect = QRect(int( rect().x()+rect().width()*mInsetRect.at(i).x() ),
+                        int( rect().y()+rect().height()*mInsetRect.at(i).y() ),
+                        int( rect().width()*mInsetRect.at(i).width() ),
+                        int( rect().height()*mInsetRect.at(i).height() ));
       if (insetRect.size().width() < finalMinSize.width())
         insetRect.setWidth(finalMinSize.width());
       if (insetRect.size().height() < finalMinSize.height())
@@ -4991,10 +5003,10 @@ void QCPLayoutInset::updateLayout()
       Qt::Alignment al = mInsetAlignment.at(i);
       if (al.testFlag(Qt::AlignLeft)) insetRect.moveLeft(rect().x());
       else if (al.testFlag(Qt::AlignRight)) insetRect.moveRight(rect().x()+rect().width());
-      else insetRect.moveLeft(rect().x()+rect().width()*0.5-finalMinSize.width()*0.5); // default to Qt::AlignHCenter
+      else insetRect.moveLeft(int( rect().x()+rect().width()*0.5-finalMinSize.width()*0.5 )); // default to Qt::AlignHCenter
       if (al.testFlag(Qt::AlignTop)) insetRect.moveTop(rect().y());
       else if (al.testFlag(Qt::AlignBottom)) insetRect.moveBottom(rect().y()+rect().height());
-      else insetRect.moveTop(rect().y()+rect().height()*0.5-finalMinSize.height()*0.5); // default to Qt::AlignVCenter
+      else insetRect.moveTop(int( rect().y()+rect().height()*0.5-finalMinSize.height()*0.5 )); // default to Qt::AlignVCenter
     }
     mElements.at(i)->setOuterRect(insetRect);
   }
@@ -5012,7 +5024,7 @@ QCPLayoutElement *QCPLayoutInset::elementAt(int index) const
   if (index >= 0 && index < mElements.size())
     return mElements.at(index);
   else
-    return 0;
+    return nullptr;
 }
 
 /* inherits documentation from base class */
@@ -5029,7 +5041,7 @@ QCPLayoutElement *QCPLayoutInset::takeAt(int index)
   } else
   {
     qDebug() << Q_FUNC_INFO << "Attempt to take invalid index:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -5067,11 +5079,11 @@ double QCPLayoutInset::selectTest(const QPointF &pos, bool onlySelectable, QVari
   if (onlySelectable)
     return -1;
   
-  for (int i=0; i<mElements.size(); ++i)
+  foreach (QCPLayoutElement *el, mElements)
   {
     // inset layout shall only return positive selectTest, if actually an inset object is at pos
     // else it would block the entire underlying QCPAxisRect with its surface.
-    if (mElements.at(i)->realVisibility() && mElements.at(i)->selectTest(pos, onlySelectable) >= 0)
+    if (el->realVisibility() && el->selectTest(pos, onlySelectable) >= 0)
       return mParentPlot->selectionTolerance()*0.99;
   }
   return -1;
@@ -5131,8 +5143,8 @@ void QCPLayoutInset::addElement(QCPLayoutElement *element, const QRectF &rect)
 /* end of 'src/layout.cpp' */
 
 
-/* including file 'src/lineending.cpp', size 11536                           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/lineending.cpp', size 11189                           */
+/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPLineEnding
@@ -5402,17 +5414,12 @@ void QCPLineEnding::draw(QCPPainter *painter, const QCPVector2D &pos, const QCPV
     }
     case esSkewedBar:
     {
-      if (qFuzzyIsNull(painter->pen().widthF()) && !painter->modes().testFlag(QCPPainter::pmNonCosmetic))
-      {
-        // if drawing with cosmetic pen (perfectly thin stroke, happens only in vector exports), draw bar exactly on tip of line
-        painter->drawLine((pos+widthVec+lengthVec*0.2*(mInverted?-1:1)).toPointF(),
-                          (pos-widthVec-lengthVec*0.2*(mInverted?-1:1)).toPointF());
-      } else
-      {
-        // if drawing with thick (non-cosmetic) pen, shift bar a little in line direction to prevent line from sticking through bar slightly
-        painter->drawLine((pos+widthVec+lengthVec*0.2*(mInverted?-1:1)+dir.normalized()*qMax(1.0f, (float)painter->pen().widthF())*0.5f).toPointF(),
-                          (pos-widthVec-lengthVec*0.2*(mInverted?-1:1)+dir.normalized()*qMax(1.0f, (float)painter->pen().widthF())*0.5f).toPointF());
-      }
+      QCPVector2D shift;
+      if (!qFuzzyIsNull(painter->pen().widthF()) || painter->modes().testFlag(QCPPainter::pmNonCosmetic))
+        shift = dir.normalized()*qMax(qreal(1.0), painter->pen().widthF())*qreal(0.5);
+      // if drawing with thick (non-cosmetic) pen, shift bar a little in line direction to prevent line from sticking through bar slightly
+      painter->drawLine((pos+widthVec+lengthVec*0.2*(mInverted?-1:1)+shift).toPointF(),
+                        (pos-widthVec-lengthVec*0.2*(mInverted?-1:1)+shift).toPointF());
       break;
     }
   }
@@ -5430,8 +5437,8 @@ void QCPLineEnding::draw(QCPPainter *painter, const QCPVector2D &pos, double ang
 /* end of 'src/lineending.cpp' */
 
 
-/* including file 'src/axis/axisticker.cpp', size 18664                      */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axisticker.cpp', size 18679                      */
+/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTicker
@@ -5566,7 +5573,7 @@ void QCPAxisTicker::generate(const QCPRange &range, const QLocale &locale, QChar
   // generate sub ticks between major ticks:
   if (subTicks)
   {
-    if (ticks.size() > 0)
+    if (!ticks.isEmpty())
     {
       *subTicks = createSubTickVector(getSubTickCount(tickStep), ticks);
       trimTicks(range, *subTicks, false);
@@ -5593,7 +5600,7 @@ void QCPAxisTicker::generate(const QCPRange &range, const QLocale &locale, QChar
 */
 double QCPAxisTicker::getTickStep(const QCPRange &range)
 {
-  double exactStep = range.size()/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+  double exactStep = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
   return cleanMantissa(exactStep);
 }
 
@@ -5613,7 +5620,7 @@ int QCPAxisTicker::getSubTickCount(double tickStep)
   double intPartf;
   int intPart;
   double fracPart = modf(getMantissa(tickStep), &intPartf);
-  intPart = intPartf;
+  intPart = int(intPartf);
   
   // handle cases with (almost) integer mantissa:
   if (fracPart < epsilon || 1.0-fracPart < epsilon)
@@ -5690,7 +5697,7 @@ QVector<double> QCPAxisTicker::createSubTickVector(int subTickCount, const QVect
   result.reserve((ticks.size()-1)*subTickCount);
   for (int i=1; i<ticks.size(); ++i)
   {
-    double subTickStep = (ticks.at(i)-ticks.at(i-1))/(double)(subTickCount+1);
+    double subTickStep = (ticks.at(i)-ticks.at(i-1))/double(subTickCount+1);
     for (int k=1; k<=subTickCount; ++k)
       result.append(ticks.at(i-1) + k*subTickStep);
   }
@@ -5716,9 +5723,9 @@ QVector<double> QCPAxisTicker::createTickVector(double tickStep, const QCPRange 
 {
   QVector<double> result;
   // Generate tick positions according to tickStep:
-  qint64 firstStep = floor((range.lower-mTickOrigin)/tickStep); // do not use qFloor here, or we'll lose 64 bit precision
-  qint64 lastStep = ceil((range.upper-mTickOrigin)/tickStep); // do not use qCeil here, or we'll lose 64 bit precision
-  int tickcount = lastStep-firstStep+1;
+  qint64 firstStep = qint64(floor((range.lower-mTickOrigin)/tickStep)); // do not use qFloor here, or we'll lose 64 bit precision
+  qint64 lastStep = qint64(ceil((range.upper-mTickOrigin)/tickStep)); // do not use qCeil here, or we'll lose 64 bit precision
+  int tickcount = int(lastStep-firstStep+1);
   if (tickcount < 0) tickcount = 0;
   result.resize(tickcount);
   for (int i=0; i<tickcount; ++i)
@@ -5739,8 +5746,8 @@ QVector<QString> QCPAxisTicker::createLabelVector(const QVector<double> &ticks, 
 {
   QVector<QString> result;
   result.reserve(ticks.size());
-  for (int i=0; i<ticks.size(); ++i)
-    result.append(getTickLabel(ticks.at(i), locale, formatChar, precision));
+  foreach (double tickCoord, ticks)
+    result.append(getTickLabel(tickCoord, locale, formatChar, precision));
   return result;
 }
 
@@ -5840,9 +5847,9 @@ double QCPAxisTicker::cleanMantissa(double input) const
     {
       // this gives effectively a mantissa of 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 8.0, 10.0
       if (mantissa <= 5.0)
-        return (int)(mantissa*2)/2.0*magnitude; // round digit after decimal point to 0.5
+        return int(mantissa*2)/2.0*magnitude; // round digit after decimal point to 0.5
       else
-        return (int)(mantissa/2.0)*2.0*magnitude; // round to first digit in multiples of 2
+        return int(mantissa/2.0)*2.0*magnitude; // round to first digit in multiples of 2
     }
   }
   return input;
@@ -5850,8 +5857,8 @@ double QCPAxisTicker::cleanMantissa(double input) const
 /* end of 'src/axis/axisticker.cpp' */
 
 
-/* including file 'src/axis/axistickerdatetime.cpp', size 14443              */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerdatetime.cpp', size 14732              */
+/* commit 9b3fe261363a32f67fa7d5ff97d3389916642c28 2020-05-16 13:47:25 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerDateTime
@@ -5973,7 +5980,7 @@ void QCPAxisTickerDateTime::setTickOrigin(const QDateTime &origin)
 */
 double QCPAxisTickerDateTime::getTickStep(const QCPRange &range)
 {
-  double result = range.size()/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+  double result = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
   
   mDateStrategy = dsNone;
   if (result < 1) // ideal tick step is below 1 second -> use normal clean mantissa algorithm in units of seconds
@@ -6024,11 +6031,11 @@ int QCPAxisTickerDateTime::getSubTickCount(double tickStep)
     case 86400*5: result = 4; break;
     case 86400*7: result = 6; break;
     case 86400*14: result = 1; break;
-    case (int)(86400*30.4375+0.5): result = 3; break;
-    case (int)(86400*30.4375*2+0.5): result = 1; break;
-    case (int)(86400*30.4375*3+0.5): result = 2; break;
-    case (int)(86400*30.4375*6+0.5): result = 5; break;
-    case (int)(86400*30.4375*12+0.5): result = 3; break;
+    case int(86400*30.4375+0.5): result = 3; break;
+    case int(86400*30.4375*2+0.5): result = 1; break;
+    case int(86400*30.4375*3+0.5): result = 2; break;
+    case int(86400*30.4375*6+0.5): result = 5; break;
+    case int(86400*30.4375*12+0.5): result = 3; break;
   }
   return result;
 }
@@ -6104,7 +6111,7 @@ QDateTime QCPAxisTickerDateTime::keyToDateTime(double key)
 # if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
   return QDateTime::fromTime_t(key).addMSecs((key-(qint64)key)*1000);
 # else
-  return QDateTime::fromMSecsSinceEpoch(key*1000.0);
+  return QDateTime::fromMSecsSinceEpoch(qint64(key*1000.0));
 # endif
 }
 
@@ -6119,7 +6126,7 @@ QDateTime QCPAxisTickerDateTime::keyToDateTime(double key)
   
   \see keyToDateTime
 */
-double QCPAxisTickerDateTime::dateTimeToKey(const QDateTime dateTime)
+double QCPAxisTickerDateTime::dateTimeToKey(const QDateTime &dateTime)
 {
 # if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
   return dateTime.toTime_t()+dateTime.time().msec()/1000.0;
@@ -6130,25 +6137,30 @@ double QCPAxisTickerDateTime::dateTimeToKey(const QDateTime dateTime)
 
 /*! \overload
   
-  A convenience method which turns a QDate object into a double value that corresponds to
-  seconds since Epoch (1. Jan 1970, 00:00 UTC). This is the format used as axis coordinates by
-  QCPAxisTickerDateTime.
+  A convenience method which turns a QDate object into a double value that corresponds to seconds
+  since Epoch (1. Jan 1970, 00:00 UTC). This is the format used
+  as axis coordinates by QCPAxisTickerDateTime.
+  
+  The returned value will be the start of the passed day of \a date, interpreted in the given \a
+  timeSpec.
   
   \see keyToDateTime
 */
-double QCPAxisTickerDateTime::dateTimeToKey(const QDate date)
+double QCPAxisTickerDateTime::dateTimeToKey(const QDate &date, Qt::TimeSpec timeSpec)
 {
 # if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
-  return QDateTime(date).toTime_t();
+  return QDateTime(date, QTime(0, 0), timeSpec).toTime_t();
+# elif QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  return QDateTime(date, QTime(0, 0), timeSpec).toMSecsSinceEpoch()/1000.0;
 # else
-  return QDateTime(date).toMSecsSinceEpoch()/1000.0;
+  return date.startOfDay(timeSpec).toMSecsSinceEpoch()/1000.0;
 # endif
 }
 /* end of 'src/axis/axistickerdatetime.cpp' */
 
 
-/* including file 'src/axis/axistickertime.cpp', size 11747                  */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickertime.cpp', size 11745                  */
+/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerTime
@@ -6277,7 +6289,7 @@ void QCPAxisTickerTime::setFieldWidth(QCPAxisTickerTime::TimeUnit unit, int widt
 */
 double QCPAxisTickerTime::getTickStep(const QCPRange &range)
 {
-  double result = range.size()/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+  double result = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
   
   if (result < 1) // ideal tick step is below 1 second -> use normal clean mantissa algorithm in units of seconds
   {
@@ -6396,8 +6408,8 @@ void QCPAxisTickerTime::replaceUnit(QString &text, QCPAxisTickerTime::TimeUnit u
 /* end of 'src/axis/axistickertime.cpp' */
 
 
-/* including file 'src/axis/axistickerfixed.cpp', size 5583                  */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerfixed.cpp', size 5575                  */
+/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerFixed
@@ -6481,16 +6493,16 @@ double QCPAxisTickerFixed::getTickStep(const QCPRange &range)
     }
     case ssMultiples:
     {
-      double exactStep = range.size()/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+      double exactStep = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
       if (exactStep < mTickStep)
         return mTickStep;
       else
-        return (qint64)(cleanMantissa(exactStep/mTickStep)+0.5)*mTickStep;
+        return qint64(cleanMantissa(exactStep/mTickStep)+0.5)*mTickStep;
     }
     case ssPowers:
     {
-      double exactStep = range.size()/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
-      return qPow(mTickStep, (int)(qLn(exactStep)/qLn(mTickStep)+0.5));
+      double exactStep = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+      return qPow(mTickStep, int(qLn(exactStep)/qLn(mTickStep)+0.5));
     }
   }
   return mTickStep;
@@ -6498,8 +6510,8 @@ double QCPAxisTickerFixed::getTickStep(const QCPRange &range)
 /* end of 'src/axis/axistickerfixed.cpp' */
 
 
-/* including file 'src/axis/axistickertext.cpp', size 8661                   */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickertext.cpp', size 8742                   */
+/* commit dcedb527064bdd0d2d2769e308760f2750abc4de 2020-05-16 15:37:05 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerText
@@ -6624,7 +6636,11 @@ void QCPAxisTickerText::addTick(double position, const QString &label)
 */
 void QCPAxisTickerText::addTicks(const QMap<double, QString> &ticks)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
   mTicks.unite(ticks);
+#else
+  mTicks.insert(ticks);
+#endif
 }
 
 /*! \overload
@@ -6711,8 +6727,8 @@ QVector<double> QCPAxisTickerText::createTickVector(double tickStep, const QCPRa
 /* end of 'src/axis/axistickertext.cpp' */
 
 
-/* including file 'src/axis/axistickerpi.cpp', size 11170                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerpi.cpp', size 11168                    */
+/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerPi
@@ -6802,7 +6818,7 @@ void QCPAxisTickerPi::setFractionStyle(QCPAxisTickerPi::FractionStyle style)
 */
 double QCPAxisTickerPi::getTickStep(const QCPRange &range)
 {
-  mPiTickStep = range.size()/mPiValue/(double)(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
+  mPiTickStep = range.size()/mPiValue/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
   mPiTickStep = cleanMantissa(mPiTickStep);
   return mPiTickStep*mPiValue;
 }
@@ -6900,7 +6916,7 @@ QString QCPAxisTickerPi::fractionToString(int numerator, int denominator) const
   if (mFractionStyle == fsFloatingPoint) // should never be the case when calling this function
   {
     qDebug() << Q_FUNC_INFO << "shouldn't be called with fraction style fsDecimal";
-    return QString::number(numerator/(double)denominator); // failsafe
+    return QString::number(numerator/double(denominator)); // failsafe
   }
   int sign = numerator*denominator < 0 ? -1 : 1;
   numerator = qAbs(numerator);
@@ -6998,8 +7014,8 @@ QString QCPAxisTickerPi::unicodeSubscript(int number) const
 /* end of 'src/axis/axistickerpi.cpp' */
 
 
-/* including file 'src/axis/axistickerlog.cpp', size 7106                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerlog.cpp', size 7102                    */
+/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerLog
@@ -7109,8 +7125,8 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
   QVector<double> result;
   if (range.lower > 0 && range.upper > 0) // positive range
   {
-    double exactPowerStep =  qLn(range.upper/range.lower)*mLogBaseLnInv/(double)(mTickCount+1e-10);
-    double newLogBase = qPow(mLogBase, qMax((int)cleanMantissa(exactPowerStep), 1));
+    double exactPowerStep =  qLn(range.upper/range.lower)*mLogBaseLnInv/double(mTickCount+1e-10);
+    double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
     double currentTick = qPow(newLogBase, qFloor(qLn(range.lower)/qLn(newLogBase)));
     result.append(currentTick);
     while (currentTick < range.upper && currentTick > 0) // currentMag might be zero for ranges ~1e-300, just cancel in that case
@@ -7120,8 +7136,8 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
     }
   } else if (range.lower < 0 && range.upper < 0) // negative range
   {
-    double exactPowerStep =  qLn(range.lower/range.upper)*mLogBaseLnInv/(double)(mTickCount+1e-10);
-    double newLogBase = qPow(mLogBase, qMax((int)cleanMantissa(exactPowerStep), 1));
+    double exactPowerStep =  qLn(range.lower/range.upper)*mLogBaseLnInv/double(mTickCount+1e-10);
+    double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
     double currentTick = -qPow(newLogBase, qCeil(qLn(-range.lower)/qLn(newLogBase)));
     result.append(currentTick);
     while (currentTick < range.upper && currentTick < 0) // currentMag might be zero for ranges ~1e-300, just cancel in that case
@@ -7139,8 +7155,8 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
 /* end of 'src/axis/axistickerlog.cpp' */
 
 
-/* including file 'src/axis/axis.cpp', size 99515                            */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axis.cpp', size 99442                            */
+/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200 */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7167,6 +7183,9 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
 */
 QCPGrid::QCPGrid(QCPAxis *parentAxis) :
   QCPLayerable(parentAxis->parentPlot(), QString(), parentAxis),
+  mSubGridVisible{},
+  mAntialiasedSubGrid{},
+  mAntialiasedZeroLine{},
   mParentAxis(parentAxis)
 {
   // warning: this is called in QCPAxis constructor, so parentAxis members should not be accessed/called
@@ -7353,16 +7372,16 @@ void QCPGrid::drawSubGridLines(QCPPainter *painter) const
   painter->setPen(mSubGridPen);
   if (mParentAxis->orientation() == Qt::Horizontal)
   {
-    for (int i=0; i<mParentAxis->mSubTickVector.size(); ++i)
+    foreach (double tickCoord, mParentAxis->mSubTickVector)
     {
-      t = mParentAxis->coordToPixel(mParentAxis->mSubTickVector.at(i)); // x
+      t = mParentAxis->coordToPixel(tickCoord); // x
       painter->drawLine(QLineF(t, mParentAxis->mAxisRect->bottom(), t, mParentAxis->mAxisRect->top()));
     }
   } else
   {
-    for (int i=0; i<mParentAxis->mSubTickVector.size(); ++i)
+    foreach (double tickCoord, mParentAxis->mSubTickVector)
     {
-      t = mParentAxis->coordToPixel(mParentAxis->mSubTickVector.at(i)); // y
+      t = mParentAxis->coordToPixel(tickCoord); // y
       painter->drawLine(QLineF(mParentAxis->mAxisRect->left(), t, mParentAxis->mAxisRect->right(), t));
     }
   }
@@ -7545,7 +7564,8 @@ QCPAxis::QCPAxis(QCPAxisRect *parent, AxisType type) :
   mAxisPainter(new QCPAxisPainterPrivate(parent->parentPlot())),
   mTicker(new QCPAxisTicker),
   mCachedMarginValid(false),
-  mCachedMargin(0)
+  mCachedMargin(0),
+  mDragging(false)
 {
   setParent(parent);
   mGrid->setVisible(false);
@@ -8504,7 +8524,7 @@ void QCPAxis::setScaleRatio(const QCPAxis *otherAxis, double ratio)
   else
     ownPixelSize = axisRect()->height();
   
-  double newRangeSize = ratio*otherAxis->range().size()*ownPixelSize/(double)otherPixelSize;
+  double newRangeSize = ratio*otherAxis->range().size()*ownPixelSize/double(otherPixelSize);
   setRange(range().center(), newRangeSize, Qt::AlignCenter);
 }
 
@@ -8516,22 +8536,21 @@ void QCPAxis::setScaleRatio(const QCPAxis *otherAxis, double ratio)
 */
 void QCPAxis::rescale(bool onlyVisiblePlottables)
 {
-  QList<QCPAbstractPlottable*> p = plottables();
   QCPRange newRange;
   bool haveRange = false;
-  for (int i=0; i<p.size(); ++i)
+  foreach (QCPAbstractPlottable *plottable, plottables())
   {
-    if (!p.at(i)->realVisibility() && onlyVisiblePlottables)
+    if (!plottable->realVisibility() && onlyVisiblePlottables)
       continue;
     QCPRange plottableRange;
     bool currentFoundRange;
     QCP::SignDomain signDomain = QCP::sdBoth;
     if (mScaleType == stLogarithmic)
       signDomain = (mRange.upper < 0 ? QCP::sdNegative : QCP::sdPositive);
-    if (p.at(i)->keyAxis() == this)
-      plottableRange = p.at(i)->getKeyRange(currentFoundRange, signDomain);
+    if (plottable->keyAxis() == this)
+      plottableRange = plottable->getKeyRange(currentFoundRange, signDomain);
     else
-      plottableRange = p.at(i)->getValueRange(currentFoundRange, signDomain);
+      plottableRange = plottable->getValueRange(currentFoundRange, signDomain);
     if (currentFoundRange)
     {
       if (!haveRange)
@@ -8570,30 +8589,30 @@ double QCPAxis::pixelToCoord(double value) const
     if (mScaleType == stLinear)
     {
       if (!mRangeReversed)
-        return (value-mAxisRect->left())/(double)mAxisRect->width()*mRange.size()+mRange.lower;
+        return (value-mAxisRect->left())/double(mAxisRect->width())*mRange.size()+mRange.lower;
       else
-        return -(value-mAxisRect->left())/(double)mAxisRect->width()*mRange.size()+mRange.upper;
+        return -(value-mAxisRect->left())/double(mAxisRect->width())*mRange.size()+mRange.upper;
     } else // mScaleType == stLogarithmic
     {
       if (!mRangeReversed)
-        return qPow(mRange.upper/mRange.lower, (value-mAxisRect->left())/(double)mAxisRect->width())*mRange.lower;
+        return qPow(mRange.upper/mRange.lower, (value-mAxisRect->left())/double(mAxisRect->width()))*mRange.lower;
       else
-        return qPow(mRange.upper/mRange.lower, (mAxisRect->left()-value)/(double)mAxisRect->width())*mRange.upper;
+        return qPow(mRange.upper/mRange.lower, (mAxisRect->left()-value)/double(mAxisRect->width()))*mRange.upper;
     }
   } else // orientation() == Qt::Vertical
   {
     if (mScaleType == stLinear)
     {
       if (!mRangeReversed)
-        return (mAxisRect->bottom()-value)/(double)mAxisRect->height()*mRange.size()+mRange.lower;
+        return (mAxisRect->bottom()-value)/double(mAxisRect->height())*mRange.size()+mRange.lower;
       else
-        return -(mAxisRect->bottom()-value)/(double)mAxisRect->height()*mRange.size()+mRange.upper;
+        return -(mAxisRect->bottom()-value)/double(mAxisRect->height())*mRange.size()+mRange.upper;
     } else // mScaleType == stLogarithmic
     {
       if (!mRangeReversed)
-        return qPow(mRange.upper/mRange.lower, (mAxisRect->bottom()-value)/(double)mAxisRect->height())*mRange.lower;
+        return qPow(mRange.upper/mRange.lower, (mAxisRect->bottom()-value)/double(mAxisRect->height()))*mRange.lower;
       else
-        return qPow(mRange.upper/mRange.lower, (value-mAxisRect->bottom())/(double)mAxisRect->height())*mRange.upper;
+        return qPow(mRange.upper/mRange.lower, (value-mAxisRect->bottom())/double(mAxisRect->height()))*mRange.upper;
     }
   }
 }
@@ -8699,10 +8718,10 @@ QList<QCPAbstractPlottable*> QCPAxis::plottables() const
   QList<QCPAbstractPlottable*> result;
   if (!mParentPlot) return result;
   
-  for (int i=0; i<mParentPlot->mPlottables.size(); ++i)
+  foreach (QCPAbstractPlottable *plottable, mParentPlot->mPlottables)
   {
-    if (mParentPlot->mPlottables.at(i)->keyAxis() == this ||mParentPlot->mPlottables.at(i)->valueAxis() == this)
-      result.append(mParentPlot->mPlottables.at(i));
+    if (plottable->keyAxis() == this || plottable->valueAxis() == this)
+      result.append(plottable);
   }
   return result;
 }
@@ -8717,10 +8736,10 @@ QList<QCPGraph*> QCPAxis::graphs() const
   QList<QCPGraph*> result;
   if (!mParentPlot) return result;
   
-  for (int i=0; i<mParentPlot->mGraphs.size(); ++i)
+  foreach (QCPGraph *graph, mParentPlot->mGraphs)
   {
-    if (mParentPlot->mGraphs.at(i)->keyAxis() == this || mParentPlot->mGraphs.at(i)->valueAxis() == this)
-      result.append(mParentPlot->mGraphs.at(i));
+    if (graph->keyAxis() == this || graph->valueAxis() == this)
+      result.append(graph);
   }
   return result;
 }
@@ -8736,14 +8755,13 @@ QList<QCPAbstractItem*> QCPAxis::items() const
   QList<QCPAbstractItem*> result;
   if (!mParentPlot) return result;
   
-  for (int itemId=0; itemId<mParentPlot->mItems.size(); ++itemId)
+  foreach (QCPAbstractItem *item, mParentPlot->mItems)
   {
-    QList<QCPItemPosition*> positions = mParentPlot->mItems.at(itemId)->positions();
-    for (int posId=0; posId<positions.size(); ++posId)
+    foreach (QCPItemPosition *position, item->positions())
     {
-      if (positions.at(posId)->keyAxis() == this || positions.at(posId)->valueAxis() == this)
+      if (position->keyAxis() == this || position->valueAxis() == this)
       {
-        result.append(mParentPlot->mItems.at(itemId));
+        result.append(item);
         break;
       }
     }
@@ -8765,7 +8783,7 @@ QCPAxis::AxisType QCPAxis::marginSideToAxisType(QCP::MarginSide side)
     case QCP::msBottom: return atBottom;
     default: break;
   }
-  qDebug() << Q_FUNC_INFO << "Invalid margin side passed:" << (int)side;
+  qDebug() << Q_FUNC_INFO << "Invalid margin side passed:" << static_cast<int>(side);
   return atLeft;
 }
 
@@ -8776,12 +8794,13 @@ QCPAxis::AxisType QCPAxis::opposite(QCPAxis::AxisType type)
 {
   switch (type)
   {
-    case atLeft: return atRight; break;
-    case atRight: return atLeft; break;
-    case atBottom: return atTop; break;
-    case atTop: return atBottom; break;
-    default: qDebug() << Q_FUNC_INFO << "invalid axis type"; return atLeft; break;
+    case atLeft: return atRight;
+    case atRight: return atLeft;
+    case atBottom: return atTop;
+    case atTop: return atBottom;
   }
+  qDebug() << Q_FUNC_INFO << "invalid axis type";
+  return atLeft;
 }
 
 /* inherits documentation from base class */
@@ -8932,9 +8951,21 @@ void QCPAxis::wheelEvent(QWheelEvent *event)
     return;
   }
   
-  const double wheelSteps = event->delta()/120.0; // a single step delta is +/-120 usually
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+  const double delta = event->delta();
+#else
+  const double delta = event->angleDelta().y();
+#endif
+  
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  const QPointF pos = event->pos();
+#else
+  const QPointF pos = event->position();
+#endif
+  
+  const double wheelSteps = delta/120.0; // a single step delta is +/-120 usually
   const double factor = qPow(mAxisRect->rangeZoomFactor(orientation()), wheelSteps);
-  scaleRange(factor, pixelToCoord(orientation() == Qt::Horizontal ? event->pos().x() : event->pos().y()));
+  scaleRange(factor, pixelToCoord(orientation() == Qt::Horizontal ? pos.x() : pos.y()));
   mParentPlot->replot();
 }
 
@@ -9026,7 +9057,7 @@ void QCPAxis::setupTickVectors()
   if ((!mTicks && !mTickLabels && !mGrid->visible()) || mRange.size() <= 0) return;
   
   QVector<QString> oldLabels = mTickVectorLabels;
-  mTicker->generate(mRange, mParentPlot->locale(), mNumberFormatChar, mNumberPrecision, mTickVector, mSubTicks ? &mSubTickVector : 0, mTickLabels ? &mTickVectorLabels : 0);
+  mTicker->generate(mRange, mParentPlot->locale(), mNumberFormatChar, mNumberPrecision, mTickVector, mSubTicks ? &mSubTickVector : nullptr, mTickLabels ? &mTickVectorLabels : nullptr);
   mCachedMarginValid &= mTickVectorLabels == oldLabels; // if labels have changed, margin might have changed, too
 }
 
@@ -9264,12 +9295,12 @@ void QCPAxisPainterPrivate::draw(QCPPainter *painter)
     int tickDir = (type == QCPAxis::atBottom || type == QCPAxis::atRight) ? -1 : 1; // direction of ticks ("inward" is right for left axis and left for right axis)
     if (QCPAxis::orientation(type) == Qt::Horizontal)
     {
-      for (int i=0; i<tickPositions.size(); ++i)
-        painter->drawLine(QLineF(tickPositions.at(i)+xCor, origin.y()-tickLengthOut*tickDir+yCor, tickPositions.at(i)+xCor, origin.y()+tickLengthIn*tickDir+yCor));
+      foreach (double tickPos, tickPositions)
+        painter->drawLine(QLineF(tickPos+xCor, origin.y()-tickLengthOut*tickDir+yCor, tickPos+xCor, origin.y()+tickLengthIn*tickDir+yCor));
     } else
     {
-      for (int i=0; i<tickPositions.size(); ++i)
-        painter->drawLine(QLineF(origin.x()-tickLengthOut*tickDir+xCor, tickPositions.at(i)+yCor, origin.x()+tickLengthIn*tickDir+xCor, tickPositions.at(i)+yCor));
+      foreach (double tickPos, tickPositions)
+        painter->drawLine(QLineF(origin.x()-tickLengthOut*tickDir+xCor, tickPos+yCor, origin.x()+tickLengthIn*tickDir+xCor, tickPos+yCor));
     }
   }
   
@@ -9281,12 +9312,12 @@ void QCPAxisPainterPrivate::draw(QCPPainter *painter)
     int tickDir = (type == QCPAxis::atBottom || type == QCPAxis::atRight) ? -1 : 1;
     if (QCPAxis::orientation(type) == Qt::Horizontal)
     {
-      for (int i=0; i<subTickPositions.size(); ++i)
-        painter->drawLine(QLineF(subTickPositions.at(i)+xCor, origin.y()-subTickLengthOut*tickDir+yCor, subTickPositions.at(i)+xCor, origin.y()+subTickLengthIn*tickDir+yCor));
+      foreach (double subTickPos, subTickPositions)
+        painter->drawLine(QLineF(subTickPos+xCor, origin.y()-subTickLengthOut*tickDir+yCor, subTickPos+xCor, origin.y()+subTickLengthIn*tickDir+yCor));
     } else
     {
-      for (int i=0; i<subTickPositions.size(); ++i)
-        painter->drawLine(QLineF(origin.x()-subTickLengthOut*tickDir+xCor, subTickPositions.at(i)+yCor, origin.x()+subTickLengthIn*tickDir+xCor, subTickPositions.at(i)+yCor));
+      foreach (double subTickPos, subTickPositions)
+        painter->drawLine(QLineF(origin.x()-subTickLengthOut*tickDir+xCor, subTickPos+yCor, origin.x()+subTickLengthIn*tickDir+xCor, subTickPos+yCor));
     }
   }
   margin += qMax(0, qMax(tickLengthOut, subTickLengthOut));
@@ -9427,8 +9458,8 @@ int QCPAxisPainterPrivate::size() const
     QSize tickLabelsSize(0, 0);
     if (!tickLabels.isEmpty())
     {
-      for (int i=0; i<tickLabels.size(); ++i)
-        getMaxTickLabelSize(tickLabelFont, tickLabels.at(i), &tickLabelsSize);
+      foreach (const QString &tickLabel, tickLabels)
+        getMaxTickLabelSize(tickLabelFont, tickLabel, &tickLabelsSize);
       result += QCPAxis::orientation(type) == Qt::Horizontal ? tickLabelsSize.height() : tickLabelsSize.width();
     result += tickLabelPadding;
     }
@@ -9469,9 +9500,9 @@ QByteArray QCPAxisPainterPrivate::generateLabelParameterHash() const
   QByteArray result;
   result.append(QByteArray::number(mParentPlot->bufferDevicePixelRatio()));
   result.append(QByteArray::number(tickLabelRotation));
-  result.append(QByteArray::number((int)tickLabelSide));
-  result.append(QByteArray::number((int)substituteExponent));
-  result.append(QByteArray::number((int)numberMultiplyCross));
+  result.append(QByteArray::number(int(tickLabelSide)));
+  result.append(QByteArray::number(int(substituteExponent)));
+  result.append(QByteArray::number(int(numberMultiplyCross)));
   result.append(tickLabelColor.name().toLatin1()+QByteArray::number(tickLabelColor.alpha(), 16));
   result.append(tickLabelFont.toString().toLatin1());
   return result;
@@ -9668,9 +9699,9 @@ QCPAxisPainterPrivate::TickLabelData QCPAxisPainterPrivate::getTickLabelData(con
     // prepare smaller font for exponent:
     result.expFont = font;
     if (result.expFont.pointSize() > 0)
-      result.expFont.setPointSize(result.expFont.pointSize()*0.75);
+      result.expFont.setPointSize(int(result.expFont.pointSize()*0.75));
     else
-      result.expFont.setPixelSize(result.expFont.pixelSize()*0.75);
+      result.expFont.setPixelSize(int(result.expFont.pixelSize()*0.75));
     // calculate bounding rects of base part(s), exponent part and total one:
     result.baseBounds = QFontMetrics(result.baseFont).boundingRect(0, 0, 0, 0, Qt::TextDontClip, result.basePart);
     result.expBounds = QFontMetrics(result.expFont).boundingRect(0, 0, 0, 0, Qt::TextDontClip, result.expPart);
@@ -9721,7 +9752,8 @@ QPointF QCPAxisPainterPrivate::getTickLabelDrawOffset(const TickLabelData &label
   bool doRotation = !qFuzzyIsNull(tickLabelRotation);
   bool flip = qFuzzyCompare(qAbs(tickLabelRotation), 90.0); // perfect +/-90 degree flip. Indicates vertical label centering on vertical axes.
   double radians = tickLabelRotation/180.0*M_PI;
-  int x=0, y=0;
+  double x = 0;
+  double y = 0;
   if ((type == QCPAxis::atLeft && tickLabelSide == QCPAxis::lsOutside) || (type == QCPAxis::atRight && tickLabelSide == QCPAxis::lsInside)) // Anchor at right side of tick label
   {
     if (doRotation)
@@ -9796,7 +9828,7 @@ QPointF QCPAxisPainterPrivate::getTickLabelDrawOffset(const TickLabelData &label
     }
   }
   
-  return QPointF(x, y);
+  return {x, y};
 }
 
 /*! \internal
@@ -9829,8 +9861,8 @@ void QCPAxisPainterPrivate::getMaxTickLabelSize(const QFont &font, const QString
 /* end of 'src/axis/axis.cpp' */
 
 
-/* including file 'src/scatterstyle.cpp', size 17450                         */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/scatterstyle.cpp', size 17466                         */
+/* commit d5a94cfe4877e687a6843dcf312a4f2cd4217d2f 2020-02-14 21:26:16 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPScatterStyle
@@ -10285,7 +10317,7 @@ void QCPScatterStyle::drawShape(QCPPainter *painter, double x, double y) const
       const QRectF clipRect = painter->clipBoundingRect().adjusted(-widthHalf, -heightHalf, widthHalf, heightHalf);
 #endif
       if (clipRect.contains(x, y))
-        painter->drawPixmap(x-widthHalf, y-heightHalf, mPixmap);
+        painter->drawPixmap(qRound(x-widthHalf), qRound(y-heightHalf), mPixmap);
       break;
     }
     case ssCustom:
@@ -10303,8 +10335,8 @@ void QCPScatterStyle::drawShape(QCPPainter *painter, double x, double y) const
 
 //amalgamation: add datacontainer.cpp
 
-/* including file 'src/plottable.cpp', size 38845                            */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottable.cpp', size 38812                            */
+/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionDecorator
@@ -10342,9 +10374,8 @@ void QCPScatterStyle::drawShape(QCPPainter *painter, double x, double y) const
 QCPSelectionDecorator::QCPSelectionDecorator() :
   mPen(QColor(80, 80, 255), 2.5),
   mBrush(Qt::NoBrush),
-  mScatterStyle(),
   mUsedScatterProperties(QCPScatterStyle::spNone),
-  mPlottable(0)
+  mPlottable(nullptr)
 {
 }
 
@@ -10708,7 +10739,7 @@ QCPAbstractPlottable::QCPAbstractPlottable(QCPAxis *keyAxis, QCPAxis *valueAxis)
   mKeyAxis(keyAxis),
   mValueAxis(valueAxis),
   mSelectable(QCP::stWhole),
-  mSelectionDecorator(0)
+  mSelectionDecorator(nullptr)
 {
   if (keyAxis->parentPlot() != valueAxis->parentPlot())
     qDebug() << Q_FUNC_INFO << "Parent plot of keyAxis is not the same as that of valueAxis.";
@@ -10724,7 +10755,7 @@ QCPAbstractPlottable::~QCPAbstractPlottable()
   if (mSelectionDecorator)
   {
     delete mSelectionDecorator;
-    mSelectionDecorator = 0;
+    mSelectionDecorator = nullptr;
   }
 }
 
@@ -10863,14 +10894,13 @@ void QCPAbstractPlottable::setSelectionDecorator(QCPSelectionDecorator *decorato
   {
     if (decorator->registerWithPlottable(this))
     {
-      if (mSelectionDecorator) // delete old decorator if necessary
-        delete mSelectionDecorator;
+      delete mSelectionDecorator; // delete old decorator if necessary
       mSelectionDecorator = decorator;
     }
   } else if (mSelectionDecorator) // just clear decorator
   {
     delete mSelectionDecorator;
-    mSelectionDecorator = 0;
+    mSelectionDecorator = nullptr;
   }
 }
 
@@ -11170,7 +11200,7 @@ QRect QCPAbstractPlottable::clipRect() const
   if (mKeyAxis && mValueAxis)
     return mKeyAxis.data()->axisRect()->rect() & mValueAxis.data()->axisRect()->rect();
   else
-    return QRect();
+    return {};
 }
 
 /* inherits documentation from base class */
@@ -11276,8 +11306,8 @@ void QCPAbstractPlottable::deselectEvent(bool *selectionStateChanged)
 /* end of 'src/plottable.cpp' */
 
 
-/* including file 'src/item.cpp', size 49271                                 */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/item.cpp', size 49337                                 */
+/* commit 8453feaef00a9107eb505e3d940d7ac70b746431 2020-04-12 14:26:55 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemAnchor
@@ -11337,12 +11367,12 @@ QCPItemAnchor::~QCPItemAnchor()
   foreach (QCPItemPosition *child, mChildrenX.values())
   {
     if (child->parentAnchorX() == this)
-      child->setParentAnchorX(0); // this acts back on this anchor and child removes itself from mChildrenX
+      child->setParentAnchorX(nullptr); // this acts back on this anchor and child removes itself from mChildrenX
   }
   foreach (QCPItemPosition *child, mChildrenY.values())
   {
     if (child->parentAnchorY() == this)
-      child->setParentAnchorY(0); // this acts back on this anchor and child removes itself from mChildrenY
+      child->setParentAnchorY(nullptr); // this acts back on this anchor and child removes itself from mChildrenY
   }
 }
 
@@ -11362,12 +11392,12 @@ QPointF QCPItemAnchor::pixelPosition() const
     } else
     {
       qDebug() << Q_FUNC_INFO << "no valid anchor id set:" << mAnchorId;
-      return QPointF();
+      return {};
     }
   } else
   {
     qDebug() << Q_FUNC_INFO << "no parent item set";
-    return QPointF();
+    return {};
   }
 }
 
@@ -11502,8 +11532,8 @@ QCPItemPosition::QCPItemPosition(QCustomPlot *parentPlot, QCPAbstractItem *paren
   mPositionTypeY(ptAbsolute),
   mKey(0),
   mValue(0),
-  mParentAnchorX(0),
-  mParentAnchorY(0)
+  mParentAnchorX(nullptr),
+  mParentAnchorY(nullptr)
 {
 }
 
@@ -11515,12 +11545,12 @@ QCPItemPosition::~QCPItemPosition()
   foreach (QCPItemPosition *child, mChildrenX.values())
   {
     if (child->parentAnchorX() == this)
-      child->setParentAnchorX(0); // this acts back on this anchor and child removes itself from mChildrenX
+      child->setParentAnchorX(nullptr); // this acts back on this anchor and child removes itself from mChildrenX
   }
   foreach (QCPItemPosition *child, mChildrenY.values())
   {
     if (child->parentAnchorY() == this)
-      child->setParentAnchorY(0); // this acts back on this anchor and child removes itself from mChildrenY
+      child->setParentAnchorY(nullptr); // this acts back on this anchor and child removes itself from mChildrenY
   }
   // unregister as child in parent:
   if (mParentAnchorX)
@@ -11965,7 +11995,7 @@ void QCPItemPosition::setPixelPosition(const QPointF &pixelPosition)
         x -= mParentAnchorX->pixelPosition().x();
       else
         x -= mParentPlot->viewport().left();
-      x /= (double)mParentPlot->viewport().width();
+      x /= double(mParentPlot->viewport().width());
       break;
     }
     case ptAxisRectRatio:
@@ -11976,7 +12006,7 @@ void QCPItemPosition::setPixelPosition(const QPointF &pixelPosition)
           x -= mParentAnchorX->pixelPosition().x();
         else
           x -= mAxisRect.data()->left();
-        x /= (double)mAxisRect.data()->width();
+        x /= double(mAxisRect.data()->width());
       } else
         qDebug() << Q_FUNC_INFO << "Item position type x is ptAxisRectRatio, but no axis rect was defined";
       break;
@@ -12007,7 +12037,7 @@ void QCPItemPosition::setPixelPosition(const QPointF &pixelPosition)
         y -= mParentAnchorY->pixelPosition().y();
       else
         y -= mParentPlot->viewport().top();
-      y /= (double)mParentPlot->viewport().height();
+      y /= double(mParentPlot->viewport().height());
       break;
     }
     case ptAxisRectRatio:
@@ -12018,7 +12048,7 @@ void QCPItemPosition::setPixelPosition(const QPointF &pixelPosition)
           y -= mParentAnchorY->pixelPosition().y();
         else
           y -= mAxisRect.data()->top();
-        y /= (double)mAxisRect.data()->height();
+        y /= double(mAxisRect.data()->height());
       } else
         qDebug() << Q_FUNC_INFO << "Item position type y is ptAxisRectRatio, but no axis rect was defined";
       break;
@@ -12220,7 +12250,7 @@ QCPAbstractItem::QCPAbstractItem(QCustomPlot *parentPlot) :
   parentPlot->registerItem(this);
   
   QList<QCPAxisRect*> rects = parentPlot->axisRects();
-  if (rects.size() > 0)
+  if (!rects.isEmpty())
   {
     setClipToAxisRect(true);
     setClipAxisRect(rects.first());
@@ -12318,13 +12348,13 @@ void QCPAbstractItem::setSelected(bool selected)
 */
 QCPItemPosition *QCPAbstractItem::position(const QString &name) const
 {
-  for (int i=0; i<mPositions.size(); ++i)
+  foreach (QCPItemPosition *position, mPositions)
   {
-    if (mPositions.at(i)->name() == name)
-      return mPositions.at(i);
+    if (position->name() == name)
+      return position;
   }
   qDebug() << Q_FUNC_INFO << "position with name not found:" << name;
-  return 0;
+  return nullptr;
 }
 
 /*!
@@ -12339,13 +12369,13 @@ QCPItemPosition *QCPAbstractItem::position(const QString &name) const
 */
 QCPItemAnchor *QCPAbstractItem::anchor(const QString &name) const
 {
-  for (int i=0; i<mAnchors.size(); ++i)
+  foreach (QCPItemAnchor *anchor, mAnchors)
   {
-    if (mAnchors.at(i)->name() == name)
-      return mAnchors.at(i);
+    if (anchor->name() == name)
+      return anchor;
   }
   qDebug() << Q_FUNC_INFO << "anchor with name not found:" << name;
-  return 0;
+  return nullptr;
 }
 
 /*!
@@ -12358,9 +12388,9 @@ QCPItemAnchor *QCPAbstractItem::anchor(const QString &name) const
 */
 bool QCPAbstractItem::hasAnchor(const QString &name) const
 {
-  for (int i=0; i<mAnchors.size(); ++i)
+  foreach (QCPItemAnchor *anchor, mAnchors)
   {
-    if (mAnchors.at(i)->name() == name)
+    if (anchor->name() == name)
       return true;
   }
   return false;
@@ -12419,13 +12449,13 @@ double QCPAbstractItem::rectDistance(const QRectF &rect, const QPointF &pos, boo
   double result = -1;
 
   // distance to border:
-  QList<QLineF> lines;
-  lines << QLineF(rect.topLeft(), rect.topRight()) << QLineF(rect.bottomLeft(), rect.bottomRight())
-        << QLineF(rect.topLeft(), rect.bottomLeft()) << QLineF(rect.topRight(), rect.bottomRight());
+  const QList<QLineF> lines = QList<QLineF>() << QLineF(rect.topLeft(), rect.topRight()) << QLineF(rect.bottomLeft(), rect.bottomRight())
+                                              << QLineF(rect.topLeft(), rect.bottomLeft()) << QLineF(rect.topRight(), rect.bottomRight());
+  const QCPVector2D posVec(pos);
   double minDistSqr = (std::numeric_limits<double>::max)();
-  for (int i=0; i<lines.size(); ++i)
+  foreach (const QLineF &line, lines)
   {
-    double distSqr = QCPVector2D(pos).distanceSquaredToLine(lines.at(i).p1(), lines.at(i).p2());
+    double distSqr = posVec.distanceSquaredToLine(line.p1(), line.p2());
     if (distSqr < minDistSqr)
       minDistSqr = distSqr;
   }
@@ -12453,7 +12483,7 @@ double QCPAbstractItem::rectDistance(const QRectF &rect, const QPointF &pos, boo
 QPointF QCPAbstractItem::anchorPixelPosition(int anchorId) const
 {
   qDebug() << Q_FUNC_INFO << "called on item which shouldn't have any anchors (this method not reimplemented). anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
@@ -12547,8 +12577,8 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 /* end of 'src/item.cpp' */
 
 
-/* including file 'src/core.cpp', size 126207                                */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/core.cpp', size 125623                                */
+/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCustomPlot
@@ -12858,33 +12888,35 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 */
 QCustomPlot::QCustomPlot(QWidget *parent) :
   QWidget(parent),
-  xAxis(0),
-  yAxis(0),
-  xAxis2(0),
-  yAxis2(0),
-  legend(0),
+  xAxis(nullptr),
+  yAxis(nullptr),
+  xAxis2(nullptr),
+  yAxis2(nullptr),
+  legend(nullptr),
   mBufferDevicePixelRatio(1.0), // will be adapted to primary screen below
-  mPlotLayout(0),
+  mPlotLayout(nullptr),
   mAutoAddPlottableToLegend(true),
   mAntialiasedElements(QCP::aeNone),
   mNotAntialiasedElements(QCP::aeNone),
-  mInteractions(0),
+  mInteractions(QCP::iNone),
   mSelectionTolerance(8),
   mNoAntialiasingOnDrag(false),
   mBackgroundBrush(Qt::white, Qt::SolidPattern),
   mBackgroundScaled(true),
   mBackgroundScaledMode(Qt::KeepAspectRatioByExpanding),
-  mCurrentLayer(0),
+  mCurrentLayer(nullptr),
   mPlottingHints(QCP::phCacheLabels|QCP::phImmediateRefresh),
   mMultiSelectModifier(Qt::ControlModifier),
   mSelectionRectMode(QCP::srmNone),
-  mSelectionRect(0),
+  mSelectionRect(nullptr),
   mOpenGl(false),
   mMouseHasMoved(false),
-  mMouseEventLayerable(0),
-  mMouseSignalLayerable(0),
+  mMouseEventLayerable(nullptr),
+  mMouseSignalLayerable(nullptr),
   mReplotting(false),
   mReplotQueued(false),
+  mReplotTime(0),
+  mReplotTimeAverage(0),
   mOpenGlMultisamples(16),
   mOpenGlAntialiasedElementsBackup(QCP::aeNone),
   mOpenGlCacheLabelsBackup(true)
@@ -12961,10 +12993,10 @@ QCustomPlot::~QCustomPlot()
   if (mPlotLayout)
   {
     delete mPlotLayout;
-    mPlotLayout = 0;
+    mPlotLayout = nullptr;
   }
   
-  mCurrentLayer = 0;
+  mCurrentLayer = nullptr;
   qDeleteAll(mLayers); // don't use removeLayer, because it would prevent the last layer to be removed
   mLayers.clear();
 }
@@ -13274,8 +13306,7 @@ void QCustomPlot::setSelectionRectMode(QCP::SelectionRectMode mode)
 */
 void QCustomPlot::setSelectionRect(QCPSelectionRect *selectionRect)
 {
-  if (mSelectionRect)
-    delete mSelectionRect;
+  delete mSelectionRect;
   
   mSelectionRect = selectionRect;
   
@@ -13403,8 +13434,8 @@ void QCustomPlot::setBufferDevicePixelRatio(double ratio)
   {
 #ifdef QCP_DEVICEPIXELRATIO_SUPPORTED
     mBufferDevicePixelRatio = ratio;
-    for (int i=0; i<mPaintBuffers.size(); ++i)
-      mPaintBuffers.at(i)->setDevicePixelRatio(mBufferDevicePixelRatio);
+    foreach (QSharedPointer<QCPAbstractPaintBuffer> buffer, mPaintBuffers)
+      buffer->setDevicePixelRatio(mBufferDevicePixelRatio);
     // Note: axis label cache has devicePixelRatio as part of cache hash, so no need to manually clear cache here
 #else
     qDebug() << Q_FUNC_INFO << "Device pixel ratios not supported for Qt versions before 5.4";
@@ -13509,7 +13540,7 @@ QCPAbstractPlottable *QCustomPlot::plottable(int index)
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -13526,7 +13557,7 @@ QCPAbstractPlottable *QCustomPlot::plottable()
   {
     return mPlottables.last();
   } else
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -13616,38 +13647,17 @@ QList<QCPAbstractPlottable*> QCustomPlot::selectedPlottables() const
 }
 
 /*!
-  Returns the plottable at the pixel position \a pos. Plottables that only consist of single lines
-  (like graphs) have a tolerance band around them, see \ref setSelectionTolerance. If multiple
-  plottables come into consideration, the one closest to \a pos is returned.
+  Returns any plottable at the pixel position \a pos. Since it can capture all plottables, the
+  return type is the abstract base class of all plottables, QCPAbstractPlottable.
   
-  If \a onlySelectable is true, only plottables that are selectable
-  (QCPAbstractPlottable::setSelectable) are considered.
+  For details, and if you wish to specify a certain plottable type (e.g. QCPGraph), see the
+  template method plottableAt<PlottableType>()
   
-  If there is no plottable at \a pos, the return value is 0.
-  
-  \see itemAt, layoutElementAt
+  \see plottableAt<PlottableType>(), itemAt, layoutElementAt
 */
-QCPAbstractPlottable *QCustomPlot::plottableAt(const QPointF &pos, bool onlySelectable) const
+QCPAbstractPlottable *QCustomPlot::plottableAt(const QPointF &pos, bool onlySelectable, int *dataIndex) const
 {
-  QCPAbstractPlottable *resultPlottable = 0;
-  double resultDistance = mSelectionTolerance; // only regard clicks with distances smaller than mSelectionTolerance as selections, so initialize with that value
-  
-  foreach (QCPAbstractPlottable *plottable, mPlottables)
-  {
-    if (onlySelectable && !plottable->selectable()) // we could have also passed onlySelectable to the selectTest function, but checking here is faster, because we have access to QCPabstractPlottable::selectable
-      continue;
-    if ((plottable->keyAxis()->axisRect()->rect() & plottable->valueAxis()->axisRect()->rect()).contains(pos.toPoint())) // only consider clicks inside the rect that is spanned by the plottable's key/value axes
-    {
-      double currentDistance = plottable->selectTest(pos, false);
-      if (currentDistance >= 0 && currentDistance < resultDistance)
-      {
-        resultPlottable = plottable;
-        resultDistance = currentDistance;
-      }
-    }
-  }
-  
-  return resultPlottable;
+  return plottableAt<QCPAbstractPlottable>(pos, onlySelectable, dataIndex);
 }
 
 /*!
@@ -13674,7 +13684,7 @@ QCPGraph *QCustomPlot::graph(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -13691,7 +13701,7 @@ QCPGraph *QCustomPlot::graph() const
   {
     return mGraphs.last();
   } else
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -13713,12 +13723,12 @@ QCPGraph *QCustomPlot::addGraph(QCPAxis *keyAxis, QCPAxis *valueAxis)
   if (!keyAxis || !valueAxis)
   {
     qDebug() << Q_FUNC_INFO << "can't use default QCustomPlot xAxis or yAxis, because at least one is invalid (has been deleted)";
-    return 0;
+    return nullptr;
   }
   if (keyAxis->parentPlot() != this || valueAxis->parentPlot() != this)
   {
     qDebug() << Q_FUNC_INFO << "passed keyAxis or valueAxis doesn't have this QCustomPlot as parent";
-    return 0;
+    return nullptr;
   }
   
   QCPGraph *newGraph = new QCPGraph(keyAxis, valueAxis);
@@ -13814,7 +13824,7 @@ QCPAbstractItem *QCustomPlot::item(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -13831,7 +13841,7 @@ QCPAbstractItem *QCustomPlot::item() const
   {
     return mItems.last();
   } else
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -13912,39 +13922,17 @@ QList<QCPAbstractItem*> QCustomPlot::selectedItems() const
 }
 
 /*!
-  Returns the item at the pixel position \a pos. Items that only consist of single lines (e.g. \ref
-  QCPItemLine or \ref QCPItemCurve) have a tolerance band around them, see \ref
-  setSelectionTolerance. If multiple items come into consideration, the one closest to \a pos is
-  returned.
+  Returns the item at the pixel position \a pos. Since it can capture all items, the
+  return type is the abstract base class of all items, QCPAbstractItem.
   
-  If \a onlySelectable is true, only items that are selectable (QCPAbstractItem::setSelectable) are
-  considered.
+  For details, and if you wish to specify a certain item type (e.g. QCPItemLine), see the
+  template method itemAt<ItemType>()
   
-  If there is no item at \a pos, the return value is 0.
-  
-  \see plottableAt, layoutElementAt
+  \see itemAt<ItemType>(), plottableAt, layoutElementAt
 */
 QCPAbstractItem *QCustomPlot::itemAt(const QPointF &pos, bool onlySelectable) const
 {
-  QCPAbstractItem *resultItem = 0;
-  double resultDistance = mSelectionTolerance; // only regard clicks with distances smaller than mSelectionTolerance as selections, so initialize with that value
-  
-  foreach (QCPAbstractItem *item, mItems)
-  {
-    if (onlySelectable && !item->selectable()) // we could have also passed onlySelectable to the selectTest function, but checking here is faster, because we have access to QCPAbstractItem::selectable
-      continue;
-    if (!item->clipToAxisRect() || item->clipRect().contains(pos.toPoint())) // only consider clicks inside axis cliprect of the item if actually clipped to it
-    {
-      double currentDistance = item->selectTest(pos, false);
-      if (currentDistance >= 0 && currentDistance < resultDistance)
-      {
-        resultItem = item;
-        resultDistance = currentDistance;
-      }
-    }
-  }
-  
-  return resultItem;
+  return itemAt<QCPAbstractItem>(pos, onlySelectable);
 }
 
 /*!
@@ -13972,7 +13960,7 @@ QCPLayer *QCustomPlot::layer(const QString &name) const
     if (layer->name() == name)
       return layer;
   }
-  return 0;
+  return nullptr;
 }
 
 /*! \overload
@@ -13989,7 +13977,7 @@ QCPLayer *QCustomPlot::layer(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -14120,21 +14108,19 @@ bool QCustomPlot::removeLayer(QCPLayer *layer)
   bool isFirstLayer = removedIndex==0;
   QCPLayer *targetLayer = isFirstLayer ? mLayers.at(removedIndex+1) : mLayers.at(removedIndex-1);
   QList<QCPLayerable*> children = layer->children();
-  if (isFirstLayer) // prepend in reverse order (so order relative to each other stays the same)
-  {
-    for (int i=children.size()-1; i>=0; --i)
-      children.at(i)->moveToLayer(targetLayer, true);
-  } else  // append normally
-  {
-    for (int i=0; i<children.size(); ++i)
-      children.at(i)->moveToLayer(targetLayer, false);
-  }
+  if (isFirstLayer) // prepend in reverse order (such that relative order stays the same)
+    std::reverse(children.begin(), children.end());
+  foreach (QCPLayerable *child, children)
+    child->moveToLayer(targetLayer, isFirstLayer); // prepend if isFirstLayer, otherwise append
+  
   // if removed layer is current layer, change current layer to layer below/above:
   if (layer == mCurrentLayer)
     setCurrentLayer(targetLayer);
+  
   // invalidate the paint buffer that was responsible for this layer:
-  if (!layer->mPaintBuffer.isNull())
-    layer->mPaintBuffer.toStrongRef().data()->setInvalidated();
+  if (QSharedPointer<QCPAbstractPaintBuffer> pb = layer->mPaintBuffer.toStrongRef())
+    pb->setInvalidated();
+  
   // remove layer:
   delete layer;
   mLayers.removeOne(layer);
@@ -14170,10 +14156,10 @@ bool QCustomPlot::moveLayer(QCPLayer *layer, QCPLayer *otherLayer, QCustomPlot::
     mLayers.move(layer->index(), otherLayer->index() + (insertMode==limAbove ? 0:-1));
   
   // invalidate the paint buffers that are responsible for the layers:
-  if (!layer->mPaintBuffer.isNull())
-    layer->mPaintBuffer.toStrongRef().data()->setInvalidated();
-  if (!otherLayer->mPaintBuffer.isNull())
-    otherLayer->mPaintBuffer.toStrongRef().data()->setInvalidated();
+  if (QSharedPointer<QCPAbstractPaintBuffer> pb = layer->mPaintBuffer.toStrongRef())
+    pb->setInvalidated();
+  if (QSharedPointer<QCPAbstractPaintBuffer> pb = otherLayer->mPaintBuffer.toStrongRef())
+    pb->setInvalidated();
   
   updateLayerIndices();
   return true;
@@ -14221,7 +14207,7 @@ QCPAxisRect *QCustomPlot::axisRect(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "invalid axis rect index" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -14300,7 +14286,7 @@ QCPLayoutElement *QCustomPlot::layoutElementAt(const QPointF &pos) const
 */
 QCPAxisRect *QCustomPlot::axisRectAt(const QPointF &pos) const
 {
-  QCPAxisRect *result = 0;
+  QCPAxisRect *result = nullptr;
   QCPLayoutElement *currentElement = mPlotLayout;
   bool searchSubElements = true;
   while (searchSubElements && currentElement)
@@ -14391,7 +14377,7 @@ void QCustomPlot::deselectAll()
   foreach (QCPLayer *layer, mLayers)
   {
     foreach (QCPLayerable *layerable, layer->children())
-      layerable->deselectEvent(0);
+      layerable->deselectEvent(nullptr);
   }
 }
 
@@ -14419,6 +14405,8 @@ void QCustomPlot::deselectAll()
   If a layer is in mode \ref QCPLayer::lmBuffered (\ref QCPLayer::setMode), it is also possible to
   replot only that specific layer via \ref QCPLayer::replot. See the documentation there for
   details.
+  
+  \see replotTime
 */
 void QCustomPlot::replot(QCustomPlot::RefreshPriority refreshPriority)
 {
@@ -14438,21 +14426,50 @@ void QCustomPlot::replot(QCustomPlot::RefreshPriority refreshPriority)
   mReplotQueued = false;
   emit beforeReplot();
   
+# if QT_VERSION < QT_VERSION_CHECK(4, 8, 0)
+  QTime replotTimer;
+  replotTimer.start();
+# else
+  QElapsedTimer replotTimer;
+  replotTimer.start();
+# endif
+  
   updateLayout();
   // draw all layered objects (grid, axes, plottables, items, legend,...) into their buffers:
   setupPaintBuffers();
   foreach (QCPLayer *layer, mLayers)
     layer->drawToPaintBuffer();
-  for (int i=0; i<mPaintBuffers.size(); ++i)
-    mPaintBuffers.at(i)->setInvalidated(false);
+  foreach (QSharedPointer<QCPAbstractPaintBuffer> buffer, mPaintBuffers)
+    buffer->setInvalidated(false);
   
   if ((refreshPriority == rpRefreshHint && mPlottingHints.testFlag(QCP::phImmediateRefresh)) || refreshPriority==rpImmediateRefresh)
     repaint();
   else
     update();
   
+# if QT_VERSION < QT_VERSION_CHECK(4, 8, 0)
+  mReplotTime = replotTimer.elapsed();
+# else
+  mReplotTime = replotTimer.nsecsElapsed()*1e-6;
+# endif
+  if (!qFuzzyIsNull(mReplotTimeAverage))
+    mReplotTimeAverage = mReplotTimeAverage*0.9 + mReplotTime*0.1; // exponential moving average with a time constant of 10 last replots
+  else
+    mReplotTimeAverage = mReplotTime; // no previous replots to average with, so initialize with replot time
+  
   emit afterReplot();
   mReplotting = false;
+}
+
+/*!
+  Returns the time in milliseconds that the last replot took. If \a average is set to true, an
+  exponential moving average over the last couple of replots is returned.
+  
+  \see replot
+*/
+double QCustomPlot::replotTime(bool average) const
+{
+  return average ? mReplotTimeAverage : mReplotTime;
 }
 
 /*!
@@ -14744,7 +14761,7 @@ QSize QCustomPlot::sizeHint() const
 */
 void QCustomPlot::paintEvent(QPaintEvent *event)
 {
-  Q_UNUSED(event);
+  Q_UNUSED(event)
   QCPPainter painter(this);
   if (painter.isActive())
   {
@@ -14752,8 +14769,8 @@ void QCustomPlot::paintEvent(QPaintEvent *event)
     if (mBackgroundBrush.style() != Qt::NoBrush)
       painter.fillRect(mViewport, mBackgroundBrush);
     drawBackground(&painter);
-    for (int bufferIndex = 0; bufferIndex < mPaintBuffers.size(); ++bufferIndex)
-      mPaintBuffers.at(bufferIndex)->draw(&painter);
+    foreach (QSharedPointer<QCPAbstractPaintBuffer> buffer, mPaintBuffers)
+      buffer->draw(&painter);
   }
 }
 
@@ -14814,7 +14831,7 @@ void QCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
     else if (QCPAbstractItem *ai = qobject_cast<QCPAbstractItem*>(candidates.first()))
       emit itemDoubleClick(ai, event);
     else if (QCPLegend *lg = qobject_cast<QCPLegend*>(candidates.first()))
-      emit legendDoubleClick(lg, 0, event);
+      emit legendDoubleClick(lg, nullptr, event);
     else if (QCPAbstractLegendItem *li = qobject_cast<QCPAbstractLegendItem*>(candidates.first()))
       emit legendDoubleClick(li->parentLegend(), li, event);
   }
@@ -14933,10 +14950,10 @@ void QCustomPlot::mouseReleaseEvent(QMouseEvent *event)
     else if (QCPAbstractItem *ai = qobject_cast<QCPAbstractItem*>(mMouseSignalLayerable))
       emit itemClick(ai, event);
     else if (QCPLegend *lg = qobject_cast<QCPLegend*>(mMouseSignalLayerable))
-      emit legendClick(lg, 0, event);
+      emit legendClick(lg, nullptr, event);
     else if (QCPAbstractLegendItem *li = qobject_cast<QCPAbstractLegendItem*>(mMouseSignalLayerable))
       emit legendClick(li->parentLegend(), li, event);
-    mMouseSignalLayerable = 0;
+    mMouseSignalLayerable = nullptr;
   }
   
   if (mSelectionRect && mSelectionRect->isActive()) // Note: if a click was detected above, the selection rect is canceled there
@@ -14949,7 +14966,7 @@ void QCustomPlot::mouseReleaseEvent(QMouseEvent *event)
     if (mMouseEventLayerable)
     {
       mMouseEventLayerable->mouseReleaseEvent(event, mMousePressPos);
-      mMouseEventLayerable = 0;
+      mMouseEventLayerable = nullptr;
     }
   }
   
@@ -14967,12 +14984,18 @@ void QCustomPlot::mouseReleaseEvent(QMouseEvent *event)
 void QCustomPlot::wheelEvent(QWheelEvent *event)
 {
   emit mouseWheel(event);
+  
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  const QPointF pos = event->pos();
+#else
+  const QPointF pos = event->position();
+#endif
+  
   // forward event to layerable under cursor:
-  QList<QCPLayerable*> candidates = layerableListAt(event->pos(), false);
-  for (int i=0; i<candidates.size(); ++i)
+  foreach (QCPLayerable *candidate, layerableListAt(pos, false))
   {
     event->accept(); // default impl of QCPLayerable's mouse events ignore the event, in that case propagate to next candidate in list
-    candidates.at(i)->wheelEvent(event);
+    candidate->wheelEvent(event);
     if (event->isAccepted())
       break;
   }
@@ -15001,7 +15024,7 @@ void QCustomPlot::draw(QCPPainter *painter)
     layer->draw(painter);
   
   /* Debug code to draw all layout element rects
-  foreach (QCPLayoutElement* el, findChildren<QCPLayoutElement*>())
+  foreach (QCPLayoutElement *el, findChildren<QCPLayoutElement*>())
   {
     painter->setBrush(Qt::NoBrush);
     painter->setPen(QPen(QColor(0, 0, 0, 100), 0, Qt::DashLine));
@@ -15116,11 +15139,11 @@ void QCustomPlot::setupPaintBuffers()
   while (mPaintBuffers.size()-1 > bufferIndex)
     mPaintBuffers.removeLast();
   // resize buffers to viewport size and clear contents:
-  for (int i=0; i<mPaintBuffers.size(); ++i)
+  foreach (QSharedPointer<QCPAbstractPaintBuffer> buffer, mPaintBuffers)
   {
-    mPaintBuffers.at(i)->setSize(viewport().size()); // won't do anything if already correct size
-    mPaintBuffers.at(i)->clear(Qt::transparent);
-    mPaintBuffers.at(i)->setInvalidated();
+    buffer->setSize(viewport().size()); // won't do anything if already correct size
+    buffer->clear(Qt::transparent);
+    buffer->setInvalidated();
   }
 }
 
@@ -15154,16 +15177,16 @@ QCPAbstractPaintBuffer *QCustomPlot::createPaintBuffer()
 
   If any buffer is invalidated, a partial replot (\ref QCPLayer::replot) is not allowed and always
   causes a full replot (\ref QCustomPlot::replot) of all layers. This is the case when for example
-  the layer order has changed, new layers were added, layers were removed, or layer modes were
-  changed (\ref QCPLayer::setMode).
+  the layer order has changed, new layers were added or removed, layer modes were changed (\ref
+  QCPLayer::setMode), or layerables were added or removed.
 
   \see QCPAbstractPaintBuffer::setInvalidated
 */
 bool QCustomPlot::hasInvalidatedPaintBuffers()
 {
-  for (int i=0; i<mPaintBuffers.size(); ++i)
+  foreach (QSharedPointer<QCPAbstractPaintBuffer> buffer, mPaintBuffers)
   {
-    if (mPaintBuffers.at(i)->invalidated())
+    if (buffer->invalidated())
       return true;
   }
   return false;
@@ -15257,13 +15280,13 @@ void QCustomPlot::freeOpenGl()
 void QCustomPlot::axisRemoved(QCPAxis *axis)
 {
   if (xAxis == axis)
-    xAxis = 0;
+    xAxis = nullptr;
   if (xAxis2 == axis)
-    xAxis2 = 0;
+    xAxis2 = nullptr;
   if (yAxis == axis)
-    yAxis = 0;
+    yAxis = nullptr;
   if (yAxis2 == axis)
-    yAxis2 = 0;
+    yAxis2 = nullptr;
   
   // Note: No need to take care of range drag axes and range zoom axes, because they are stored in smart pointers
 }
@@ -15276,7 +15299,7 @@ void QCustomPlot::axisRemoved(QCPAxis *axis)
 void QCustomPlot::legendRemoved(QCPLegend *legend)
 {
   if (this->legend == legend)
-    this->legend = 0;
+    this->legend = nullptr;
 }
 
 /*! \internal
@@ -15298,11 +15321,14 @@ void QCustomPlot::legendRemoved(QCPLegend *legend)
 */
 void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event)
 {
+  typedef QPair<QCPAbstractPlottable*, QCPDataSelection> SelectionCandidate;
+  typedef QMultiMap<int, SelectionCandidate> SelectionCandidates; // map key is number of selected data points, so we have selections sorted by size
+  
   bool selectionStateChanged = false;
   
   if (mInteractions.testFlag(QCP::iSelectPlottables))
   {
-    QMap<int, QPair<QCPAbstractPlottable*, QCPDataSelection> > potentialSelections; // map key is number of selected data points, so we have selections sorted by size
+    SelectionCandidates potentialSelections;
     QRectF rectF(rect.normalized());
     if (QCPAxisRect *affectedAxisRect = axisRectAt(rectF.topLeft()))
     {
@@ -15313,7 +15339,7 @@ void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event)
         {
           QCPDataSelection dataSel = plottableInterface->selectTestRect(rectF, true);
           if (!dataSel.isEmpty())
-            potentialSelections.insertMulti(dataSel.dataPointCount(), QPair<QCPAbstractPlottable*, QCPDataSelection>(plottable, dataSel));
+            potentialSelections.insert(dataSel.dataPointCount(), SelectionCandidate(plottable, dataSel));
         }
       }
       
@@ -15322,7 +15348,7 @@ void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event)
         // only leave plottable with most selected points in map, since we will only select a single plottable:
         if (!potentialSelections.isEmpty())
         {
-          QMap<int, QPair<QCPAbstractPlottable*, QCPDataSelection> >::iterator it = potentialSelections.begin();
+          SelectionCandidates::iterator it = potentialSelections.begin();
           while (it != potentialSelections.end()-1) // erase all except last element
             it = potentialSelections.erase(it);
         }
@@ -15348,7 +15374,7 @@ void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event)
       }
       
       // go through selections in reverse (largest selection first) and emit select events:
-      QMap<int, QPair<QCPAbstractPlottable*, QCPDataSelection> >::const_iterator it = potentialSelections.constEnd();
+      SelectionCandidates::const_iterator it = potentialSelections.constEnd();
       while (it != potentialSelections.constBegin())
       {
         --it;
@@ -15387,7 +15413,7 @@ void QCustomPlot::processRectZoom(QRect rect, QMouseEvent *event)
   if (QCPAxisRect *axisRect = axisRectAt(rect.topLeft()))
   {
     QList<QCPAxis*> affectedAxes = QList<QCPAxis*>() << axisRect->rangeZoomAxes(Qt::Horizontal) << axisRect->rangeZoomAxes(Qt::Vertical);
-    affectedAxes.removeAll(static_cast<QCPAxis*>(0));
+    affectedAxes.removeAll(static_cast<QCPAxis*>(nullptr));
     axisRect->zoom(QRectF(rect), affectedAxes);
   }
   replot(rpQueuedReplot); // always replot to make selection rect disappear
@@ -15564,13 +15590,13 @@ void QCustomPlot::updateLayerIndices() const
 QCPLayerable *QCustomPlot::layerableAt(const QPointF &pos, bool onlySelectable, QVariant *selectionDetails) const
 {
   QList<QVariant> details;
-  QList<QCPLayerable*> candidates = layerableListAt(pos, onlySelectable, selectionDetails ? &details : 0);
+  QList<QCPLayerable*> candidates = layerableListAt(pos, onlySelectable, selectionDetails ? &details : nullptr);
   if (selectionDetails && !details.isEmpty())
     *selectionDetails = details.first();
   if (!candidates.isEmpty())
     return candidates.first();
   else
-    return 0;
+    return nullptr;
 }
 
 /*! \internal
@@ -15579,7 +15605,8 @@ QCPLayerable *QCustomPlot::layerableAt(const QPointF &pos, bool onlySelectable, 
   layerables that are selectable will be considered. (Layerable subclasses communicate their
   selectability via the QCPLayerable::selectTest method, by returning -1.)
 
-  The returned list is sorted by the layerable/drawing order. If you only need to know the top-most
+  The returned list is sorted by the layerable/drawing order such that the layerable that appears
+  on top in the plot is at index 0 of the returned list. If you only need to know the top
   layerable, rather use \ref layerableAt.
 
   \a selectionDetails is an output parameter that contains selection specifics of the affected
@@ -15602,7 +15629,7 @@ QList<QCPLayerable*> QCustomPlot::layerableListAt(const QPointF &pos, bool onlyS
       if (!layerables.at(i)->realVisibility())
         continue;
       QVariant details;
-      double dist = layerables.at(i)->selectTest(pos, onlySelectable, selectionDetails ? &details : 0);
+      double dist = layerables.at(i)->selectTest(pos, onlySelectable, selectionDetails ? &details : nullptr);
       if (dist >= 0 && dist < selectionTolerance())
       {
         result.append(layerables.at(i));
@@ -15641,7 +15668,7 @@ bool QCustomPlot::saveRastered(const QString &fileName, int width, int height, d
   {
     case QCP::ruDotsPerMeter: dotsPerMeter = resolution; break;
     case QCP::ruDotsPerCentimeter: dotsPerMeter = resolution*100; break;
-    case QCP::ruDotsPerInch: dotsPerMeter = resolution/0.0254; break;
+    case QCP::ruDotsPerInch: dotsPerMeter = int(resolution/0.0254); break;
   }
   buffer.setDotsPerMeterX(dotsPerMeter); // this is saved together with some image formats, e.g. PNG, and is relevant when opening image in other tools
   buffer.setDotsPerMeterY(dotsPerMeter); // this is saved together with some image formats, e.g. PNG, and is relevant when opening image in other tools
@@ -15745,8 +15772,8 @@ void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)
 
 //amalgamation: add plottable1d.cpp
 
-/* including file 'src/colorgradient.cpp', size 25342                        */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/colorgradient.cpp', size 25255                        */
+/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15769,6 +15796,8 @@ void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)
   configured color stops. This allows to display some portions of the data range as transparent in
   the plot.
   
+  How NaN values are interpreted can be configured with \ref setNanHandling.
+  
   \image html QCPColorGradient.png
   
   The \ref QCPColorGradient(GradientPreset preset) constructor allows directly converting a \ref
@@ -15790,6 +15819,8 @@ void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)
 QCPColorGradient::QCPColorGradient() :
   mLevelCount(350),
   mColorInterpolation(ciRGB),
+  mNanHandling(nhNone),
+  mNanColor(Qt::black),
   mPeriodic(false),
   mColorBufferInvalidated(true)
 {
@@ -15805,6 +15836,8 @@ QCPColorGradient::QCPColorGradient() :
 QCPColorGradient::QCPColorGradient(GradientPreset preset) :
   mLevelCount(350),
   mColorInterpolation(ciRGB),
+  mNanHandling(nhNone),
+  mNanColor(Qt::black),
   mPeriodic(false),
   mColorBufferInvalidated(true)
 {
@@ -15817,6 +15850,8 @@ bool QCPColorGradient::operator==(const QCPColorGradient &other) const
 {
   return ((other.mLevelCount == this->mLevelCount) &&
           (other.mColorInterpolation == this->mColorInterpolation) &&
+          (other.mNanHandling == this ->mNanHandling) &&
+          (other.mNanColor == this->mNanColor) &&
           (other.mPeriodic == this->mPeriodic) &&
           (other.mColorStops == this->mColorStops));
 }
@@ -15887,6 +15922,27 @@ void QCPColorGradient::setColorInterpolation(QCPColorGradient::ColorInterpolatio
 }
 
 /*!
+  Sets how NaNs in the data are displayed in the plot.
+  
+  \see setNanColor
+*/
+void QCPColorGradient::setNanHandling(QCPColorGradient::NanHandling handling)
+{
+  mNanHandling = handling;
+}
+
+/*!
+  Sets the color that NaN data is represented by, if \ref setNanHandling is set
+  to ref nhNanColor.
+  
+  \see setNanHandling
+*/
+void QCPColorGradient::setNanColor(const QColor &color)
+{
+  mNanColor = color;
+}
+
+/*!
   Sets whether data points that are outside the configured data range (e.g. \ref
   QCPColorMap::setDataRange) are colored by periodically repeating the color gradient or whether
   they all have the same color, corresponding to the respective gradient boundary color.
@@ -15921,7 +15977,7 @@ void QCPColorGradient::setPeriodic(bool enabled)
   
   Use the overloaded method to additionally provide alpha map data.
 
-  The QRgb values that are placed in \a scanLine have their r, g and b components premultiplied
+  The QRgb values that are placed in \a scanLine have their r, g, and b components premultiplied
   with alpha (see QImage::Format_ARGB32_Premultiplied).
 */
 void QCPColorGradient::colorize(const double *data, const QCPRange &range, QRgb *scanLine, int n, int dataIndexFactor, bool logarithmic)
@@ -15940,51 +15996,33 @@ void QCPColorGradient::colorize(const double *data, const QCPRange &range, QRgb 
   if (mColorBufferInvalidated)
     updateColorBuffer();
   
-  if (!logarithmic)
+  const bool skipNanCheck = mNanHandling == nhNone;
+  const double posToIndexFactor = !logarithmic ? (mLevelCount-1)/range.size() : (mLevelCount-1)/qLn(range.upper/range.lower);
+  for (int i=0; i<n; ++i)
   {
-    const double posToIndexFactor = (mLevelCount-1)/range.size();
-    if (mPeriodic)
+    const double value = data[dataIndexFactor*i];
+    if (skipNanCheck || !std::isnan(value))
     {
-      for (int i=0; i<n; ++i)
+      int index = int((!logarithmic ? value-range.lower : qLn(value/range.lower)) * posToIndexFactor);
+      if (!mPeriodic)
       {
-        int index = (int)((data[dataIndexFactor*i]-range.lower)*posToIndexFactor) % mLevelCount;
+        index = qBound(0, index, mLevelCount-1);
+      } else
+      {
+        index %= mLevelCount;
         if (index < 0)
           index += mLevelCount;
-        scanLine[i] = mColorBuffer.at(index);
       }
+      scanLine[i] = mColorBuffer.at(index);
     } else
     {
-      for (int i=0; i<n; ++i)
+      switch(mNanHandling)
       {
-        int index = (data[dataIndexFactor*i]-range.lower)*posToIndexFactor;
-        if (index < 0)
-          index = 0;
-        else if (index >= mLevelCount)
-          index = mLevelCount-1;
-        scanLine[i] = mColorBuffer.at(index);
-      }
-    }
-  } else // logarithmic == true
-  {
-    if (mPeriodic)
-    {
-      for (int i=0; i<n; ++i)
-      {
-        int index = (int)(qLn(data[dataIndexFactor*i]/range.lower)/qLn(range.upper/range.lower)*(mLevelCount-1)) % mLevelCount;
-        if (index < 0)
-          index += mLevelCount;
-        scanLine[i] = mColorBuffer.at(index);
-      }
-    } else
-    {
-      for (int i=0; i<n; ++i)
-      {
-        int index = qLn(data[dataIndexFactor*i]/range.lower)/qLn(range.upper/range.lower)*(mLevelCount-1);
-        if (index < 0)
-          index = 0;
-        else if (index >= mLevelCount)
-          index = mLevelCount-1;
-        scanLine[i] = mColorBuffer.at(index);
+      case nhLowestColor: scanLine[i] = mColorBuffer.first(); break;
+      case nhHighestColor: scanLine[i] = mColorBuffer.last(); break;
+      case nhTransparent: scanLine[i] = qRgba(0, 0, 0, 0); break;
+      case nhNanColor: scanLine[i] = mNanColor.rgba(); break;
+      case nhNone: break; // shouldn't happen
       }
     }
   }
@@ -16019,83 +16057,41 @@ void QCPColorGradient::colorize(const double *data, const unsigned char *alpha, 
   if (mColorBufferInvalidated)
     updateColorBuffer();
   
-  if (!logarithmic)
+  const bool skipNanCheck = mNanHandling == nhNone;
+  const double posToIndexFactor = !logarithmic ? (mLevelCount-1)/range.size() : (mLevelCount-1)/qLn(range.upper/range.lower);
+  for (int i=0; i<n; ++i)
   {
-    const double posToIndexFactor = (mLevelCount-1)/range.size();
-    if (mPeriodic)
+    const double value = data[dataIndexFactor*i];
+    if (skipNanCheck || !std::isnan(value))
     {
-      for (int i=0; i<n; ++i)
+      int index = int((!logarithmic ? value-range.lower : qLn(value/range.lower)) * posToIndexFactor);
+      if (!mPeriodic)
       {
-        int index = (int)((data[dataIndexFactor*i]-range.lower)*posToIndexFactor) % mLevelCount;
+        index = qBound(0, index, mLevelCount-1);
+      } else
+      {
+        index %= mLevelCount;
         if (index < 0)
           index += mLevelCount;
-        if (alpha[dataIndexFactor*i] == 255)
-        {
-          scanLine[i] = mColorBuffer.at(index);
-        } else
-        {
-          const QRgb rgb = mColorBuffer.at(index);
-          const float alphaF = alpha[dataIndexFactor*i]/255.0f;
-          scanLine[i] = qRgba(qRed(rgb)*alphaF, qGreen(rgb)*alphaF, qBlue(rgb)*alphaF, qAlpha(rgb)*alphaF);
-        }
+      }
+      if (alpha[dataIndexFactor*i] == 255)
+      {
+        scanLine[i] = mColorBuffer.at(index);
+      } else
+      {
+        const QRgb rgb = mColorBuffer.at(index);
+        const float alphaF = alpha[dataIndexFactor*i]/255.0f;
+        scanLine[i] = qRgba(int(qRed(rgb)*alphaF), int(qGreen(rgb)*alphaF), int(qBlue(rgb)*alphaF), int(qAlpha(rgb)*alphaF)); // also multiply r,g,b with alpha, to conform to Format_ARGB32_Premultiplied
       }
     } else
     {
-      for (int i=0; i<n; ++i)
+      switch(mNanHandling)
       {
-        int index = (data[dataIndexFactor*i]-range.lower)*posToIndexFactor;
-        if (index < 0)
-          index = 0;
-        else if (index >= mLevelCount)
-          index = mLevelCount-1;
-        if (alpha[dataIndexFactor*i] == 255)
-        {
-          scanLine[i] = mColorBuffer.at(index);
-        } else
-        {
-          const QRgb rgb = mColorBuffer.at(index);
-          const float alphaF = alpha[dataIndexFactor*i]/255.0f;
-          scanLine[i] = qRgba(qRed(rgb)*alphaF, qGreen(rgb)*alphaF, qBlue(rgb)*alphaF, qAlpha(rgb)*alphaF);
-        }
-      }
-    }
-  } else // logarithmic == true
-  {
-    if (mPeriodic)
-    {
-      for (int i=0; i<n; ++i)
-      {
-        int index = (int)(qLn(data[dataIndexFactor*i]/range.lower)/qLn(range.upper/range.lower)*(mLevelCount-1)) % mLevelCount;
-        if (index < 0)
-          index += mLevelCount;
-        if (alpha[dataIndexFactor*i] == 255)
-        {
-          scanLine[i] = mColorBuffer.at(index);
-        } else
-        {
-          const QRgb rgb = mColorBuffer.at(index);
-          const float alphaF = alpha[dataIndexFactor*i]/255.0f;
-          scanLine[i] = qRgba(qRed(rgb)*alphaF, qGreen(rgb)*alphaF, qBlue(rgb)*alphaF, qAlpha(rgb)*alphaF);
-        }
-      }
-    } else
-    {
-      for (int i=0; i<n; ++i)
-      {
-        int index = qLn(data[dataIndexFactor*i]/range.lower)/qLn(range.upper/range.lower)*(mLevelCount-1);
-        if (index < 0)
-          index = 0;
-        else if (index >= mLevelCount)
-          index = mLevelCount-1;
-        if (alpha[dataIndexFactor*i] == 255)
-        {
-          scanLine[i] = mColorBuffer.at(index);
-        } else
-        {
-          const QRgb rgb = mColorBuffer.at(index);
-          const float alphaF = alpha[dataIndexFactor*i]/255.0f;
-          scanLine[i] = qRgba(qRed(rgb)*alphaF, qGreen(rgb)*alphaF, qBlue(rgb)*alphaF, qAlpha(rgb)*alphaF);
-        }
+      case nhLowestColor: scanLine[i] = mColorBuffer.first(); break;
+      case nhHighestColor: scanLine[i] = mColorBuffer.last(); break;
+      case nhTransparent: scanLine[i] = qRgba(0, 0, 0, 0); break;
+      case nhNanColor: scanLine[i] = mNanColor.rgba(); break;
+      case nhNone: break; // shouldn't happen
       }
     }
   }
@@ -16118,22 +16114,30 @@ QRgb QCPColorGradient::color(double position, const QCPRange &range, bool logari
   // If you change something here, make sure to also adapt ::colorize()
   if (mColorBufferInvalidated)
     updateColorBuffer();
-  int index = 0;
-  if (!logarithmic)
-    index = (position-range.lower)*(mLevelCount-1)/range.size();
-  else
-    index = qLn(position/range.lower)/qLn(range.upper/range.lower)*(mLevelCount-1);
-  if (mPeriodic)
+  
+  const bool skipNanCheck = mNanHandling == nhNone;
+  if (!skipNanCheck && std::isnan(position))
   {
-    index = index % mLevelCount;
-    if (index < 0)
-      index += mLevelCount;
+    switch(mNanHandling)
+    {
+    case nhLowestColor: return mColorBuffer.first();
+    case nhHighestColor: return mColorBuffer.last();
+    case nhTransparent: return qRgba(0, 0, 0, 0);
+    case nhNanColor: return mNanColor.rgba();
+    case nhNone: return qRgba(0, 0, 0, 0); // shouldn't happen
+    }
+  }
+  
+  const double posToIndexFactor = !logarithmic ? (mLevelCount-1)/range.size() : (mLevelCount-1)/qLn(range.upper/range.lower);
+  int index = int((!logarithmic ? position-range.lower : qLn(position/range.lower)) * posToIndexFactor);
+  if (!mPeriodic)
+  {
+    index = qBound(0, index, mLevelCount-1);
   } else
   {
+    index %= mLevelCount;
     if (index < 0)
-      index = 0;
-    else if (index >= mLevelCount)
-      index = mLevelCount-1;
+      index += mLevelCount;
   }
   return mColorBuffer.at(index);
 }
@@ -16301,7 +16305,7 @@ void QCPColorGradient::updateColorBuffer()
     mColorBuffer.resize(mLevelCount);
   if (mColorStops.size() > 1)
   {
-    double indexToPosFactor = 1.0/(double)(mLevelCount-1);
+    double indexToPosFactor = 1.0/double(mLevelCount-1);
     const bool useAlpha = stopsUseAlpha();
     for (int i=0; i<mLevelCount; ++i)
     {
@@ -16312,17 +16316,23 @@ void QCPColorGradient::updateColorBuffer()
         if (useAlpha)
         {
           const QColor col = (it-1).value();
-          const float alphaPremultiplier = col.alpha()/255.0f; // since we use QImage::Format_ARGB32_Premultiplied
-          mColorBuffer[i] = qRgba(col.red()*alphaPremultiplier, col.green()*alphaPremultiplier, col.blue()*alphaPremultiplier, col.alpha());
+          const double alphaPremultiplier = col.alpha()/255.0; // since we use QImage::Format_ARGB32_Premultiplied
+          mColorBuffer[i] = qRgba(int(col.red()*alphaPremultiplier),
+                                  int(col.green()*alphaPremultiplier),
+                                  int(col.blue()*alphaPremultiplier),
+                                  col.alpha());
         } else
           mColorBuffer[i] = (it-1).value().rgba();
       } else if (it == mColorStops.constBegin()) // position is on or before first stop, use color of first stop
       {
         if (useAlpha)
         {
-          const QColor col = it.value();
-          const float alphaPremultiplier = col.alpha()/255.0f; // since we use QImage::Format_ARGB32_Premultiplied
-          mColorBuffer[i] = qRgba(col.red()*alphaPremultiplier, col.green()*alphaPremultiplier, col.blue()*alphaPremultiplier, col.alpha());
+          const QColor &col = it.value();
+          const double alphaPremultiplier = col.alpha()/255.0; // since we use QImage::Format_ARGB32_Premultiplied
+          mColorBuffer[i] = qRgba(int(col.red()*alphaPremultiplier),
+                                  int(col.green()*alphaPremultiplier),
+                                  int(col.blue()*alphaPremultiplier),
+                                  col.alpha());
         } else
           mColorBuffer[i] = it.value().rgba();
       } else // position is in between stops (or on an intermediate stop), interpolate color
@@ -16336,17 +16346,17 @@ void QCPColorGradient::updateColorBuffer()
           {
             if (useAlpha)
             {
-              const int alpha = (1-t)*low.value().alpha() + t*high.value().alpha();
-              const float alphaPremultiplier = alpha/255.0f; // since we use QImage::Format_ARGB32_Premultiplied
-              mColorBuffer[i] = qRgba(((1-t)*low.value().red() + t*high.value().red())*alphaPremultiplier,
-                                      ((1-t)*low.value().green() + t*high.value().green())*alphaPremultiplier,
-                                      ((1-t)*low.value().blue() + t*high.value().blue())*alphaPremultiplier,
+              const int alpha = int((1-t)*low.value().alpha() + t*high.value().alpha());
+              const double alphaPremultiplier = alpha/255.0; // since we use QImage::Format_ARGB32_Premultiplied
+              mColorBuffer[i] = qRgba(int( ((1-t)*low.value().red() + t*high.value().red())*alphaPremultiplier ),
+                                      int( ((1-t)*low.value().green() + t*high.value().green())*alphaPremultiplier ),
+                                      int( ((1-t)*low.value().blue() + t*high.value().blue())*alphaPremultiplier ),
                                       alpha);
             } else
             {
-              mColorBuffer[i] = qRgb(((1-t)*low.value().red() + t*high.value().red()),
-                                     ((1-t)*low.value().green() + t*high.value().green()),
-                                     ((1-t)*low.value().blue() + t*high.value().blue()));
+              mColorBuffer[i] = qRgb(int( ((1-t)*low.value().red() + t*high.value().red()) ),
+                                     int( ((1-t)*low.value().green() + t*high.value().green()) ),
+                                     int( ((1-t)*low.value().blue() + t*high.value().blue())) );
             }
             break;
           }
@@ -16369,8 +16379,8 @@ void QCPColorGradient::updateColorBuffer()
               const QRgb rgb = QColor::fromHsvF(hue,
                                                 (1-t)*lowHsv.saturationF() + t*highHsv.saturationF(),
                                                 (1-t)*lowHsv.valueF() + t*highHsv.valueF()).rgb();
-              const float alpha = (1-t)*lowHsv.alphaF() + t*highHsv.alphaF();
-              mColorBuffer[i] = qRgba(qRed(rgb)*alpha, qGreen(rgb)*alpha, qBlue(rgb)*alpha, 255*alpha);
+              const double alpha = (1-t)*lowHsv.alphaF() + t*highHsv.alphaF();
+              mColorBuffer[i] = qRgba(int(qRed(rgb)*alpha), int(qGreen(rgb)*alpha), int(qBlue(rgb)*alpha), int(255*alpha));
             }
             else
             {
@@ -16386,8 +16396,8 @@ void QCPColorGradient::updateColorBuffer()
   } else if (mColorStops.size() == 1)
   {
     const QRgb rgb = mColorStops.constBegin().value().rgb();
-    const float alpha = mColorStops.constBegin().value().alphaF();
-    mColorBuffer.fill(qRgba(qRed(rgb)*alpha, qGreen(rgb)*alpha, qBlue(rgb)*alpha, 255*alpha));
+    const double alpha = mColorStops.constBegin().value().alphaF();
+    mColorBuffer.fill(qRgba(int(qRed(rgb)*alpha), int(qGreen(rgb)*alpha), int(qBlue(rgb)*alpha), int(255*alpha)));
   } else // mColorStops is empty, fill color buffer with black
   {
     mColorBuffer.fill(qRgb(0, 0, 0));
@@ -16397,8 +16407,8 @@ void QCPColorGradient::updateColorBuffer()
 /* end of 'src/colorgradient.cpp' */
 
 
-/* including file 'src/selectiondecorator-bracket.cpp', size 12313           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/selectiondecorator-bracket.cpp', size 12308           */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionDecoratorBracket
@@ -16540,12 +16550,12 @@ void QCPSelectionDecoratorBracket::drawBracket(QCPPainter *painter, int directio
     }
     case bsHalfEllipse:
     {
-      painter->drawArc(-mBracketWidth*0.5, -mBracketHeight*0.5, mBracketWidth, mBracketHeight, -90*16, -180*16*direction);
+      painter->drawArc(QRectF(-mBracketWidth*0.5, -mBracketHeight*0.5, mBracketWidth, mBracketHeight), -90*16, -180*16*direction);
       break;
     }
     case bsEllipse:
     {
-      painter->drawEllipse(-mBracketWidth*0.5, -mBracketHeight*0.5, mBracketWidth, mBracketHeight);
+      painter->drawEllipse(QRectF(-mBracketWidth*0.5, -mBracketHeight*0.5, mBracketWidth, mBracketHeight));
       break;
     }
     case bsPlus:
@@ -16645,7 +16655,7 @@ double QCPSelectionDecoratorBracket::getTangentAngle(const QCPPlottableInterface
     pointsAverage += points[i];
     currentIndex += direction;
   }
-  pointsAverage /= (double)averageCount;
+  pointsAverage /= double(averageCount);
   
   // calculate slope of linear regression through points:
   double numSum = 0;
@@ -16673,18 +16683,18 @@ QPointF QCPSelectionDecoratorBracket::getPixelCoordinates(const QCPPlottableInte
 {
   QCPAxis *keyAxis = mPlottable->keyAxis();
   QCPAxis *valueAxis = mPlottable->valueAxis();
-  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return QPointF(0, 0); }
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return {0, 0}; }
   
   if (keyAxis->orientation() == Qt::Horizontal)
-    return QPointF(keyAxis->coordToPixel(interface1d->dataMainKey(dataIndex)), valueAxis->coordToPixel(interface1d->dataMainValue(dataIndex)));
+    return {keyAxis->coordToPixel(interface1d->dataMainKey(dataIndex)), valueAxis->coordToPixel(interface1d->dataMainValue(dataIndex))};
   else
-    return QPointF(valueAxis->coordToPixel(interface1d->dataMainValue(dataIndex)), keyAxis->coordToPixel(interface1d->dataMainKey(dataIndex)));
+    return {valueAxis->coordToPixel(interface1d->dataMainValue(dataIndex)), keyAxis->coordToPixel(interface1d->dataMainKey(dataIndex))};
 }
 /* end of 'src/selectiondecorator-bracket.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-axisrect.cpp', size 47584 */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200  */
+/* including file 'src/layoutelements/layoutelement-axisrect.cpp', size 47184 */
+/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200  */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16863,11 +16873,10 @@ QCPAxisRect::QCPAxisRect(QCustomPlot *parentPlot, bool setupDefaultAxes) :
 QCPAxisRect::~QCPAxisRect()
 {
   delete mInsetLayout;
-  mInsetLayout = 0;
+  mInsetLayout = nullptr;
   
-  QList<QCPAxis*> axesList = axes();
-  for (int i=0; i<axesList.size(); ++i)
-    removeAxis(axesList.at(i));
+  foreach (QCPAxis *axis, axes())
+    removeAxis(axis);
 }
 
 /*!
@@ -16894,7 +16903,7 @@ QCPAxis *QCPAxisRect::axis(QCPAxis::AxisType type, int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "Axis index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -16967,20 +16976,20 @@ QCPAxis *QCPAxisRect::addAxis(QCPAxis::AxisType type, QCPAxis *axis)
     if (newAxis->axisType() != type)
     {
       qDebug() << Q_FUNC_INFO << "passed axis has different axis type than specified in type parameter";
-      return 0;
+      return nullptr;
     }
     if (newAxis->axisRect() != this)
     {
       qDebug() << Q_FUNC_INFO << "passed axis doesn't have this axis rect as parent axis rect";
-      return 0;
+      return nullptr;
     }
     if (axes().contains(newAxis))
     {
       qDebug() << Q_FUNC_INFO << "passed axis is already owned by this axis rect";
-      return 0;
+      return nullptr;
     }
   }
-  if (mAxes[type].size() > 0) // multiple axes on one side, add half-bar axis ending to additional axes with offset
+  if (!mAxes[type].isEmpty()) // multiple axes on one side, add half-bar axis ending to additional axes with offset
   {
     bool invert = (type == QCPAxis::atRight) || (type == QCPAxis::atBottom);
     newAxis->setLowerEnding(QCPLineEnding(QCPLineEnding::esHalfBar, 6, 10, !invert));
@@ -17179,10 +17188,10 @@ QList<QCPAbstractPlottable*> QCPAxisRect::plottables() const
 {
   // Note: don't append all QCPAxis::plottables() into a list, because we might get duplicate entries
   QList<QCPAbstractPlottable*> result;
-  for (int i=0; i<mParentPlot->mPlottables.size(); ++i)
+  foreach (QCPAbstractPlottable *plottable, mParentPlot->mPlottables)
   {
-    if (mParentPlot->mPlottables.at(i)->keyAxis()->axisRect() == this || mParentPlot->mPlottables.at(i)->valueAxis()->axisRect() == this)
-      result.append(mParentPlot->mPlottables.at(i));
+    if (plottable->keyAxis()->axisRect() == this || plottable->valueAxis()->axisRect() == this)
+      result.append(plottable);
   }
   return result;
 }
@@ -17199,10 +17208,10 @@ QList<QCPGraph*> QCPAxisRect::graphs() const
 {
   // Note: don't append all QCPAxis::graphs() into a list, because we might get duplicate entries
   QList<QCPGraph*> result;
-  for (int i=0; i<mParentPlot->mGraphs.size(); ++i)
+  foreach (QCPGraph *graph, mParentPlot->mGraphs)
   {
-    if (mParentPlot->mGraphs.at(i)->keyAxis()->axisRect() == this || mParentPlot->mGraphs.at(i)->valueAxis()->axisRect() == this)
-      result.append(mParentPlot->mGraphs.at(i));
+    if (graph->keyAxis()->axisRect() == this || graph->valueAxis()->axisRect() == this)
+      result.append(graph);
   }
   return result;
 }
@@ -17222,21 +17231,20 @@ QList<QCPAbstractItem *> QCPAxisRect::items() const
   // Note: don't just append all QCPAxis::items() into a list, because we might get duplicate entries
   //       and miss those items that have this axis rect as clipAxisRect.
   QList<QCPAbstractItem*> result;
-  for (int itemId=0; itemId<mParentPlot->mItems.size(); ++itemId)
+  foreach (QCPAbstractItem *item, mParentPlot->mItems)
   {
-    if (mParentPlot->mItems.at(itemId)->clipAxisRect() == this)
+    if (item->clipAxisRect() == this)
     {
-      result.append(mParentPlot->mItems.at(itemId));
+      result.append(item);
       continue;
     }
-    QList<QCPItemPosition*> positions = mParentPlot->mItems.at(itemId)->positions();
-    for (int posId=0; posId<positions.size(); ++posId)
+    foreach (QCPItemPosition *position, item->positions())
     {
-      if (positions.at(posId)->axisRect() == this ||
-          positions.at(posId)->keyAxis()->axisRect() == this ||
-          positions.at(posId)->valueAxis()->axisRect() == this)
+      if (position->axisRect() == this ||
+          position->keyAxis()->axisRect() == this ||
+          position->valueAxis()->axisRect() == this)
       {
-        result.append(mParentPlot->mItems.at(itemId));
+        result.append(item);
         break;
       }
     }
@@ -17262,9 +17270,8 @@ void QCPAxisRect::update(UpdatePhase phase)
   {
     case upPreparation:
     {
-      QList<QCPAxis*> allAxes = axes();
-      for (int i=0; i<allAxes.size(); ++i)
-        allAxes.at(i)->setupTickVectors();
+      foreach (QCPAxis *axis, axes())
+        axis->setupTickVectors();
       break;
     }
     case upLayout:
@@ -17392,9 +17399,9 @@ void QCPAxisRect::setBackgroundScaledMode(Qt::AspectRatioMode mode)
 QCPAxis *QCPAxisRect::rangeDragAxis(Qt::Orientation orientation)
 {
   if (orientation == Qt::Horizontal)
-    return mRangeDragHorzAxis.isEmpty() ? 0 : mRangeDragHorzAxis.first().data();
+    return mRangeDragHorzAxis.isEmpty() ? nullptr : mRangeDragHorzAxis.first().data();
   else
-    return mRangeDragVertAxis.isEmpty() ? 0 : mRangeDragVertAxis.first().data();
+    return mRangeDragVertAxis.isEmpty() ? nullptr : mRangeDragVertAxis.first().data();
 }
 
 /*!
@@ -17406,9 +17413,9 @@ QCPAxis *QCPAxisRect::rangeDragAxis(Qt::Orientation orientation)
 QCPAxis *QCPAxisRect::rangeZoomAxis(Qt::Orientation orientation)
 {
   if (orientation == Qt::Horizontal)
-    return mRangeZoomHorzAxis.isEmpty() ? 0 : mRangeZoomHorzAxis.first().data();
+    return mRangeZoomHorzAxis.isEmpty() ? nullptr : mRangeZoomHorzAxis.first().data();
   else
-    return mRangeZoomVertAxis.isEmpty() ? 0 : mRangeZoomVertAxis.first().data();
+    return mRangeZoomVertAxis.isEmpty() ? nullptr : mRangeZoomVertAxis.first().data();
 }
 
 /*!
@@ -17421,17 +17428,17 @@ QList<QCPAxis*> QCPAxisRect::rangeDragAxes(Qt::Orientation orientation)
   QList<QCPAxis*> result;
   if (orientation == Qt::Horizontal)
   {
-    for (int i=0; i<mRangeDragHorzAxis.size(); ++i)
+    foreach (QPointer<QCPAxis> axis, mRangeDragHorzAxis)
     {
-      if (!mRangeDragHorzAxis.at(i).isNull())
-        result.append(mRangeDragHorzAxis.at(i).data());
+      if (!axis.isNull())
+        result.append(axis.data());
     }
   } else
   {
-    for (int i=0; i<mRangeDragVertAxis.size(); ++i)
+    foreach (QPointer<QCPAxis> axis, mRangeDragVertAxis)
     {
-      if (!mRangeDragVertAxis.at(i).isNull())
-        result.append(mRangeDragVertAxis.at(i).data());
+      if (!axis.isNull())
+        result.append(axis.data());
     }
   }
   return result;
@@ -17447,17 +17454,17 @@ QList<QCPAxis*> QCPAxisRect::rangeZoomAxes(Qt::Orientation orientation)
   QList<QCPAxis*> result;
   if (orientation == Qt::Horizontal)
   {
-    for (int i=0; i<mRangeZoomHorzAxis.size(); ++i)
+    foreach (QPointer<QCPAxis> axis, mRangeZoomHorzAxis)
     {
-      if (!mRangeZoomHorzAxis.at(i).isNull())
-        result.append(mRangeZoomHorzAxis.at(i).data());
+      if (!axis.isNull())
+        result.append(axis.data());
     }
   } else
   {
-    for (int i=0; i<mRangeZoomVertAxis.size(); ++i)
+    foreach (QPointer<QCPAxis> axis, mRangeZoomVertAxis)
     {
-      if (!mRangeZoomVertAxis.at(i).isNull())
-        result.append(mRangeZoomVertAxis.at(i).data());
+      if (!axis.isNull())
+        result.append(axis.data());
     }
   }
   return result;
@@ -17480,9 +17487,9 @@ double QCPAxisRect::rangeZoomFactor(Qt::Orientation orientation)
   default, the horizontal axis is the bottom axis (xAxis) and the vertical axis
   is the left axis (yAxis).
   
-  To disable range dragging entirely, pass 0 as \a orientations or remove \ref QCP::iRangeDrag from \ref
-  QCustomPlot::setInteractions. To enable range dragging for both directions, pass <tt>Qt::Horizontal |
-  Qt::Vertical</tt> as \a orientations.
+  To disable range dragging entirely, pass \c nullptr as \a orientations or remove \ref
+  QCP::iRangeDrag from \ref QCustomPlot::setInteractions. To enable range dragging for both
+  directions, pass <tt>Qt::Horizontal | Qt::Vertical</tt> as \a orientations.
   
   In addition to setting \a orientations to a non-zero value, make sure \ref QCustomPlot::setInteractions
   contains \ref QCP::iRangeDrag to enable the range dragging interaction.
@@ -17500,9 +17507,9 @@ void QCPAxisRect::setRangeDrag(Qt::Orientations orientations)
   QCPAxis *vertical). By default, the horizontal axis is the bottom axis (xAxis) and the vertical
   axis is the left axis (yAxis).
 
-  To disable range zooming entirely, pass 0 as \a orientations or remove \ref QCP::iRangeZoom from \ref
-  QCustomPlot::setInteractions. To enable range zooming for both directions, pass <tt>Qt::Horizontal |
-  Qt::Vertical</tt> as \a orientations.
+  To disable range zooming entirely, pass \c nullptr as \a orientations or remove \ref
+  QCP::iRangeZoom from \ref QCustomPlot::setInteractions. To enable range zooming for both
+  directions, pass <tt>Qt::Horizontal | Qt::Vertical</tt> as \a orientations.
   
   In addition to setting \a orientations to a non-zero value, make sure \ref QCustomPlot::setInteractions
   contains \ref QCP::iRangeZoom to enable the range zooming interaction.
@@ -17517,7 +17524,8 @@ void QCPAxisRect::setRangeZoom(Qt::Orientations orientations)
 /*! \overload
   
   Sets the axes whose range will be dragged when \ref setRangeDrag enables mouse range dragging on
-  the QCustomPlot widget. Pass 0 if no axis shall be dragged in the respective orientation.
+  the QCustomPlot widget. Pass \c nullptr if no axis shall be dragged in the respective
+  orientation.
 
   Use the overload taking a list of axes, if multiple axes (more than one per orientation) shall
   react to dragging interactions.
@@ -17586,7 +17594,7 @@ void QCPAxisRect::setRangeDragAxes(QList<QCPAxis*> horizontal, QList<QCPAxis*> v
 
 /*!
   Sets the axes whose range will be zoomed when \ref setRangeZoom enables mouse wheel zooming on
-  the QCustomPlot widget. Pass 0 if no axis shall be zoomed in the respective orientation.
+  the QCustomPlot widget. Pass \c nullptr if no axis shall be zoomed in the respective orientation.
 
   The two axes can be zoomed with different strengths, when different factors are passed to \ref
   setRangeZoomFactor(double horizontalFactor, double verticalFactor).
@@ -17764,7 +17772,7 @@ int QCPAxisRect::calculateAutoMargin(QCP::MarginSide side)
   
   // note: only need to look at the last (outer most) axis to determine the total margin, due to updateAxisOffset call
   const QList<QCPAxis*> axesList = mAxes.value(QCPAxis::marginSideToAxisType(side));
-  if (axesList.size() > 0)
+  if (!axesList.isEmpty())
     return axesList.last()->offset() + axesList.last()->calculateMargin();
   else
     return 0;
@@ -17822,11 +17830,11 @@ void QCPAxisRect::mousePressEvent(QMouseEvent *event, const QVariant &details)
     if (mParentPlot->interactions().testFlag(QCP::iRangeDrag))
     {
       mDragStartHorzRange.clear();
-      for (int i=0; i<mRangeDragHorzAxis.size(); ++i)
-        mDragStartHorzRange.append(mRangeDragHorzAxis.at(i).isNull() ? QCPRange() : mRangeDragHorzAxis.at(i)->range());
+      foreach (QPointer<QCPAxis> axis, mRangeDragHorzAxis)
+        mDragStartHorzRange.append(axis.isNull() ? QCPRange() : axis->range());
       mDragStartVertRange.clear();
-      for (int i=0; i<mRangeDragVertAxis.size(); ++i)
-        mDragStartVertRange.append(mRangeDragVertAxis.at(i).isNull() ? QCPRange() : mRangeDragVertAxis.at(i)->range());
+      foreach (QPointer<QCPAxis> axis, mRangeDragVertAxis)
+        mDragStartVertRange.append(axis.isNull() ? QCPRange() : axis->range());
     }
   }
 }
@@ -17918,37 +17926,49 @@ void QCPAxisRect::mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos)
   dependent on the mouse wheel delta (which direction the wheel was rotated) to provide a natural
   zooming feel. The Strength of the zoom can be controlled via \ref setRangeZoomFactor.
   
-  Note, that event->delta() is usually +/-120 for single rotation steps. However, if the mouse
-  wheel is turned rapidly, many steps may bunch up to one event, so the event->delta() may then be
-  multiples of 120. This is taken into account here, by calculating \a wheelSteps and using it as
-  exponent of the range zoom factor. This takes care of the wheel direction automatically, by
-  inverting the factor, when the wheel step is negative (f^-1 = 1/f).
+  Note, that event->angleDelta() is usually +/-120 for single rotation steps. However, if the mouse
+  wheel is turned rapidly, many steps may bunch up to one event, so the delta may then be multiples
+  of 120. This is taken into account here, by calculating \a wheelSteps and using it as exponent of
+  the range zoom factor. This takes care of the wheel direction automatically, by inverting the
+  factor, when the wheel step is negative (f^-1 = 1/f).
 */
 void QCPAxisRect::wheelEvent(QWheelEvent *event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+  const double delta = event->delta();
+#else
+  const double delta = event->angleDelta().y();
+#endif
+  
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+  const QPointF pos = event->pos();
+#else
+  const QPointF pos = event->position();
+#endif
+  
   // Mouse range zooming interaction:
   if (mParentPlot->interactions().testFlag(QCP::iRangeZoom))
   {
     if (mRangeZoom != 0)
     {
       double factor;
-      double wheelSteps = event->delta()/120.0; // a single step delta is +/-120 usually
+      double wheelSteps = delta/120.0; // a single step delta is +/-120 usually
       if (mRangeZoom.testFlag(Qt::Horizontal))
       {
         factor = qPow(mRangeZoomFactorHorz, wheelSteps);
-        for (int i=0; i<mRangeZoomHorzAxis.size(); ++i)
+        foreach (QPointer<QCPAxis> axis, mRangeZoomHorzAxis)
         {
-          if (!mRangeZoomHorzAxis.at(i).isNull())
-            mRangeZoomHorzAxis.at(i)->scaleRange(factor, mRangeZoomHorzAxis.at(i)->pixelToCoord(event->pos().x()));
+          if (!axis.isNull())
+            axis->scaleRange(factor, axis->pixelToCoord(pos.x()));
         }
       }
       if (mRangeZoom.testFlag(Qt::Vertical))
       {
         factor = qPow(mRangeZoomFactorVert, wheelSteps);
-        for (int i=0; i<mRangeZoomVertAxis.size(); ++i)
+        foreach (QPointer<QCPAxis> axis, mRangeZoomVertAxis)
         {
-          if (!mRangeZoomVertAxis.at(i).isNull())
-            mRangeZoomVertAxis.at(i)->scaleRange(factor, mRangeZoomVertAxis.at(i)->pixelToCoord(event->pos().y()));
+          if (!axis.isNull())
+            axis->scaleRange(factor, axis->pixelToCoord(pos.y()));
         }
       }
       mParentPlot->replot();
@@ -17958,8 +17978,8 @@ void QCPAxisRect::wheelEvent(QWheelEvent *event)
 /* end of 'src/layoutelements/layoutelement-axisrect.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-legend.cpp', size 31153  */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/layoutelements/layoutelement-legend.cpp', size 31744  */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAbstractLegendItem
@@ -18225,9 +18245,9 @@ void QCPPlottableLegendItem::draw(QCPPainter *painter)
   if (!mPlottable) return;
   painter->setFont(getFont());
   painter->setPen(QPen(getTextColor()));
-  QSizeF iconSize = mParentLegend->iconSize();
-  QRectF textRect = painter->fontMetrics().boundingRect(0, 0, 0, iconSize.height(), Qt::TextDontClip, mPlottable->name());
-  QRectF iconRect(mRect.topLeft(), iconSize);
+  QSize iconSize = mParentLegend->iconSize();
+  QRect textRect = painter->fontMetrics().boundingRect(0, 0, 0, iconSize.height(), Qt::TextDontClip, mPlottable->name());
+  QRect iconRect(mRect.topLeft(), iconSize);
   int textHeight = qMax(textRect.height(), iconSize.height());  // if text has smaller height than icon, center text vertically in icon height, else align tops
   painter->drawText(mRect.x()+iconSize.width()+mParentLegend->iconTextPadding(), mRect.y(), textRect.width(), textHeight, Qt::TextDontClip, mPlottable->name());
   // draw icon:
@@ -18255,7 +18275,7 @@ void QCPPlottableLegendItem::draw(QCPPainter *painter)
 */
 QSize QCPPlottableLegendItem::minimumOuterSizeHint() const
 {
-  if (!mPlottable) return QSize();
+  if (!mPlottable) return {};
   QSize result(0, 0);
   QRect textRect;
   QFontMetrics fontMetrics(getFont());
@@ -18324,7 +18344,8 @@ QSize QCPPlottableLegendItem::minimumOuterSizeHint() const
   Note that by default, QCustomPlot already contains a legend ready to be used as \ref
   QCustomPlot::legend
 */
-QCPLegend::QCPLegend()
+QCPLegend::QCPLegend() :
+  mIconTextPadding{}
 {
   setFillOrder(QCPLayoutGrid::foRowsFirst);
   setWrap(0);
@@ -18600,7 +18621,8 @@ void QCPLegend::setSelectedTextColor(const QColor &color)
 }
 
 /*!
-  Returns the item with index \a i.
+  Returns the item with index \a i. If non-legend items were added to the legend, and the element
+  at the specified cell index is not a QCPAbstractLegendItem, returns 0.
 
   Note that the linear index depends on the current fill order (\ref setFillOrder).
 
@@ -18627,11 +18649,13 @@ QCPPlottableLegendItem *QCPLegend::itemWithPlottable(const QCPAbstractPlottable 
         return pli;
     }
   }
-  return 0;
+  return nullptr;
 }
 
 /*!
-  Returns the number of items currently in the legend.
+  Returns the number of items currently in the legend. It is identical to the base class
+  QCPLayoutGrid::elementCount(), and unlike the other "item" interface methods of QCPLegend,
+  doesn't only address elements which can be cast to QCPAbstractLegendItem.
 
   Note that if empty cells are in the legend (e.g. by calling methods of the \ref QCPLayoutGrid
   base class which allows creating empty cells), they are included in the returned count.
@@ -18734,8 +18758,12 @@ bool QCPLegend::removeItem(QCPAbstractLegendItem *item)
 */
 void QCPLegend::clearItems()
 {
-  for (int i=itemCount()-1; i>=0; --i)
-    removeItem(i);
+  for (int i=elementCount()-1; i>=0; --i)
+  {
+    if (item(i))
+      removeAt(i); // don't use removeItem() because it would unnecessarily reorder the whole legend for each item
+  }
+  setFillOrder(fillOrder(), true); // get rid of empty cells by reordering once after all items are removed
 }
 
 /*!
@@ -18874,8 +18902,8 @@ void QCPLegend::parentPlotInitialized(QCustomPlot *parentPlot)
 /* end of 'src/layoutelements/layoutelement-legend.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-textelement.cpp', size 12761 */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200     */
+/* including file 'src/layoutelements/layoutelement-textelement.cpp', size 12998 */
+/* commit 310c9fd102f0e1e8f4c5d40dde1b64eecc04ae63 2020-05-23 09:29:21 +0200     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPTextElement
@@ -18976,13 +19004,14 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, dou
   QCPLayoutElement(parentPlot),
   mText(text),
   mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
-  mFont(QFont(QLatin1String("sans serif"), pointSize)), // will be taken from parentPlot if available, see below
+  mFont(QFont(QLatin1String("sans serif"), int(pointSize))), // will be taken from parentPlot if available, see below
   mTextColor(Qt::black),
-  mSelectedFont(QFont(QLatin1String("sans serif"), pointSize)), // will be taken from parentPlot if available, see below
+  mSelectedFont(QFont(QLatin1String("sans serif"), int(pointSize))), // will be taken from parentPlot if available, see below
   mSelectedTextColor(Qt::blue),
   mSelectable(false),
   mSelected(false)
 {
+  mFont.setPointSizeF(pointSize); // set here again as floating point, because constructor above only takes integer
   if (parentPlot)
   {
     mFont = parentPlot->font();
@@ -19003,13 +19032,14 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, con
   QCPLayoutElement(parentPlot),
   mText(text),
   mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
-  mFont(QFont(fontFamily, pointSize)),
+  mFont(QFont(fontFamily, int(pointSize))),
   mTextColor(Qt::black),
-  mSelectedFont(QFont(fontFamily, pointSize)),
+  mSelectedFont(QFont(fontFamily, int(pointSize))),
   mSelectedTextColor(Qt::blue),
   mSelectable(false),
   mSelected(false)
 {
+  mFont.setPointSizeF(pointSize); // set here again as floating point, because constructor above only takes integer
   setMargins(QMargins(2, 2, 2, 2));
 }
 
@@ -19150,14 +19180,14 @@ void QCPTextElement::draw(QCPPainter *painter)
 {
   painter->setFont(mainFont());
   painter->setPen(QPen(mainTextColor()));
-  painter->drawText(mRect, Qt::AlignCenter, mText, &mTextBoundingRect);
+  painter->drawText(mRect, mTextFlags, mText, &mTextBoundingRect);
 }
 
 /* inherits documentation from base class */
 QSize QCPTextElement::minimumOuterSizeHint() const
 {
   QFontMetrics metrics(mFont);
-  QSize result(metrics.boundingRect(0, 0, 0, 0, Qt::AlignCenter, mText).size());
+  QSize result(metrics.boundingRect(0, 0, 0, 0, mTextFlags, mText).size());
   result.rwidth() += mMargins.left()+mMargins.right();
   result.rheight() += mMargins.top()+mMargins.bottom();
   return result;
@@ -19167,7 +19197,7 @@ QSize QCPTextElement::minimumOuterSizeHint() const
 QSize QCPTextElement::maximumOuterSizeHint() const
 {
   QFontMetrics metrics(mFont);
-  QSize result(metrics.boundingRect(0, 0, 0, 0, Qt::AlignCenter, mText).size());
+  QSize result(metrics.boundingRect(0, 0, 0, 0, mTextFlags, mText).size());
   result.setWidth(QWIDGETSIZE_MAX);
   result.rheight() += mMargins.top()+mMargins.bottom();
   return result;
@@ -19278,8 +19308,8 @@ QColor QCPTextElement::mainTextColor() const
 /* end of 'src/layoutelements/layoutelement-textelement.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-colorscale.cpp', size 26246 */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200    */
+/* including file 'src/layoutelements/layoutelement-colorscale.cpp', size 26531 */
+/* commit 3616b887936dcb5c44be74b667424c1c2af77a0d 2020-05-16 15:34:58 +0200    */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19372,6 +19402,7 @@ QCPColorScale::QCPColorScale(QCustomPlot *parentPlot) :
   QCPLayoutElement(parentPlot),
   mType(QCPAxis::atTop), // set to atTop such that setType(QCPAxis::atRight) below doesn't skip work because it thinks it's already atRight
   mDataScaleType(QCPAxis::stLinear),
+  mGradient(QCPColorGradient::gpCold),
   mBarWidth(20),
   mAxisRect(new QCPColorScaleAxisRectPrivate(this))
 {
@@ -19446,7 +19477,7 @@ void QCPColorScale::setType(QCPAxis::AxisType type)
     QString labelTransfer;
     QSharedPointer<QCPAxisTicker> tickerTransfer;
     // transfer/revert some settings on old axis if it exists:
-    bool doTransfer = (bool)mColorAxis;
+    bool doTransfer = !mColorAxis.isNull();
     if (doTransfer)
     {
       rangeTransfer = mColorAxis.data()->range();
@@ -19456,7 +19487,7 @@ void QCPColorScale::setType(QCPAxis::AxisType type)
       disconnect(mColorAxis.data(), SIGNAL(rangeChanged(QCPRange)), this, SLOT(setDataRange(QCPRange)));
       disconnect(mColorAxis.data(), SIGNAL(scaleTypeChanged(QCPAxis::ScaleType)), this, SLOT(setDataScaleType(QCPAxis::ScaleType)));
     }
-    QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atLeft << QCPAxis::atRight << QCPAxis::atBottom << QCPAxis::atTop;
+    const QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atLeft << QCPAxis::atRight << QCPAxis::atBottom << QCPAxis::atTop;
     foreach (QCPAxis::AxisType atype, allAxisTypes)
     {
       mAxisRect.data()->axis(atype)->setTicks(atype == mType);
@@ -19586,9 +19617,16 @@ void QCPColorScale::setRangeDrag(bool enabled)
   }
   
   if (enabled)
+  {
     mAxisRect.data()->setRangeDrag(QCPAxis::orientation(mType));
-  else
-    mAxisRect.data()->setRangeDrag(0);
+  } else
+  {
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
+    mAxisRect.data()->setRangeDrag(nullptr);
+#else
+    mAxisRect.data()->setRangeDrag({});
+#endif
+  }
 }
 
 /*!
@@ -19606,9 +19644,16 @@ void QCPColorScale::setRangeZoom(bool enabled)
   }
   
   if (enabled)
+  {
     mAxisRect.data()->setRangeZoom(QCPAxis::orientation(mType));
-  else
-    mAxisRect.data()->setRangeZoom(0);
+  } else
+  {
+#if QT_VERSION < QT_VERSION_CHECK(5, 2, 0)
+    mAxisRect.data()->setRangeDrag(nullptr);
+#else
+    mAxisRect.data()->setRangeZoom({});
+#endif
+  }
 }
 
 /*!
@@ -19640,15 +19685,15 @@ void QCPColorScale::rescaleDataRange(bool onlyVisibleMaps)
   QCP::SignDomain sign = QCP::sdBoth;
   if (mDataScaleType == QCPAxis::stLogarithmic)
     sign = (mDataRange.upper < 0 ? QCP::sdNegative : QCP::sdPositive);
-  for (int i=0; i<maps.size(); ++i)
+  foreach (QCPColorMap *map, maps)
   {
-    if (!maps.at(i)->realVisibility() && onlyVisibleMaps)
+    if (!map->realVisibility() && onlyVisibleMaps)
       continue;
     QCPRange mapRange;
-    if (maps.at(i)->colorScale() == this)
+    if (map->colorScale() == this)
     {
       bool currentFoundRange = true;
-      mapRange = maps.at(i)->data()->dataBounds();
+      mapRange = map->data()->dataBounds();
       if (sign == QCP::sdPositive)
       {
         if (mapRange.lower <= 0 && mapRange.upper > 0)
@@ -19802,7 +19847,7 @@ QCPColorScaleAxisRectPrivate::QCPColorScaleAxisRectPrivate(QCPColorScale *parent
 {
   setParentLayerable(parentColorScale);
   setMinimumMargins(QMargins(0, 0, 0, 0));
-  QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
+  const QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
   foreach (QCPAxis::AxisType type, allAxisTypes)
   {
     axis(type)->setVisible(true);
@@ -19878,7 +19923,7 @@ void QCPColorScaleAxisRectPrivate::updateGradientImage()
       pixels.append(reinterpret_cast<QRgb*>(mGradientImage.scanLine(y)));
     mParentColorScale->mGradient.colorize(data.constData(), QCPRange(0, n-1), pixels.first(), n);
     for (int y=1; y<h; ++y)
-      memcpy(pixels.at(y), pixels.first(), n*sizeof(QRgb));
+      memcpy(pixels.at(y), pixels.first(), size_t(n)*sizeof(QRgb));
   } else
   {
     w = rect().width();
@@ -19903,7 +19948,7 @@ void QCPColorScaleAxisRectPrivate::updateGradientImage()
 void QCPColorScaleAxisRectPrivate::axisSelectionChanged(QCPAxis::SelectableParts selectedParts)
 {
   // axis bases of four axes shall always (de-)selected synchronously:
-  QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
+  const QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
   foreach (QCPAxis::AxisType type, allAxisTypes)
   {
     if (QCPAxis *senderAxis = qobject_cast<QCPAxis*>(sender()))
@@ -19928,7 +19973,7 @@ void QCPColorScaleAxisRectPrivate::axisSelectionChanged(QCPAxis::SelectableParts
 void QCPColorScaleAxisRectPrivate::axisSelectableChanged(QCPAxis::SelectableParts selectableParts)
 {
   // synchronize axis base selectability:
-  QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
+  const QList<QCPAxis::AxisType> allAxisTypes = QList<QCPAxis::AxisType>() << QCPAxis::atBottom << QCPAxis::atTop << QCPAxis::atLeft << QCPAxis::atRight;
   foreach (QCPAxis::AxisType type, allAxisTypes)
   {
     if (QCPAxis *senderAxis = qobject_cast<QCPAxis*>(sender()))
@@ -19947,8 +19992,8 @@ void QCPColorScaleAxisRectPrivate::axisSelectableChanged(QCPAxis::SelectablePart
 /* end of 'src/layoutelements/layoutelement-colorscale.cpp' */
 
 
-/* including file 'src/plottables/plottable-graph.cpp', size 74194           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-graph.cpp', size 74370           */
+/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPGraphData
@@ -20106,7 +20151,10 @@ QCPGraphData::QCPGraphData(double key, double value) :
   To directly create a graph inside a plot, you can also use the simpler QCustomPlot::addGraph function.
 */
 QCPGraph::QCPGraph(QCPAxis *keyAxis, QCPAxis *valueAxis) :
-  QCPAbstractPlottable1D<QCPGraphData>(keyAxis, valueAxis)
+  QCPAbstractPlottable1D<QCPGraphData>(keyAxis, valueAxis),
+  mLineStyle{},
+  mScatterSkip{},
+  mAdaptiveSampling{}
 {
   // special handling for QCPGraphs to maintain the simple graph interface:
   mParentPlot->registerGraph(this);
@@ -20116,7 +20164,7 @@ QCPGraph::QCPGraph(QCPAxis *keyAxis, QCPAxis *valueAxis) :
   
   setLineStyle(lsLine);
   setScatterSkip(0);
-  setChannelFillGraph(0);
+  setChannelFillGraph(nullptr);
   setAdaptiveSampling(true);
 }
 
@@ -20214,14 +20262,14 @@ void QCPGraph::setChannelFillGraph(QCPGraph *targetGraph)
   if (targetGraph == this)
   {
     qDebug() << Q_FUNC_INFO << "targetGraph is this graph itself";
-    mChannelFillGraph = 0;
+    mChannelFillGraph = nullptr;
     return;
   }
   // prevent setting channel target to a graph not in the plot:
   if (targetGraph && targetGraph->mParentPlot != mParentPlot)
   {
     qDebug() << Q_FUNC_INFO << "targetGraph not in same plot";
-    mChannelFillGraph = 0;
+    mChannelFillGraph = nullptr;
     return;
   }
   
@@ -20322,13 +20370,13 @@ double QCPGraph::selectTest(const QPointF &pos, bool onlySelectable, QVariant *d
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     QCPGraphDataContainer::const_iterator closestDataPoint = mDataContainer->constEnd();
     double result = pointDistance(pos, closestDataPoint);
     if (details)
     {
-      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      int pointIndex = int(closestDataPoint-mDataContainer->constBegin());
       details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
     }
     return result;
@@ -20818,12 +20866,12 @@ void QCPGraph::drawFill(QCPPainter *painter, QVector<QPointF> *lines) const
   if (painter->brush().style() == Qt::NoBrush || painter->brush().color().alpha() == 0) return;
   
   applyFillAntialiasingHint(painter);
-  QVector<QCPDataRange> segments = getNonNanSegments(lines, keyAxis()->orientation());
+  const QVector<QCPDataRange> segments = getNonNanSegments(lines, keyAxis()->orientation());
   if (!mChannelFillGraph)
   {
     // draw base fill under graph, fill goes all the way to the zero-value-line:
-    for (int i=0; i<segments.size(); ++i)
-      painter->drawPolygon(getFillPolygon(lines, segments.at(i)));
+    foreach (QCPDataRange segment, segments)
+      painter->drawPolygon(getFillPolygon(lines, segment));
   } else
   {
     // draw fill between this graph and mChannelFillGraph:
@@ -20850,8 +20898,8 @@ void QCPGraph::drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &scat
 {
   applyScattersAntialiasingHint(painter);
   style.applyTo(painter, mPen);
-  for (int i=0; i<scatters.size(); ++i)
-    style.drawShape(painter, scatters.at(i).x(), scatters.at(i).y());
+  foreach (const QPointF &scatter, scatters)
+    style.drawShape(painter, scatter.x(), scatter.y());
 }
 
 /*!  \internal
@@ -20911,13 +20959,13 @@ void QCPGraph::getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGr
   if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
   if (begin == end) return;
   
-  int dataCount = end-begin;
+  int dataCount = int(end-begin);
   int maxCount = (std::numeric_limits<int>::max)();
   if (mAdaptiveSampling)
   {
     double keyPixelSpan = qAbs(keyAxis->coordToPixel(begin->key)-keyAxis->coordToPixel((end-1)->key));
     if (2*keyPixelSpan+2 < static_cast<double>((std::numeric_limits<int>::max)()))
-      maxCount = 2*keyPixelSpan+2;
+      maxCount = int(2*keyPixelSpan+2);
   }
   
   if (mAdaptiveSampling && dataCount >= maxCount) // use adaptive sampling only if there are at least two points per pixel on average
@@ -20928,7 +20976,7 @@ void QCPGraph::getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGr
     QCPGraphDataContainer::const_iterator currentIntervalFirstPoint = it;
     int reversedFactor = keyAxis->pixelOrientation(); // is used to calculate keyEpsilon pixel into the correct direction
     int reversedRound = reversedFactor==-1 ? 1 : 0; // is used to switch between floor (normal) and ceil (reversed) rounding of currentIntervalStartKey
-    double currentIntervalStartKey = keyAxis->pixelToCoord((int)(keyAxis->coordToPixel(begin->key)+reversedRound));
+    double currentIntervalStartKey = keyAxis->pixelToCoord(int(keyAxis->coordToPixel(begin->key)+reversedRound));
     double lastIntervalEndKey = currentIntervalStartKey;
     double keyEpsilon = qAbs(currentIntervalStartKey-keyAxis->pixelToCoord(keyAxis->coordToPixel(currentIntervalStartKey)+1.0*reversedFactor)); // interval of one pixel on screen when mapped to plot key coordinates
     bool keyEpsilonVariable = keyAxis->scaleType() == QCPAxis::stLogarithmic; // indicates whether keyEpsilon needs to be updated after every interval (for log axes)
@@ -20959,7 +21007,7 @@ void QCPGraph::getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGr
         minValue = it->value;
         maxValue = it->value;
         currentIntervalFirstPoint = it;
-        currentIntervalStartKey = keyAxis->pixelToCoord((int)(keyAxis->coordToPixel(it->key)+reversedRound));
+        currentIntervalStartKey = keyAxis->pixelToCoord(int(keyAxis->coordToPixel(it->key)+reversedRound));
         if (keyEpsilonVariable)
           keyEpsilon = qAbs(currentIntervalStartKey-keyAxis->pixelToCoord(keyAxis->coordToPixel(currentIntervalStartKey)+1.0*reversedFactor));
         intervalDataCount = 1;
@@ -21004,19 +21052,19 @@ void QCPGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGr
   
   const int scatterModulo = mScatterSkip+1;
   const bool doScatterSkip = mScatterSkip > 0;
-  int beginIndex = begin-mDataContainer->constBegin();
-  int endIndex = end-mDataContainer->constBegin();
+  int beginIndex = int(begin-mDataContainer->constBegin());
+  int endIndex = int(end-mDataContainer->constBegin());
   while (doScatterSkip && begin != end && beginIndex % scatterModulo != 0) // advance begin iterator to first non-skipped scatter
   {
     ++beginIndex;
     ++begin;
   }
   if (begin == end) return;
-  int dataCount = end-begin;
+  int dataCount = int(end-begin);
   int maxCount = (std::numeric_limits<int>::max)();
   if (mAdaptiveSampling)
   {
-    int keyPixelSpan = qAbs(keyAxis->coordToPixel(begin->key)-keyAxis->coordToPixel((end-1)->key));
+    int keyPixelSpan = int(qAbs(keyAxis->coordToPixel(begin->key)-keyAxis->coordToPixel((end-1)->key)));
     maxCount = 2*keyPixelSpan+2;
   }
   
@@ -21025,7 +21073,7 @@ void QCPGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGr
     double valueMaxRange = valueAxis->range().upper;
     double valueMinRange = valueAxis->range().lower;
     QCPGraphDataContainer::const_iterator it = begin;
-    int itIndex = beginIndex;
+    int itIndex = int(beginIndex);
     double minValue = it->value;
     double maxValue = it->value;
     QCPGraphDataContainer::const_iterator minValueIt = it;
@@ -21033,7 +21081,7 @@ void QCPGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGr
     QCPGraphDataContainer::const_iterator currentIntervalStart = it;
     int reversedFactor = keyAxis->pixelOrientation(); // is used to calculate keyEpsilon pixel into the correct direction
     int reversedRound = reversedFactor==-1 ? 1 : 0; // is used to switch between floor (normal) and ceil (reversed) rounding of currentIntervalStartKey
-    double currentIntervalStartKey = keyAxis->pixelToCoord((int)(keyAxis->coordToPixel(begin->key)+reversedRound));
+    double currentIntervalStartKey = keyAxis->pixelToCoord(int(keyAxis->coordToPixel(begin->key)+reversedRound));
     double keyEpsilon = qAbs(currentIntervalStartKey-keyAxis->pixelToCoord(keyAxis->coordToPixel(currentIntervalStartKey)+1.0*reversedFactor)); // interval of one pixel on screen when mapped to plot key coordinates
     bool keyEpsilonVariable = keyAxis->scaleType() == QCPAxis::stLogarithmic; // indicates whether keyEpsilon needs to be updated after every interval (for log axes)
     int intervalDataCount = 1;
@@ -21090,7 +21138,7 @@ void QCPGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGr
         minValue = it->value;
         maxValue = it->value;
         currentIntervalStart = it;
-        currentIntervalStartKey = keyAxis->pixelToCoord((int)(keyAxis->coordToPixel(it->key)+reversedRound));
+        currentIntervalStartKey = keyAxis->pixelToCoord(int(keyAxis->coordToPixel(it->key)+reversedRound));
         if (keyEpsilonVariable)
           keyEpsilon = qAbs(currentIntervalStartKey-keyAxis->pixelToCoord(keyAxis->coordToPixel(currentIntervalStartKey)+1.0*reversedFactor));
         intervalDataCount = 1;
@@ -21117,7 +21165,7 @@ void QCPGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGr
       double valuePixelSpan = qAbs(valueAxis->coordToPixel(minValue)-valueAxis->coordToPixel(maxValue));
       int dataModulo = qMax(1, qRound(intervalDataCount/(valuePixelSpan/4.0))); // approximately every 4 value pixels one data point on average
       QCPGraphDataContainer::const_iterator intervalIt = currentIntervalStart;
-      int intervalItIndex = intervalIt-mDataContainer->constBegin();
+      int intervalItIndex = int(intervalIt-mDataContainer->constBegin());
       int c = 0;
       while (intervalIt != it)
       {
@@ -21364,7 +21412,7 @@ QPointF QCPGraph::getFillBasePoint(QPointF matchingDataPoint) const
 {
   QCPAxis *keyAxis = mKeyAxis.data();
   QCPAxis *valueAxis = mValueAxis.data();
-  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return QPointF(); }
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return {}; }
   
   QPointF result;
   if (valueAxis->scaleType() == QCPAxis::stLinear)
@@ -21702,8 +21750,8 @@ int QCPGraph::findIndexBelowY(const QVector<QPointF> *data, double y) const
 /* end of 'src/plottables/plottable-graph.cpp' */
 
 
-/* including file 'src/plottables/plottable-curve.cpp', size 63742           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-curve.cpp', size 63851           */
+/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPCurveData
@@ -21861,7 +21909,9 @@ QCPCurveData::QCPCurveData(double t, double key, double value) :
   but use QCustomPlot::removePlottable() instead.
 */
 QCPCurve::QCPCurve(QCPAxis *keyAxis, QCPAxis *valueAxis) :
-  QCPAbstractPlottable1D<QCPCurveData>(keyAxis, valueAxis)
+  QCPAbstractPlottable1D<QCPCurveData>(keyAxis, valueAxis),
+  mScatterSkip{},
+  mLineStyle{}
 {
   // modify inherited properties from abstract plottable:
   setPen(QPen(Qt::blue, 0));
@@ -22084,13 +22134,13 @@ double QCPCurve::selectTest(const QPointF &pos, bool onlySelectable, QVariant *d
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     QCPCurveDataContainer::const_iterator closestDataPoint = mDataContainer->constEnd();
     double result = pointDistance(pos, closestDataPoint);
     if (details)
     {
-      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      int pointIndex = int( closestDataPoint-mDataContainer->constBegin() );
       details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
     }
     return result;
@@ -22240,9 +22290,9 @@ void QCPCurve::drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &poin
   // draw scatter point symbols:
   applyScattersAntialiasingHint(painter);
   style.applyTo(painter, mPen);
-  for (int i=0; i<points.size(); ++i)
-    if (!qIsNaN(points.at(i).x()) && !qIsNaN(points.at(i).y()))
-      style.drawShape(painter,  points.at(i));
+  foreach (const QPointF &point, points)
+    if (!qIsNaN(point.x()) && !qIsNaN(point.y()))
+      style.drawShape(painter,  point);
 }
 
 /*! \internal
@@ -22391,7 +22441,7 @@ void QCPCurve::getScatters(QVector<QPointF> *scatters, const QCPDataRange &dataR
     return;
   const int scatterModulo = mScatterSkip+1;
   const bool doScatterSkip = mScatterSkip > 0;
-  int endIndex = end-mDataContainer->constBegin();
+  int endIndex = int( end-mDataContainer->constBegin() );
   
   QCPRange keyRange = keyAxis->range();
   QCPRange valueRange = valueAxis->range();
@@ -22402,7 +22452,7 @@ void QCPCurve::getScatters(QVector<QPointF> *scatters, const QCPDataRange &dataR
   valueRange.upper = valueAxis->pixelToCoord(valueAxis->coordToPixel(valueRange.upper)+scatterWidth*valueAxis->pixelOrientation());
   
   QCPCurveDataContainer::const_iterator it = begin;
-  int itIndex = begin-mDataContainer->constBegin();
+  int itIndex = int( begin-mDataContainer->constBegin() );
   while (doScatterSkip && it != end && itIndex % scatterModulo != 0) // advance begin iterator to first non-skipped scatter
   {
     ++itIndex;
@@ -22611,9 +22661,9 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey, double oth
     }
   }
   if (mKeyAxis->orientation() == Qt::Horizontal)
-    return QPointF(intersectKeyPx, intersectValuePx);
+    return {intersectKeyPx, intersectValuePx};
   else
-    return QPointF(intersectValuePx, intersectKeyPx);
+    return {intersectValuePx, intersectKeyPx};
 }
 
 /*! \internal
@@ -22917,12 +22967,12 @@ bool QCPCurve::getTraverse(double prevKey, double prevValue, double key, double 
   const double valuePx = mValueAxis->coordToPixel(value);
   const double prevKeyPx = mKeyAxis->coordToPixel(prevKey);
   const double prevValuePx = mValueAxis->coordToPixel(prevValue);
-  if (qFuzzyIsNull(key-prevKey)) // line is parallel to value axis
+  if (qFuzzyIsNull(keyPx-prevKeyPx)) // line is parallel to value axis
   {
     // due to region filter in mayTraverse(), if line is parallel to value or key axis, region 5 is traversed here
     intersections.append(mKeyAxis->orientation() == Qt::Horizontal ? QPointF(keyPx, valueMinPx) : QPointF(valueMinPx, keyPx)); // direction will be taken care of at end of method
     intersections.append(mKeyAxis->orientation() == Qt::Horizontal ? QPointF(keyPx, valueMaxPx) : QPointF(valueMaxPx, keyPx));
-  } else if (qFuzzyIsNull(value-prevValue)) // line is parallel to key axis
+  } else if (qFuzzyIsNull(valuePx-prevValuePx)) // line is parallel to key axis
   {
     // due to region filter in mayTraverse(), if line is parallel to value or key axis, region 5 is traversed here
     intersections.append(mKeyAxis->orientation() == Qt::Horizontal ? QPointF(keyMinPx, valuePx) : QPointF(valuePx, keyMinPx)); // direction will be taken care of at end of method
@@ -23158,8 +23208,8 @@ double QCPCurve::pointDistance(const QPointF &pixelPoint, QCPCurveDataContainer:
 /* end of 'src/plottables/plottable-curve.cpp' */
 
 
-/* including file 'src/plottables/plottable-bars.cpp', size 43725            */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-bars.cpp', size 43853            */
+/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23283,7 +23333,7 @@ QCPBars *QCPBarsGroup::bars(int index) const
   } else
   {
     qDebug() << Q_FUNC_INFO << "index out of bounds:" << index;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -23294,8 +23344,9 @@ QCPBars *QCPBarsGroup::bars(int index) const
 */
 void QCPBarsGroup::clear()
 {
-  foreach (QCPBars *bars, mBars) // since foreach takes a copy, removing bars in the loop is okay
-    bars->setBarsGroup(0); // removes itself via removeBars
+  const QList<QCPBars*> oldBars = mBars;
+  foreach (QCPBars *bars, oldBars)
+    bars->setBarsGroup(nullptr); // removes itself from mBars via removeBars
 }
 
 /*!
@@ -23356,7 +23407,7 @@ void QCPBarsGroup::remove(QCPBars *bars)
   }
   
   if (mBars.contains(bars))
-    bars->setBarsGroup(0);
+    bars->setBarsGroup(nullptr);
   else
     qDebug() << Q_FUNC_INFO << "bars plottable is not in this bars group:" << reinterpret_cast<quintptr>(bars);
 }
@@ -23651,7 +23702,7 @@ QCPBars::QCPBars(QCPAxis *keyAxis, QCPAxis *valueAxis) :
   QCPAbstractPlottable1D<QCPBarsData>(keyAxis, valueAxis),
   mWidth(0.75),
   mWidthType(wtPlotCoords),
-  mBarsGroup(0),
+  mBarsGroup(nullptr),
   mBaseValue(0),
   mStackingGap(0)
 {
@@ -23665,7 +23716,7 @@ QCPBars::QCPBars(QCPAxis *keyAxis, QCPAxis *valueAxis) :
 
 QCPBars::~QCPBars()
 {
-  setBarsGroup(0);
+  setBarsGroup(nullptr);
   if (mBarBelow || mBarAbove)
     connectBars(mBarBelow.data(), mBarAbove.data()); // take this bar out of any stacking
 }
@@ -23900,7 +23951,7 @@ QCPDataSelection QCPBars::selectTestRect(const QRectF &rect, bool onlySelectable
   for (QCPBarsDataContainer::const_iterator it=visibleBegin; it!=visibleEnd; ++it)
   {
     if (rect.intersects(getBarRect(it->key, it->value)))
-      result.addDataRange(QCPDataRange(it-mDataContainer->constBegin(), it-mDataContainer->constBegin()+1), false);
+      result.addDataRange(QCPDataRange(int(it-mDataContainer->constBegin()), int(it-mDataContainer->constBegin()+1)), false);
   }
   result.simplify();
   return result;
@@ -23922,7 +23973,7 @@ double QCPBars::selectTest(const QPointF &pos, bool onlySelectable, QVariant *de
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     // get visible data range:
     QCPBarsDataContainer::const_iterator visibleBegin, visibleEnd;
@@ -23933,7 +23984,7 @@ double QCPBars::selectTest(const QPointF &pos, bool onlySelectable, QVariant *de
       {
         if (details)
         {
-          int pointIndex = it-mDataContainer->constBegin();
+          int pointIndex = int(it-mDataContainer->constBegin());
           details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
         }
         return mParentPlot->selectionTolerance()*0.99;
@@ -23996,8 +24047,8 @@ QCPRange QCPBars::getValueRange(bool &foundRange, QCP::SignDomain inSignDomain, 
   QCPBarsDataContainer::const_iterator itEnd = mDataContainer->constEnd();
   if (inKeyRange != QCPRange())
   {
-    itBegin = mDataContainer->findBegin(inKeyRange.lower);
-    itEnd = mDataContainer->findEnd(inKeyRange.upper);
+    itBegin = mDataContainer->findBegin(inKeyRange.lower, false);
+    itEnd = mDataContainer->findEnd(inKeyRange.upper, false);
   }
   for (QCPBarsDataContainer::const_iterator it = itBegin; it != itEnd; ++it)
   {
@@ -24029,19 +24080,19 @@ QPointF QCPBars::dataPixelPosition(int index) const
   {
     QCPAxis *keyAxis = mKeyAxis.data();
     QCPAxis *valueAxis = mValueAxis.data();
-    if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return QPointF(); }
+    if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return {}; }
     
     const QCPDataContainer<QCPBarsData>::const_iterator it = mDataContainer->constBegin()+index;
     const double valuePixel = valueAxis->coordToPixel(getStackedBaseValue(it->key, it->value >= 0) + it->value);
     const double keyPixel = keyAxis->coordToPixel(it->key) + (mBarsGroup ? mBarsGroup->keyPixelOffset(this, it->key) : 0);
     if (keyAxis->orientation() == Qt::Horizontal)
-      return QPointF(keyPixel, valuePixel);
+      return {keyPixel, valuePixel};
     else
-      return QPointF(valuePixel, keyPixel);
+      return {valuePixel, keyPixel};
   } else
   {
     qDebug() << Q_FUNC_INFO << "Index out of bounds" << index;
-    return QPointF();
+    return {};
   }
 }
 
@@ -24184,7 +24235,7 @@ QRectF QCPBars::getBarRect(double key, double value) const
 {
   QCPAxis *keyAxis = mKeyAxis.data();
   QCPAxis *valueAxis = mValueAxis.data();
-  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return QRectF(); }
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return {}; }
   
   double lowerPixelWidth, upperPixelWidth;
   getPixelWidth(key, lowerPixelWidth, upperPixelWidth);
@@ -24310,22 +24361,22 @@ void QCPBars::connectBars(QCPBars *lower, QCPBars *upper)
   {
     // disconnect old bar below upper:
     if (upper->mBarBelow && upper->mBarBelow.data()->mBarAbove.data() == upper)
-      upper->mBarBelow.data()->mBarAbove = 0;
-    upper->mBarBelow = 0;
+      upper->mBarBelow.data()->mBarAbove = nullptr;
+    upper->mBarBelow = nullptr;
   } else if (!upper) // disconnect lower at top
   {
     // disconnect old bar above lower:
     if (lower->mBarAbove && lower->mBarAbove.data()->mBarBelow.data() == lower)
-      lower->mBarAbove.data()->mBarBelow = 0;
-    lower->mBarAbove = 0;
+      lower->mBarAbove.data()->mBarBelow = nullptr;
+    lower->mBarAbove = nullptr;
   } else // connect lower and upper
   {
     // disconnect old bar above lower:
     if (lower->mBarAbove && lower->mBarAbove.data()->mBarBelow.data() == lower)
-      lower->mBarAbove.data()->mBarBelow = 0;
+      lower->mBarAbove.data()->mBarBelow = nullptr;
     // disconnect old bar below upper:
     if (upper->mBarBelow && upper->mBarBelow.data()->mBarAbove.data() == upper)
-      upper->mBarBelow.data()->mBarAbove = 0;
+      upper->mBarBelow.data()->mBarAbove = nullptr;
     lower->mBarAbove = upper;
     upper->mBarBelow = lower;
   }
@@ -24333,8 +24384,8 @@ void QCPBars::connectBars(QCPBars *lower, QCPBars *upper)
 /* end of 'src/plottables/plottable-bars.cpp' */
 
 
-/* including file 'src/plottables/plottable-statisticalbox.cpp', size 28837  */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-statisticalbox.cpp', size 28951  */
+/* commit 2ee8ff13ce17102796793cd6274926c37dce8096 2020-04-05 01:01:46 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPStatisticalBoxData
@@ -24732,7 +24783,7 @@ QCPDataSelection QCPStatisticalBox::selectTestRect(const QRectF &rect, bool only
   for (QCPStatisticalBoxDataContainer::const_iterator it=visibleBegin; it!=visibleEnd; ++it)
   {
     if (rect.intersects(getQuartileBox(it)))
-      result.addDataRange(QCPDataRange(it-mDataContainer->constBegin(), it-mDataContainer->constBegin()+1), false);
+      result.addDataRange(QCPDataRange(int(it-mDataContainer->constBegin()), int(it-mDataContainer->constBegin()+1)), false);
   }
   result.simplify();
   return result;
@@ -24754,7 +24805,7 @@ double QCPStatisticalBox::selectTest(const QPointF &pos, bool onlySelectable, QV
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     // get visible data range:
     QCPStatisticalBoxDataContainer::const_iterator visibleBegin, visibleEnd;
@@ -24773,10 +24824,11 @@ double QCPStatisticalBox::selectTest(const QPointF &pos, bool onlySelectable, QV
         }
       } else // whiskers
       {
-        const QVector<QLineF> whiskerBackbones(getWhiskerBackboneLines(it));
-        for (int i=0; i<whiskerBackbones.size(); ++i)
+        const QVector<QLineF> whiskerBackbones = getWhiskerBackboneLines(it);
+        const QCPVector2D posVec(pos);
+        foreach (const QLineF &backbone, whiskerBackbones)
         {
-          double currentDistSqr = QCPVector2D(pos).distanceSquaredToLine(whiskerBackbones.at(i));
+          double currentDistSqr = posVec.distanceSquaredToLine(backbone);
           if (currentDistSqr < minDistSqr)
           {
             minDistSqr = currentDistSqr;
@@ -24787,7 +24839,7 @@ double QCPStatisticalBox::selectTest(const QPointF &pos, bool onlySelectable, QV
     }
     if (details)
     {
-      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      int pointIndex = int(closestDataPoint-mDataContainer->constBegin());
       details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
     }
     return qSqrt(minDistSqr);
@@ -24994,8 +25046,8 @@ QVector<QLineF> QCPStatisticalBox::getWhiskerBarLines(QCPStatisticalBoxDataConta
 /* end of 'src/plottables/plottable-statisticalbox.cpp' */
 
 
-/* including file 'src/plottables/plottable-colormap.cpp', size 47881        */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-colormap.cpp', size 48149        */
+/* commit 7adb87d8e4e148e7977da0a22576962655b662cc 2020-04-12 14:12:11 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPColorMapData
@@ -25057,8 +25109,8 @@ QCPColorMapData::QCPColorMapData(int keySize, int valueSize, const QCPRange &key
   mKeyRange(keyRange),
   mValueRange(valueRange),
   mIsEmpty(true),
-  mData(0),
-  mAlpha(0),
+  mData(nullptr),
+  mAlpha(nullptr),
   mDataModified(true)
 {
   setSize(keySize, valueSize);
@@ -25067,10 +25119,8 @@ QCPColorMapData::QCPColorMapData(int keySize, int valueSize, const QCPRange &key
 
 QCPColorMapData::~QCPColorMapData()
 {
-  if (mData)
-    delete[] mData;
-  if (mAlpha)
-    delete[] mAlpha;
+  delete[] mData;
+  delete[] mAlpha;
 }
 
 /*!
@@ -25080,8 +25130,8 @@ QCPColorMapData::QCPColorMapData(const QCPColorMapData &other) :
   mKeySize(0),
   mValueSize(0),
   mIsEmpty(true),
-  mData(0),
-  mAlpha(0),
+  mData(nullptr),
+  mAlpha(nullptr),
   mDataModified(true)
 {
   *this = other;
@@ -25105,9 +25155,9 @@ QCPColorMapData &QCPColorMapData::operator=(const QCPColorMapData &other)
     setRange(other.keyRange(), other.valueRange());
     if (!isEmpty())
     {
-      memcpy(mData, other.mData, sizeof(mData[0])*keySize*valueSize);
+      memcpy(mData, other.mData, sizeof(mData[0])*size_t(keySize*valueSize));
       if (mAlpha)
-        memcpy(mAlpha, other.mAlpha, sizeof(mAlpha[0])*keySize*valueSize);
+        memcpy(mAlpha, other.mAlpha, sizeof(mAlpha[0])*size_t(keySize*valueSize));
     }
     mDataBounds = other.mDataBounds;
     mDataModified = true;
@@ -25118,8 +25168,8 @@ QCPColorMapData &QCPColorMapData::operator=(const QCPColorMapData &other)
 /* undocumented getter */
 double QCPColorMapData::data(double key, double value)
 {
-  int keyCell = (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5;
-  int valueCell = (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5;
+  int keyCell = int( (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5 );
+  int valueCell = int( (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5 );
   if (keyCell >= 0 && keyCell < mKeySize && valueCell >= 0 && valueCell < mValueSize)
     return mData[valueCell*mKeySize + keyCell];
   else
@@ -25169,24 +25219,23 @@ void QCPColorMapData::setSize(int keySize, int valueSize)
   {
     mKeySize = keySize;
     mValueSize = valueSize;
-    if (mData)
-      delete[] mData;
+    delete[] mData;
     mIsEmpty = mKeySize == 0 || mValueSize == 0;
     if (!mIsEmpty)
     {
 #ifdef __EXCEPTIONS
       try { // 2D arrays get memory intensive fast. So if the allocation fails, at least output debug message
 #endif
-      mData = new double[mKeySize*mValueSize];
+      mData = new double[size_t(mKeySize*mValueSize)];
 #ifdef __EXCEPTIONS
-      } catch (...) { mData = 0; }
+      } catch (...) { mData = nullptr; }
 #endif
       if (mData)
         fill(0);
       else
         qDebug() << Q_FUNC_INFO << "out of memory for data dimensions "<< mKeySize << "*" << mValueSize;
     } else
-      mData = 0;
+      mData = nullptr;
     
     if (mAlpha) // if we had an alpha map, recreate it with new size
       createAlpha();
@@ -25285,8 +25334,8 @@ void QCPColorMapData::setValueRange(const QCPRange &valueRange)
 */
 void QCPColorMapData::setData(double key, double value, double z)
 {
-  int keyCell = (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5;
-  int valueCell = (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5;
+  int keyCell = int( (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5 );
+  int valueCell = int( (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5 );
   if (keyCell >= 0 && keyCell < mKeySize && valueCell >= 0 && valueCell < mValueSize)
   {
     mData[valueCell*mKeySize + keyCell] = z;
@@ -25401,7 +25450,7 @@ void QCPColorMapData::clearAlpha()
   if (mAlpha)
   {
     delete[] mAlpha;
-    mAlpha = 0;
+    mAlpha = nullptr;
     mDataModified = true;
   }
 }
@@ -25445,8 +25494,8 @@ void QCPColorMapData::fillAlpha(unsigned char alpha)
   
   The retrieved key/value cell indices can then be used for example with \ref setCell.
   
-  If you are only interested in a key or value index, you may pass 0 as \a valueIndex or \a
-  keyIndex.
+  If you are only interested in a key or value index, you may pass \c nullptr as \a valueIndex or
+  \a keyIndex.
   
   \note The QCPColorMap always displays the data at equal key/value intervals, even if the key or
   value axis is set to a logarithmic scaling. If you want to use QCPColorMap with logarithmic axes,
@@ -25458,9 +25507,9 @@ void QCPColorMapData::fillAlpha(unsigned char alpha)
 void QCPColorMapData::coordToCell(double key, double value, int *keyIndex, int *valueIndex) const
 {
   if (keyIndex)
-    *keyIndex = (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5;
+    *keyIndex = int( (key-mKeyRange.lower)/(mKeyRange.upper-mKeyRange.lower)*(mKeySize-1)+0.5 );
   if (valueIndex)
-    *valueIndex = (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5;
+    *valueIndex = int( (value-mValueRange.lower)/(mValueRange.upper-mValueRange.lower)*(mValueSize-1)+0.5 );
 }
 
 /*!
@@ -25468,7 +25517,7 @@ void QCPColorMapData::coordToCell(double key, double value, int *keyIndex, int *
   instance. The resulting coordinates are returned via the output parameters \a key and \a
   value.
   
-  If you are only interested in a key or value coordinate, you may pass 0 as \a key or \a
+  If you are only interested in a key or value coordinate, you may pass \c nullptr as \a key or \a
   value.
   
   \note The QCPColorMap always displays the data at equal key/value intervals, even if the key or
@@ -25481,9 +25530,9 @@ void QCPColorMapData::coordToCell(double key, double value, int *keyIndex, int *
 void QCPColorMapData::cellToCoord(int keyIndex, int valueIndex, double *key, double *value) const
 {
   if (key)
-    *key = keyIndex/(double)(mKeySize-1)*(mKeyRange.upper-mKeyRange.lower)+mKeyRange.lower;
+    *key = keyIndex/double(mKeySize-1)*(mKeyRange.upper-mKeyRange.lower)+mKeyRange.lower;
   if (value)
-    *value = valueIndex/(double)(mValueSize-1)*(mValueRange.upper-mValueRange.lower)+mValueRange.lower;
+    *value = valueIndex/double(mValueSize-1)*(mValueRange.upper-mValueRange.lower)+mValueRange.lower;
 }
 
 /*! \internal
@@ -25508,9 +25557,9 @@ bool QCPColorMapData::createAlpha(bool initializeOpaque)
 #ifdef __EXCEPTIONS
   try { // 2D arrays get memory intensive fast. So if the allocation fails, at least output debug message
 #endif
-    mAlpha = new unsigned char[mKeySize*mValueSize];
+    mAlpha = new unsigned char[size_t(mKeySize*mValueSize)];
 #ifdef __EXCEPTIONS
-  } catch (...) { mAlpha = 0; }
+  } catch (...) { mAlpha = nullptr; }
 #endif
   if (mAlpha)
   {
@@ -25561,13 +25610,14 @@ bool QCPColorMapData::createAlpha(bool initializeOpaque)
   
   \section qcpcolormap-appearance Changing the appearance
   
-  The central part of the appearance is the color gradient, which can be specified via \ref
+  Most important to the appearance is the color gradient, which can be specified via \ref
   setGradient. See the documentation of \ref QCPColorGradient for details on configuring a color
   gradient.
   
   The \a data range that is mapped to the colors of the gradient can be specified with \ref
   setDataRange. To make the data range encompass the whole data set minimum to maximum, call \ref
-  rescaleDataRange.
+  rescaleDataRange. If your data may contain NaN values, use \ref QCPColorGradient::setNanHandling
+  to define how they are displayed.
   
   \section qcpcolormap-transparency Transparency
   
@@ -25789,7 +25839,7 @@ void QCPColorMap::setTightBoundary(bool enabled)
   type of \a colorScale. After this call, you may change these properties at either the color map
   or the color scale, and the setting will be applied to both.
   
-  Pass 0 as \a colorScale to disconnect the color scale from this color map again.
+  Pass \c nullptr as \a colorScale to disconnect the color scale from this color map again.
 */
 void QCPColorMap::setColorScale(QCPColorScale *colorScale)
 {
@@ -25880,7 +25930,7 @@ double QCPColorMap::selectTest(const QPointF &pos, bool onlySelectable, QVariant
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     double posKey, posValue;
     pixelsToCoords(pos, posKey, posValue);
@@ -25924,7 +25974,7 @@ QCPRange QCPColorMap::getValueRange(bool &foundRange, QCP::SignDomain inSignDoma
     if (mMapData->keyRange().upper < inKeyRange.lower || mMapData->keyRange().lower > inKeyRange.upper)
     {
       foundRange = false;
-      return QCPRange();
+      return {};
     }
   }
   
@@ -25970,8 +26020,8 @@ void QCPColorMap::updateMapImage()
   const QImage::Format format = QImage::Format_ARGB32_Premultiplied;
   const int keySize = mMapData->keySize();
   const int valueSize = mMapData->valueSize();
-  int keyOversamplingFactor = mInterpolate ? 1 : (int)(1.0+100.0/(double)keySize); // make mMapImage have at least size 100, factor becomes 1 if size > 200 or interpolation is on
-  int valueOversamplingFactor = mInterpolate ? 1 : (int)(1.0+100.0/(double)valueSize); // make mMapImage have at least size 100, factor becomes 1 if size > 200 or interpolation is on
+  int keyOversamplingFactor = mInterpolate ? 1 : int(1.0+100.0/double(keySize)); // make mMapImage have at least size 100, factor becomes 1 if size > 200 or interpolation is on
+  int valueOversamplingFactor = mInterpolate ? 1 : int(1.0+100.0/double(valueSize)); // make mMapImage have at least size 100, factor becomes 1 if size > 200 or interpolation is on
   
   // resize mMapImage to correct dimensions including possible oversampling factors, according to key/value axes orientation:
   if (keyAxis->orientation() == Qt::Horizontal && (mMapImage.width() != keySize*keyOversamplingFactor || mMapImage.height() != valueSize*valueOversamplingFactor))
@@ -26072,15 +26122,15 @@ void QCPColorMap::draw(QCPPainter *painter)
   if (keyAxis()->orientation() == Qt::Horizontal)
   {
     if (mMapData->keySize() > 1)
-      halfCellWidth = 0.5*imageRect.width()/(double)(mMapData->keySize()-1);
+      halfCellWidth = 0.5*imageRect.width()/double(mMapData->keySize()-1);
     if (mMapData->valueSize() > 1)
-      halfCellHeight = 0.5*imageRect.height()/(double)(mMapData->valueSize()-1);
+      halfCellHeight = 0.5*imageRect.height()/double(mMapData->valueSize()-1);
   } else // keyAxis orientation is Qt::Vertical
   {
     if (mMapData->keySize() > 1)
-      halfCellHeight = 0.5*imageRect.height()/(double)(mMapData->keySize()-1);
+      halfCellHeight = 0.5*imageRect.height()/double(mMapData->keySize()-1);
     if (mMapData->valueSize() > 1)
-      halfCellWidth = 0.5*imageRect.width()/(double)(mMapData->valueSize()-1);
+      halfCellWidth = 0.5*imageRect.width()/double(mMapData->valueSize()-1);
   }
   imageRect.adjust(-halfCellWidth, -halfCellHeight, halfCellWidth, halfCellHeight);
   const bool mirrorX = (keyAxis()->orientation() == Qt::Horizontal ? keyAxis() : valueAxis())->rangeReversed();
@@ -26129,8 +26179,8 @@ void QCPColorMap::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const
 /* end of 'src/plottables/plottable-colormap.cpp' */
 
 
-/* including file 'src/plottables/plottable-financial.cpp', size 42827       */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-financial.cpp', size 42914       */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPFinancialData
@@ -26529,7 +26579,7 @@ QCPDataSelection QCPFinancial::selectTestRect(const QRectF &rect, bool onlySelec
   for (QCPFinancialDataContainer::const_iterator it=visibleBegin; it!=visibleEnd; ++it)
   {
     if (rect.intersects(selectionHitBox(it)))
-      result.addDataRange(QCPDataRange(it-mDataContainer->constBegin(), it-mDataContainer->constBegin()+1), false);
+      result.addDataRange(QCPDataRange(int(it-mDataContainer->constBegin()), int(it-mDataContainer->constBegin()+1)), false);
   }
   result.simplify();
   return result;
@@ -26551,7 +26601,7 @@ double QCPFinancial::selectTest(const QPointF &pos, bool onlySelectable, QVarian
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     // get visible data range:
     QCPFinancialDataContainer::const_iterator visibleBegin, visibleEnd;
@@ -26568,7 +26618,7 @@ double QCPFinancial::selectTest(const QPointF &pos, bool onlySelectable, QVarian
     }
     if (details)
     {
-      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      int pointIndex = int(closestDataPoint-mDataContainer->constBegin());
       details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
     }
     return result;
@@ -27077,7 +27127,7 @@ QRectF QCPFinancial::selectionHitBox(QCPFinancialDataContainer::const_iterator i
 {
   QCPAxis *keyAxis = mKeyAxis.data();
   QCPAxis *valueAxis = mValueAxis.data();
-  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return QRectF(); }
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return {}; }
   
   double keyPixel = keyAxis->coordToPixel(it->key);
   double highPixel = valueAxis->coordToPixel(it->high);
@@ -27091,8 +27141,8 @@ QRectF QCPFinancial::selectionHitBox(QCPFinancialDataContainer::const_iterator i
 /* end of 'src/plottables/plottable-financial.cpp' */
 
 
-/* including file 'src/plottables/plottable-errorbar.cpp', size 37570        */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/plottables/plottable-errorbar.cpp', size 37673        */
+/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPErrorBarsData
@@ -27286,13 +27336,13 @@ void QCPErrorBars::setDataPlottable(QCPAbstractPlottable *plottable)
 {
   if (plottable && qobject_cast<QCPErrorBars*>(plottable))
   {
-    mDataPlottable = 0;
+    mDataPlottable = nullptr;
     qDebug() << Q_FUNC_INFO << "can't set another QCPErrorBars instance as data plottable";
     return;
   }
   if (plottable && !plottable->interface1D())
   {
-    mDataPlottable = 0;
+    mDataPlottable = nullptr;
     qDebug() << Q_FUNC_INFO << "passed plottable doesn't implement 1d interface, can't associate with QCPErrorBars";
     return;
   }
@@ -27434,13 +27484,13 @@ QCPRange QCPErrorBars::dataValueRange(int index) const
   {
     const double value = mDataPlottable->interface1D()->dataMainValue(index);
     if (index >= 0 && index < mDataContainer->size() && mErrorType == etValueError)
-      return QCPRange(value-mDataContainer->at(index).errorMinus, value+mDataContainer->at(index).errorPlus);
+      return {value-mDataContainer->at(index).errorMinus, value+mDataContainer->at(index).errorPlus};
     else
-      return QCPRange(value, value);
+      return {value, value};
   } else
   {
     qDebug() << Q_FUNC_INFO << "no data plottable set";
-    return QCPRange();
+    return {};
   }
 }
 
@@ -27451,7 +27501,7 @@ QPointF QCPErrorBars::dataPixelPosition(int index) const
     return mDataPlottable->interface1D()->dataPixelPosition(index);
   else
     qDebug() << Q_FUNC_INFO << "no data plottable set";
-  return QPointF();
+  return {};
 }
 
 /* inherits documentation from base class */
@@ -27489,11 +27539,11 @@ QCPDataSelection QCPErrorBars::selectTestRect(const QRectF &rect, bool onlySelec
     backbones.clear();
     whiskers.clear();
     getErrorBarLines(it, backbones, whiskers);
-    for (int i=0; i<backbones.size(); ++i)
+    foreach (const QLineF &backbone, backbones)
     {
-      if (rectIntersectsLine(rect, backbones.at(i)))
+      if (rectIntersectsLine(rect, backbone))
       {
-        result.addDataRange(QCPDataRange(it-mDataContainer->constBegin(), it-mDataContainer->constBegin()+1), false);
+        result.addDataRange(QCPDataRange(int(it-mDataContainer->constBegin()), int(it-mDataContainer->constBegin()+1)), false);
         break;
       }
     }
@@ -27551,13 +27601,13 @@ double QCPErrorBars::selectTest(const QPointF &pos, bool onlySelectable, QVarian
   if (!mKeyAxis || !mValueAxis)
     return -1;
   
-  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()))
+  if (mKeyAxis.data()->axisRect()->rect().contains(pos.toPoint()) || mParentPlot->interactions().testFlag(QCP::iSelectPlottablesBeyondAxisRect))
   {
     QCPErrorBarsDataContainer::const_iterator closestDataPoint = mDataContainer->constEnd();
     double result = pointDistance(pos, closestDataPoint);
     if (details)
     {
-      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      int pointIndex = int(closestDataPoint-mDataContainer->constBegin());
       details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
     }
     return result;
@@ -27615,7 +27665,7 @@ void QCPErrorBars::draw(QCPPainter *painter)
     whiskers.clear();
     for (QCPErrorBarsDataContainer::const_iterator it=begin; it!=end; ++it)
     {
-      if (!checkPointVisibility || errorBarVisible(it-mDataContainer->constBegin()))
+      if (!checkPointVisibility || errorBarVisible(int(it-mDataContainer->constBegin())))
         getErrorBarLines(it, backbones, whiskers);
     }
     painter->drawLines(backbones);
@@ -27651,7 +27701,7 @@ QCPRange QCPErrorBars::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomai
   if (!mDataPlottable)
   {
     foundRange = false;
-    return QCPRange();
+    return {};
   }
   
   QCPRange range;
@@ -27663,7 +27713,7 @@ QCPRange QCPErrorBars::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomai
     if (mErrorType == etValueError)
     {
       // error bar doesn't extend in key dimension (except whisker but we ignore that here), so only use data point center
-      const double current = mDataPlottable->interface1D()->dataMainKey(it-mDataContainer->constBegin());
+      const double current = mDataPlottable->interface1D()->dataMainKey(int(it-mDataContainer->constBegin()));
       if (qIsNaN(current)) continue;
       if (inSignDomain == QCP::sdBoth || (inSignDomain == QCP::sdNegative && current < 0) || (inSignDomain == QCP::sdPositive && current > 0))
       {
@@ -27680,7 +27730,7 @@ QCPRange QCPErrorBars::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomai
       }
     } else // mErrorType == etKeyError
     {
-      const double dataKey = mDataPlottable->interface1D()->dataMainKey(it-mDataContainer->constBegin());
+      const double dataKey = mDataPlottable->interface1D()->dataMainKey(int(it-mDataContainer->constBegin()));
       if (qIsNaN(dataKey)) continue;
       // plus error:
       double current = dataKey + (qIsNaN(it->errorPlus) ? 0 : it->errorPlus);
@@ -27725,7 +27775,7 @@ QCPRange QCPErrorBars::getValueRange(bool &foundRange, QCP::SignDomain inSignDom
   if (!mDataPlottable)
   {
     foundRange = false;
-    return QCPRange();
+    return {};
   }
   
   QCPRange range;
@@ -27736,20 +27786,20 @@ QCPRange QCPErrorBars::getValueRange(bool &foundRange, QCP::SignDomain inSignDom
   QCPErrorBarsDataContainer::const_iterator itEnd = mDataContainer->constEnd();
   if (mDataPlottable->interface1D()->sortKeyIsMainKey() && restrictKeyRange)
   {
-    itBegin = mDataContainer->constBegin()+findBegin(inKeyRange.lower);
-    itEnd = mDataContainer->constBegin()+findEnd(inKeyRange.upper);
+    itBegin = mDataContainer->constBegin()+findBegin(inKeyRange.lower, false);
+    itEnd = mDataContainer->constBegin()+findEnd(inKeyRange.upper, false);
   }
   for (QCPErrorBarsDataContainer::const_iterator it = itBegin; it != itEnd; ++it)
   {
     if (restrictKeyRange)
     {
-      const double dataKey = mDataPlottable->interface1D()->dataMainKey(it-mDataContainer->constBegin());
+      const double dataKey = mDataPlottable->interface1D()->dataMainKey(int(it-mDataContainer->constBegin()));
       if (dataKey < inKeyRange.lower || dataKey > inKeyRange.upper)
         continue;
     }
     if (mErrorType == etValueError)
     {
-      const double dataValue = mDataPlottable->interface1D()->dataMainValue(it-mDataContainer->constBegin());
+      const double dataValue = mDataPlottable->interface1D()->dataMainValue(int(it-mDataContainer->constBegin()));
       if (qIsNaN(dataValue)) continue;
       // plus error:
       double current = dataValue + (qIsNaN(it->errorPlus) ? 0 : it->errorPlus);
@@ -27774,7 +27824,7 @@ QCPRange QCPErrorBars::getValueRange(bool &foundRange, QCP::SignDomain inSignDom
     } else // mErrorType == etKeyError
     {
       // error bar doesn't extend in value dimension (except whisker but we ignore that here), so only use data point center
-      const double current = mDataPlottable->interface1D()->dataMainValue(it-mDataContainer->constBegin());
+      const double current = mDataPlottable->interface1D()->dataMainValue(int(it-mDataContainer->constBegin()));
       if (qIsNaN(current)) continue;
       if (inSignDomain == QCP::sdBoth || (inSignDomain == QCP::sdNegative && current < 0) || (inSignDomain == QCP::sdPositive && current > 0))
       {
@@ -27821,7 +27871,7 @@ void QCPErrorBars::getErrorBarLines(QCPErrorBarsDataContainer::const_iterator it
 {
   if (!mDataPlottable) return;
   
-  int index = it-mDataContainer->constBegin();
+  int index = int(it-mDataContainer->constBegin());
   QPointF centerPixel = mDataPlottable->interface1D()->dataPixelPosition(index);
   if (qIsNaN(centerPixel.x()) || qIsNaN(centerPixel.y()))
     return;
@@ -27965,9 +28015,9 @@ double QCPErrorBars::pointDistance(const QPointF &pixelPoint, QCPErrorBarsDataCo
   for (QCPErrorBarsDataContainer::const_iterator it=begin; it!=end; ++it)
   {
     getErrorBarLines(it, backbones, whiskers);
-    for (int i=0; i<backbones.size(); ++i)
+    foreach (const QLineF &backbone, backbones)
     {
-      const double currentDistSqr = QCPVector2D(pixelPoint).distanceSquaredToLine(backbones.at(i));
+      const double currentDistSqr = QCPVector2D(pixelPoint).distanceSquaredToLine(backbone);
       if (currentDistSqr < minDistSqr)
       {
         minDistSqr = currentDistSqr;
@@ -28059,8 +28109,8 @@ bool QCPErrorBars::rectIntersectsLine(const QRectF &pixelRect, const QLineF &lin
 /* end of 'src/plottables/plottable-errorbar.cpp' */
 
 
-/* including file 'src/items/item-straightline.cpp', size 7592               */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-straightline.cpp', size 7596               */
+/* commit d5a94cfe4877e687a6843dcf312a4f2cd4217d2f 2020-02-14 21:26:16 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemStraightLine
@@ -28132,7 +28182,7 @@ void QCPItemStraightLine::draw(QCPPainter *painter)
   QCPVector2D start(point1->pixelPosition());
   QCPVector2D end(point2->pixelPosition());
   // get visible segment of straight line inside clipRect:
-  double clipPad = mainPen().widthF();
+  int clipPad = qCeil(mainPen().widthF());
   QLineF line = getRectClippedStraightLine(start, end-start, clipRect().adjusted(-clipPad, -clipPad, clipPad, clipPad));
   // paint visible segment, if existent:
   if (!line.isNull())
@@ -28240,8 +28290,8 @@ QPen QCPItemStraightLine::mainPen() const
 /* end of 'src/items/item-straightline.cpp' */
 
 
-/* including file 'src/items/item-line.cpp', size 8498                       */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-line.cpp', size 8525                       */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemLine
@@ -28343,8 +28393,8 @@ void QCPItemLine::draw(QCPPainter *painter)
   if (qFuzzyIsNull((startVec-endVec).lengthSquared()))
     return;
   // get visible segment of straight line inside clipRect:
-  double clipPad = qMax(mHead.boundingDistance(), mTail.boundingDistance());
-  clipPad = qMax(clipPad, (double)mainPen().widthF());
+  int clipPad = int(qMax(mHead.boundingDistance(), mTail.boundingDistance()));
+  clipPad = qMax(clipPad, qCeil(mainPen().widthF()));
   QLineF line = getRectClippedLine(startVec, endVec, clipRect().adjusted(-clipPad, -clipPad, clipPad, clipPad));
   // paint visible segment, if existent:
   if (!line.isNull())
@@ -28368,10 +28418,10 @@ void QCPItemLine::draw(QCPPainter *painter)
 */
 QLineF QCPItemLine::getRectClippedLine(const QCPVector2D &start, const QCPVector2D &end, const QRect &rect) const
 {
-  bool containsStart = rect.contains(start.x(), start.y());
-  bool containsEnd = rect.contains(end.x(), end.y());
+  bool containsStart = rect.contains(qRound(start.x()), qRound(start.y()));
+  bool containsEnd = rect.contains(qRound(end.x()), qRound(end.y()));
   if (containsStart && containsEnd)
-    return QLineF(start.toPointF(), end.toPointF());
+    return {start.toPointF(), end.toPointF()};
   
   QCPVector2D base = start;
   QCPVector2D vec = end-start;
@@ -28471,8 +28521,8 @@ QPen QCPItemLine::mainPen() const
 /* end of 'src/items/item-line.cpp' */
 
 
-/* including file 'src/items/item-curve.cpp', size 7248                      */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-curve.cpp', size 7273                      */
+/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemCurve
@@ -28611,7 +28661,8 @@ void QCPItemCurve::draw(QCPPainter *painter)
   cubicPath.cubicTo(startDirVec.toPointF(), endDirVec.toPointF(), endVec.toPointF());
 
   // paint visible segment, if existent:
-  QRect clip = clipRect().adjusted(-mainPen().widthF(), -mainPen().widthF(), mainPen().widthF(), mainPen().widthF());
+  const int clipEnlarge = qCeil(mainPen().widthF());
+  QRect clip = clipRect().adjusted(-clipEnlarge, -clipEnlarge, clipEnlarge, clipEnlarge);
   QRect cubicRect = cubicPath.controlPointRect().toRect();
   if (cubicRect.isEmpty()) // may happen when start and end exactly on same x or y position
     cubicRect.adjust(0, 0, 1, 1);
@@ -28639,8 +28690,8 @@ QPen QCPItemCurve::mainPen() const
 /* end of 'src/items/item-curve.cpp' */
 
 
-/* including file 'src/items/item-rect.cpp', size 6479                       */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-rect.cpp', size 6472                       */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemRect
@@ -28771,7 +28822,7 @@ QPointF QCPItemRect::anchorPixelPosition(int anchorId) const
   }
   
   qDebug() << Q_FUNC_INFO << "invalid anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
@@ -28796,8 +28847,8 @@ QBrush QCPItemRect::mainBrush() const
 /* end of 'src/items/item-rect.cpp' */
 
 
-/* including file 'src/items/item-text.cpp', size 13338                      */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-text.cpp', size 13335                      */
+/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemText
@@ -29025,7 +29076,7 @@ void QCPItemText::draw(QCPPainter *painter)
   QPointF textPos = getTextDrawPoint(QPointF(0, 0), textBoxRect, mPositionAlignment); // 0, 0 because the transform does the translation
   textRect.moveTopLeft(textPos.toPoint()+QPoint(mPadding.left(), mPadding.top()));
   textBoxRect.moveTopLeft(textPos.toPoint());
-  double clipPad = mainPen().widthF();
+  int clipPad = qCeil(mainPen().widthF());
   QRect boundingRect = textBoxRect.adjusted(-clipPad, -clipPad, clipPad, clipPad);
   if (transform.mapRect(boundingRect).intersects(painter->transform().mapRect(clipRect())))
   {
@@ -29072,7 +29123,7 @@ QPointF QCPItemText::anchorPixelPosition(int anchorId) const
   }
   
   qDebug() << Q_FUNC_INFO << "invalid anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
@@ -29144,8 +29195,8 @@ QBrush QCPItemText::mainBrush() const
 /* end of 'src/items/item-text.cpp' */
 
 
-/* including file 'src/items/item-ellipse.cpp', size 7863                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-ellipse.cpp', size 7881                    */
+/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemEllipse
@@ -29269,7 +29320,8 @@ void QCPItemEllipse::draw(QCPPainter *painter)
   if (p1.toPoint() == p2.toPoint())
     return;
   QRectF ellipseRect = QRectF(p1, p2).normalized();
-  QRect clip = clipRect().adjusted(-mainPen().widthF(), -mainPen().widthF(), mainPen().widthF(), mainPen().widthF());
+  const int clipEnlarge = qCeil(mainPen().widthF());
+  QRect clip = clipRect().adjusted(-clipEnlarge, -clipEnlarge, clipEnlarge, clipEnlarge);
   if (ellipseRect.intersects(clip)) // only draw if bounding rect of ellipse is visible in cliprect
   {
     painter->setPen(mainPen());
@@ -29307,7 +29359,7 @@ QPointF QCPItemEllipse::anchorPixelPosition(int anchorId) const
   }
   
   qDebug() << Q_FUNC_INFO << "invalid anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
@@ -29332,8 +29384,8 @@ QBrush QCPItemEllipse::mainBrush() const
 /* end of 'src/items/item-ellipse.cpp' */
 
 
-/* including file 'src/items/item-pixmap.cpp', size 10615                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-pixmap.cpp', size 10622                    */
+/* commit 14d202ec0e0070a071376728076a3c202e6d8df0 2020-02-23 00:54:05 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemPixmap
@@ -29444,7 +29496,7 @@ void QCPItemPixmap::draw(QCPPainter *painter)
   bool flipHorz = false;
   bool flipVert = false;
   QRect rect = getFinalRect(&flipHorz, &flipVert);
-  double clipPad = mainPen().style() == Qt::NoPen ? 0 : mainPen().widthF();
+  int clipPad = mainPen().style() == Qt::NoPen ? 0 : qCeil(mainPen().widthF());
   QRect boundingRect = rect.adjusted(-clipPad, -clipPad, clipPad, clipPad);
   if (boundingRect.intersects(clipRect()))
   {
@@ -29463,8 +29515,8 @@ void QCPItemPixmap::draw(QCPPainter *painter)
 /* inherits documentation from base class */
 QPointF QCPItemPixmap::anchorPixelPosition(int anchorId) const
 {
-  bool flipHorz;
-  bool flipVert;
+  bool flipHorz = false;
+  bool flipVert = false;
   QRect rect = getFinalRect(&flipHorz, &flipVert);
   // we actually want denormal rects (negative width/height) here, so restore
   // the flipped state:
@@ -29480,11 +29532,11 @@ QPointF QCPItemPixmap::anchorPixelPosition(int anchorId) const
     case aiRight:       return (rect.topRight()+rect.bottomRight())*0.5;
     case aiBottom:      return (rect.bottomLeft()+rect.bottomRight())*0.5;
     case aiBottomLeft:  return rect.bottomLeft();
-    case aiLeft:        return (rect.topLeft()+rect.bottomLeft())*0.5;;
+    case aiLeft:        return (rect.topLeft()+rect.bottomLeft())*0.5;
   }
   
   qDebug() << Q_FUNC_INFO << "invalid anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
@@ -29550,7 +29602,7 @@ QRect QCPItemPixmap::getFinalRect(bool *flippedHorz, bool *flippedVert) const
   QPoint p1 = topLeft->pixelPosition().toPoint();
   QPoint p2 = bottomRight->pixelPosition().toPoint();
   if (p1 == p2)
-    return QRect(p1, QSize(0, 0));
+    return {p1, QSize(0, 0)};
   if (mScaled)
   {
     QSize newSize = QSize(p2.x()-p1.x(), p2.y()-p1.y());
@@ -29602,8 +29654,8 @@ QPen QCPItemPixmap::mainPen() const
 /* end of 'src/items/item-pixmap.cpp' */
 
 
-/* including file 'src/items/item-tracer.cpp', size 14624                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-tracer.cpp', size 14636                    */
+/* commit 4d08f7b77252c4915866edfd67cac613b68d19ec 2020-02-14 21:31:48 +0100 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemTracer
@@ -29650,7 +29702,7 @@ QCPItemTracer::QCPItemTracer(QCustomPlot *parentPlot) :
   position(createPosition(QLatin1String("position"))),
   mSize(6),
   mStyle(tsCrosshair),
-  mGraph(0),
+  mGraph(nullptr),
   mGraphKey(0),
   mInterpolating(false)
 {
@@ -29750,7 +29802,7 @@ void QCPItemTracer::setGraph(QCPGraph *graph)
       qDebug() << Q_FUNC_INFO << "graph isn't in same QCustomPlot instance as this item";
   } else
   {
-    mGraph = 0;
+    mGraph = nullptr;
   }
 }
 
@@ -29925,7 +29977,7 @@ void QCPItemTracer::updatePosition()
             {
               // interpolate between iterators around mGraphKey:
               double slope = 0;
-              if (!qFuzzyCompare((double)it->key, (double)prevIt->key))
+              if (!qFuzzyCompare(double(it->key), double(prevIt->key)))
                 slope = (it->value-prevIt->value)/(it->key-prevIt->key);
               position->setCoords(mGraphKey, (mGraphKey-prevIt->key)*slope+prevIt->value);
             } else
@@ -29972,8 +30024,8 @@ QBrush QCPItemTracer::mainBrush() const
 /* end of 'src/items/item-tracer.cpp' */
 
 
-/* including file 'src/items/item-bracket.cpp', size 10687                   */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/items/item-bracket.cpp', size 10705                   */
+/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemBracket
@@ -30126,7 +30178,8 @@ void QCPItemBracket::draw(QCPPainter *painter)
   QPolygon boundingPoly;
   boundingPoly << leftVec.toPoint() << rightVec.toPoint()
                << (rightVec-lengthVec).toPoint() << (leftVec-lengthVec).toPoint();
-  QRect clip = clipRect().adjusted(-mainPen().widthF(), -mainPen().widthF(), mainPen().widthF(), mainPen().widthF());
+  const int clipEnlarge = qCeil(mainPen().widthF());
+  QRect clip = clipRect().adjusted(-clipEnlarge, -clipEnlarge, clipEnlarge, clipEnlarge);
   if (clip.intersects(boundingPoly.boundingRect()))
   {
     painter->setPen(mainPen());
@@ -30197,7 +30250,7 @@ QPointF QCPItemBracket::anchorPixelPosition(int anchorId) const
       return centerVec.toPointF();
   }
   qDebug() << Q_FUNC_INFO << "invalid anchorId" << anchorId;
-  return QPointF();
+  return {};
 }
 
 /*! \internal
