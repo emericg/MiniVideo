@@ -1253,7 +1253,9 @@ static int mkv_parse_segment(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t 
         retcode = parse_ebml_element(bitstr, &element_sub);
 
         // Then parse subbox content
-        if (mkv->run == true && retcode == SUCCESS)
+        if (mkv->run == true &&
+            retcode == SUCCESS &&
+            bitstream_get_absolute_byte_offset(bitstr) < element_sub.offset_end)
         {
             switch (element_sub.eid)
             {

@@ -101,6 +101,7 @@ int parse_box_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
 
         // Set end offset
         box_header->offset_end = box_header->offset_start + box_header->size;
+        if (box_header->offset_end > bitstream_get_full_size(bitstr)) box_header->offset_end = bitstream_get_full_size(bitstr);
 
         if (box_header->boxtype == BOX_UUID)
         {

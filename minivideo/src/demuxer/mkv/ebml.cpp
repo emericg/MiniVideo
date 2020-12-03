@@ -167,6 +167,7 @@ int parse_ebml_element(Bitstream_t *bitstr, EbmlElement_t *element)
 
         // Set end offset
         element->offset_end = element->offset_start + (element->eid_size + element->size_size + element->size);
+        if (element->offset_end > bitstream_get_full_size(bitstr)) element->offset_end = bitstream_get_full_size(bitstr);
     }
 
     return retcode;

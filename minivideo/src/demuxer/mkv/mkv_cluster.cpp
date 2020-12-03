@@ -49,7 +49,7 @@ int mkv_parse_block(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv,
     uint32_t stn = static_cast<uint32_t>(read_ebml_size(bitstr) - 1);
     uint32_t stc = read_bits(bitstr, 16);
 
-    if (mkv->tracks_count < stn && !mkv->tracks[stn])
+    if (mkv->tracks_count < stn || !mkv->tracks[stn])
     {
         TRACE_WARNING(MKV, "simpleblock with no associated track: %i ???", stn);
         return FAILURE;
@@ -264,7 +264,7 @@ int mkv_parse_blockgroup(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv
             switch (element_sub.eid)
             {
             case eid_Block:
-                mkv_parse_block(bitstr, &element_sub, mkv, sampletype_Block, cluster_timecode);
+                retcode = mkv_parse_block(bitstr, &element_sub, mkv, sampletype_Block, cluster_timecode);
                 break;
 
             case eid_BlockDuration:
@@ -352,7 +352,7 @@ int mkv_parse_cluster(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv)
                 break;
 
             case eid_SimpleBlock:
-                mkv_parse_block(bitstr, &element_sub, mkv, sampletype_SimpleBlock, cluster.Timecode);
+                retcode = mkv_parse_block(bitstr, &element_sub, mkv, sampletype_SimpleBlock, cluster.Timecode);
                 break;
 
             case eid_void:

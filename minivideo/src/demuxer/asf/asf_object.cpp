@@ -365,6 +365,7 @@ int parse_asf_object(Bitstream_t *bitstr, AsfObject_t *asf_object)
 
         // Set end offset
         asf_object->offset_end = asf_object->offset_start + asf_object->size;
+        if (asf_object->offset_end > bitstream_get_full_size(bitstr)) asf_object->offset_end = bitstream_get_full_size(bitstr);
     }
 
     return retcode;
