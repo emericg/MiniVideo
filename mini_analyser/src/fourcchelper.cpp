@@ -139,8 +139,7 @@ void FourccHelper::int32LEEdited()
     for (int i = 0; i < 4; i++)
     {
         char w = static_cast<char>((i32 >> (i*8)) & 0xFF);
-        if (w > 0)
-            internal_hex.append(QString::number(w, 16));
+        if (w > 0) internal_hex.append(QString::number(w, 16).toLocal8Bit());
     }
 
     internal_hex = QByteArray::fromHex(internal_hex);

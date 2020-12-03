@@ -4,11 +4,13 @@
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
+
 VERSION      = 46
+DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 CONFIG      += c++11
 QT          += core svg gui widgets printsupport
-DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
+equals(QT_MAJOR_VERSION, 6) { QT += svgwidgets }
 
 # build artifacts
 OBJECTS_DIR  = build/

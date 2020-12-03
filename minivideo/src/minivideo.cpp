@@ -60,6 +60,8 @@ void minivideo_print_infos(void)
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
 
+    printf("* Library built with C++ '%li'\n", __cplusplus);
+
 #if defined(__ICC) || defined(__INTEL_COMPILER)
     printf("* Library built with ICC '%d / %s'\n", __INTEL_COMPILER, __INTEL_COMPILER_BUILD_DATE);
 #elif defined(_MSC_VER)
