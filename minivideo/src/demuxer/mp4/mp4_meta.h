@@ -45,5 +45,7 @@ int parse_iprp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 int parse_idat(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 int parse_iloc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 
+int parse_chpl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+
 /* ************************************************************************** */
 #endif // PARSER_MP4_META_H

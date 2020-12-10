@@ -76,6 +76,14 @@ int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
         }
     }
 
+    // Chapters
+    media->chapters_type = 0;
+    media->chapters_count = mp4->chapters_count;
+    media->chapters = mp4->chapters;
+
+    // Vendor metadata
+    media->metadata_gopro = mp4->gopro;
+
     return status;
 }
 
@@ -535,6 +543,11 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 
                 chunkOffset++; // Increase chunk offset
             }
+        }
+
+        if (map->stream_type == stream_IMAGE)
+        {
+            map->sample_count = 1;
         }
 
         if (map->stream_type == stream_TMCD)

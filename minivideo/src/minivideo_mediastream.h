@@ -160,5 +160,12 @@ typedef struct MediaSample_t
 
 } MediaSample_t;
 
+typedef struct Chapter_t
+{
+    char *name;
+    uint64_t pts;
+
+} Chapter_t;
+
 /* ************************************************************************** */
 #endif // MINIVIDEO_MEDIASTREAM_H

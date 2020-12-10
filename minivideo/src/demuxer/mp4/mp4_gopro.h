@@ -30,18 +30,18 @@
 
 /* ************************************************************************** */
 
-int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_lens(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
+int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_lens(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 int parse_came(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_amba(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_muid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_bcid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_guri(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_gusi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_gumi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
-int parse_gpmf(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4);
+int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_amba(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_muid(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_bcid(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_guri(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_gusi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_gumi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
+int parse_gpmf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 
 /* ************************************************************************** */
 #endif // PARSER_MP4_GOPRO_H

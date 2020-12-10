@@ -172,6 +172,11 @@ typedef struct Mp4_t
     uint32_t tracks_count;
     Mp4Track_t *tracks[16];
 
+    uint32_t chapters_count;
+    Chapter_t *chapters;
+
+    metadata_gopro_t *gopro;
+
     FILE *xml;                  //!< Temporary file used by the xmlMapper
 
 } Mp4_t;
@@ -197,6 +202,7 @@ typedef enum Mp4BoxType_e
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
     BOX_UDTA = 0x75647461,                      //!< user data box
+        BOX_CHPL = 0x6368706C,                  //!< Chapters
         BOX_AMBA = 0x414D4241,                  //!< (v) Ambarella stuff
         BOX_FIRM = 0x4649524D,                  //!< (v) GoPro Firmware
         BOX_LENS = 0x4C454E53,                  //!< (v) GoPro Lens

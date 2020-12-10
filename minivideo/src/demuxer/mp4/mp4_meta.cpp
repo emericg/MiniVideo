@@ -42,6 +42,48 @@
 
 /* ************************************************************************** */
 
+int parse_chpl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_chpl()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributs
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Chapters");
+
+    skip_bits(bitstr, 32); // ?
+
+    mp4->chapters_count = read_mp4_uint8(bitstr, mp4->xml, "entry_count");
+    mp4->chapters = (Chapter_t *)calloc(mp4->chapters_count, sizeof(Chapter_t));
+
+    char tagname[24]= {0};
+    for (unsigned i = 0; i < mp4->chapters_count; i++)
+    {
+        xmlSpacer(mp4->xml, "chapter", i);
+
+        snprintf(tagname, 24, "timestamp_%u", i);
+        mp4->chapters[i].pts = read_mp4_uint64(bitstr, mp4->xml, tagname) / 10000;
+
+        snprintf(tagname, 24, "title_size_%u", i);
+        int sz = read_mp4_uint8(bitstr, mp4->xml, tagname);
+
+        if (sz > 0)
+        {
+            snprintf(tagname, 24, "title_%u", i);
+            mp4->chapters[i].name = read_mp4_string(bitstr, sz, mp4->xml, tagname);
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
 static int parse_mdta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_mdta()" CLR_RESET);

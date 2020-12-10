@@ -41,7 +41,7 @@
 
 /* ************************************************************************** */
 
-int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_firm()" CLR_RESET);
     int retcode = SUCCESS;
@@ -49,7 +49,10 @@ int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml, "GoPro Firmware");
 
-    uint8_t *firmware = read_mp4_data(bitstr, 12, mp4->xml, "Firmware");
+    if (! mp4->gopro) mp4->gopro = (metadata_gopro_t*)calloc(1, sizeof(metadata_gopro_t));
+
+    char *firmware = read_mp4_string(bitstr, (box_header->size - 8), mp4->xml, "Firmware");
+    strncpy(mp4->gopro->camera_firmware, firmware, 32);
     free(firmware);
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -57,7 +60,7 @@ int parse_firm(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_lens(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_lens(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_lens()" CLR_RESET);
     int retcode = SUCCESS;
@@ -65,7 +68,8 @@ int parse_lens(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml, "GoPro Lens");
 
-    //
+    char *lens = read_mp4_string(bitstr, (box_header->size - 8), mp4->xml, "Lens");
+    free(lens);
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
@@ -80,7 +84,10 @@ int parse_came(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml, "GoPro Camera");
 
-    uint8_t *serial = read_mp4_data(bitstr, 16, mp4->xml, "SerialNumber");
+    if (! mp4->gopro) mp4->gopro = (metadata_gopro_t*)calloc(1, sizeof(metadata_gopro_t));
+
+    char *serial = read_mp4_string(bitstr, (box_header->size - 8), mp4->xml, "SerialNumber");
+    strncpy(mp4->gopro->camera_serial, serial, 32);
     free(serial);
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -88,7 +95,7 @@ int parse_came(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     return retcode;
 }
 
-int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_sett()" CLR_RESET);
     int retcode = SUCCESS;
@@ -96,56 +103,58 @@ int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml, "GoPro Settings");
 
+    if (! mp4->gopro) mp4->gopro = (metadata_gopro_t*)calloc(1, sizeof(metadata_gopro_t));
+
     if (box_header->size >= 1)
     {
         xmlSpacer(mp4->xml, "Word 1", -1);
-        uint32_t startup_mode = read_mp4_uint(bitstr, 4, mp4->xml, "StartupMode");
-        uint32_t photo_mode = read_mp4_uint(bitstr, 4, mp4->xml, "PhotoMode");
-        uint32_t timelapse_interval = read_mp4_uint(bitstr, 8, mp4->xml, "TimelapseInterval");
-        uint32_t image_flip = read_mp4_uint(bitstr, 1, mp4->xml, "ImageFlip");
-        uint32_t exposure_style = read_mp4_uint(bitstr, 1, mp4->xml, "ExposureStyle");
+        mp4->gopro->startup_mode = read_mp4_uint(bitstr, 4, mp4->xml, "StartupMode");
+        mp4->gopro->photo_mode = read_mp4_uint(bitstr, 4, mp4->xml, "PhotoMode");
+        mp4->gopro->timelapse_interval = read_mp4_uint(bitstr, 8, mp4->xml, "TimelapseInterval");
+        mp4->gopro->image_flip = read_mp4_uint(bitstr, 1, mp4->xml, "ImageFlip");
+        mp4->gopro->exposure_style = read_mp4_uint(bitstr, 1, mp4->xml, "ExposureStyle");
 
-        uint32_t white_balance = read_mp4_uint(bitstr, 2, mp4->xml, "WhiteBalance");
-        uint32_t iso_limit = read_mp4_uint(bitstr, 2, mp4->xml, "IsoLimit");
-        uint32_t one_button_mode = read_mp4_uint(bitstr, 1, mp4->xml, "OneButtonMode");
-        uint32_t osd = read_mp4_uint(bitstr, 1, mp4->xml, "OnScreenDisplay");
-        uint32_t leds_active = read_mp4_uint(bitstr, 2, mp4->xml, "LEDsActive");
-        uint32_t beep_active = read_mp4_uint(bitstr, 2, mp4->xml, "BeepActive");
-        uint32_t auto_off = read_mp4_uint(bitstr, 2, mp4->xml, "AutoOff");
-        uint32_t stereo_mode = read_mp4_uint(bitstr, 2, mp4->xml, "StereoMode");
+        mp4->gopro->white_balance = read_mp4_uint(bitstr, 2, mp4->xml, "WhiteBalance");
+        mp4->gopro->iso_limit = read_mp4_uint(bitstr, 2, mp4->xml, "IsoLimit");
+        mp4->gopro->one_button_mode = read_mp4_uint(bitstr, 1, mp4->xml, "OneButtonMode");
+        mp4->gopro->osd = read_mp4_uint(bitstr, 1, mp4->xml, "OnScreenDisplay");
+        mp4->gopro->leds_active = read_mp4_uint(bitstr, 2, mp4->xml, "LEDsActive");
+        mp4->gopro->beep_active = read_mp4_uint(bitstr, 2, mp4->xml, "BeepActive");
+        mp4->gopro->auto_off = read_mp4_uint(bitstr, 2, mp4->xml, "AutoOff");
+        mp4->gopro->stereo_mode = read_mp4_uint(bitstr, 2, mp4->xml, "StereoMode");
 
-        uint32_t protune = read_mp4_uint(bitstr, 1, mp4->xml, "Protune");
-        uint32_t cam_raw = read_mp4_uint(bitstr, 1, mp4->xml, "CameraRaw");
+        mp4->gopro->protune = read_mp4_uint(bitstr, 1, mp4->xml, "Protune");
+        mp4->gopro->cam_raw = read_mp4_uint(bitstr, 1, mp4->xml, "CameraRaw");
     }
 
     if (box_header->size >= 2)
     {
         xmlSpacer(mp4->xml, "Word 2", -1);
-        uint32_t broadcast_range = read_mp4_uint(bitstr, 1, mp4->xml, "Broadcast_YUV_range");
-        uint32_t video_mode_fov = read_mp4_uint(bitstr, 2, mp4->xml, "VideoModeFOV");
-        uint32_t lens_type = read_mp4_uint(bitstr, 1, mp4->xml, "LensType");
-        uint32_t lowlight = read_mp4_uint(bitstr, 1, mp4->xml, "Lowlight");
-        uint32_t superview = read_mp4_uint(bitstr, 1, mp4->xml, "Superview");
-        uint32_t sharpening = read_mp4_uint(bitstr, 2, mp4->xml, "Sharpening");
-        uint32_t color_curve = read_mp4_uint(bitstr, 1, mp4->xml, "ColorCurve");
-        uint32_t iso_limit2 = read_mp4_uint(bitstr, 3, mp4->xml, "IsoLimit2");
-        uint32_t EV_compensation = read_mp4_uint(bitstr, 4, mp4->xml, "EV_Compensation");
-        uint32_t white_balance2 = read_mp4_uint(bitstr, 2, mp4->xml, "WhiteBalance2");
-        uint32_t unnamed = read_mp4_uint(bitstr, 2, mp4->xml, "Unnamed");
-        uint32_t EIS = read_mp4_uint(bitstr, 1, mp4->xml, "EIS");
+        mp4->gopro->broadcast_range = read_mp4_uint(bitstr, 1, mp4->xml, "Broadcast_YUV_range");
+        mp4->gopro->video_mode_fov = read_mp4_uint(bitstr, 2, mp4->xml, "VideoModeFOV");
+        mp4->gopro->lens_type = read_mp4_uint(bitstr, 1, mp4->xml, "LensType");
+        mp4->gopro->lowlight = read_mp4_uint(bitstr, 1, mp4->xml, "Lowlight");
+        mp4->gopro->superview = read_mp4_uint(bitstr, 1, mp4->xml, "Superview");
+        mp4->gopro->sharpening = read_mp4_uint(bitstr, 2, mp4->xml, "Sharpening");
+        mp4->gopro->color_curve = read_mp4_uint(bitstr, 1, mp4->xml, "ColorCurve");
+        mp4->gopro->iso_limit2 = read_mp4_uint(bitstr, 3, mp4->xml, "IsoLimit2");
+        mp4->gopro->EV_compensation = read_mp4_uint(bitstr, 4, mp4->xml, "EV_Compensation");
+        mp4->gopro->white_balance2 = read_mp4_uint(bitstr, 2, mp4->xml, "WhiteBalance2");
+        mp4->gopro->unnamed = read_mp4_uint(bitstr, 2, mp4->xml, "Unnamed");
+        mp4->gopro->eis = read_mp4_uint(bitstr, 1, mp4->xml, "EIS");
     }
 
     if (box_header->size >= 3)
     {
         xmlSpacer(mp4->xml, "Word 3", -1);
-        uint32_t media_type = read_mp4_uint(bitstr, 4, mp4->xml, "MediaType");
+        mp4->gopro->media_type = read_mp4_uint(bitstr, 4, mp4->xml, "MediaType");
         skip_bits(bitstr, 28);
     }
 
     if (box_header->size >= 4)
     {
         xmlSpacer(mp4->xml, "Word 4", -1);
-        uint32_t upload_status = read_mp4_uint32(bitstr, mp4->xml, "UploadStatus");
+        mp4->gopro->upload_status = read_mp4_uint32(bitstr, mp4->xml, "UploadStatus");
     }
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -153,7 +162,7 @@ int parse_sett(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_amba(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_amba(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_amba()" CLR_RESET);
     int retcode = SUCCESS;
@@ -168,7 +177,7 @@ int parse_amba(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_muid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_muid(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_muid()" CLR_RESET);
     int retcode = SUCCESS;
@@ -184,7 +193,7 @@ int parse_muid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_hmmt()" CLR_RESET);
     int retcode = SUCCESS;
@@ -194,12 +203,15 @@ int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
 
     unsigned hmmt_count = read_mp4_uint32(bitstr, mp4->xml, "hmmt_count");
 
+    mp4->chapters_count = hmmt_count;
+    mp4->chapters = (Chapter_t *)calloc(mp4->chapters_count, sizeof(Chapter_t));
+
     for (unsigned i = 0; i < hmmt_count && i < 100; i++)
     {
         char tagname[16];
         snprintf(tagname, 16, "tag_%u", i);
 
-        read_mp4_uint32(bitstr, mp4->xml, tagname);
+        mp4->chapters[i].pts = read_mp4_uint32(bitstr, mp4->xml, tagname);
     }
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -207,7 +219,7 @@ int parse_hmmt(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_bcid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_bcid(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_bcid()" CLR_RESET);
     int retcode = SUCCESS;
@@ -223,7 +235,7 @@ int parse_bcid(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_guri(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_guri(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_guri()" CLR_RESET);
     int retcode = SUCCESS;
@@ -243,7 +255,7 @@ int parse_guri(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_gusi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_gusi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_gusi()" CLR_RESET);
     int retcode = SUCCESS;
@@ -261,7 +273,7 @@ int parse_gusi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_gumi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_gumi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_gumi()" CLR_RESET);
     int retcode = SUCCESS;
@@ -276,7 +288,7 @@ int parse_gumi(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
     return retcode;
 }
 
-int parse_gpmf(Bitstream_t *bitstr, Mp4Box_t *box_header,  Mp4_t *mp4)
+int parse_gpmf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
     TRACE_INFO(MP4, BLD_GREEN "parse_gpmf()" CLR_RESET);
     int retcode = SUCCESS;

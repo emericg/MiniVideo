@@ -436,6 +436,10 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     retcode = parse_gpmf(bitstr, &box_subheader, mp4);
                     break;
 
+                case BOX_CHPL:
+                    retcode = parse_chpl(bitstr, &box_subheader, mp4);
+                    break;
+
                 case BOX_FREE:
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);

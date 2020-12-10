@@ -25,9 +25,11 @@
 /* ************************************************************************** */
 
 // minivideo headers
-#include "minivideo_mediastream.h"
 #include "minivideo_codecs.h"
 #include "minivideo_containers.h"
+#include "minivideo_mediastream.h"
+#include "minivideo_metadata_vendors.h"
+#include "demuxer/ContainerParser.h"
 
 // C standard libraries
 #include <cstdio>
@@ -77,6 +79,14 @@ typedef struct MediaFile_t
 
     unsigned int tracks_others_count;
     MediaStream_t *tracks_others[48];   //!< Other "unknown" tracks found in the container (metadata, timecodes, ...)
+
+    // Chapters
+    unsigned int chapters_type;
+    unsigned int chapters_count;
+    Chapter_t *chapters;                //!< Chapters
+
+    // Vendor metadata
+    metadata_gopro_t *metadata_gopro;
 
     // Parsing statistics
     uint64_t parsingTime;               //!< Parsing time (in milliseconds) (only available in debug mode)

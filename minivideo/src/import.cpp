@@ -295,7 +295,6 @@ int import_fileClose(MediaFile_t **media_ptr)
 {
     TRACE_INFO(IO, BLD_GREEN "import_fileClose()" CLR_RESET);
     int retcode = SUCCESS;
-    int i = 0;
 
     if ((*media_ptr) != NULL)
     {
@@ -318,6 +317,8 @@ int import_fileClose(MediaFile_t **media_ptr)
         free((*media_ptr)->creation_app);
         free((*media_ptr)->creation_lib);
 
+        unsigned i = 0;
+
         for (i = 0; i < 16 /*(*media_ptr)->tracks_audio_count*/; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_audio[i]);
@@ -337,6 +338,20 @@ int import_fileClose(MediaFile_t **media_ptr)
         {
             free_bitstream_map(&(*media_ptr)->tracks_others[i]);
         }
+
+        // Chapters
+        for (i = 0; i < (*media_ptr)->chapters_count; i++)
+        {
+            if (&(*media_ptr)->chapters[i])
+            {
+                if ((*media_ptr)->chapters[i].name)
+                    free((*media_ptr)->chapters[i].name);
+                //free(&(*media_ptr)->chapters[i]);
+            }
+        }
+        free((*media_ptr)->chapters);
+
+        free((*media_ptr)->metadata_gopro);
 
         {
             free(*media_ptr);
