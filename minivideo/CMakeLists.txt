@@ -5,7 +5,7 @@
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 12)
+set(minivideo_VERSION_MINOR 13)
 set(minivideo_VERSION_PATCH 0)
 set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
 
