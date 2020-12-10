@@ -1444,8 +1444,30 @@ int MainWindow::printOtherDetails()
         }
 
         // Add new chapters
-        QLabel *chap = new QLabel(tr("No chapters found..."));
-        ui->verticalLayout_other2_chapters->addWidget(chap);
+        if (media->chapters_count > 0 && media->chapters)
+        {
+            QLabel *chap = new QLabel(tr("%1 chapters").arg(media->chapters_count));
+            ui->verticalLayout_other2_chapters->addWidget(chap);
+
+            QListWidget *chl = new QListWidget();
+            for (unsigned i = 0; i < media->chapters_count; i++)
+            {
+                Chapter_t *ch = &media->chapters[i];
+                if (ch == nullptr) break;
+
+                QString chstr = "#" + QString::number(i);
+                if (ch->name) chstr += " '" + QString::fromUtf8(ch->name) + "'";
+                chstr += " @ " + QString::number(ch->pts / 1000.f) + "s";
+
+                new QListWidgetItem(chstr, chl);
+            }
+            ui->verticalLayout_other2_chapters->addWidget(chl);
+        }
+        else
+        {
+            QLabel *chap = new QLabel(tr("No chapters found..."));
+            ui->verticalLayout_other2_chapters->addWidget(chap);
+        }
 
         // Add new tags
         QLabel *tag = new QLabel(tr("No tags found..."));

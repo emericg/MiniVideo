@@ -381,8 +381,31 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
         }
         exportData += "\nLanguage       : ";
         exportData += QString::fromUtf8(t->track_languagecode);
+    }
 
-        status = 0;
+    // CHAPTERS ////////////////////////////////////////////////////////////////
+
+    if (media.chapters_count > 0 && media.chapters)
+    {
+        // Section title
+        exportData += "\n\nCHAPTERS";
+        exportData += "\n--------";
+
+        exportData += "\nChapters       : ";
+        exportData += QString::number(media.chapters_count);
+
+        if (detailed == true)
+        {
+            for (unsigned i = 0; i < media.chapters_count; i++)
+            {
+                Chapter_t *ch = &media.chapters[i];
+                if (ch == nullptr) break;
+
+                exportData += "\n#" + QString::number(i);
+                if (ch->name) exportData += " '" + QString::fromUtf8(ch->name) + "'";
+                exportData += " @ " + QString::number(ch->pts / 1000.f) + "s";
+            }
+        }
     }
 
     return status;
