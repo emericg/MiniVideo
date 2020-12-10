@@ -29,7 +29,6 @@
 #include "minivideo_containers.h"
 #include "minivideo_mediastream.h"
 #include "minivideo_metadata_vendors.h"
-#include "demuxer/ContainerParser.h"
 
 // C standard libraries
 #include <cstdio>
