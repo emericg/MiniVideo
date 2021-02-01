@@ -49,6 +49,45 @@ textExport::~textExport()
 
 /* ************************************************************************** */
 
+int textExport::generateSubtitlesData_text(MediaFile_t &media, QString &exportData, unsigned track)
+{
+    int status = 1;
+
+    if (media.tracks_subtitles_count <= track) return status;
+
+    MediaStream_t *t = media.tracks_subt[track];
+
+    if (t->stream_codec == CODEC_SRT ||
+        t->stream_codec == CODEC_ASS ||
+        t->stream_codec == CODEC_MPEG4_TTXT)
+    {
+        for (unsigned i = 0; i < t->sample_count; i++)
+        {
+            exportData += "[" + getTimestampPreciseString(t->sample_pts[i]) + "]\n";
+
+            MediaSample_t *s = minivideo_get_sample(&media, t, i);
+            if (s)
+            {
+                if (t->stream_codec == CODEC_SRT)
+                    exportData += QString::fromUtf8((const char *)(s->data), s->size);
+
+                if (t->stream_codec == CODEC_ASS) // WIP
+                    exportData += QString::fromUtf8((const char *)(s->data), s->size);
+
+                if (t->stream_codec == CODEC_MPEG4_TTXT) // WIP
+                    exportData += QString::fromUtf8((const char *)(s->data + 2), s->size - 2);
+
+                minivideo_destroy_sample(&s);
+                exportData += "\n\n";
+            }
+        }
+    }
+
+    return status;
+}
+
+/* ************************************************************************** */
+
 int textExport::generateExportData_text(MediaFile_t &media, QString &exportData, bool detailed)
 {
     int status = 1;
@@ -307,7 +346,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             break;
 
         // Section title
-        exportData += "\n\nSUBTITLES TRACK #"+ QString::number(i);
+        exportData += "\n\nSUBTITLES TRACK #" + QString::number(i);
         exportData += "\n------------------";
         if (i > 9) exportData += "-";
 

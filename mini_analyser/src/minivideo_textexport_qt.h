@@ -24,7 +24,6 @@
 #define MINIVIDEO_TEXTEXPORT_H
 /* ************************************************************************** */
 
-// minivideo library
 #include "minivideo_mediafile.h"
 
 #include <QString>
@@ -44,6 +43,8 @@ class textExport
 public:
     textExport();
     ~textExport();
+
+    static int generateSubtitlesData_text(MediaFile_t &media, QString &exportData, unsigned track);
 
     static int generateExportData_text(MediaFile_t &media, QString &exportData, bool detailed);
     static int generateExportData_json(MediaFile_t &media, QString &exportData, bool detailed);
