@@ -33,18 +33,6 @@
 int parse_keys(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4);
 int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4);
 
-int parse_pitm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_iinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_iref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-    int parse_dimg(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-    int parse_thumb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-    int parse_cdsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_iprp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-    int parse_ipco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-    int parse_ipma(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_idat(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-int parse_iloc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
-
 int parse_chpl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4);
 
 /* ************************************************************************** */

@@ -118,6 +118,10 @@ typedef struct Mp4Track_t
         unsigned int *pps_sample_size;
         int64_t *pps_sample_offset;
 
+        // Picture specific parameters
+        unsigned int main_item_reference;
+        unsigned int pict_entry_count;
+
         // TimeCode Record specific parameters
         uint8_t number_of_frames;
 

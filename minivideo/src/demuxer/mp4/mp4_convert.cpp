@@ -133,7 +133,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
         else if (track->handlerType == MP4_HANDLER_PICT)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->stsz_sample_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->pict_entry_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -486,7 +486,6 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         for (i = 0; (i < track->stsc_entry_count) && (chunkOffset < track->stco_entry_count); i++)
         {
             uint32_t n = 0, l = 0;
-            k = 0;
 
             if ((i + 1) == track->stsc_entry_count)
             {
@@ -547,7 +546,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
 
         if (map->stream_type == stream_IMAGE)
         {
-            map->sample_count = 1;
+            map->sample_count = track->pict_entry_count;
         }
 
         if (map->stream_type == stream_TMCD)

@@ -155,7 +155,7 @@ int parse_st3d(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_st3d()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -240,7 +240,7 @@ int parse_svhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_svhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -332,7 +332,7 @@ int parse_prhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_prhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -373,7 +373,7 @@ int parse_cbmp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_cbmp()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -404,7 +404,7 @@ int parse_equi(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_prhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -436,7 +436,7 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_mshp()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 

@@ -205,7 +205,7 @@ set(minivideo_SRC
         src/export_utils.cpp
         src/thirdparty/stb_image_write.h
     src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp
-        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
+        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_picture.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
     src/demuxer/mp3/mp3_struct.h src/demuxer/mp3/mp3.cpp
     src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/mkv.cpp src/demuxer/mkv/ebml.cpp
         src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp src/demuxer/mkv/mkv_convert.cpp

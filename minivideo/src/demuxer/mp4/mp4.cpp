@@ -26,6 +26,7 @@
 #include "mp4_struct.h"
 #include "mp4_box.h"
 #include "mp4_meta.h"
+#include "mp4_picture.h"
 #include "mp4_stbl.h"
 #include "mp4_spatial.h"
 #include "mp4_gopro.h"
@@ -114,6 +115,14 @@ static int parse_ftyp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
             {
                 mp4->profile = PROF_ISOBMF_3GP;
             }
+            else if (compatible_brands[i] == fourcc_be("heic"))
+            {
+                mp4->profile = PROF_ISOBMF_HEIF;
+            }
+            else if (compatible_brands[i] == fourcc_be("avif"))
+            {
+                mp4->profile = PROF_ISOBMF_AVIF;
+            }
         }
     }
 
@@ -162,7 +171,7 @@ static int parse_pdin(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     TRACE_INFO(MP4, BLD_GREEN "parse_pdin()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -220,7 +229,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     char name[128] = {0};
     char *pname = name;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -228,7 +237,7 @@ static int parse_hdlr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     unsigned int pre_defined = read_bits(bitstr, 32);
     unsigned int handlerType = read_bits(bitstr, 32);
 
-    // If we have a track structure, this hdlr describe the track
+    // If we have a track structure, this hdlr describe the track type
     if (track && track->handlerType == 0)
     {
         track->handlerType = handlerType;
@@ -298,7 +307,7 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     if (mp4->profile != PROF_ISOBMF_MOV)
     {
-        // Read FullBox attributs
+        // Read FullBox attributes
         // Well the spec says its a fullbox, but apparently not...
         box_header->version = (uint8_t)read_bits(bitstr, 8);
         box_header->flags = read_bits(bitstr, 24);
@@ -306,6 +315,18 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     print_box_header(box_header);
     write_box_header(box_header, mp4->xml, "Meta");
+
+    Mp4Track_t *track = nullptr;
+
+    if (mp4->profile == PROF_ISOBMF_AVIF || mp4->profile == PROF_ISOBMF_HEIF)
+    {
+        // Picture track creation
+        unsigned int track_id = mp4->tracks_count;
+        mp4->tracks_count++;
+
+        track = mp4->tracks[track_id] = (Mp4Track_t*)calloc(1, sizeof(Mp4Track_t));
+        track->handlerType = MP4_HANDLER_PICT;
+    }
 
     while (mp4->run == true &&
            retcode == SUCCESS &&
@@ -321,36 +342,36 @@ static int parse_meta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
             switch (box_subheader.boxtype)
             {
                 case BOX_HDLR:
-                    retcode = parse_hdlr(bitstr, &box_subheader, NULL, mp4);
+                    retcode = parse_hdlr(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_DINF:
-                    retcode = parse_dinf(bitstr, &box_subheader, NULL, mp4);
+                    retcode = parse_dinf(bitstr, &box_subheader, track, mp4);
                     break;
 
                 case BOX_ILST:
-                    retcode = parse_ilst(bitstr, &box_subheader, NULL, mp4);
+                    retcode = parse_ilst(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_KEYS:
-                    retcode = parse_keys(bitstr, &box_subheader, NULL, mp4);
+                    retcode = parse_keys(bitstr, &box_subheader, track, mp4);
                     break;
 
                 case BOX_PITM:
-                    retcode = parse_pitm(bitstr, &box_subheader, mp4);
+                    retcode = parse_pitm(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_IINF:
-                    retcode = parse_iinf(bitstr, &box_subheader, mp4);
+                    retcode = parse_iinf(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_IREF:
-                    retcode = parse_iref(bitstr, &box_subheader, mp4);
+                    retcode = parse_iref(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_IPRP:
-                    retcode = parse_iprp(bitstr, &box_subheader, mp4);
+                    retcode = parse_iprp(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_IDAT:
-                    retcode = parse_idat(bitstr, &box_subheader, mp4);
+                    retcode = parse_idat(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_ILOC:
-                    retcode = parse_iloc(bitstr, &box_subheader, mp4);
+                    retcode = parse_iloc(bitstr, &box_subheader, track, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
@@ -472,7 +493,7 @@ static int parse_mdhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_mdhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -542,7 +563,7 @@ static int parse_vmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_vmhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -585,7 +606,7 @@ static int parse_smhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_smhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -624,7 +645,7 @@ static int parse_hmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_hmhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -672,7 +693,7 @@ static int parse_nmhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_nmhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -768,7 +789,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_dref()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1002,7 +1023,7 @@ static int parse_elst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_elst()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1113,7 +1134,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
     TRACE_INFO(MP4, BLD_GREEN "parse_tkhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1306,7 +1327,7 @@ static int parse_iods(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
     TRACE_INFO(MP4, BLD_GREEN "parse_iods()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1342,7 +1363,7 @@ static int parse_mvhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     int retcode = SUCCESS;
     int i = 0;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1537,7 +1558,7 @@ static int parse_mfhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
     TRACE_INFO(MP4, BLD_GREEN "parse_mfhd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 

@@ -137,7 +137,7 @@ int parse_fullbox_header(Bitstream_t *bitstr, Mp4Box_t *box_header)
     }
     else
     {
-        // Read FullBox attributs
+        // Read FullBox attributes
         box_header->version = static_cast<uint8_t>(read_bits(bitstr, 8));
         box_header->flags = read_bits(bitstr, 24);
     }

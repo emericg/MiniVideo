@@ -105,7 +105,7 @@ int parse_chan(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_chan()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -279,7 +279,7 @@ int parse_stsd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stsd()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -966,7 +966,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_esds()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1686,7 +1686,7 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_vpcC()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -1905,6 +1905,38 @@ int parse_av1C(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
+ * \brief JPGC Configuration Box.
+ *
+ * From 'AV1 Codec ISO Media File Format Binding':
+ * v1.2.0, 12 December 2019
+ * 2.3. AV1 Codec Configuration Box
+ * - https://aomediacodec.github.io/av1-isobmff/#av1codecconfigurationbox
+ */
+int parse_jpgC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_jpgC()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Parse box content
+#if ENABLE_DEBUG
+    print_box_header(box_header);
+    // TODO
+#endif // ENABLE_DEBUG
+
+    // xmlMapper
+    if (mp4->xml)
+    {
+        write_box_header(box_header, mp4->xml, "JPGC Configuration");
+        // TODO
+        fprintf(mp4->xml, "  </a>\n");
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
  * \brief Bitrate Box.
  *
  * From 'ISO/IEC 14496-12' specification:
@@ -2109,7 +2141,7 @@ int parse_coll(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_coll()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2150,7 +2182,7 @@ int parse_smdm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_smdm()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2257,7 +2289,7 @@ int parse_padb(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_padb()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2343,7 +2375,7 @@ int parse_stts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stts()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2412,7 +2444,7 @@ int parse_ctts(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_ctts()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2485,7 +2517,7 @@ int parse_stss(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stss()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2555,7 +2587,7 @@ int parse_stsc(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stsc()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2665,7 +2697,7 @@ int parse_stsz(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     int retcode = SUCCESS;
     unsigned int field_size = 32;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2749,7 +2781,7 @@ int parse_stco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_stco()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
@@ -2825,7 +2857,7 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_sdtp()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributs
+    // Read FullBox attributes
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
