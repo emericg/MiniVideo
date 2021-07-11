@@ -42,6 +42,9 @@ class MediaWrapper : public QObject
 {
     Q_OBJECT
 
+Q_SIGNALS:
+    void parsingFinished(QString mediaPath);
+
 public:
     MediaWrapper() {}
     MediaWrapper(QString &file) { mediaPath = file; }
@@ -108,9 +111,6 @@ public slots:
             emit parsingFinished(mediaPath);
         }
     }
-
-signals:
-    void parsingFinished(QString mediaPath);
 };
 
 /* ************************************************************************** */

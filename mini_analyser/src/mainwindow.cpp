@@ -228,7 +228,10 @@ int MainWindow::setAppPath(const QString &path)
 
 void MainWindow::loadFileDialog()
 {
-    QString startFolder = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first();
+    QString startFolder;
+
+    if (QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).size() > 0)
+        startFolder = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open a multimedia file"),
                                                     startFolder, tr("Files (*.*)"));

@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
         MiniAnalyserCLI app(argc, argv);
 
-        for (auto const &file: files)
+        for (auto const &file: qAsConst(files))
         {
             app.cli.printFile(file, cli_details_enabled);
         }
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
         }
 
         // If files have been passed as arguments, load them
-        for (auto const &file: files)
+        for (auto const &file: qAsConst(files))
         {
             app.gui.loadFile(file);
         }

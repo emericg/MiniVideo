@@ -44,6 +44,8 @@ CLI::~CLI()
 
 int CLI::printFile(const QString &file, bool details)
 {
+    int status = 0;
+
     if (!file.isEmpty())
     {
         MediaFile_t *media = nullptr;
@@ -52,31 +54,31 @@ int CLI::printFile(const QString &file, bool details)
         strncpy(input_filepath, file.toLocal8Bit(), 4095);
 
         // Create and open the media file
-        int minivideo_retcode = minivideo_open(input_filepath, &media);
-        if (minivideo_retcode == 1)
+        status = minivideo_open(input_filepath, &media);
+        if (status == 1)
         {
             // Parse media file
-            minivideo_retcode = minivideo_parse(media, true, true);
-            if (minivideo_retcode == 1)
+            status = minivideo_parse(media, true, true);
+            if (status == 1)
             {
                 // Generate text output and print it on console
                 QString exportData;
-                minivideo_retcode = textExport::generateExportData_text(*media, exportData, details);
+                status = textExport::generateExportData_text(*media, exportData, details);
 
-                QTextStream(stdout) << exportData << endl;
+                QTextStream(stdout) << exportData << Qt::endl;
             }
             else
             {
-                qDebug() << "minivideo_parse() failed with retcode: " << minivideo_retcode;
+                qDebug() << "minivideo_parse() failed with retcode: " << status;
             }
         }
         else
         {
-            qDebug() << "minivideo_open() failed with retcode: " << minivideo_retcode;
+            qDebug() << "minivideo_open() failed with retcode: " << status;
         }
     }
 
-    return 0;
+    return status;
 }
 
 /* ************************************************************************** */
