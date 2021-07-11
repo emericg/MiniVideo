@@ -1,7 +1,7 @@
 /***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
-**  Copyright (C) 2011-2018 Emanuel Eichhammer                            **
+**  Copyright (C) 2011-2021 Emanuel Eichhammer                            **
 **                                                                        **
 **  This program is free software: you can redistribute it and/or modify  **
 **  it under the terms of the GNU General Public License as published by  **
@@ -19,15 +19,15 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 03.12.20                                             **
-**          Version: 2.1.0 (git)                                          **
+**             Date: 29.03.21                                             **
+**          Version: 2.1.0                                                **
 ****************************************************************************/
 
 #include "qcustomplot.h"
 
 
-/* including file 'src/vector2d.cpp', size 7340                              */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/vector2d.cpp'       */
+/* modified 2021-03-29T02:30:44, size 7973 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPVector2D
@@ -70,6 +70,13 @@
   calculation of a square root.
   
   \see length
+*/
+
+/*! \fn double QCPVector2D::angle() const
+  
+  Returns the angle of the vector in radians. The angle is measured between the positive x line and
+  the vector, counter-clockwise in a mathematical coordinate system (y axis upwards positive). In
+  screen/widget coordinates where the y axis is inverted, the angle appears clockwise.
 */
 
 /*! \fn QPoint QCPVector2D::toPoint() const
@@ -147,25 +154,30 @@ QCPVector2D::QCPVector2D(const QPointF &point) :
 /*!
   Normalizes this vector. After this operation, the length of the vector is equal to 1.
   
+  If the vector has both entries set to zero, this method does nothing.
+  
   \see normalized, length, lengthSquared
 */
 void QCPVector2D::normalize()
 {
-  double len = length();
-  mX /= len;
-  mY /= len;
+  if (mX == 0.0 && mY == 0.0) return;
+  const double lenInv = 1.0/length();
+  mX *= lenInv;
+  mY *= lenInv;
 }
 
 /*!
   Returns a normalized version of this vector. The length of the returned vector is equal to 1.
   
+  If the vector has both entries set to zero, this method returns the vector unmodified.
+  
   \see normalize, length, lengthSquared
 */
 QCPVector2D QCPVector2D::normalized() const
 {
-  QCPVector2D result(mX, mY);
-  result.normalize();
-  return result;
+  if (mX == 0.0 && mY == 0.0) return *this;
+  const double lenInv = 1.0/length();
+  return QCPVector2D(mX*lenInv, mY*lenInv);
 }
 
 /*! \overload
@@ -177,11 +189,11 @@ QCPVector2D QCPVector2D::normalized() const
 */
 double QCPVector2D::distanceSquaredToLine(const QCPVector2D &start, const QCPVector2D &end) const
 {
-  QCPVector2D v(end-start);
-  double vLengthSqr = v.lengthSquared();
+  const QCPVector2D v(end-start);
+  const double vLengthSqr = v.lengthSquared();
   if (!qFuzzyIsNull(vLengthSqr))
   {
-    double mu = v.dot(*this-start)/vLengthSqr;
+    const double mu = v.dot(*this-start)/vLengthSqr;
     if (mu < 0)
       return (*this-start).lengthSquared();
     else if (mu > 1)
@@ -259,8 +271,8 @@ QCPVector2D &QCPVector2D::operator-=(const QCPVector2D &vector)
 /* end of 'src/vector2d.cpp' */
 
 
-/* including file 'src/painter.cpp', size 8656                               */
-/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
+/* including file 'src/painter.cpp'        */
+/* modified 2021-03-29T02:30:44, size 8656 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPPainter
@@ -476,8 +488,8 @@ void QCPPainter::makeNonCosmetic()
 /* end of 'src/painter.cpp' */
 
 
-/* including file 'src/paintbuffer.cpp', size 18819                          */
-/* commit 2cf29cf8cb32b9c01a022abf6db25f984c716636 2019-12-14 01:26:50 +0100 */
+/* including file 'src/paintbuffer.cpp'     */
+/* modified 2021-03-29T02:30:44, size 18915 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAbstractPaintBuffer
@@ -615,7 +627,7 @@ void QCPAbstractPaintBuffer::setInvalidated(bool invalidated)
 }
 
 /*!
-  Sets the the device pixel ratio to \a ratio. This is useful to render on high-DPI output devices.
+  Sets the device pixel ratio to \a ratio. This is useful to render on high-DPI output devices.
   The ratio is automatically set to the device pixel ratio used by the parent QCustomPlot instance.
 
   The buffer is reallocated (by calling \ref reallocateBuffer), so any painters that were obtained
@@ -666,7 +678,9 @@ QCPPaintBufferPixmap::~QCPPaintBufferPixmap()
 QCPPainter *QCPPaintBufferPixmap::startPainting()
 {
   QCPPainter *result = new QCPPainter(&mBuffer);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   result->setRenderHint(QPainter::HighQualityAntialiasing);
+#endif
   return result;
 }
 
@@ -866,7 +880,9 @@ QCPPainter *QCPPaintBufferGlFbo::startPainting()
     context->makeCurrent(context->surface());
   mGlFrameBuffer->bind();
   QCPPainter *result = new QCPPainter(paintDevice.data());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   result->setRenderHint(QPainter::HighQualityAntialiasing);
+#endif
   return result;
 }
 
@@ -959,8 +975,8 @@ void QCPPaintBufferGlFbo::reallocateBuffer()
 /* end of 'src/paintbuffer.cpp' */
 
 
-/* including file 'src/layer.cpp', size 37560                                */
-/* commit d8f7e39c83a569e702793686a97af3fe1b86e311 2020-05-16 13:49:29 +0200 */
+/* including file 'src/layer.cpp'           */
+/* modified 2021-03-29T02:30:44, size 37615 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPLayer
@@ -1071,7 +1087,7 @@ QCPLayer::~QCPLayer()
     mChildren.last()->setLayer(nullptr); // removes itself from mChildren via removeChild()
   
   if (mParentPlot->currentLayer() == this)
-    qDebug() << Q_FUNC_INFO << "The parent plot's mCurrentLayer will be a dangling pointer. Should have been set to a valid layer or 0 beforehand.";
+    qDebug() << Q_FUNC_INFO << "The parent plot's mCurrentLayer will be a dangling pointer. Should have been set to a valid layer or nullptr beforehand.";
 }
 
 /*!
@@ -1160,7 +1176,7 @@ void QCPLayer::drawToPaintBuffer()
       delete painter;
       pb->donePainting();
     } else
-      qDebug() << Q_FUNC_INFO << "paint buffer returned zero painter";
+      qDebug() << Q_FUNC_INFO << "paint buffer returned nullptr painter";
   } else
     qDebug() << Q_FUNC_INFO << "no valid paint buffer associated with this layer";
 }
@@ -1264,7 +1280,8 @@ void QCPLayer::removeChild(QCPLayerable *layerable)
   only get drawn if their parent layerables are visible, too.
   
   Note that a parent layerable is not necessarily also the QObject parent for memory management.
-  Further, a layerable doesn't always have a parent layerable, so this function may return 0.
+  Further, a layerable doesn't always have a parent layerable, so this function may return \c
+  nullptr.
   
   A parent layerable is set implicitly when placed inside layout elements and doesn't need to be
   set manually by the user.
@@ -1336,8 +1353,8 @@ void QCPLayer::removeChild(QCPLayerable *layerable)
   targetLayer is an empty string, it places itself on the current layer of the plot (see \ref
   QCustomPlot::setCurrentLayer).
   
-  It is possible to provide 0 as \a plot. In that case, you should assign a parent plot at a later
-  time with \ref initializeParentPlot.
+  It is possible to provide \c nullptr as \a plot. In that case, you should assign a parent plot at
+  a later time with \ref initializeParentPlot.
   
   The layerable's parent layerable is set to \a parentLayerable, if provided. Direct layerable
   parents are mainly used to control visibility in a hierarchy of layerables. This means a
@@ -1494,11 +1511,11 @@ double QCPLayerable::selectTest(const QPointF &pos, bool onlySelectable, QVarian
 /*! \internal
   
   Sets the parent plot of this layerable. Use this function once to set the parent plot if you have
-  passed 0 in the constructor. It can not be used to move a layerable from one QCustomPlot to
-  another one.
+  passed \c nullptr in the constructor. It can not be used to move a layerable from one QCustomPlot
+  to another one.
   
-  Note that, unlike when passing a non-null parent plot in the constructor, this function does not
-  make \a parentPlot the QObject-parent of this layerable. If you want this, call
+  Note that, unlike when passing a non \c nullptr parent plot in the constructor, this function
+  does not make \a parentPlot the QObject-parent of this layerable. If you want this, call
   QObject::setParent(\a parentPlot) in addition to this function.
   
   Further, you will probably want to set a layer (\ref setLayer) after calling this function, to
@@ -1591,8 +1608,8 @@ void QCPLayerable::applyAntialiasingHint(QCPPainter *painter, bool localAntialia
 /*! \internal
 
   This function is called by \ref initializeParentPlot, to allow subclasses to react on the setting
-  of a parent plot. This is the case when 0 was passed as parent plot in the constructor, and the
-  parent plot is set at a later time.
+  of a parent plot. This is the case when \c nullptr was passed as parent plot in the constructor,
+  and the parent plot is set at a later time.
   
   For example, QCPLayoutElement/QCPLayout hierarchies may be created independently of any
   QCustomPlot at first. When they are then added to a layout inside the QCustomPlot, the top level
@@ -1732,7 +1749,7 @@ void QCPLayerable::mousePressEvent(QMouseEvent *event, const QVariant &details)
 
   The current pixel position of the cursor on the QCustomPlot widget is accessible via \c
   event->pos(). The parameter \a startPos indicates the position where the initial \ref
-  mousePressEvent occured, that started the mouse interaction.
+  mousePressEvent occurred, that started the mouse interaction.
 
   The default implementation does nothing.
 
@@ -1750,7 +1767,7 @@ void QCPLayerable::mouseMoveEvent(QMouseEvent *event, const QPointF &startPos)
 
   The current pixel position of the cursor on the QCustomPlot widget is accessible via \c
   event->pos(). The parameter \a startPos indicates the position where the initial \ref
-  mousePressEvent occured, that started the mouse interaction.
+  mousePressEvent occurred, that started the mouse interaction.
 
   The default implementation does nothing.
 
@@ -1818,8 +1835,8 @@ void QCPLayerable::wheelEvent(QWheelEvent *event)
 /* end of 'src/layer.cpp' */
 
 
-/* including file 'src/axis/range.cpp', size 12221                           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/range.cpp'      */
+/* modified 2021-03-29T02:30:44, size 12221 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPRange
@@ -2140,8 +2157,8 @@ bool QCPRange::validRange(const QCPRange &range)
 /* end of 'src/axis/range.cpp' */
 
 
-/* including file 'src/selection.cpp', size 21875                            */
-/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
+/* including file 'src/selection.cpp'       */
+/* modified 2021-03-29T02:30:44, size 21837 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPDataRange
@@ -2151,10 +2168,9 @@ bool QCPRange::validRange(const QCPRange &range)
   \brief Describes a data range given by begin and end index
   
   QCPDataRange holds two integers describing the begin (\ref setBegin) and end (\ref setEnd) index
-  of a contiguous set of data points. The end index points to the data point just after the last
-  data point that's part of the data range, similarly to the nomenclature used in standard
-  iterators.
-  
+  of a contiguous set of data points. The \a end index corresponds to the data point just after the
+  last data point of the data range, like in standard iterators.
+
   Data Ranges are not bound to a certain plottable, thus they can be freely exchanged, created and
   modified. If a non-contiguous data set shall be described, the class \ref QCPDataSelection is
   used, which holds and manages multiple instances of \ref QCPDataRange. In most situations, \ref
@@ -2742,8 +2758,8 @@ QCPDataSelection QCPDataSelection::inverse(const QCPDataRange &outerRange) const
 /* end of 'src/selection.cpp' */
 
 
-/* including file 'src/selectionrect.cpp', size 9206                         */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/selectionrect.cpp'  */
+/* modified 2021-03-29T02:30:44, size 9215 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionRect
@@ -2801,8 +2817,8 @@ QCPDataSelection QCPDataSelection::inverse(const QCPDataRange &outerRange) const
 
 /*! \fn void QCPSelectionRect::canceled(const QRect &rect, QInputEvent *event);
   
-  This signal is emitted when the selection interaction was cancelled. Note that \a event is 0 if
-  the selection interaction was cancelled programmatically, by a call to \ref cancel.
+  This signal is emitted when the selection interaction was cancelled. Note that \a event is \c
+  nullptr if the selection interaction was cancelled programmatically, by a call to \ref cancel.
   
   The user may cancel the selection interaction by pressing the escape key. In this case, \a event
   holds the respective input event.
@@ -2971,8 +2987,8 @@ void QCPSelectionRect::draw(QCPPainter *painter)
 /* end of 'src/selectionrect.cpp' */
 
 
-/* including file 'src/layout.cpp', size 78799                               */
-/* commit 3616b887936dcb5c44be74b667424c1c2af77a0d 2020-05-16 15:34:58 +0200 */
+/* including file 'src/layout.cpp'          */
+/* modified 2021-03-29T02:30:44, size 78863 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPMarginGroup
@@ -3370,7 +3386,7 @@ void QCPLayoutElement::setSizeConstraintRect(SizeConstraintRect constraintRect)
   Margin groups allow synchronizing specified margins across layout elements, see the documentation
   of \ref QCPMarginGroup.
   
-  To unset the margin group of \a sides, set \a group to 0.
+  To unset the margin group of \a sides, set \a group to \c nullptr.
   
   Note that margin groups only work for margin sides that are set to automatic (\ref
   setAutoMargins).
@@ -3486,8 +3502,8 @@ QSize QCPLayoutElement::maximumOuterSizeHint() const
   Returns a list of all child elements in this layout element. If \a recursive is true, all
   sub-child elements are included in the list, too.
   
-  \warning There may be entries with value 0 in the returned list. (For example, QCPLayoutGrid may have
-  empty cells which yield 0 at the respective index.)
+  \warning There may be \c nullptr entries in the returned list. For example, QCPLayoutGrid may
+  have empty cells which yield \c nullptr at the respective index.
 */
 QList<QCPLayoutElement*> QCPLayoutElement::elements(bool recursive) const
 {
@@ -3607,11 +3623,12 @@ void QCPLayoutElement::layoutChanged()
 
 /*! \fn virtual QCPLayoutElement* QCPLayout::elementAt(int index) const = 0
   
-  Returns the element in the cell with the given \a index. If \a index is invalid, returns 0.
+  Returns the element in the cell with the given \a index. If \a index is invalid, returns \c
+  nullptr.
   
   Note that even if \a index is valid, the respective cell may be empty in some layouts (e.g.
-  QCPLayoutGrid), so this function may return 0 in those cases. You may use this function to check
-  whether a cell is empty or not.
+  QCPLayoutGrid), so this function may return \c nullptr in those cases. You may use this function
+  to check whether a cell is empty or not.
   
   \see elements, elementCount, takeAt
 */
@@ -3620,7 +3637,7 @@ void QCPLayoutElement::layoutChanged()
   
   Removes the element with the given \a index from the layout and returns it.
   
-  If the \a index is invalid or the cell with that index is empty, returns 0.
+  If the \a index is invalid or the cell with that index is empty, returns \c nullptr.
   
   Note that some layouts don't remove the respective cell right away but leave an empty cell after
   successful removal of the layout element. To collapse empty cells, use \ref simplify.
@@ -4102,8 +4119,8 @@ QCPLayoutGrid::~QCPLayoutGrid()
 /*!
   Returns the element in the cell in \a row and \a column.
   
-  Returns 0 if either the row/column is invalid or if the cell is empty. In those cases, a qDebug
-  message is printed. To check whether a cell exists and isn't empty, use \ref hasElement.
+  Returns \c nullptr if either the row/column is invalid or if the cell is empty. In those cases, a
+  qDebug message is printed. To check whether a cell exists and isn't empty, use \ref hasElement.
   
   \see addElement, hasElement
 */
@@ -4655,7 +4672,7 @@ bool QCPLayoutGrid::take(QCPLayoutElement *element)
     }
     qDebug() << Q_FUNC_INFO << "Element not in this layout, couldn't take";
   } else
-    qDebug() << Q_FUNC_INFO << "Can't take null element";
+    qDebug() << Q_FUNC_INFO << "Can't take nullptr element";
   return false;
 }
 
@@ -5060,7 +5077,7 @@ bool QCPLayoutInset::take(QCPLayoutElement *element)
     }
     qDebug() << Q_FUNC_INFO << "Element not in this layout, couldn't take";
   } else
-    qDebug() << Q_FUNC_INFO << "Can't take null element";
+    qDebug() << Q_FUNC_INFO << "Can't take nullptr element";
   return false;
 }
 
@@ -5112,7 +5129,7 @@ void QCPLayoutInset::addElement(QCPLayoutElement *element, Qt::Alignment alignme
     mInsetRect.append(QRectF(0.6, 0.6, 0.4, 0.4));
     adoptElement(element);
   } else
-    qDebug() << Q_FUNC_INFO << "Can't add null element";
+    qDebug() << Q_FUNC_INFO << "Can't add nullptr element";
 }
 
 /*!
@@ -5138,13 +5155,13 @@ void QCPLayoutInset::addElement(QCPLayoutElement *element, const QRectF &rect)
     mInsetRect.append(rect);
     adoptElement(element);
   } else
-    qDebug() << Q_FUNC_INFO << "Can't add null element";
+    qDebug() << Q_FUNC_INFO << "Can't add nullptr element";
 }
 /* end of 'src/layout.cpp' */
 
 
-/* including file 'src/lineending.cpp', size 11189                           */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/lineending.cpp'      */
+/* modified 2021-03-29T02:30:44, size 11189 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPLineEnding
@@ -5437,8 +5454,607 @@ void QCPLineEnding::draw(QCPPainter *painter, const QCPVector2D &pos, double ang
 /* end of 'src/lineending.cpp' */
 
 
-/* including file 'src/axis/axisticker.cpp', size 18679                      */
-/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
+/* including file 'src/axis/labelpainter.cpp' */
+/* modified 2021-03-29T02:30:44, size 27296   */
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPLabelPainterPrivate
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPLabelPainterPrivate
+
+  \internal
+  \brief (Private)
+  
+  This is a private class and not part of the public QCustomPlot interface.
+  
+*/
+
+const QChar QCPLabelPainterPrivate::SymbolDot(183);
+const QChar QCPLabelPainterPrivate::SymbolCross(215);
+
+/*!
+  Constructs a QCPLabelPainterPrivate instance. Make sure to not create a new
+  instance on every redraw, to utilize the caching mechanisms.
+  
+  the \a parentPlot does not take ownership of the label painter. Make sure
+  to delete it appropriately.
+*/
+QCPLabelPainterPrivate::QCPLabelPainterPrivate(QCustomPlot *parentPlot) :
+  mAnchorMode(amRectangular),
+  mAnchorSide(asLeft),
+  mAnchorReferenceType(artNormal),
+  mColor(Qt::black),
+  mPadding(0),
+  mRotation(0),
+  mSubstituteExponent(true),
+  mMultiplicationSymbol(QChar(215)),
+  mAbbreviateDecimalPowers(false),
+  mParentPlot(parentPlot),
+  mLabelCache(16)
+{
+  analyzeFontMetrics();
+}
+
+QCPLabelPainterPrivate::~QCPLabelPainterPrivate()
+{
+}
+
+void QCPLabelPainterPrivate::setAnchorSide(AnchorSide side)
+{
+  mAnchorSide = side;
+}
+
+void QCPLabelPainterPrivate::setAnchorMode(AnchorMode mode)
+{
+  mAnchorMode = mode;
+}
+
+void QCPLabelPainterPrivate::setAnchorReference(const QPointF &pixelPoint)
+{
+  mAnchorReference = pixelPoint;
+}
+
+void QCPLabelPainterPrivate::setAnchorReferenceType(AnchorReferenceType type)
+{
+  mAnchorReferenceType = type;
+}
+
+void QCPLabelPainterPrivate::setFont(const QFont &font)
+{
+  if (mFont != font)
+  {
+    mFont = font;
+    analyzeFontMetrics();
+  }
+}
+
+void QCPLabelPainterPrivate::setColor(const QColor &color)
+{
+  mColor = color;
+}
+
+void QCPLabelPainterPrivate::setPadding(int padding)
+{
+  mPadding = padding;
+}
+
+void QCPLabelPainterPrivate::setRotation(double rotation)
+{
+  mRotation = qBound(-90.0, rotation, 90.0);
+}
+
+void QCPLabelPainterPrivate::setSubstituteExponent(bool enabled)
+{
+  mSubstituteExponent = enabled;
+}
+
+void QCPLabelPainterPrivate::setMultiplicationSymbol(QChar symbol)
+{
+  mMultiplicationSymbol = symbol;
+}
+
+void QCPLabelPainterPrivate::setAbbreviateDecimalPowers(bool enabled)
+{
+  mAbbreviateDecimalPowers = enabled;
+}
+
+void QCPLabelPainterPrivate::setCacheSize(int labelCount)
+{
+  mLabelCache.setMaxCost(labelCount);
+}
+
+int QCPLabelPainterPrivate::cacheSize() const
+{
+  return mLabelCache.maxCost();
+}
+
+void QCPLabelPainterPrivate::drawTickLabel(QCPPainter *painter, const QPointF &tickPos, const QString &text)
+{
+  double realRotation = mRotation;
+  
+  AnchorSide realSide = mAnchorSide;
+  // for circular axes, the anchor side is determined depending on the quadrant of tickPos with respect to mCircularReference
+  if (mAnchorMode == amSkewedUpright)
+  {
+    realSide = skewedAnchorSide(tickPos, 0.2, 0.3); 
+  } else if (mAnchorMode == amSkewedRotated) // in this mode every label is individually rotated to match circle tangent
+  {
+    realSide = skewedAnchorSide(tickPos, 0, 0);
+    realRotation += QCPVector2D(tickPos-mAnchorReference).angle()/M_PI*180.0;
+    if (realRotation > 90) realRotation -= 180;
+    else if (realRotation < -90) realRotation += 180;
+  }
+  
+  realSide = rotationCorrectedSide(realSide, realRotation); // rotation angles may change the true anchor side of the label
+  drawLabelMaybeCached(painter, mFont, mColor, getAnchorPos(tickPos), realSide, realRotation, text);
+}
+
+/*! \internal
+  
+  Returns the size ("margin" in QCPAxisRect context, so measured perpendicular to the axis backbone
+  direction) needed to fit the axis.
+*/
+/* TODO: needed?
+int QCPLabelPainterPrivate::size() const
+{
+  int result = 0;
+  // get length of tick marks pointing outwards:
+  if (!tickPositions.isEmpty())
+    result += qMax(0, qMax(tickLengthOut, subTickLengthOut));
+  
+  // calculate size of tick labels:
+  if (tickLabelSide == QCPAxis::lsOutside)
+  {
+    QSize tickLabelsSize(0, 0);
+    if (!tickLabels.isEmpty())
+    {
+      for (int i=0; i<tickLabels.size(); ++i)
+        getMaxTickLabelSize(tickLabelFont, tickLabels.at(i), &tickLabelsSize);
+      result += QCPAxis::orientation(type) == Qt::Horizontal ? tickLabelsSize.height() : tickLabelsSize.width();
+    result += tickLabelPadding;
+    }
+  }
+  
+  // calculate size of axis label (only height needed, because left/right labels are rotated by 90 degrees):
+  if (!label.isEmpty())
+  {
+    QFontMetrics fontMetrics(labelFont);
+    QRect bounds;
+    bounds = fontMetrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip | Qt::AlignHCenter | Qt::AlignVCenter, label);
+    result += bounds.height() + labelPadding;
+  }
+
+  return result;
+}
+*/
+
+/*! \internal
+  
+  Clears the internal label cache. Upon the next \ref draw, all labels will be created new. This
+  method is called automatically if any parameters have changed that invalidate the cached labels,
+  such as font, color, etc. Usually you won't need to call this method manually.
+*/
+void QCPLabelPainterPrivate::clearCache()
+{
+  mLabelCache.clear();
+}
+
+/*! \internal
+  
+  Returns a hash that allows uniquely identifying whether the label parameters have changed such
+  that the cached labels must be refreshed (\ref clearCache). It is used in \ref draw. If the
+  return value of this method hasn't changed since the last redraw, the respective label parameters
+  haven't changed and cached labels may be used.
+*/
+QByteArray QCPLabelPainterPrivate::generateLabelParameterHash() const
+{
+  QByteArray result;
+  result.append(QByteArray::number(mParentPlot->bufferDevicePixelRatio()));
+  result.append(QByteArray::number(mRotation));
+  //result.append(QByteArray::number((int)tickLabelSide)); TODO: check whether this is really a cache-invalidating property
+  result.append(QByteArray::number((int)mSubstituteExponent));
+  result.append(QString(mMultiplicationSymbol).toUtf8());
+  result.append(mColor.name().toLatin1()+QByteArray::number(mColor.alpha(), 16));
+  result.append(mFont.toString().toLatin1());
+  return result;
+}
+
+/*! \internal
+  
+  Draws a single tick label with the provided \a painter, utilizing the internal label cache to
+  significantly speed up drawing of labels that were drawn in previous calls. The tick label is
+  always bound to an axis, the distance to the axis is controllable via \a distanceToAxis in
+  pixels. The pixel position in the axis direction is passed in the \a position parameter. Hence
+  for the bottom axis, \a position would indicate the horizontal pixel position (not coordinate),
+  at which the label should be drawn.
+  
+  In order to later draw the axis label in a place that doesn't overlap with the tick labels, the
+  largest tick label size is needed. This is acquired by passing a \a tickLabelsSize to the \ref
+  drawTickLabel calls during the process of drawing all tick labels of one axis. In every call, \a
+  tickLabelsSize is expanded, if the drawn label exceeds the value \a tickLabelsSize currently
+  holds.
+  
+  The label is drawn with the font and pen that are currently set on the \a painter. To draw
+  superscripted powers, the font is temporarily made smaller by a fixed factor (see \ref
+  getTickLabelData).
+*/
+void QCPLabelPainterPrivate::drawLabelMaybeCached(QCPPainter *painter, const QFont &font, const QColor &color, const QPointF &pos, AnchorSide side, double rotation, const QString &text)
+{
+  // warning: if you change anything here, also adapt getMaxTickLabelSize() accordingly!
+  if (text.isEmpty()) return;
+  QSize finalSize;
+
+  if (mParentPlot->plottingHints().testFlag(QCP::phCacheLabels) && !painter->modes().testFlag(QCPPainter::pmNoCaching)) // label caching enabled
+  {
+    QByteArray key = cacheKey(text, color, rotation, side);
+    CachedLabel *cachedLabel = mLabelCache.take(QString::fromUtf8(key)); // attempt to take label from cache (don't use object() because we want ownership/prevent deletion during our operations, we re-insert it afterwards)
+    if (!cachedLabel)  // no cached label existed, create it
+    {
+      LabelData labelData = getTickLabelData(font, color, rotation, side, text);
+      cachedLabel = createCachedLabel(labelData);
+    }
+    // if label would be partly clipped by widget border on sides, don't draw it (only for outside tick labels):
+    bool labelClippedByBorder = false;
+    /*
+    if (tickLabelSide == QCPAxis::lsOutside)
+    {
+      if (QCPAxis::orientation(type) == Qt::Horizontal)
+        labelClippedByBorder = labelAnchor.x()+cachedLabel->offset.x()+cachedLabel->pixmap.width()/mParentPlot->bufferDevicePixelRatio() > viewportRect.right() || labelAnchor.x()+cachedLabel->offset.x() < viewportRect.left();
+      else
+        labelClippedByBorder = labelAnchor.y()+cachedLabel->offset.y()+cachedLabel->pixmap.height()/mParentPlot->bufferDevicePixelRatio() > viewportRect.bottom() || labelAnchor.y()+cachedLabel->offset.y() < viewportRect.top();
+    }
+    */
+    if (!labelClippedByBorder)
+    {
+      painter->drawPixmap(pos+cachedLabel->offset, cachedLabel->pixmap);
+      finalSize = cachedLabel->pixmap.size()/mParentPlot->bufferDevicePixelRatio(); // TODO: collect this in a member rect list?
+    }
+    mLabelCache.insert(QString::fromUtf8(key), cachedLabel);
+  } else // label caching disabled, draw text directly on surface:
+  {
+    LabelData labelData = getTickLabelData(font, color, rotation, side, text);
+    // if label would be partly clipped by widget border on sides, don't draw it (only for outside tick labels):
+     bool labelClippedByBorder = false;
+     /*
+    if (tickLabelSide == QCPAxis::lsOutside)
+    {
+      if (QCPAxis::orientation(type) == Qt::Horizontal)
+        labelClippedByBorder = finalPosition.x()+(labelData.rotatedTotalBounds.width()+labelData.rotatedTotalBounds.left()) > viewportRect.right() || finalPosition.x()+labelData.rotatedTotalBounds.left() < viewportRect.left();
+      else
+        labelClippedByBorder = finalPosition.y()+(labelData.rotatedTotalBounds.height()+labelData.rotatedTotalBounds.top()) > viewportRect.bottom() || finalPosition.y()+labelData.rotatedTotalBounds.top() < viewportRect.top();
+    }
+    */
+    if (!labelClippedByBorder)
+    {
+      drawText(painter, pos, labelData);
+      finalSize = labelData.rotatedTotalBounds.size();
+    }
+  }
+  /*
+  // expand passed tickLabelsSize if current tick label is larger:
+  if (finalSize.width() > tickLabelsSize->width())
+    tickLabelsSize->setWidth(finalSize.width());
+  if (finalSize.height() > tickLabelsSize->height())
+    tickLabelsSize->setHeight(finalSize.height());
+  */
+}
+
+QPointF QCPLabelPainterPrivate::getAnchorPos(const QPointF &tickPos)
+{
+  switch (mAnchorMode)
+  {
+    case amRectangular:
+    {
+      switch (mAnchorSide)
+      {
+        case asLeft:   return tickPos+QPointF(mPadding, 0);
+        case asRight:  return tickPos+QPointF(-mPadding, 0);
+        case asTop:    return tickPos+QPointF(0, mPadding);
+        case asBottom: return tickPos+QPointF(0, -mPadding);
+        case asTopLeft:     return tickPos+QPointF(mPadding*M_SQRT1_2, mPadding*M_SQRT1_2);
+        case asTopRight:    return tickPos+QPointF(-mPadding*M_SQRT1_2, mPadding*M_SQRT1_2);
+        case asBottomRight: return tickPos+QPointF(-mPadding*M_SQRT1_2, -mPadding*M_SQRT1_2);
+        case asBottomLeft:  return tickPos+QPointF(mPadding*M_SQRT1_2, -mPadding*M_SQRT1_2);
+      }
+    }
+    case amSkewedUpright:
+    case amSkewedRotated:
+    {
+      QCPVector2D anchorNormal(tickPos-mAnchorReference);
+      if (mAnchorReferenceType == artTangent)
+        anchorNormal = anchorNormal.perpendicular();
+      anchorNormal.normalize();
+      return tickPos+(anchorNormal*mPadding).toPointF();
+    }
+  }
+  return tickPos;
+}
+
+/*! \internal
+  
+  This is a \ref placeTickLabel helper function.
+  
+  Draws the tick label specified in \a labelData with \a painter at the pixel positions \a x and \a
+  y. This function is used by \ref placeTickLabel to create new tick labels for the cache, or to
+  directly draw the labels on the QCustomPlot surface when label caching is disabled, i.e. when
+  QCP::phCacheLabels plotting hint is not set.
+*/
+void QCPLabelPainterPrivate::drawText(QCPPainter *painter, const QPointF &pos, const LabelData &labelData) const
+{
+  // backup painter settings that we're about to change:
+  QTransform oldTransform = painter->transform();
+  QFont oldFont = painter->font();
+  QPen oldPen = painter->pen();
+  
+  // transform painter to position/rotation:
+  painter->translate(pos);
+  painter->setTransform(labelData.transform, true);
+  
+  // draw text:
+  painter->setFont(labelData.baseFont);
+  painter->setPen(QPen(labelData.color));
+  if (!labelData.expPart.isEmpty()) // use superscripted exponent typesetting
+  {
+    painter->drawText(0, 0, 0, 0, Qt::TextDontClip, labelData.basePart);
+    if (!labelData.suffixPart.isEmpty())
+      painter->drawText(labelData.baseBounds.width()+1+labelData.expBounds.width(), 0, 0, 0, Qt::TextDontClip, labelData.suffixPart);
+    painter->setFont(labelData.expFont);
+    painter->drawText(labelData.baseBounds.width()+1, 0, labelData.expBounds.width(), labelData.expBounds.height(), Qt::TextDontClip,  labelData.expPart);
+  } else
+  {
+    painter->drawText(0, 0, labelData.totalBounds.width(), labelData.totalBounds.height(), Qt::TextDontClip | Qt::AlignHCenter, labelData.basePart);
+  }
+  
+  /* Debug code to draw label bounding boxes, baseline, and capheight
+  painter->save();
+  painter->setPen(QPen(QColor(0, 0, 0, 150)));
+  painter->drawRect(labelData.totalBounds);
+  const int baseline = labelData.totalBounds.height()-mLetterDescent;
+  painter->setPen(QPen(QColor(255, 0, 0, 150)));
+  painter->drawLine(QLineF(0, baseline, labelData.totalBounds.width(), baseline));
+  painter->setPen(QPen(QColor(0, 0, 255, 150)));
+  painter->drawLine(QLineF(0, baseline-mLetterCapHeight, labelData.totalBounds.width(), baseline-mLetterCapHeight));
+  painter->restore();
+  */
+  
+  // reset painter settings to what it was before:
+  painter->setTransform(oldTransform);
+  painter->setFont(oldFont);
+  painter->setPen(oldPen);
+}
+
+/*! \internal
+  
+  This is a \ref placeTickLabel helper function.
+  
+  Transforms the passed \a text and \a font to a tickLabelData structure that can then be further
+  processed by \ref getTickLabelDrawOffset and \ref drawTickLabel. It splits the text into base and
+  exponent if necessary (member substituteExponent) and calculates appropriate bounding boxes.
+*/
+QCPLabelPainterPrivate::LabelData QCPLabelPainterPrivate::getTickLabelData(const QFont &font, const QColor &color, double rotation, AnchorSide side, const QString &text) const
+{
+  LabelData result;
+  result.rotation = rotation;
+  result.side = side;
+  result.color = color;
+  
+  // determine whether beautiful decimal powers should be used
+  bool useBeautifulPowers = false;
+  int ePos = -1; // first index of exponent part, text before that will be basePart, text until eLast will be expPart
+  int eLast = -1; // last index of exponent part, rest of text after this will be suffixPart
+  if (mSubstituteExponent)
+  {
+    ePos = text.indexOf(QLatin1Char('e'));
+    if (ePos > 0 && text.at(ePos-1).isDigit())
+    {
+      eLast = ePos;
+      while (eLast+1 < text.size() && (text.at(eLast+1) == QLatin1Char('+') || text.at(eLast+1) == QLatin1Char('-') || text.at(eLast+1).isDigit()))
+        ++eLast;
+      if (eLast > ePos) // only if also to right of 'e' is a digit/+/- interpret it as beautifiable power
+        useBeautifulPowers = true;
+    }
+  }
+  
+  // calculate text bounding rects and do string preparation for beautiful decimal powers:
+  result.baseFont = font;
+  if (result.baseFont.pointSizeF() > 0) // might return -1 if specified with setPixelSize, in that case we can't do correction in next line
+    result.baseFont.setPointSizeF(result.baseFont.pointSizeF()+0.05); // QFontMetrics.boundingRect has a bug for exact point sizes that make the results oscillate due to internal rounding
+  
+  QFontMetrics baseFontMetrics(result.baseFont);
+  if (useBeautifulPowers)
+  {
+    // split text into parts of number/symbol that will be drawn normally and part that will be drawn as exponent:
+    result.basePart = text.left(ePos);
+    result.suffixPart = text.mid(eLast+1); // also drawn normally but after exponent
+    // in log scaling, we want to turn "1*10^n" into "10^n", else add multiplication sign and decimal base:
+    if (mAbbreviateDecimalPowers && result.basePart == QLatin1String("1"))
+      result.basePart = QLatin1String("10");
+    else
+      result.basePart += QString(mMultiplicationSymbol) + QLatin1String("10");
+    result.expPart = text.mid(ePos+1, eLast-ePos);
+    // clip "+" and leading zeros off expPart:
+    while (result.expPart.length() > 2 && result.expPart.at(1) == QLatin1Char('0')) // length > 2 so we leave one zero when numberFormatChar is 'e'
+      result.expPart.remove(1, 1);
+    if (!result.expPart.isEmpty() && result.expPart.at(0) == QLatin1Char('+'))
+      result.expPart.remove(0, 1);
+    // prepare smaller font for exponent:
+    result.expFont = font;
+    if (result.expFont.pointSize() > 0)
+      result.expFont.setPointSize(result.expFont.pointSize()*0.75);
+    else
+      result.expFont.setPixelSize(result.expFont.pixelSize()*0.75);
+    // calculate bounding rects of base part(s), exponent part and total one:
+    result.baseBounds = baseFontMetrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip, result.basePart);
+    result.expBounds = QFontMetrics(result.expFont).boundingRect(0, 0, 0, 0, Qt::TextDontClip, result.expPart);
+    if (!result.suffixPart.isEmpty())
+      result.suffixBounds = QFontMetrics(result.baseFont).boundingRect(0, 0, 0, 0, Qt::TextDontClip, result.suffixPart);
+    result.totalBounds = result.baseBounds.adjusted(0, 0, result.expBounds.width()+result.suffixBounds.width()+2, 0); // +2 consists of the 1 pixel spacing between base and exponent (see drawTickLabel) and an extra pixel to include AA
+  } else // useBeautifulPowers == false
+  {
+    result.basePart = text;
+    result.totalBounds = baseFontMetrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip | Qt::AlignHCenter, result.basePart);
+  }
+  result.totalBounds.moveTopLeft(QPoint(0, 0));
+  applyAnchorTransform(result);
+  result.rotatedTotalBounds = result.transform.mapRect(result.totalBounds);
+  
+  return result;
+}
+
+void QCPLabelPainterPrivate::applyAnchorTransform(LabelData &labelData) const
+{
+  if (!qFuzzyIsNull(labelData.rotation))
+    labelData.transform.rotate(labelData.rotation); // rotates effectively clockwise (due to flipped y axis of painter vs widget coordinate system)
+  
+  // from now on we translate in rotated label-local coordinate system.
+  // shift origin of coordinate system to appropriate point on label:
+  labelData.transform.translate(0, -labelData.totalBounds.height()+mLetterDescent+mLetterCapHeight); // shifts origin to true top of capital (or number) characters
+  
+  if (labelData.side == asLeft || labelData.side == asRight) // anchor is centered vertically
+    labelData.transform.translate(0, -mLetterCapHeight/2.0);
+  else if (labelData.side == asTop || labelData.side == asBottom) // anchor is centered horizontally
+    labelData.transform.translate(-labelData.totalBounds.width()/2.0, 0);
+  
+  if (labelData.side == asTopRight || labelData.side == asRight || labelData.side == asBottomRight) // anchor is at right
+    labelData.transform.translate(-labelData.totalBounds.width(), 0);
+  if (labelData.side == asBottomLeft || labelData.side == asBottom || labelData.side == asBottomRight) // anchor is at bottom (no elseif!)
+    labelData.transform.translate(0, -mLetterCapHeight);
+}
+
+/*! \internal
+  
+  Simulates the steps done by \ref placeTickLabel by calculating bounding boxes of the text label
+  to be drawn, depending on number format etc. Since only the largest tick label is wanted for the
+  margin calculation, the passed \a tickLabelsSize is only expanded, if it's currently set to a
+  smaller width/height.
+*/
+/*
+void QCPLabelPainterPrivate::getMaxTickLabelSize(const QFont &font, const QString &text,  QSize *tickLabelsSize) const
+{
+  // note: this function must return the same tick label sizes as the placeTickLabel function.
+  QSize finalSize;
+  if (mParentPlot->plottingHints().testFlag(QCP::phCacheLabels) && mLabelCache.contains(text)) // label caching enabled and have cached label
+  {
+    const CachedLabel *cachedLabel = mLabelCache.object(text);
+    finalSize = cachedLabel->pixmap.size()/mParentPlot->bufferDevicePixelRatio();
+  } else // label caching disabled or no label with this text cached:
+  {
+    // TODO: LabelData labelData = getTickLabelData(font, text);
+    // TODO: finalSize = labelData.rotatedTotalBounds.size();
+  }
+  
+  // expand passed tickLabelsSize if current tick label is larger:
+  if (finalSize.width() > tickLabelsSize->width())
+    tickLabelsSize->setWidth(finalSize.width());
+  if (finalSize.height() > tickLabelsSize->height())
+    tickLabelsSize->setHeight(finalSize.height());
+}
+*/
+
+QCPLabelPainterPrivate::CachedLabel *QCPLabelPainterPrivate::createCachedLabel(const LabelData &labelData) const
+{
+  CachedLabel *result = new CachedLabel;
+  
+  // allocate pixmap with the correct size and pixel ratio:
+  if (!qFuzzyCompare(1.0, mParentPlot->bufferDevicePixelRatio()))
+  {
+    result->pixmap = QPixmap(labelData.rotatedTotalBounds.size()*mParentPlot->bufferDevicePixelRatio());
+#ifdef QCP_DEVICEPIXELRATIO_SUPPORTED
+#  ifdef QCP_DEVICEPIXELRATIO_FLOAT
+    result->pixmap.setDevicePixelRatio(mParentPlot->devicePixelRatioF());
+#  else
+    result->pixmap.setDevicePixelRatio(mParentPlot->devicePixelRatio());
+#  endif
+#endif
+  } else
+    result->pixmap = QPixmap(labelData.rotatedTotalBounds.size());
+  result->pixmap.fill(Qt::transparent);
+  
+  // draw the label into the pixmap
+  // offset is between label anchor and topleft of cache pixmap, so pixmap can be drawn at pos+offset to make the label anchor appear at pos.
+  // We use rotatedTotalBounds.topLeft() because rotatedTotalBounds is in a coordinate system where the label anchor is at (0, 0)
+  result->offset = labelData.rotatedTotalBounds.topLeft();
+  QCPPainter cachePainter(&result->pixmap);
+  drawText(&cachePainter, -result->offset, labelData);
+  return result;
+}
+
+QByteArray QCPLabelPainterPrivate::cacheKey(const QString &text, const QColor &color, double rotation, AnchorSide side) const
+{
+  return text.toUtf8()+
+      QByteArray::number(color.red()+256*color.green()+65536*color.blue(), 36)+
+      QByteArray::number(color.alpha()+256*(int)side, 36)+
+      QByteArray::number((int)(rotation*100)%36000, 36);
+}
+
+QCPLabelPainterPrivate::AnchorSide QCPLabelPainterPrivate::skewedAnchorSide(const QPointF &tickPos, double sideExpandHorz, double sideExpandVert) const
+{
+  QCPVector2D anchorNormal = QCPVector2D(tickPos-mAnchorReference);
+  if (mAnchorReferenceType == artTangent)
+    anchorNormal = anchorNormal.perpendicular();
+  const double radius = anchorNormal.length();
+  const double sideHorz = sideExpandHorz*radius;
+  const double sideVert = sideExpandVert*radius;
+  if (anchorNormal.x() > sideHorz)
+  {
+    if (anchorNormal.y() > sideVert) return asTopLeft;
+    else if (anchorNormal.y() < -sideVert) return asBottomLeft;
+    else return asLeft;
+  } else if (anchorNormal.x() < -sideHorz)
+  {
+    if (anchorNormal.y() > sideVert) return asTopRight;
+    else if (anchorNormal.y() < -sideVert) return asBottomRight;
+    else return asRight;
+  } else
+  {
+    if (anchorNormal.y() > 0) return asTop;
+    else return asBottom;
+  }
+  return asBottom; // should never be reached
+}
+
+QCPLabelPainterPrivate::AnchorSide QCPLabelPainterPrivate::rotationCorrectedSide(AnchorSide side, double rotation) const
+{
+  AnchorSide result = side;
+  const bool rotateClockwise = rotation > 0;
+  if (!qFuzzyIsNull(rotation))
+  {
+    if (!qFuzzyCompare(qAbs(rotation), 90)) // avoid graphical collision with anchor tangent (e.g. axis line) when rotating, so change anchor side appropriately:
+    {
+      if (side == asTop) result = rotateClockwise ? asLeft : asRight;
+      else if (side == asBottom) result = rotateClockwise ? asRight : asLeft;
+      else if (side == asTopLeft) result = rotateClockwise ? asLeft : asTop;
+      else if (side == asTopRight) result = rotateClockwise ? asTop : asRight;
+      else if (side == asBottomLeft) result = rotateClockwise ? asBottom : asLeft;
+      else if (side == asBottomRight) result = rotateClockwise ? asRight : asBottom;
+    } else // for full rotation by +/-90 degrees, other sides are more appropriate for centering on anchor:
+    {
+      if (side == asLeft) result = rotateClockwise ? asBottom : asTop;
+      else if (side == asRight) result = rotateClockwise ? asTop : asBottom;
+      else if (side == asTop) result = rotateClockwise ? asLeft : asRight;
+      else if (side == asBottom) result = rotateClockwise ? asRight : asLeft;
+      else if (side == asTopLeft) result = rotateClockwise ? asBottomLeft : asTopRight;
+      else if (side == asTopRight) result = rotateClockwise ? asTopLeft : asBottomRight;
+      else if (side == asBottomLeft) result = rotateClockwise ? asBottomRight : asTopLeft;
+      else if (side == asBottomRight) result = rotateClockwise ? asTopRight : asBottomLeft;
+    }
+  }
+  return result;
+}
+
+void QCPLabelPainterPrivate::analyzeFontMetrics()
+{
+  const QFontMetrics fm(mFont);
+  mLetterCapHeight = fm.tightBoundingRect(QLatin1String("8")).height(); // this method is slow, that's why we query it only upon font change
+  mLetterDescent = fm.descent();
+}
+/* end of 'src/axis/labelpainter.cpp' */
+
+
+/* including file 'src/axis/axisticker.cpp' */
+/* modified 2021-03-29T02:30:44, size 18688 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTicker
@@ -5559,9 +6175,9 @@ void QCPAxisTicker::setTickOrigin(double origin)
   even irrelevant) for certain QCPAxisTicker subclasses.
   
   The output parameter \a ticks is filled with the generated tick positions in axis coordinates.
-  The output parameters \a subTicks and \a tickLabels are optional (set them to 0 if not needed)
-  and are respectively filled with sub tick coordinates, and tick label strings belonging to \a
-  ticks by index.
+  The output parameters \a subTicks and \a tickLabels are optional (set them to \c nullptr if not
+  needed) and are respectively filled with sub tick coordinates, and tick label strings belonging
+  to \a ticks by index.
 */
 void QCPAxisTicker::generate(const QCPRange &range, const QLocale &locale, QChar formatChar, int precision, QVector<double> &ticks, QVector<double> *subTicks, QVector<QString> *tickLabels)
 {
@@ -5857,8 +6473,8 @@ double QCPAxisTicker::cleanMantissa(double input) const
 /* end of 'src/axis/axisticker.cpp' */
 
 
-/* including file 'src/axis/axistickerdatetime.cpp', size 14732              */
-/* commit 9b3fe261363a32f67fa7d5ff97d3389916642c28 2020-05-16 13:47:25 +0200 */
+/* including file 'src/axis/axistickerdatetime.cpp' */
+/* modified 2021-03-29T02:30:44, size 18829         */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerDateTime
@@ -5877,7 +6493,8 @@ double QCPAxisTicker::cleanMantissa(double input) const
   millisecond on all Qt versions.
   
   The format of the date/time display in the tick labels is controlled with \ref setDateTimeFormat.
-  If a different time spec (time zone) shall be used, see \ref setDateTimeSpec.
+  If a different time spec or time zone shall be used for the tick label appearance, see \ref
+  setDateTimeSpec or \ref setTimeZone, respectively.
   
   This ticker produces unequal tick spacing in order to provide intuitive date and time-of-day
   ticks. For example, if the axis range spans a few years such that there is one tick per year,
@@ -5915,9 +6532,38 @@ QCPAxisTickerDateTime::QCPAxisTickerDateTime() :
   Sets the format in which dates and times are displayed as tick labels. For details about the \a
   format string, see the documentation of QDateTime::toString().
   
-  Newlines can be inserted with "\n".
+  Typical expressions are
+  <table>
+    <tr><td>\c d</td><td>The day as a number without a leading zero (1 to 31)</td></tr>
+    <tr><td>\c dd</td><td>The day as a number with a leading zero (01 to 31)</td></tr>
+    <tr><td>\c ddd</td><td>The abbreviated localized day name (e.g. 'Mon' to 'Sun'). Uses the system locale to localize the name, i.e. QLocale::system().</td></tr>
+    <tr><td>\c dddd</td><td>The long localized day name (e.g. 'Monday' to 'Sunday'). Uses the system locale to localize the name, i.e. QLocale::system().</td></tr>
+    <tr><td>\c M</td><td>The month as a number without a leading zero (1 to 12)</td></tr>
+    <tr><td>\c MM</td><td>The month as a number with a leading zero (01 to 12)</td></tr>
+    <tr><td>\c MMM</td><td>The abbreviated localized month name (e.g. 'Jan' to 'Dec'). Uses the system locale to localize the name, i.e. QLocale::system().</td></tr>
+    <tr><td>\c MMMM</td><td>The long localized month name (e.g. 'January' to 'December'). Uses the system locale to localize the name, i.e. QLocale::system().</td></tr>
+    <tr><td>\c yy</td><td>The year as a two digit number (00 to 99)</td></tr>
+    <tr><td>\c yyyy</td><td>The year as a four digit number. If the year is negative, a minus sign is prepended, making five characters.</td></tr>
+    <tr><td>\c h</td><td>The hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)</td></tr>
+    <tr><td>\c hh</td><td>The hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)</td></tr>
+    <tr><td>\c H</td><td>The hour without a leading zero (0 to 23, even with AM/PM display)</td></tr>
+    <tr><td>\c HH</td><td>The hour with a leading zero (00 to 23, even with AM/PM display)</td></tr>
+    <tr><td>\c m</td><td>The minute without a leading zero (0 to 59)</td></tr>
+    <tr><td>\c mm</td><td>The minute with a leading zero (00 to 59)</td></tr>
+    <tr><td>\c s</td><td>The whole second, without any leading zero (0 to 59)</td></tr>
+    <tr><td>\c ss</td><td>The whole second, with a leading zero where applicable (00 to 59)</td></tr>
+    <tr><td>\c z</td><td>The fractional part of the second, to go after a decimal point, without trailing zeroes (0 to 999). Thus "s.z" reports the seconds to full available (millisecond) precision without trailing zeroes.</td></tr>
+    <tr><td>\c zzz</td><td>The fractional part of the second, to millisecond precision, including trailing zeroes where applicable (000 to 999).</td></tr>
+    <tr><td>\c AP or \c A</td><td>Use AM/PM display. A/AP will be replaced by an upper-case version of either QLocale::amText() or QLocale::pmText().</td></tr>
+    <tr><td>\c ap or \c a</td><td>Use am/pm display. a/ap will be replaced by a lower-case version of either QLocale::amText() or QLocale::pmText().</td></tr>
+    <tr><td>\c t</td><td>The timezone (for example "CEST")</td></tr>
+  </table>
   
-  \see setDateTimeSpec
+  Newlines can be inserted with \c "\n", literal strings (even when containing above expressions)
+  by encapsulating them using single-quotes. A literal single quote can be generated by using two
+  consecutive single quotes in the format.
+  
+  \see setDateTimeSpec, setTimeZone
 */
 void QCPAxisTickerDateTime::setDateTimeFormat(const QString &format)
 {
@@ -5928,16 +6574,33 @@ void QCPAxisTickerDateTime::setDateTimeFormat(const QString &format)
   Sets the time spec that is used for creating the tick labels from corresponding dates/times.
 
   The default value of QDateTime objects (and also QCPAxisTickerDateTime) is
-  <tt>Qt::LocalTime</tt>. However, if the date time values passed to QCustomPlot (e.g. in the form
-  of axis ranges or keys of a plottable) are given in the UTC spec, set \a spec to <tt>Qt::UTC</tt>
-  to get the correct axis labels.
+  <tt>Qt::LocalTime</tt>. However, if the displayed tick labels shall be given in UTC, set \a spec
+  to <tt>Qt::UTC</tt>.
   
-  \see setDateTimeFormat
+  Tick labels corresponding to other time zones can be achieved with \ref setTimeZone (which sets
+  \a spec to \c Qt::TimeZone internally). Note that if \a spec is afterwards set to not be \c
+  Qt::TimeZone again, the \ref setTimeZone setting will be ignored accordingly.
+  
+  \see setDateTimeFormat, setTimeZone
 */
 void QCPAxisTickerDateTime::setDateTimeSpec(Qt::TimeSpec spec)
 {
   mDateTimeSpec = spec;
 }
+
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+/*!
+  Sets the time zone that is used for creating the tick labels from corresponding dates/times. The
+  time spec (\ref setDateTimeSpec) is set to \c Qt::TimeZone.
+  
+  \see setDateTimeFormat, setTimeZone
+*/
+void QCPAxisTickerDateTime::setTimeZone(const QTimeZone &zone)
+{
+  mTimeZone = zone;
+  mDateTimeSpec = Qt::TimeZone;
+}
+#endif
 
 /*!
   Sets the tick origin (see \ref QCPAxisTicker::setTickOrigin) in seconds since Epoch (1. Jan 1970,
@@ -5982,7 +6645,7 @@ double QCPAxisTickerDateTime::getTickStep(const QCPRange &range)
 {
   double result = range.size()/double(mTickCount+1e-10); // mTickCount ticks on average, the small addition is to prevent jitter on exact integers
   
-  mDateStrategy = dsNone;
+  mDateStrategy = dsNone; // leaving it at dsNone means tick coordinates will not be tuned in any special way in createTickVector
   if (result < 1) // ideal tick step is below 1 second -> use normal clean mantissa algorithm in units of seconds
   {
     result = cleanMantissa(result);
@@ -6043,7 +6706,8 @@ int QCPAxisTickerDateTime::getSubTickCount(double tickStep)
 /*! \internal
   
   Generates a date/time tick label for tick coordinate \a tick, based on the currently set format
-  (\ref setDateTimeFormat) and time spec (\ref setDateTimeSpec).
+  (\ref setDateTimeFormat), time spec (\ref setDateTimeSpec), and possibly time zone (\ref
+  setTimeZone).
   
   \seebaseclassmethod
 */
@@ -6051,7 +6715,14 @@ QString QCPAxisTickerDateTime::getTickLabel(double tick, const QLocale &locale, 
 {
   Q_UNUSED(precision)
   Q_UNUSED(formatChar)
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+  if (mDateTimeSpec == Qt::TimeZone)
+    return locale.toString(keyToDateTime(tick).toTimeZone(mTimeZone), mDateTimeFormat);
+  else
+    return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
+# else
   return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
+# endif
 }
 
 /*! \internal
@@ -6159,8 +6830,8 @@ double QCPAxisTickerDateTime::dateTimeToKey(const QDate &date, Qt::TimeSpec time
 /* end of 'src/axis/axistickerdatetime.cpp' */
 
 
-/* including file 'src/axis/axistickertime.cpp', size 11745                  */
-/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
+/* including file 'src/axis/axistickertime.cpp' */
+/* modified 2021-03-29T02:30:44, size 11745     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerTime
@@ -6408,8 +7079,8 @@ void QCPAxisTickerTime::replaceUnit(QString &text, QCPAxisTickerTime::TimeUnit u
 /* end of 'src/axis/axistickertime.cpp' */
 
 
-/* including file 'src/axis/axistickerfixed.cpp', size 5575                  */
-/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
+/* including file 'src/axis/axistickerfixed.cpp' */
+/* modified 2021-03-29T02:30:44, size 5575       */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerFixed
@@ -6510,8 +7181,8 @@ double QCPAxisTickerFixed::getTickStep(const QCPRange &range)
 /* end of 'src/axis/axistickerfixed.cpp' */
 
 
-/* including file 'src/axis/axistickertext.cpp', size 8742                   */
-/* commit dcedb527064bdd0d2d2769e308760f2750abc4de 2020-05-16 15:37:05 +0200 */
+/* including file 'src/axis/axistickertext.cpp' */
+/* modified 2021-03-29T02:30:44, size 8742      */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerText
@@ -6727,8 +7398,8 @@ QVector<double> QCPAxisTickerText::createTickVector(double tickStep, const QCPRa
 /* end of 'src/axis/axistickertext.cpp' */
 
 
-/* including file 'src/axis/axistickerpi.cpp', size 11168                    */
-/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
+/* including file 'src/axis/axistickerpi.cpp' */
+/* modified 2021-03-29T02:30:44, size 11177   */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerPi
@@ -6938,7 +7609,7 @@ QString QCPAxisTickerPi::fractionToString(int numerator, int denominator) const
       {
         return QString(QLatin1String("%1%2%3/%4"))
             .arg(sign == -1 ? QLatin1String("-") : QLatin1String(""))
-            .arg(integerPart > 0 ? QString::number(integerPart)+QLatin1String(" ") : QLatin1String(""))
+            .arg(integerPart > 0 ? QString::number(integerPart)+QLatin1String(" ") : QString(QLatin1String("")))
             .arg(remainder)
             .arg(denominator);
       } else if (mFractionStyle == fsUnicodeFractions)
@@ -7014,8 +7685,8 @@ QString QCPAxisTickerPi::unicodeSubscript(int number) const
 /* end of 'src/axis/axistickerpi.cpp' */
 
 
-/* including file 'src/axis/axistickerlog.cpp', size 7102                    */
-/* commit de4437a9fa7093b3f1976128ef0e2e1940b58c89 2020-01-26 01:42:42 +0100 */
+/* including file 'src/axis/axistickerlog.cpp' */
+/* modified 2021-03-29T02:30:44, size 7890     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAxisTickerLog
@@ -7038,6 +7709,12 @@ QString QCPAxisTickerPi::unicodeSubscript(int number) const
 
   The ticker can be created and assigned to an axis like this:
   \snippet documentation/doc-image-generator/mainwindow.cpp axistickerlog-creation
+  
+  Note that the nature of logarithmic ticks imply that there exists a smallest possible tick step,
+  corresponding to one multiplication by the log base. If the user zooms in further than that, no
+  new ticks would appear, leading to very sparse or even no axis ticks on the axis. To prevent this
+  situation, this ticker falls back to regular tick generation if the axis range would be covered
+  by too few logarithmically placed ticks.
 */
 
 /*!
@@ -7085,20 +7762,6 @@ void QCPAxisTickerLog::setSubTickCount(int subTicks)
 
 /*! \internal
   
-  Since logarithmic tick steps are necessarily different for each tick interval, this method does
-  nothing in the case of QCPAxisTickerLog
-  
-  \seebaseclassmethod
-*/
-double QCPAxisTickerLog::getTickStep(const QCPRange &range)
-{
-  // Logarithmic axis ticker has unequal tick spacing, so doesn't need this method
-  Q_UNUSED(range)
-  return 1.0;
-}
-
-/*! \internal
-  
   Returns the sub tick count specified in \ref setSubTickCount. For QCPAxisTickerLog, there is no
   automatic sub tick count calculation necessary.
   
@@ -7114,19 +7777,24 @@ int QCPAxisTickerLog::getSubTickCount(double tickStep)
   
   Creates ticks with a spacing given by the logarithm base and an increasing integer power in the
   provided \a range. The step in which the power increases tick by tick is chosen in order to keep
-  the total number of ticks as close as possible to the tick count (\ref setTickCount). The
-  parameter \a tickStep is ignored for QCPAxisTickerLog
+  the total number of ticks as close as possible to the tick count (\ref setTickCount).
+
+  The parameter \a tickStep is ignored for the normal logarithmic ticker generation. Only when
+  zoomed in very far such that not enough logarithmically placed ticks would be visible, this
+  function falls back to the regular QCPAxisTicker::createTickVector, which then uses \a tickStep.
   
   \seebaseclassmethod
 */
 QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRange &range)
 {
-  Q_UNUSED(tickStep)
   QVector<double> result;
   if (range.lower > 0 && range.upper > 0) // positive range
   {
-    double exactPowerStep =  qLn(range.upper/range.lower)*mLogBaseLnInv/double(mTickCount+1e-10);
-    double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
+    const double baseTickCount = qLn(range.upper/range.lower)*mLogBaseLnInv;
+    if (baseTickCount < 1.6) // if too few log ticks would be visible in axis range, fall back to regular tick vector generation
+      return QCPAxisTicker::createTickVector(tickStep, range);
+    const double exactPowerStep =  baseTickCount/double(mTickCount+1e-10);
+    const double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
     double currentTick = qPow(newLogBase, qFloor(qLn(range.lower)/qLn(newLogBase)));
     result.append(currentTick);
     while (currentTick < range.upper && currentTick > 0) // currentMag might be zero for ranges ~1e-300, just cancel in that case
@@ -7136,8 +7804,11 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
     }
   } else if (range.lower < 0 && range.upper < 0) // negative range
   {
-    double exactPowerStep =  qLn(range.lower/range.upper)*mLogBaseLnInv/double(mTickCount+1e-10);
-    double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
+    const double baseTickCount = qLn(range.lower/range.upper)*mLogBaseLnInv;
+    if (baseTickCount < 1.6) // if too few log ticks would be visible in axis range, fall back to regular tick vector generation
+      return QCPAxisTicker::createTickVector(tickStep, range);
+    const double exactPowerStep =  baseTickCount/double(mTickCount+1e-10);
+    const double newLogBase = qPow(mLogBase, qMax(int(cleanMantissa(exactPowerStep)), 1));
     double currentTick = -qPow(newLogBase, qCeil(qLn(-range.lower)/qLn(newLogBase)));
     result.append(currentTick);
     while (currentTick < range.upper && currentTick < 0) // currentMag might be zero for ranges ~1e-300, just cancel in that case
@@ -7155,8 +7826,8 @@ QVector<double> QCPAxisTickerLog::createTickVector(double tickStep, const QCPRan
 /* end of 'src/axis/axistickerlog.cpp' */
 
 
-/* including file 'src/axis/axis.cpp', size 99442                            */
-/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200 */
+/* including file 'src/axis/axis.cpp'       */
+/* modified 2021-03-29T02:30:44, size 99883 */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7898,7 +8569,7 @@ void QCPAxis::setTicker(QSharedPointer<QCPAxisTicker> ticker)
   if (ticker)
     mTicker = ticker;
   else
-    qDebug() << Q_FUNC_INFO << "can not set 0 as axis ticker";
+    qDebug() << Q_FUNC_INFO << "can not set nullptr as axis ticker";
   // no need to invalidate margin cache here because produced tick labels are checked for changes in setupTickVector
 }
 
@@ -8006,11 +8677,16 @@ void QCPAxis::setTickLabelSide(LabelSide side)
   of the format code used e.g. by QString::number() and QLocale::toString(). For reference about
   that, see the "Argument Formats" section in the detailed description of the QString class.
   
-  \a formatCode is a string of one, two or three characters. The first character is identical to
+  \a formatCode is a string of one, two or three characters.
+
+  <b>The first character</b> is identical to
   the normal format code used by Qt. In short, this means: 'e'/'E' scientific format, 'f' fixed
-  format, 'g'/'G' scientific or fixed, whichever is shorter.
-  
-  The second and third characters are optional and specific to QCustomPlot:\n
+  format, 'g'/'G' scientific or fixed, whichever is shorter. For the 'e', 'E', and 'f' formats,
+  the precision set by \ref setNumberPrecision represents the number of digits after the decimal
+  point. For the 'g' and 'G' formats, the precision represents the maximum number of significant
+  digits, trailing zeroes are omitted.
+
+  <b>The second and third characters</b> are optional and specific to QCustomPlot:\n
   If the first char was 'e' or 'g', numbers are/might be displayed in the scientific format, e.g.
   "5.5e9", which is ugly in a plot. So when the second char of \a formatCode is set to 'b' (for
   "beautiful"), those exponential numbers are formatted in a more natural way, i.e. "5.5
@@ -9444,9 +10120,16 @@ void QCPAxisPainterPrivate::draw(QCPPainter *painter)
   Returns the size ("margin" in QCPAxisRect context, so measured perpendicular to the axis backbone
   direction) needed to fit the axis.
 */
-int QCPAxisPainterPrivate::size() const
+int QCPAxisPainterPrivate::size()
 {
   int result = 0;
+
+  QByteArray newHash = generateLabelParameterHash();
+  if (newHash != mLabelParameterHash)
+  {
+    mLabelCache.clear();
+    mLabelParameterHash = newHash;
+  }
   
   // get length of tick marks pointing outwards:
   if (!tickPositions.isEmpty())
@@ -9473,7 +10156,7 @@ int QCPAxisPainterPrivate::size() const
     bounds = fontMetrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip | Qt::AlignHCenter | Qt::AlignVCenter, label);
     result += bounds.height() + labelPadding;
   }
-  
+
   return result;
 }
 
@@ -9861,8 +10544,8 @@ void QCPAxisPainterPrivate::getMaxTickLabelSize(const QFont &font, const QString
 /* end of 'src/axis/axis.cpp' */
 
 
-/* including file 'src/scatterstyle.cpp', size 17466                         */
-/* commit d5a94cfe4877e687a6843dcf312a4f2cd4217d2f 2020-02-14 21:26:16 +0100 */
+/* including file 'src/scatterstyle.cpp'    */
+/* modified 2021-03-29T02:30:44, size 17466 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPScatterStyle
@@ -10333,10 +11016,9 @@ void QCPScatterStyle::drawShape(QCPPainter *painter, double x, double y) const
 }
 /* end of 'src/scatterstyle.cpp' */
 
-//amalgamation: add datacontainer.cpp
 
-/* including file 'src/plottable.cpp', size 38812                            */
-/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
+/* including file 'src/plottable.cpp'       */
+/* modified 2021-03-29T02:30:44, size 38818 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionDecorator
@@ -10581,7 +11263,7 @@ bool QCPSelectionDecorator::registerWithPlottable(QCPAbstractPlottable *plottabl
   </tr><tr>
     <td>QPointer<\ref QCPAxis> \b mKeyAxis, \b mValueAxis</td>
     <td>The key and value axes this plottable is attached to. Call their QCPAxis::coordToPixel functions to translate coordinates
-        to pixels in either the key or value dimension. Make sure to check whether the pointer is null before using it. If one of
+        to pixels in either the key or value dimension. Make sure to check whether the pointer is \c nullptr before using it. If one of
         the axes is null, don't draw the plottable.</td>
   </tr><tr>
     <td>\ref QCPSelectionDecorator \b mSelectionDecorator</td>
@@ -11306,8 +11988,8 @@ void QCPAbstractPlottable::deselectEvent(bool *selectionStateChanged)
 /* end of 'src/plottable.cpp' */
 
 
-/* including file 'src/item.cpp', size 49337                                 */
-/* commit 8453feaef00a9107eb505e3d940d7ac70b746431 2020-04-12 14:26:55 +0200 */
+/* including file 'src/item.cpp'            */
+/* modified 2021-03-29T02:30:44, size 49486 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemAnchor
@@ -11338,8 +12020,8 @@ void QCPAbstractPlottable::deselectEvent(bool *selectionStateChanged)
 
 /*! \fn virtual QCPItemPosition *QCPItemAnchor::toQCPItemPosition()
   
-  Returns 0 if this instance is merely a QCPItemAnchor, and a valid pointer of type QCPItemPosition* if
-  it actually is a QCPItemPosition (which is a subclass of QCPItemAnchor).
+  Returns \c nullptr if this instance is merely a QCPItemAnchor, and a valid pointer of type
+  QCPItemPosition* if it actually is a QCPItemPosition (which is a subclass of QCPItemAnchor).
   
   This safe downcast functionality could also be achieved with a dynamic_cast. However, QCustomPlot avoids
   dynamic_cast to work with projects that don't have RTTI support enabled (e.g. -fno-rtti flag with
@@ -11471,10 +12153,11 @@ void QCPItemAnchor::removeChildY(QCPItemPosition *pos)
 
   QCPItemPosition has a type (\ref PositionType) that can be set with \ref setType. This type
   defines how coordinates passed to \ref setCoords are to be interpreted, e.g. as absolute pixel
-  coordinates, as plot coordinates of certain axes, etc. For more advanced plots it is also
+  coordinates, as plot coordinates of certain axes (\ref QCPItemPosition::setAxes), as fractions of
+  the axis rect (\ref QCPItemPosition::setAxisRect), etc. For more advanced plots it is also
   possible to assign different types per X/Y coordinate of the position (see \ref setTypeX, \ref
-  setTypeY). This way an item could be positioned at a fixed pixel distance from the top in the Y
-  direction, while following a plot coordinate in the X direction.
+  setTypeY). This way an item could be positioned for example at a fixed pixel distance from the
+  top in the Y direction, while following a plot coordinate in the X direction.
 
   A QCPItemPosition may have a parent QCPItemAnchor, see \ref setParentAnchor. This way you can tie
   multiple items together. If the QCPItemPosition has a parent, its coordinates (\ref setCoords)
@@ -11666,7 +12349,7 @@ void QCPItemPosition::setTypeY(QCPItemPosition::PositionType type)
   during reparenting. If it's set to false, the coordinates are set to (0, 0), i.e. the position
   will be exactly on top of the parent anchor.
   
-  To remove this QCPItemPosition from any parent anchor, set \a parentAnchor to 0.
+  To remove this QCPItemPosition from any parent anchor, set \a parentAnchor to \c nullptr.
   
   If the QCPItemPosition previously had no parent and the type is \ref ptPlotCoords, the type is
   set to \ref ptAbsolute, to keep the position in a valid state.
@@ -12338,7 +13021,7 @@ void QCPAbstractItem::setSelected(bool selected)
 
 /*!
   Returns the QCPItemPosition with the specified \a name. If this item doesn't have a position by
-  that name, returns 0.
+  that name, returns \c nullptr.
   
   This function provides an alternative way to access item positions. Normally, you access
   positions direcly by their member pointers (which typically have the same variable name as \a
@@ -12359,7 +13042,7 @@ QCPItemPosition *QCPAbstractItem::position(const QString &name) const
 
 /*!
   Returns the QCPItemAnchor with the specified \a name. If this item doesn't have an anchor by
-  that name, returns 0.
+  that name, returns \c nullptr.
   
   This function provides an alternative way to access item anchors. Normally, you access
   anchors direcly by their member pointers (which typically have the same variable name as \a
@@ -12577,8 +13260,8 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 /* end of 'src/item.cpp' */
 
 
-/* including file 'src/core.cpp', size 125623                                */
-/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200 */
+/* including file 'src/core.cpp'             */
+/* modified 2021-03-29T02:30:44, size 127198 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCustomPlot
@@ -12726,8 +13409,8 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   
   \a event is the mouse event that caused the click, \a legend is the legend that received the
   click and \a item is the legend item that received the click. If only the legend and no item is
-  clicked, \a item is 0. This happens for a click inside the legend padding or the space between
-  two items.
+  clicked, \a item is \c nullptr. This happens for a click inside the legend padding or the space
+  between two items.
   
   \see legendDoubleClick
 */
@@ -12738,8 +13421,8 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   
   \a event is the mouse event that caused the click, \a legend is the legend that received the
   click and \a item is the legend item that received the click. If only the legend and no item is
-  clicked, \a item is 0. This happens for a click inside the legend padding or the space between
-  two items.
+  clicked, \a item is \c nullptr. This happens for a click inside the legend padding or the space
+  between two items.
   
   \see legendClick
 */
@@ -12768,7 +13451,28 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   It is safe to mutually connect the replot slot with this signal on two QCustomPlots to make them
   replot synchronously, it won't cause an infinite recursion.
   
-  \see replot, afterReplot
+  \see replot, afterReplot, afterLayout
+*/
+
+/*! \fn void QCustomPlot::afterLayout()
+
+  This signal is emitted immediately after the layout step has been completed, which occurs right
+  before drawing the plot. This is typically during a call to \ref replot, and in such cases this
+  signal is emitted in between the signals \ref beforeReplot and \ref afterReplot. Unlike those
+  signals however, this signal is also emitted during off-screen painting, such as when calling
+  \ref toPixmap or \ref savePdf.
+
+  The layout step queries all layouts and layout elements in the plot for their proposed size and
+  arranges the objects accordingly as preparation for the subsequent drawing step. Through this
+  signal, you have the opportunity to update certain things in your plot that depend crucially on
+  the exact dimensions/positioning of layout elements such as axes and axis rects.
+
+  \warning However, changing any parameters of this QCustomPlot instance which would normally
+  affect the layouting (e.g. axis range order of magnitudes, tick label sizes, etc.) will not issue
+  a second run of the layout step. It will propagate directly to the draw step and may cause
+  graphical inconsistencies such as overlapping objects, if sizes or positions have changed.
+
+  \see updateLayout, beforeReplot, afterReplot
 */
 
 /*! \fn void QCustomPlot::afterReplot()
@@ -12779,7 +13483,7 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   It is safe to mutually connect the replot slot with this signal on two QCustomPlots to make them
   replot synchronously, it won't cause an infinite recursion.
   
-  \see replot, beforeReplot
+  \see replot, beforeReplot, afterLayout
 */
 
 /* end of documentation of signals */
@@ -12795,12 +13499,12 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   layout system\endlink to add multiple axis rects or multiple axes to one side, use the \ref
   QCPAxisRect::axis interface to access the new axes. If one of the four default axes or the
   default legend is removed due to manipulation of the layout system (e.g. by removing the main
-  axis rect), the corresponding pointers become 0.
+  axis rect), the corresponding pointers become \c nullptr.
   
-  If an axis convenience pointer is currently zero and a new axis rect or a corresponding axis is
-  added in the place of the main axis rect, QCustomPlot resets the convenience pointers to the
-  according new axes. Similarly the \ref legend convenience pointer will be reset if a legend is
-  added after the main legend was removed before.
+  If an axis convenience pointer is currently \c nullptr and a new axis rect or a corresponding
+  axis is added in the place of the main axis rect, QCustomPlot resets the convenience pointers to
+  the according new axes. Similarly the \ref legend convenience pointer will be reset if a legend
+  is added after the main legend was removed before.
 */
 
 /*! \var QCPAxis *QCustomPlot::yAxis
@@ -12813,12 +13517,12 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   layout system\endlink to add multiple axis rects or multiple axes to one side, use the \ref
   QCPAxisRect::axis interface to access the new axes. If one of the four default axes or the
   default legend is removed due to manipulation of the layout system (e.g. by removing the main
-  axis rect), the corresponding pointers become 0.
+  axis rect), the corresponding pointers become \c nullptr.
   
-  If an axis convenience pointer is currently zero and a new axis rect or a corresponding axis is
-  added in the place of the main axis rect, QCustomPlot resets the convenience pointers to the
-  according new axes. Similarly the \ref legend convenience pointer will be reset if a legend is
-  added after the main legend was removed before.
+  If an axis convenience pointer is currently \c nullptr and a new axis rect or a corresponding
+  axis is added in the place of the main axis rect, QCustomPlot resets the convenience pointers to
+  the according new axes. Similarly the \ref legend convenience pointer will be reset if a legend
+  is added after the main legend was removed before.
 */
 
 /*! \var QCPAxis *QCustomPlot::xAxis2
@@ -12833,12 +13537,12 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   layout system\endlink to add multiple axis rects or multiple axes to one side, use the \ref
   QCPAxisRect::axis interface to access the new axes. If one of the four default axes or the
   default legend is removed due to manipulation of the layout system (e.g. by removing the main
-  axis rect), the corresponding pointers become 0.
+  axis rect), the corresponding pointers become \c nullptr.
   
-  If an axis convenience pointer is currently zero and a new axis rect or a corresponding axis is
-  added in the place of the main axis rect, QCustomPlot resets the convenience pointers to the
-  according new axes. Similarly the \ref legend convenience pointer will be reset if a legend is
-  added after the main legend was removed before.
+  If an axis convenience pointer is currently \c nullptr and a new axis rect or a corresponding
+  axis is added in the place of the main axis rect, QCustomPlot resets the convenience pointers to
+  the according new axes. Similarly the \ref legend convenience pointer will be reset if a legend
+  is added after the main legend was removed before.
 */
 
 /*! \var QCPAxis *QCustomPlot::yAxis2
@@ -12853,12 +13557,12 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   layout system\endlink to add multiple axis rects or multiple axes to one side, use the \ref
   QCPAxisRect::axis interface to access the new axes. If one of the four default axes or the
   default legend is removed due to manipulation of the layout system (e.g. by removing the main
-  axis rect), the corresponding pointers become 0.
+  axis rect), the corresponding pointers become \c nullptr.
   
-  If an axis convenience pointer is currently zero and a new axis rect or a corresponding axis is
-  added in the place of the main axis rect, QCustomPlot resets the convenience pointers to the
-  according new axes. Similarly the \ref legend convenience pointer will be reset if a legend is
-  added after the main legend was removed before.
+  If an axis convenience pointer is currently \c nullptr and a new axis rect or a corresponding
+  axis is added in the place of the main axis rect, QCustomPlot resets the convenience pointers to
+  the according new axes. Similarly the \ref legend convenience pointer will be reset if a legend
+  is added after the main legend was removed before.
 */
 
 /*! \var QCPLegend *QCustomPlot::legend
@@ -12873,12 +13577,12 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
   access the new legend. For example, legends can be placed inside an axis rect's \ref
   QCPAxisRect::insetLayout "inset layout", and must then also be accessed via the inset layout. If
   the default legend is removed due to manipulation of the layout system (e.g. by removing the main
-  axis rect), the corresponding pointer becomes 0.
+  axis rect), the corresponding pointer becomes \c nullptr.
   
-  If an axis convenience pointer is currently zero and a new axis rect or a corresponding axis is
-  added in the place of the main axis rect, QCustomPlot resets the convenience pointers to the
-  according new axes. Similarly the \ref legend convenience pointer will be reset if a legend is
-  added after the main legend was removed before.
+  If an axis convenience pointer is currently \c nullptr and a new axis rect or a corresponding
+  axis is added in the place of the main axis rect, QCustomPlot resets the convenience pointers to
+  the according new axes. Similarly the \ref legend convenience pointer will be reset if a legend
+  is added after the main legend was removed before.
 */
 
 /* end of documentation of public members */
@@ -13398,7 +14102,7 @@ void QCustomPlot::setOpenGl(bool enabled, int multisampling)
   Sets the viewport of this QCustomPlot. Usually users of QCustomPlot don't need to change the
   viewport manually.
 
-  The viewport is the area in which the plot is drawn. All mechanisms, e.g. margin caluclation take
+  The viewport is the area in which the plot is drawn. All mechanisms, e.g. margin calculation take
   the viewport to be the outer border of the plot. The viewport normally is the rect() of the
   QCustomPlot widget, i.e. a rect with top left (0, 0) and size of the QCustomPlot widget.
 
@@ -13525,7 +14229,7 @@ void QCustomPlot::setBackgroundScaledMode(Qt::AspectRatioMode mode)
 }
 
 /*!
-  Returns the plottable with \a index. If the index is invalid, returns 0.
+  Returns the plottable with \a index. If the index is invalid, returns \c nullptr.
   
   There is an overloaded version of this function with no parameter which returns the last added
   plottable, see QCustomPlot::plottable()
@@ -13547,7 +14251,7 @@ QCPAbstractPlottable *QCustomPlot::plottable(int index)
 /*! \overload
   
   Returns the last plottable that was added to the plot. If there are no plottables in the plot,
-  returns 0.
+  returns \c nullptr.
   
   \see plottableCount
 */
@@ -13669,7 +14373,7 @@ bool QCustomPlot::hasPlottable(QCPAbstractPlottable *plottable) const
 }
 
 /*!
-  Returns the graph with \a index. If the index is invalid, returns 0.
+  Returns the graph with \a index. If the index is invalid, returns \c nullptr.
   
   There is an overloaded version of this function with no parameter which returns the last created
   graph, see QCustomPlot::graph()
@@ -13691,7 +14395,7 @@ QCPGraph *QCustomPlot::graph(int index) const
 /*! \overload
   
   Returns the last graph, that was created with \ref addGraph. If there are no graphs in the plot,
-  returns 0.
+  returns \c nullptr.
   
   \see graphCount, addGraph
 */
@@ -13712,7 +14416,7 @@ QCPGraph *QCustomPlot::graph() const
   \a keyAxis will be used as key axis (typically "x") and \a valueAxis as value axis (typically
   "y") for the graph.
   
-  Returns a pointer to the newly created graph, or 0 if adding the graph failed.
+  Returns a pointer to the newly created graph, or \c nullptr if adding the graph failed.
   
   \see graph, graphCount, removeGraph, clearGraphs
 */
@@ -13740,7 +14444,7 @@ QCPGraph *QCustomPlot::addGraph(QCPAxis *keyAxis, QCPAxis *valueAxis)
   Removes the specified \a graph from the plot and deletes it. If necessary, the corresponding
   legend item is also removed from the default legend (QCustomPlot::legend). If any other graphs in
   the plot have a channel fill set towards the removed graph, the channel fill property of those
-  graphs is reset to zero (no channel fill).
+  graphs is reset to \c nullptr (no channel fill).
   
   Returns true on success.
   
@@ -13809,7 +14513,7 @@ QList<QCPGraph*> QCustomPlot::selectedGraphs() const
 }
 
 /*!
-  Returns the item with \a index. If the index is invalid, returns 0.
+  Returns the item with \a index. If the index is invalid, returns \c nullptr.
   
   There is an overloaded version of this function with no parameter which returns the last added
   item, see QCustomPlot::item()
@@ -13831,7 +14535,7 @@ QCPAbstractItem *QCustomPlot::item(int index) const
 /*! \overload
   
   Returns the last item that was added to this plot. If there are no items in the plot,
-  returns 0.
+  returns \c nullptr.
   
   \see itemCount
 */
@@ -13946,8 +14650,8 @@ bool QCustomPlot::hasItem(QCPAbstractItem *item) const
 }
 
 /*!
-  Returns the layer with the specified \a name. If there is no layer with the specified name, 0 is
-  returned.
+  Returns the layer with the specified \a name. If there is no layer with the specified name, \c
+  nullptr is returned.
   
   Layer names are case-sensitive.
   
@@ -13965,7 +14669,7 @@ QCPLayer *QCustomPlot::layer(const QString &name) const
 
 /*! \overload
   
-  Returns the layer by \a index. If the index is invalid, 0 is returned.
+  Returns the layer by \a index. If the index is invalid, \c nullptr is returned.
   
   \see addLayer, moveLayer, removeLayer
 */
@@ -14247,7 +14951,7 @@ QList<QCPAxisRect*> QCustomPlot::axisRects() const
 
 /*!
   Returns the layout element at pixel position \a pos. If there is no element at that position,
-  returns 0.
+  returns \c nullptr.
   
   Only visible elements are used. If \ref QCPLayoutElement::setVisible on the element itself or on
   any of its parent elements is set to false, it will not be considered.
@@ -14277,7 +14981,7 @@ QCPLayoutElement *QCustomPlot::layoutElementAt(const QPointF &pos) const
 /*!
   Returns the layout element of type \ref QCPAxisRect at pixel position \a pos. This method ignores
   other layout elements even if they are visually in front of the axis rect (e.g. a \ref
-  QCPLegend). If there is no axis rect at that position, returns 0.
+  QCPLegend). If there is no axis rect at that position, returns \c nullptr.
 
   Only visible axis rects are used. If \ref QCPLayoutElement::setVisible on the axis rect itself or
   on any of its parent elements is set to false, it will not be considered.
@@ -14765,7 +15469,9 @@ void QCustomPlot::paintEvent(QPaintEvent *event)
   QCPPainter painter(this);
   if (painter.isActive())
   {
-    painter.setRenderHint(QPainter::HighQualityAntialiasing); // to make Antialiasing look good if using the OpenGL graphicssystem
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  painter.setRenderHint(QPainter::HighQualityAntialiasing); // to make Antialiasing look good if using the OpenGL graphicssystem
+#endif
     if (mBackgroundBrush.style() != Qt::NoBrush)
       painter.fillRect(mViewport, mBackgroundBrush);
     drawBackground(&painter);
@@ -15049,6 +15755,8 @@ void QCustomPlot::updateLayout()
   mPlotLayout->update(QCPLayoutElement::upPreparation);
   mPlotLayout->update(QCPLayoutElement::upMargins);
   mPlotLayout->update(QCPLayoutElement::upLayout);
+
+  emit afterLayout();
 }
 
 /*! \internal
@@ -15349,7 +16057,7 @@ void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event)
         if (!potentialSelections.isEmpty())
         {
           SelectionCandidates::iterator it = potentialSelections.begin();
-          while (it != potentialSelections.end()-1) // erase all except last element
+          while (it != std::prev(potentialSelections.end())) // erase all except last element
             it = potentialSelections.erase(it);
         }
       }
@@ -15770,10 +16478,9 @@ void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)
 }
 /* end of 'src/core.cpp' */
 
-//amalgamation: add plottable1d.cpp
 
-/* including file 'src/colorgradient.cpp', size 25255                        */
-/* commit 6a64fcbc7115ec3a95dd37be2e0d93ba58b76e9e 2020-04-11 02:28:24 +0200 */
+/* including file 'src/colorgradient.cpp'   */
+/* modified 2021-03-29T02:30:44, size 25278 */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15800,7 +16507,7 @@ void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)
   
   \image html QCPColorGradient.png
   
-  The \ref QCPColorGradient(GradientPreset preset) constructor allows directly converting a \ref
+  The constructor \ref QCPColorGradient(GradientPreset preset) allows directly converting a \ref
   GradientPreset to a QCPColorGradient. This means that you can directly pass \ref GradientPreset
   to all the \a setGradient methods, e.g.:
   \snippet documentation/doc-code-snippets/mainwindow.cpp qcpcolorgradient-setgradient
@@ -16315,14 +17022,14 @@ void QCPColorGradient::updateColorBuffer()
       {
         if (useAlpha)
         {
-          const QColor col = (it-1).value();
+          const QColor col = std::prev(it).value();
           const double alphaPremultiplier = col.alpha()/255.0; // since we use QImage::Format_ARGB32_Premultiplied
           mColorBuffer[i] = qRgba(int(col.red()*alphaPremultiplier),
                                   int(col.green()*alphaPremultiplier),
                                   int(col.blue()*alphaPremultiplier),
                                   col.alpha());
         } else
-          mColorBuffer[i] = (it-1).value().rgba();
+          mColorBuffer[i] = std::prev(it).value().rgba();
       } else if (it == mColorStops.constBegin()) // position is on or before first stop, use color of first stop
       {
         if (useAlpha)
@@ -16338,7 +17045,7 @@ void QCPColorGradient::updateColorBuffer()
       } else // position is in between stops (or on an intermediate stop), interpolate color
       {
         QMap<double, QColor>::const_iterator high = it;
-        QMap<double, QColor>::const_iterator low = it-1;
+        QMap<double, QColor>::const_iterator low = std::prev(it);
         double t = (position-low.key())/(high.key()-low.key()); // interpolation factor 0..1
         switch (mColorInterpolation)
         {
@@ -16407,8 +17114,8 @@ void QCPColorGradient::updateColorBuffer()
 /* end of 'src/colorgradient.cpp' */
 
 
-/* including file 'src/selectiondecorator-bracket.cpp', size 12308           */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/selectiondecorator-bracket.cpp' */
+/* modified 2021-03-29T02:30:44, size 12308            */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPSelectionDecoratorBracket
@@ -16693,8 +17400,8 @@ QPointF QCPSelectionDecoratorBracket::getPixelCoordinates(const QCPPlottableInte
 /* end of 'src/selectiondecorator-bracket.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-axisrect.cpp', size 47184 */
-/* commit 17d5b93d49d1ba533bb8b417ca7b8417705f11a7 2020-05-17 09:27:15 +0200  */
+/* including file 'src/layoutelements/layoutelement-axisrect.cpp' */
+/* modified 2021-03-29T02:30:44, size 47193                       */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16954,7 +17661,7 @@ QList<QCPAxis*> QCPAxisRect::axes() const
   previously created outside QCustomPlot. It is important to note that QCustomPlot takes ownership
   of the axis, so you may not delete it afterwards. Further, the \a axis must have been created
   with this axis rect as parent and with the same axis type as specified in \a type. If this is not
-  the case, a debug output is generated, the axis is not added, and the method returns 0.
+  the case, a debug output is generated, the axis is not added, and the method returns \c nullptr.
 
   This method can not be used to move \a axis between axis rects. The same \a axis instance must
   not be added multiple times to the same or different axis rects.
@@ -17978,8 +18685,8 @@ void QCPAxisRect::wheelEvent(QWheelEvent *event)
 /* end of 'src/layoutelements/layoutelement-axisrect.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-legend.cpp', size 31744  */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/layoutelements/layoutelement-legend.cpp' */
+/* modified 2021-03-29T02:30:44, size 31762                     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPAbstractLegendItem
@@ -18622,7 +19329,7 @@ void QCPLegend::setSelectedTextColor(const QColor &color)
 
 /*!
   Returns the item with index \a i. If non-legend items were added to the legend, and the element
-  at the specified cell index is not a QCPAbstractLegendItem, returns 0.
+  at the specified cell index is not a QCPAbstractLegendItem, returns \c nullptr.
 
   Note that the linear index depends on the current fill order (\ref setFillOrder).
 
@@ -18635,7 +19342,7 @@ QCPAbstractLegendItem *QCPLegend::item(int index) const
 
 /*!
   Returns the QCPPlottableLegendItem which is associated with \a plottable (e.g. a \ref QCPGraph*).
-  If such an item isn't in the legend, returns 0.
+  If such an item isn't in the legend, returns \c nullptr.
   
   \see hasItemWithPlottable
 */
@@ -18902,8 +19609,8 @@ void QCPLegend::parentPlotInitialized(QCustomPlot *parentPlot)
 /* end of 'src/layoutelements/layoutelement-legend.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-textelement.cpp', size 12998 */
-/* commit 310c9fd102f0e1e8f4c5d40dde1b64eecc04ae63 2020-05-23 09:29:21 +0200     */
+/* including file 'src/layoutelements/layoutelement-textelement.cpp' */
+/* modified 2021-03-29T02:30:44, size 12925                          */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPTextElement
@@ -18953,7 +19660,7 @@ void QCPLegend::parentPlotInitialized(QCustomPlot *parentPlot)
 QCPTextElement::QCPTextElement(QCustomPlot *parentPlot) :
   QCPLayoutElement(parentPlot),
   mText(),
-  mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
+  mTextFlags(Qt::AlignCenter),
   mFont(QFont(QLatin1String("sans serif"), 12)), // will be taken from parentPlot if available, see below
   mTextColor(Qt::black),
   mSelectedFont(QFont(QLatin1String("sans serif"), 12)), // will be taken from parentPlot if available, see below
@@ -18978,7 +19685,7 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot) :
 QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text) :
   QCPLayoutElement(parentPlot),
   mText(text),
-  mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
+  mTextFlags(Qt::AlignCenter),
   mFont(QFont(QLatin1String("sans serif"), 12)), // will be taken from parentPlot if available, see below
   mTextColor(Qt::black),
   mSelectedFont(QFont(QLatin1String("sans serif"), 12)), // will be taken from parentPlot if available, see below
@@ -19003,7 +19710,7 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text) :
 QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, double pointSize) :
   QCPLayoutElement(parentPlot),
   mText(text),
-  mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
+  mTextFlags(Qt::AlignCenter),
   mFont(QFont(QLatin1String("sans serif"), int(pointSize))), // will be taken from parentPlot if available, see below
   mTextColor(Qt::black),
   mSelectedFont(QFont(QLatin1String("sans serif"), int(pointSize))), // will be taken from parentPlot if available, see below
@@ -19031,7 +19738,7 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, dou
 QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, const QString &fontFamily, double pointSize) :
   QCPLayoutElement(parentPlot),
   mText(text),
-  mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
+  mTextFlags(Qt::AlignCenter),
   mFont(QFont(fontFamily, int(pointSize))),
   mTextColor(Qt::black),
   mSelectedFont(QFont(fontFamily, int(pointSize))),
@@ -19052,7 +19759,7 @@ QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, con
 QCPTextElement::QCPTextElement(QCustomPlot *parentPlot, const QString &text, const QFont &font) :
   QCPLayoutElement(parentPlot),
   mText(text),
-  mTextFlags(Qt::AlignCenter|Qt::TextWordWrap),
+  mTextFlags(Qt::AlignCenter),
   mFont(font),
   mTextColor(Qt::black),
   mSelectedFont(font),
@@ -19187,7 +19894,7 @@ void QCPTextElement::draw(QCPPainter *painter)
 QSize QCPTextElement::minimumOuterSizeHint() const
 {
   QFontMetrics metrics(mFont);
-  QSize result(metrics.boundingRect(0, 0, 0, 0, mTextFlags, mText).size());
+  QSize result(metrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip, mText).size());
   result.rwidth() += mMargins.left()+mMargins.right();
   result.rheight() += mMargins.top()+mMargins.bottom();
   return result;
@@ -19197,7 +19904,7 @@ QSize QCPTextElement::minimumOuterSizeHint() const
 QSize QCPTextElement::maximumOuterSizeHint() const
 {
   QFontMetrics metrics(mFont);
-  QSize result(metrics.boundingRect(0, 0, 0, 0, mTextFlags, mText).size());
+  QSize result(metrics.boundingRect(0, 0, 0, 0, Qt::TextDontClip, mText).size());
   result.setWidth(QWIDGETSIZE_MAX);
   result.rheight() += mMargins.top()+mMargins.bottom();
   return result;
@@ -19308,8 +20015,8 @@ QColor QCPTextElement::mainTextColor() const
 /* end of 'src/layoutelements/layoutelement-textelement.cpp' */
 
 
-/* including file 'src/layoutelements/layoutelement-colorscale.cpp', size 26531 */
-/* commit 3616b887936dcb5c44be74b667424c1c2af77a0d 2020-05-16 15:34:58 +0200    */
+/* including file 'src/layoutelements/layoutelement-colorscale.cpp' */
+/* modified 2021-03-29T02:30:44, size 26531                         */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19992,8 +20699,8 @@ void QCPColorScaleAxisRectPrivate::axisSelectableChanged(QCPAxis::SelectablePart
 /* end of 'src/layoutelements/layoutelement-colorscale.cpp' */
 
 
-/* including file 'src/plottables/plottable-graph.cpp', size 74370           */
-/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
+/* including file 'src/plottables/plottable-graph.cpp' */
+/* modified 2021-03-29T02:30:44, size 74518            */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPGraphData
@@ -20501,7 +21208,7 @@ void QCPGraph::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const
 
 /*! \internal
 
-  This method retrieves an optimized set of data points via \ref getOptimizedLineData, an branches
+  This method retrieves an optimized set of data points via \ref getOptimizedLineData, and branches
   out to the line style specific functions such as \ref dataToLines, \ref dataToStepLeftLines, etc.
   according to the line style of the graph.
 
@@ -21711,7 +22418,7 @@ double QCPGraph::pointDistance(const QPointF &pixelPoint, QCPGraphDataContainer:
   {
     // line displayed, calculate distance to line segments:
     QVector<QPointF> lineData;
-    getLines(&lineData, QCPDataRange(0, dataCount()));
+    getLines(&lineData, QCPDataRange(0, dataCount())); // don't limit data range further since with sharp data spikes, line segments may be closer to test point than segments with closer key coordinate
     QCPVector2D p(pixelPoint);
     const int step = mLineStyle==lsImpulse ? 2 : 1; // impulse plot differs from other line styles in that the lineData points are only pairwise connected
     for (int i=0; i<lineData.size()-1; i+=step)
@@ -21750,8 +22457,8 @@ int QCPGraph::findIndexBelowY(const QVector<QPointF> *data, double y) const
 /* end of 'src/plottables/plottable-graph.cpp' */
 
 
-/* including file 'src/plottables/plottable-curve.cpp', size 63851           */
-/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
+/* including file 'src/plottables/plottable-curve.cpp' */
+/* modified 2021-03-29T02:30:44, size 63851            */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPCurveData
@@ -23208,8 +23915,8 @@ double QCPCurve::pointDistance(const QPointF &pixelPoint, QCPCurveDataContainer:
 /* end of 'src/plottables/plottable-curve.cpp' */
 
 
-/* including file 'src/plottables/plottable-bars.cpp', size 43853            */
-/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
+/* including file 'src/plottables/plottable-bars.cpp' */
+/* modified 2021-03-29T02:30:44, size 43907           */
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23321,7 +24028,7 @@ void QCPBarsGroup::setSpacing(double spacing)
 
 /*!
   Returns the QCPBars instance with the specified \a index in this group. If no such QCPBars
-  exists, returns 0.
+  exists, returns \c nullptr.
 
   \see bars(), size
 */
@@ -23674,14 +24381,14 @@ QCPBarsData::QCPBarsData(double key, double value) :
 
 /*! \fn QCPBars *QCPBars::barBelow() const
   Returns the bars plottable that is directly below this bars plottable.
-  If there is no such plottable, returns 0.
+  If there is no such plottable, returns \c nullptr.
   
   \see barAbove, moveBelow, moveAbove
 */
 
 /*! \fn QCPBars *QCPBars::barAbove() const
   Returns the bars plottable that is directly above this bars plottable.
-  If there is no such plottable, returns 0.
+  If there is no such plottable, returns \c nullptr.
   
   \see barBelow, moveBelow, moveAbove
 */
@@ -23704,7 +24411,7 @@ QCPBars::QCPBars(QCPAxis *keyAxis, QCPAxis *valueAxis) :
   mWidthType(wtPlotCoords),
   mBarsGroup(nullptr),
   mBaseValue(0),
-  mStackingGap(0)
+  mStackingGap(1)
 {
   // modify inherited properties from abstract plottable:
   mPen.setColor(Qt::blue);
@@ -23786,7 +24493,7 @@ void QCPBars::setWidthType(QCPBars::WidthType widthType)
   Sets to which QCPBarsGroup this QCPBars instance belongs to. Alternatively, you can also use \ref
   QCPBarsGroup::append.
   
-  To remove this QCPBars from any group, set \a barsGroup to 0.
+  To remove this QCPBars from any group, set \a barsGroup to \c nullptr.
 */
 void QCPBars::setBarsGroup(QCPBarsGroup *barsGroup)
 {
@@ -23878,7 +24585,7 @@ void QCPBars::addData(double key, double value)
   is already between two other bars, the two other bars will be stacked on top of each other after
   the operation.
   
-  To remove this bars plottable from any stacking, set \a bars to 0.
+  To remove this bars plottable from any stacking, set \a bars to \c nullptr.
   
   \see moveBelow, barAbove, barBelow
 */
@@ -23911,7 +24618,7 @@ void QCPBars::moveBelow(QCPBars *bars)
   is already between two other bars, the two other bars will be stacked on top of each other after
   the operation.
   
-  To remove this bars plottable from any stacking, set \a bars to 0.
+  To remove this bars plottable from any stacking, set \a bars to \c nullptr.
   
   \see moveBelow, barBelow, barAbove
 */
@@ -24384,8 +25091,8 @@ void QCPBars::connectBars(QCPBars *lower, QCPBars *upper)
 /* end of 'src/plottables/plottable-bars.cpp' */
 
 
-/* including file 'src/plottables/plottable-statisticalbox.cpp', size 28951  */
-/* commit 2ee8ff13ce17102796793cd6274926c37dce8096 2020-04-05 01:01:46 +0200 */
+/* including file 'src/plottables/plottable-statisticalbox.cpp' */
+/* modified 2021-03-29T02:30:44, size 28951                     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPStatisticalBoxData
@@ -25046,8 +25753,8 @@ QVector<QLineF> QCPStatisticalBox::getWhiskerBarLines(QCPStatisticalBoxDataConta
 /* end of 'src/plottables/plottable-statisticalbox.cpp' */
 
 
-/* including file 'src/plottables/plottable-colormap.cpp', size 48149        */
-/* commit 7adb87d8e4e148e7977da0a22576962655b662cc 2020-04-12 14:12:11 +0200 */
+/* including file 'src/plottables/plottable-colormap.cpp' */
+/* modified 2021-03-29T02:30:44, size 48149               */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPColorMapData
@@ -26179,8 +26886,8 @@ void QCPColorMap::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const
 /* end of 'src/plottables/plottable-colormap.cpp' */
 
 
-/* including file 'src/plottables/plottable-financial.cpp', size 42914       */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/plottables/plottable-financial.cpp' */
+/* modified 2021-03-29T02:30:44, size 42914                */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPFinancialData
@@ -27141,8 +27848,8 @@ QRectF QCPFinancial::selectionHitBox(QCPFinancialDataContainer::const_iterator i
 /* end of 'src/plottables/plottable-financial.cpp' */
 
 
-/* including file 'src/plottables/plottable-errorbar.cpp', size 37673        */
-/* commit 02c563636df6f6060aded6143fe50fe10af36af3 2020-04-04 16:52:15 +0200 */
+/* including file 'src/plottables/plottable-errorbar.cpp' */
+/* modified 2021-03-29T02:30:44, size 37679               */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPErrorBarsData
@@ -28060,8 +28767,8 @@ void QCPErrorBars::getDataSegments(QList<QCPDataRange> &selectedSegments, QList<
   range.
 
   This method assumes for performance reasons without checking that the key axis, the value axis,
-  and the data plottable (\ref setDataPlottable) are not zero and that \a index is within valid
-  bounds of this \ref QCPErrorBars instance and the bounds of the data plottable.
+  and the data plottable (\ref setDataPlottable) are not \c nullptr and that \a index is within
+  valid bounds of this \ref QCPErrorBars instance and the bounds of the data plottable.
 */
 bool QCPErrorBars::errorBarVisible(int index) const
 {
@@ -28109,8 +28816,8 @@ bool QCPErrorBars::rectIntersectsLine(const QRectF &pixelRect, const QLineF &lin
 /* end of 'src/plottables/plottable-errorbar.cpp' */
 
 
-/* including file 'src/items/item-straightline.cpp', size 7596               */
-/* commit d5a94cfe4877e687a6843dcf312a4f2cd4217d2f 2020-02-14 21:26:16 +0100 */
+/* including file 'src/items/item-straightline.cpp' */
+/* modified 2021-03-29T02:30:44, size 7596          */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemStraightLine
@@ -28290,8 +28997,8 @@ QPen QCPItemStraightLine::mainPen() const
 /* end of 'src/items/item-straightline.cpp' */
 
 
-/* including file 'src/items/item-line.cpp', size 8525                       */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/items/item-line.cpp' */
+/* modified 2021-03-29T02:30:44, size 8525  */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemLine
@@ -28521,8 +29228,8 @@ QPen QCPItemLine::mainPen() const
 /* end of 'src/items/item-line.cpp' */
 
 
-/* including file 'src/items/item-curve.cpp', size 7273                      */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/items/item-curve.cpp' */
+/* modified 2021-03-29T02:30:44, size 7273   */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemCurve
@@ -28690,8 +29397,8 @@ QPen QCPItemCurve::mainPen() const
 /* end of 'src/items/item-curve.cpp' */
 
 
-/* including file 'src/items/item-rect.cpp', size 6472                       */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/items/item-rect.cpp' */
+/* modified 2021-03-29T02:30:44, size 6472  */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemRect
@@ -28847,8 +29554,8 @@ QBrush QCPItemRect::mainBrush() const
 /* end of 'src/items/item-rect.cpp' */
 
 
-/* including file 'src/items/item-text.cpp', size 13335                      */
-/* commit 36f45e3db760efa99f3cd030c15c133bff13cd3d 2020-02-23 00:28:52 +0100 */
+/* including file 'src/items/item-text.cpp' */
+/* modified 2021-03-29T02:30:44, size 13335 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemText
@@ -29195,8 +29902,8 @@ QBrush QCPItemText::mainBrush() const
 /* end of 'src/items/item-text.cpp' */
 
 
-/* including file 'src/items/item-ellipse.cpp', size 7881                    */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/items/item-ellipse.cpp' */
+/* modified 2021-03-29T02:30:44, size 7881     */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemEllipse
@@ -29384,8 +30091,8 @@ QBrush QCPItemEllipse::mainBrush() const
 /* end of 'src/items/item-ellipse.cpp' */
 
 
-/* including file 'src/items/item-pixmap.cpp', size 10622                    */
-/* commit 14d202ec0e0070a071376728076a3c202e6d8df0 2020-02-23 00:54:05 +0100 */
+/* including file 'src/items/item-pixmap.cpp' */
+/* modified 2021-03-29T02:30:44, size 10622   */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemPixmap
@@ -29654,8 +30361,8 @@ QPen QCPItemPixmap::mainPen() const
 /* end of 'src/items/item-pixmap.cpp' */
 
 
-/* including file 'src/items/item-tracer.cpp', size 14636                    */
-/* commit 4d08f7b77252c4915866edfd67cac613b68d19ec 2020-02-14 21:31:48 +0100 */
+/* including file 'src/items/item-tracer.cpp' */
+/* modified 2021-03-29T02:30:44, size 14645   */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemTracer
@@ -29782,9 +30489,9 @@ void QCPItemTracer::setStyle(QCPItemTracer::TracerStyle style)
   Sets the QCPGraph this tracer sticks to. The tracer \a position will be set to type
   QCPItemPosition::ptPlotCoords and the axes will be set to the axes of \a graph.
   
-  To free the tracer from any graph, set \a graph to 0. The tracer \a position can then be placed
-  freely like any other item position. This is the state the tracer will assume when its graph gets
-  deleted while still attached to it.
+  To free the tracer from any graph, set \a graph to \c nullptr. The tracer \a position can then be
+  placed freely like any other item position. This is the state the tracer will assume when its
+  graph gets deleted while still attached to it.
   
   \see setGraphKey
 */
@@ -30024,8 +30731,8 @@ QBrush QCPItemTracer::mainBrush() const
 /* end of 'src/items/item-tracer.cpp' */
 
 
-/* including file 'src/items/item-bracket.cpp', size 10705                   */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/items/item-bracket.cpp' */
+/* modified 2021-03-29T02:30:44, size 10705    */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPItemBracket
@@ -30263,5 +30970,4527 @@ QPen QCPItemBracket::mainPen() const
     return mSelected ? mSelectedPen : mPen;
 }
 /* end of 'src/items/item-bracket.cpp' */
+
+
+/* including file 'src/polar/radialaxis.cpp' */
+/* modified 2021-03-29T02:30:44, size 49415  */
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPPolarAxisRadial
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPPolarAxisRadial
+  \brief The radial axis inside a radial plot
+  
+  \warning In this QCustomPlot version, polar plots are a tech preview. Expect documentation and
+  functionality to be incomplete, as well as changing public interfaces in the future.
+  
+  Each axis holds an instance of QCPAxisTicker which is used to generate the tick coordinates and
+  tick labels. You can access the currently installed \ref ticker or set a new one (possibly one of
+  the specialized subclasses, or your own subclass) via \ref setTicker. For details, see the
+  documentation of QCPAxisTicker.
+*/
+
+/* start of documentation of inline functions */
+
+/*! \fn QSharedPointer<QCPAxisTicker> QCPPolarAxisRadial::ticker() const
+
+  Returns a modifiable shared pointer to the currently installed axis ticker. The axis ticker is
+  responsible for generating the tick positions and tick labels of this axis. You can access the
+  \ref QCPAxisTicker with this method and modify basic properties such as the approximate tick count
+  (\ref QCPAxisTicker::setTickCount).
+
+  You can gain more control over the axis ticks by setting a different \ref QCPAxisTicker subclass, see
+  the documentation there. A new axis ticker can be set with \ref setTicker.
+
+  Since the ticker is stored in the axis as a shared pointer, multiple axes may share the same axis
+  ticker simply by passing the same shared pointer to multiple axes.
+
+  \see setTicker
+*/
+
+/* end of documentation of inline functions */
+/* start of documentation of signals */
+
+/*! \fn void QCPPolarAxisRadial::rangeChanged(const QCPRange &newRange)
+
+  This signal is emitted when the range of this axis has changed. You can connect it to the \ref
+  setRange slot of another axis to communicate the new range to the other axis, in order for it to
+  be synchronized.
+  
+  You may also manipulate/correct the range with \ref setRange in a slot connected to this signal.
+  This is useful if for example a maximum range span shall not be exceeded, or if the lower/upper
+  range shouldn't go beyond certain values (see \ref QCPRange::bounded). For example, the following
+  slot would limit the x axis to ranges between 0 and 10:
+  \code
+  customPlot->xAxis->setRange(newRange.bounded(0, 10))
+  \endcode
+*/
+
+/*! \fn void QCPPolarAxisRadial::rangeChanged(const QCPRange &newRange, const QCPRange &oldRange)
+  \overload
+  
+  Additionally to the new range, this signal also provides the previous range held by the axis as
+  \a oldRange.
+*/
+
+/*! \fn void QCPPolarAxisRadial::scaleTypeChanged(QCPPolarAxisRadial::ScaleType scaleType);
+  
+  This signal is emitted when the scale type changes, by calls to \ref setScaleType
+*/
+
+/*! \fn void QCPPolarAxisRadial::selectionChanged(QCPPolarAxisRadial::SelectableParts selection)
+  
+  This signal is emitted when the selection state of this axis has changed, either by user interaction
+  or by a direct call to \ref setSelectedParts.
+*/
+
+/*! \fn void QCPPolarAxisRadial::selectableChanged(const QCPPolarAxisRadial::SelectableParts &parts);
+  
+  This signal is emitted when the selectability changes, by calls to \ref setSelectableParts
+*/
+
+/* end of documentation of signals */
+
+/*!
+  Constructs an Axis instance of Type \a type for the axis rect \a parent.
+  
+  Usually it isn't necessary to instantiate axes directly, because you can let QCustomPlot create
+  them for you with \ref QCPAxisRect::addAxis. If you want to use own QCPAxis-subclasses however,
+  create them manually and then inject them also via \ref QCPAxisRect::addAxis.
+*/
+QCPPolarAxisRadial::QCPPolarAxisRadial(QCPPolarAxisAngular *parent) :
+  QCPLayerable(parent->parentPlot(), QString(), parent),
+  mRangeDrag(true),
+  mRangeZoom(true),
+  mRangeZoomFactor(0.85),
+  // axis base:
+  mAngularAxis(parent),
+  mAngle(45),
+  mAngleReference(arAngularAxis),
+  mSelectableParts(spAxis | spTickLabels | spAxisLabel),
+  mSelectedParts(spNone),
+  mBasePen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedBasePen(QPen(Qt::blue, 2)),
+  // axis label:
+  mLabelPadding(0),
+  mLabel(),
+  mLabelFont(mParentPlot->font()),
+  mSelectedLabelFont(QFont(mLabelFont.family(), mLabelFont.pointSize(), QFont::Bold)),
+  mLabelColor(Qt::black),
+  mSelectedLabelColor(Qt::blue),
+  // tick labels:
+  // mTickLabelPadding(0), in label painter
+  mTickLabels(true),
+  // mTickLabelRotation(0), in label painter
+  mTickLabelFont(mParentPlot->font()),
+  mSelectedTickLabelFont(QFont(mTickLabelFont.family(), mTickLabelFont.pointSize(), QFont::Bold)),
+  mTickLabelColor(Qt::black),
+  mSelectedTickLabelColor(Qt::blue),
+  mNumberPrecision(6),
+  mNumberFormatChar('g'),
+  mNumberBeautifulPowers(true),
+  mNumberMultiplyCross(false),
+  // ticks and subticks:
+  mTicks(true),
+  mSubTicks(true),
+  mTickLengthIn(5),
+  mTickLengthOut(0),
+  mSubTickLengthIn(2),
+  mSubTickLengthOut(0),
+  mTickPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedTickPen(QPen(Qt::blue, 2)),
+  mSubTickPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedSubTickPen(QPen(Qt::blue, 2)),
+  // scale and range:
+  mRange(0, 5),
+  mRangeReversed(false),
+  mScaleType(stLinear),
+  // internal members:
+  mRadius(1), // non-zero initial value, will be overwritten in ::update() according to inner rect
+  mTicker(new QCPAxisTicker),
+  mLabelPainter(mParentPlot)
+{
+  setParent(parent);
+  setAntialiased(true);
+  
+  setTickLabelPadding(5);
+  setTickLabelRotation(0);
+  setTickLabelMode(lmUpright);
+  mLabelPainter.setAnchorReferenceType(QCPLabelPainterPrivate::artTangent);
+  mLabelPainter.setAbbreviateDecimalPowers(false);
+}
+
+QCPPolarAxisRadial::~QCPPolarAxisRadial()
+{
+}
+
+QCPPolarAxisRadial::LabelMode QCPPolarAxisRadial::tickLabelMode() const
+{
+  switch (mLabelPainter.anchorMode())
+  {
+    case QCPLabelPainterPrivate::amSkewedUpright: return lmUpright;
+    case QCPLabelPainterPrivate::amSkewedRotated: return lmRotated;
+    default: qDebug() << Q_FUNC_INFO << "invalid mode for polar axis"; break;
+  }
+  return lmUpright;
+}
+
+/* No documentation as it is a property getter */
+QString QCPPolarAxisRadial::numberFormat() const
+{
+  QString result;
+  result.append(mNumberFormatChar);
+  if (mNumberBeautifulPowers)
+  {
+    result.append(QLatin1Char('b'));
+    if (mNumberMultiplyCross)
+      result.append(QLatin1Char('c'));
+  }
+  return result;
+}
+
+/* No documentation as it is a property getter */
+int QCPPolarAxisRadial::tickLengthIn() const
+{
+  return mTickLengthIn;
+}
+
+/* No documentation as it is a property getter */
+int QCPPolarAxisRadial::tickLengthOut() const
+{
+  return mTickLengthOut;
+}
+
+/* No documentation as it is a property getter */
+int QCPPolarAxisRadial::subTickLengthIn() const
+{
+  return mSubTickLengthIn;
+}
+
+/* No documentation as it is a property getter */
+int QCPPolarAxisRadial::subTickLengthOut() const
+{
+  return mSubTickLengthOut;
+}
+
+/* No documentation as it is a property getter */
+int QCPPolarAxisRadial::labelPadding() const
+{
+  return mLabelPadding;
+}
+
+void QCPPolarAxisRadial::setRangeDrag(bool enabled)
+{
+  mRangeDrag = enabled;
+}
+
+void QCPPolarAxisRadial::setRangeZoom(bool enabled)
+{
+  mRangeZoom = enabled;
+}
+
+void QCPPolarAxisRadial::setRangeZoomFactor(double factor)
+{
+  mRangeZoomFactor = factor;
+}
+
+/*!
+  Sets whether the axis uses a linear scale or a logarithmic scale.
+  
+  Note that this method controls the coordinate transformation. For logarithmic scales, you will
+  likely also want to use a logarithmic tick spacing and labeling, which can be achieved by setting
+  the axis ticker to an instance of \ref QCPAxisTickerLog :
+  
+  \snippet documentation/doc-code-snippets/mainwindow.cpp qcpaxisticker-log-creation
+  
+  See the documentation of \ref QCPAxisTickerLog about the details of logarithmic axis tick
+  creation.
+  
+  \ref setNumberPrecision
+*/
+void QCPPolarAxisRadial::setScaleType(QCPPolarAxisRadial::ScaleType type)
+{
+  if (mScaleType != type)
+  {
+    mScaleType = type;
+    if (mScaleType == stLogarithmic)
+      setRange(mRange.sanitizedForLogScale());
+    //mCachedMarginValid = false;
+    emit scaleTypeChanged(mScaleType);
+  }
+}
+
+/*!
+  Sets the range of the axis.
+  
+  This slot may be connected with the \ref rangeChanged signal of another axis so this axis
+  is always synchronized with the other axis range, when it changes.
+  
+  To invert the direction of an axis, use \ref setRangeReversed.
+*/
+void QCPPolarAxisRadial::setRange(const QCPRange &range)
+{
+  if (range.lower == mRange.lower && range.upper == mRange.upper)
+    return;
+  
+  if (!QCPRange::validRange(range)) return;
+  QCPRange oldRange = mRange;
+  if (mScaleType == stLogarithmic)
+  {
+    mRange = range.sanitizedForLogScale();
+  } else
+  {
+    mRange = range.sanitizedForLinScale();
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets whether the user can (de-)select the parts in \a selectable by clicking on the QCustomPlot surface.
+  (When \ref QCustomPlot::setInteractions contains iSelectAxes.)
+  
+  However, even when \a selectable is set to a value not allowing the selection of a specific part,
+  it is still possible to set the selection of this part manually, by calling \ref setSelectedParts
+  directly.
+  
+  \see SelectablePart, setSelectedParts
+*/
+void QCPPolarAxisRadial::setSelectableParts(const SelectableParts &selectable)
+{
+  if (mSelectableParts != selectable)
+  {
+    mSelectableParts = selectable;
+    emit selectableChanged(mSelectableParts);
+  }
+}
+
+/*!
+  Sets the selected state of the respective axis parts described by \ref SelectablePart. When a part
+  is selected, it uses a different pen/font.
+  
+  The entire selection mechanism for axes is handled automatically when \ref
+  QCustomPlot::setInteractions contains iSelectAxes. You only need to call this function when you
+  wish to change the selection state manually.
+  
+  This function can change the selection state of a part, independent of the \ref setSelectableParts setting.
+  
+  emits the \ref selectionChanged signal when \a selected is different from the previous selection state.
+  
+  \see SelectablePart, setSelectableParts, selectTest, setSelectedBasePen, setSelectedTickPen, setSelectedSubTickPen,
+  setSelectedTickLabelFont, setSelectedLabelFont, setSelectedTickLabelColor, setSelectedLabelColor
+*/
+void QCPPolarAxisRadial::setSelectedParts(const SelectableParts &selected)
+{
+  if (mSelectedParts != selected)
+  {
+    mSelectedParts = selected;
+    emit selectionChanged(mSelectedParts);
+  }
+}
+
+/*!
+  \overload
+  
+  Sets the lower and upper bound of the axis range.
+  
+  To invert the direction of an axis, use \ref setRangeReversed.
+  
+  There is also a slot to set a range, see \ref setRange(const QCPRange &range).
+*/
+void QCPPolarAxisRadial::setRange(double lower, double upper)
+{
+  if (lower == mRange.lower && upper == mRange.upper)
+    return;
+  
+  if (!QCPRange::validRange(lower, upper)) return;
+  QCPRange oldRange = mRange;
+  mRange.lower = lower;
+  mRange.upper = upper;
+  if (mScaleType == stLogarithmic)
+  {
+    mRange = mRange.sanitizedForLogScale();
+  } else
+  {
+    mRange = mRange.sanitizedForLinScale();
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  \overload
+  
+  Sets the range of the axis.
+  
+  The \a position coordinate indicates together with the \a alignment parameter, where the new
+  range will be positioned. \a size defines the size of the new axis range. \a alignment may be
+  Qt::AlignLeft, Qt::AlignRight or Qt::AlignCenter. This will cause the left border, right border,
+  or center of the range to be aligned with \a position. Any other values of \a alignment will
+  default to Qt::AlignCenter.
+*/
+void QCPPolarAxisRadial::setRange(double position, double size, Qt::AlignmentFlag alignment)
+{
+  if (alignment == Qt::AlignLeft)
+    setRange(position, position+size);
+  else if (alignment == Qt::AlignRight)
+    setRange(position-size, position);
+  else // alignment == Qt::AlignCenter
+    setRange(position-size/2.0, position+size/2.0);
+}
+
+/*!
+  Sets the lower bound of the axis range. The upper bound is not changed.
+  \see setRange
+*/
+void QCPPolarAxisRadial::setRangeLower(double lower)
+{
+  if (mRange.lower == lower)
+    return;
+  
+  QCPRange oldRange = mRange;
+  mRange.lower = lower;
+  if (mScaleType == stLogarithmic)
+  {
+    mRange = mRange.sanitizedForLogScale();
+  } else
+  {
+    mRange = mRange.sanitizedForLinScale();
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets the upper bound of the axis range. The lower bound is not changed.
+  \see setRange
+*/
+void QCPPolarAxisRadial::setRangeUpper(double upper)
+{
+  if (mRange.upper == upper)
+    return;
+  
+  QCPRange oldRange = mRange;
+  mRange.upper = upper;
+  if (mScaleType == stLogarithmic)
+  {
+    mRange = mRange.sanitizedForLogScale();
+  } else
+  {
+    mRange = mRange.sanitizedForLinScale();
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets whether the axis range (direction) is displayed reversed. Normally, the values on horizontal
+  axes increase left to right, on vertical axes bottom to top. When \a reversed is set to true, the
+  direction of increasing values is inverted.
+
+  Note that the range and data interface stays the same for reversed axes, e.g. the \a lower part
+  of the \ref setRange interface will still reference the mathematically smaller number than the \a
+  upper part.
+*/
+void QCPPolarAxisRadial::setRangeReversed(bool reversed)
+{
+  mRangeReversed = reversed;
+}
+
+void QCPPolarAxisRadial::setAngle(double degrees)
+{
+  mAngle = degrees;
+}
+
+void QCPPolarAxisRadial::setAngleReference(AngleReference reference)
+{
+  mAngleReference = reference;
+}
+
+/*!
+  The axis ticker is responsible for generating the tick positions and tick labels. See the
+  documentation of QCPAxisTicker for details on how to work with axis tickers.
+  
+  You can change the tick positioning/labeling behaviour of this axis by setting a different
+  QCPAxisTicker subclass using this method. If you only wish to modify the currently installed axis
+  ticker, access it via \ref ticker.
+  
+  Since the ticker is stored in the axis as a shared pointer, multiple axes may share the same axis
+  ticker simply by passing the same shared pointer to multiple axes.
+  
+  \see ticker
+*/
+void QCPPolarAxisRadial::setTicker(QSharedPointer<QCPAxisTicker> ticker)
+{
+  if (ticker)
+    mTicker = ticker;
+  else
+    qDebug() << Q_FUNC_INFO << "can not set 0 as axis ticker";
+  // no need to invalidate margin cache here because produced tick labels are checked for changes in setupTickVector
+}
+
+/*!
+  Sets whether tick marks are displayed.
+
+  Note that setting \a show to false does not imply that tick labels are invisible, too. To achieve
+  that, see \ref setTickLabels.
+  
+  \see setSubTicks
+*/
+void QCPPolarAxisRadial::setTicks(bool show)
+{
+  if (mTicks != show)
+  {
+    mTicks = show;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets whether tick labels are displayed. Tick labels are the numbers drawn next to tick marks.
+*/
+void QCPPolarAxisRadial::setTickLabels(bool show)
+{
+  if (mTickLabels != show)
+  {
+    mTickLabels = show;
+    //mCachedMarginValid = false;
+    if (!mTickLabels)
+      mTickVectorLabels.clear();
+  }
+}
+
+/*!
+  Sets the distance between the axis base line (including any outward ticks) and the tick labels.
+  \see setLabelPadding, setPadding
+*/
+void QCPPolarAxisRadial::setTickLabelPadding(int padding)
+{
+  mLabelPainter.setPadding(padding);
+}
+
+/*!
+  Sets the font of the tick labels.
+  
+  \see setTickLabels, setTickLabelColor
+*/
+void QCPPolarAxisRadial::setTickLabelFont(const QFont &font)
+{
+  if (font != mTickLabelFont)
+  {
+    mTickLabelFont = font;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the color of the tick labels.
+  
+  \see setTickLabels, setTickLabelFont
+*/
+void QCPPolarAxisRadial::setTickLabelColor(const QColor &color)
+{
+  mTickLabelColor = color;
+}
+
+/*!
+  Sets the rotation of the tick labels. If \a degrees is zero, the labels are drawn normally. Else,
+  the tick labels are drawn rotated by \a degrees clockwise. The specified angle is bound to values
+  from -90 to 90 degrees.
+  
+  If \a degrees is exactly -90, 0 or 90, the tick labels are centered on the tick coordinate. For
+  other angles, the label is drawn with an offset such that it seems to point toward or away from
+  the tick mark.
+*/
+void QCPPolarAxisRadial::setTickLabelRotation(double degrees)
+{
+  mLabelPainter.setRotation(degrees);
+}
+
+void QCPPolarAxisRadial::setTickLabelMode(LabelMode mode)
+{
+  switch (mode)
+  {
+    case lmUpright: mLabelPainter.setAnchorMode(QCPLabelPainterPrivate::amSkewedUpright); break;
+    case lmRotated: mLabelPainter.setAnchorMode(QCPLabelPainterPrivate::amSkewedRotated); break;
+  }
+}
+
+/*!
+  Sets the number format for the numbers in tick labels. This \a formatCode is an extended version
+  of the format code used e.g. by QString::number() and QLocale::toString(). For reference about
+  that, see the "Argument Formats" section in the detailed description of the QString class.
+  
+  \a formatCode is a string of one, two or three characters. The first character is identical to
+  the normal format code used by Qt. In short, this means: 'e'/'E' scientific format, 'f' fixed
+  format, 'g'/'G' scientific or fixed, whichever is shorter.
+  
+  The second and third characters are optional and specific to QCustomPlot:\n
+  If the first char was 'e' or 'g', numbers are/might be displayed in the scientific format, e.g.
+  "5.5e9", which is ugly in a plot. So when the second char of \a formatCode is set to 'b' (for
+  "beautiful"), those exponential numbers are formatted in a more natural way, i.e. "5.5
+  [multiplication sign] 10 [superscript] 9". By default, the multiplication sign is a centered dot.
+  If instead a cross should be shown (as is usual in the USA), the third char of \a formatCode can
+  be set to 'c'. The inserted multiplication signs are the UTF-8 characters 215 (0xD7) for the
+  cross and 183 (0xB7) for the dot.
+  
+  Examples for \a formatCode:
+  \li \c g normal format code behaviour. If number is small, fixed format is used, if number is large,
+  normal scientific format is used
+  \li \c gb If number is small, fixed format is used, if number is large, scientific format is used with
+  beautifully typeset decimal powers and a dot as multiplication sign
+  \li \c ebc All numbers are in scientific format with beautifully typeset decimal power and a cross as
+  multiplication sign
+  \li \c fb illegal format code, since fixed format doesn't support (or need) beautifully typeset decimal
+  powers. Format code will be reduced to 'f'.
+  \li \c hello illegal format code, since first char is not 'e', 'E', 'f', 'g' or 'G'. Current format
+  code will not be changed.
+*/
+void QCPPolarAxisRadial::setNumberFormat(const QString &formatCode)
+{
+  if (formatCode.isEmpty())
+  {
+    qDebug() << Q_FUNC_INFO << "Passed formatCode is empty";
+    return;
+  }
+  //mCachedMarginValid = false;
+  
+  // interpret first char as number format char:
+  QString allowedFormatChars(QLatin1String("eEfgG"));
+  if (allowedFormatChars.contains(formatCode.at(0)))
+  {
+    mNumberFormatChar = QLatin1Char(formatCode.at(0).toLatin1());
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "Invalid number format code (first char not in 'eEfgG'):" << formatCode;
+    return;
+  }
+  
+  if (formatCode.length() < 2)
+  {
+    mNumberBeautifulPowers = false;
+    mNumberMultiplyCross = false;
+  } else
+  {
+    // interpret second char as indicator for beautiful decimal powers:
+    if (formatCode.at(1) == QLatin1Char('b') && (mNumberFormatChar == QLatin1Char('e') || mNumberFormatChar == QLatin1Char('g')))
+      mNumberBeautifulPowers = true;
+    else
+      qDebug() << Q_FUNC_INFO << "Invalid number format code (second char not 'b' or first char neither 'e' nor 'g'):" << formatCode;
+    
+    if (formatCode.length() < 3)
+    {
+      mNumberMultiplyCross = false;
+    } else
+    {
+      // interpret third char as indicator for dot or cross multiplication symbol:
+      if (formatCode.at(2) == QLatin1Char('c'))
+        mNumberMultiplyCross = true;
+      else if (formatCode.at(2) == QLatin1Char('d'))
+        mNumberMultiplyCross = false;
+      else
+        qDebug() << Q_FUNC_INFO << "Invalid number format code (third char neither 'c' nor 'd'):" << formatCode;
+    }
+  }
+  mLabelPainter.setSubstituteExponent(mNumberBeautifulPowers);
+  mLabelPainter.setMultiplicationSymbol(mNumberMultiplyCross ? QCPLabelPainterPrivate::SymbolCross : QCPLabelPainterPrivate::SymbolDot);
+}
+
+/*!
+  Sets the precision of the tick label numbers. See QLocale::toString(double i, char f, int prec)
+  for details. The effect of precisions are most notably for number Formats starting with 'e', see
+  \ref setNumberFormat
+*/
+void QCPPolarAxisRadial::setNumberPrecision(int precision)
+{
+  if (mNumberPrecision != precision)
+  {
+    mNumberPrecision = precision;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the length of the ticks in pixels. \a inside is the length the ticks will reach inside the
+  plot and \a outside is the length they will reach outside the plot. If \a outside is greater than
+  zero, the tick labels and axis label will increase their distance to the axis accordingly, so
+  they won't collide with the ticks.
+  
+  \see setSubTickLength, setTickLengthIn, setTickLengthOut
+*/
+void QCPPolarAxisRadial::setTickLength(int inside, int outside)
+{
+  setTickLengthIn(inside);
+  setTickLengthOut(outside);
+}
+
+/*!
+  Sets the length of the inward ticks in pixels. \a inside is the length the ticks will reach
+  inside the plot.
+  
+  \see setTickLengthOut, setTickLength, setSubTickLength
+*/
+void QCPPolarAxisRadial::setTickLengthIn(int inside)
+{
+  if (mTickLengthIn != inside)
+  {
+    mTickLengthIn = inside;
+  }
+}
+
+/*!
+  Sets the length of the outward ticks in pixels. \a outside is the length the ticks will reach
+  outside the plot. If \a outside is greater than zero, the tick labels and axis label will
+  increase their distance to the axis accordingly, so they won't collide with the ticks.
+  
+  \see setTickLengthIn, setTickLength, setSubTickLength
+*/
+void QCPPolarAxisRadial::setTickLengthOut(int outside)
+{
+  if (mTickLengthOut != outside)
+  {
+    mTickLengthOut = outside;
+    //mCachedMarginValid = false; // only outside tick length can change margin
+  }
+}
+
+/*!
+  Sets whether sub tick marks are displayed.
+  
+  Sub ticks are only potentially visible if (major) ticks are also visible (see \ref setTicks)
+  
+  \see setTicks
+*/
+void QCPPolarAxisRadial::setSubTicks(bool show)
+{
+  if (mSubTicks != show)
+  {
+    mSubTicks = show;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the length of the subticks in pixels. \a inside is the length the subticks will reach inside
+  the plot and \a outside is the length they will reach outside the plot. If \a outside is greater
+  than zero, the tick labels and axis label will increase their distance to the axis accordingly,
+  so they won't collide with the ticks.
+  
+  \see setTickLength, setSubTickLengthIn, setSubTickLengthOut
+*/
+void QCPPolarAxisRadial::setSubTickLength(int inside, int outside)
+{
+  setSubTickLengthIn(inside);
+  setSubTickLengthOut(outside);
+}
+
+/*!
+  Sets the length of the inward subticks in pixels. \a inside is the length the subticks will reach inside
+  the plot.
+  
+  \see setSubTickLengthOut, setSubTickLength, setTickLength
+*/
+void QCPPolarAxisRadial::setSubTickLengthIn(int inside)
+{
+  if (mSubTickLengthIn != inside)
+  {
+    mSubTickLengthIn = inside;
+  }
+}
+
+/*!
+  Sets the length of the outward subticks in pixels. \a outside is the length the subticks will reach
+  outside the plot. If \a outside is greater than zero, the tick labels will increase their
+  distance to the axis accordingly, so they won't collide with the ticks.
+  
+  \see setSubTickLengthIn, setSubTickLength, setTickLength
+*/
+void QCPPolarAxisRadial::setSubTickLengthOut(int outside)
+{
+  if (mSubTickLengthOut != outside)
+  {
+    mSubTickLengthOut = outside;
+    //mCachedMarginValid = false; // only outside tick length can change margin
+  }
+}
+
+/*!
+  Sets the pen, the axis base line is drawn with.
+  
+  \see setTickPen, setSubTickPen
+*/
+void QCPPolarAxisRadial::setBasePen(const QPen &pen)
+{
+  mBasePen = pen;
+}
+
+/*!
+  Sets the pen, tick marks will be drawn with.
+  
+  \see setTickLength, setBasePen
+*/
+void QCPPolarAxisRadial::setTickPen(const QPen &pen)
+{
+  mTickPen = pen;
+}
+
+/*!
+  Sets the pen, subtick marks will be drawn with.
+  
+  \see setSubTickCount, setSubTickLength, setBasePen
+*/
+void QCPPolarAxisRadial::setSubTickPen(const QPen &pen)
+{
+  mSubTickPen = pen;
+}
+
+/*!
+  Sets the font of the axis label.
+  
+  \see setLabelColor
+*/
+void QCPPolarAxisRadial::setLabelFont(const QFont &font)
+{
+  if (mLabelFont != font)
+  {
+    mLabelFont = font;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the color of the axis label.
+  
+  \see setLabelFont
+*/
+void QCPPolarAxisRadial::setLabelColor(const QColor &color)
+{
+  mLabelColor = color;
+}
+
+/*!
+  Sets the text of the axis label that will be shown below/above or next to the axis, depending on
+  its orientation. To disable axis labels, pass an empty string as \a str.
+*/
+void QCPPolarAxisRadial::setLabel(const QString &str)
+{
+  if (mLabel != str)
+  {
+    mLabel = str;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the distance between the tick labels and the axis label.
+  
+  \see setTickLabelPadding, setPadding
+*/
+void QCPPolarAxisRadial::setLabelPadding(int padding)
+{
+  if (mLabelPadding != padding)
+  {
+    mLabelPadding = padding;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the font that is used for tick labels when they are selected.
+  
+  \see setTickLabelFont, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedTickLabelFont(const QFont &font)
+{
+  if (font != mSelectedTickLabelFont)
+  {
+    mSelectedTickLabelFont = font;
+    // don't set mCachedMarginValid to false here because margin calculation is always done with non-selected fonts
+  }
+}
+
+/*!
+  Sets the font that is used for the axis label when it is selected.
+  
+  \see setLabelFont, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedLabelFont(const QFont &font)
+{
+  mSelectedLabelFont = font;
+  // don't set mCachedMarginValid to false here because margin calculation is always done with non-selected fonts
+}
+
+/*!
+  Sets the color that is used for tick labels when they are selected.
+  
+  \see setTickLabelColor, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedTickLabelColor(const QColor &color)
+{
+  if (color != mSelectedTickLabelColor)
+  {
+    mSelectedTickLabelColor = color;
+  }
+}
+
+/*!
+  Sets the color that is used for the axis label when it is selected.
+  
+  \see setLabelColor, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedLabelColor(const QColor &color)
+{
+  mSelectedLabelColor = color;
+}
+
+/*!
+  Sets the pen that is used to draw the axis base line when selected.
+  
+  \see setBasePen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedBasePen(const QPen &pen)
+{
+  mSelectedBasePen = pen;
+}
+
+/*!
+  Sets the pen that is used to draw the (major) ticks when selected.
+  
+  \see setTickPen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedTickPen(const QPen &pen)
+{
+  mSelectedTickPen = pen;
+}
+
+/*!
+  Sets the pen that is used to draw the subticks when selected.
+  
+  \see setSubTickPen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisRadial::setSelectedSubTickPen(const QPen &pen)
+{
+  mSelectedSubTickPen = pen;
+}
+
+/*!
+  If the scale type (\ref setScaleType) is \ref stLinear, \a diff is added to the lower and upper
+  bounds of the range. The range is simply moved by \a diff.
+  
+  If the scale type is \ref stLogarithmic, the range bounds are multiplied by \a diff. This
+  corresponds to an apparent "linear" move in logarithmic scaling by a distance of log(diff).
+*/
+void QCPPolarAxisRadial::moveRange(double diff)
+{
+  QCPRange oldRange = mRange;
+  if (mScaleType == stLinear)
+  {
+    mRange.lower += diff;
+    mRange.upper += diff;
+  } else // mScaleType == stLogarithmic
+  {
+    mRange.lower *= diff;
+    mRange.upper *= diff;
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Scales the range of this axis by \a factor around the center of the current axis range. For
+  example, if \a factor is 2.0, then the axis range will double its size, and the point at the axis
+  range center won't have changed its position in the QCustomPlot widget (i.e. coordinates around
+  the center will have moved symmetrically closer).
+
+  If you wish to scale around a different coordinate than the current axis range center, use the
+  overload \ref scaleRange(double factor, double center).
+*/
+void QCPPolarAxisRadial::scaleRange(double factor)
+{
+  scaleRange(factor, range().center());
+}
+
+/*! \overload
+
+  Scales the range of this axis by \a factor around the coordinate \a center. For example, if \a
+  factor is 2.0, \a center is 1.0, then the axis range will double its size, and the point at
+  coordinate 1.0 won't have changed its position in the QCustomPlot widget (i.e. coordinates
+  around 1.0 will have moved symmetrically closer to 1.0).
+
+  \see scaleRange(double factor)
+*/
+void QCPPolarAxisRadial::scaleRange(double factor, double center)
+{
+  QCPRange oldRange = mRange;
+  if (mScaleType == stLinear)
+  {
+    QCPRange newRange;
+    newRange.lower = (mRange.lower-center)*factor + center;
+    newRange.upper = (mRange.upper-center)*factor + center;
+    if (QCPRange::validRange(newRange))
+      mRange = newRange.sanitizedForLinScale();
+  } else // mScaleType == stLogarithmic
+  {
+    if ((mRange.upper < 0 && center < 0) || (mRange.upper > 0 && center > 0)) // make sure center has same sign as range
+    {
+      QCPRange newRange;
+      newRange.lower = qPow(mRange.lower/center, factor)*center;
+      newRange.upper = qPow(mRange.upper/center, factor)*center;
+      if (QCPRange::validRange(newRange))
+        mRange = newRange.sanitizedForLogScale();
+    } else
+      qDebug() << Q_FUNC_INFO << "Center of scaling operation doesn't lie in same logarithmic sign domain as range:" << center;
+  }
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Changes the axis range such that all plottables associated with this axis are fully visible in
+  that dimension.
+  
+  \see QCPAbstractPlottable::rescaleAxes, QCustomPlot::rescaleAxes
+*/
+void QCPPolarAxisRadial::rescale(bool onlyVisiblePlottables)
+{
+  Q_UNUSED(onlyVisiblePlottables)
+  /* TODO
+  QList<QCPAbstractPlottable*> p = plottables();
+  QCPRange newRange;
+  bool haveRange = false;
+  for (int i=0; i<p.size(); ++i)
+  {
+    if (!p.at(i)->realVisibility() && onlyVisiblePlottables)
+      continue;
+    QCPRange plottableRange;
+    bool currentFoundRange;
+    QCP::SignDomain signDomain = QCP::sdBoth;
+    if (mScaleType == stLogarithmic)
+      signDomain = (mRange.upper < 0 ? QCP::sdNegative : QCP::sdPositive);
+    if (p.at(i)->keyAxis() == this)
+      plottableRange = p.at(i)->getKeyRange(currentFoundRange, signDomain);
+    else
+      plottableRange = p.at(i)->getValueRange(currentFoundRange, signDomain);
+    if (currentFoundRange)
+    {
+      if (!haveRange)
+        newRange = plottableRange;
+      else
+        newRange.expand(plottableRange);
+      haveRange = true;
+    }
+  }
+  if (haveRange)
+  {
+    if (!QCPRange::validRange(newRange)) // likely due to range being zero (plottable has only constant data in this axis dimension), shift current range to at least center the plottable
+    {
+      double center = (newRange.lower+newRange.upper)*0.5; // upper and lower should be equal anyway, but just to make sure, incase validRange returned false for other reason
+      if (mScaleType == stLinear)
+      {
+        newRange.lower = center-mRange.size()/2.0;
+        newRange.upper = center+mRange.size()/2.0;
+      } else // mScaleType == stLogarithmic
+      {
+        newRange.lower = center/qSqrt(mRange.upper/mRange.lower);
+        newRange.upper = center*qSqrt(mRange.upper/mRange.lower);
+      }
+    }
+    setRange(newRange);
+  }
+  */
+}
+
+/*!
+  Transforms \a value, in pixel coordinates of the QCustomPlot widget, to axis coordinates.
+*/
+void QCPPolarAxisRadial::pixelToCoord(QPointF pixelPos, double &angleCoord, double &radiusCoord) const
+{
+  QCPVector2D posVector(pixelPos-mCenter);
+  radiusCoord = radiusToCoord(posVector.length());
+  angleCoord = mAngularAxis->angleRadToCoord(posVector.angle());
+}
+
+/*!
+  Transforms \a value, in coordinates of the axis, to pixel coordinates of the QCustomPlot widget.
+*/
+QPointF QCPPolarAxisRadial::coordToPixel(double angleCoord, double radiusCoord) const
+{
+  const double radiusPixel = coordToRadius(radiusCoord);
+  const double angleRad = mAngularAxis->coordToAngleRad(angleCoord);
+  return QPointF(mCenter.x()+qCos(angleRad)*radiusPixel, mCenter.y()+qSin(angleRad)*radiusPixel);
+}
+
+double QCPPolarAxisRadial::coordToRadius(double coord) const
+{
+  if (mScaleType == stLinear)
+  {
+    if (!mRangeReversed)
+      return (coord-mRange.lower)/mRange.size()*mRadius;
+    else
+      return (mRange.upper-coord)/mRange.size()*mRadius;
+  } else // mScaleType == stLogarithmic
+  {
+    if (coord >= 0.0 && mRange.upper < 0.0) // invalid value for logarithmic scale, just return outside visible range
+      return !mRangeReversed ? mRadius+200 : mRadius-200;
+    else if (coord <= 0.0 && mRange.upper >= 0.0) // invalid value for logarithmic scale, just return outside visible range
+      return !mRangeReversed ? mRadius-200 :mRadius+200;
+    else
+    {
+      if (!mRangeReversed)
+        return qLn(coord/mRange.lower)/qLn(mRange.upper/mRange.lower)*mRadius;
+      else
+        return qLn(mRange.upper/coord)/qLn(mRange.upper/mRange.lower)*mRadius;
+    }
+  }
+}
+
+double QCPPolarAxisRadial::radiusToCoord(double radius) const
+{
+  if (mScaleType == stLinear)
+  {
+    if (!mRangeReversed)
+      return (radius)/mRadius*mRange.size()+mRange.lower;
+    else
+      return -(radius)/mRadius*mRange.size()+mRange.upper;
+  } else // mScaleType == stLogarithmic
+  {
+    if (!mRangeReversed)
+      return qPow(mRange.upper/mRange.lower, (radius)/mRadius)*mRange.lower;
+    else
+      return qPow(mRange.upper/mRange.lower, (-radius)/mRadius)*mRange.upper;
+  }
+}
+
+
+/*!
+  Returns the part of the axis that is hit by \a pos (in pixels). The return value of this function
+  is independent of the user-selectable parts defined with \ref setSelectableParts. Further, this
+  function does not change the current selection state of the axis.
+  
+  If the axis is not visible (\ref setVisible), this function always returns \ref spNone.
+  
+  \see setSelectedParts, setSelectableParts, QCustomPlot::setInteractions
+*/
+QCPPolarAxisRadial::SelectablePart QCPPolarAxisRadial::getPartAt(const QPointF &pos) const
+{
+  Q_UNUSED(pos) // TODO remove later
+  if (!mVisible)
+    return spNone;
+  
+  /*
+    TODO:
+  if (mAxisPainter->axisSelectionBox().contains(pos.toPoint()))
+    return spAxis;
+  else if (mAxisPainter->tickLabelsSelectionBox().contains(pos.toPoint()))
+    return spTickLabels;
+  else if (mAxisPainter->labelSelectionBox().contains(pos.toPoint()))
+    return spAxisLabel;
+  else */
+    return spNone;
+}
+
+/* inherits documentation from base class */
+double QCPPolarAxisRadial::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
+{
+  if (!mParentPlot) return -1;
+  SelectablePart part = getPartAt(pos);
+  if ((onlySelectable && !mSelectableParts.testFlag(part)) || part == spNone)
+    return -1;
+  
+  if (details)
+    details->setValue(part);
+  return mParentPlot->selectionTolerance()*0.99;
+}
+
+/* inherits documentation from base class */
+void QCPPolarAxisRadial::selectEvent(QMouseEvent *event, bool additive, const QVariant &details, bool *selectionStateChanged)
+{
+  Q_UNUSED(event)
+  SelectablePart part = details.value<SelectablePart>();
+  if (mSelectableParts.testFlag(part))
+  {
+    SelectableParts selBefore = mSelectedParts;
+    setSelectedParts(additive ? mSelectedParts^part : part);
+    if (selectionStateChanged)
+      *selectionStateChanged = mSelectedParts != selBefore;
+  }
+}
+
+/* inherits documentation from base class */
+void QCPPolarAxisRadial::deselectEvent(bool *selectionStateChanged)
+{
+  SelectableParts selBefore = mSelectedParts;
+  setSelectedParts(mSelectedParts & ~mSelectableParts);
+  if (selectionStateChanged)
+    *selectionStateChanged = mSelectedParts != selBefore;
+}
+
+/*! \internal
+  
+  This mouse event reimplementation provides the functionality to let the user drag individual axes
+  exclusively, by startig the drag on top of the axis.
+
+  For the axis to accept this event and perform the single axis drag, the parent \ref QCPAxisRect
+  must be configured accordingly, i.e. it must allow range dragging in the orientation of this axis
+  (\ref QCPAxisRect::setRangeDrag) and this axis must be a draggable axis (\ref
+  QCPAxisRect::setRangeDragAxes)
+  
+  \seebaseclassmethod
+  
+  \note The dragging of possibly multiple axes at once by starting the drag anywhere in the axis
+  rect is handled by the axis rect's mouse event, e.g. \ref QCPAxisRect::mousePressEvent.
+*/
+void QCPPolarAxisRadial::mousePressEvent(QMouseEvent *event, const QVariant &details)
+{
+  Q_UNUSED(details)
+  if (!mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+  {
+    event->ignore();
+    return;
+  }
+  
+  if (event->buttons() & Qt::LeftButton)
+  {
+    mDragging = true;
+    // initialize antialiasing backup in case we start dragging:
+    if (mParentPlot->noAntialiasingOnDrag())
+    {
+      mAADragBackup = mParentPlot->antialiasedElements();
+      mNotAADragBackup = mParentPlot->notAntialiasedElements();
+    }
+    // Mouse range dragging interaction:
+    if (mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+      mDragStartRange = mRange;
+  }
+}
+
+/*! \internal
+  
+  This mouse event reimplementation provides the functionality to let the user drag individual axes
+  exclusively, by startig the drag on top of the axis.
+  
+  \seebaseclassmethod
+  
+  \note The dragging of possibly multiple axes at once by starting the drag anywhere in the axis
+  rect is handled by the axis rect's mouse event, e.g. \ref QCPAxisRect::mousePressEvent.
+  
+  \see QCPAxis::mousePressEvent
+*/
+void QCPPolarAxisRadial::mouseMoveEvent(QMouseEvent *event, const QPointF &startPos)
+{
+  Q_UNUSED(event) // TODO remove later
+  Q_UNUSED(startPos) // TODO remove later
+  if (mDragging)
+  {
+    /* TODO
+    const double startPixel = orientation() == Qt::Horizontal ? startPos.x() : startPos.y();
+    const double currentPixel = orientation() == Qt::Horizontal ? event->pos().x() : event->pos().y();
+    if (mScaleType == QCPPolarAxisRadial::stLinear)
+    {
+      const double diff = pixelToCoord(startPixel) - pixelToCoord(currentPixel);
+      setRange(mDragStartRange.lower+diff, mDragStartRange.upper+diff);
+    } else if (mScaleType == QCPPolarAxisRadial::stLogarithmic)
+    {
+      const double diff = pixelToCoord(startPixel) / pixelToCoord(currentPixel);
+      setRange(mDragStartRange.lower*diff, mDragStartRange.upper*diff);
+    }
+    */
+    
+    if (mParentPlot->noAntialiasingOnDrag())
+      mParentPlot->setNotAntialiasedElements(QCP::aeAll);
+    mParentPlot->replot(QCustomPlot::rpQueuedReplot);
+  }
+}
+
+/*! \internal
+  
+  This mouse event reimplementation provides the functionality to let the user drag individual axes
+  exclusively, by startig the drag on top of the axis.
+  
+  \seebaseclassmethod
+  
+  \note The dragging of possibly multiple axes at once by starting the drag anywhere in the axis
+  rect is handled by the axis rect's mouse event, e.g. \ref QCPAxisRect::mousePressEvent.
+  
+  \see QCPAxis::mousePressEvent
+*/
+void QCPPolarAxisRadial::mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos)
+{
+  Q_UNUSED(event)
+  Q_UNUSED(startPos)
+  mDragging = false;
+  if (mParentPlot->noAntialiasingOnDrag())
+  {
+    mParentPlot->setAntialiasedElements(mAADragBackup);
+    mParentPlot->setNotAntialiasedElements(mNotAADragBackup);
+  }
+}
+
+/*! \internal
+  
+  This mouse event reimplementation provides the functionality to let the user zoom individual axes
+  exclusively, by performing the wheel event on top of the axis.
+
+  For the axis to accept this event and perform the single axis zoom, the parent \ref QCPAxisRect
+  must be configured accordingly, i.e. it must allow range zooming in the orientation of this axis
+  (\ref QCPAxisRect::setRangeZoom) and this axis must be a zoomable axis (\ref
+  QCPAxisRect::setRangeZoomAxes)
+  
+  \seebaseclassmethod
+  
+  \note The zooming of possibly multiple axes at once by performing the wheel event anywhere in the
+  axis rect is handled by the axis rect's mouse event, e.g. \ref QCPAxisRect::wheelEvent.
+*/
+void QCPPolarAxisRadial::wheelEvent(QWheelEvent *event)
+{
+  // Mouse range zooming interaction:
+  if (!mParentPlot->interactions().testFlag(QCP::iRangeZoom))
+  {
+    event->ignore();
+    return;
+  }
+  
+  // TODO:
+  //const double wheelSteps = event->delta()/120.0; // a single step delta is +/-120 usually
+  //const double factor = qPow(mRangeZoomFactor, wheelSteps);
+  //scaleRange(factor, pixelToCoord(orientation() == Qt::Horizontal ? event->pos().x() : event->pos().y()));
+  mParentPlot->replot();
+}
+
+void QCPPolarAxisRadial::updateGeometry(const QPointF &center, double radius)
+{
+  mCenter = center;
+  mRadius = radius;
+  if (mRadius < 1) mRadius = 1;
+}
+
+/*! \internal
+
+  A convenience function to easily set the QPainter::Antialiased hint on the provided \a painter
+  before drawing axis lines.
+
+  This is the antialiasing state the painter passed to the \ref draw method is in by default.
+  
+  This function takes into account the local setting of the antialiasing flag as well as the
+  overrides set with \ref QCustomPlot::setAntialiasedElements and \ref
+  QCustomPlot::setNotAntialiasedElements.
+  
+  \seebaseclassmethod
+  
+  \see setAntialiased
+*/
+void QCPPolarAxisRadial::applyDefaultAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiased, QCP::aeAxes);
+}
+
+/*! \internal
+  
+  Draws the axis with the specified \a painter, using the internal QCPAxisPainterPrivate instance.
+
+  \seebaseclassmethod
+*/
+void QCPPolarAxisRadial::draw(QCPPainter *painter)
+{
+  const double axisAngleRad = (mAngle+(mAngleReference==arAngularAxis ? mAngularAxis->angle() : 0))/180.0*M_PI;
+  const QPointF axisVector(qCos(axisAngleRad), qSin(axisAngleRad)); // semantically should be QCPVector2D, but we save time in loops when we keep it as QPointF
+  const QPointF tickNormal = QCPVector2D(axisVector).perpendicular().toPointF(); // semantically should be QCPVector2D, but we save time in loops when we keep it as QPointF
+  
+  // draw baseline:
+  painter->setPen(getBasePen());
+  painter->drawLine(QLineF(mCenter, mCenter+axisVector*(mRadius-0.5)));
+  
+  // draw subticks:
+  if (!mSubTickVector.isEmpty())
+  {
+    painter->setPen(getSubTickPen());
+    for (int i=0; i<mSubTickVector.size(); ++i)
+    {
+      const QPointF tickPosition = mCenter+axisVector*coordToRadius(mSubTickVector.at(i));
+      painter->drawLine(QLineF(tickPosition-tickNormal*mSubTickLengthIn, tickPosition+tickNormal*mSubTickLengthOut));
+    }
+  }
+  
+  // draw ticks and labels:
+  if (!mTickVector.isEmpty())
+  {
+    mLabelPainter.setAnchorReference(mCenter-axisVector); // subtract (normalized) axisVector, just to prevent degenerate tangents for tick label at exact lower axis range
+    mLabelPainter.setFont(getTickLabelFont());
+    mLabelPainter.setColor(getTickLabelColor());
+    const QPen ticksPen = getTickPen();
+    painter->setPen(ticksPen);
+    for (int i=0; i<mTickVector.size(); ++i)
+    {
+      const double r = coordToRadius(mTickVector.at(i));
+      const QPointF tickPosition = mCenter+axisVector*r;
+      painter->drawLine(QLineF(tickPosition-tickNormal*mTickLengthIn, tickPosition+tickNormal*mTickLengthOut));
+      // possibly draw tick labels:
+      if (!mTickVectorLabels.isEmpty())
+      {
+        if ((!mRangeReversed && (i < mTickVectorLabels.count()-1 || mRadius-r > 10)) ||
+            (mRangeReversed && (i > 0 || mRadius-r > 10))) // skip last label if it's closer than 10 pixels to angular axis
+          mLabelPainter.drawTickLabel(painter, tickPosition+tickNormal*mSubTickLengthOut, mTickVectorLabels.at(i));
+      }
+    }
+  }
+}
+
+/*! \internal
+  
+  Prepares the internal tick vector, sub tick vector and tick label vector. This is done by calling
+  QCPAxisTicker::generate on the currently installed ticker.
+  
+  If a change in the label text/count is detected, the cached axis margin is invalidated to make
+  sure the next margin calculation recalculates the label sizes and returns an up-to-date value.
+*/
+void QCPPolarAxisRadial::setupTickVectors()
+{
+  if (!mParentPlot) return;
+  if ((!mTicks && !mTickLabels) || mRange.size() <= 0) return;
+  
+  mTicker->generate(mRange, mParentPlot->locale(), mNumberFormatChar, mNumberPrecision, mTickVector, mSubTicks ? &mSubTickVector : 0, mTickLabels ? &mTickVectorLabels : 0);
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the axis base line. Depending on the selection state, this
+  is either mSelectedBasePen or mBasePen.
+*/
+QPen QCPPolarAxisRadial::getBasePen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedBasePen : mBasePen;
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the (major) ticks. Depending on the selection state, this
+  is either mSelectedTickPen or mTickPen.
+*/
+QPen QCPPolarAxisRadial::getTickPen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedTickPen : mTickPen;
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the subticks. Depending on the selection state, this
+  is either mSelectedSubTickPen or mSubTickPen.
+*/
+QPen QCPPolarAxisRadial::getSubTickPen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedSubTickPen : mSubTickPen;
+}
+
+/*! \internal
+  
+  Returns the font that is used to draw the tick labels. Depending on the selection state, this
+  is either mSelectedTickLabelFont or mTickLabelFont.
+*/
+QFont QCPPolarAxisRadial::getTickLabelFont() const
+{
+  return mSelectedParts.testFlag(spTickLabels) ? mSelectedTickLabelFont : mTickLabelFont;
+}
+
+/*! \internal
+  
+  Returns the font that is used to draw the axis label. Depending on the selection state, this
+  is either mSelectedLabelFont or mLabelFont.
+*/
+QFont QCPPolarAxisRadial::getLabelFont() const
+{
+  return mSelectedParts.testFlag(spAxisLabel) ? mSelectedLabelFont : mLabelFont;
+}
+
+/*! \internal
+  
+  Returns the color that is used to draw the tick labels. Depending on the selection state, this
+  is either mSelectedTickLabelColor or mTickLabelColor.
+*/
+QColor QCPPolarAxisRadial::getTickLabelColor() const
+{
+  return mSelectedParts.testFlag(spTickLabels) ? mSelectedTickLabelColor : mTickLabelColor;
+}
+
+/*! \internal
+  
+  Returns the color that is used to draw the axis label. Depending on the selection state, this
+  is either mSelectedLabelColor or mLabelColor.
+*/
+QColor QCPPolarAxisRadial::getLabelColor() const
+{
+  return mSelectedParts.testFlag(spAxisLabel) ? mSelectedLabelColor : mLabelColor;
+}
+
+
+/* inherits documentation from base class */
+QCP::Interaction QCPPolarAxisRadial::selectionCategory() const
+{
+  return QCP::iSelectAxes;
+}
+/* end of 'src/polar/radialaxis.cpp' */
+
+
+/* including file 'src/polar/layoutelement-angularaxis.cpp' */
+/* modified 2021-03-29T02:30:44, size 57266                 */
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPPolarAxisAngular
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPPolarAxisAngular
+  \brief The main container for polar plots, representing the angular axis as a circle
+
+  \warning In this QCustomPlot version, polar plots are a tech preview. Expect documentation and
+  functionality to be incomplete, as well as changing public interfaces in the future.
+*/
+
+/* start documentation of inline functions */
+
+/*! \fn QCPLayoutInset *QCPPolarAxisAngular::insetLayout() const
+  
+  Returns the inset layout of this axis rect. It can be used to place other layout elements (or
+  even layouts with multiple other elements) inside/on top of an axis rect.
+  
+  \see QCPLayoutInset
+*/
+
+/*! \fn int QCPPolarAxisAngular::left() const
+  
+  Returns the pixel position of the left border of this axis rect. Margins are not taken into
+  account here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn int QCPPolarAxisAngular::right() const
+  
+  Returns the pixel position of the right border of this axis rect. Margins are not taken into
+  account here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn int QCPPolarAxisAngular::top() const
+  
+  Returns the pixel position of the top border of this axis rect. Margins are not taken into
+  account here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn int QCPPolarAxisAngular::bottom() const
+  
+  Returns the pixel position of the bottom border of this axis rect. Margins are not taken into
+  account here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn int QCPPolarAxisAngular::width() const
+  
+  Returns the pixel width of this axis rect. Margins are not taken into account here, so the
+  returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn int QCPPolarAxisAngular::height() const
+  
+  Returns the pixel height of this axis rect. Margins are not taken into account here, so the
+  returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QSize QCPPolarAxisAngular::size() const
+  
+  Returns the pixel size of this axis rect. Margins are not taken into account here, so the
+  returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QPoint QCPPolarAxisAngular::topLeft() const
+  
+  Returns the top left corner of this axis rect in pixels. Margins are not taken into account here,
+  so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QPoint QCPPolarAxisAngular::topRight() const
+  
+  Returns the top right corner of this axis rect in pixels. Margins are not taken into account
+  here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QPoint QCPPolarAxisAngular::bottomLeft() const
+  
+  Returns the bottom left corner of this axis rect in pixels. Margins are not taken into account
+  here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QPoint QCPPolarAxisAngular::bottomRight() const
+  
+  Returns the bottom right corner of this axis rect in pixels. Margins are not taken into account
+  here, so the returned value is with respect to the inner \ref rect.
+*/
+
+/*! \fn QPoint QCPPolarAxisAngular::center() const
+  
+  Returns the center of this axis rect in pixels. Margins are not taken into account here, so the
+  returned value is with respect to the inner \ref rect.
+*/
+
+/* end documentation of inline functions */
+
+/*!
+  Creates a QCPPolarAxis instance and sets default values. An axis is added for each of the four
+  sides, the top and right axes are set invisible initially.
+*/
+QCPPolarAxisAngular::QCPPolarAxisAngular(QCustomPlot *parentPlot) :
+  QCPLayoutElement(parentPlot),
+  mBackgroundBrush(Qt::NoBrush),
+  mBackgroundScaled(true),
+  mBackgroundScaledMode(Qt::KeepAspectRatioByExpanding),
+  mInsetLayout(new QCPLayoutInset),
+  mRangeDrag(false),
+  mRangeZoom(false),
+  mRangeZoomFactor(0.85),
+  // axis base:
+  mAngle(-90),
+  mAngleRad(mAngle/180.0*M_PI),
+  mSelectableParts(spAxis | spTickLabels | spAxisLabel),
+  mSelectedParts(spNone),
+  mBasePen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedBasePen(QPen(Qt::blue, 2)),
+  // axis label:
+  mLabelPadding(0),
+  mLabel(),
+  mLabelFont(mParentPlot->font()),
+  mSelectedLabelFont(QFont(mLabelFont.family(), mLabelFont.pointSize(), QFont::Bold)),
+  mLabelColor(Qt::black),
+  mSelectedLabelColor(Qt::blue),
+  // tick labels:
+  //mTickLabelPadding(0), in label painter
+  mTickLabels(true),
+  //mTickLabelRotation(0), in label painter
+  mTickLabelFont(mParentPlot->font()),
+  mSelectedTickLabelFont(QFont(mTickLabelFont.family(), mTickLabelFont.pointSize(), QFont::Bold)),
+  mTickLabelColor(Qt::black),
+  mSelectedTickLabelColor(Qt::blue),
+  mNumberPrecision(6),
+  mNumberFormatChar('g'),
+  mNumberBeautifulPowers(true),
+  mNumberMultiplyCross(false),
+  // ticks and subticks:
+  mTicks(true),
+  mSubTicks(true),
+  mTickLengthIn(5),
+  mTickLengthOut(0),
+  mSubTickLengthIn(2),
+  mSubTickLengthOut(0),
+  mTickPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedTickPen(QPen(Qt::blue, 2)),
+  mSubTickPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::SquareCap)),
+  mSelectedSubTickPen(QPen(Qt::blue, 2)),
+  // scale and range:
+  mRange(0, 360),
+  mRangeReversed(false),
+  // internal members:
+  mRadius(1), // non-zero initial value, will be overwritten in ::update() according to inner rect
+  mGrid(new QCPPolarGrid(this)),
+  mTicker(new QCPAxisTickerFixed),
+  mDragging(false),
+  mLabelPainter(parentPlot)
+{
+  // TODO:
+  //mInsetLayout->initializeParentPlot(mParentPlot);
+  //mInsetLayout->setParentLayerable(this);
+  //mInsetLayout->setParent(this);
+ 
+  if (QCPAxisTickerFixed *fixedTicker = mTicker.dynamicCast<QCPAxisTickerFixed>().data())
+  {
+    fixedTicker->setTickStep(30);
+  }
+  setAntialiased(true);
+  setLayer(mParentPlot->currentLayer()); // it's actually on that layer already, but we want it in front of the grid, so we place it on there again
+  
+  setTickLabelPadding(5);
+  setTickLabelRotation(0);
+  setTickLabelMode(lmUpright);
+  mLabelPainter.setAnchorReferenceType(QCPLabelPainterPrivate::artNormal);
+  mLabelPainter.setAbbreviateDecimalPowers(false);
+  mLabelPainter.setCacheSize(24); // so we can cache up to 15-degree intervals, polar angular axis uses a bit larger cache than normal axes
+  
+  setMinimumSize(50, 50);
+  setMinimumMargins(QMargins(30, 30, 30, 30));
+  
+  addRadialAxis();
+  mGrid->setRadialAxis(radialAxis());
+}
+
+QCPPolarAxisAngular::~QCPPolarAxisAngular()
+{
+  delete mGrid; // delete grid here instead of via parent ~QObject for better defined deletion order
+  mGrid = 0;
+  
+  delete mInsetLayout;
+  mInsetLayout = 0;
+  
+  QList<QCPPolarAxisRadial*> radialAxesList = radialAxes();
+  for (int i=0; i<radialAxesList.size(); ++i)
+    removeRadialAxis(radialAxesList.at(i));
+}
+
+QCPPolarAxisAngular::LabelMode QCPPolarAxisAngular::tickLabelMode() const
+{
+  switch (mLabelPainter.anchorMode())
+  {
+    case QCPLabelPainterPrivate::amSkewedUpright: return lmUpright;
+    case QCPLabelPainterPrivate::amSkewedRotated: return lmRotated;
+    default: qDebug() << Q_FUNC_INFO << "invalid mode for polar axis"; break;
+  }
+  return lmUpright;
+}
+
+/* No documentation as it is a property getter */
+QString QCPPolarAxisAngular::numberFormat() const
+{
+  QString result;
+  result.append(mNumberFormatChar);
+  if (mNumberBeautifulPowers)
+  {
+    result.append(QLatin1Char('b'));
+    if (mLabelPainter.multiplicationSymbol() == QCPLabelPainterPrivate::SymbolCross)
+      result.append(QLatin1Char('c'));
+  }
+  return result;
+}
+
+/*!
+  Returns the number of axes on the axis rect side specified with \a type.
+  
+  \see axis
+*/
+int QCPPolarAxisAngular::radialAxisCount() const
+{
+  return mRadialAxes.size();
+}
+
+/*!
+  Returns the axis with the given \a index on the axis rect side specified with \a type.
+  
+  \see axisCount, axes
+*/
+QCPPolarAxisRadial *QCPPolarAxisAngular::radialAxis(int index) const
+{
+  if (index >= 0 && index < mRadialAxes.size())
+  {
+    return mRadialAxes.at(index);
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "Axis index out of bounds:" << index;
+    return 0;
+  }
+}
+
+/*!
+  Returns all axes on the axis rect sides specified with \a types.
+  
+  \a types may be a single \ref QCPAxis::AxisType or an <tt>or</tt>-combination, to get the axes of
+  multiple sides.
+  
+  \see axis
+*/
+QList<QCPPolarAxisRadial*> QCPPolarAxisAngular::radialAxes() const
+{
+  return mRadialAxes;
+}
+
+
+/*!
+  Adds a new axis to the axis rect side specified with \a type, and returns it. If \a axis is 0, a
+  new QCPAxis instance is created internally. QCustomPlot owns the returned axis, so if you want to
+  remove an axis, use \ref removeAxis instead of deleting it manually.
+
+  You may inject QCPAxis instances (or subclasses of QCPAxis) by setting \a axis to an axis that was
+  previously created outside QCustomPlot. It is important to note that QCustomPlot takes ownership
+  of the axis, so you may not delete it afterwards. Further, the \a axis must have been created
+  with this axis rect as parent and with the same axis type as specified in \a type. If this is not
+  the case, a debug output is generated, the axis is not added, and the method returns 0.
+
+  This method can not be used to move \a axis between axis rects. The same \a axis instance must
+  not be added multiple times to the same or different axis rects.
+
+  If an axis rect side already contains one or more axes, the lower and upper endings of the new
+  axis (\ref QCPAxis::setLowerEnding, \ref QCPAxis::setUpperEnding) are set to \ref
+  QCPLineEnding::esHalfBar.
+
+  \see addAxes, setupFullAxesBox
+*/
+QCPPolarAxisRadial *QCPPolarAxisAngular::addRadialAxis(QCPPolarAxisRadial *axis)
+{
+  QCPPolarAxisRadial *newAxis = axis;
+  if (!newAxis)
+  {
+    newAxis = new QCPPolarAxisRadial(this);
+  } else // user provided existing axis instance, do some sanity checks
+  {
+    if (newAxis->angularAxis() != this)
+    {
+      qDebug() << Q_FUNC_INFO << "passed radial axis doesn't have this angular axis as parent angular axis";
+      return 0;
+    }
+    if (radialAxes().contains(newAxis))
+    {
+      qDebug() << Q_FUNC_INFO << "passed axis is already owned by this angular axis";
+      return 0;
+    }
+  }
+  mRadialAxes.append(newAxis);
+  return newAxis;
+}
+
+/*!
+  Removes the specified \a axis from the axis rect and deletes it.
+  
+  Returns true on success, i.e. if \a axis was a valid axis in this axis rect.
+  
+  \see addAxis
+*/
+bool QCPPolarAxisAngular::removeRadialAxis(QCPPolarAxisRadial *radialAxis)
+{
+  if (mRadialAxes.contains(radialAxis))
+  {
+    mRadialAxes.removeOne(radialAxis);
+    delete radialAxis;
+    return true;
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "Radial axis isn't associated with this angular axis:" << reinterpret_cast<quintptr>(radialAxis);
+    return false;
+  }
+}
+
+QRegion QCPPolarAxisAngular::exactClipRegion() const
+{
+  return QRegion(mCenter.x()-mRadius, mCenter.y()-mRadius, qRound(2*mRadius), qRound(2*mRadius), QRegion::Ellipse);
+}
+
+/*!
+  If the scale type (\ref setScaleType) is \ref stLinear, \a diff is added to the lower and upper
+  bounds of the range. The range is simply moved by \a diff.
+  
+  If the scale type is \ref stLogarithmic, the range bounds are multiplied by \a diff. This
+  corresponds to an apparent "linear" move in logarithmic scaling by a distance of log(diff).
+*/
+void QCPPolarAxisAngular::moveRange(double diff)
+{
+  QCPRange oldRange = mRange;
+  mRange.lower += diff;
+  mRange.upper += diff;
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Scales the range of this axis by \a factor around the center of the current axis range. For
+  example, if \a factor is 2.0, then the axis range will double its size, and the point at the axis
+  range center won't have changed its position in the QCustomPlot widget (i.e. coordinates around
+  the center will have moved symmetrically closer).
+
+  If you wish to scale around a different coordinate than the current axis range center, use the
+  overload \ref scaleRange(double factor, double center).
+*/
+void QCPPolarAxisAngular::scaleRange(double factor)
+{
+  scaleRange(factor, range().center());
+}
+
+/*! \overload
+
+  Scales the range of this axis by \a factor around the coordinate \a center. For example, if \a
+  factor is 2.0, \a center is 1.0, then the axis range will double its size, and the point at
+  coordinate 1.0 won't have changed its position in the QCustomPlot widget (i.e. coordinates
+  around 1.0 will have moved symmetrically closer to 1.0).
+
+  \see scaleRange(double factor)
+*/
+void QCPPolarAxisAngular::scaleRange(double factor, double center)
+{
+  QCPRange oldRange = mRange;
+  QCPRange newRange;
+  newRange.lower = (mRange.lower-center)*factor + center;
+  newRange.upper = (mRange.upper-center)*factor + center;
+  if (QCPRange::validRange(newRange))
+    mRange = newRange.sanitizedForLinScale();
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Changes the axis range such that all plottables associated with this axis are fully visible in
+  that dimension.
+  
+  \see QCPAbstractPlottable::rescaleAxes, QCustomPlot::rescaleAxes
+*/
+void QCPPolarAxisAngular::rescale(bool onlyVisiblePlottables)
+{
+  QCPRange newRange;
+  bool haveRange = false;
+  for (int i=0; i<mGraphs.size(); ++i)
+  {
+    if (!mGraphs.at(i)->realVisibility() && onlyVisiblePlottables)
+      continue;
+    QCPRange range;
+    bool currentFoundRange;
+    if (mGraphs.at(i)->keyAxis() == this)
+      range = mGraphs.at(i)->getKeyRange(currentFoundRange, QCP::sdBoth);
+    else
+      range = mGraphs.at(i)->getValueRange(currentFoundRange, QCP::sdBoth);
+    if (currentFoundRange)
+    {
+      if (!haveRange)
+        newRange = range;
+      else
+        newRange.expand(range);
+      haveRange = true;
+    }
+  }
+  if (haveRange)
+  {
+    if (!QCPRange::validRange(newRange)) // likely due to range being zero (plottable has only constant data in this axis dimension), shift current range to at least center the plottable
+    {
+      double center = (newRange.lower+newRange.upper)*0.5; // upper and lower should be equal anyway, but just to make sure, incase validRange returned false for other reason
+      newRange.lower = center-mRange.size()/2.0;
+      newRange.upper = center+mRange.size()/2.0;
+    }
+    setRange(newRange);
+  }
+}
+
+/*!
+  Transforms \a value, in pixel coordinates of the QCustomPlot widget, to axis coordinates.
+*/
+void QCPPolarAxisAngular::pixelToCoord(QPointF pixelPos, double &angleCoord, double &radiusCoord) const
+{
+  if (!mRadialAxes.isEmpty())
+    mRadialAxes.first()->pixelToCoord(pixelPos, angleCoord, radiusCoord);
+  else
+    qDebug() << Q_FUNC_INFO << "no radial axis configured";
+}
+
+/*!
+  Transforms \a value, in coordinates of the axis, to pixel coordinates of the QCustomPlot widget.
+*/
+QPointF QCPPolarAxisAngular::coordToPixel(double angleCoord, double radiusCoord) const
+{
+  if (!mRadialAxes.isEmpty())
+  {
+    return mRadialAxes.first()->coordToPixel(angleCoord, radiusCoord);
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "no radial axis configured";
+    return QPointF();
+  }
+}
+
+/*!
+  Returns the part of the axis that is hit by \a pos (in pixels). The return value of this function
+  is independent of the user-selectable parts defined with \ref setSelectableParts. Further, this
+  function does not change the current selection state of the axis.
+  
+  If the axis is not visible (\ref setVisible), this function always returns \ref spNone.
+  
+  \see setSelectedParts, setSelectableParts, QCustomPlot::setInteractions
+*/
+QCPPolarAxisAngular::SelectablePart QCPPolarAxisAngular::getPartAt(const QPointF &pos) const
+{
+  Q_UNUSED(pos) // TODO remove later
+  
+  if (!mVisible)
+    return spNone;
+  
+  /*
+    TODO:
+  if (mAxisPainter->axisSelectionBox().contains(pos.toPoint()))
+    return spAxis;
+  else if (mAxisPainter->tickLabelsSelectionBox().contains(pos.toPoint()))
+    return spTickLabels;
+  else if (mAxisPainter->labelSelectionBox().contains(pos.toPoint()))
+    return spAxisLabel;
+  else */
+    return spNone;
+}
+
+/* inherits documentation from base class */
+double QCPPolarAxisAngular::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
+{
+  /*
+  if (!mParentPlot) return -1;
+  SelectablePart part = getPartAt(pos);
+  if ((onlySelectable && !mSelectableParts.testFlag(part)) || part == spNone)
+    return -1;
+  
+  if (details)
+    details->setValue(part);
+  return mParentPlot->selectionTolerance()*0.99;
+  */
+  
+  Q_UNUSED(details)
+  
+  if (onlySelectable)
+    return -1;
+  
+  if (QRectF(mOuterRect).contains(pos))
+  {
+    if (mParentPlot)
+      return mParentPlot->selectionTolerance()*0.99;
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "parent plot not defined";
+      return -1;
+    }
+  } else
+    return -1;
+}
+
+/*!
+  This method is called automatically upon replot and doesn't need to be called by users of
+  QCPPolarAxisAngular.
+  
+  Calls the base class implementation to update the margins (see \ref QCPLayoutElement::update),
+  and finally passes the \ref rect to the inset layout (\ref insetLayout) and calls its
+  QCPInsetLayout::update function.
+  
+  \seebaseclassmethod
+*/
+void QCPPolarAxisAngular::update(UpdatePhase phase)
+{
+  QCPLayoutElement::update(phase);
+  
+  switch (phase)
+  {
+    case upPreparation:
+    {
+      setupTickVectors();
+      for (int i=0; i<mRadialAxes.size(); ++i)
+        mRadialAxes.at(i)->setupTickVectors();
+      break;
+    }
+    case upLayout:
+    {
+      mCenter = mRect.center();
+      mRadius = 0.5*qMin(qAbs(mRect.width()), qAbs(mRect.height()));
+      if (mRadius < 1) mRadius = 1; // prevent cases where radius might become 0 which causes trouble
+      for (int i=0; i<mRadialAxes.size(); ++i)
+        mRadialAxes.at(i)->updateGeometry(mCenter, mRadius);
+      
+      mInsetLayout->setOuterRect(rect());
+      break;
+    }
+    default: break;
+  }
+  
+  // pass update call on to inset layout (doesn't happen automatically, because QCPPolarAxis doesn't derive from QCPLayout):
+  mInsetLayout->update(phase);
+}
+
+/* inherits documentation from base class */
+QList<QCPLayoutElement*> QCPPolarAxisAngular::elements(bool recursive) const
+{
+  QList<QCPLayoutElement*> result;
+  if (mInsetLayout)
+  {
+    result << mInsetLayout;
+    if (recursive)
+      result << mInsetLayout->elements(recursive);
+  }
+  return result;
+}
+
+bool QCPPolarAxisAngular::removeGraph(QCPPolarGraph *graph)
+{
+  if (!mGraphs.contains(graph))
+  {
+    qDebug() << Q_FUNC_INFO << "graph not in list:" << reinterpret_cast<quintptr>(graph);
+    return false;
+  }
+  
+  // remove plottable from legend:
+  graph->removeFromLegend();
+  // remove plottable:
+  delete graph;
+  mGraphs.removeOne(graph);
+  return true;
+}
+
+/* inherits documentation from base class */
+void QCPPolarAxisAngular::applyDefaultAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiased, QCP::aeAxes);
+}
+
+/* inherits documentation from base class */
+void QCPPolarAxisAngular::draw(QCPPainter *painter)
+{
+  drawBackground(painter, mCenter, mRadius);
+  
+  // draw baseline circle:
+  painter->setPen(getBasePen());
+  painter->drawEllipse(mCenter, mRadius, mRadius);
+  
+  // draw subticks:
+  if (!mSubTickVector.isEmpty())
+  {
+    painter->setPen(getSubTickPen());
+    for (int i=0; i<mSubTickVector.size(); ++i)
+    {
+      painter->drawLine(mCenter+mSubTickVectorCosSin.at(i)*(mRadius-mSubTickLengthIn),
+                        mCenter+mSubTickVectorCosSin.at(i)*(mRadius+mSubTickLengthOut));
+    }
+  }
+  
+  // draw ticks and labels:
+  if (!mTickVector.isEmpty())
+  {
+    mLabelPainter.setAnchorReference(mCenter);
+    mLabelPainter.setFont(getTickLabelFont());
+    mLabelPainter.setColor(getTickLabelColor());
+    const QPen ticksPen = getTickPen();
+    painter->setPen(ticksPen);
+    for (int i=0; i<mTickVector.size(); ++i)
+    {
+      const QPointF outerTick = mCenter+mTickVectorCosSin.at(i)*(mRadius+mTickLengthOut);
+      painter->drawLine(mCenter+mTickVectorCosSin.at(i)*(mRadius-mTickLengthIn), outerTick);
+      // draw tick labels:
+      if (!mTickVectorLabels.isEmpty())
+      {
+        if (i < mTickVectorLabels.count()-1 || (mTickVectorCosSin.at(i)-mTickVectorCosSin.first()).manhattanLength() > 5/180.0*M_PI) // skip last label if it's closer than approx 5 degrees to first
+          mLabelPainter.drawTickLabel(painter, outerTick, mTickVectorLabels.at(i));
+      }
+    }
+  }
+}
+
+/* inherits documentation from base class */
+QCP::Interaction QCPPolarAxisAngular::selectionCategory() const
+{
+  return QCP::iSelectAxes;
+}
+
+
+/*!
+  Sets \a pm as the axis background pixmap. The axis background pixmap will be drawn inside the
+  axis rect. Since axis rects place themselves on the "background" layer by default, the axis rect
+  backgrounds are usually drawn below everything else.
+
+  For cases where the provided pixmap doesn't have the same size as the axis rect, scaling can be
+  enabled with \ref setBackgroundScaled and the scaling mode (i.e. whether and how the aspect ratio
+  is preserved) can be set with \ref setBackgroundScaledMode. To set all these options in one call,
+  consider using the overloaded version of this function.
+
+  Below the pixmap, the axis rect may be optionally filled with a brush, if specified with \ref
+  setBackground(const QBrush &brush).
+  
+  \see setBackgroundScaled, setBackgroundScaledMode, setBackground(const QBrush &brush)
+*/
+void QCPPolarAxisAngular::setBackground(const QPixmap &pm)
+{
+  mBackgroundPixmap = pm;
+  mScaledBackgroundPixmap = QPixmap();
+}
+
+/*! \overload
+  
+  Sets \a brush as the background brush. The axis rect background will be filled with this brush.
+  Since axis rects place themselves on the "background" layer by default, the axis rect backgrounds
+  are usually drawn below everything else.
+
+  The brush will be drawn before (under) any background pixmap, which may be specified with \ref
+  setBackground(const QPixmap &pm).
+
+  To disable drawing of a background brush, set \a brush to Qt::NoBrush.
+  
+  \see setBackground(const QPixmap &pm)
+*/
+void QCPPolarAxisAngular::setBackground(const QBrush &brush)
+{
+  mBackgroundBrush = brush;
+}
+
+/*! \overload
+  
+  Allows setting the background pixmap of the axis rect, whether it shall be scaled and how it
+  shall be scaled in one call.
+
+  \see setBackground(const QPixmap &pm), setBackgroundScaled, setBackgroundScaledMode
+*/
+void QCPPolarAxisAngular::setBackground(const QPixmap &pm, bool scaled, Qt::AspectRatioMode mode)
+{
+  mBackgroundPixmap = pm;
+  mScaledBackgroundPixmap = QPixmap();
+  mBackgroundScaled = scaled;
+  mBackgroundScaledMode = mode;
+}
+
+/*!
+  Sets whether the axis background pixmap shall be scaled to fit the axis rect or not. If \a scaled
+  is set to true, you may control whether and how the aspect ratio of the original pixmap is
+  preserved with \ref setBackgroundScaledMode.
+  
+  Note that the scaled version of the original pixmap is buffered, so there is no performance
+  penalty on replots. (Except when the axis rect dimensions are changed continuously.)
+  
+  \see setBackground, setBackgroundScaledMode
+*/
+void QCPPolarAxisAngular::setBackgroundScaled(bool scaled)
+{
+  mBackgroundScaled = scaled;
+}
+
+/*!
+  If scaling of the axis background pixmap is enabled (\ref setBackgroundScaled), use this function to
+  define whether and how the aspect ratio of the original pixmap passed to \ref setBackground is preserved.
+  \see setBackground, setBackgroundScaled
+*/
+void QCPPolarAxisAngular::setBackgroundScaledMode(Qt::AspectRatioMode mode)
+{
+  mBackgroundScaledMode = mode;
+}
+
+void QCPPolarAxisAngular::setRangeDrag(bool enabled)
+{
+  mRangeDrag = enabled;
+}
+
+void QCPPolarAxisAngular::setRangeZoom(bool enabled)
+{
+  mRangeZoom = enabled;
+}
+
+void QCPPolarAxisAngular::setRangeZoomFactor(double factor)
+{
+  mRangeZoomFactor = factor;
+}
+
+
+
+
+
+
+
+/*!
+  Sets the range of the axis.
+  
+  This slot may be connected with the \ref rangeChanged signal of another axis so this axis
+  is always synchronized with the other axis range, when it changes.
+  
+  To invert the direction of an axis, use \ref setRangeReversed.
+*/
+void QCPPolarAxisAngular::setRange(const QCPRange &range)
+{
+  if (range.lower == mRange.lower && range.upper == mRange.upper)
+    return;
+  
+  if (!QCPRange::validRange(range)) return;
+  QCPRange oldRange = mRange;
+  mRange = range.sanitizedForLinScale();
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets whether the user can (de-)select the parts in \a selectable by clicking on the QCustomPlot surface.
+  (When \ref QCustomPlot::setInteractions contains iSelectAxes.)
+  
+  However, even when \a selectable is set to a value not allowing the selection of a specific part,
+  it is still possible to set the selection of this part manually, by calling \ref setSelectedParts
+  directly.
+  
+  \see SelectablePart, setSelectedParts
+*/
+void QCPPolarAxisAngular::setSelectableParts(const SelectableParts &selectable)
+{
+  if (mSelectableParts != selectable)
+  {
+    mSelectableParts = selectable;
+    emit selectableChanged(mSelectableParts);
+  }
+}
+
+/*!
+  Sets the selected state of the respective axis parts described by \ref SelectablePart. When a part
+  is selected, it uses a different pen/font.
+  
+  The entire selection mechanism for axes is handled automatically when \ref
+  QCustomPlot::setInteractions contains iSelectAxes. You only need to call this function when you
+  wish to change the selection state manually.
+  
+  This function can change the selection state of a part, independent of the \ref setSelectableParts setting.
+  
+  emits the \ref selectionChanged signal when \a selected is different from the previous selection state.
+  
+  \see SelectablePart, setSelectableParts, selectTest, setSelectedBasePen, setSelectedTickPen, setSelectedSubTickPen,
+  setSelectedTickLabelFont, setSelectedLabelFont, setSelectedTickLabelColor, setSelectedLabelColor
+*/
+void QCPPolarAxisAngular::setSelectedParts(const SelectableParts &selected)
+{
+  if (mSelectedParts != selected)
+  {
+    mSelectedParts = selected;
+    emit selectionChanged(mSelectedParts);
+  }
+}
+
+/*!
+  \overload
+  
+  Sets the lower and upper bound of the axis range.
+  
+  To invert the direction of an axis, use \ref setRangeReversed.
+  
+  There is also a slot to set a range, see \ref setRange(const QCPRange &range).
+*/
+void QCPPolarAxisAngular::setRange(double lower, double upper)
+{
+  if (lower == mRange.lower && upper == mRange.upper)
+    return;
+  
+  if (!QCPRange::validRange(lower, upper)) return;
+  QCPRange oldRange = mRange;
+  mRange.lower = lower;
+  mRange.upper = upper;
+  mRange = mRange.sanitizedForLinScale();
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  \overload
+  
+  Sets the range of the axis.
+  
+  The \a position coordinate indicates together with the \a alignment parameter, where the new
+  range will be positioned. \a size defines the size of the new axis range. \a alignment may be
+  Qt::AlignLeft, Qt::AlignRight or Qt::AlignCenter. This will cause the left border, right border,
+  or center of the range to be aligned with \a position. Any other values of \a alignment will
+  default to Qt::AlignCenter.
+*/
+void QCPPolarAxisAngular::setRange(double position, double size, Qt::AlignmentFlag alignment)
+{
+  if (alignment == Qt::AlignLeft)
+    setRange(position, position+size);
+  else if (alignment == Qt::AlignRight)
+    setRange(position-size, position);
+  else // alignment == Qt::AlignCenter
+    setRange(position-size/2.0, position+size/2.0);
+}
+
+/*!
+  Sets the lower bound of the axis range. The upper bound is not changed.
+  \see setRange
+*/
+void QCPPolarAxisAngular::setRangeLower(double lower)
+{
+  if (mRange.lower == lower)
+    return;
+  
+  QCPRange oldRange = mRange;
+  mRange.lower = lower;
+  mRange = mRange.sanitizedForLinScale();
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets the upper bound of the axis range. The lower bound is not changed.
+  \see setRange
+*/
+void QCPPolarAxisAngular::setRangeUpper(double upper)
+{
+  if (mRange.upper == upper)
+    return;
+  
+  QCPRange oldRange = mRange;
+  mRange.upper = upper;
+  mRange = mRange.sanitizedForLinScale();
+  emit rangeChanged(mRange);
+  emit rangeChanged(mRange, oldRange);
+}
+
+/*!
+  Sets whether the axis range (direction) is displayed reversed. Normally, the values on horizontal
+  axes increase left to right, on vertical axes bottom to top. When \a reversed is set to true, the
+  direction of increasing values is inverted.
+
+  Note that the range and data interface stays the same for reversed axes, e.g. the \a lower part
+  of the \ref setRange interface will still reference the mathematically smaller number than the \a
+  upper part.
+*/
+void QCPPolarAxisAngular::setRangeReversed(bool reversed)
+{
+  mRangeReversed = reversed;
+}
+
+void QCPPolarAxisAngular::setAngle(double degrees)
+{
+  mAngle = degrees;
+  mAngleRad = mAngle/180.0*M_PI;
+}
+
+/*!
+  The axis ticker is responsible for generating the tick positions and tick labels. See the
+  documentation of QCPAxisTicker for details on how to work with axis tickers.
+  
+  You can change the tick positioning/labeling behaviour of this axis by setting a different
+  QCPAxisTicker subclass using this method. If you only wish to modify the currently installed axis
+  ticker, access it via \ref ticker.
+  
+  Since the ticker is stored in the axis as a shared pointer, multiple axes may share the same axis
+  ticker simply by passing the same shared pointer to multiple axes.
+  
+  \see ticker
+*/
+void QCPPolarAxisAngular::setTicker(QSharedPointer<QCPAxisTicker> ticker)
+{
+  if (ticker)
+    mTicker = ticker;
+  else
+    qDebug() << Q_FUNC_INFO << "can not set 0 as axis ticker";
+  // no need to invalidate margin cache here because produced tick labels are checked for changes in setupTickVector
+}
+
+/*!
+  Sets whether tick marks are displayed.
+
+  Note that setting \a show to false does not imply that tick labels are invisible, too. To achieve
+  that, see \ref setTickLabels.
+  
+  \see setSubTicks
+*/
+void QCPPolarAxisAngular::setTicks(bool show)
+{
+  if (mTicks != show)
+  {
+    mTicks = show;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets whether tick labels are displayed. Tick labels are the numbers drawn next to tick marks.
+*/
+void QCPPolarAxisAngular::setTickLabels(bool show)
+{
+  if (mTickLabels != show)
+  {
+    mTickLabels = show;
+    //mCachedMarginValid = false;
+    if (!mTickLabels)
+      mTickVectorLabels.clear();
+  }
+}
+
+/*!
+  Sets the distance between the axis base line (including any outward ticks) and the tick labels.
+  \see setLabelPadding, setPadding
+*/
+void QCPPolarAxisAngular::setTickLabelPadding(int padding)
+{
+  mLabelPainter.setPadding(padding);
+}
+
+/*!
+  Sets the font of the tick labels.
+  
+  \see setTickLabels, setTickLabelColor
+*/
+void QCPPolarAxisAngular::setTickLabelFont(const QFont &font)
+{
+  mTickLabelFont = font;
+}
+
+/*!
+  Sets the color of the tick labels.
+  
+  \see setTickLabels, setTickLabelFont
+*/
+void QCPPolarAxisAngular::setTickLabelColor(const QColor &color)
+{
+  mTickLabelColor = color;
+}
+
+/*!
+  Sets the rotation of the tick labels. If \a degrees is zero, the labels are drawn normally. Else,
+  the tick labels are drawn rotated by \a degrees clockwise. The specified angle is bound to values
+  from -90 to 90 degrees.
+  
+  If \a degrees is exactly -90, 0 or 90, the tick labels are centered on the tick coordinate. For
+  other angles, the label is drawn with an offset such that it seems to point toward or away from
+  the tick mark.
+*/
+void QCPPolarAxisAngular::setTickLabelRotation(double degrees)
+{
+  mLabelPainter.setRotation(degrees);
+}
+
+void QCPPolarAxisAngular::setTickLabelMode(LabelMode mode)
+{
+  switch (mode)
+  {
+    case lmUpright: mLabelPainter.setAnchorMode(QCPLabelPainterPrivate::amSkewedUpright); break;
+    case lmRotated: mLabelPainter.setAnchorMode(QCPLabelPainterPrivate::amSkewedRotated); break;
+  }
+}
+
+/*!
+  Sets the number format for the numbers in tick labels. This \a formatCode is an extended version
+  of the format code used e.g. by QString::number() and QLocale::toString(). For reference about
+  that, see the "Argument Formats" section in the detailed description of the QString class.
+  
+  \a formatCode is a string of one, two or three characters. The first character is identical to
+  the normal format code used by Qt. In short, this means: 'e'/'E' scientific format, 'f' fixed
+  format, 'g'/'G' scientific or fixed, whichever is shorter.
+  
+  The second and third characters are optional and specific to QCustomPlot:\n If the first char was
+  'e' or 'g', numbers are/might be displayed in the scientific format, e.g. "5.5e9", which might be
+  visually unappealing in a plot. So when the second char of \a formatCode is set to 'b' (for
+  "beautiful"), those exponential numbers are formatted in a more natural way, i.e. "5.5
+  [multiplication sign] 10 [superscript] 9". By default, the multiplication sign is a centered dot.
+  If instead a cross should be shown (as is usual in the USA), the third char of \a formatCode can
+  be set to 'c'. The inserted multiplication signs are the UTF-8 characters 215 (0xD7) for the
+  cross and 183 (0xB7) for the dot.
+  
+  Examples for \a formatCode:
+  \li \c g normal format code behaviour. If number is small, fixed format is used, if number is large,
+  normal scientific format is used
+  \li \c gb If number is small, fixed format is used, if number is large, scientific format is used with
+  beautifully typeset decimal powers and a dot as multiplication sign
+  \li \c ebc All numbers are in scientific format with beautifully typeset decimal power and a cross as
+  multiplication sign
+  \li \c fb illegal format code, since fixed format doesn't support (or need) beautifully typeset decimal
+  powers. Format code will be reduced to 'f'.
+  \li \c hello illegal format code, since first char is not 'e', 'E', 'f', 'g' or 'G'. Current format
+  code will not be changed.
+*/
+void QCPPolarAxisAngular::setNumberFormat(const QString &formatCode)
+{
+  if (formatCode.isEmpty())
+  {
+    qDebug() << Q_FUNC_INFO << "Passed formatCode is empty";
+    return;
+  }
+  //mCachedMarginValid = false;
+  
+  // interpret first char as number format char:
+  QString allowedFormatChars(QLatin1String("eEfgG"));
+  if (allowedFormatChars.contains(formatCode.at(0)))
+  {
+    mNumberFormatChar = QLatin1Char(formatCode.at(0).toLatin1());
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "Invalid number format code (first char not in 'eEfgG'):" << formatCode;
+    return;
+  }
+  
+  if (formatCode.length() < 2)
+  {
+    mNumberBeautifulPowers = false;
+    mNumberMultiplyCross = false;
+  } else
+  {
+    // interpret second char as indicator for beautiful decimal powers:
+    if (formatCode.at(1) == QLatin1Char('b') && (mNumberFormatChar == QLatin1Char('e') || mNumberFormatChar == QLatin1Char('g')))
+      mNumberBeautifulPowers = true;
+    else
+      qDebug() << Q_FUNC_INFO << "Invalid number format code (second char not 'b' or first char neither 'e' nor 'g'):" << formatCode;
+    
+    if (formatCode.length() < 3)
+    {
+      mNumberMultiplyCross = false;
+    } else
+    {
+      // interpret third char as indicator for dot or cross multiplication symbol:
+      if (formatCode.at(2) == QLatin1Char('c'))
+        mNumberMultiplyCross = true;
+      else if (formatCode.at(2) == QLatin1Char('d'))
+        mNumberMultiplyCross = false;
+      else
+        qDebug() << Q_FUNC_INFO << "Invalid number format code (third char neither 'c' nor 'd'):" << formatCode;
+    }
+  }
+  mLabelPainter.setSubstituteExponent(mNumberBeautifulPowers);
+  mLabelPainter.setMultiplicationSymbol(mNumberMultiplyCross ? QCPLabelPainterPrivate::SymbolCross : QCPLabelPainterPrivate::SymbolDot);
+}
+
+/*!
+  Sets the precision of the tick label numbers. See QLocale::toString(double i, char f, int prec)
+  for details. The effect of precisions are most notably for number Formats starting with 'e', see
+  \ref setNumberFormat
+*/
+void QCPPolarAxisAngular::setNumberPrecision(int precision)
+{
+  if (mNumberPrecision != precision)
+  {
+    mNumberPrecision = precision;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the length of the ticks in pixels. \a inside is the length the ticks will reach inside the
+  plot and \a outside is the length they will reach outside the plot. If \a outside is greater than
+  zero, the tick labels and axis label will increase their distance to the axis accordingly, so
+  they won't collide with the ticks.
+  
+  \see setSubTickLength, setTickLengthIn, setTickLengthOut
+*/
+void QCPPolarAxisAngular::setTickLength(int inside, int outside)
+{
+  setTickLengthIn(inside);
+  setTickLengthOut(outside);
+}
+
+/*!
+  Sets the length of the inward ticks in pixels. \a inside is the length the ticks will reach
+  inside the plot.
+  
+  \see setTickLengthOut, setTickLength, setSubTickLength
+*/
+void QCPPolarAxisAngular::setTickLengthIn(int inside)
+{
+  if (mTickLengthIn != inside)
+  {
+    mTickLengthIn = inside;
+  }
+}
+
+/*!
+  Sets the length of the outward ticks in pixels. \a outside is the length the ticks will reach
+  outside the plot. If \a outside is greater than zero, the tick labels and axis label will
+  increase their distance to the axis accordingly, so they won't collide with the ticks.
+  
+  \see setTickLengthIn, setTickLength, setSubTickLength
+*/
+void QCPPolarAxisAngular::setTickLengthOut(int outside)
+{
+  if (mTickLengthOut != outside)
+  {
+    mTickLengthOut = outside;
+    //mCachedMarginValid = false; // only outside tick length can change margin
+  }
+}
+
+/*!
+  Sets whether sub tick marks are displayed.
+  
+  Sub ticks are only potentially visible if (major) ticks are also visible (see \ref setTicks)
+  
+  \see setTicks
+*/
+void QCPPolarAxisAngular::setSubTicks(bool show)
+{
+  if (mSubTicks != show)
+  {
+    mSubTicks = show;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the length of the subticks in pixels. \a inside is the length the subticks will reach inside
+  the plot and \a outside is the length they will reach outside the plot. If \a outside is greater
+  than zero, the tick labels and axis label will increase their distance to the axis accordingly,
+  so they won't collide with the ticks.
+  
+  \see setTickLength, setSubTickLengthIn, setSubTickLengthOut
+*/
+void QCPPolarAxisAngular::setSubTickLength(int inside, int outside)
+{
+  setSubTickLengthIn(inside);
+  setSubTickLengthOut(outside);
+}
+
+/*!
+  Sets the length of the inward subticks in pixels. \a inside is the length the subticks will reach inside
+  the plot.
+  
+  \see setSubTickLengthOut, setSubTickLength, setTickLength
+*/
+void QCPPolarAxisAngular::setSubTickLengthIn(int inside)
+{
+  if (mSubTickLengthIn != inside)
+  {
+    mSubTickLengthIn = inside;
+  }
+}
+
+/*!
+  Sets the length of the outward subticks in pixels. \a outside is the length the subticks will reach
+  outside the plot. If \a outside is greater than zero, the tick labels will increase their
+  distance to the axis accordingly, so they won't collide with the ticks.
+  
+  \see setSubTickLengthIn, setSubTickLength, setTickLength
+*/
+void QCPPolarAxisAngular::setSubTickLengthOut(int outside)
+{
+  if (mSubTickLengthOut != outside)
+  {
+    mSubTickLengthOut = outside;
+    //mCachedMarginValid = false; // only outside tick length can change margin
+  }
+}
+
+/*!
+  Sets the pen, the axis base line is drawn with.
+  
+  \see setTickPen, setSubTickPen
+*/
+void QCPPolarAxisAngular::setBasePen(const QPen &pen)
+{
+  mBasePen = pen;
+}
+
+/*!
+  Sets the pen, tick marks will be drawn with.
+  
+  \see setTickLength, setBasePen
+*/
+void QCPPolarAxisAngular::setTickPen(const QPen &pen)
+{
+  mTickPen = pen;
+}
+
+/*!
+  Sets the pen, subtick marks will be drawn with.
+  
+  \see setSubTickCount, setSubTickLength, setBasePen
+*/
+void QCPPolarAxisAngular::setSubTickPen(const QPen &pen)
+{
+  mSubTickPen = pen;
+}
+
+/*!
+  Sets the font of the axis label.
+  
+  \see setLabelColor
+*/
+void QCPPolarAxisAngular::setLabelFont(const QFont &font)
+{
+  if (mLabelFont != font)
+  {
+    mLabelFont = font;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the color of the axis label.
+  
+  \see setLabelFont
+*/
+void QCPPolarAxisAngular::setLabelColor(const QColor &color)
+{
+  mLabelColor = color;
+}
+
+/*!
+  Sets the text of the axis label that will be shown below/above or next to the axis, depending on
+  its orientation. To disable axis labels, pass an empty string as \a str.
+*/
+void QCPPolarAxisAngular::setLabel(const QString &str)
+{
+  if (mLabel != str)
+  {
+    mLabel = str;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the distance between the tick labels and the axis label.
+  
+  \see setTickLabelPadding, setPadding
+*/
+void QCPPolarAxisAngular::setLabelPadding(int padding)
+{
+  if (mLabelPadding != padding)
+  {
+    mLabelPadding = padding;
+    //mCachedMarginValid = false;
+  }
+}
+
+/*!
+  Sets the font that is used for tick labels when they are selected.
+  
+  \see setTickLabelFont, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedTickLabelFont(const QFont &font)
+{
+  if (font != mSelectedTickLabelFont)
+  {
+    mSelectedTickLabelFont = font;
+    // don't set mCachedMarginValid to false here because margin calculation is always done with non-selected fonts
+  }
+}
+
+/*!
+  Sets the font that is used for the axis label when it is selected.
+  
+  \see setLabelFont, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedLabelFont(const QFont &font)
+{
+  mSelectedLabelFont = font;
+  // don't set mCachedMarginValid to false here because margin calculation is always done with non-selected fonts
+}
+
+/*!
+  Sets the color that is used for tick labels when they are selected.
+  
+  \see setTickLabelColor, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedTickLabelColor(const QColor &color)
+{
+  if (color != mSelectedTickLabelColor)
+  {
+    mSelectedTickLabelColor = color;
+  }
+}
+
+/*!
+  Sets the color that is used for the axis label when it is selected.
+  
+  \see setLabelColor, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedLabelColor(const QColor &color)
+{
+  mSelectedLabelColor = color;
+}
+
+/*!
+  Sets the pen that is used to draw the axis base line when selected.
+  
+  \see setBasePen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedBasePen(const QPen &pen)
+{
+  mSelectedBasePen = pen;
+}
+
+/*!
+  Sets the pen that is used to draw the (major) ticks when selected.
+  
+  \see setTickPen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedTickPen(const QPen &pen)
+{
+  mSelectedTickPen = pen;
+}
+
+/*!
+  Sets the pen that is used to draw the subticks when selected.
+  
+  \see setSubTickPen, setSelectableParts, setSelectedParts, QCustomPlot::setInteractions
+*/
+void QCPPolarAxisAngular::setSelectedSubTickPen(const QPen &pen)
+{
+  mSelectedSubTickPen = pen;
+}
+
+/*! \internal
+  
+  Draws the background of this axis rect. It may consist of a background fill (a QBrush) and a
+  pixmap.
+  
+  If a brush was given via \ref setBackground(const QBrush &brush), this function first draws an
+  according filling inside the axis rect with the provided \a painter.
+  
+  Then, if a pixmap was provided via \ref setBackground, this function buffers the scaled version
+  depending on \ref setBackgroundScaled and \ref setBackgroundScaledMode and then draws it inside
+  the axis rect with the provided \a painter. The scaled version is buffered in
+  mScaledBackgroundPixmap to prevent expensive rescaling at every redraw. It is only updated, when
+  the axis rect has changed in a way that requires a rescale of the background pixmap (this is
+  dependent on the \ref setBackgroundScaledMode), or when a differend axis background pixmap was
+  set.
+  
+  \see setBackground, setBackgroundScaled, setBackgroundScaledMode
+*/
+void QCPPolarAxisAngular::drawBackground(QCPPainter *painter, const QPointF &center, double radius)
+{
+  // draw background fill (don't use circular clip, looks bad):
+  if (mBackgroundBrush != Qt::NoBrush)
+  {
+    QPainterPath ellipsePath;
+    ellipsePath.addEllipse(center, radius, radius);
+    painter->fillPath(ellipsePath, mBackgroundBrush);
+  }
+  
+  // draw background pixmap (on top of fill, if brush specified):
+  if (!mBackgroundPixmap.isNull())
+  {
+    QRegion clipCircle(center.x()-radius, center.y()-radius, qRound(2*radius), qRound(2*radius), QRegion::Ellipse);
+    QRegion originalClip = painter->clipRegion();
+    painter->setClipRegion(clipCircle);
+    if (mBackgroundScaled)
+    {
+      // check whether mScaledBackground needs to be updated:
+      QSize scaledSize(mBackgroundPixmap.size());
+      scaledSize.scale(mRect.size(), mBackgroundScaledMode);
+      if (mScaledBackgroundPixmap.size() != scaledSize)
+        mScaledBackgroundPixmap = mBackgroundPixmap.scaled(mRect.size(), mBackgroundScaledMode, Qt::SmoothTransformation);
+      painter->drawPixmap(mRect.topLeft()+QPoint(0, -1), mScaledBackgroundPixmap, QRect(0, 0, mRect.width(), mRect.height()) & mScaledBackgroundPixmap.rect());
+    } else
+    {
+      painter->drawPixmap(mRect.topLeft()+QPoint(0, -1), mBackgroundPixmap, QRect(0, 0, mRect.width(), mRect.height()));
+    }
+    painter->setClipRegion(originalClip);
+  }
+}
+
+/*! \internal
+  
+  Prepares the internal tick vector, sub tick vector and tick label vector. This is done by calling
+  QCPAxisTicker::generate on the currently installed ticker.
+  
+  If a change in the label text/count is detected, the cached axis margin is invalidated to make
+  sure the next margin calculation recalculates the label sizes and returns an up-to-date value.
+*/
+void QCPPolarAxisAngular::setupTickVectors()
+{
+  if (!mParentPlot) return;
+  if ((!mTicks && !mTickLabels && !mGrid->visible()) || mRange.size() <= 0) return;
+  
+  mSubTickVector.clear(); // since we might not pass it to mTicker->generate(), and we don't want old data in there
+  mTicker->generate(mRange, mParentPlot->locale(), mNumberFormatChar, mNumberPrecision, mTickVector, mSubTicks ? &mSubTickVector : 0, mTickLabels ? &mTickVectorLabels : 0);
+  
+  // fill cos/sin buffers which will be used by draw() and QCPPolarGrid::draw(), so we don't have to calculate it twice:
+  mTickVectorCosSin.resize(mTickVector.size());
+  for (int i=0; i<mTickVector.size(); ++i)
+  {
+    const double theta = coordToAngleRad(mTickVector.at(i));
+    mTickVectorCosSin[i] = QPointF(qCos(theta), qSin(theta));
+  }
+  mSubTickVectorCosSin.resize(mSubTickVector.size());
+  for (int i=0; i<mSubTickVector.size(); ++i)
+  {
+    const double theta = coordToAngleRad(mSubTickVector.at(i));
+    mSubTickVectorCosSin[i] = QPointF(qCos(theta), qSin(theta));
+  }
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the axis base line. Depending on the selection state, this
+  is either mSelectedBasePen or mBasePen.
+*/
+QPen QCPPolarAxisAngular::getBasePen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedBasePen : mBasePen;
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the (major) ticks. Depending on the selection state, this
+  is either mSelectedTickPen or mTickPen.
+*/
+QPen QCPPolarAxisAngular::getTickPen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedTickPen : mTickPen;
+}
+
+/*! \internal
+  
+  Returns the pen that is used to draw the subticks. Depending on the selection state, this
+  is either mSelectedSubTickPen or mSubTickPen.
+*/
+QPen QCPPolarAxisAngular::getSubTickPen() const
+{
+  return mSelectedParts.testFlag(spAxis) ? mSelectedSubTickPen : mSubTickPen;
+}
+
+/*! \internal
+  
+  Returns the font that is used to draw the tick labels. Depending on the selection state, this
+  is either mSelectedTickLabelFont or mTickLabelFont.
+*/
+QFont QCPPolarAxisAngular::getTickLabelFont() const
+{
+  return mSelectedParts.testFlag(spTickLabels) ? mSelectedTickLabelFont : mTickLabelFont;
+}
+
+/*! \internal
+  
+  Returns the font that is used to draw the axis label. Depending on the selection state, this
+  is either mSelectedLabelFont or mLabelFont.
+*/
+QFont QCPPolarAxisAngular::getLabelFont() const
+{
+  return mSelectedParts.testFlag(spAxisLabel) ? mSelectedLabelFont : mLabelFont;
+}
+
+/*! \internal
+  
+  Returns the color that is used to draw the tick labels. Depending on the selection state, this
+  is either mSelectedTickLabelColor or mTickLabelColor.
+*/
+QColor QCPPolarAxisAngular::getTickLabelColor() const
+{
+  return mSelectedParts.testFlag(spTickLabels) ? mSelectedTickLabelColor : mTickLabelColor;
+}
+
+/*! \internal
+  
+  Returns the color that is used to draw the axis label. Depending on the selection state, this
+  is either mSelectedLabelColor or mLabelColor.
+*/
+QColor QCPPolarAxisAngular::getLabelColor() const
+{
+  return mSelectedParts.testFlag(spAxisLabel) ? mSelectedLabelColor : mLabelColor;
+}
+
+/*! \internal
+  
+  Event handler for when a mouse button is pressed on the axis rect. If the left mouse button is
+  pressed, the range dragging interaction is initialized (the actual range manipulation happens in
+  the \ref mouseMoveEvent).
+
+  The mDragging flag is set to true and some anchor points are set that are needed to determine the
+  distance the mouse was dragged in the mouse move/release events later.
+  
+  \see mouseMoveEvent, mouseReleaseEvent
+*/
+void QCPPolarAxisAngular::mousePressEvent(QMouseEvent *event, const QVariant &details)
+{
+  Q_UNUSED(details)
+  if (event->buttons() & Qt::LeftButton)
+  {
+    mDragging = true;
+    // initialize antialiasing backup in case we start dragging:
+    if (mParentPlot->noAntialiasingOnDrag())
+    {
+      mAADragBackup = mParentPlot->antialiasedElements();
+      mNotAADragBackup = mParentPlot->notAntialiasedElements();
+    }
+    // Mouse range dragging interaction:
+    if (mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+    {
+      mDragAngularStart = range();
+      mDragRadialStart.clear();
+      for (int i=0; i<mRadialAxes.size(); ++i)
+        mDragRadialStart.append(mRadialAxes.at(i)->range());
+    }
+  }
+}
+
+/*! \internal
+  
+  Event handler for when the mouse is moved on the axis rect. If range dragging was activated in a
+  preceding \ref mousePressEvent, the range is moved accordingly.
+  
+  \see mousePressEvent, mouseReleaseEvent
+*/
+void QCPPolarAxisAngular::mouseMoveEvent(QMouseEvent *event, const QPointF &startPos)
+{
+  Q_UNUSED(startPos)
+  bool doReplot = false;
+  // Mouse range dragging interaction:
+  if (mDragging && mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+  {
+    if (mRangeDrag)
+    {
+      doReplot = true;
+      double angleCoordStart, radiusCoordStart;
+      double angleCoord, radiusCoord;
+      pixelToCoord(startPos, angleCoordStart, radiusCoordStart);
+      pixelToCoord(event->pos(), angleCoord, radiusCoord);
+      double diff = angleCoordStart - angleCoord;
+      setRange(mDragAngularStart.lower+diff, mDragAngularStart.upper+diff);
+    }
+    
+    for (int i=0; i<mRadialAxes.size(); ++i)
+    {
+      QCPPolarAxisRadial *ax = mRadialAxes.at(i);
+      if (!ax->rangeDrag())
+        continue;
+      doReplot = true;
+      double angleCoordStart, radiusCoordStart;
+      double angleCoord, radiusCoord;
+      ax->pixelToCoord(startPos, angleCoordStart, radiusCoordStart);
+      ax->pixelToCoord(event->pos(), angleCoord, radiusCoord);
+      if (ax->scaleType() == QCPPolarAxisRadial::stLinear)
+      {
+        double diff = radiusCoordStart - radiusCoord;
+        ax->setRange(mDragRadialStart.at(i).lower+diff, mDragRadialStart.at(i).upper+diff);
+      } else if (ax->scaleType() == QCPPolarAxisRadial::stLogarithmic)
+      {
+        if (radiusCoord != 0)
+        {
+          double diff = radiusCoordStart/radiusCoord;
+          ax->setRange(mDragRadialStart.at(i).lower*diff, mDragRadialStart.at(i).upper*diff);
+        }
+      }
+    }
+    
+    if (doReplot) // if either vertical or horizontal drag was enabled, do a replot
+    {
+      if (mParentPlot->noAntialiasingOnDrag())
+        mParentPlot->setNotAntialiasedElements(QCP::aeAll);
+      mParentPlot->replot(QCustomPlot::rpQueuedReplot);
+    }
+  }
+}
+
+/* inherits documentation from base class */
+void QCPPolarAxisAngular::mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos)
+{
+  Q_UNUSED(event)
+  Q_UNUSED(startPos)
+  mDragging = false;
+  if (mParentPlot->noAntialiasingOnDrag())
+  {
+    mParentPlot->setAntialiasedElements(mAADragBackup);
+    mParentPlot->setNotAntialiasedElements(mNotAADragBackup);
+  }
+}
+
+/*! \internal
+  
+  Event handler for mouse wheel events. If rangeZoom is Qt::Horizontal, Qt::Vertical or both, the
+  ranges of the axes defined as rangeZoomHorzAxis and rangeZoomVertAxis are scaled. The center of
+  the scaling operation is the current cursor position inside the axis rect. The scaling factor is
+  dependent on the mouse wheel delta (which direction the wheel was rotated) to provide a natural
+  zooming feel. The Strength of the zoom can be controlled via \ref setRangeZoomFactor.
+  
+  Note, that event->delta() is usually +/-120 for single rotation steps. However, if the mouse
+  wheel is turned rapidly, many steps may bunch up to one event, so the event->delta() may then be
+  multiples of 120. This is taken into account here, by calculating \a wheelSteps and using it as
+  exponent of the range zoom factor. This takes care of the wheel direction automatically, by
+  inverting the factor, when the wheel step is negative (f^-1 = 1/f).
+*/
+void QCPPolarAxisAngular::wheelEvent(QWheelEvent *event)
+{
+  bool doReplot = false;
+  // Mouse range zooming interaction:
+  if (mParentPlot->interactions().testFlag(QCP::iRangeZoom))
+  {
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    const double delta = event->delta();
+#else
+    const double delta = event->angleDelta().y();
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    const QPointF pos = event->pos();
+#else
+    const QPointF pos = event->position();
+#endif
+    const double wheelSteps = delta/120.0; // a single step delta is +/-120 usually
+    if (mRangeZoom)
+    {
+      double angleCoord, radiusCoord;
+      pixelToCoord(pos, angleCoord, radiusCoord);
+      scaleRange(qPow(mRangeZoomFactor, wheelSteps), angleCoord);
+    }
+
+    for (int i=0; i<mRadialAxes.size(); ++i)
+    {
+      QCPPolarAxisRadial *ax = mRadialAxes.at(i);
+      if (!ax->rangeZoom())
+        continue;
+      doReplot = true;
+      double angleCoord, radiusCoord;
+      ax->pixelToCoord(pos, angleCoord, radiusCoord);
+      ax->scaleRange(qPow(ax->rangeZoomFactor(), wheelSteps), radiusCoord);
+    }
+  }
+  if (doReplot)
+    mParentPlot->replot();
+}
+
+bool QCPPolarAxisAngular::registerPolarGraph(QCPPolarGraph *graph)
+{
+  if (mGraphs.contains(graph))
+  {
+    qDebug() << Q_FUNC_INFO << "plottable already added:" << reinterpret_cast<quintptr>(graph);
+    return false;
+  }
+  if (graph->keyAxis() != this)
+  {
+    qDebug() << Q_FUNC_INFO << "plottable not created with this as axis:" << reinterpret_cast<quintptr>(graph);
+    return false;
+  }
+  
+  mGraphs.append(graph);
+  // possibly add plottable to legend:
+  if (mParentPlot->autoAddPlottableToLegend())
+    graph->addToLegend();
+  if (!graph->layer()) // usually the layer is already set in the constructor of the plottable (via QCPLayerable constructor)
+    graph->setLayer(mParentPlot->currentLayer());
+  return true;
+}
+/* end of 'src/polar/layoutelement-angularaxis.cpp' */
+
+
+/* including file 'src/polar/polargrid.cpp' */
+/* modified 2021-03-29T02:30:44, size 7493  */
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPPolarGrid
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPPolarGrid
+  \brief The grid in both angular and radial dimensions for polar plots
+
+  \warning In this QCustomPlot version, polar plots are a tech preview. Expect documentation and
+  functionality to be incomplete, as well as changing public interfaces in the future.
+*/
+
+/*!
+  Creates a QCPPolarGrid instance and sets default values.
+  
+  You shouldn't instantiate grids on their own, since every axis brings its own grid.
+*/
+QCPPolarGrid::QCPPolarGrid(QCPPolarAxisAngular *parentAxis) :
+  QCPLayerable(parentAxis->parentPlot(), QString(), parentAxis),
+  mType(gtNone),
+  mSubGridType(gtNone),
+  mAntialiasedSubGrid(true),
+  mAntialiasedZeroLine(true),
+  mParentAxis(parentAxis)
+{
+  // warning: this is called in QCPPolarAxisAngular constructor, so parentAxis members should not be accessed/called
+  setParent(parentAxis);
+  setType(gtAll);
+  setSubGridType(gtNone);
+  
+  setAngularPen(QPen(QColor(200,200,200), 0, Qt::DotLine));
+  setAngularSubGridPen(QPen(QColor(220,220,220), 0, Qt::DotLine));
+  
+  setRadialPen(QPen(QColor(200,200,200), 0, Qt::DotLine));
+  setRadialSubGridPen(QPen(QColor(220,220,220), 0, Qt::DotLine));
+  setRadialZeroLinePen(QPen(QColor(200,200,200), 0, Qt::SolidLine));
+  
+  setAntialiased(true);
+}
+
+void QCPPolarGrid::setRadialAxis(QCPPolarAxisRadial *axis)
+{
+  mRadialAxis = axis;
+}
+
+void QCPPolarGrid::setType(GridTypes type)
+{
+  mType = type;
+}
+
+void QCPPolarGrid::setSubGridType(GridTypes type)
+{
+  mSubGridType = type;
+}
+
+/*!
+  Sets whether sub grid lines are drawn antialiased.
+*/
+void QCPPolarGrid::setAntialiasedSubGrid(bool enabled)
+{
+  mAntialiasedSubGrid = enabled;
+}
+
+/*!
+  Sets whether zero lines are drawn antialiased.
+*/
+void QCPPolarGrid::setAntialiasedZeroLine(bool enabled)
+{
+  mAntialiasedZeroLine = enabled;
+}
+
+/*!
+  Sets the pen with which (major) grid lines are drawn.
+*/
+void QCPPolarGrid::setAngularPen(const QPen &pen)
+{
+  mAngularPen = pen;
+}
+
+/*!
+  Sets the pen with which sub grid lines are drawn.
+*/
+void QCPPolarGrid::setAngularSubGridPen(const QPen &pen)
+{
+  mAngularSubGridPen = pen;
+}
+
+void QCPPolarGrid::setRadialPen(const QPen &pen)
+{
+  mRadialPen = pen;
+}
+
+void QCPPolarGrid::setRadialSubGridPen(const QPen &pen)
+{
+  mRadialSubGridPen = pen;
+}
+
+void QCPPolarGrid::setRadialZeroLinePen(const QPen &pen)
+{
+  mRadialZeroLinePen = pen;
+}
+
+/*! \internal
+
+  A convenience function to easily set the QPainter::Antialiased hint on the provided \a painter
+  before drawing the major grid lines.
+
+  This is the antialiasing state the painter passed to the \ref draw method is in by default.
+  
+  This function takes into account the local setting of the antialiasing flag as well as the
+  overrides set with \ref QCustomPlot::setAntialiasedElements and \ref
+  QCustomPlot::setNotAntialiasedElements.
+  
+  \see setAntialiased
+*/
+void QCPPolarGrid::applyDefaultAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiased, QCP::aeGrid);
+}
+
+/*! \internal
+  
+  Draws grid lines and sub grid lines at the positions of (sub) ticks of the parent axis, spanning
+  over the complete axis rect. Also draws the zero line, if appropriate (\ref setZeroLinePen).
+*/
+void QCPPolarGrid::draw(QCPPainter *painter)
+{
+  if (!mParentAxis) { qDebug() << Q_FUNC_INFO << "invalid parent axis"; return; }
+  
+  const QPointF center = mParentAxis->mCenter;
+  const double radius = mParentAxis->mRadius;
+  
+  painter->setBrush(Qt::NoBrush);
+  // draw main angular grid:
+  if (mType.testFlag(gtAngular))
+    drawAngularGrid(painter, center, radius, mParentAxis->mTickVectorCosSin, mAngularPen);
+  // draw main radial grid:
+  if (mType.testFlag(gtRadial) && mRadialAxis)
+    drawRadialGrid(painter, center, mRadialAxis->tickVector(), mRadialPen, mRadialZeroLinePen);
+  
+  applyAntialiasingHint(painter, mAntialiasedSubGrid, QCP::aeGrid);
+  // draw sub angular grid:
+  if (mSubGridType.testFlag(gtAngular))
+    drawAngularGrid(painter, center, radius, mParentAxis->mSubTickVectorCosSin, mAngularSubGridPen);
+  // draw sub radial grid:
+  if (mSubGridType.testFlag(gtRadial) && mRadialAxis)
+    drawRadialGrid(painter, center, mRadialAxis->subTickVector(), mRadialSubGridPen);
+}
+
+void QCPPolarGrid::drawRadialGrid(QCPPainter *painter, const QPointF &center, const QVector<double> &coords, const QPen &pen, const QPen &zeroPen)
+{
+  if (!mRadialAxis) return;
+  if (coords.isEmpty()) return;
+  const bool drawZeroLine = zeroPen != Qt::NoPen;
+  const double zeroLineEpsilon = qAbs(coords.last()-coords.first())*1e-6;
+  
+  painter->setPen(pen);
+  for (int i=0; i<coords.size(); ++i)
+  {
+    const double r = mRadialAxis->coordToRadius(coords.at(i));
+    if (drawZeroLine && qAbs(coords.at(i)) < zeroLineEpsilon)
+    {
+      applyAntialiasingHint(painter, mAntialiasedZeroLine, QCP::aeZeroLine);
+      painter->setPen(zeroPen);
+      painter->drawEllipse(center, r, r);
+      painter->setPen(pen);
+      applyDefaultAntialiasingHint(painter);
+    } else
+    {
+      painter->drawEllipse(center, r, r);
+    }
+  }
+}
+
+void QCPPolarGrid::drawAngularGrid(QCPPainter *painter, const QPointF &center, double radius, const QVector<QPointF> &ticksCosSin, const QPen &pen)
+{
+  if (ticksCosSin.isEmpty()) return;
+  
+  painter->setPen(pen);
+  for (int i=0; i<ticksCosSin.size(); ++i)
+    painter->drawLine(center, center+ticksCosSin.at(i)*radius);
+}
+/* end of 'src/polar/polargrid.cpp' */
+
+
+/* including file 'src/polar/polargraph.cpp' */
+/* modified 2021-03-29T02:30:44, size 44035  */
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPPolarLegendItem
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPPolarLegendItem
+  \brief A legend item for polar plots
+
+  \warning In this QCustomPlot version, polar plots are a tech preview. Expect documentation and
+  functionality to be incomplete, as well as changing public interfaces in the future.
+*/
+QCPPolarLegendItem::QCPPolarLegendItem(QCPLegend *parent, QCPPolarGraph *graph) :
+  QCPAbstractLegendItem(parent),
+  mPolarGraph(graph)
+{
+  setAntialiased(false);
+}
+
+void QCPPolarLegendItem::draw(QCPPainter *painter)
+{
+  if (!mPolarGraph) return;
+  painter->setFont(getFont());
+  painter->setPen(QPen(getTextColor()));
+  QSizeF iconSize = mParentLegend->iconSize();
+  QRectF textRect = painter->fontMetrics().boundingRect(0, 0, 0, iconSize.height(), Qt::TextDontClip, mPolarGraph->name());
+  QRectF iconRect(mRect.topLeft(), iconSize);
+  int textHeight = qMax(textRect.height(), iconSize.height());  // if text has smaller height than icon, center text vertically in icon height, else align tops
+  painter->drawText(mRect.x()+iconSize.width()+mParentLegend->iconTextPadding(), mRect.y(), textRect.width(), textHeight, Qt::TextDontClip, mPolarGraph->name());
+  // draw icon:
+  painter->save();
+  painter->setClipRect(iconRect, Qt::IntersectClip);
+  mPolarGraph->drawLegendIcon(painter, iconRect);
+  painter->restore();
+  // draw icon border:
+  if (getIconBorderPen().style() != Qt::NoPen)
+  {
+    painter->setPen(getIconBorderPen());
+    painter->setBrush(Qt::NoBrush);
+    int halfPen = qCeil(painter->pen().widthF()*0.5)+1;
+    painter->setClipRect(mOuterRect.adjusted(-halfPen, -halfPen, halfPen, halfPen)); // extend default clip rect so thicker pens (especially during selection) are not clipped
+    painter->drawRect(iconRect);
+  }
+}
+
+QSize QCPPolarLegendItem::minimumOuterSizeHint() const
+{
+  if (!mPolarGraph) return QSize();
+  QSize result(0, 0);
+  QRect textRect;
+  QFontMetrics fontMetrics(getFont());
+  QSize iconSize = mParentLegend->iconSize();
+  textRect = fontMetrics.boundingRect(0, 0, 0, iconSize.height(), Qt::TextDontClip, mPolarGraph->name());
+  result.setWidth(iconSize.width() + mParentLegend->iconTextPadding() + textRect.width());
+  result.setHeight(qMax(textRect.height(), iconSize.height()));
+  result.rwidth() += mMargins.left()+mMargins.right();
+  result.rheight() += mMargins.top()+mMargins.bottom();
+  return result;
+}
+
+QPen QCPPolarLegendItem::getIconBorderPen() const
+{
+  return mSelected ? mParentLegend->selectedIconBorderPen() : mParentLegend->iconBorderPen();
+}
+
+QColor QCPPolarLegendItem::getTextColor() const
+{
+  return mSelected ? mSelectedTextColor : mTextColor;
+}
+
+QFont QCPPolarLegendItem::getFont() const
+{
+  return mSelected ? mSelectedFont : mFont;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////// QCPPolarGraph
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*! \class QCPPolarGraph
+  \brief A radial graph used to display data in polar plots
+
+  \warning In this QCustomPlot version, polar plots are a tech preview. Expect documentation and
+  functionality to be incomplete, as well as changing public interfaces in the future.
+*/
+
+/* start of documentation of inline functions */
+
+// TODO
+
+/* end of documentation of inline functions */
+
+/*!
+  Constructs a graph which uses \a keyAxis as its angular and \a valueAxis as its radial axis. \a
+  keyAxis and \a valueAxis must reside in the same QCustomPlot, and the radial axis must be
+  associated with the angular axis. If either of these restrictions is violated, a corresponding
+  message is printed to the debug output (qDebug), the construction is not aborted, though.
+
+  The created QCPPolarGraph is automatically registered with the QCustomPlot instance inferred from
+  \a keyAxis. This QCustomPlot instance takes ownership of the QCPPolarGraph, so do not delete it
+  manually but use QCPPolarAxisAngular::removeGraph() instead.
+
+  To directly create a QCPPolarGraph inside a plot, you shoud use the QCPPolarAxisAngular::addGraph
+  method.
+*/
+QCPPolarGraph::QCPPolarGraph(QCPPolarAxisAngular *keyAxis, QCPPolarAxisRadial *valueAxis) :
+  QCPLayerable(keyAxis->parentPlot(), QString(), keyAxis),
+  mDataContainer(new QCPGraphDataContainer),
+  mName(),
+  mAntialiasedFill(true),
+  mAntialiasedScatters(true),
+  mPen(Qt::black),
+  mBrush(Qt::NoBrush),
+  mPeriodic(true),
+  mKeyAxis(keyAxis),
+  mValueAxis(valueAxis),
+  mSelectable(QCP::stWhole)
+  //mSelectionDecorator(0) // TODO
+{
+  if (keyAxis->parentPlot() != valueAxis->parentPlot())
+    qDebug() << Q_FUNC_INFO << "Parent plot of keyAxis is not the same as that of valueAxis.";
+  
+  mKeyAxis->registerPolarGraph(this);
+  
+  //setSelectionDecorator(new QCPSelectionDecorator); // TODO
+  
+  setPen(QPen(Qt::blue, 0));
+  setBrush(Qt::NoBrush);
+  setLineStyle(lsLine);
+}
+
+QCPPolarGraph::~QCPPolarGraph()
+{
+  /* TODO
+  if (mSelectionDecorator)
+  {
+    delete mSelectionDecorator;
+    mSelectionDecorator = 0;
+  }
+  */
+}
+
+/*!
+   The name is the textual representation of this plottable as it is displayed in the legend
+   (\ref QCPLegend). It may contain any UTF-8 characters, including newlines.
+*/
+void QCPPolarGraph::setName(const QString &name)
+{
+  mName = name;
+}
+
+/*!
+  Sets whether fills of this plottable are drawn antialiased or not.
+  
+  Note that this setting may be overridden by \ref QCustomPlot::setAntialiasedElements and \ref
+  QCustomPlot::setNotAntialiasedElements.
+*/
+void QCPPolarGraph::setAntialiasedFill(bool enabled)
+{
+  mAntialiasedFill = enabled;
+}
+
+/*!
+  Sets whether the scatter symbols of this plottable are drawn antialiased or not.
+  
+  Note that this setting may be overridden by \ref QCustomPlot::setAntialiasedElements and \ref
+  QCustomPlot::setNotAntialiasedElements.
+*/
+void QCPPolarGraph::setAntialiasedScatters(bool enabled)
+{
+  mAntialiasedScatters = enabled;
+}
+
+/*!
+  The pen is used to draw basic lines that make up the plottable representation in the
+  plot.
+  
+  For example, the \ref QCPGraph subclass draws its graph lines with this pen.
+
+  \see setBrush
+*/
+void QCPPolarGraph::setPen(const QPen &pen)
+{
+  mPen = pen;
+}
+
+/*!
+  The brush is used to draw basic fills of the plottable representation in the
+  plot. The Fill can be a color, gradient or texture, see the usage of QBrush.
+  
+  For example, the \ref QCPGraph subclass draws the fill under the graph with this brush, when
+  it's not set to Qt::NoBrush.
+
+  \see setPen
+*/
+void QCPPolarGraph::setBrush(const QBrush &brush)
+{
+  mBrush = brush;
+}
+
+void QCPPolarGraph::setPeriodic(bool enabled)
+{
+  mPeriodic = enabled;
+}
+
+/*!
+  The key axis of a plottable can be set to any axis of a QCustomPlot, as long as it is orthogonal
+  to the plottable's value axis. This function performs no checks to make sure this is the case.
+  The typical mathematical choice is to use the x-axis (QCustomPlot::xAxis) as key axis and the
+  y-axis (QCustomPlot::yAxis) as value axis.
+  
+  Normally, the key and value axes are set in the constructor of the plottable (or \ref
+  QCustomPlot::addGraph when working with QCPGraphs through the dedicated graph interface).
+
+  \see setValueAxis
+*/
+void QCPPolarGraph::setKeyAxis(QCPPolarAxisAngular *axis)
+{
+  mKeyAxis = axis;
+}
+
+/*!
+  The value axis of a plottable can be set to any axis of a QCustomPlot, as long as it is
+  orthogonal to the plottable's key axis. This function performs no checks to make sure this is the
+  case. The typical mathematical choice is to use the x-axis (QCustomPlot::xAxis) as key axis and
+  the y-axis (QCustomPlot::yAxis) as value axis.
+
+  Normally, the key and value axes are set in the constructor of the plottable (or \ref
+  QCustomPlot::addGraph when working with QCPGraphs through the dedicated graph interface).
+  
+  \see setKeyAxis
+*/
+void QCPPolarGraph::setValueAxis(QCPPolarAxisRadial *axis)
+{
+  mValueAxis = axis;
+}
+
+/*!
+  Sets whether and to which granularity this plottable can be selected.
+
+  A selection can happen by clicking on the QCustomPlot surface (When \ref
+  QCustomPlot::setInteractions contains \ref QCP::iSelectPlottables), by dragging a selection rect
+  (When \ref QCustomPlot::setSelectionRectMode is \ref QCP::srmSelect), or programmatically by
+  calling \ref setSelection.
+  
+  \see setSelection, QCP::SelectionType
+*/
+void QCPPolarGraph::setSelectable(QCP::SelectionType selectable)
+{
+  if (mSelectable != selectable)
+  {
+    mSelectable = selectable;
+    QCPDataSelection oldSelection = mSelection;
+    mSelection.enforceType(mSelectable);
+    emit selectableChanged(mSelectable);
+    if (mSelection != oldSelection)
+    {
+      emit selectionChanged(selected());
+      emit selectionChanged(mSelection);
+    }
+  }
+}
+
+/*!
+  Sets which data ranges of this plottable are selected. Selected data ranges are drawn differently
+  (e.g. color) in the plot. This can be controlled via the selection decorator (see \ref
+  selectionDecorator).
+  
+  The entire selection mechanism for plottables is handled automatically when \ref
+  QCustomPlot::setInteractions contains iSelectPlottables. You only need to call this function when
+  you wish to change the selection state programmatically.
+  
+  Using \ref setSelectable you can further specify for each plottable whether and to which
+  granularity it is selectable. If \a selection is not compatible with the current \ref
+  QCP::SelectionType set via \ref setSelectable, the resulting selection will be adjusted
+  accordingly (see \ref QCPDataSelection::enforceType).
+  
+  emits the \ref selectionChanged signal when \a selected is different from the previous selection state.
+  
+  \see setSelectable, selectTest
+*/
+void QCPPolarGraph::setSelection(QCPDataSelection selection)
+{
+  selection.enforceType(mSelectable);
+  if (mSelection != selection)
+  {
+    mSelection = selection;
+    emit selectionChanged(selected());
+    emit selectionChanged(mSelection);
+  }
+}
+
+/*! \overload
+  
+  Replaces the current data container with the provided \a data container.
+  
+  Since a QSharedPointer is used, multiple QCPPolarGraphs may share the same data container safely.
+  Modifying the data in the container will then affect all graphs that share the container. Sharing
+  can be achieved by simply exchanging the data containers wrapped in shared pointers:
+  \snippet documentation/doc-code-snippets/mainwindow.cpp QCPPolarGraph-datasharing-1
+  
+  If you do not wish to share containers, but create a copy from an existing container, rather use
+  the \ref QCPDataContainer<DataType>::set method on the graph's data container directly:
+  \snippet documentation/doc-code-snippets/mainwindow.cpp QCPPolarGraph-datasharing-2
+  
+  \see addData
+*/
+void QCPPolarGraph::setData(QSharedPointer<QCPGraphDataContainer> data)
+{
+  mDataContainer = data;
+}
+
+/*! \overload
+  
+  Replaces the current data with the provided points in \a keys and \a values. The provided
+  vectors should have equal length. Else, the number of added points will be the size of the
+  smallest vector.
+  
+  If you can guarantee that the passed data points are sorted by \a keys in ascending order, you
+  can set \a alreadySorted to true, to improve performance by saving a sorting run.
+  
+  \see addData
+*/
+void QCPPolarGraph::setData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted)
+{
+  mDataContainer->clear();
+  addData(keys, values, alreadySorted);
+}
+
+/*!
+  Sets how the single data points are connected in the plot. For scatter-only plots, set \a ls to
+  \ref lsNone and \ref setScatterStyle to the desired scatter style.
+  
+  \see setScatterStyle
+*/
+void QCPPolarGraph::setLineStyle(LineStyle ls)
+{
+  mLineStyle = ls;
+}
+
+/*!
+  Sets the visual appearance of single data points in the plot. If set to \ref QCPScatterStyle::ssNone, no scatter points
+  are drawn (e.g. for line-only-plots with appropriate line style).
+  
+  \see QCPScatterStyle, setLineStyle
+*/
+void QCPPolarGraph::setScatterStyle(const QCPScatterStyle &style)
+{
+  mScatterStyle = style;
+}
+
+void QCPPolarGraph::addData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted)
+{
+  if (keys.size() != values.size())
+    qDebug() << Q_FUNC_INFO << "keys and values have different sizes:" << keys.size() << values.size();
+  const int n = qMin(keys.size(), values.size());
+  QVector<QCPGraphData> tempData(n);
+  QVector<QCPGraphData>::iterator it = tempData.begin();
+  const QVector<QCPGraphData>::iterator itEnd = tempData.end();
+  int i = 0;
+  while (it != itEnd)
+  {
+    it->key = keys[i];
+    it->value = values[i];
+    ++it;
+    ++i;
+  }
+  mDataContainer->add(tempData, alreadySorted); // don't modify tempData beyond this to prevent copy on write
+}
+
+void QCPPolarGraph::addData(double key, double value)
+{
+  mDataContainer->add(QCPGraphData(key, value));
+}
+
+/*!
+  Use this method to set an own QCPSelectionDecorator (subclass) instance. This allows you to
+  customize the visual representation of selected data ranges further than by using the default
+  QCPSelectionDecorator.
+  
+  The plottable takes ownership of the \a decorator.
+  
+  The currently set decorator can be accessed via \ref selectionDecorator.
+*/
+/*
+void QCPPolarGraph::setSelectionDecorator(QCPSelectionDecorator *decorator)
+{
+  if (decorator)
+  {
+    if (decorator->registerWithPlottable(this))
+    {
+      if (mSelectionDecorator) // delete old decorator if necessary
+        delete mSelectionDecorator;
+      mSelectionDecorator = decorator;
+    }
+  } else if (mSelectionDecorator) // just clear decorator
+  {
+    delete mSelectionDecorator;
+    mSelectionDecorator = 0;
+  }
+}
+*/
+
+void QCPPolarGraph::coordsToPixels(double key, double value, double &x, double &y) const
+{
+  if (mValueAxis)
+  {
+    const QPointF point = mValueAxis->coordToPixel(key, value);
+    x = point.x();
+    y = point.y();
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "invalid key or value axis";
+  }
+}
+
+const QPointF QCPPolarGraph::coordsToPixels(double key, double value) const
+{
+  if (mValueAxis)
+  {
+    return mValueAxis->coordToPixel(key, value);
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "invalid key or value axis";
+    return QPointF();
+  }
+}
+
+void QCPPolarGraph::pixelsToCoords(double x, double y, double &key, double &value) const
+{
+  if (mValueAxis)
+  {
+    mValueAxis->pixelToCoord(QPointF(x, y), key, value);
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "invalid key or value axis";
+  }
+}
+
+void QCPPolarGraph::pixelsToCoords(const QPointF &pixelPos, double &key, double &value) const
+{
+  if (mValueAxis)
+  {
+    mValueAxis->pixelToCoord(pixelPos, key, value);
+  } else
+  {
+    qDebug() << Q_FUNC_INFO << "invalid key or value axis";
+  }
+}
+
+void QCPPolarGraph::rescaleAxes(bool onlyEnlarge) const
+{
+  rescaleKeyAxis(onlyEnlarge);
+  rescaleValueAxis(onlyEnlarge);
+}
+
+void QCPPolarGraph::rescaleKeyAxis(bool onlyEnlarge) const
+{
+  QCPPolarAxisAngular *keyAxis = mKeyAxis.data();
+  if (!keyAxis) { qDebug() << Q_FUNC_INFO << "invalid key axis"; return; }
+  
+  bool foundRange;
+  QCPRange newRange = getKeyRange(foundRange, QCP::sdBoth);
+  if (foundRange)
+  {
+    if (onlyEnlarge)
+      newRange.expand(keyAxis->range());
+    if (!QCPRange::validRange(newRange)) // likely due to range being zero (plottable has only constant data in this axis dimension), shift current range to at least center the plottable
+    {
+      double center = (newRange.lower+newRange.upper)*0.5; // upper and lower should be equal anyway, but just to make sure, incase validRange returned false for other reason
+      newRange.lower = center-keyAxis->range().size()/2.0;
+      newRange.upper = center+keyAxis->range().size()/2.0;
+    }
+    keyAxis->setRange(newRange);
+  }
+}
+
+void QCPPolarGraph::rescaleValueAxis(bool onlyEnlarge, bool inKeyRange) const
+{
+  QCPPolarAxisAngular *keyAxis = mKeyAxis.data();
+  QCPPolarAxisRadial *valueAxis = mValueAxis.data();
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
+  
+  QCP::SignDomain signDomain = QCP::sdBoth;
+  if (valueAxis->scaleType() == QCPPolarAxisRadial::stLogarithmic)
+    signDomain = (valueAxis->range().upper < 0 ? QCP::sdNegative : QCP::sdPositive);
+  
+  bool foundRange;
+  QCPRange newRange = getValueRange(foundRange, signDomain, inKeyRange ? keyAxis->range() : QCPRange());
+  if (foundRange)
+  {
+    if (onlyEnlarge)
+      newRange.expand(valueAxis->range());
+    if (!QCPRange::validRange(newRange)) // likely due to range being zero (plottable has only constant data in this axis dimension), shift current range to at least center the plottable
+    {
+      double center = (newRange.lower+newRange.upper)*0.5; // upper and lower should be equal anyway, but just to make sure, incase validRange returned false for other reason
+      if (valueAxis->scaleType() == QCPPolarAxisRadial::stLinear)
+      {
+        newRange.lower = center-valueAxis->range().size()/2.0;
+        newRange.upper = center+valueAxis->range().size()/2.0;
+      } else // scaleType() == stLogarithmic
+      {
+        newRange.lower = center/qSqrt(valueAxis->range().upper/valueAxis->range().lower);
+        newRange.upper = center*qSqrt(valueAxis->range().upper/valueAxis->range().lower);
+      }
+    }
+    valueAxis->setRange(newRange);
+  }
+}
+
+bool QCPPolarGraph::addToLegend(QCPLegend *legend)
+{
+  if (!legend)
+  {
+    qDebug() << Q_FUNC_INFO << "passed legend is null";
+    return false;
+  }
+  if (legend->parentPlot() != mParentPlot)
+  {
+    qDebug() << Q_FUNC_INFO << "passed legend isn't in the same QCustomPlot as this plottable";
+    return false;
+  }
+  
+  //if (!legend->hasItemWithPlottable(this)) // TODO
+  //{
+    legend->addItem(new QCPPolarLegendItem(legend, this));
+    return true;
+  //} else
+  //  return false;
+}
+
+bool QCPPolarGraph::addToLegend()
+{
+  if (!mParentPlot || !mParentPlot->legend)
+    return false;
+  else
+    return addToLegend(mParentPlot->legend);
+}
+
+bool QCPPolarGraph::removeFromLegend(QCPLegend *legend) const
+{
+  if (!legend)
+  {
+    qDebug() << Q_FUNC_INFO << "passed legend is null";
+    return false;
+  }
+  
+  
+  QCPPolarLegendItem *removableItem = 0;
+  for (int i=0; i<legend->itemCount(); ++i) // TODO: reduce this to code in QCPAbstractPlottable::removeFromLegend once unified
+  {
+    if (QCPPolarLegendItem *pli = qobject_cast<QCPPolarLegendItem*>(legend->item(i)))
+    {
+      if (pli->polarGraph() == this)
+      {
+        removableItem = pli;
+        break;
+      }
+    }
+  }
+  
+  if (removableItem)
+    return legend->removeItem(removableItem);
+  else
+    return false;
+}
+
+bool QCPPolarGraph::removeFromLegend() const
+{
+  if (!mParentPlot || !mParentPlot->legend)
+    return false;
+  else
+    return removeFromLegend(mParentPlot->legend);
+}
+
+double QCPPolarGraph::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
+{
+  if ((onlySelectable && mSelectable == QCP::stNone) || mDataContainer->isEmpty())
+    return -1;
+  if (!mKeyAxis || !mValueAxis)
+    return -1;
+  
+  if (mKeyAxis->rect().contains(pos.toPoint()))
+  {
+    QCPGraphDataContainer::const_iterator closestDataPoint = mDataContainer->constEnd();
+    double result = pointDistance(pos, closestDataPoint);
+    if (details)
+    {
+      int pointIndex = closestDataPoint-mDataContainer->constBegin();
+      details->setValue(QCPDataSelection(QCPDataRange(pointIndex, pointIndex+1)));
+    }
+    return result;
+  } else
+    return -1;
+}
+
+/* inherits documentation from base class */
+QCPRange QCPPolarGraph::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain) const
+{
+  return mDataContainer->keyRange(foundRange, inSignDomain);
+}
+
+/* inherits documentation from base class */
+QCPRange QCPPolarGraph::getValueRange(bool &foundRange, QCP::SignDomain inSignDomain, const QCPRange &inKeyRange) const
+{
+  return mDataContainer->valueRange(foundRange, inSignDomain, inKeyRange);
+}
+
+/* inherits documentation from base class */
+QRect QCPPolarGraph::clipRect() const
+{
+  if (mKeyAxis)
+    return mKeyAxis.data()->rect();
+  else
+    return QRect();
+}
+
+void QCPPolarGraph::draw(QCPPainter *painter)
+{
+  if (!mKeyAxis || !mValueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
+  if (mKeyAxis.data()->range().size() <= 0 || mDataContainer->isEmpty()) return;
+  if (mLineStyle == lsNone && mScatterStyle.isNone()) return;
+  
+  painter->setClipRegion(mKeyAxis->exactClipRegion());
+  
+  QVector<QPointF> lines, scatters; // line and (if necessary) scatter pixel coordinates will be stored here while iterating over segments
+  
+  // loop over and draw segments of unselected/selected data:
+  QList<QCPDataRange> selectedSegments, unselectedSegments, allSegments;
+  getDataSegments(selectedSegments, unselectedSegments);
+  allSegments << unselectedSegments << selectedSegments;
+  for (int i=0; i<allSegments.size(); ++i)
+  {
+    bool isSelectedSegment = i >= unselectedSegments.size();
+    // get line pixel points appropriate to line style:
+    QCPDataRange lineDataRange = isSelectedSegment ? allSegments.at(i) : allSegments.at(i).adjusted(-1, 1); // unselected segments extend lines to bordering selected data point (safe to exceed total data bounds in first/last segment, getLines takes care)
+    getLines(&lines, lineDataRange);
+    
+    // check data validity if flag set:
+#ifdef QCUSTOMPLOT_CHECK_DATA
+    QCPGraphDataContainer::const_iterator it;
+    for (it = mDataContainer->constBegin(); it != mDataContainer->constEnd(); ++it)
+    {
+      if (QCP::isInvalidData(it->key, it->value))
+        qDebug() << Q_FUNC_INFO << "Data point at" << it->key << "invalid." << "Plottable name:" << name();
+    }
+#endif
+    
+    // draw fill of graph:
+    //if (isSelectedSegment && mSelectionDecorator)
+    //  mSelectionDecorator->applyBrush(painter);
+    //else
+      painter->setBrush(mBrush);
+    painter->setPen(Qt::NoPen);
+    drawFill(painter, &lines);
+    
+    
+    // draw line:
+    if (mLineStyle != lsNone)
+    {
+      //if (isSelectedSegment && mSelectionDecorator)
+      //  mSelectionDecorator->applyPen(painter);
+      //else
+        painter->setPen(mPen);
+      painter->setBrush(Qt::NoBrush);
+      drawLinePlot(painter, lines);
+    }
+    
+    // draw scatters:
+    
+    QCPScatterStyle finalScatterStyle = mScatterStyle;
+    //if (isSelectedSegment && mSelectionDecorator)
+    //  finalScatterStyle = mSelectionDecorator->getFinalScatterStyle(mScatterStyle);
+    if (!finalScatterStyle.isNone())
+    {
+      getScatters(&scatters, allSegments.at(i));
+      drawScatterPlot(painter, scatters, finalScatterStyle);
+    }
+  }
+  
+  // draw other selection decoration that isn't just line/scatter pens and brushes:
+  //if (mSelectionDecorator)
+  //  mSelectionDecorator->drawDecoration(painter, selection());
+}
+
+QCP::Interaction QCPPolarGraph::selectionCategory() const
+{
+  return QCP::iSelectPlottables;
+}
+
+void QCPPolarGraph::applyDefaultAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiased, QCP::aePlottables);
+}
+
+/* inherits documentation from base class */
+void QCPPolarGraph::selectEvent(QMouseEvent *event, bool additive, const QVariant &details, bool *selectionStateChanged)
+{
+  Q_UNUSED(event)
+  
+  if (mSelectable != QCP::stNone)
+  {
+    QCPDataSelection newSelection = details.value<QCPDataSelection>();
+    QCPDataSelection selectionBefore = mSelection;
+    if (additive)
+    {
+      if (mSelectable == QCP::stWhole) // in whole selection mode, we toggle to no selection even if currently unselected point was hit
+      {
+        if (selected())
+          setSelection(QCPDataSelection());
+        else
+          setSelection(newSelection);
+      } else // in all other selection modes we toggle selections of homogeneously selected/unselected segments
+      {
+        if (mSelection.contains(newSelection)) // if entire newSelection is already selected, toggle selection
+          setSelection(mSelection-newSelection);
+        else
+          setSelection(mSelection+newSelection);
+      }
+    } else
+      setSelection(newSelection);
+    if (selectionStateChanged)
+      *selectionStateChanged = mSelection != selectionBefore;
+  }
+}
+
+/* inherits documentation from base class */
+void QCPPolarGraph::deselectEvent(bool *selectionStateChanged)
+{
+  if (mSelectable != QCP::stNone)
+  {
+    QCPDataSelection selectionBefore = mSelection;
+    setSelection(QCPDataSelection());
+    if (selectionStateChanged)
+      *selectionStateChanged = mSelection != selectionBefore;
+  }
+}
+
+/*!  \internal
+  
+  Draws lines between the points in \a lines, given in pixel coordinates.
+  
+  \see drawScatterPlot, drawImpulsePlot, QCPAbstractPlottable1D::drawPolyline
+*/
+void QCPPolarGraph::drawLinePlot(QCPPainter *painter, const QVector<QPointF> &lines) const
+{
+  if (painter->pen().style() != Qt::NoPen && painter->pen().color().alpha() != 0)
+  {
+    applyDefaultAntialiasingHint(painter);
+    drawPolyline(painter, lines);
+  }
+}
+
+/*! \internal
+  
+  Draws the fill of the graph using the specified \a painter, with the currently set brush.
+  
+  Depending on whether a normal fill or a channel fill (\ref setChannelFillGraph) is needed, \ref
+  getFillPolygon or \ref getChannelFillPolygon are used to find the according fill polygons.
+  
+  In order to handle NaN Data points correctly (the fill needs to be split into disjoint areas),
+  this method first determines a list of non-NaN segments with \ref getNonNanSegments, on which to
+  operate. In the channel fill case, \ref getOverlappingSegments is used to consolidate the non-NaN
+  segments of the two involved graphs, before passing the overlapping pairs to \ref
+  getChannelFillPolygon.
+  
+  Pass the points of this graph's line as \a lines, in pixel coordinates.
+
+  \see drawLinePlot, drawImpulsePlot, drawScatterPlot
+*/
+void QCPPolarGraph::drawFill(QCPPainter *painter, QVector<QPointF> *lines) const
+{
+  applyFillAntialiasingHint(painter);
+  if (painter->brush().style() != Qt::NoBrush && painter->brush().color().alpha() != 0)
+    painter->drawPolygon(QPolygonF(*lines));
+}
+
+/*! \internal
+
+  Draws scatter symbols at every point passed in \a scatters, given in pixel coordinates. The
+  scatters will be drawn with \a painter and have the appearance as specified in \a style.
+
+  \see drawLinePlot, drawImpulsePlot
+*/
+void QCPPolarGraph::drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &scatters, const QCPScatterStyle &style) const
+{
+  applyScattersAntialiasingHint(painter);
+  style.applyTo(painter, mPen);
+  for (int i=0; i<scatters.size(); ++i)
+    style.drawShape(painter, scatters.at(i).x(), scatters.at(i).y());
+}
+
+void QCPPolarGraph::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const
+{
+  // draw fill:
+  if (mBrush.style() != Qt::NoBrush)
+  {
+    applyFillAntialiasingHint(painter);
+    painter->fillRect(QRectF(rect.left(), rect.top()+rect.height()/2.0, rect.width(), rect.height()/3.0), mBrush);
+  }
+  // draw line vertically centered:
+  if (mLineStyle != lsNone)
+  {
+    applyDefaultAntialiasingHint(painter);
+    painter->setPen(mPen);
+    painter->drawLine(QLineF(rect.left(), rect.top()+rect.height()/2.0, rect.right()+5, rect.top()+rect.height()/2.0)); // +5 on x2 else last segment is missing from dashed/dotted pens
+  }
+  // draw scatter symbol:
+  if (!mScatterStyle.isNone())
+  {
+    applyScattersAntialiasingHint(painter);
+    // scale scatter pixmap if it's too large to fit in legend icon rect:
+    if (mScatterStyle.shape() == QCPScatterStyle::ssPixmap && (mScatterStyle.pixmap().size().width() > rect.width() || mScatterStyle.pixmap().size().height() > rect.height()))
+    {
+      QCPScatterStyle scaledStyle(mScatterStyle);
+      scaledStyle.setPixmap(scaledStyle.pixmap().scaled(rect.size().toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+      scaledStyle.applyTo(painter, mPen);
+      scaledStyle.drawShape(painter, QRectF(rect).center());
+    } else
+    {
+      mScatterStyle.applyTo(painter, mPen);
+      mScatterStyle.drawShape(painter, QRectF(rect).center());
+    }
+  }
+}
+
+void QCPPolarGraph::applyFillAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiasedFill, QCP::aeFills);
+}
+
+void QCPPolarGraph::applyScattersAntialiasingHint(QCPPainter *painter) const
+{
+  applyAntialiasingHint(painter, mAntialiasedScatters, QCP::aeScatters);
+}
+
+double QCPPolarGraph::pointDistance(const QPointF &pixelPoint, QCPGraphDataContainer::const_iterator &closestData) const
+{
+  closestData = mDataContainer->constEnd();
+  if (mDataContainer->isEmpty())
+    return -1.0;
+  if (mLineStyle == lsNone && mScatterStyle.isNone())
+    return -1.0;
+  
+  // calculate minimum distances to graph data points and find closestData iterator:
+  double minDistSqr = (std::numeric_limits<double>::max)();
+  // determine which key range comes into question, taking selection tolerance around pos into account:
+  double posKeyMin, posKeyMax, dummy;
+  pixelsToCoords(pixelPoint-QPointF(mParentPlot->selectionTolerance(), mParentPlot->selectionTolerance()), posKeyMin, dummy);
+  pixelsToCoords(pixelPoint+QPointF(mParentPlot->selectionTolerance(), mParentPlot->selectionTolerance()), posKeyMax, dummy);
+  if (posKeyMin > posKeyMax)
+    qSwap(posKeyMin, posKeyMax);
+  // iterate over found data points and then choose the one with the shortest distance to pos:
+  QCPGraphDataContainer::const_iterator begin = mDataContainer->findBegin(posKeyMin, true);
+  QCPGraphDataContainer::const_iterator end = mDataContainer->findEnd(posKeyMax, true);
+  for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
+  {
+    const double currentDistSqr = QCPVector2D(coordsToPixels(it->key, it->value)-pixelPoint).lengthSquared();
+    if (currentDistSqr < minDistSqr)
+    {
+      minDistSqr = currentDistSqr;
+      closestData = it;
+    }
+  }
+    
+  // calculate distance to graph line if there is one (if so, will probably be smaller than distance to closest data point):
+  if (mLineStyle != lsNone)
+  {
+    // line displayed, calculate distance to line segments:
+    QVector<QPointF> lineData;
+    getLines(&lineData, QCPDataRange(0, dataCount()));
+    QCPVector2D p(pixelPoint);
+    for (int i=0; i<lineData.size()-1; ++i)
+    {
+      const double currentDistSqr = p.distanceSquaredToLine(lineData.at(i), lineData.at(i+1));
+      if (currentDistSqr < minDistSqr)
+        minDistSqr = currentDistSqr;
+    }
+  }
+  
+  return qSqrt(minDistSqr);
+}
+
+int QCPPolarGraph::dataCount() const
+{
+  return mDataContainer->size();
+}
+
+void QCPPolarGraph::getDataSegments(QList<QCPDataRange> &selectedSegments, QList<QCPDataRange> &unselectedSegments) const
+{
+  selectedSegments.clear();
+  unselectedSegments.clear();
+  if (mSelectable == QCP::stWhole) // stWhole selection type draws the entire plottable with selected style if mSelection isn't empty
+  {
+    if (selected())
+      selectedSegments << QCPDataRange(0, dataCount());
+    else
+      unselectedSegments << QCPDataRange(0, dataCount());
+  } else
+  {
+    QCPDataSelection sel(selection());
+    sel.simplify();
+    selectedSegments = sel.dataRanges();
+    unselectedSegments = sel.inverse(QCPDataRange(0, dataCount())).dataRanges();
+  }
+}
+
+void QCPPolarGraph::drawPolyline(QCPPainter *painter, const QVector<QPointF> &lineData) const
+{
+  // if drawing solid line and not in PDF, use much faster line drawing instead of polyline:
+  if (mParentPlot->plottingHints().testFlag(QCP::phFastPolylines) &&
+      painter->pen().style() == Qt::SolidLine &&
+      !painter->modes().testFlag(QCPPainter::pmVectorized) &&
+      !painter->modes().testFlag(QCPPainter::pmNoCaching))
+  {
+    int i = 0;
+    bool lastIsNan = false;
+    const int lineDataSize = lineData.size();
+    while (i < lineDataSize && (qIsNaN(lineData.at(i).y()) || qIsNaN(lineData.at(i).x()))) // make sure first point is not NaN
+      ++i;
+    ++i; // because drawing works in 1 point retrospect
+    while (i < lineDataSize)
+    {
+      if (!qIsNaN(lineData.at(i).y()) && !qIsNaN(lineData.at(i).x())) // NaNs create a gap in the line
+      {
+        if (!lastIsNan)
+          painter->drawLine(lineData.at(i-1), lineData.at(i));
+        else
+          lastIsNan = false;
+      } else
+        lastIsNan = true;
+      ++i;
+    }
+  } else
+  {
+    int segmentStart = 0;
+    int i = 0;
+    const int lineDataSize = lineData.size();
+    while (i < lineDataSize)
+    {
+      if (qIsNaN(lineData.at(i).y()) || qIsNaN(lineData.at(i).x()) || qIsInf(lineData.at(i).y())) // NaNs create a gap in the line. Also filter Infs which make drawPolyline block
+      {
+        painter->drawPolyline(lineData.constData()+segmentStart, i-segmentStart); // i, because we don't want to include the current NaN point
+        segmentStart = i+1;
+      }
+      ++i;
+    }
+    // draw last segment:
+    painter->drawPolyline(lineData.constData()+segmentStart, lineDataSize-segmentStart);
+  }
+}
+
+void QCPPolarGraph::getVisibleDataBounds(QCPGraphDataContainer::const_iterator &begin, QCPGraphDataContainer::const_iterator &end, const QCPDataRange &rangeRestriction) const
+{
+  if (rangeRestriction.isEmpty())
+  {
+    end = mDataContainer->constEnd();
+    begin = end;
+  } else
+  {
+    QCPPolarAxisAngular *keyAxis = mKeyAxis.data();
+    QCPPolarAxisRadial *valueAxis = mValueAxis.data();
+    if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
+    // get visible data range:
+    if (mPeriodic)
+    {
+      begin = mDataContainer->constBegin();
+      end = mDataContainer->constEnd();
+    } else
+    {
+      begin = mDataContainer->findBegin(keyAxis->range().lower);
+      end = mDataContainer->findEnd(keyAxis->range().upper);
+    }
+    // limit lower/upperEnd to rangeRestriction:
+    mDataContainer->limitIteratorsToDataRange(begin, end, rangeRestriction); // this also ensures rangeRestriction outside data bounds doesn't break anything
+  }
+}
+
+/*! \internal
+
+  This method retrieves an optimized set of data points via \ref getOptimizedLineData, an branches
+  out to the line style specific functions such as \ref dataToLines, \ref dataToStepLeftLines, etc.
+  according to the line style of the graph.
+
+  \a lines will be filled with points in pixel coordinates, that can be drawn with the according
+  draw functions like \ref drawLinePlot and \ref drawImpulsePlot. The points returned in \a lines
+  aren't necessarily the original data points. For example, step line styles require additional
+  points to form the steps when drawn. If the line style of the graph is \ref lsNone, the \a
+  lines vector will be empty.
+
+  \a dataRange specifies the beginning and ending data indices that will be taken into account for
+  conversion. In this function, the specified range may exceed the total data bounds without harm:
+  a correspondingly trimmed data range will be used. This takes the burden off the user of this
+  function to check for valid indices in \a dataRange, e.g. when extending ranges coming from \ref
+  getDataSegments.
+
+  \see getScatters
+*/
+void QCPPolarGraph::getLines(QVector<QPointF> *lines, const QCPDataRange &dataRange) const
+{
+  if (!lines) return;
+  QCPGraphDataContainer::const_iterator begin, end;
+  getVisibleDataBounds(begin, end, dataRange);
+  if (begin == end)
+  {
+    lines->clear();
+    return;
+  }
+  
+  QVector<QCPGraphData> lineData;
+  if (mLineStyle != lsNone)
+    getOptimizedLineData(&lineData, begin, end);
+
+  switch (mLineStyle)
+  {
+    case lsNone: lines->clear(); break;
+    case lsLine: *lines = dataToLines(lineData); break;
+  }
+}
+
+void QCPPolarGraph::getScatters(QVector<QPointF> *scatters, const QCPDataRange &dataRange) const
+{
+  QCPPolarAxisAngular *keyAxis = mKeyAxis.data();
+  QCPPolarAxisRadial *valueAxis = mValueAxis.data();
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return; }
+  
+  if (!scatters) return;
+  QCPGraphDataContainer::const_iterator begin, end;
+  getVisibleDataBounds(begin, end, dataRange);
+  if (begin == end)
+  {
+    scatters->clear();
+    return;
+  }
+  
+  QVector<QCPGraphData> data;
+  getOptimizedScatterData(&data, begin, end);
+  
+  scatters->resize(data.size());
+  for (int i=0; i<data.size(); ++i)
+  {
+    if (!qIsNaN(data.at(i).value))
+      (*scatters)[i] = valueAxis->coordToPixel(data.at(i).key, data.at(i).value);
+  }
+}
+
+void QCPPolarGraph::getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGraphDataContainer::const_iterator &begin, const QCPGraphDataContainer::const_iterator &end) const
+{
+  lineData->clear();
+  
+  // TODO: fix for log axes and thick line style
+  
+  const QCPRange range = mValueAxis->range();
+  bool reversed = mValueAxis->rangeReversed();
+  const double clipMargin = range.size()*0.05; // extra distance from visible circle, so optimized outside lines can cover more angle before having to place a dummy point to prevent tangents
+  const double upperClipValue = range.upper + (reversed ? 0 : range.size()*0.05+clipMargin); // clip slightly outside of actual range to avoid line thicknesses to peek into visible circle
+  const double lowerClipValue = range.lower - (reversed ? range.size()*0.05+clipMargin : 0); // clip slightly outside of actual range to avoid line thicknesses to peek into visible circle
+  const double maxKeySkip = qAsin(qSqrt(clipMargin*(clipMargin+2*range.size()))/(range.size()+clipMargin))/M_PI*mKeyAxis->range().size(); // the maximum angle between two points on outer circle (r=clipValue+clipMargin) before connecting line becomes tangent to inner circle (r=clipValue)
+  double skipBegin = 0;
+  bool belowRange = false;
+  bool aboveRange = false;
+  QCPGraphDataContainer::const_iterator it = begin;
+  while (it != end)
+  {
+    if (it->value < lowerClipValue)
+    {
+      if (aboveRange) // jumped directly from above to below visible range, draw previous point so entry angle is correct
+      {
+        aboveRange = false;
+        if (!reversed) // TODO: with inner radius, we'll need else case here with projected border point
+          lineData->append(*(it-1));
+      }
+      if (!belowRange)
+      {
+        skipBegin = it->key;
+        lineData->append(QCPGraphData(it->key, lowerClipValue));
+        belowRange = true;
+      }
+      if (it->key-skipBegin > maxKeySkip) // add dummy point if we're exceeding the maximum skippable angle (to prevent unintentional intersections with visible circle)
+      {
+        skipBegin += maxKeySkip;
+        lineData->append(QCPGraphData(skipBegin, lowerClipValue));
+      }
+    } else if (it->value > upperClipValue)
+    {
+      if (belowRange) // jumped directly from below to above visible range, draw previous point so entry angle is correct (if lower means outer, so if reversed axis)
+      {
+        belowRange = false;
+        if (reversed)
+          lineData->append(*(it-1));
+      }
+      if (!aboveRange)
+      {
+        skipBegin = it->key;
+        lineData->append(QCPGraphData(it->key, upperClipValue));
+        aboveRange = true;
+      }
+      if (it->key-skipBegin > maxKeySkip) // add dummy point if we're exceeding the maximum skippable angle (to prevent unintentional intersections with visible circle)
+      {
+        skipBegin += maxKeySkip;
+        lineData->append(QCPGraphData(skipBegin, upperClipValue));
+      }
+    } else // value within bounds where we don't optimize away points
+    {
+      if (aboveRange)
+      {
+        aboveRange = false;
+        if (!reversed)
+          lineData->append(*(it-1)); // just entered from above, draw previous point so entry angle is correct (if above means outer, so if not reversed axis)
+      }
+      if (belowRange)
+      {
+        belowRange = false;
+        if (reversed)
+          lineData->append(*(it-1)); // just entered from below, draw previous point so entry angle is correct (if below means outer, so if reversed axis)
+      }
+      lineData->append(*it); // inside visible circle, add point normally
+    }
+    ++it;
+  }
+  // to make fill not erratic, add last point normally if it was outside visible circle:
+  if (aboveRange)
+  {
+    aboveRange = false;
+    if (!reversed)
+      lineData->append(*(it-1)); // just entered from above, draw previous point so entry angle is correct (if above means outer, so if not reversed axis)
+  }
+  if (belowRange)
+  {
+    belowRange = false;
+    if (reversed)
+      lineData->append(*(it-1)); // just entered from below, draw previous point so entry angle is correct (if below means outer, so if reversed axis)
+  }
+}
+
+void QCPPolarGraph::getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGraphDataContainer::const_iterator begin, QCPGraphDataContainer::const_iterator end) const
+{
+  scatterData->clear();
+  
+  const QCPRange range = mValueAxis->range();
+  bool reversed = mValueAxis->rangeReversed();
+  const double clipMargin = range.size()*0.05;
+  const double upperClipValue = range.upper + (reversed ? 0 : clipMargin); // clip slightly outside of actual range to avoid scatter size to peek into visible circle
+  const double lowerClipValue = range.lower - (reversed ? clipMargin : 0); // clip slightly outside of actual range to avoid scatter size to peek into visible circle
+  QCPGraphDataContainer::const_iterator it = begin;
+  while (it != end)
+  {
+    if (it->value > lowerClipValue && it->value < upperClipValue)
+      scatterData->append(*it);
+    ++it;
+  }
+}
+
+/*! \internal
+
+  Takes raw data points in plot coordinates as \a data, and returns a vector containing pixel
+  coordinate points which are suitable for drawing the line style \ref lsLine.
+  
+  The source of \a data is usually \ref getOptimizedLineData, and this method is called in \a
+  getLines if the line style is set accordingly.
+
+  \see dataToStepLeftLines, dataToStepRightLines, dataToStepCenterLines, dataToImpulseLines, getLines, drawLinePlot
+*/
+QVector<QPointF> QCPPolarGraph::dataToLines(const QVector<QCPGraphData> &data) const
+{
+  QVector<QPointF> result;
+  QCPPolarAxisAngular *keyAxis = mKeyAxis.data();
+  QCPPolarAxisRadial *valueAxis = mValueAxis.data();
+  if (!keyAxis || !valueAxis) { qDebug() << Q_FUNC_INFO << "invalid key or value axis"; return result; }
+
+  // transform data points to pixels:
+  result.resize(data.size());
+  for (int i=0; i<data.size(); ++i)
+    result[i] = mValueAxis->coordToPixel(data.at(i).key, data.at(i).value);
+  return result;
+}
+/* end of 'src/polar/polargraph.cpp' */
 
 

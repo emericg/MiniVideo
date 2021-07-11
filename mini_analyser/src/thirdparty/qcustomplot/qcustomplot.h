@@ -1,7 +1,7 @@
 /***************************************************************************
 **                                                                        **
 **  QCustomPlot, an easy to use, modern plotting widget for Qt            **
-**  Copyright (C) 2011-2018 Emanuel Eichhammer                            **
+**  Copyright (C) 2011-2021 Emanuel Eichhammer                            **
 **                                                                        **
 **  This program is free software: you can redistribute it and/or modify  **
 **  it under the terms of the GNU General Public License as published by  **
@@ -19,8 +19,8 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 25.06.18                                             **
-**          Version: 2.0.1                                                **
+**             Date: 29.03.21                                             **
+**          Version: 2.1.0                                                **
 ****************************************************************************/
 
 #ifndef QCUSTOMPLOT_H
@@ -52,6 +52,7 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QTimer>
 #include <QtGui/QPainter>
+#include <QtGui/QPainterPath>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QWheelEvent>
@@ -70,7 +71,12 @@
 #include <algorithm>
 #ifdef QCP_OPENGL_FBO
 #  include <QtGui/QOpenGLContext>
-#  include <QtGui/QOpenGLFramebufferObject>
+#  if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#    include <QtGui/QOpenGLFramebufferObject>
+#  else
+#    include <QOpenGLFramebufferObject>
+#    include <QOpenGLPaintDevice>
+#  endif
 #  ifdef QCP_OPENGL_OFFSCREENSURFACE
 #    include <QtGui/QOffscreenSurface>
 #  else
@@ -93,6 +99,9 @@
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
 #  include <QtCore/QElapsedTimer>
 #endif
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+#  include <QtCore/QTimeZone>
+#endif
 
 class QCPPainter;
 class QCustomPlot;
@@ -114,12 +123,16 @@ class QCPSelectionRect;
 class QCPColorMap;
 class QCPColorScale;
 class QCPBars;
+class QCPPolarAxisRadial;
+class QCPPolarAxisAngular;
+class QCPPolarGrid;
+class QCPPolarGraph;
 
-/* including file 'src/global.h', size 16731                                 */
-/* commit 3616b887936dcb5c44be74b667424c1c2af77a0d 2020-05-16 15:34:58 +0200 */
+/* including file 'src/global.h'            */
+/* modified 2021-03-29T02:30:44, size 16981 */
 
-#define QCUSTOMPLOT_VERSION_STR "2.0.1"
-#define QCUSTOMPLOT_VERSION 0x020001
+#define QCUSTOMPLOT_VERSION_STR "2.1.0"
+#define QCUSTOMPLOT_VERSION 0x020100
 
 // decl definitions for shared library compilation/usage:
 #if defined(QT_STATIC_BUILD)
@@ -386,8 +399,8 @@ Q_DECLARE_METATYPE(QCP::SelectionType)
 /* end of 'src/global.h' */
 
 
-/* including file 'src/vector2d.h', size 4938                                */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/vector2d.h'         */
+/* modified 2021-03-29T02:30:44, size 4988 */
 
 class QCP_LIB_DECL QCPVector2D
 {
@@ -410,6 +423,7 @@ public:
   // non-virtual methods:
   double length() const { return qSqrt(mX*mX+mY*mY); }
   double lengthSquared() const { return mX*mX+mY*mY; }
+  double angle() const { return qAtan2(mY, mX); }
   QPoint toPoint() const { return QPoint(int(mX), int(mY)); }
   QPointF toPointF() const { return QPointF(mX, mY); }
   
@@ -460,8 +474,8 @@ inline QDebug operator<< (QDebug d, const QCPVector2D &vec)
 /* end of 'src/vector2d.h' */
 
 
-/* including file 'src/painter.h', size 4035                                 */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/painter.h'          */
+/* modified 2021-03-29T02:30:44, size 4035 */
 
 class QCP_LIB_DECL QCPPainter : public QPainter
 {
@@ -519,8 +533,8 @@ Q_DECLARE_METATYPE(QCPPainter::PainterMode)
 /* end of 'src/painter.h' */
 
 
-/* including file 'src/paintbuffer.h', size 5006                             */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/paintbuffer.h'      */
+/* modified 2021-03-29T02:30:44, size 5006 */
 
 class QCP_LIB_DECL QCPAbstractPaintBuffer
 {
@@ -627,8 +641,8 @@ protected:
 /* end of 'src/paintbuffer.h' */
 
 
-/* including file 'src/layer.h', size 6897                                   */
-/* commit 9277a043b77617fddbd226f2625a91c504ebb70e 2020-02-23 00:49:18 +0100 */
+/* including file 'src/layer.h'            */
+/* modified 2021-03-29T02:30:44, size 7038 */
 
 class QCP_LIB_DECL QCPLayer : public QObject
 {
@@ -776,8 +790,8 @@ private:
 /* end of 'src/layer.h' */
 
 
-/* including file 'src/axis/range.h', size 5280                              */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/range.h'       */
+/* modified 2021-03-29T02:30:44, size 5280 */
 
 class QCP_LIB_DECL QCPRange
 {
@@ -894,8 +908,8 @@ inline const QCPRange operator/(const QCPRange& range, double value)
 /* end of 'src/axis/range.h' */
 
 
-/* including file 'src/selection.h', size 8569                               */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/selection.h'        */
+/* modified 2021-03-29T02:30:44, size 8569 */
 
 class QCP_LIB_DECL QCPDataRange
 {
@@ -1098,8 +1112,8 @@ inline QDebug operator<< (QDebug d, const QCPDataSelection &selection)
 /* end of 'src/selection.h' */
 
 
-/* including file 'src/selectionrect.h', size 3354                           */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/selectionrect.h'    */
+/* modified 2021-03-29T02:30:44, size 3354 */
 
 class QCP_LIB_DECL QCPSelectionRect : public QCPLayerable
 {
@@ -1152,8 +1166,8 @@ protected:
 /* end of 'src/selectionrect.h' */
 
 
-/* including file 'src/layout.h', size 14279                                 */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/layout.h'            */
+/* modified 2021-03-29T02:30:44, size 14279 */
 
 class QCP_LIB_DECL QCPMarginGroup : public QObject
 {
@@ -1473,8 +1487,8 @@ Q_DECLARE_METATYPE(QCPLayoutInset::InsetPlacement)
 /* end of 'src/layout.h' */
 
 
-/* including file 'src/lineending.h', size 4426                              */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/lineending.h'       */
+/* modified 2021-03-29T02:30:44, size 4426 */
 
 class QCP_LIB_DECL QCPLineEnding
 {
@@ -1537,8 +1551,148 @@ Q_DECLARE_METATYPE(QCPLineEnding::EndingStyle)
 /* end of 'src/lineending.h' */
 
 
-/* including file 'src/axis/axisticker.h', size 4230                         */
-/* commit 9277a043b77617fddbd226f2625a91c504ebb70e 2020-02-23 00:49:18 +0100 */
+/* including file 'src/axis/labelpainter.h' */
+/* modified 2021-03-29T02:30:44, size 7086  */
+
+class QCPLabelPainterPrivate
+{
+  Q_GADGET
+public:
+  /*!
+    TODO
+  */
+  enum AnchorMode { amRectangular    ///< 
+                    ,amSkewedUpright ///<
+                    ,amSkewedRotated ///<
+                   };
+  Q_ENUMS(AnchorMode)
+  
+  /*!
+    TODO
+  */
+  enum AnchorReferenceType { artNormal    ///< 
+                             ,artTangent ///<
+                           };
+  Q_ENUMS(AnchorReferenceType)
+  
+  /*!
+    TODO
+  */
+  enum AnchorSide { asLeft      ///< 
+                    ,asRight    ///< 
+                    ,asTop      ///< 
+                    ,asBottom   ///< 
+                    ,asTopLeft
+                    ,asTopRight
+                    ,asBottomRight
+                    ,asBottomLeft
+                   };
+  Q_ENUMS(AnchorSide)
+  
+  explicit QCPLabelPainterPrivate(QCustomPlot *parentPlot);
+  virtual ~QCPLabelPainterPrivate();
+  
+  // setters:
+  void setAnchorSide(AnchorSide side);
+  void setAnchorMode(AnchorMode mode);
+  void setAnchorReference(const QPointF &pixelPoint);
+  void setAnchorReferenceType(AnchorReferenceType type);
+  void setFont(const QFont &font);
+  void setColor(const QColor &color);
+  void setPadding(int padding);
+  void setRotation(double rotation);
+  void setSubstituteExponent(bool enabled);
+  void setMultiplicationSymbol(QChar symbol);
+  void setAbbreviateDecimalPowers(bool enabled);
+  void setCacheSize(int labelCount);
+  
+  // getters:
+  AnchorMode anchorMode() const { return mAnchorMode; }
+  AnchorSide anchorSide() const { return mAnchorSide; }
+  QPointF anchorReference() const { return mAnchorReference; }
+  AnchorReferenceType anchorReferenceType() const { return mAnchorReferenceType; }
+  QFont font() const { return mFont; }
+  QColor color() const { return mColor; }
+  int padding() const { return mPadding; }
+  double rotation() const { return mRotation; }
+  bool substituteExponent() const { return mSubstituteExponent; }
+  QChar multiplicationSymbol() const { return mMultiplicationSymbol; }
+  bool abbreviateDecimalPowers() const { return mAbbreviateDecimalPowers; }
+  int cacheSize() const;
+  
+  //virtual int size() const;
+  
+  // non-property methods: 
+  void drawTickLabel(QCPPainter *painter, const QPointF &tickPos, const QString &text);
+  void clearCache();
+  
+  // constants that may be used with setMultiplicationSymbol:
+  static const QChar SymbolDot;
+  static const QChar SymbolCross;
+  
+protected:
+  struct CachedLabel
+  {
+    QPoint offset;
+    QPixmap pixmap;
+  };
+  struct LabelData
+  {
+    AnchorSide side;
+    double rotation; // angle in degrees
+    QTransform transform; // the transform about the label anchor which is at (0, 0). Does not contain final absolute x/y positioning on the plot/axis
+    QString basePart, expPart, suffixPart;
+    QRect baseBounds, expBounds, suffixBounds;
+    QRect totalBounds; // is in a coordinate system where label top left is at (0, 0)
+    QRect rotatedTotalBounds; // is in a coordinate system where the label anchor is at (0, 0)
+    QFont baseFont, expFont;
+    QColor color;
+  };
+  
+  // property members:
+  AnchorMode mAnchorMode;
+  AnchorSide mAnchorSide;
+  QPointF mAnchorReference;
+  AnchorReferenceType mAnchorReferenceType;
+  QFont mFont;
+  QColor mColor;
+  int mPadding;
+  double mRotation; // this is the rotation applied uniformly to all labels, not the heterogeneous rotation in amCircularRotated mode
+  bool mSubstituteExponent;
+  QChar mMultiplicationSymbol;
+  bool mAbbreviateDecimalPowers;
+  // non-property members:
+  QCustomPlot *mParentPlot;
+  QByteArray mLabelParameterHash; // to determine whether mLabelCache needs to be cleared due to changed parameters
+  QCache<QString, CachedLabel> mLabelCache;
+  QRect mAxisSelectionBox, mTickLabelsSelectionBox, mLabelSelectionBox;
+  int mLetterCapHeight, mLetterDescent;
+  
+  // introduced virtual methods:
+  virtual void drawLabelMaybeCached(QCPPainter *painter, const QFont &font, const QColor &color, const QPointF &pos, AnchorSide side, double rotation, const QString &text);
+  virtual QByteArray generateLabelParameterHash() const; // TODO: get rid of this in favor of invalidation flag upon setters?
+
+  // non-virtual methods:
+  QPointF getAnchorPos(const QPointF &tickPos);
+  void drawText(QCPPainter *painter, const QPointF &pos, const LabelData &labelData) const;
+  LabelData getTickLabelData(const QFont &font, const QColor &color, double rotation, AnchorSide side, const QString &text) const;
+  void applyAnchorTransform(LabelData &labelData) const;
+  //void getMaxTickLabelSize(const QFont &font, const QString &text, QSize *tickLabelsSize) const;
+  CachedLabel *createCachedLabel(const LabelData &labelData) const;
+  QByteArray cacheKey(const QString &text, const QColor &color, double rotation, AnchorSide side) const;
+  AnchorSide skewedAnchorSide(const QPointF &tickPos, double sideExpandHorz, double sideExpandVert) const;
+  AnchorSide rotationCorrectedSide(AnchorSide side, double rotation) const;
+  void analyzeFontMetrics();
+};
+Q_DECLARE_METATYPE(QCPLabelPainterPrivate::AnchorMode)
+Q_DECLARE_METATYPE(QCPLabelPainterPrivate::AnchorSide)
+
+
+/* end of 'src/axis/labelpainter.h' */
+
+
+/* including file 'src/axis/axisticker.h'  */
+/* modified 2021-03-29T02:30:44, size 4230 */
 
 class QCP_LIB_DECL QCPAxisTicker
 {
@@ -1602,8 +1756,8 @@ Q_DECLARE_METATYPE(QSharedPointer<QCPAxisTicker>)
 /* end of 'src/axis/axisticker.h' */
 
 
-/* including file 'src/axis/axistickerdatetime.h', size 3328                 */
-/* commit 9b3fe261363a32f67fa7d5ff97d3389916642c28 2020-05-16 13:47:25 +0200 */
+/* including file 'src/axis/axistickerdatetime.h' */
+/* modified 2021-03-29T02:30:44, size 3600        */
 
 class QCP_LIB_DECL QCPAxisTickerDateTime : public QCPAxisTicker
 {
@@ -1613,10 +1767,16 @@ public:
   // getters:
   QString dateTimeFormat() const { return mDateTimeFormat; }
   Qt::TimeSpec dateTimeSpec() const { return mDateTimeSpec; }
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+  QTimeZone timeZone() const { return mTimeZone; }
+#endif
   
   // setters:
   void setDateTimeFormat(const QString &format);
   void setDateTimeSpec(Qt::TimeSpec spec);
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+  void setTimeZone(const QTimeZone &zone);
+# endif
   void setTickOrigin(double origin); // hides base class method but calls baseclass implementation ("using" throws off IDEs and doxygen)
   void setTickOrigin(const QDateTime &origin);
   
@@ -1629,7 +1789,9 @@ protected:
   // property members:
   QString mDateTimeFormat;
   Qt::TimeSpec mDateTimeSpec;
-  
+# if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+  QTimeZone mTimeZone;
+# endif
   // non-property members:
   enum DateStrategy {dsNone, dsUniformTimeInDay, dsUniformDayInMonth} mDateStrategy;
   
@@ -1643,8 +1805,8 @@ protected:
 /* end of 'src/axis/axistickerdatetime.h' */
 
 
-/* including file 'src/axis/axistickertime.h', size 3542                     */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickertime.h' */
+/* modified 2021-03-29T02:30:44, size 3542    */
 
 class QCP_LIB_DECL QCPAxisTickerTime : public QCPAxisTicker
 {
@@ -1695,8 +1857,8 @@ Q_DECLARE_METATYPE(QCPAxisTickerTime::TimeUnit)
 /* end of 'src/axis/axistickertime.h' */
 
 
-/* including file 'src/axis/axistickerfixed.h', size 3308                    */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerfixed.h' */
+/* modified 2021-03-29T02:30:44, size 3308     */
 
 class QCP_LIB_DECL QCPAxisTickerFixed : public QCPAxisTicker
 {
@@ -1737,8 +1899,8 @@ Q_DECLARE_METATYPE(QCPAxisTickerFixed::ScaleStrategy)
 /* end of 'src/axis/axistickerfixed.h' */
 
 
-/* including file 'src/axis/axistickertext.h', size 3090                     */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickertext.h' */
+/* modified 2021-03-29T02:30:44, size 3090    */
 
 class QCP_LIB_DECL QCPAxisTickerText : public QCPAxisTicker
 {
@@ -1775,8 +1937,8 @@ protected:
 /* end of 'src/axis/axistickertext.h' */
 
 
-/* including file 'src/axis/axistickerpi.h', size 3911                       */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerpi.h' */
+/* modified 2021-03-29T02:30:44, size 3911  */
 
 class QCP_LIB_DECL QCPAxisTickerPi : public QCPAxisTicker
 {
@@ -1834,8 +1996,8 @@ Q_DECLARE_METATYPE(QCPAxisTickerPi::FractionStyle)
 /* end of 'src/axis/axistickerpi.h' */
 
 
-/* including file 'src/axis/axistickerlog.h', size 2663                      */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/axis/axistickerlog.h' */
+/* modified 2021-03-29T02:30:44, size 2594   */
 
 class QCP_LIB_DECL QCPAxisTickerLog : public QCPAxisTicker
 {
@@ -1859,7 +2021,6 @@ protected:
   double mLogBaseLnInv;
   
   // reimplemented virtual methods:
-  virtual double getTickStep(const QCPRange &range) Q_DECL_OVERRIDE;
   virtual int getSubTickCount(double tickStep) Q_DECL_OVERRIDE;
   virtual QVector<double> createTickVector(double tickStep, const QCPRange &range) Q_DECL_OVERRIDE;
 };
@@ -1867,8 +2028,8 @@ protected:
 /* end of 'src/axis/axistickerlog.h' */
 
 
-/* including file 'src/axis/axis.h', size 20719                              */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/axis/axis.h'         */
+/* modified 2021-03-29T02:30:44, size 20913 */
 
 class QCP_LIB_DECL QCPGrid :public QCPLayerable
 {
@@ -2233,7 +2394,7 @@ public:
   virtual ~QCPAxisPainterPrivate();
   
   virtual void draw(QCPPainter *painter);
-  virtual int size() const;
+  virtual int size();
   void clearCache();
   
   QRect axisSelectionBox() const { return mAxisSelectionBox; }
@@ -2295,8 +2456,8 @@ protected:
 /* end of 'src/axis/axis.h' */
 
 
-/* including file 'src/scatterstyle.h', size 7275                            */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/scatterstyle.h'     */
+/* modified 2021-03-29T02:30:44, size 7275 */
 
 class QCP_LIB_DECL QCPScatterStyle
 {
@@ -2402,8 +2563,8 @@ Q_DECLARE_METATYPE(QCPScatterStyle::ScatterShape)
 /* end of 'src/scatterstyle.h' */
 
 
-/* including file 'src/datacontainer.h', size 4596                           */
-/* commit ce344b3f96a62e5f652585e55f1ae7c7883cd45b 2018-06-25 01:03:39 +0200 */
+/* including file 'src/datacontainer.h'     */
+/* modified 2021-03-29T02:30:44, size 34070 */
 
 /*! \relates QCPDataContainer
   Returns whether the sort key of \a a is less than the sort key of \a b.
@@ -2470,11 +2631,9 @@ protected:
   void performAutoSqueeze();
 };
 
+
+
 // include implementation in header since it is a class template:
-
-/* including file 'src/datacontainer.cpp', size 31363                        */
-/* commit 9c5c5ef70ed9555e33767915e021029956de04de 2019-02-17 22:01:55 +0100 */
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPDataContainer
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2771,7 +2930,7 @@ void QCPDataContainer<DataType>::removeBefore(double sortKey)
 {
   QCPDataContainer<DataType>::iterator it = begin();
   QCPDataContainer<DataType>::iterator itEnd = std::lower_bound(begin(), end(), DataType::fromSortKey(sortKey), qcpLessThanSortKey<DataType>);
-  mPreallocSize += itEnd-it; // don't actually delete, just add it to the preallocated block (if it gets too large, squeeze will take care of it)
+  mPreallocSize += int(itEnd-it); // don't actually delete, just add it to the preallocated block (if it gets too large, squeeze will take care of it)
   if (mAutoSqueeze)
     performAutoSqueeze();
 }
@@ -3175,7 +3334,7 @@ QCPRange QCPDataContainer<DataType>::valueRange(bool &foundRange, QCP::SignDomai
 template <class DataType>
 void QCPDataContainer<DataType>::limitIteratorsToDataRange(const_iterator &begin, const_iterator &end, const QCPDataRange &dataRange) const
 {
-  QCPDataRange iteratorRange(begin-constBegin(), end-constBegin());
+  QCPDataRange iteratorRange(int(begin-constBegin()), int(end-constBegin()));
   iteratorRange = iteratorRange.bounded(dataRange.bounded(this->dataRange()));
   begin = constBegin()+iteratorRange.begin();
   end = constBegin()+iteratorRange.end();
@@ -3241,14 +3400,13 @@ void QCPDataContainer<DataType>::performAutoSqueeze()
   if (shrinkPreAllocation || shrinkPostAllocation)
     squeeze(shrinkPreAllocation, shrinkPostAllocation);
 }
-/* end of 'src/datacontainer.cpp' */
 
 
 /* end of 'src/datacontainer.h' */
 
 
-/* including file 'src/plottable.h', size 8461                               */
-/* commit b84fecfc8bfbcd86c5471ac88847a176984ae232 2020-04-11 01:51:46 +0200 */
+/* including file 'src/plottable.h'        */
+/* modified 2021-03-29T02:30:44, size 8461 */
 
 class QCP_LIB_DECL QCPSelectionDecorator
 {
@@ -3404,8 +3562,8 @@ private:
 /* end of 'src/plottable.h' */
 
 
-/* including file 'src/item.h', size 9425                                    */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/item.h'             */
+/* modified 2021-03-29T02:30:44, size 9425 */
 
 class QCP_LIB_DECL QCPItemAnchor
 {
@@ -3589,8 +3747,8 @@ private:
 /* end of 'src/item.h' */
 
 
-/* including file 'src/core.h', size 19288                                   */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/core.h'              */
+/* modified 2021-03-29T02:30:44, size 19304 */
 
 class QCP_LIB_DECL QCustomPlot : public QWidget
 {
@@ -3767,6 +3925,7 @@ signals:
   
   void selectionChangedByUser();
   void beforeReplot();
+  void afterLayout();
   void afterReplot();
   
 protected:
@@ -3877,7 +4036,7 @@ Q_DECLARE_METATYPE(QCustomPlot::RefreshPriority)
   if \a dataIndex is non-null, it is set to the index of the plottable's data point that is closest
   to \a pos.
 
-  If there is no plottable of the specified type at \a pos, the return value is 0.
+  If there is no plottable of the specified type at \a pos, returns \c nullptr.
   
   \see itemAt, layoutElementAt
 */
@@ -3924,7 +4083,7 @@ PlottableType *QCustomPlot::plottableAt(const QPointF &pos, bool onlySelectable,
   If \a onlySelectable is true, only items that are selectable (QCPAbstractItem::setSelectable) are
   considered.
   
-  If there is no item at \a pos, the return value is 0.
+  If there is no item at \a pos, returns \c nullptr.
   
   \see plottableAt, layoutElementAt
 */
@@ -3958,8 +4117,8 @@ ItemType *QCustomPlot::itemAt(const QPointF &pos, bool onlySelectable) const
 /* end of 'src/core.h' */
 
 
-/* including file 'src/plottable1d.h', size 4574                             */
-/* commit 47d131e1ac30267dc948348a51b4f7d168283fe1 2020-05-02 21:40:17 +0200 */
+/* including file 'src/plottable1d.h'       */
+/* modified 2021-03-29T02:30:44, size 25638 */
 
 class QCPPlottableInterface1D
 {
@@ -4016,12 +4175,9 @@ private:
   
 };
 
+
+
 // include implementation in header since it is a class template:
-
-/* including file 'src/plottable1d.cpp', size 22362                          */
-/* commit 47d131e1ac30267dc948348a51b4f7d168283fe1 2020-05-02 21:40:17 +0200 */
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPPlottableInterface1D
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4356,16 +4512,16 @@ QCPDataSelection QCPAbstractPlottable1D<DataType>::selectTestRect(const QRectF &
     if (currentSegmentBegin == -1)
     {
       if (valueRange.contains(it->mainValue()) && keyRange.contains(it->mainKey())) // start segment
-        currentSegmentBegin = it-mDataContainer->constBegin();
+        currentSegmentBegin = int(it-mDataContainer->constBegin());
     } else if (!valueRange.contains(it->mainValue()) || !keyRange.contains(it->mainKey())) // segment just ended
     {
-      result.addDataRange(QCPDataRange(currentSegmentBegin, it-mDataContainer->constBegin()), false);
+      result.addDataRange(QCPDataRange(currentSegmentBegin, int(it-mDataContainer->constBegin())), false);
       currentSegmentBegin = -1;
     }
   }
   // process potential last segment:
   if (currentSegmentBegin != -1)
-    result.addDataRange(QCPDataRange(currentSegmentBegin, end-mDataContainer->constBegin()), false);
+    result.addDataRange(QCPDataRange(currentSegmentBegin, int(end-mDataContainer->constBegin())), false);
   
   result.simplify();
   return result;
@@ -4377,7 +4533,7 @@ QCPDataSelection QCPAbstractPlottable1D<DataType>::selectTestRect(const QRectF &
 template <class DataType>
 int QCPAbstractPlottable1D<DataType>::findBegin(double sortKey, bool expandedRange) const
 {
-  return mDataContainer->findBegin(sortKey, expandedRange)-mDataContainer->constBegin();
+  return int(mDataContainer->findBegin(sortKey, expandedRange)-mDataContainer->constBegin());
 }
 
 /*!
@@ -4386,7 +4542,7 @@ int QCPAbstractPlottable1D<DataType>::findBegin(double sortKey, bool expandedRan
 template <class DataType>
 int QCPAbstractPlottable1D<DataType>::findEnd(double sortKey, bool expandedRange) const
 {
-  return mDataContainer->findEnd(sortKey, expandedRange)-mDataContainer->constBegin();
+  return int(mDataContainer->findEnd(sortKey, expandedRange)-mDataContainer->constBegin());
 }
 
 /*!
@@ -4438,7 +4594,7 @@ double QCPAbstractPlottable1D<DataType>::selectTest(const QPointF &pos, bool onl
       if (currentDistSqr < minDistSqr)
       {
         minDistSqr = currentDistSqr;
-        minDistIndex = it-mDataContainer->constBegin();
+        minDistIndex = int(it-mDataContainer->constBegin());
       }
     }
   }
@@ -4494,6 +4650,18 @@ void QCPAbstractPlottable1D<DataType>::getDataSegments(QList<QCPDataRange> &sele
 template <class DataType>
 void QCPAbstractPlottable1D<DataType>::drawPolyline(QCPPainter *painter, const QVector<QPointF> &lineData) const
 {
+  // if drawing lines in plot (instead of PDF), reduce 1px lines to cosmetic, because at least in
+  // Qt6 drawing of "1px" width lines is much slower even though it has same appearance apart from
+  // High-DPI. In High-DPI cases people must set a pen width slightly larger than 1.0 to get
+  // correct DPI scaling of width, but of course with performance penalty.
+  if (!painter->modes().testFlag(QCPPainter::pmVectorized) &&
+      qFuzzyCompare(painter->pen().widthF(), 1.0))
+  {
+    QPen newPen = painter->pen();
+    newPen.setWidth(0);
+    painter->setPen(newPen);
+  }
+
   // if drawing solid line and not in PDF, use much faster line drawing instead of polyline:
   if (mParentPlot->plottingHints().testFlag(QCP::phFastPolylines) &&
       painter->pen().style() == Qt::SolidLine &&
@@ -4536,14 +4704,13 @@ void QCPAbstractPlottable1D<DataType>::drawPolyline(QCPPainter *painter, const Q
     painter->drawPolyline(lineData.constData()+segmentStart, lineDataSize-segmentStart);
   }
 }
-/* end of 'src/plottable1d.cpp' */
 
 
 /* end of 'src/plottable1d.h' */
 
 
-/* including file 'src/colorgradient.h', size 7262                           */
-/* commit 07a7483a7f6afa0467139730111b075464405920 2019-10-18 18:57:23 +0200 */
+/* including file 'src/colorgradient.h'    */
+/* modified 2021-03-29T02:30:44, size 7262 */
 
 class QCP_LIB_DECL QCPColorGradient
 {
@@ -4645,8 +4812,8 @@ Q_DECLARE_METATYPE(QCPColorGradient::GradientPreset)
 /* end of 'src/colorgradient.h' */
 
 
-/* including file 'src/selectiondecorator-bracket.h', size 4458              */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/selectiondecorator-bracket.h' */
+/* modified 2021-03-29T02:30:44, size 4458           */
 
 class QCP_LIB_DECL QCPSelectionDecoratorBracket : public QCPSelectionDecorator
 {
@@ -4714,8 +4881,8 @@ Q_DECLARE_METATYPE(QCPSelectionDecoratorBracket::BracketStyle)
 /* end of 'src/selectiondecorator-bracket.h' */
 
 
-/* including file 'src/layoutelements/layoutelement-axisrect.h', size 7529   */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/layoutelements/layoutelement-axisrect.h' */
+/* modified 2021-03-29T02:30:44, size 7529                      */
 
 class QCP_LIB_DECL QCPAxisRect : public QCPLayoutElement
 {
@@ -4840,8 +5007,8 @@ private:
 /* end of 'src/layoutelements/layoutelement-axisrect.h' */
 
 
-/* including file 'src/layoutelements/layoutelement-legend.h', size 10425    */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/layoutelements/layoutelement-legend.h' */
+/* modified 2021-03-29T02:30:44, size 10425                   */
 
 class QCP_LIB_DECL QCPAbstractLegendItem : public QCPLayoutElement
 {
@@ -5058,8 +5225,8 @@ Q_DECLARE_METATYPE(QCPLegend::SelectablePart)
 /* end of 'src/layoutelements/layoutelement-legend.h' */
 
 
-/* including file 'src/layoutelements/layoutelement-textelement.h', size 5359 */
-/* commit 9277a043b77617fddbd226f2625a91c504ebb70e 2020-02-23 00:49:18 +0100  */
+/* including file 'src/layoutelements/layoutelement-textelement.h' */
+/* modified 2021-03-29T02:30:44, size 5359                         */
 
 class QCP_LIB_DECL QCPTextElement : public QCPLayoutElement
 {
@@ -5145,8 +5312,8 @@ private:
 /* end of 'src/layoutelements/layoutelement-textelement.h' */
 
 
-/* including file 'src/layoutelements/layoutelement-colorscale.h', size 5939 */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/layoutelements/layoutelement-colorscale.h' */
+/* modified 2021-03-29T02:30:44, size 5939                        */
 
 
 class QCPColorScaleAxisRectPrivate : public QCPAxisRect
@@ -5253,8 +5420,8 @@ private:
 /* end of 'src/layoutelements/layoutelement-colorscale.h' */
 
 
-/* including file 'src/plottables/plottable-graph.h', size 9316              */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-graph.h' */
+/* modified 2021-03-29T02:30:44, size 9316           */
 
 class QCP_LIB_DECL QCPGraphData
 {
@@ -5392,8 +5559,8 @@ Q_DECLARE_METATYPE(QCPGraph::LineStyle)
 /* end of 'src/plottables/plottable-graph.h' */
 
 
-/* including file 'src/plottables/plottable-curve.h', size 7434              */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-curve.h' */
+/* modified 2021-03-29T02:30:44, size 7434           */
 
 class QCP_LIB_DECL QCPCurveData
 {
@@ -5507,8 +5674,8 @@ Q_DECLARE_METATYPE(QCPCurve::LineStyle)
 /* end of 'src/plottables/plottable-curve.h' */
 
 
-/* including file 'src/plottables/plottable-bars.h', size 8955               */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-bars.h' */
+/* modified 2021-03-29T02:30:44, size 8955          */
 
 class QCP_LIB_DECL QCPBarsGroup : public QObject
 {
@@ -5695,8 +5862,8 @@ Q_DECLARE_METATYPE(QCPBars::WidthType)
 /* end of 'src/plottables/plottable-bars.h' */
 
 
-/* including file 'src/plottables/plottable-statisticalbox.h', size 7522     */
-/* commit 9277a043b77617fddbd226f2625a91c504ebb70e 2020-02-23 00:49:18 +0100 */
+/* including file 'src/plottables/plottable-statisticalbox.h' */
+/* modified 2021-03-29T02:30:44, size 7522                    */
 
 class QCP_LIB_DECL QCPStatisticalBoxData
 {
@@ -5812,8 +5979,8 @@ protected:
 /* end of 'src/plottables/plottable-statisticalbox.h' */
 
 
-/* including file 'src/plottables/plottable-colormap.h', size 7092           */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-colormap.h' */
+/* modified 2021-03-29T02:30:44, size 7092              */
 
 class QCP_LIB_DECL QCPColorMapData
 {
@@ -5948,8 +6115,8 @@ protected:
 /* end of 'src/plottables/plottable-colormap.h' */
 
 
-/* including file 'src/plottables/plottable-financial.h', size 8644          */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-financial.h' */
+/* modified 2021-03-29T02:30:44, size 8644               */
 
 class QCP_LIB_DECL QCPFinancialData
 {
@@ -6087,8 +6254,8 @@ Q_DECLARE_METATYPE(QCPFinancial::ChartStyle)
 /* end of 'src/plottables/plottable-financial.h' */
 
 
-/* including file 'src/plottables/plottable-errorbar.h', size 7749           */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/plottables/plottable-errorbar.h' */
+/* modified 2021-03-29T02:30:44, size 7749              */
 
 class QCP_LIB_DECL QCPErrorBarsData
 {
@@ -6212,8 +6379,8 @@ protected:
 /* end of 'src/plottables/plottable-errorbar.h' */
 
 
-/* including file 'src/items/item-straightline.h', size 3137                 */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-straightline.h' */
+/* modified 2021-03-29T02:30:44, size 3137        */
 
 class QCP_LIB_DECL QCPItemStraightLine : public QCPAbstractItem
 {
@@ -6255,8 +6422,8 @@ protected:
 /* end of 'src/items/item-straightline.h' */
 
 
-/* including file 'src/items/item-line.h', size 3429                         */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-line.h'  */
+/* modified 2021-03-29T02:30:44, size 3429 */
 
 class QCP_LIB_DECL QCPItemLine : public QCPAbstractItem
 {
@@ -6305,8 +6472,8 @@ protected:
 /* end of 'src/items/item-line.h' */
 
 
-/* including file 'src/items/item-curve.h', size 3401                        */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-curve.h' */
+/* modified 2021-03-29T02:30:44, size 3401 */
 
 class QCP_LIB_DECL QCPItemCurve : public QCPAbstractItem
 {
@@ -6356,8 +6523,8 @@ protected:
 /* end of 'src/items/item-curve.h' */
 
 
-/* including file 'src/items/item-rect.h', size 3710                         */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-rect.h'  */
+/* modified 2021-03-29T02:30:44, size 3710 */
 
 class QCP_LIB_DECL QCPItemRect : public QCPAbstractItem
 {
@@ -6415,8 +6582,8 @@ protected:
 /* end of 'src/items/item-rect.h' */
 
 
-/* including file 'src/items/item-text.h', size 5576                         */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-text.h'  */
+/* modified 2021-03-29T02:30:44, size 5576 */
 
 class QCP_LIB_DECL QCPItemText : public QCPAbstractItem
 {
@@ -6512,8 +6679,8 @@ protected:
 /* end of 'src/items/item-text.h' */
 
 
-/* including file 'src/items/item-ellipse.h', size 3890                      */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-ellipse.h' */
+/* modified 2021-03-29T02:30:44, size 3890   */
 
 class QCP_LIB_DECL QCPItemEllipse : public QCPAbstractItem
 {
@@ -6574,8 +6741,8 @@ protected:
 /* end of 'src/items/item-ellipse.h' */
 
 
-/* including file 'src/items/item-pixmap.h', size 4407                       */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-pixmap.h' */
+/* modified 2021-03-29T02:30:44, size 4407  */
 
 class QCP_LIB_DECL QCPItemPixmap : public QCPAbstractItem
 {
@@ -6643,8 +6810,8 @@ protected:
 /* end of 'src/items/item-pixmap.h' */
 
 
-/* including file 'src/items/item-tracer.h', size 4784                       */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-tracer.h' */
+/* modified 2021-03-29T02:30:44, size 4811  */
 
 class QCP_LIB_DECL QCPItemTracer : public QCPAbstractItem
 {
@@ -6729,8 +6896,8 @@ Q_DECLARE_METATYPE(QCPItemTracer::TracerStyle)
 /* end of 'src/items/item-tracer.h' */
 
 
-/* including file 'src/items/item-bracket.h', size 3991                      */
-/* commit c8ba5104520628815ee18bf3e2df4612843a693e 2020-04-11 01:11:48 +0200 */
+/* including file 'src/items/item-bracket.h' */
+/* modified 2021-03-29T02:30:44, size 3991   */
 
 class QCP_LIB_DECL QCPItemBracket : public QCPAbstractItem
 {
@@ -6794,6 +6961,776 @@ protected:
 Q_DECLARE_METATYPE(QCPItemBracket::BracketStyle)
 
 /* end of 'src/items/item-bracket.h' */
+
+
+/* including file 'src/polar/radialaxis.h'  */
+/* modified 2021-03-29T02:30:44, size 12227 */
+
+
+class QCP_LIB_DECL QCPPolarAxisRadial : public QCPLayerable
+{
+  Q_OBJECT
+  /// \cond INCLUDE_QPROPERTIES
+  
+  /// \endcond
+public:
+  /*!
+    Defines the reference of the angle at which a radial axis is tilted (\ref setAngle).
+  */
+  enum AngleReference { arAbsolute    ///< The axis tilt is given in absolute degrees. The zero is to the right and positive angles are measured counter-clockwise.
+                       ,arAngularAxis ///< The axis tilt is measured in the angular coordinate system given by the parent angular axis.
+                      };
+  Q_ENUMS(AngleReference)
+  /*!
+    Defines the scale of an axis.
+    \see setScaleType
+  */
+  enum ScaleType { stLinear       ///< Linear scaling
+                   ,stLogarithmic ///< Logarithmic scaling with correspondingly transformed axis coordinates (possibly also \ref setTicker to a \ref QCPAxisTickerLog instance).
+                 };
+  Q_ENUMS(ScaleType)
+  /*!
+    Defines the selectable parts of an axis.
+    \see setSelectableParts, setSelectedParts
+  */
+  enum SelectablePart { spNone        = 0      ///< None of the selectable parts
+                        ,spAxis       = 0x001  ///< The axis backbone and tick marks
+                        ,spTickLabels = 0x002  ///< Tick labels (numbers) of this axis (as a whole, not individually)
+                        ,spAxisLabel  = 0x004  ///< The axis label
+                      };
+  Q_ENUMS(SelectablePart)
+  Q_FLAGS(SelectableParts)
+  Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
+  
+  enum LabelMode { lmUpright   ///< 
+                   ,lmRotated ///< 
+                 };
+  Q_ENUMS(LabelMode)
+  
+  explicit QCPPolarAxisRadial(QCPPolarAxisAngular *parent);
+  virtual ~QCPPolarAxisRadial();
+  
+  // getters:
+  bool rangeDrag() const { return mRangeDrag; }
+  bool rangeZoom() const { return mRangeZoom; }
+  double rangeZoomFactor() const { return mRangeZoomFactor; }
+  
+  QCPPolarAxisAngular *angularAxis() const { return mAngularAxis; }
+  ScaleType scaleType() const { return mScaleType; }
+  const QCPRange range() const { return mRange; }
+  bool rangeReversed() const { return mRangeReversed; }
+  double angle() const { return mAngle; }
+  AngleReference angleReference() const { return mAngleReference; }
+  QSharedPointer<QCPAxisTicker> ticker() const { return mTicker; }
+  bool ticks() const { return mTicks; }
+  bool tickLabels() const { return mTickLabels; }
+  int tickLabelPadding() const { return mLabelPainter.padding(); }
+  QFont tickLabelFont() const { return mTickLabelFont; }
+  QColor tickLabelColor() const { return mTickLabelColor; }
+  double tickLabelRotation() const { return mLabelPainter.rotation(); }
+  LabelMode tickLabelMode() const;
+  QString numberFormat() const;
+  int numberPrecision() const { return mNumberPrecision; }
+  QVector<double> tickVector() const { return mTickVector; }
+  QVector<double> subTickVector() const { return mSubTickVector; }
+  QVector<QString> tickVectorLabels() const { return mTickVectorLabels; }
+  int tickLengthIn() const;
+  int tickLengthOut() const;
+  bool subTicks() const { return mSubTicks; }
+  int subTickLengthIn() const;
+  int subTickLengthOut() const;
+  QPen basePen() const { return mBasePen; }
+  QPen tickPen() const { return mTickPen; }
+  QPen subTickPen() const { return mSubTickPen; }
+  QFont labelFont() const { return mLabelFont; }
+  QColor labelColor() const { return mLabelColor; }
+  QString label() const { return mLabel; }
+  int labelPadding() const;
+  SelectableParts selectedParts() const { return mSelectedParts; }
+  SelectableParts selectableParts() const { return mSelectableParts; }
+  QFont selectedTickLabelFont() const { return mSelectedTickLabelFont; }
+  QFont selectedLabelFont() const { return mSelectedLabelFont; }
+  QColor selectedTickLabelColor() const { return mSelectedTickLabelColor; }
+  QColor selectedLabelColor() const { return mSelectedLabelColor; }
+  QPen selectedBasePen() const { return mSelectedBasePen; }
+  QPen selectedTickPen() const { return mSelectedTickPen; }
+  QPen selectedSubTickPen() const { return mSelectedSubTickPen; }
+  
+  // setters:
+  void setRangeDrag(bool enabled);
+  void setRangeZoom(bool enabled);
+  void setRangeZoomFactor(double factor);
+  
+  Q_SLOT void setScaleType(QCPPolarAxisRadial::ScaleType type);
+  Q_SLOT void setRange(const QCPRange &range);
+  void setRange(double lower, double upper);
+  void setRange(double position, double size, Qt::AlignmentFlag alignment);
+  void setRangeLower(double lower);
+  void setRangeUpper(double upper);
+  void setRangeReversed(bool reversed);
+  void setAngle(double degrees);
+  void setAngleReference(AngleReference reference);
+  void setTicker(QSharedPointer<QCPAxisTicker> ticker);
+  void setTicks(bool show);
+  void setTickLabels(bool show);
+  void setTickLabelPadding(int padding);
+  void setTickLabelFont(const QFont &font);
+  void setTickLabelColor(const QColor &color);
+  void setTickLabelRotation(double degrees);
+  void setTickLabelMode(LabelMode mode);
+  void setNumberFormat(const QString &formatCode);
+  void setNumberPrecision(int precision);
+  void setTickLength(int inside, int outside=0);
+  void setTickLengthIn(int inside);
+  void setTickLengthOut(int outside);
+  void setSubTicks(bool show);
+  void setSubTickLength(int inside, int outside=0);
+  void setSubTickLengthIn(int inside);
+  void setSubTickLengthOut(int outside);
+  void setBasePen(const QPen &pen);
+  void setTickPen(const QPen &pen);
+  void setSubTickPen(const QPen &pen);
+  void setLabelFont(const QFont &font);
+  void setLabelColor(const QColor &color);
+  void setLabel(const QString &str);
+  void setLabelPadding(int padding);
+  void setSelectedTickLabelFont(const QFont &font);
+  void setSelectedLabelFont(const QFont &font);
+  void setSelectedTickLabelColor(const QColor &color);
+  void setSelectedLabelColor(const QColor &color);
+  void setSelectedBasePen(const QPen &pen);
+  void setSelectedTickPen(const QPen &pen);
+  void setSelectedSubTickPen(const QPen &pen);
+  Q_SLOT void setSelectableParts(const QCPPolarAxisRadial::SelectableParts &selectableParts);
+  Q_SLOT void setSelectedParts(const QCPPolarAxisRadial::SelectableParts &selectedParts);
+  
+  // reimplemented virtual methods:
+  virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=0) const Q_DECL_OVERRIDE;
+  
+  // non-property methods:
+  void moveRange(double diff);
+  void scaleRange(double factor);
+  void scaleRange(double factor, double center);
+  void rescale(bool onlyVisiblePlottables=false);
+  void pixelToCoord(QPointF pixelPos, double &angleCoord, double &radiusCoord) const;
+  QPointF coordToPixel(double angleCoord, double radiusCoord) const;
+  double coordToRadius(double coord) const;
+  double radiusToCoord(double radius) const;
+  SelectablePart getPartAt(const QPointF &pos) const;
+  
+signals:
+  void rangeChanged(const QCPRange &newRange);
+  void rangeChanged(const QCPRange &newRange, const QCPRange &oldRange);
+  void scaleTypeChanged(QCPPolarAxisRadial::ScaleType scaleType);
+  void selectionChanged(const QCPPolarAxisRadial::SelectableParts &parts);
+  void selectableChanged(const QCPPolarAxisRadial::SelectableParts &parts);
+
+protected:
+  // property members:
+  bool mRangeDrag;
+  bool mRangeZoom;
+  double mRangeZoomFactor;
+  
+  // axis base:
+  QCPPolarAxisAngular *mAngularAxis;
+  double mAngle;
+  AngleReference mAngleReference;
+  SelectableParts mSelectableParts, mSelectedParts;
+  QPen mBasePen, mSelectedBasePen;
+  // axis label:
+  int mLabelPadding;
+  QString mLabel;
+  QFont mLabelFont, mSelectedLabelFont;
+  QColor mLabelColor, mSelectedLabelColor;
+  // tick labels:
+  //int mTickLabelPadding; in label painter
+  bool mTickLabels;
+  //double mTickLabelRotation; in label painter
+  QFont mTickLabelFont, mSelectedTickLabelFont;
+  QColor mTickLabelColor, mSelectedTickLabelColor;
+  int mNumberPrecision;
+  QLatin1Char mNumberFormatChar;
+  bool mNumberBeautifulPowers;
+  bool mNumberMultiplyCross;
+  // ticks and subticks:
+  bool mTicks;
+  bool mSubTicks;
+  int mTickLengthIn, mTickLengthOut, mSubTickLengthIn, mSubTickLengthOut;
+  QPen mTickPen, mSelectedTickPen;
+  QPen mSubTickPen, mSelectedSubTickPen;
+  // scale and range:
+  QCPRange mRange;
+  bool mRangeReversed;
+  ScaleType mScaleType;
+  
+  // non-property members:
+  QPointF mCenter;
+  double mRadius;
+  QSharedPointer<QCPAxisTicker> mTicker;
+  QVector<double> mTickVector;
+  QVector<QString> mTickVectorLabels;
+  QVector<double> mSubTickVector;
+  bool mDragging;
+  QCPRange mDragStartRange;
+  QCP::AntialiasedElements mAADragBackup, mNotAADragBackup;
+  QCPLabelPainterPrivate mLabelPainter;
+  
+  // reimplemented virtual methods:
+  virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;
+  virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;
+  virtual QCP::Interaction selectionCategory() const Q_DECL_OVERRIDE;
+  // events:
+  virtual void selectEvent(QMouseEvent *event, bool additive, const QVariant &details, bool *selectionStateChanged) Q_DECL_OVERRIDE;
+  virtual void deselectEvent(bool *selectionStateChanged) Q_DECL_OVERRIDE;
+  // mouse events:
+  virtual void mousePressEvent(QMouseEvent *event, const QVariant &details) Q_DECL_OVERRIDE;
+  virtual void mouseMoveEvent(QMouseEvent *event, const QPointF &startPos) Q_DECL_OVERRIDE;
+  virtual void mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos) Q_DECL_OVERRIDE;
+  virtual void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
+  
+  // non-virtual methods:
+  void updateGeometry(const QPointF &center, double radius);
+  void setupTickVectors();
+  QPen getBasePen() const;
+  QPen getTickPen() const;
+  QPen getSubTickPen() const;
+  QFont getTickLabelFont() const;
+  QFont getLabelFont() const;
+  QColor getTickLabelColor() const;
+  QColor getLabelColor() const;
+  
+private:
+  Q_DISABLE_COPY(QCPPolarAxisRadial)
+  
+  friend class QCustomPlot;
+  friend class QCPPolarAxisAngular;
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCPPolarAxisRadial::SelectableParts)
+Q_DECLARE_METATYPE(QCPPolarAxisRadial::AngleReference)
+Q_DECLARE_METATYPE(QCPPolarAxisRadial::ScaleType)
+Q_DECLARE_METATYPE(QCPPolarAxisRadial::SelectablePart)
+
+
+
+/* end of 'src/polar/radialaxis.h' */
+
+
+/* including file 'src/polar/layoutelement-angularaxis.h' */
+/* modified 2021-03-29T02:30:44, size 13461               */
+
+class QCP_LIB_DECL QCPPolarAxisAngular : public QCPLayoutElement
+{
+  Q_OBJECT
+  /// \cond INCLUDE_QPROPERTIES
+  
+  /// \endcond
+public:
+  /*!
+    Defines the selectable parts of an axis.
+    \see setSelectableParts, setSelectedParts
+  */
+  enum SelectablePart { spNone        = 0      ///< None of the selectable parts
+                        ,spAxis       = 0x001  ///< The axis backbone and tick marks
+                        ,spTickLabels = 0x002  ///< Tick labels (numbers) of this axis (as a whole, not individually)
+                        ,spAxisLabel  = 0x004  ///< The axis label
+                      };
+  Q_ENUMS(SelectablePart)
+  Q_FLAGS(SelectableParts)
+  Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
+  
+  /*!
+    TODO
+  */
+  enum LabelMode { lmUpright   ///< 
+                   ,lmRotated ///< 
+                 };
+  Q_ENUMS(LabelMode)
+  
+  explicit QCPPolarAxisAngular(QCustomPlot *parentPlot);
+  virtual ~QCPPolarAxisAngular();
+  
+  // getters:
+  QPixmap background() const { return mBackgroundPixmap; }
+  QBrush backgroundBrush() const { return mBackgroundBrush; }
+  bool backgroundScaled() const { return mBackgroundScaled; }
+  Qt::AspectRatioMode backgroundScaledMode() const { return mBackgroundScaledMode; }
+  bool rangeDrag() const { return mRangeDrag; }
+  bool rangeZoom() const { return mRangeZoom; }
+  double rangeZoomFactor() const { return mRangeZoomFactor; }
+  
+  const QCPRange range() const { return mRange; }
+  bool rangeReversed() const { return mRangeReversed; }
+  double angle() const { return mAngle; }
+  QSharedPointer<QCPAxisTicker> ticker() const { return mTicker; }
+  bool ticks() const { return mTicks; }
+  bool tickLabels() const { return mTickLabels; }
+  int tickLabelPadding() const { return mLabelPainter.padding(); }
+  QFont tickLabelFont() const { return mTickLabelFont; }
+  QColor tickLabelColor() const { return mTickLabelColor; }
+  double tickLabelRotation() const { return mLabelPainter.rotation(); }
+  LabelMode tickLabelMode() const;
+  QString numberFormat() const;
+  int numberPrecision() const { return mNumberPrecision; }
+  QVector<double> tickVector() const { return mTickVector; }
+  QVector<QString> tickVectorLabels() const { return mTickVectorLabels; }
+  int tickLengthIn() const { return mTickLengthIn; }
+  int tickLengthOut() const { return mTickLengthOut; }
+  bool subTicks() const { return mSubTicks; }
+  int subTickLengthIn() const { return mSubTickLengthIn; }
+  int subTickLengthOut() const { return mSubTickLengthOut; }
+  QPen basePen() const { return mBasePen; }
+  QPen tickPen() const { return mTickPen; }
+  QPen subTickPen() const { return mSubTickPen; }
+  QFont labelFont() const { return mLabelFont; }
+  QColor labelColor() const { return mLabelColor; }
+  QString label() const { return mLabel; }
+  int labelPadding() const { return mLabelPadding; }
+  SelectableParts selectedParts() const { return mSelectedParts; }
+  SelectableParts selectableParts() const { return mSelectableParts; }
+  QFont selectedTickLabelFont() const { return mSelectedTickLabelFont; }
+  QFont selectedLabelFont() const { return mSelectedLabelFont; }
+  QColor selectedTickLabelColor() const { return mSelectedTickLabelColor; }
+  QColor selectedLabelColor() const { return mSelectedLabelColor; }
+  QPen selectedBasePen() const { return mSelectedBasePen; }
+  QPen selectedTickPen() const { return mSelectedTickPen; }
+  QPen selectedSubTickPen() const { return mSelectedSubTickPen; }
+  QCPPolarGrid *grid() const { return mGrid; }
+  
+  // setters:
+  void setBackground(const QPixmap &pm);
+  void setBackground(const QPixmap &pm, bool scaled, Qt::AspectRatioMode mode=Qt::KeepAspectRatioByExpanding);
+  void setBackground(const QBrush &brush);
+  void setBackgroundScaled(bool scaled);
+  void setBackgroundScaledMode(Qt::AspectRatioMode mode);
+  void setRangeDrag(bool enabled);
+  void setRangeZoom(bool enabled);
+  void setRangeZoomFactor(double factor);
+  
+  Q_SLOT void setRange(const QCPRange &range);
+  void setRange(double lower, double upper);
+  void setRange(double position, double size, Qt::AlignmentFlag alignment);
+  void setRangeLower(double lower);
+  void setRangeUpper(double upper);
+  void setRangeReversed(bool reversed);
+  void setAngle(double degrees);
+  void setTicker(QSharedPointer<QCPAxisTicker> ticker);
+  void setTicks(bool show);
+  void setTickLabels(bool show);
+  void setTickLabelPadding(int padding);
+  void setTickLabelFont(const QFont &font);
+  void setTickLabelColor(const QColor &color);
+  void setTickLabelRotation(double degrees);
+  void setTickLabelMode(LabelMode mode);
+  void setNumberFormat(const QString &formatCode);
+  void setNumberPrecision(int precision);
+  void setTickLength(int inside, int outside=0);
+  void setTickLengthIn(int inside);
+  void setTickLengthOut(int outside);
+  void setSubTicks(bool show);
+  void setSubTickLength(int inside, int outside=0);
+  void setSubTickLengthIn(int inside);
+  void setSubTickLengthOut(int outside);
+  void setBasePen(const QPen &pen);
+  void setTickPen(const QPen &pen);
+  void setSubTickPen(const QPen &pen);
+  void setLabelFont(const QFont &font);
+  void setLabelColor(const QColor &color);
+  void setLabel(const QString &str);
+  void setLabelPadding(int padding);
+  void setLabelPosition(Qt::AlignmentFlag position);
+  void setSelectedTickLabelFont(const QFont &font);
+  void setSelectedLabelFont(const QFont &font);
+  void setSelectedTickLabelColor(const QColor &color);
+  void setSelectedLabelColor(const QColor &color);
+  void setSelectedBasePen(const QPen &pen);
+  void setSelectedTickPen(const QPen &pen);
+  void setSelectedSubTickPen(const QPen &pen);
+  Q_SLOT void setSelectableParts(const QCPPolarAxisAngular::SelectableParts &selectableParts);
+  Q_SLOT void setSelectedParts(const QCPPolarAxisAngular::SelectableParts &selectedParts);
+  
+  // reimplemented virtual methods:
+  virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=0) const Q_DECL_OVERRIDE;
+  virtual void update(UpdatePhase phase) Q_DECL_OVERRIDE;
+  virtual QList<QCPLayoutElement*> elements(bool recursive) const Q_DECL_OVERRIDE;
+  
+  // non-property methods:
+  bool removeGraph(QCPPolarGraph *graph);
+  int radialAxisCount() const;
+  QCPPolarAxisRadial *radialAxis(int index=0) const;
+  QList<QCPPolarAxisRadial*> radialAxes() const;
+  QCPPolarAxisRadial *addRadialAxis(QCPPolarAxisRadial *axis=0);
+  bool removeRadialAxis(QCPPolarAxisRadial *axis);
+  QCPLayoutInset *insetLayout() const { return mInsetLayout; }
+  QRegion exactClipRegion() const;
+  
+  void moveRange(double diff);
+  void scaleRange(double factor);
+  void scaleRange(double factor, double center);
+  void rescale(bool onlyVisiblePlottables=false);
+  double coordToAngleRad(double coord) const { return mAngleRad+(coord-mRange.lower)/mRange.size()*(mRangeReversed ? -2.0*M_PI : 2.0*M_PI); } // mention in doc that return doesn't wrap
+  double angleRadToCoord(double angleRad) const { return mRange.lower+(angleRad-mAngleRad)/(mRangeReversed ? -2.0*M_PI : 2.0*M_PI)*mRange.size(); }
+  void pixelToCoord(QPointF pixelPos, double &angleCoord, double &radiusCoord) const;
+  QPointF coordToPixel(double angleCoord, double radiusCoord) const;
+  SelectablePart getPartAt(const QPointF &pos) const;
+  
+  // read-only interface imitating a QRect:
+  int left() const { return mRect.left(); }
+  int right() const { return mRect.right(); }
+  int top() const { return mRect.top(); }
+  int bottom() const { return mRect.bottom(); }
+  int width() const { return mRect.width(); }
+  int height() const { return mRect.height(); }
+  QSize size() const { return mRect.size(); }
+  QPoint topLeft() const { return mRect.topLeft(); }
+  QPoint topRight() const { return mRect.topRight(); }
+  QPoint bottomLeft() const { return mRect.bottomLeft(); }
+  QPoint bottomRight() const { return mRect.bottomRight(); }
+  QPointF center() const { return mCenter; }
+  double radius() const { return mRadius; }
+  
+signals:
+  void rangeChanged(const QCPRange &newRange);
+  void rangeChanged(const QCPRange &newRange, const QCPRange &oldRange);
+  void selectionChanged(const QCPPolarAxisAngular::SelectableParts &parts);
+  void selectableChanged(const QCPPolarAxisAngular::SelectableParts &parts);
+  
+protected:
+  // property members:
+  QBrush mBackgroundBrush;
+  QPixmap mBackgroundPixmap;
+  QPixmap mScaledBackgroundPixmap;
+  bool mBackgroundScaled;
+  Qt::AspectRatioMode mBackgroundScaledMode;
+  QCPLayoutInset *mInsetLayout;
+  bool mRangeDrag;
+  bool mRangeZoom;
+  double mRangeZoomFactor;
+  
+  // axis base:
+  double mAngle, mAngleRad;
+  SelectableParts mSelectableParts, mSelectedParts;
+  QPen mBasePen, mSelectedBasePen;
+  // axis label:
+  int mLabelPadding;
+  QString mLabel;
+  QFont mLabelFont, mSelectedLabelFont;
+  QColor mLabelColor, mSelectedLabelColor;
+  // tick labels:
+  //int mTickLabelPadding; in label painter
+  bool mTickLabels;
+  //double mTickLabelRotation; in label painter
+  QFont mTickLabelFont, mSelectedTickLabelFont;
+  QColor mTickLabelColor, mSelectedTickLabelColor;
+  int mNumberPrecision;
+  QLatin1Char mNumberFormatChar;
+  bool mNumberBeautifulPowers;
+  bool mNumberMultiplyCross;
+  // ticks and subticks:
+  bool mTicks;
+  bool mSubTicks;
+  int mTickLengthIn, mTickLengthOut, mSubTickLengthIn, mSubTickLengthOut;
+  QPen mTickPen, mSelectedTickPen;
+  QPen mSubTickPen, mSelectedSubTickPen;
+  // scale and range:
+  QCPRange mRange;
+  bool mRangeReversed;
+  
+  // non-property members:
+  QPointF mCenter;
+  double mRadius;
+  QList<QCPPolarAxisRadial*> mRadialAxes;
+  QCPPolarGrid *mGrid;
+  QList<QCPPolarGraph*> mGraphs;
+  QSharedPointer<QCPAxisTicker> mTicker;
+  QVector<double> mTickVector;
+  QVector<QString> mTickVectorLabels;
+  QVector<QPointF> mTickVectorCosSin;
+  QVector<double> mSubTickVector;
+  QVector<QPointF> mSubTickVectorCosSin;
+  bool mDragging;
+  QCPRange mDragAngularStart;
+  QList<QCPRange> mDragRadialStart;
+  QCP::AntialiasedElements mAADragBackup, mNotAADragBackup;
+  QCPLabelPainterPrivate mLabelPainter;
+  
+  // reimplemented virtual methods:
+  virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;
+  virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;
+  virtual QCP::Interaction selectionCategory() const Q_DECL_OVERRIDE;
+  // events:
+  virtual void mousePressEvent(QMouseEvent *event, const QVariant &details) Q_DECL_OVERRIDE;
+  virtual void mouseMoveEvent(QMouseEvent *event, const QPointF &startPos) Q_DECL_OVERRIDE;
+  virtual void mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos) Q_DECL_OVERRIDE;
+  virtual void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
+  
+  // non-virtual methods:
+  bool registerPolarGraph(QCPPolarGraph *graph);
+  void drawBackground(QCPPainter *painter, const QPointF &center, double radius);
+  void setupTickVectors();
+  QPen getBasePen() const;
+  QPen getTickPen() const;
+  QPen getSubTickPen() const;
+  QFont getTickLabelFont() const;
+  QFont getLabelFont() const;
+  QColor getTickLabelColor() const;
+  QColor getLabelColor() const;
+  
+private:
+  Q_DISABLE_COPY(QCPPolarAxisAngular)
+  
+  friend class QCustomPlot;
+  friend class QCPPolarGrid;
+  friend class QCPPolarGraph;
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCPPolarAxisAngular::SelectableParts)
+Q_DECLARE_METATYPE(QCPPolarAxisAngular::SelectablePart)
+
+/* end of 'src/polar/layoutelement-angularaxis.h' */
+
+
+/* including file 'src/polar/polargrid.h'  */
+/* modified 2021-03-29T02:30:44, size 4506 */
+
+class QCP_LIB_DECL QCPPolarGrid :public QCPLayerable
+{
+  Q_OBJECT
+  /// \cond INCLUDE_QPROPERTIES
+  
+  /// \endcond
+public:
+  /*!
+    TODO
+  */
+  enum GridType { gtAngular = 0x01 ///< 
+                  ,gtRadial = 0x02 ///< 
+                  ,gtAll    = 0xFF ///< 
+                  ,gtNone   = 0x00 ///< 
+                };
+  Q_ENUMS(GridType)
+  Q_FLAGS(GridTypes)
+  Q_DECLARE_FLAGS(GridTypes, GridType)
+  
+  explicit QCPPolarGrid(QCPPolarAxisAngular *parentAxis);
+  
+  // getters:
+  QCPPolarAxisRadial *radialAxis() const { return mRadialAxis.data(); }
+  GridTypes type() const { return mType; }
+  GridTypes subGridType() const { return mSubGridType; }
+  bool antialiasedSubGrid() const { return mAntialiasedSubGrid; }
+  bool antialiasedZeroLine() const { return mAntialiasedZeroLine; }
+  QPen angularPen() const { return mAngularPen; }
+  QPen angularSubGridPen() const { return mAngularSubGridPen; }
+  QPen radialPen() const { return mRadialPen; }
+  QPen radialSubGridPen() const { return mRadialSubGridPen; }
+  QPen radialZeroLinePen() const { return mRadialZeroLinePen; }
+  
+  // setters:
+  void setRadialAxis(QCPPolarAxisRadial *axis);
+  void setType(GridTypes type);
+  void setSubGridType(GridTypes type);
+  void setAntialiasedSubGrid(bool enabled);
+  void setAntialiasedZeroLine(bool enabled);
+  void setAngularPen(const QPen &pen);
+  void setAngularSubGridPen(const QPen &pen);
+  void setRadialPen(const QPen &pen);
+  void setRadialSubGridPen(const QPen &pen);
+  void setRadialZeroLinePen(const QPen &pen);
+  
+protected:
+  // property members:
+  GridTypes mType;
+  GridTypes mSubGridType;
+  bool mAntialiasedSubGrid, mAntialiasedZeroLine;
+  QPen mAngularPen, mAngularSubGridPen;
+  QPen mRadialPen, mRadialSubGridPen, mRadialZeroLinePen;
+  
+  // non-property members:
+  QCPPolarAxisAngular *mParentAxis;
+  QPointer<QCPPolarAxisRadial> mRadialAxis;
+  
+  // reimplemented virtual methods:
+  virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;
+  virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;
+  
+  // non-virtual methods:
+  void drawRadialGrid(QCPPainter *painter, const QPointF &center, const QVector<double> &coords, const QPen &pen, const QPen &zeroPen=Qt::NoPen);
+  void drawAngularGrid(QCPPainter *painter, const QPointF &center, double radius, const QVector<QPointF> &ticksCosSin, const QPen &pen);
+  
+private:
+  Q_DISABLE_COPY(QCPPolarGrid)
+  
+};
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCPPolarGrid::GridTypes)
+Q_DECLARE_METATYPE(QCPPolarGrid::GridType)
+
+
+/* end of 'src/polar/polargrid.h' */
+
+
+/* including file 'src/polar/polargraph.h' */
+/* modified 2021-03-29T02:30:44, size 9606 */
+
+
+class QCP_LIB_DECL QCPPolarLegendItem : public QCPAbstractLegendItem
+{
+  Q_OBJECT
+public:
+  QCPPolarLegendItem(QCPLegend *parent, QCPPolarGraph *graph);
+  
+  // getters:
+  QCPPolarGraph *polarGraph() { return mPolarGraph; }
+  
+protected:
+  // property members:
+  QCPPolarGraph *mPolarGraph;
+  
+  // reimplemented virtual methods:
+  virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;
+  virtual QSize minimumOuterSizeHint() const Q_DECL_OVERRIDE;
+  
+  // non-virtual methods:
+  QPen getIconBorderPen() const;
+  QColor getTextColor() const;
+  QFont getFont() const;
+};
+
+
+class QCP_LIB_DECL QCPPolarGraph : public QCPLayerable
+{
+  Q_OBJECT
+  /// \cond INCLUDE_QPROPERTIES
+  
+  /// \endcond
+public:
+  /*!
+    Defines how the graph's line is represented visually in the plot. The line is drawn with the
+    current pen of the graph (\ref setPen).
+    \see setLineStyle
+  */
+  enum LineStyle { lsNone        ///< data points are not connected with any lines (e.g. data only represented
+                                 ///< with symbols according to the scatter style, see \ref setScatterStyle)
+                   ,lsLine       ///< data points are connected by a straight line
+                 };
+  Q_ENUMS(LineStyle)
+  
+  QCPPolarGraph(QCPPolarAxisAngular *keyAxis, QCPPolarAxisRadial *valueAxis);
+  virtual ~QCPPolarGraph();
+  
+  // getters:
+  QString name() const { return mName; }
+  bool antialiasedFill() const { return mAntialiasedFill; }
+  bool antialiasedScatters() const { return mAntialiasedScatters; }
+  QPen pen() const { return mPen; }
+  QBrush brush() const { return mBrush; }
+  bool periodic() const { return mPeriodic; }
+  QCPPolarAxisAngular *keyAxis() const { return mKeyAxis.data(); }
+  QCPPolarAxisRadial *valueAxis() const { return mValueAxis.data(); }
+  QCP::SelectionType selectable() const { return mSelectable; }
+  bool selected() const { return !mSelection.isEmpty(); }
+  QCPDataSelection selection() const { return mSelection; }
+  //QCPSelectionDecorator *selectionDecorator() const { return mSelectionDecorator; }
+  QSharedPointer<QCPGraphDataContainer> data() const { return mDataContainer; }
+  LineStyle lineStyle() const { return mLineStyle; }
+  QCPScatterStyle scatterStyle() const { return mScatterStyle; }
+  
+  // setters:
+  void setName(const QString &name);
+  void setAntialiasedFill(bool enabled);
+  void setAntialiasedScatters(bool enabled);
+  void setPen(const QPen &pen);
+  void setBrush(const QBrush &brush);
+  void setPeriodic(bool enabled);
+  void setKeyAxis(QCPPolarAxisAngular *axis);
+  void setValueAxis(QCPPolarAxisRadial *axis);
+  Q_SLOT void setSelectable(QCP::SelectionType selectable);
+  Q_SLOT void setSelection(QCPDataSelection selection);
+  //void setSelectionDecorator(QCPSelectionDecorator *decorator);
+  void setData(QSharedPointer<QCPGraphDataContainer> data);
+  void setData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
+  void setLineStyle(LineStyle ls);
+  void setScatterStyle(const QCPScatterStyle &style);
+
+  // non-property methods:
+  void addData(const QVector<double> &keys, const QVector<double> &values, bool alreadySorted=false);
+  void addData(double key, double value);
+  void coordsToPixels(double key, double value, double &x, double &y) const;
+  const QPointF coordsToPixels(double key, double value) const;
+  void pixelsToCoords(double x, double y, double &key, double &value) const;
+  void pixelsToCoords(const QPointF &pixelPos, double &key, double &value) const;
+  void rescaleAxes(bool onlyEnlarge=false) const;
+  void rescaleKeyAxis(bool onlyEnlarge=false) const;
+  void rescaleValueAxis(bool onlyEnlarge=false, bool inKeyRange=false) const;
+  bool addToLegend(QCPLegend *legend);
+  bool addToLegend();
+  bool removeFromLegend(QCPLegend *legend) const;
+  bool removeFromLegend() const;
+  
+  // introduced virtual methods:
+  virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=0) const; // actually introduced in QCPLayerable as non-pure, but we want to force reimplementation for plottables
+  virtual QCPPlottableInterface1D *interface1D() { return 0; } // TODO: return this later, when QCPAbstractPolarPlottable is created
+  virtual QCPRange getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain=QCP::sdBoth) const;
+  virtual QCPRange getValueRange(bool &foundRange, QCP::SignDomain inSignDomain=QCP::sdBoth, const QCPRange &inKeyRange=QCPRange()) const;
+  
+signals:
+  void selectionChanged(bool selected);
+  void selectionChanged(const QCPDataSelection &selection);
+  void selectableChanged(QCP::SelectionType selectable);
+  
+protected:
+  // property members:
+  QSharedPointer<QCPGraphDataContainer> mDataContainer;
+  LineStyle mLineStyle;
+  QCPScatterStyle mScatterStyle;
+  QString mName;
+  bool mAntialiasedFill, mAntialiasedScatters;
+  QPen mPen;
+  QBrush mBrush;
+  bool mPeriodic;
+  QPointer<QCPPolarAxisAngular> mKeyAxis;
+  QPointer<QCPPolarAxisRadial> mValueAxis;
+  QCP::SelectionType mSelectable;
+  QCPDataSelection mSelection;
+  //QCPSelectionDecorator *mSelectionDecorator;
+  
+  // introduced virtual methods (later reimplemented TODO from QCPAbstractPolarPlottable):
+  virtual QRect clipRect() const;
+  virtual void draw(QCPPainter *painter);
+  virtual QCP::Interaction selectionCategory() const;
+  void applyDefaultAntialiasingHint(QCPPainter *painter) const;
+  // events:
+  virtual void selectEvent(QMouseEvent *event, bool additive, const QVariant &details, bool *selectionStateChanged);
+  virtual void deselectEvent(bool *selectionStateChanged);
+  // virtual drawing helpers:
+  virtual void drawLinePlot(QCPPainter *painter, const QVector<QPointF> &lines) const;
+  virtual void drawFill(QCPPainter *painter, QVector<QPointF> *lines) const;
+  virtual void drawScatterPlot(QCPPainter *painter, const QVector<QPointF> &scatters, const QCPScatterStyle &style) const;
+  
+  // introduced virtual methods:
+  virtual void drawLegendIcon(QCPPainter *painter, const QRectF &rect) const;
+  
+  // non-virtual methods:
+  void applyFillAntialiasingHint(QCPPainter *painter) const;
+  void applyScattersAntialiasingHint(QCPPainter *painter) const;
+  double pointDistance(const QPointF &pixelPoint, QCPGraphDataContainer::const_iterator &closestData) const;
+  // drawing helpers:
+  virtual int dataCount() const;
+  void getDataSegments(QList<QCPDataRange> &selectedSegments, QList<QCPDataRange> &unselectedSegments) const;
+  void drawPolyline(QCPPainter *painter, const QVector<QPointF> &lineData) const;
+  void getVisibleDataBounds(QCPGraphDataContainer::const_iterator &begin, QCPGraphDataContainer::const_iterator &end, const QCPDataRange &rangeRestriction) const;
+  void getLines(QVector<QPointF> *lines, const QCPDataRange &dataRange) const;
+  void getScatters(QVector<QPointF> *scatters, const QCPDataRange &dataRange) const;
+  void getOptimizedLineData(QVector<QCPGraphData> *lineData, const QCPGraphDataContainer::const_iterator &begin, const QCPGraphDataContainer::const_iterator &end) const;
+  void getOptimizedScatterData(QVector<QCPGraphData> *scatterData, QCPGraphDataContainer::const_iterator begin, QCPGraphDataContainer::const_iterator end) const;
+  QVector<QPointF> dataToLines(const QVector<QCPGraphData> &data) const;
+
+private:
+  Q_DISABLE_COPY(QCPPolarGraph)
+  
+  friend class QCPPolarLegendItem;
+};
+
+/* end of 'src/polar/polargraph.h' */
 
 
 #endif // QCUSTOMPLOT_H
