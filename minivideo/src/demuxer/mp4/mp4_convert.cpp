@@ -469,7 +469,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                     j = 1;
                 }
 
-                for (; j < track->stts_sample_count[i]; j++, k++)
+                for (; j < track->stts_sample_count[i] - 1; j++, k++)
                 {
                     int64_t dts = map->sample_dts[k - 1];
                     int64_t pts = dts + (int64_t)track->stts_sample_delta[i];
