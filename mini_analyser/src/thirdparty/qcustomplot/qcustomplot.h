@@ -161,19 +161,19 @@ namespace QCP {
 #else
 class QCP { // when in moc-run, make it look like a class, so we get Q_GADGET, Q_ENUMS/Q_FLAGS features in namespace
   Q_GADGET
-  Q_ENUMS(ExportPen)
-  Q_ENUMS(ResolutionUnit)
-  Q_ENUMS(SignDomain)
-  Q_ENUMS(MarginSide)
+  Q_ENUM(ExportPen)
+  Q_ENUM(ResolutionUnit)
+  Q_ENUM(SignDomain)
+  Q_ENUM(MarginSide)
   Q_FLAGS(MarginSides)
-  Q_ENUMS(AntialiasedElement)
+  Q_ENUM(AntialiasedElement)
   Q_FLAGS(AntialiasedElements)
-  Q_ENUMS(PlottingHint)
+  Q_ENUM(PlottingHint)
   Q_FLAGS(PlottingHints)
-  Q_ENUMS(Interaction)
+  Q_ENUM(Interaction)
   Q_FLAGS(Interactions)
-  Q_ENUMS(SelectionRectMode)
-  Q_ENUMS(SelectionType)
+  Q_ENUM(SelectionRectMode)
+  Q_ENUM(SelectionType)
 public:
 #endif
 
@@ -490,7 +490,7 @@ public:
                      ,pmNoCaching    = 0x02   ///< <tt>0x02</tt> Mode for all sorts of exports (e.g. PNG, PDF,...). For example, this prevents using cached pixmap labels
                      ,pmNonCosmetic  = 0x04   ///< <tt>0x04</tt> Turns pen widths 0 to 1, i.e. disables cosmetic pens. (A cosmetic pen is always drawn with width 1 pixel in the vector image/pdf viewer, independent of zoom.)
                    };
-  Q_ENUMS(PainterMode)
+  Q_ENUM(PainterMode)
   Q_FLAGS(PainterModes)
   Q_DECLARE_FLAGS(PainterModes, PainterMode)
   
@@ -667,7 +667,7 @@ public:
   enum LayerMode { lmLogical   ///< Layer is used only for rendering order, and shares paint buffer with all other adjacent logical layers.
                    ,lmBuffered ///< Layer has its own paint buffer and may be replotted individually (see \ref replot).
                  };
-  Q_ENUMS(LayerMode)
+  Q_ENUM(LayerMode)
   
   QCPLayer(QCustomPlot* parentPlot, const QString &layerName);
   virtual ~QCPLayer();
@@ -1222,7 +1222,7 @@ public:
                      ,upMargins    ///< Phase in which the margins are calculated and set
                      ,upLayout     ///< Final phase in which the layout system places the rects of the elements
                    };
-  Q_ENUMS(UpdatePhase)
+  Q_ENUM(UpdatePhase)
   
   /*!
     Defines to which rect of a layout element the size constraints that can be set via \ref
@@ -1235,7 +1235,7 @@ public:
   enum SizeConstraintRect { scrInnerRect ///< Minimum/Maximum size constraints apply to inner rect
                             , scrOuterRect ///< Minimum/Maximum size constraints apply to outer rect, thus include layout element margins
                           };
-  Q_ENUMS(SizeConstraintRect)
+  Q_ENUM(SizeConstraintRect)
 
   explicit QCPLayoutElement(QCustomPlot *parentPlot=nullptr);
   virtual ~QCPLayoutElement() Q_DECL_OVERRIDE;
@@ -1368,7 +1368,7 @@ public:
   enum FillOrder { foRowsFirst    ///< Rows are filled first, and a new element is wrapped to the next column if the row count would exceed \ref setWrap.
                   ,foColumnsFirst ///< Columns are filled first, and a new element is wrapped to the next row if the column count would exceed \ref setWrap.
                 };
-  Q_ENUMS(FillOrder)
+  Q_ENUM(FillOrder)
   
   explicit QCPLayoutGrid();
   virtual ~QCPLayoutGrid() Q_DECL_OVERRIDE;
@@ -1444,7 +1444,7 @@ public:
   enum InsetPlacement { ipFree            ///< The element may be positioned/sized arbitrarily, see \ref setInsetRect
                         ,ipBorderAligned  ///< The element is aligned to one of the layout sides, see \ref setInsetAlignment
                       };
-  Q_ENUMS(InsetPlacement)
+  Q_ENUM(InsetPlacement)
   
   explicit QCPLayoutInset();
   virtual ~QCPLayoutInset() Q_DECL_OVERRIDE;
@@ -1516,7 +1516,7 @@ public:
                      ,esHalfBar      ///< A bar perpendicular to the line, pointing out to only one side (to which side can be changed with \ref setInverted)
                      ,esSkewedBar    ///< A bar that is skewed (skew controllable via \ref setLength)
                    };
-  Q_ENUMS(EndingStyle)
+  Q_ENUM(EndingStyle)
   
   QCPLineEnding();
   QCPLineEnding(EndingStyle style, double width=8, double length=10, bool inverted=false);
@@ -1565,7 +1565,7 @@ public:
                     ,amSkewedUpright ///<
                     ,amSkewedRotated ///<
                    };
-  Q_ENUMS(AnchorMode)
+  Q_ENUM(AnchorMode)
   
   /*!
     TODO
@@ -1573,7 +1573,7 @@ public:
   enum AnchorReferenceType { artNormal    ///< 
                              ,artTangent ///<
                            };
-  Q_ENUMS(AnchorReferenceType)
+  Q_ENUM(AnchorReferenceType)
   
   /*!
     TODO
@@ -1587,7 +1587,7 @@ public:
                     ,asBottomRight
                     ,asBottomLeft
                    };
-  Q_ENUMS(AnchorSide)
+  Q_ENUM(AnchorSide)
   
   explicit QCPLabelPainterPrivate(QCustomPlot *parentPlot);
   virtual ~QCPLabelPainterPrivate();
@@ -1708,7 +1708,7 @@ public:
     tssReadability    ///< A nicely readable tick step is prioritized over matching the requested number of ticks (see \ref setTickCount)
     ,tssMeetTickCount ///< Less readable tick steps are allowed which in turn facilitates getting closer to the requested tick count
   };
-  Q_ENUMS(TickStepStrategy)
+  Q_ENUM(TickStepStrategy)
   
   QCPAxisTicker();
   virtual ~QCPAxisTicker();
@@ -1823,7 +1823,7 @@ public:
                   ,tuHours       ///< Hours (%%h in \ref setTimeFormat)
                   ,tuDays        ///< Days (%%d in \ref setTimeFormat)
                 };
-  Q_ENUMS(TimeUnit)
+  Q_ENUM(TimeUnit)
   
   QCPAxisTickerTime();
 
@@ -1874,7 +1874,7 @@ public:
                        ,ssMultiples ///< An integer multiple of the specified tick step is allowed. The used factor follows the base class properties of \ref setTickStepStrategy and \ref setTickCount.
                        ,ssPowers    ///< An integer power of the specified tick step is allowed.
                      };
-  Q_ENUMS(ScaleStrategy)
+  Q_ENUM(ScaleStrategy)
   
   QCPAxisTickerFixed();
   
@@ -1953,7 +1953,7 @@ public:
                        ,fsAsciiFractions   ///< Fractions are written as rationals using ASCII characters only, e.g. "1/4" or "1/8"
                        ,fsUnicodeFractions ///< Fractions are written using sub- and superscript UTF-8 digits and the fraction symbol.
                      };
-  Q_ENUMS(FractionStyle)
+  Q_ENUM(FractionStyle)
   
   QCPAxisTickerPi();
   
@@ -2140,7 +2140,7 @@ public:
                   ,atTop    = 0x04  ///< <tt>0x04</tt> Axis is horizontal and on the top side of the axis rect
                   ,atBottom = 0x08  ///< <tt>0x08</tt> Axis is horizontal and on the bottom side of the axis rect
                 };
-  Q_ENUMS(AxisType)
+  Q_ENUM(AxisType)
   Q_FLAGS(AxisTypes)
   Q_DECLARE_FLAGS(AxisTypes, AxisType)
   /*!
@@ -2151,7 +2151,7 @@ public:
   enum LabelSide { lsInside    ///< Tick labels will be displayed inside the axis rect and clipped to the inner axis rect
                    ,lsOutside  ///< Tick labels will be displayed outside the axis rect
                  };
-  Q_ENUMS(LabelSide)
+  Q_ENUM(LabelSide)
   /*!
     Defines the scale of an axis.
     \see setScaleType
@@ -2159,7 +2159,7 @@ public:
   enum ScaleType { stLinear       ///< Linear scaling
                    ,stLogarithmic ///< Logarithmic scaling with correspondingly transformed axis coordinates (possibly also \ref setTicker to a \ref QCPAxisTickerLog instance).
                  };
-  Q_ENUMS(ScaleType)
+  Q_ENUM(ScaleType)
   /*!
     Defines the selectable parts of an axis.
     \see setSelectableParts, setSelectedParts
@@ -2169,7 +2169,7 @@ public:
                         ,spTickLabels = 0x002  ///< Tick labels (numbers) of this axis (as a whole, not individually)
                         ,spAxisLabel  = 0x004  ///< The axis label
                       };
-  Q_ENUMS(SelectablePart)
+  Q_ENUM(SelectablePart)
   Q_FLAGS(SelectableParts)
   Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
   
@@ -2478,7 +2478,7 @@ public:
                          ,spShape = 0x08  ///< <tt>0x08</tt> The shape property, see \ref setShape
                          ,spAll   = 0xFF  ///< <tt>0xFF</tt> All properties
                        };
-  Q_ENUMS(ScatterProperty)
+  Q_ENUM(ScatterProperty)
   Q_FLAGS(ScatterProperties)
   Q_DECLARE_FLAGS(ScatterProperties, ScatterProperty)
 
@@ -2508,7 +2508,7 @@ public:
                       ,ssPixmap    ///< a custom pixmap specified by \ref setPixmap, centered on the data point coordinates
                       ,ssCustom    ///< custom painter operations are performed per scatter (As QPainterPath, see \ref setCustomPath)
                     };
-  Q_ENUMS(ScatterShape)
+  Q_ENUM(ScatterShape)
 
   QCPScatterStyle();
   QCPScatterStyle(ScatterShape shape, double size=6);
@@ -3622,7 +3622,7 @@ public:
                                         ///< vertically at the top of the axis rect, etc. You can also go beyond the axis rect by providing negative coordinates or coordinates larger than 1.
                       ,ptPlotCoords     ///< Dynamic positioning at a plot coordinate defined by two axes (see \ref setAxes).
                     };
-  Q_ENUMS(PositionType)
+  Q_ENUM(PositionType)
   
   QCPItemPosition(QCustomPlot *parentPlot, QCPAbstractItem *parentItem, const QString &name);
   virtual ~QCPItemPosition() Q_DECL_OVERRIDE;
@@ -3774,7 +3774,7 @@ public:
   enum LayerInsertMode { limBelow  ///< Layer is inserted below other layer
                          ,limAbove ///< Layer is inserted above other layer
                        };
-  Q_ENUMS(LayerInsertMode)
+  Q_ENUM(LayerInsertMode)
   
   /*!
     Defines with what timing the QCustomPlot surface is refreshed after a replot.
@@ -3786,7 +3786,7 @@ public:
                          ,rpRefreshHint     ///< Whether to use immediate or queued refresh depends on whether the plotting hint \ref QCP::phImmediateRefresh is set, see \ref setPlottingHints.
                          ,rpQueuedReplot    ///< Queues the entire replot for the next event loop iteration. This way multiple redundant replots can be avoided. The actual replot is then done with \ref rpRefreshHint priority.
                        };
-  Q_ENUMS(RefreshPriority)
+  Q_ENUM(RefreshPriority)
   
   explicit QCustomPlot(QWidget *parent = nullptr);
   virtual ~QCustomPlot() Q_DECL_OVERRIDE;
@@ -4724,7 +4724,7 @@ public:
   enum ColorInterpolation { ciRGB  ///< Color channels red, green and blue are linearly interpolated
                             ,ciHSV ///< Color channels hue, saturation and value are linearly interpolated (The hue is interpolated over the shortest angle distance)
                           };
-  Q_ENUMS(ColorInterpolation)
+  Q_ENUM(ColorInterpolation)
   
   /*!
     Defines how NaN data points shall appear in the plot.
@@ -4737,7 +4737,7 @@ public:
                      ,nhTransparent ///< NaN data points appear transparent
                      ,nhNanColor ///< NaN data points appear as the color defined with \ref setNanColor
                    };
-  Q_ENUMS(NanHandling)
+  Q_ENUM(NanHandling)
   
   /*!
     Defines the available presets that can be loaded with \ref loadPreset. See the documentation
@@ -4756,7 +4756,7 @@ public:
                         ,gpJet       ///< Hue variation similar to a spectrum, often used in numerical visualization (creates banding illusion but allows more precise magnitude estimates)
                         ,gpHues      ///< Full hue cycle, with highest and lowest color red (suitable for periodic data, such as angles and phases, see \ref setPeriodic)
                       };
-  Q_ENUMS(GradientPreset)
+  Q_ENUM(GradientPreset)
   
   QCPColorGradient();
   QCPColorGradient(GradientPreset preset);
@@ -4832,7 +4832,7 @@ public:
                       ,bsPlus         ///< A plus is drawn.
                       ,bsUserStyle    ///< Start custom bracket styles at this index when subclassing and reimplementing \ref drawBracket.
   };
-  Q_ENUMS(BracketStyle)
+  Q_ENUM(BracketStyle)
   
   QCPSelectionDecoratorBracket();
   virtual ~QCPSelectionDecoratorBracket() Q_DECL_OVERRIDE;
@@ -5127,7 +5127,7 @@ public:
                         ,spLegendBox  = 0x001 ///< <tt>0x001</tt> The legend box (frame)
                         ,spItems      = 0x002 ///< <tt>0x002</tt> Legend items individually (see \ref selectedItems)
                       };
-  Q_ENUMS(SelectablePart)
+  Q_ENUM(SelectablePart)
   Q_FLAGS(SelectableParts)
   Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
   
@@ -5478,7 +5478,7 @@ public:
                    ,lsStepCenter ///< line is drawn as steps where the step is in between two data points
                    ,lsImpulse    ///< each data point is represented by a line parallel to the value axis, which reaches from the data point to the zero-value-line
                  };
-  Q_ENUMS(LineStyle)
+  Q_ENUM(LineStyle)
   
   explicit QCPGraph(QCPAxis *keyAxis, QCPAxis *valueAxis);
   virtual ~QCPGraph() Q_DECL_OVERRIDE;
@@ -5611,7 +5611,7 @@ public:
   enum LineStyle { lsNone  ///< No line is drawn between data points (e.g. only scatters)
                    ,lsLine ///< Data points are connected with a straight line
                  };
-  Q_ENUMS(LineStyle)
+  Q_ENUM(LineStyle)
   
   explicit QCPCurve(QCPAxis *keyAxis, QCPAxis *valueAxis);
   virtual ~QCPCurve() Q_DECL_OVERRIDE;
@@ -5695,7 +5695,7 @@ public:
                      ,stAxisRectRatio ///< Bar spacing is given by a fraction of the axis rect size
                      ,stPlotCoords    ///< Bar spacing is in key coordinates and thus scales with the key axis range
                    };
-  Q_ENUMS(SpacingType)
+  Q_ENUM(SpacingType)
   
   explicit QCPBarsGroup(QCustomPlot *parentPlot);
   virtual ~QCPBarsGroup();
@@ -5796,7 +5796,7 @@ public:
                    ,wtAxisRectRatio ///< Bar width is given by a fraction of the axis rect size
                    ,wtPlotCoords    ///< Bar width is in key coordinates and thus scales with the key axis range
                  };
-  Q_ENUMS(WidthType)
+  Q_ENUM(WidthType)
   
   explicit QCPBars(QCPAxis *keyAxis, QCPAxis *valueAxis);
   virtual ~QCPBars() Q_DECL_OVERRIDE;
@@ -6173,7 +6173,7 @@ public:
                    ,wtAxisRectRatio ///< width is given by a fraction of the axis rect size
                    ,wtPlotCoords    ///< width is in key coordinates and thus scales with the key axis range
                  };
-  Q_ENUMS(WidthType)
+  Q_ENUM(WidthType)
   
   /*!
     Defines the possible representations of OHLC data in the plot.
@@ -6183,7 +6183,7 @@ public:
   enum ChartStyle { csOhlc         ///< Open-High-Low-Close bar representation
                    ,csCandlestick  ///< Candlestick representation
                   };
-  Q_ENUMS(ChartStyle)
+  Q_ENUM(ChartStyle)
   
   explicit QCPFinancial(QCPAxis *keyAxis, QCPAxis *valueAxis);
   virtual ~QCPFinancial() Q_DECL_OVERRIDE;
@@ -6307,7 +6307,7 @@ public:
   enum ErrorType { etKeyError    ///< The errors are for the key dimension (bars appear parallel to the key axis)
                    ,etValueError ///< The errors are for the value dimension (bars appear parallel to the value axis)
   };
-  Q_ENUMS(ErrorType)
+  Q_ENUM(ErrorType)
   
   explicit QCPErrorBars(QCPAxis *keyAxis, QCPAxis *valueAxis);
   virtual ~QCPErrorBars() Q_DECL_OVERRIDE;
@@ -6839,7 +6839,7 @@ public:
                      ,tsCircle     ///< A circle
                      ,tsSquare     ///< A square
                    };
-  Q_ENUMS(TracerStyle)
+  Q_ENUM(TracerStyle)
 
   explicit QCPItemTracer(QCustomPlot *parentPlot);
   virtual ~QCPItemTracer() Q_DECL_OVERRIDE;
@@ -6920,7 +6920,7 @@ public:
                       ,bsCurly  ///< A curly brace
                       ,bsCalligraphic ///< A curly brace with varying stroke width giving a calligraphic impression
   };
-  Q_ENUMS(BracketStyle)
+  Q_ENUM(BracketStyle)
 
   explicit QCPItemBracket(QCustomPlot *parentPlot);
   virtual ~QCPItemBracket() Q_DECL_OVERRIDE;
@@ -6980,7 +6980,7 @@ public:
   enum AngleReference { arAbsolute    ///< The axis tilt is given in absolute degrees. The zero is to the right and positive angles are measured counter-clockwise.
                        ,arAngularAxis ///< The axis tilt is measured in the angular coordinate system given by the parent angular axis.
                       };
-  Q_ENUMS(AngleReference)
+  Q_ENUM(AngleReference)
   /*!
     Defines the scale of an axis.
     \see setScaleType
@@ -6988,7 +6988,7 @@ public:
   enum ScaleType { stLinear       ///< Linear scaling
                    ,stLogarithmic ///< Logarithmic scaling with correspondingly transformed axis coordinates (possibly also \ref setTicker to a \ref QCPAxisTickerLog instance).
                  };
-  Q_ENUMS(ScaleType)
+  Q_ENUM(ScaleType)
   /*!
     Defines the selectable parts of an axis.
     \see setSelectableParts, setSelectedParts
@@ -6998,14 +6998,14 @@ public:
                         ,spTickLabels = 0x002  ///< Tick labels (numbers) of this axis (as a whole, not individually)
                         ,spAxisLabel  = 0x004  ///< The axis label
                       };
-  Q_ENUMS(SelectablePart)
+  Q_ENUM(SelectablePart)
   Q_FLAGS(SelectableParts)
   Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
   
   enum LabelMode { lmUpright   ///< 
                    ,lmRotated ///< 
                  };
-  Q_ENUMS(LabelMode)
+  Q_ENUM(LabelMode)
   
   explicit QCPPolarAxisRadial(QCPPolarAxisAngular *parent);
   virtual ~QCPPolarAxisRadial();
@@ -7234,7 +7234,7 @@ public:
                         ,spTickLabels = 0x002  ///< Tick labels (numbers) of this axis (as a whole, not individually)
                         ,spAxisLabel  = 0x004  ///< The axis label
                       };
-  Q_ENUMS(SelectablePart)
+  Q_ENUM(SelectablePart)
   Q_FLAGS(SelectableParts)
   Q_DECLARE_FLAGS(SelectableParts, SelectablePart)
   
@@ -7244,7 +7244,7 @@ public:
   enum LabelMode { lmUpright   ///< 
                    ,lmRotated ///< 
                  };
-  Q_ENUMS(LabelMode)
+  Q_ENUM(LabelMode)
   
   explicit QCPPolarAxisAngular(QCustomPlot *parentPlot);
   virtual ~QCPPolarAxisAngular();
@@ -7506,7 +7506,7 @@ public:
                   ,gtAll    = 0xFF ///< 
                   ,gtNone   = 0x00 ///< 
                 };
-  Q_ENUMS(GridType)
+  Q_ENUM(GridType)
   Q_FLAGS(GridTypes)
   Q_DECLARE_FLAGS(GridTypes, GridType)
   
@@ -7612,7 +7612,7 @@ public:
                                  ///< with symbols according to the scatter style, see \ref setScatterStyle)
                    ,lsLine       ///< data points are connected by a straight line
                  };
-  Q_ENUMS(LineStyle)
+  Q_ENUM(LineStyle)
   
   QCPPolarGraph(QCPPolarAxisAngular *keyAxis, QCPPolarAxisRadial *valueAxis);
   virtual ~QCPPolarGraph();
