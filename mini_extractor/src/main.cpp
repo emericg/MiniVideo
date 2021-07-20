@@ -234,8 +234,8 @@ int main(int argc, char *argv[])
         // Let's get to work
         std::cout << std::endl << YELLOW "Working..." RESET << std::endl;
 
-// Stream(s) extraction
-////////////////////////////////////////////////////////////////////////
+        // Stream(s) extraction
+        ////////////////////////////////////////////////////////////////////////
 
         int minivideo_retcode = 0;
 

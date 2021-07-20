@@ -46,7 +46,7 @@ unix {
     contains(COMPILER_BASENAME, "clang++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-private-field } # Clang only
 
     # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
     #QMAKE_LFLAGS += -fsanitize=address,undefined
 }
 

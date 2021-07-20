@@ -1252,6 +1252,7 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
         pps->redundant_pic_cnt_present_flag = read_bit(bitstr);
 
         if (h264_more_rbsp_data(bitstr) == true &&
+            sps_array[pps->seq_parameter_set_id] &&
             sps_array[pps->seq_parameter_set_id]->profile_idc >= HIGHP)
         {
             pps->transform_8x8_mode_flag = read_bit(bitstr);
@@ -2186,7 +2187,7 @@ static void mapVUI(vui_t *vui, FILE *xml)
  * E.2.2 HRD parameters semantics.
  *
  * HRD can only be found inside VUI structure.
- * This function must only be called by checkVUI().
+ * This function must only be called by decodeVUI().
  */
 hrd_t *decodeHRD(Bitstream_t *bitstr)
 {

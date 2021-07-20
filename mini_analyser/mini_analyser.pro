@@ -86,7 +86,7 @@ unix {
     QMAKE_CXXFLAGS += -fPIE
 
     # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
     #QMAKE_LFLAGS += -fsanitize=address,undefined
 
     QMAKE_CXXFLAGS += -Wall -Wextra

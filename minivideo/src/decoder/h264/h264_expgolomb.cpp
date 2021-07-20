@@ -50,8 +50,6 @@ const uint8_t NCBP[2][48][2] =
     }
 };
 
-static unsigned int get_codeNum(Bitstream_t *bitstr);
-
 /* ************************************************************************** */
 
 /*!

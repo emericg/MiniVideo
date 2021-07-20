@@ -321,12 +321,14 @@ int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset)
         bitstr->buffer_size += bitstr->buffer_discarded_bytes;
         bitstr->buffer_discarded_bytes = 0;
 
-        // Cut buffer size if the end of file is almost reached
         if ((bitstr->bitstream_offset + bitstr->buffer_size) > bitstr->bitstream_size)
         {
+            // Cut buffer size if the end of file is almost reached
+
             unsigned int buffer_size_saved = bitstr->buffer_size;
             bitstr->buffer_size = (unsigned int)(bitstr->bitstream_size - bitstr->bitstream_offset);
             bitstr->buffer = (uint8_t*)realloc(bitstr->buffer, bitstr->buffer_size);
+            bitstr->buffer_discarded_bytes = 0;
 
             if (bitstr->buffer == nullptr)
             {
