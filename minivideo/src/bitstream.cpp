@@ -42,7 +42,7 @@
 /*!
  * \brief Default size for the bitstream data buffer memory cache.
  */
-#define DEFAULT_BUFFER_SIZE 1024
+#define DEFAULT_BUFFER_SIZE 2048
 
 /* ************************************************************************** */
 
