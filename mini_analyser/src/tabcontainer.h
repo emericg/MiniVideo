@@ -88,7 +88,7 @@ private:
     MediaWrapper *wrapper = nullptr;
 
     MediaStream_t *track = nullptr;
-    MediaStream_t *tracks[16] = { nullptr };
+    MediaStream_t *tracks[64] = { nullptr };
 
     std::map <unsigned, OutputSurface_t *> thumbnails;
 
