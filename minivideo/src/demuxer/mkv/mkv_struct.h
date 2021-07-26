@@ -379,6 +379,7 @@ typedef struct mkv_track_t
     uint64_t MaxBlockAdditionID = 0;
     char *Name = nullptr;
     char *Language = nullptr;
+    char *LanguageIETF = nullptr;
     char *CodecID = nullptr;
     int64_t CodecPrivate_offset = 0;
     int CodecPrivate_size = 0;
@@ -569,6 +570,7 @@ typedef enum EbmlElement_e
         eid_MaxBlockAdditionID = 0x55EE,
         eid_Name = 0x536E,
         eid_Language = 0x22B59C,
+        eid_LanguageIETF = 0x22B59D,
         eid_CodecID = 0x86,
         eid_CodecPrivate = 0x63A2,
         eid_CodecName = 0x258688,

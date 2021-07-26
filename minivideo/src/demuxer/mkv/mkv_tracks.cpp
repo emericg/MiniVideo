@@ -819,6 +819,9 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
             case eid_Language:
                 mkv_track->Language = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "Language");
                 break;
+            case eid_LanguageIETF:
+                mkv_track->LanguageIETF = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "LanguageIETF");
+                break;
             case eid_CodecID:
                 mkv_track->CodecID = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "CodecID");
                 break;

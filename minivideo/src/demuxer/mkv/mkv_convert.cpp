@@ -403,6 +403,7 @@ void mkv_clean(mkv_t *mkv)
             {
                 delete [] mkv->tracks[stream_id]->Name;
                 delete [] mkv->tracks[stream_id]->Language;
+                delete [] mkv->tracks[stream_id]->LanguageIETF;
                 delete [] mkv->tracks[stream_id]->CodecID;
                 delete [] mkv->tracks[stream_id]->CodecPrivate;
                 delete [] mkv->tracks[stream_id]->CodecName;
