@@ -868,18 +868,25 @@ void tabContainer::clearContent()
 
 void tabContainer::clearPreviews()
 {
+#if THUMBNAILS_ENABLED == 1
     //qDebug() << "tabContainer::clearPreviews(" << thumbnails.size() << ")";
 
     for (auto thumb: thumbnails)
     {
-        OutputSurface_t *s = (thumb.second);
-
-        free(s->surface);
-        s->surface = nullptr;
-        delete s;
+        OutputSurface_t *s = thumb.second;
+        if (s)
+        {
+            if (s->surface)
+            {
+                free(s->surface);
+                s->surface = nullptr;
+            }
+            delete s;
+        }
     }
 
     thumbnails.clear();
+#endif //THUMBNAILS_ENABLED
 }
 
 /* ************************************************************************** */

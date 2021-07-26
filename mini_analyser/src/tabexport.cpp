@@ -143,7 +143,7 @@ void tabExport::saveData()
             QMessageBox::StandardButton messageReply;
             QString messageText = tr("This file already exist:\n");
             messageText += ui->lineEdit_export_filename->text();
-            messageText += tr("\nAre you sure you want to overwrite it?");
+            messageText += tr("\n\nAre you sure you want to overwrite it?");
 
             messageReply = QMessageBox::warning(this, tr("Confirm file overwrite"),
                                                 messageText,
