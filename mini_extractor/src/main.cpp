@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     // Argument(s) parsing
     ////////////////////////////////////////////////////////////////////////////
 
-    if (argc == 1)
+    if (argc <= 1 || !argv)
     {
         std::cerr << "mini_extractor: " RED "no argument" RESET  "!" << std::endl;
     }

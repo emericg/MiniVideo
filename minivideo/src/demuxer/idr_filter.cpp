@@ -38,13 +38,12 @@ int idr_filtering(MediaStream_t **stream_ptr,
                   unsigned picture_number, const int picture_extraction_mode)
 {
     TRACE_INFO(FILTR, BLD_GREEN "idr_filtering()" CLR_RESET);
-    int retcode = FAILURE;
+    int available_pictures = 0;
 
-    unsigned i = 0;
     unsigned temporary_totalsamples_idr = 0;
     unsigned temporary_sample_id[999] = {0};
 
-    if (stream_ptr == NULL || *stream_ptr == NULL)
+    if (stream_ptr == nullptr || *stream_ptr == nullptr)
     {
         TRACE_ERROR(FILTR, "Invalid MediaStream_t structure!");
     }
@@ -72,48 +71,91 @@ int idr_filtering(MediaStream_t **stream_ptr,
 
         if (picture_extraction_mode == PICTURE_UNFILTERED)
         {
-            TRACE_1(FILTR, "PICTURE_UNFILTERED is specified: no need to process MediaStream_t.");
-            retcode = picture_number;
+            // Init bitstream_map_filtered
+            MediaStream_t *map_filtered = nullptr;
+            int retcode = init_bitstream_map(&map_filtered, map->parameter_count, picture_number);
+
+            // Write bitstream_map_filtered
+            if (retcode)
+            {
+                map_filtered->stream_type = map->stream_type;
+                map_filtered->stream_codec = map->stream_codec;
+
+                map_filtered->parameter_count = map->parameter_count;
+                map_filtered->sample_count = 0;
+                map_filtered->frame_count_idr = 0;
+
+                // Copy SPS and PPS
+                for (unsigned i = 0; i < map->parameter_count; i++)
+                {
+                    map_filtered->parameter_type[i] = map->parameter_type[i];
+                    map_filtered->parameter_offset[i] = map->parameter_offset[i];
+                    map_filtered->parameter_size[i] = map->parameter_size[i];
+                }
+
+                // Then, keep only the IDR
+                for (unsigned i = 0, j = 0; i < map->sample_count && j < picture_number; i++)
+                {
+                    if (map->sample_type[i] == sample_VIDEO_SYNC)
+                    {
+                        map_filtered->sample_type[j] = map->sample_type[i];
+                        map_filtered->sample_size[j] = map->sample_size[i];
+                        map_filtered->sample_offset[j] = map->sample_offset[i];
+                        map_filtered->sample_pts[j] = map->sample_pts[i];
+                        map_filtered->sample_dts[j] = map->sample_dts[i];
+
+                        j++;
+                        map_filtered->sample_count++;
+                        map_filtered->frame_count_idr++;
+                    }
+                }
+
+                free(map->sample_type);
+                free(map->sample_pts);
+                free(map->sample_offset);
+                free(map->sample_size);
+
+                map->sample_type = map_filtered->sample_type;
+                map->sample_pts = map_filtered->sample_pts;
+                map->sample_offset = map_filtered->sample_offset;
+                map->sample_size = map_filtered->sample_size;
+
+                available_pictures = picture_number;
+            }
         }
         else
         {
-            // Warning: this is not true anymore, must count that manually
-            unsigned spspps = map->sample_count - map->frame_count_idr;
-            unsigned payload = 0;
-
             // First cut (remove small frames)
             ////////////////////////////////////////////////////////////////////
 
             // Compute average samples size
-            for (i = spspps; i < map->sample_count; i++)
+            unsigned payload = 0;
+            for (unsigned i = 0; i < map->sample_count; i++)
             {
-                payload += map->sample_size[i];
+                if (map->sample_type[i] == sample_VIDEO_SYNC)
+                {
+                    payload += map->sample_size[i];
+                }
             }
 
             // Used to filter the frames that are below the threshold (33% of the average frame size)
             unsigned frame_sizethreshold = static_cast<unsigned>(((double)payload / (double)map->frame_count_idr) / 1.66);
 
-            // If we have enough frames (let's say 48), filter the frames from the first and last 3%
-            // Note: for a movie, cut the last 33% to avoid spoilers & credits?
-            unsigned frame_borders = 0;
-            if (map->frame_count_idr > 48)
+            for (unsigned i = 0; i < map->sample_count; i++)
             {
-                frame_borders = std::ceil(map->frame_count_idr * 0.03);
-                TRACE_1(FILTR, "frame_borders is %i", frame_borders);
-            }
-
-            for (i = frame_borders; i < (map->frame_count_idr - frame_borders); i++)
-            {
-                if (map->sample_size[i + spspps] > frame_sizethreshold)
+                if (map->sample_type[i] == sample_VIDEO_SYNC)
                 {
-                    TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i)", i, map->sample_size[i + spspps], frame_sizethreshold);
+                    if (map->sample_size[i] > frame_sizethreshold)
+                    {
+                        TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i)", i, map->sample_size[i], frame_sizethreshold);
 
-                    temporary_sample_id[temporary_totalsamples_idr] = i + spspps;
-                    temporary_totalsamples_idr++;
-                }
-                else
-                {
-                    TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i) > REMOVED", i, map->sample_size[i + spspps], frame_sizethreshold);
+                        temporary_sample_id[temporary_totalsamples_idr] = i;
+                        temporary_totalsamples_idr++;
+                    }
+                    else
+                    {
+                        TRACE_1(FILTR, "IDR %i (size: %i / threshold: %i) > REMOVED", i, map->sample_size[i], frame_sizethreshold);
+                    }
                 }
             }
 
@@ -122,12 +164,14 @@ int idr_filtering(MediaStream_t **stream_ptr,
                 picture_number = temporary_totalsamples_idr;
 
             // Jump between two frames in PICTURE_DISTRIBUTED mode
-            int frame_jump = std::ceil(temporary_totalsamples_idr / (picture_number-1));
+            int frame_jump = 0;
+            if (picture_number > 1)
+                frame_jump = std::ceil(temporary_totalsamples_idr / (picture_number-1));
             TRACE_1(FILTR, "frame_jump is %i", frame_jump);
 
             // Init bitstream_map_filtered
-            MediaStream_t *map_filtered = NULL;
-            retcode = init_bitstream_map(&map_filtered, spspps, temporary_totalsamples_idr);
+            MediaStream_t *map_filtered = nullptr;
+            int retcode = init_bitstream_map(&map_filtered, map->parameter_count, temporary_totalsamples_idr);
 
             // Write bitstream_map_filtered
             if (retcode)
@@ -135,46 +179,43 @@ int idr_filtering(MediaStream_t **stream_ptr,
                 map_filtered->stream_type = map->stream_type;
                 map_filtered->stream_codec = map->stream_codec;
 
-                map_filtered->sample_count = spspps + temporary_totalsamples_idr;
+                map_filtered->sample_count = temporary_totalsamples_idr;
                 map_filtered->frame_count_idr = temporary_totalsamples_idr;
 
                 // Copy SPS and PPS
-                for (i = 0; i < spspps; i++)
+                for (unsigned i = 0; i < map->parameter_count; i++)
                 {
-                    map_filtered->sample_type[i] = map->sample_type[i];
-                    map_filtered->sample_pts[i] = map->sample_pts[i];
-
-                    map_filtered->sample_offset[i] = map->sample_offset[i];
-                    map_filtered->sample_size[i] = map->sample_size[i];
+                    map_filtered->parameter_type[i] = map->parameter_type[i];
+                    map_filtered->parameter_offset[i] = map->parameter_offset[i];
+                    map_filtered->parameter_size[i] = map->parameter_size[i];
                 }
 
                 // Second cut (frame distribution)
                 ////////////////////////////////////////////////////////////////
 
-                for (i = 0; i < picture_number; i++)
+                for (unsigned i = 0; i < picture_number; i++)
                 {
                     if (picture_extraction_mode == PICTURE_ORDERED)
                     {
-                        map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i]];
-                        map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i]];
+                        map_filtered->sample_type[i] = map->sample_type[temporary_sample_id[i]];
+                        map_filtered->sample_pts[i] = map->sample_pts[temporary_sample_id[i]];
 
-                        map_filtered->sample_offset[spspps + i] = map->sample_offset[temporary_sample_id[i]];
-                        map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i]];
+                        map_filtered->sample_offset[i] = map->sample_offset[temporary_sample_id[i]];
+                        map_filtered->sample_size[i] = map->sample_size[temporary_sample_id[i]];
                     }
                     else if (picture_extraction_mode == PICTURE_DISTRIBUTED)
                     {
-                        map_filtered->sample_type[spspps + i] = map->sample_type[temporary_sample_id[i*frame_jump]];
-                        map_filtered->sample_pts[spspps + i] = map->sample_pts[temporary_sample_id[i*frame_jump]];
+                        map_filtered->sample_type[i] = map->sample_type[temporary_sample_id[i*frame_jump]];
+                        map_filtered->sample_pts[i] = map->sample_pts[temporary_sample_id[i*frame_jump]];
 
-                        map_filtered->sample_offset[spspps + i] = map->sample_offset[temporary_sample_id[i*frame_jump]];
-                        map_filtered->sample_size[spspps + i] = map->sample_size[temporary_sample_id[i*frame_jump]];
+                        map_filtered->sample_offset[i] = map->sample_offset[temporary_sample_id[i*frame_jump]];
+                        map_filtered->sample_size[i] = map->sample_size[temporary_sample_id[i*frame_jump]];
                     }
                 }
-/*
+
                 // Recap
-                print_bitstream_map(map);
-                print_bitstream_map(map_filtered);
-*/
+                //print_bitstream_map(map);
+                //print_bitstream_map(map_filtered);
 
                 // Erase bitstream_map and replace it with bitstream_map_filtered
                 //free_bitstream_map(bitstream_map_pointer);
@@ -191,12 +232,12 @@ int idr_filtering(MediaStream_t **stream_ptr,
                 map->sample_size = map_filtered->sample_size;
 
                 // Exit
-                retcode = picture_number;
+                available_pictures = picture_number;
             }
         }
     }
 
-    return retcode;
+    return available_pictures;
 }
 
 /* ************************************************************************** */

@@ -481,7 +481,7 @@ void MainWindow::detachFile()
         else
         {
             // Just start another instance
-            QProcess::startDetached(applicationPath);
+            QProcess::startDetached(applicationPath, QStringList());
         }
     }
 }

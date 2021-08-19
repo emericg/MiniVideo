@@ -528,53 +528,41 @@ DecodingContext_t *h264_init(MediaFile_t *input_video, unsigned tid)
 int h264_decode(DecodingContext_t *dc, unsigned sid)
 {
     TRACE_INFO(H264, BLD_GREEN "h264_decode()" CLR_RESET);
-    int retcode = SUCCESS;
+    int retcode = FAILURE;
 
-    if (!dc)
-        return FAILURE;
+    if (!dc) return retcode;
 
-    // Loop until the end of the decoding
-    while (dc->decoderRunning && retcode == SUCCESS)
+    // Get one sample
+    retcode = buffer_feed_manual(dc->bitstr,
+                                 dc->MediaFile->tracks_video[dc->active_tid]->sample_offset[sid],
+                                 dc->MediaFile->tracks_video[dc->active_tid]->sample_size[sid]);
+
+    // Depacketize
+    es_sample_t essample_list[16];
+    int essample_count = depack_loaded_sample(dc->bitstr, dc->MediaFile,
+                                              dc->MediaFile->tracks_video[dc->active_tid],
+                                              sid, essample_list);
+
+    for (int i = 0; i < essample_count && dc->decoderRunning; i++)
     {
-        buffer_feed_manual(dc->bitstr,
-                           dc->MediaFile->tracks_video[dc->active_tid]->sample_offset[sid],
-                           dc->MediaFile->tracks_video[dc->active_tid]->sample_size[sid]);
+        int64_t current_nalu_offset = essample_list[i].offset;
+        int64_t current_nalu_size = essample_list[i].size;
+        retcode = h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
 
-        // Depacketize
-        es_sample_t essample_list[16];
-        int essample_count = depack_loaded_sample(dc->bitstr, dc->MediaFile,
-                                                  dc->MediaFile->tracks_video[dc->active_tid],
-                                                  sid, essample_list);
-
-        if (essample_count < 1)
+        if (dc->idrCounter == 1 && retcode == SUCCESS)
         {
-            retcode = FAILURE;
+            TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
+            TRACE_INFO(H264, "H.264 decoding ended");
+            retcode = SUCCESS;
             dc->decoderRunning = false;
-            break;
         }
 
-        for (int i = 0; i < essample_count && dc->decoderRunning; i++)
+        if (dc->errorCounter > 64 || retcode == FAILURE)
         {
-            int64_t current_nalu_offset = essample_list[i].offset;
-            int64_t current_nalu_size = essample_list[i].size;
-            retcode = h264_decode_nalu(dc, current_nalu_offset, current_nalu_size);
-
-            if (dc->idrCounter == 1 && retcode == SUCCESS)
-            {
-                TRACE_INFO(H264, ">> " BLD_YELLOW "Decoding of %i IDR successfull!" CLR_RESET, dc->idrCounter);
-                TRACE_INFO(H264, "H.264 decoding ended");
-                retcode = SUCCESS;
-                dc->decoderRunning = false;
-            }
-/*
-            if (dc->errorCounter > 64 || retcode == FAILURE)
-            {
-                TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
-                TRACE_ERROR(H264, "H.264 decoding aborted");
-                retcode = FAILURE;
-                dc->decoderRunning = false;
-            }
-*/
+            TRACE_ERROR(H264, "Error inside NAL Unit decoding loop! (errorCounter = %i) (current nal_unit_type = %i)", dc->errorCounter, dc->active_nalu->nal_unit_type);
+            TRACE_ERROR(H264, "H.264 decoding aborted...");
+            retcode = FAILURE;
+            dc->decoderRunning = false;
         }
     }
 

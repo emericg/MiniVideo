@@ -773,7 +773,7 @@ static int checkRPLM(DecodingContext_t *dc, rplm_t *rplm)
     }
     else // Check values
     {
-        TRACE_WARNING(SLICE, "    >>> UNIMPLEMENTED (checkRPLM)");
+        TRACE_INFO(SLICE, "    >>> UNIMPLEMENTED (checkRPLM)");
     }
 
     return retcode;

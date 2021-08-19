@@ -294,7 +294,6 @@ int minivideo_thumbnail(MediaFile_t *input_media,
         //import_fileStatus(input_media);
 
         int tid = 0;
-        int sid = 0;
 
         // IDR frame filtering
         int picture_number_filtered = idr_filtering(&input_media->tracks_video[tid],
@@ -304,7 +303,8 @@ int minivideo_thumbnail(MediaFile_t *input_media,
         {
             TRACE_ERROR(MAIN, "No picture to decode after filtering!");
         }
-        else
+
+        for (unsigned sid = 0; sid < picture_number_filtered; sid++)
         {
             OutputFile_t out;
             memset(&out, 0, sizeof (OutputFile_t));
