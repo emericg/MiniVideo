@@ -83,16 +83,12 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
                         if (next_byte == 0x67 || next_byte == 0x68)
                         {
                             // Add a sample
-                            // note: SPS and PPS are added to parameters and frame tables
-
-                            if (media->tracks_video[0]->parameter_count < 8)
+                            if (media->tracks_video[0]->parameter_count < 32)
                             {
+                                // NOTE: SPS and PPS are added to both parameter and sample tables
                                 media->tracks_video[0]->parameter_offset[media->tracks_video[0]->parameter_count] = bitstream_get_absolute_byte_offset(bitstr);
                                 media->tracks_video[0]->parameter_size[media->tracks_video[0]->parameter_count] = GUESS_BUFFERSIZE;
                                 media->tracks_video[0]->parameter_type[media->tracks_video[0]->parameter_count] = sample_VIDEO_PARAM;
-
-                                if (media->tracks_video[0]->parameter_count > 0)
-                                    media->tracks_video[0]->sample_size[media->tracks_video[0]->parameter_count - 1] = bitstream_get_absolute_byte_offset(bitstr) - media->tracks_video[0]->sample_offset[media->tracks_video[0]->parameter_count - 1];
 
                                 media->tracks_video[0]->parameter_count++;
                             }
@@ -100,33 +96,51 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
 
                         if (next_byte == 0x67 || next_byte == 0x68 || next_byte == 0x65 || next_byte == 0x41)
                         {
-                            // Add a frame
+                            // Add a sample
                             if (media->tracks_video[0]->sample_count < 999999)
                             {
                                 media->tracks_video[0]->sample_offset[media->tracks_video[0]->sample_count] = bitstream_get_absolute_byte_offset(bitstr);
                                 media->tracks_video[0]->sample_size[media->tracks_video[0]->sample_count] = GUESS_BUFFERSIZE;
-                                media->tracks_video[0]->sample_pts[media->tracks_video[0]->sample_count] = (media->tracks_video[0]->sample_count - media->tracks_video[0]->parameter_count) * 41708;
 
-                                // Set size of the previous frame, now that we know where it stops
+                                // Set size of the previous sample, now that we know where it stops
                                 if (media->tracks_video[0]->sample_count > 0)
-                                    media->tracks_video[0]->sample_size[media->tracks_video[0]->sample_count - 1] = bitstream_get_absolute_byte_offset(bitstr) - media->tracks_video[0]->sample_offset[media->tracks_video[0]->sample_count - 1];
+                                {
+                                    if (media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count - 1] == sample_VIDEO_PARAM)
+                                    {
+                                        // last sample was a xPS
+                                        media->tracks_video[0]->parameter_size[media->tracks_video[0]->sample_count - 1] = bitstream_get_absolute_byte_offset(bitstr) - media->tracks_video[0]->sample_offset[media->tracks_video[0]->sample_count - 1] - current_startcode_size - 1;
+                                        media->tracks_video[0]->sample_size[media->tracks_video[0]->sample_count - 1] = media->tracks_video[0]->parameter_size[media->tracks_video[0]->sample_count - 1];
+                                    }
+                                    else
+                                    {
+                                        // last sample was a frame
+                                        media->tracks_video[0]->sample_size[media->tracks_video[0]->sample_count - 1] = bitstream_get_absolute_byte_offset(bitstr) - media->tracks_video[0]->sample_offset[media->tracks_video[0]->sample_count - 1] - current_startcode_size - 1;
+                                    }
+                                }
 
                                 if (next_byte == 0x67 || next_byte == 0x68)
                                 {
+                                    // xPS
                                     media->tracks_video[0]->sample_pts[media->tracks_video[0]->sample_count] = 0;
                                     media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_PARAM;
                                     TRACE_1(DEMUX, "* SPS or PPS nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
                                 }
-                                else if (next_byte == 0x65)
-                                {
-                                    media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_SYNC;
-                                    media->tracks_video[0]->frame_count_idr++;
-                                    TRACE_1(DEMUX, "* IDR frame nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
-                                }
                                 else
                                 {
-                                    media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO;
-                                    TRACE_1(DEMUX, "* frame nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
+                                    // frames
+                                    media->tracks_video[0]->sample_pts[media->tracks_video[0]->sample_count] = (media->tracks_video[0]->sample_count - media->tracks_video[0]->parameter_count) * 41708;
+
+                                    if (next_byte == 0x65)
+                                    {
+                                        media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_SYNC;
+                                        media->tracks_video[0]->frame_count_idr++;
+                                        TRACE_1(DEMUX, "* IDR frame nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
+                                    }
+                                    else
+                                    {
+                                        media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO;
+                                        TRACE_1(DEMUX, "* frame nal unit found at byte offset %i", bitstream_get_absolute_byte_offset(bitstr));
+                                    }
                                 }
 
                                 media->tracks_video[0]->sample_count++;
