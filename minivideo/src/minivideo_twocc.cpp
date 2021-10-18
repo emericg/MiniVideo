@@ -40,18 +40,42 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
     {
     case WAVE_FORMAT_MS_PCM:
     case WAVE_FORMAT_MS_IEEE_FLOAT:
+    case WAVE_FORMAT_ESPCM:
         codec = CODEC_LPCM;
         break;
     case WAVE_FORMAT_MS_ADPCM:
+    case WAVE_FORMAT_OKI_ADPCM:
+    case WAVE_FORMAT_DVI_ADPCM:
+    case WAVE_FORMAT_MEDIASPACE_ADPCM:
+    case WAVE_FORMAT_SIERRA_ADPCM:
+    case WAVE_FORMAT_G723_ADPCM:
+    case WAVE_FORMAT_YAMAHA_ADPCM:
+    case WAVE_FORMAT_ROCKWELL_ADPCM:
+    case WAVE_FORMAT_G721_ADPCM:
+    case WAVE_FORMAT_G726_ADPCM:
+    case WAVE_FORMAT_G722_ADPCM:
+    case WAVE_FORMAT_ZYXEL_ADPCM:
+    case WAVE_FORMAT_RHETOREX_ADPCM:
+    case WAVE_FORMAT_SANYO_LD_ADPCM:
+    case WAVE_FORMAT_G726ADPCM:
+    case WAVE_FORMAT_CREATIVE_ADPCM:
+    case WAVE_FORMAT_UHER_ADPCM:
+    case WAVE_FORMAT_OLIADPCM:
         codec = CODEC_ADPCM;
         break;
     case WAVE_FORMAT_MS_ALAW:
     case WAVE_FORMAT_MS_MULAW:
         codec = CODEC_LogPCM;
         break;
+    case WAVE_FORMAT_DIGIADPCM:
+        codec = CODEC_DPCM;
+        break;
+
     case WAVE_FORMAT_MS_DTS:
+    case WAVE_FORMAT_DTS:
         codec = CODEC_DTS;
         break;
+
     case WAVE_FORMAT_MP1:
         codec = CODEC_MPEG_L2;
         break;
@@ -59,12 +83,13 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
         codec = CODEC_MPEG_L3;
         break;
 
-    case WAVE_FORMAT_AC3:
+    case WAVE_FORMAT_DOLBY_AC2:
+        codec = CODEC_AC2;
+        break;
+    case WAVE_FORMAT_DOLBY_AC3:
         codec = CODEC_AC3;
         break;
-    case WAVE_FORMAT_DTS:
-        codec = CODEC_DTS;
-        break;
+
     case WAVE_FORMAT_RA_14:
         codec = CODEC_RA_14;
         break;
@@ -154,16 +179,16 @@ const char *getTccString(const uint16_t tcc)
         return "WAVE_FORMAT_MS_WMRTV";
         break;
 
-    case WAVE_FORMAT_AC2:
-        return "WAVE_FORMAT_AC2";
-        break;
     case WAVE_FORMAT_MP1:
         return "WAVE_FORMAT_MP1";
         break;
     case WAVE_FORMAT_MP3:
         return "WAVE_FORMAT_MP3";
         break;
-    case WAVE_FORMAT_AC3:
+    case WAVE_FORMAT_DOLBY_AC2:
+        return "WAVE_FORMAT_AC2";
+        break;
+    case WAVE_FORMAT_DOLBY_AC3:
         return "WAVE_FORMAT_AC3";
         break;
     case WAVE_FORMAT_DTS:
