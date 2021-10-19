@@ -360,110 +360,135 @@ QString getAspectRatioString(double ar_d, const bool detailed)
 {
     QString aspectratio_qstr;
 
-    if (ar_d > 1.24 && ar_d < 1.26)
+    if (ar_d > 0.99 && ar_d < 1.01)
     {
-        aspectratio_qstr = "5:4";
+        aspectratio_qstr = "1:1";
+        if (detailed) aspectratio_qstr += " (square)";
     }
-    else if (ar_d > 1.323 && ar_d < 1.343)
+    if (ar_d > 1.0)
     {
-        aspectratio_qstr = "4:3";
-    }
-    else if (ar_d > 1.42 && ar_d < 1.44)
-    {
-        aspectratio_qstr = "1.43:1";
-
-        if (detailed)
-            aspectratio_qstr += " (IMAX)";
-    }
-    else if (ar_d > 1.49 && ar_d < 1.51)
-    {
-        aspectratio_qstr = "3:2";
-    }
-    else if (ar_d > 1.545 && ar_d < 1.565)
-    {
-        aspectratio_qstr = "14:9";
-    }
-    else if (ar_d > 1.59 && ar_d < 1.61)
-    {
-        aspectratio_qstr = "16:10";
-    }
-    else if (ar_d > 1.656 && ar_d < 1.676)
-    {
-        aspectratio_qstr = "5:3";
-
-        if (detailed)
-            aspectratio_qstr += " (35 mm film)";
-    }
-    else if (ar_d > 1.767 && ar_d < 1.787)
-    {
-        aspectratio_qstr = "16:9";
-    }
-    else if (ar_d > 1.84 && ar_d < 1.86)
-    {
-        aspectratio_qstr = "1.85:1";
-
-        if (detailed)
-            aspectratio_qstr += " (US / UK widescreen)";
-    }
-    else if (ar_d > 1.886 && ar_d < 1.906)
-    {
-        aspectratio_qstr = "1.896:1";
-
-        if (detailed)
-            aspectratio_qstr += " (DCI / SMPTE digital cinema)";
-    }
-    else if (ar_d > 1.99 && ar_d < 2.01)
-    {
-        aspectratio_qstr = "2.0:1";
-
-        if (detailed)
-            aspectratio_qstr += " (SuperScope / Univisium)";
-    }
-    else if (ar_d > 2.19 && ar_d < 2.22)
-    {
-        aspectratio_qstr = "2.20:1";
-
-        if (detailed)
-            aspectratio_qstr += " (70 mm film)";
-    }
-    else if (ar_d > 2.34 && ar_d < 2.36)
-    {
-        aspectratio_qstr = "2.35:1";
-
-        if (detailed)
-            aspectratio_qstr += " (35 mm anamorphic)";
-    }
-    else if (ar_d > 2.38 && ar_d < 2.40)
-    {
-        aspectratio_qstr = "2.39:1";
-
-        if (detailed)
-            aspectratio_qstr += " (35 mm modern anamorphic)";
-    }
-    else if (ar_d < 2.41)
-    {
-        aspectratio_qstr = "2.4:1";
-
-        if (detailed)
-            aspectratio_qstr += " (35 mm modern anamorphic)";
-    }
-    else if (ar_d > 2.54 && ar_d < 2.56)
-    {
-        aspectratio_qstr = "2.55:1";
-
-        if (detailed)
-            aspectratio_qstr += " (Cinemascope)";
-    }
-    else if (ar_d > 2.75 && ar_d < 2.77)
-    {
-        aspectratio_qstr = "2.76:1";
-
-        if (detailed)
-            aspectratio_qstr += " (Ultra Panavision 70)";
+        if (ar_d > 1.24 && ar_d < 1.26)
+        {
+            aspectratio_qstr = "5:4";
+        }
+        else if (ar_d > 1.323 && ar_d < 1.343)
+        {
+            aspectratio_qstr = "4:3";
+        }
+        else if (ar_d > 1.42 && ar_d < 1.44)
+        {
+            aspectratio_qstr = "1.43:1";
+            if (detailed) aspectratio_qstr += " (IMAX)";
+        }
+        else if (ar_d > 1.49 && ar_d < 1.51)
+        {
+            aspectratio_qstr = "3:2";
+        }
+        else if (ar_d > 1.545 && ar_d < 1.565)
+        {
+            aspectratio_qstr = "14:9";
+        }
+        else if (ar_d > 1.59 && ar_d < 1.61)
+        {
+            aspectratio_qstr = "16:10";
+        }
+        else if (ar_d > 1.656 && ar_d < 1.676)
+        {
+            aspectratio_qstr = "5:3";
+            if (detailed) aspectratio_qstr += " (35 mm film)";
+        }
+        else if (ar_d > 1.767 && ar_d < 1.787)
+        {
+            aspectratio_qstr = "16:9";
+        }
+        else if (ar_d > 1.84 && ar_d < 1.86)
+        {
+            aspectratio_qstr = "1.85:1";
+            if (detailed) aspectratio_qstr += " (US / UK widescreen)";
+        }
+        else if (ar_d > 1.886 && ar_d < 1.906)
+        {
+            aspectratio_qstr = "1.896:1";
+            if (detailed) aspectratio_qstr += " (DCI / SMPTE digital cinema)";
+        }
+        else if (ar_d > 1.99 && ar_d < 2.01)
+        {
+            aspectratio_qstr = "2.0:1";
+            if (detailed) aspectratio_qstr += " (SuperScope / Univisium)";
+        }
+        else if (ar_d > 2.19 && ar_d < 2.22)
+        {
+            aspectratio_qstr = "2.20:1";
+            if (detailed) aspectratio_qstr += " (70 mm film)";
+        }
+        else if (ar_d > 2.34 && ar_d < 2.36)
+        {
+            aspectratio_qstr = "2.35:1";
+            if (detailed) aspectratio_qstr += " (35 mm anamorphic)";
+        }
+        else if (ar_d > 2.38 && ar_d < 2.40)
+        {
+            aspectratio_qstr = "2.39:1";
+            if (detailed) aspectratio_qstr += " (35 mm modern anamorphic)";
+        }
+        else if (ar_d < 2.41)
+        {
+            aspectratio_qstr = "2.4:1";
+            if (detailed) aspectratio_qstr += " (35 mm modern anamorphic)";
+        }
+        else if (ar_d > 2.54 && ar_d < 2.56)
+        {
+            aspectratio_qstr = "2.55:1";
+            if (detailed) aspectratio_qstr += " (Cinemascope)";
+        }
+        else if (ar_d > 2.75 && ar_d < 2.77)
+        {
+            aspectratio_qstr = "2.76:1";
+            if (detailed) aspectratio_qstr += " (Ultra Panavision 70)";
+        }
+        else
+        {
+            aspectratio_qstr = QString::number(ar_d, 'g', 4) + ":1";
+        }
     }
     else
     {
-        aspectratio_qstr = QString::number(ar_d, 'g', 4) + ":1";
+        if (ar_d > 0.49 && ar_d < 0.51)
+        {
+            aspectratio_qstr = "1:2";
+        }
+        else if (ar_d > 0.42 && ar_d < 0.435)
+        {
+            aspectratio_qstr = "9:21";
+        }
+        else if (ar_d > 0.55 && ar_d < 0.57)
+        {
+            aspectratio_qstr = "9:16";
+        }
+        else if (ar_d > 0.59 && ar_d < 0.61)
+        {
+            aspectratio_qstr = "3:5";
+        }
+        else if (ar_d > 0.62 && ar_d < 0.63)
+        {
+            aspectratio_qstr = "10:16";
+        }
+        else if (ar_d > 0.66 && ar_d < 0.70)
+        {
+            aspectratio_qstr = "2:3";
+        }
+        else if (ar_d > 0.74 && ar_d < 0.76)
+        {
+            aspectratio_qstr = "3:4";
+        }
+        else if (ar_d > 0.79 && ar_d < 0.81)
+        {
+            aspectratio_qstr = "4:5";
+        }
+        else
+        {
+            aspectratio_qstr = QString::number(ar_d, 'g', 4) + ":1";
+        }
     }
 
     //qDebug() << "getAspectRatioString(" << x << "," << y << ") >" << aspectratio_qstr;

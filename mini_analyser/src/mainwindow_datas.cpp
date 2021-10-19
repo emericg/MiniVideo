@@ -41,33 +41,40 @@ void MainWindow::cleanData()
     //QString unknown_bold = tr("<b>Unknown</b>");
 
     // Infos tab
-    ui->label_info_filename->clear();
     ui->label_info_fullpath->clear();
-    ui->label_info_container->clear();
+    ui->label_info_filename->clear();
     ui->label_info_filesize->clear();
     ui->label_info_duration->clear();
+
+    ui->label_info_container->clear();
+    ui->label_info_container_profile->clear();
+    ui->label_info_container_overhead->clear();
     ui->label_info_creation_date->clear();
     ui->label_info_creation_app->clear();
     ui->label_info_creation_lib->clear();
-    ui->label_info_container_overhead->clear();
+
+    ui->label_info_video_codec->clear();
+    ui->label_info_video_duration->clear();
+    ui->label_info_video_size->clear();
+    ui->label_info_video_definition->clear();
+    ui->label_info_video_aspectratio->clear();
+    ui->label_info_video_display_definition->clear();
+    ui->label_info_video_display_aspectratio->clear();
+    ui->label_info_video_framerate->clear();
+    ui->label_info_video_framerate_mode->clear();
+    ui->label_info_video_bitrate->clear();
+    ui->label_info_video_bitratemode->clear();
+
+    ui->label_info_audio_codec->clear();
+    ui->label_info_audio_duration->clear();
+    ui->label_info_audio_size->clear();
+    ui->label_info_audio_channels->clear();
+    ui->label_info_audio_lng->clear();
+    ui->label_info_audio_channelmode->clear();
+    ui->label_info_audio_samplingrate->clear();
     ui->label_info_audio_bitpersample->clear();
     ui->label_info_audio_bitrate->clear();
     ui->label_info_audio_bitratemode->clear();
-    ui->label_info_audio_channels->clear();
-    ui->label_info_audio_codec->clear();
-    ui->label_info_audio_duration->clear();
-    ui->label_info_audio_lng->clear();
-    ui->label_info_audio_samplingrate->clear();
-    ui->label_info_audio_size->clear();
-    ui->label_info_video_dar->clear();
-    ui->label_info_video_bitrate->clear();
-    ui->label_info_video_bitratemode->clear();
-    ui->label_info_video_codec->clear();
-    ui->label_info_video_definition->clear();
-    ui->label_info_video_duration->clear();
-    ui->label_info_video_framerate->clear();
-    ui->label_info_video_framerate_mode->clear();
-    ui->label_info_video_size->clear();
 
     // Infos tab // Other tracks
     if (ui->verticalLayout_other->layout())
@@ -82,62 +89,76 @@ void MainWindow::cleanData()
 
     // Audio tab
     ui->comboBox_audio_selector->clear();
-    ui->label_audio_default->clear();
-    ui->label_audio_duration->clear();
     ui->label_audio_id->clear();
-    ui->label_audio_lng->clear();
     ui->label_audio_size->clear();
+    ui->label_audio_duration->clear();
     ui->label_audio_title->clear();
+    ui->label_audio_lng->clear();
+    ui->label_audio_default->clear();
     ui->label_audio_forced->clear();
 
-    ui->label_audio_bitratemode->clear();
+    ui->label_audio_fcc->clear();
+    ui->label_audio_codec->clear();
+    ui->label_audio_codec_profile->clear();
+    ui->label_audio_encoder->clear();
+
     ui->label_audio_bitrate_gross->clear();
     ui->label_audio_bitrate_lowest->clear();
     ui->label_audio_bitrate_highest->clear();
-    ui->label_audio_codec->clear();
+    ui->label_audio_bitratemode->clear();
     ui->label_audio_compression_ratio->clear();
-    ui->label_audio_encoder->clear();
-    ui->label_audio_fcc->clear();
 
-    ui->label_audio_bitpersample->clear();
     ui->label_audio_channels->clear();
+    ui->label_audio_channelmode->clear();
     ui->label_audio_samplingrate->clear();
-
-    ui->label_audio_framecount->clear();
-    ui->label_audio_frameduration->clear();
+    ui->label_audio_bitpersample->clear();
+    ui->label_audio_sampleduration->clear();
     ui->label_audio_samplecount->clear();
     ui->label_audio_sampleperframe->clear();
+    ui->label_audio_framecount->clear();
+    ui->label_audio_frameduration->clear();
 
     // Video tab
     ui->comboBox_video_selector->clear();
-    ui->label_video_duration->clear();
     ui->label_video_id->clear();
-    ui->label_video_lng->clear();
     ui->label_video_size->clear();
+    ui->label_video_duration->clear();
     ui->label_video_title->clear();
+    ui->label_video_lng->clear();
 
-    ui->label_video_dar->clear();
-    ui->label_video_var->clear();
-    ui->label_video_par->clear();
-    ui->label_video_bitrate_gross->clear();
-    ui->label_video_bitrate_lowest->clear();
-    ui->label_video_bitrate_highest->clear();
-    ui->label_video_bitratemode->clear();
-    ui->label_video_codec->clear();
-    ui->label_video_compression_ratio->clear();
-    ui->label_video_definition->clear();
-    ui->label_video_definition_visible->clear();
-
-    ui->label_video_encoder->clear();
     ui->label_video_fcc->clear();
+    ui->label_video_codec->clear();
+    ui->label_video_codec_profile->clear();
+    ui->label_video_codec_infos->clear();
+    ui->label_video_encoder->clear();
+
+    ui->label_video_definition->clear();
+    ui->label_video_sar->clear();
+    ui->label_video_buffersize->clear();
+    ui->label_video_definition_display->clear();
+    ui->label_video_dar->clear();
+    ui->label_video_par->clear();
+    ui->label_video_rotation->clear();
+    ui->label_video_projection->clear();
+    ui->label_video_stereomode->clear();
+
     ui->label_video_framerate->clear();
     ui->label_video_framerate_mode->clear();
     ui->label_video_frameduration->clear();
 
-    ui->label_video_color_depth->clear();
-    ui->label_video_color_matrix->clear();
+    ui->label_video_bitrate_gross->clear();
+    ui->label_video_bitrate_lowest->clear();
+    ui->label_video_bitrate_highest->clear();
+    ui->label_video_bitratemode->clear();
+    ui->label_video_compression_ratio->clear();
+
     ui->label_video_color_space->clear();
     ui->label_video_color_subsampling->clear();
+    ui->label_video_color_depth->clear();
+    ui->label_video_color_range->clear();
+    ui->label_video_color_primaries->clear();
+    ui->label_video_color_transfer->clear();
+    ui->label_video_color_matrix->clear();
 
     ui->label_video_framecount->clear();
     ui->label_video_samplecount->clear();
@@ -145,12 +166,12 @@ void MainWindow::cleanData()
 
     // Subtitles tab
     ui->comboBox_sub_selector->clear();
-    ui->label_sub_codec->clear();
-    ui->label_sub_encoding->clear();
     ui->label_sub_id->clear();
-    ui->label_sub_lng->clear();
     ui->label_sub_size->clear();
+    ui->label_sub_codec->clear();
     ui->label_sub_title->clear();
+    ui->label_sub_lng->clear();
+    ui->label_sub_encoding->clear();
     ui->textBrowser_sub->clear();
 
     // Others tab
@@ -276,10 +297,12 @@ int MainWindow::printData()
         ui->label_info_container_profile->setVisible(media->container_profile);
         ui->label_info_container_profile->setText(getContainerProfileString(media->container_profile, true));
 
-        // mismatch?
-        QString ext = media->file_extension;
-        bool mismatch = (media->file_extension);
-        ui->label_info_container_mismatch->setVisible(false);
+        // Container extension mismatch?
+        ui->label_info_container_mismatch->setVisible(media->container_sc != media->container_ext);
+        ui->label_info_container_mismatch->setText(
+            QString(tr("File extension (%1) does not match container (%2)"))
+                    .arg(getContainerString(media->container_ext, false))
+                    .arg(getContainerString(media->container_sc, false)));
 
         ui->label_3->setVisible(media->duration);
         ui->label_info_duration->setVisible(media->duration);
@@ -438,7 +461,15 @@ int MainWindow::printData()
             ui->label_info_video_duration->setText(getDurationString(t->stream_duration_ms));
             ui->label_info_video_bitrate->setText(getBitrateString(t->bitrate_avg));
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_info_video_dar->setText(getAspectRatioString(t->display_aspect_ratio));
+            ui->label_info_video_aspectratio->setText(getAspectRatioString(t->video_aspect_ratio));
+
+            ui->label_93->setVisible(t->width_display != t->width || t->height_display != t->height);
+            ui->label_info_video_display_definition->setVisible(t->width_display != t->width || t->height_display != t->height);
+            ui->label_info_video_display_definition->setText(QString::number(t->width_display) + " x " + QString::number(t->height_display));
+            ui->label_95->setVisible(t->display_aspect_ratio != t->video_aspect_ratio);
+            ui->label_info_video_display_aspectratio->setVisible(t->display_aspect_ratio != t->video_aspect_ratio);
+            ui->label_info_video_display_aspectratio->setText(getAspectRatioString(t->display_aspect_ratio));
+
             ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
             ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
@@ -984,9 +1015,8 @@ int MainWindow::printVideoDetails()
             ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_video_definition_visible->setVisible(false);
-            ui->label_10->setVisible(false);
-            ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, true));
+            ui->label_video_sar->setText(getAspectRatioString(t->video_aspect_ratio, true));
+
             if (t->video_projection)
             {
                 ui->label_5->setVisible(true);
@@ -1020,20 +1050,43 @@ int MainWindow::printVideoDetails()
                 ui->label_85->setVisible(false);
                 ui->label_video_stereomode->setVisible(false);
             }
+            if ((t->width_encoded > 0 && t->width_encoded != t->width) ||
+                (t->height_encoded > 0 &&t->height_encoded != t->height))
+            {
+                ui->label_96->setVisible(true);
+                ui->label_video_buffersize->setVisible(true);
+                ui->label_video_buffersize->setText(QString::number(t->width_encoded) + " x " + QString::number(t->height_encoded));
+            }
+            else
+            {
+                ui->label_96->setVisible(false);
+                ui->label_video_buffersize->setVisible(false);
+            }
             if (t->video_aspect_ratio != t->display_aspect_ratio)
             {
-                ui->label_38->setVisible(true);
+                ui->label_10->setVisible(true);
+                ui->label_video_definition_display->setVisible(true);
+                ui->label_video_definition_display->setText(QString::number(t->width_display) + " x " + QString::number(t->height_display));
                 ui->label_81->setVisible(true);
-                ui->label_video_var->setVisible(true);
+                ui->label_video_dar->setVisible(true);
+                ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, false));
+            }
+            else
+            {
+                ui->label_10->setVisible(false);
+                ui->label_video_definition_display->setVisible(false);
+                ui->label_81->setVisible(false);
+                ui->label_video_dar->setVisible(false);
+            }
+            if (t->pixel_aspect_ratio != 1.0)
+            {
+                ui->label_38->setVisible(true);
                 ui->label_video_par->setVisible(true);
-                ui->label_video_var->setText(getAspectRatioString(t->video_aspect_ratio, false));
                 ui->label_video_par->setText(getAspectRatioString(t->pixel_aspect_ratio, false));
             }
             else
             {
                 ui->label_38->setVisible(false);
-                ui->label_81->setVisible(false);
-                ui->label_video_var->setVisible(false);
                 ui->label_video_par->setVisible(false);
             }
 
