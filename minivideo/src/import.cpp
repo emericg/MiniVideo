@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <algorithm>
 
 // C POSIX library
 #ifdef _MSC_VER
@@ -189,6 +190,8 @@ static void getSize(MediaFile_t *media)
  */
 static void getContainer(MediaFile_t *media)
 {
+    media->container_ext = CONTAINER_UNKNOWN;
+    media->container_sc = CONTAINER_UNKNOWN;
     media->container = CONTAINER_UNKNOWN;
 
     // Detect container format using start codes, by readind the first bytes of the file
@@ -196,21 +199,25 @@ static void getContainer(MediaFile_t *media)
     uint8_t buffer[16];
     if (fread(buffer, sizeof(uint8_t), sizeof(buffer), media->file_pointer) == sizeof(buffer))
     {
-        media->container =  getContainerUsingStartcodes(buffer);
+        media->container_sc = getContainerUsingStartcodes(buffer);
     }
 
-    if (media->container == CONTAINER_UNKNOWN)
+    // Detect container format using file extension
+    std::string ext = media->file_extension;
+    std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c){ return std::tolower(c); });
+    media->container_ext = getContainerUsingExtension(ext);
+
+    if (media->container_sc > CONTAINER_UNKNOWN)
     {
-        TRACE_WARNING(IO, "* Unknown container format: startcodes detection failed...");
-
-        // Fallback: detect container format using file extension
-        std::string ext = media->file_extension;
-        media->container = getContainerUsingExtension(ext);
-
-        if (media->container == CONTAINER_UNKNOWN)
-        {
-            TRACE_ERROR(IO, "* Unknown container format: file extension detection failed...");
-        }
+        media->container = media->container_sc;
+    }
+    else if (media->container_ext > CONTAINER_UNKNOWN)
+    {
+        media->container = media->container_ext;
+    }
+    else
+    {
+        TRACE_WARNING(IO, "* Unknown container format: startcodes and file extension detection failed...");
     }
 }
 

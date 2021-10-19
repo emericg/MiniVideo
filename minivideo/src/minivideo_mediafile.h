@@ -54,7 +54,9 @@ typedef struct MediaFile_t
     uint64_t file_modification_time;    //!< File modification time (Unix time) (if available from filesystem metadata)
 
     // Container
-    Containers_e container;             //!< File format / container used by this video file
+    Containers_e container;             //!< File format / container used by this media file
+    Containers_e container_ext;         //!< Container guessed from file extension
+    Containers_e container_sc;          //!< Container guessed from start codes
     ContainerProfiles_e container_profile; //!< Container profile (if applicable)
     bool container_mapper;              //!< Enables the xml container mapper
     FILE *container_mapper_fd;          //!< Direct access to xml map without the need of an actual file
