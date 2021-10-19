@@ -4,9 +4,6 @@ MiniVideo framework
 [![Build Status](https://travis-ci.com/emericg/MiniVideo.svg?branch=master)](https://travis-ci.com/emericg/MiniVideo)
 [![Build status](https://ci.appveyor.com/api/projects/status/bt94ewnmw7bv8yab?svg=true)](https://ci.appveyor.com/project/emericg/minivideo)
 
-Introduction
-------------
-
 MiniVideo is a **multimedia framework developed from scratch** in C/C++, bundled with small testing programs and a neat [media analyser](mini_analyser/).  
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The project uses a dual CMake/QMake build system (CMake is prefered though). Both library and test programs can be installed into your system.  
@@ -50,82 +47,96 @@ The minivideo library can:
 Building minivideo library
 --------------------------
 
-> $ cd minivideo/build/  
-> $ cmake ..  
-> $ make  
+```bash
+$ cd minivideo/build/
+$ cmake ..
+$ make -j$(grep -c ^processor /proc/cpuinfo)
+```
 
-Note: You can easily enable multithreaded build with the "make -jX" argument:
-> $ make -j$(grep -c ^processor /proc/cpuinfo)  
+You can change several build options directly into the "minivideo/CMakeLists.txt" 
+file, or you can tune CMake by adding extra arguments to the cmake call:
 
-Note: You can tune CMake by adding extra arguments:
 > -DCMAKE_BUILD_TYPE=Release/Debug  
 > -DCMAKE_BUILD_Mode=Dynamic/Static  
 > -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/xxx.cmake  
 > -DCMAKE_INSTALL_PREFIX=/usr/bin  
 
-Note: You can also change several build options directly into the "minivideo/CMakeLists.txt" file.
-
 Installation into the system, available for root user:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
+```bash
+$ su
+$ make install # system installation, need root user
+```
 
 Generating online documentation with Doxygen
 --------------------------------------------
 
-> $ cd minivideo/doc/  
-> $ ./generate_doxygen.sh  
+```bash
+$ cd minivideo/doc/
+$ ./generate_doxygen.sh
+```
 
 Open "minivideo/doc/doxygen.html" with your favorite browser.
-
 
 Generating error report with cppcheck
 -------------------------------------
 
-> $ cd minivideo/doc/  
-> $ ./generate_cppcheck.sh  
+```bash
+$ cd minivideo/doc/
+$ ./generate_cppcheck.sh
+```
 
 Open "minivideo/doc/cppcheck.html" with your favorite browser.
-
 
 Building MiniVideo's testing softwares
 --------------------------------------
 
 Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
-how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file)
+how to find the library (libminivideoframework.so file) and its header (minivideoframework.h file).  
 In case of problem, it may be necessary to manually indicate the paths of these files.
 
-> $ cd mini_analyser/  
-> $ qmake  
-> $ make  
+```bash
+$ cd mini_analyser/
+$ qmake
+$ make
+```
 
-> $ cd mini_extractor/build/  
-> $ cmake ..  
-> $ make  
+```bash
+$ cd mini_extractor/build/
+$ cmake ..
+$ make
+```
 
-> $ cd mini_thumbnailer/build/  
-> $ cmake ..  
-> $ make  
+```bash
+$ cd mini_thumbnailer/build/
+$ cmake ..
+$ make
+```
 
 Installation into the system, available for root user with both testing softwares:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
 
+```bash
+$ su
+$ make install # system installation, need root user
+```
 
 Using mini_analyser
 -------------------
 
-> $ cd mini_analyser/build/  
-> $ ./mini_analyser  
+```bash
+$ cd mini_analyser/build/
+$ ./mini_analyser
+```
 
 Then drag and drop files to analyse them!
-
 
 Using mini_extractor
 --------------------
 
-> $ cd mini_extractor/build/  
-> $ ./mini_extractor -i 'myfilepath' [-o 'mydirectory'] [-a nb_tracks] [-v nb_tracks]  
+```bash
+$ cd mini_extractor/build/
+$ ./mini_extractor -i 'myfilepath' [-o 'mydirectory'] [-a nb_tracks] [-v nb_tracks]
+```
 
 Command line arguments:
 > -h : print help  
@@ -134,12 +145,13 @@ Command line arguments:
 > -a : maximum number of audio stream(s) to extract  
 > -v : maximum number of video stream(s) to extract  
 
-
 Using mini_thumbnailer
 ----------------------
 
-> $ cd mini_thumbnailer/build/  
-> $ ./mini_thumbnailer -i 'myfilepath' [-o 'mydirectory'] [-f picture_format] [-q picture_quality] [-n picture_number] [-m picture_extractionmode]  
+```bash
+$ cd mini_thumbnailer/build/
+$ ./mini_thumbnailer -i 'myfilepath' [-o 'mydirectory'] [-f picture_format] [-q picture_quality] [-n picture_number] [-m picture_extractionmode]
+```
 
 Command line arguments:
 > -h : print help  

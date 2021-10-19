@@ -16,12 +16,12 @@ DESTDIR      = build/
 # build settings ---------------------------------------------------------------
 
 # build settings and version are usually set by the CMake build system.
-# we force MINIVIDEO_SETTINGS_H to make sure we never use the CMake settings file.
+# we force MINIVIDEO_SETTINGS_H to make sure we don't use the CMake settings file.
 DEFINES += MINIVIDEO_SETTINGS_H
 
-VERSION      = 0.13.0
+VERSION      = 0.14.0
 DEFINES     += minivideo_VERSION_MAJOR=0
-DEFINES     += minivideo_VERSION_MINOR=13
+DEFINES     += minivideo_VERSION_MINOR=14
 DEFINES     += minivideo_VERSION_PATCH=0
 
 CONFIG(debug, debug|release) { DEFINES += ENABLE_DEBUG=1 }
