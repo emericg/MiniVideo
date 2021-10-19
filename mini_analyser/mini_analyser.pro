@@ -5,7 +5,7 @@
 
 TARGET       = mini_analyser
 
-VERSION      = 47
+VERSION      = 48
 DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
 CONFIG      += c++11
