@@ -349,7 +349,8 @@ int avi_indexer_initmap(MediaFile_t *media, AviTrack_t *track, uint32_t index_en
 
             mytrack->stream_packetized = true;
 
-            mytrack->bitrate_avg = track->strf.wBitsPerSample;
+            mytrack->bit_per_sample = track->strf.wBitsPerSample;
+            mytrack->bitrate_avg = track->strf.nAvgBytesPerSec;
             mytrack->sampling_rate = track->strf.nSamplesPerSec;
             mytrack->channel_count = track->strf.nChannels;
 

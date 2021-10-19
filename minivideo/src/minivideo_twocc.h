@@ -213,7 +213,7 @@ typedef enum twocc_list_e
     WAVE_FORMAT_VORBIS2p                = 0x6770, //!< Ogg Vorbis mode 2+
     WAVE_FORMAT_VORBIS3p                = 0x6772, //!< Ogg Vorbis mode 3+
 
-    WAVE_FORMAT_EXTENSIBLE  = 0xFFFE
+    WAVE_FORMAT_EXTENSIBLE              = 0xFFFE
 
 } twocc_list_e;
 

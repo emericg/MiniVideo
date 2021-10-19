@@ -87,6 +87,7 @@ Codecs_e getCodecFromTwoCC(const uint16_t tcc)
         codec = CODEC_AC2;
         break;
     case WAVE_FORMAT_DOLBY_AC3:
+    case WAVE_FORMAT_DOLBY_AC3_SPDIF:
         codec = CODEC_AC3;
         break;
 
@@ -186,15 +187,20 @@ const char *getTccString(const uint16_t tcc)
         return "WAVE_FORMAT_MP3";
         break;
     case WAVE_FORMAT_DOLBY_AC2:
-        return "WAVE_FORMAT_AC2";
+        return "WAVE_FORMAT_DOLBY_AC2";
         break;
     case WAVE_FORMAT_DOLBY_AC3:
-        return "WAVE_FORMAT_AC3";
+    case WAVE_FORMAT_DOLBY_AC3_SPDIF:
+        return "WAVE_FORMAT_DOLBY_AC3";
         break;
     case WAVE_FORMAT_DTS:
         return "WAVE_FORMAT_DTS";
         break;
     case WAVE_FORMAT_AAC:
+    case 0x0180:
+    case 0x4143:
+    case 0x706D:
+    case 0xA106:
         return "WAVE_FORMAT_AAC";
         break;
 
