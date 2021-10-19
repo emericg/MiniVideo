@@ -520,54 +520,83 @@ bool computeAspectRatios(MediaFile_t *media)
         MediaStream_t *t = media->tracks_video[i];
         if (t)
         {
-            // First pass on PAR (if set by the container)
-             if (t->pixel_aspect_ratio_h && t->pixel_aspect_ratio_v)
-             {
-                 t->pixel_aspect_ratio = (double)t->pixel_aspect_ratio_h / (double)t->pixel_aspect_ratio_v;
-             }
-             else
-             {
-                 t->pixel_aspect_ratio = 1.0;
-                 t->pixel_aspect_ratio_h = 1;
-                 t->pixel_aspect_ratio_v = 1;
-             }
+            // First pass on PAR
+            if (t->pixel_aspect_ratio_h && t->pixel_aspect_ratio_v)
+            {
+                // (if set by the container)
+                t->pixel_aspect_ratio = t->pixel_aspect_ratio_h / (double)t->pixel_aspect_ratio_v;
+            }
+            else
+            {
+                t->pixel_aspect_ratio_h = 1;
+                t->pixel_aspect_ratio_v = 1;
+                t->pixel_aspect_ratio = 1.0;
+            }
 
-             if (t->video_aspect_ratio_h && t->video_aspect_ratio_v)
-             {
-                 // First pass on PAR (if set by the container)
-                 t->video_aspect_ratio = (double)t->video_aspect_ratio_h / (double)t->video_aspect_ratio_v;
-             }
-             else if (t->width && t->height)
-             {
-                 // First pass on PAR (if computer from video resolution)
-                 t->video_aspect_ratio = (double)t->width / (double)t->height,
-                 t->video_aspect_ratio_h = t->width;
-                 t->video_aspect_ratio_v = t->height;
-             }
+            // First pass on VAR
+            if (!t->video_aspect_ratio_h && t->video_aspect_ratio_v)
+            {
+                // (if set by the container)
+                t->video_aspect_ratio = t->video_aspect_ratio_h / (double)t->video_aspect_ratio_v;
+            }
+            else if (t->width && t->height)
+            {
+                // (if computed from video resolution)
+                t->video_aspect_ratio_h = t->width;
+                t->video_aspect_ratio_v = t->height;
+                t->video_aspect_ratio = t->video_aspect_ratio_h / (double)t->video_aspect_ratio_v;
+            }
 
-             // Compute display aspect ratio
-             if (t->display_aspect_ratio_h && t->display_aspect_ratio_v)
-             {
-                 t->display_aspect_ratio = (double)t->display_aspect_ratio_h / (double)t->display_aspect_ratio_v;
-             }
-             else
-             {
-                 if (t->pixel_aspect_ratio != 1.0)
-                 {
-                     t->display_aspect_ratio = t->video_aspect_ratio * t->pixel_aspect_ratio;
-                 }
-                 else
-                 {
-                     t->display_aspect_ratio = t->video_aspect_ratio;
-                 }
-             }
+            // First pass on DAR // Handle PAR
+            if (t->display_aspect_ratio_h && t->display_aspect_ratio_v)
+            {
+                // (if set by the container)
+                t->display_aspect_ratio = t->display_aspect_ratio_h / (double)t->display_aspect_ratio_v;
+            }
+            else
+            {
+                //if (t->pixel_aspect_ratio != 1.0)
+                if (t->pixel_aspect_ratio < 0.99 || t->pixel_aspect_ratio > 1.01)
+                {
+                    // (if computed from PAR)
+                    if (t->pixel_aspect_ratio >= 1.0) {
+                        t->display_aspect_ratio_h = t->video_aspect_ratio_h * t->pixel_aspect_ratio;
+                        t->display_aspect_ratio_v = t->video_aspect_ratio_v;
+                        t->width_display = t->width * t->pixel_aspect_ratio;
+                        t->height_display = t->height;
+                    } else {
+                        t->display_aspect_ratio_h = t->video_aspect_ratio_h;
+                        t->display_aspect_ratio_v = t->video_aspect_ratio_v * t->pixel_aspect_ratio;
+                        t->width_display = t->width;
+                        t->height_display = t->height * t->pixel_aspect_ratio;
+                    }
+                    t->display_aspect_ratio = t->display_aspect_ratio_h / (double)t->display_aspect_ratio_v;
+                }
+                else
+                {
+                    // (if same as VAR)
+                    t->display_aspect_ratio_h = t->video_aspect_ratio_h;
+                    t->display_aspect_ratio_v = t->video_aspect_ratio_v;
+                    t->display_aspect_ratio = t->video_aspect_ratio;
+                    t->width_display = t->width;
+                    t->height_display = t->height;
+                }
+            }
 
-             // Second pass on PAR
-             if (t->pixel_aspect_ratio == 1.0 &&
-                 (t->video_aspect_ratio != t->display_aspect_ratio))
-             {
-                 //
-             }
+            // Second pass on DAR // Handle rotation
+            if (t->video_rotation == 1 || t->video_rotation == 3)
+            {
+                // def
+                unsigned temp = t->width_display;
+                t->width_display = t->height_display;
+                t->height_display = temp;
+
+                // ar
+                temp = t->display_aspect_ratio_h;
+                t->display_aspect_ratio_h = t->display_aspect_ratio_v;
+                t->display_aspect_ratio_v = temp;
+                t->display_aspect_ratio = (double)t->width_display / (double)t->height_display;
+            }
         }
     }
 

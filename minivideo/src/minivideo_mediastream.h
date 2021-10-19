@@ -77,8 +77,37 @@ typedef struct MediaStream_t
     // Video metadata
     unsigned int width;                     //!< Horizontal size (in pixels)
     unsigned int height;                    //!< Vertical size (in pixels)
-    unsigned int visible_width;             //!< Horizontal size (in pixels, without alignment)
-    unsigned int visible_height;            //!< Vertical size (in pixels, without alignment)
+    unsigned int width_encoded;             //!< Encoded buffer width, in pixels, ignoring crop/padding/orientation
+    unsigned int height_encoded;            //!< Encoded buffer height, in pixels, ignoring crop/padding/orientation
+    unsigned int width_display;             //!< Display width, in pixels, including crop/padding/orientation
+    unsigned int height_display;            //!< Display height, in pixels, including crop/padding/orientation
+
+    ScanType_e scan_mode;                   //!< Scan type
+    StereoMode_e stereo_mode;               //!< Stereo mode
+    Rotation_e video_rotation;              //!< Rotation
+    Projection_e video_projection;          //!< Projection
+
+    double video_aspect_ratio;              //!< Video / Storage aspect ratio (from video geometry, ignore crop/padding/orientation)
+        unsigned int video_aspect_ratio_h;
+        unsigned int video_aspect_ratio_v;
+    double display_aspect_ratio;            //!< Display aspect ratio (if set directly by the container, otherwise computed)
+        unsigned int display_aspect_ratio_h;
+        unsigned int display_aspect_ratio_v;
+    double pixel_aspect_ratio;              //!< Pixel aspect ratio (if set directly by the container, otherwise computed)
+        unsigned int pixel_aspect_ratio_h;
+        unsigned int pixel_aspect_ratio_v;
+
+    unsigned int crop_top;
+    unsigned int crop_left;
+    unsigned int crop_right;
+    unsigned int crop_bottom;
+
+    double framerate;                       //!< Framerate (in frame/s)
+        double framerate_num;               //!< Framerate numerator
+        double framerate_base;              //!< Framerate denominator
+    double frame_duration;                  //!< Frame duration (in ms)
+    FramerateMode_e framerate_mode;         //!< Framerate mode
+
     double video_level;                     //!< Codec video level set by the encoder
     bool h264_feature_cabac;                //!< CABAC compression (for H.264 only)
     bool h264_feature_8x8;                  //!< 8x8 blocks (for H.264 only)
@@ -91,25 +120,6 @@ typedef struct MediaStream_t
     unsigned int color_primaries;           //!< Color primaries
     unsigned int color_transfer;            //!< Color transfer function
     unsigned int color_matrix;              //!< Color matrix
-    Projection_e video_projection;          //!< Projection
-    Rotation_e video_rotation;              //!< Rotation
-    StereoMode_e stereo_mode;               //!< Stereo mode
-    ScanType_e scan_mode;                   //!< Scan type
-    double display_aspect_ratio;            //!< Display aspect ratio (if set directly by the container, otherwise computed)
-        unsigned int display_aspect_ratio_h;
-        unsigned int display_aspect_ratio_v;
-    double video_aspect_ratio;              //!< Video aspect ratio (from video size)
-        unsigned int video_aspect_ratio_h;
-        unsigned int video_aspect_ratio_v;
-    double pixel_aspect_ratio;              //!< Pixel aspect ratio (if set directly by the container)
-        unsigned int pixel_aspect_ratio_h;
-        unsigned int pixel_aspect_ratio_v;
-
-    double framerate;                       //!< Framerate (in frame/s)
-        double framerate_num;               //!< Framerate numerator
-        double framerate_base;              //!< Framerate denominator
-    double frame_duration;                  //!< Frame duration (in ms)
-    FramerateMode_e framerate_mode;         //!< Framerate mode
 
     // Audio metadata
     unsigned int channel_count;             //!< Number of audio channels

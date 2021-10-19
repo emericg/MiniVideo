@@ -195,8 +195,49 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
             map->width = track->video->PixelWidth;
             map->height = track->video->PixelHeight;
-            map->visible_width = track->video->DisplayWidth;
-            map->visible_height = track->video->DisplayHeight;
+
+            if (track->video->DisplayUnit == 0) // in pixel
+            {
+                map->width_display = track->video->DisplayWidth - track->video->PixelCropLeft - track->video->PixelCropRight;
+                map->height_display = track->video->DisplayHeight - track->video->PixelCropTop - track->video->PixelCropBottom;
+
+                map->display_aspect_ratio_h = track->video->DisplayWidth;
+                map->display_aspect_ratio_v = track->video->DisplayHeight;
+                map->display_aspect_ratio = map->display_aspect_ratio_h / (double)map->display_aspect_ratio_v;
+            }
+            //else if (track->video->DisplayUnit == 1) // in centimeters
+            //else if (track->video->DisplayUnit == 2) // in inches
+            else if (track->video->DisplayUnit == 3) // in display aspect ratio
+            {
+                map->display_aspect_ratio_h = track->video->DisplayWidth;
+                map->display_aspect_ratio_v = track->video->DisplayHeight;
+                map->display_aspect_ratio = map->display_aspect_ratio_h / (double)map->display_aspect_ratio_v;
+
+                if (map->display_aspect_ratio > 1.0)
+                {
+                    map->pixel_aspect_ratio_h = map->display_aspect_ratio / (double)(track->video->PixelWidth/track->video->PixelHeight);
+                    map->pixel_aspect_ratio_v = 1;
+                    map->width_display = track->video->PixelWidth * (map->pixel_aspect_ratio_h / (double)map->pixel_aspect_ratio_v);
+                    map->height_display = track->video->PixelHeight * 1;
+                }
+                else
+                {
+                    map->pixel_aspect_ratio_h = 1;
+                    map->pixel_aspect_ratio_v = map->display_aspect_ratio * (double)(track->video->PixelWidth/track->video->PixelHeight);
+                    map->width_display = track->video->PixelWidth * (map->pixel_aspect_ratio_h / (double)map->pixel_aspect_ratio_v);
+                    map->height_display = track->video->PixelHeight * 1;
+                }
+            }
+
+            if (track->video->PixelCropTop || track->video->PixelCropBottom ||
+                track->video->PixelCropLeft || track->video->PixelCropRight)
+            {
+                map->crop_top = track->video->PixelCropTop;
+                map->crop_left = track->video->PixelCropLeft;
+                map->crop_right = track->video->PixelCropRight;
+                map->crop_bottom = track->video->PixelCropBottom;
+            }
+
             map->framerate = 1000000000.0 / track->DefaultDuration;
 
             map->color_depth = track->color_depth;
