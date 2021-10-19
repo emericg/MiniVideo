@@ -28,9 +28,6 @@
 // minianalyser
 #include "minivideo_utils_qt.h"
 
-#include <QMessageBox>
-#include <QFontDatabase>
-#include <QFileDialog>
 #include <QDateTime>
 #include <QFile>
 #include <QDebug>
@@ -63,7 +60,7 @@ int textExport::generateSubtitlesData_text(MediaFile_t &media, QString &exportDa
     {
         for (unsigned i = 0; i < t->sample_count; i++)
         {
-            exportData += "[" + getTimestampPreciseString(t->sample_pts[i]) + "]\n";
+            exportData += "[" + getTimestampPreciseQString(t->sample_pts[i]) + "]\n";
 
             MediaSample_t *s = minivideo_get_sample(&media, t, i);
             if (s)
@@ -98,9 +95,9 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
     exportData += "\n\nTitle          : ";
     exportData += media.file_name;
     exportData += "\nDuration       : ";
-    exportData += getDurationString(media.duration);
+    exportData += getDurationQString(media.duration);
     exportData += "\nSize           : ";
-    exportData += getSizeString(media.file_size);
+    exportData += getSizeQString(media.file_size);
     exportData += "\nContainer      : ";
     exportData += getContainerString(media.container, true);
     if (media.creation_app)
@@ -152,15 +149,15 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             if (t->stream_fcc)
             {
                 exportData += "\nFourCC         : ";
-                exportData += getFourccString(t->stream_fcc);
+                exportData += getFourccQString(t->stream_fcc);
             }
         }
         exportData += "\nCodec          : ";
-        exportData += getCodecString(stream_VIDEO, t->stream_codec, true);
+        exportData += getCodecQString(stream_VIDEO, t->stream_codec, true);
         exportData += "\nSize           : ";
-        exportData += getTrackSizeString(t, media.file_size, detailed);
+        exportData += getTrackSizeQString(t, media.file_size, detailed);
         exportData += "\nDuration       : ";
-        exportData += getDurationString(t->stream_duration_ms);
+        exportData += getDurationQString(t->stream_duration_ms);
         exportData += "\nWidth          : ";
         exportData += QString::number(t->width);
         exportData += "\nHeight         : ";
@@ -176,15 +173,15 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             if (t->video_aspect_ratio > 0.0)
             {
                 exportData += "\nVideo Aspect Ratio    : ";
-                exportData += getAspectRatioString(t->video_aspect_ratio, false);
+                exportData += getAspectRatioQString(t->video_aspect_ratio, false);
             }
             exportData += "\nDisplay Aspect Ratio  : ";
-            exportData += getAspectRatioString(t->display_aspect_ratio, true);
+            exportData += getAspectRatioQString(t->display_aspect_ratio, true);
         }
         else
         {
             exportData += "\nAspect ratio   : ";
-            exportData += getAspectRatioString(t->display_aspect_ratio, detailed);
+            exportData += getAspectRatioQString(t->display_aspect_ratio, detailed);
         }
 
         if (detailed == true)
@@ -194,19 +191,19 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             if (t->framerate_mode)
             {
                 exportData += "\nFramerate mode : ";
-                exportData += getFramerateModeString(t->framerate_mode);
+                exportData += getFramerateModeQString(t->framerate_mode);
             }
 
             exportData += "\nBitrate        : ";
-            exportData += getBitrateString(t->bitrate_avg);
+            exportData += getBitrateQString(t->bitrate_avg);
             exportData += "\nBitrate mode   : ";
-            exportData += getBitrateModeString(t->bitrate_mode);
+            exportData += getBitrateModeQString(t->bitrate_mode);
             if (t->bitrate_mode != BITRATE_CBR)
             {
                 exportData += "\nBitrate (min)  : ";
-                exportData += getBitrateString(t->bitrate_min);
+                exportData += getBitrateQString(t->bitrate_min);
                 exportData += "\nBitrate (max)  : ";
-                exportData += getBitrateString(t->bitrate_max);
+                exportData += getBitrateQString(t->bitrate_max);
             }
         }
         else
@@ -215,11 +212,11 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             exportData += QString::number(t->framerate) + " fps";
             if (t->framerate_mode)
             {
-                exportData += " (" + getFramerateModeString(t->framerate_mode) + ")";
+                exportData += " (" + getFramerateModeQString(t->framerate_mode) + ")";
             }
             exportData += "\nBitrate        : ";
-            exportData += getBitrateString(t->bitrate_avg);
-            exportData += " (" + getBitrateModeString(t->bitrate_mode) + ")";
+            exportData += getBitrateQString(t->bitrate_avg);
+            exportData += " (" + getBitrateModeQString(t->bitrate_mode) + ")";
         }
 
         if (t->color_depth > 0)
@@ -283,15 +280,15 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             if (t->stream_fcc)
             {
                 exportData += "\nFourCC         : ";
-                exportData += getFourccString(t->stream_fcc);
+                exportData += getFourccQString(t->stream_fcc);
             }
         }
         exportData += "\nCodec          : ";
-        exportData += getCodecString(stream_AUDIO, t->stream_codec, true);
+        exportData += getCodecQString(stream_AUDIO, t->stream_codec, true);
         exportData += "\nSize           : ";
-        exportData += getTrackSizeString(t, media.file_size, detailed);
+        exportData += getTrackSizeQString(t, media.file_size, detailed);
         exportData += "\nDuration       : ";
-        exportData += getDurationString(t->stream_duration_ms);
+        exportData += getDurationQString(t->stream_duration_ms);
         if (t->track_title)
         {
             exportData += "\nTitle          : ";
@@ -302,11 +299,11 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             exportData += "\nLanguage code  : ";
             exportData += QString::fromUtf8(t->track_languagecode);
 
-            QString track_language = getLanguageString(t->track_languagecode);
+            QString track_language = getLanguageQString(t->track_languagecode);
             if (!track_language.isEmpty())
             {
                 exportData += "\nLanguage       : ";
-                exportData +=  getLanguageString(t->track_languagecode);
+                exportData +=  getLanguageQString(t->track_languagecode);
             }
         }
         exportData += "\nChannels       : ";
@@ -318,22 +315,22 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
         if (detailed == true)
         {
             exportData += "\nBitrate        : ";
-            exportData += getBitrateString(t->bitrate_avg);
+            exportData += getBitrateQString(t->bitrate_avg);
             exportData += "\nBitrate mode   : ";
-            exportData += getBitrateModeString(t->bitrate_mode);
+            exportData += getBitrateModeQString(t->bitrate_mode);
             if (t->bitrate_mode != BITRATE_CBR)
             {
                 exportData += "\nBitrate (min)  : ";
-                exportData += getBitrateString(t->bitrate_min);
+                exportData += getBitrateQString(t->bitrate_min);
                 exportData += "\nBitrate (max)  : ";
-                exportData += getBitrateString(t->bitrate_max);
+                exportData += getBitrateQString(t->bitrate_max);
             }
         }
         else
         {
             exportData += "\nBitrate        : ";
-            exportData += getBitrateString(t->bitrate_avg);
-            exportData += " (" + getBitrateModeString(t->bitrate_mode) + ")";
+            exportData += getBitrateQString(t->bitrate_avg);
+            exportData += " (" + getBitrateModeQString(t->bitrate_mode) + ")";
         }
     }
 
@@ -357,9 +354,9 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             exportData += QString::number(t->track_id);
         }
         exportData += "\nFormat         : ";
-        exportData += getCodecString(stream_TEXT, t->stream_codec, true);
+        exportData += getCodecQString(stream_TEXT, t->stream_codec, true);
         exportData += "\nSize           : ";
-        exportData += getTrackSizeString(t, media.file_size, detailed);
+        exportData += getTrackSizeQString(t, media.file_size, detailed);
         if (t->track_title)
         {
             exportData += "\nTitle          : ";
@@ -370,11 +367,11 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             exportData += "\nLanguage code  : ";
             exportData += QString::fromUtf8(t->track_languagecode);
 
-            QString track_language = getLanguageString(t->track_languagecode);
+            QString track_language = getLanguageQString(t->track_languagecode);
             if (!track_language.isEmpty())
             {
                 exportData += "\nLanguage       : ";
-                exportData +=  getLanguageString(t->track_languagecode);
+                exportData +=  getLanguageQString(t->track_languagecode);
             }
         }
     }
@@ -412,7 +409,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
             exportData += QString::number(t->track_id);
         }
         exportData += "\nSize           : ";
-        exportData += getTrackSizeString(t, media.file_size, detailed);
+        exportData += getTrackSizeQString(t, media.file_size, detailed);
         if (t->track_title)
         {
             exportData += "\nTitle          : ";

@@ -284,11 +284,11 @@ int MainWindow::printData()
         ui->label_info_filename->setToolTip(QString::fromUtf8(media->file_name));
         ui->label_info_fullpath->setText(QString::fromUtf8(media->file_path));
         ui->label_info_fullpath->setToolTip(QString::fromUtf8(media->file_path));
-        ui->label_info_filesize->setText(getSizeString(media->file_size));
+        ui->label_info_filesize->setText(getSizeQString(media->file_size));
 
         ui->label_3->setVisible(media->duration);
         ui->label_info_duration->setVisible(media->duration);
-        ui->label_info_duration->setText(getDurationString(media->duration));
+        ui->label_info_duration->setText(getDurationQString(media->duration));
 
         // Container infos
         ui->label_info_container->setText(getContainerString(media->container, true));
@@ -306,7 +306,7 @@ int MainWindow::printData()
 
         ui->label_3->setVisible(media->duration);
         ui->label_info_duration->setVisible(media->duration);
-        ui->label_info_duration->setText(getDurationString(media->duration));
+        ui->label_info_duration->setText(getDurationQString(media->duration));
 
         ui->label_ca->setVisible(media->creation_app);
         ui->label_info_creation_app->setVisible(media->creation_app);
@@ -359,9 +359,9 @@ int MainWindow::printData()
             double overheadpercent = (static_cast<double>(overhead) / static_cast<double>(media->file_size)) * 100.0;
 
             if (overheadpercent < 0.01)
-                ui->label_info_container_overhead->setText("<b>~0.01%</b>   >   " + getSizeString(overhead));
+                ui->label_info_container_overhead->setText("<b>~0.01%</b>   >   " + getSizeQString(overhead));
             else if (overheadpercent <= 100)
-                ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeString(overhead));
+                ui->label_info_container_overhead->setText("<b>" + QString::number(overheadpercent, 'f', 2) + "%</b>   >   " + getSizeQString(overhead));
             else
                 ui->label_info_container_overhead->setText("<b>(ERR)</b>");
         }
@@ -384,11 +384,11 @@ int MainWindow::printData()
 
             const MediaStream_t *t = media->tracks_audio[0];
 
-            ui->label_info_audio_size->setText(getTrackSizeString(t, media->file_size));
-            ui->label_info_audio_codec->setText(getCodecString(stream_AUDIO, t->stream_codec, true));
-            ui->label_info_audio_duration->setText(getDurationString(t->stream_duration_ms));
+            ui->label_info_audio_size->setText(getTrackSizeQString(t, media->file_size));
+            ui->label_info_audio_codec->setText(getCodecQString(stream_AUDIO, t->stream_codec, true));
+            ui->label_info_audio_duration->setText(getDurationQString(t->stream_duration_ms));
 
-            QString lng = getLanguageString(t->track_languagecode);
+            QString lng = getLanguageQString(t->track_languagecode);
             if (lng.isEmpty())
             {
                 ui->label_24->hide();
@@ -403,9 +403,9 @@ int MainWindow::printData()
 
             ui->label_86->setVisible(t->channel_mode);
             ui->label_info_audio_channelmode->setVisible(t->channel_mode);
-            ui->label_info_audio_channelmode->setText(getChannelModeString(t->channel_mode));
+            ui->label_info_audio_channelmode->setText(getChannelModeQString(t->channel_mode));
 
-            ui->label_info_audio_bitrate->setText(getBitrateString(t->bitrate_avg));
+            ui->label_info_audio_bitrate->setText(getBitrateQString(t->bitrate_avg));
             ui->label_info_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_info_audio_channels->setText(QString::number(t->channel_count));
 
@@ -413,7 +413,7 @@ int MainWindow::printData()
             {
                 ui->label_info_audio_bitpersample->setText(QString::number(t->bit_per_sample) + " bits");
             }
-            ui->label_info_audio_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+            ui->label_info_audio_bitratemode->setText(getBitrateModeQString(t->bitrate_mode));
 
             if (media->tracks_audio_count > 1)
             {
@@ -427,7 +427,7 @@ int MainWindow::printData()
                         QString text = "Audio track #" + QString::number(i + 1);
                         if (i != media->tracks_audio[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_audio[i]->track_id) + ")";
-                        QString track_language = getLanguageString(media->tracks_audio[i]->track_languagecode);
+                        QString track_language = getLanguageQString(media->tracks_audio[i]->track_languagecode);
                         if (!track_language.isEmpty())
                             text += " [" + track_language + "]";
                         ui->comboBox_audio_selector->addItem(text);
@@ -457,34 +457,34 @@ int MainWindow::printData()
 
             const MediaStream_t *t = media->tracks_video[0];
 
-            ui->label_info_video_codec->setText(getCodecString(stream_VIDEO, t->stream_codec, true));
-            ui->label_info_video_duration->setText(getDurationString(t->stream_duration_ms));
-            ui->label_info_video_bitrate->setText(getBitrateString(t->bitrate_avg));
+            ui->label_info_video_codec->setText(getCodecQString(stream_VIDEO, t->stream_codec, true));
+            ui->label_info_video_duration->setText(getDurationQString(t->stream_duration_ms));
+            ui->label_info_video_bitrate->setText(getBitrateQString(t->bitrate_avg));
             ui->label_info_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_info_video_aspectratio->setText(getAspectRatioString(t->video_aspect_ratio));
+            ui->label_info_video_aspectratio->setText(getAspectRatioQString(t->video_aspect_ratio));
 
             ui->label_93->setVisible(t->width_display != t->width || t->height_display != t->height);
             ui->label_info_video_display_definition->setVisible(t->width_display != t->width || t->height_display != t->height);
             ui->label_info_video_display_definition->setText(QString::number(t->width_display) + " x " + QString::number(t->height_display));
             ui->label_95->setVisible(t->display_aspect_ratio != t->video_aspect_ratio);
             ui->label_info_video_display_aspectratio->setVisible(t->display_aspect_ratio != t->video_aspect_ratio);
-            ui->label_info_video_display_aspectratio->setText(getAspectRatioString(t->display_aspect_ratio));
+            ui->label_info_video_display_aspectratio->setText(getAspectRatioQString(t->display_aspect_ratio));
 
             ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
-            ui->label_info_video_size->setText(getTrackSizeString(t, media->file_size));
-            ui->label_info_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+            ui->label_info_video_size->setText(getTrackSizeQString(t, media->file_size));
+            ui->label_info_video_bitratemode->setText(getBitrateModeQString(t->bitrate_mode));
 
             ui->label_7->setVisible(t->framerate_mode);
             ui->label_info_video_framerate_mode->setVisible(t->framerate_mode);
-            ui->label_info_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+            ui->label_info_video_framerate_mode->setText(getFramerateModeQString(t->framerate_mode));
 
             ui->label_84->setVisible(t->video_projection);
             ui->label_info_video_projection->setVisible(t->video_projection);
-            ui->label_info_video_projection->setText(getProjectionString(t->video_projection));
+            ui->label_info_video_projection->setText(getProjectionQString(t->video_projection));
 
             ui->label_88->setVisible(t->video_rotation);
             ui->label_info_video_rotation->setVisible(t->video_rotation);
-            ui->label_info_video_rotation->setText(getRotationString(t->video_rotation));
+            ui->label_info_video_rotation->setText(getRotationQString(t->video_rotation));
 
             if (media->tracks_video_count > 1)
             {
@@ -523,7 +523,7 @@ int MainWindow::printData()
                         QString text = "Subtitles track #" + QString::number(i + 1);
                         if (i != media->tracks_subt[i]->track_id)
                             text += " (internal id #" + QString::number(media->tracks_subt[i]->track_id) + ")";
-                        QString track_language = getLanguageString(media->tracks_subt[i]->track_languagecode);
+                        QString track_language = getLanguageQString(media->tracks_subt[i]->track_languagecode);
                         if (!track_language.isEmpty())
                             text += " [" + track_language + "]";
                         ui->comboBox_sub_selector->addItem(text);
@@ -558,7 +558,7 @@ int MainWindow::printData()
                 if (media->tracks_video[i])
                 {
                     QString text = "▸ " + tr("Video track #") + QString::number(i+1) + "  /  ";
-                    text += getCodecString(stream_VIDEO, media->tracks_video[i]->stream_codec, false);
+                    text += getCodecQString(stream_VIDEO, media->tracks_video[i]->stream_codec, false);
 
                     QLabel *track = new QLabel(text);
                     ui->verticalLayout_other->addWidget(track);
@@ -569,8 +569,8 @@ int MainWindow::printData()
                 if (media->tracks_audio[i])
                 {
                     QString text = "▸ " + tr("Audio track #") + QString::number(i+1) + "  /  ";
-                    text += getCodecString(stream_AUDIO, media->tracks_audio[i]->stream_codec, false);
-                    QString lng = getLanguageString(media->tracks_audio[i]->track_languagecode);
+                    text += getCodecQString(stream_AUDIO, media->tracks_audio[i]->stream_codec, false);
+                    QString lng = getLanguageQString(media->tracks_audio[i]->track_languagecode);
                     if (lng.isEmpty() == false)
                     {
                         text += "  /  ";
@@ -590,10 +590,10 @@ int MainWindow::printData()
                     if (media->tracks_subt[i]->stream_codec)
                     {
                         text += "  /  ";
-                        text += getCodecString(stream_TEXT, media->tracks_subt[i]->stream_codec, false);
+                        text += getCodecQString(stream_TEXT, media->tracks_subt[i]->stream_codec, false);
                     }
 
-                    QString lng = getLanguageString(media->tracks_subt[i]->track_languagecode);
+                    QString lng = getLanguageQString(media->tracks_subt[i]->track_languagecode);
                     if (lng.isEmpty() == false)
                     {
                         text += "  /  ";
@@ -618,7 +618,7 @@ int MainWindow::printData()
                 {
                     const MediaStream_t *t = media->tracks_others[i];
 
-                    QString text = "▸ " + getTrackTypeString(t) + tr(" track (internal id  #") + QString::number(t->track_id) + ")";
+                    QString text = "▸ " + getTrackTypeQString(t) + tr(" track (internal id  #") + QString::number(t->track_id) + ")";
 
                     if (t->stream_type == stream_TMCD)
                     {
@@ -690,7 +690,7 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_encoder->setText(stream_encoder);
             }
 
-            QString track_language = getLanguageString(t->track_languagecode);
+            QString track_language = getLanguageQString(t->track_languagecode);
             if (track_language.isEmpty())
             {
                 ui->label_26->hide();
@@ -723,8 +723,8 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_forced->hide();
             }
 
-            ui->label_audio_size->setText(getTrackSizeString(t, media->file_size, true));
-            ui->label_audio_codec->setText(getCodecString(stream_AUDIO, t->stream_codec, true));
+            ui->label_audio_size->setText(getTrackSizeQString(t, media->file_size, true));
+            ui->label_audio_codec->setText(getCodecQString(stream_AUDIO, t->stream_codec, true));
 
             if (t->stream_codec_profile)
             {
@@ -756,7 +756,7 @@ int MainWindow::printAudioDetails()
             {
                 ui->label_6->show();
                 ui->label_audio_channelmode->show();
-                ui->label_audio_channelmode->setText(getChannelModeString(t->channel_mode));
+                ui->label_audio_channelmode->setText(getChannelModeQString(t->channel_mode));
             }
             else
             {
@@ -764,10 +764,10 @@ int MainWindow::printAudioDetails()
                 ui->label_audio_channelmode->hide();
             }
 
-            ui->label_audio_duration->setText(getDurationString(t->stream_duration_ms));
+            ui->label_audio_duration->setText(getDurationQString(t->stream_duration_ms));
 
-            ui->label_audio_bitrate_gross->setText(getBitrateString(t->bitrate_avg));
-            ui->label_audio_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+            ui->label_audio_bitrate_gross->setText(getBitrateQString(t->bitrate_avg));
+            ui->label_audio_bitratemode->setText(getBitrateModeQString(t->bitrate_mode));
 
             ui->label_audio_samplingrate->setText(QString::number(t->sampling_rate) + " Hz");
             ui->label_audio_channels->setText(QString::number(t->channel_count));
@@ -851,8 +851,8 @@ int MainWindow::printAudioDetails()
                 btc.getMinMax(bitratemin, bitratemax);
                 t->bitrate_min = bitratemin;
                 t->bitrate_max = bitratemax;
-                ui->label_audio_bitrate_lowest->setText(getBitrateString(bitratemin));
-                ui->label_audio_bitrate_highest->setText(getBitrateString(bitratemax));
+                ui->label_audio_bitrate_lowest->setText(getBitrateQString(bitratemin));
+                ui->label_audio_bitrate_highest->setText(getBitrateQString(bitratemax));
 
                 // Create graphs and assign data
                 ui->audioBitrateGraph->addGraph();
@@ -940,7 +940,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_encoder->setText(stream_encoder);
             }
 
-            QString track_language = getLanguageString(t->track_languagecode);
+            QString track_language = getLanguageQString(t->track_languagecode);
             if (track_language.isEmpty())
             {
                 ui->label_33->hide();
@@ -953,8 +953,8 @@ int MainWindow::printVideoDetails()
                 ui->label_video_lng->setText(track_language);
             }
 
-            ui->label_video_size->setText(getTrackSizeString(t, media->file_size, true));
-            ui->label_video_codec->setText(getCodecString(stream_VIDEO, t->stream_codec, true));
+            ui->label_video_size->setText(getTrackSizeQString(t, media->file_size, true));
+            ui->label_video_codec->setText(getCodecQString(stream_VIDEO, t->stream_codec, true));
 
             if (t->stream_codec_profile)
             {
@@ -1009,19 +1009,19 @@ int MainWindow::printVideoDetails()
                 ui->label_video_fcc->setText(QString::fromLatin1(getFccString_le(t->stream_fcc, fcc_str), 4));
             }
 
-            ui->label_video_duration->setText(getDurationString(t->stream_duration_ms));
+            ui->label_video_duration->setText(getDurationQString(t->stream_duration_ms));
 
-            ui->label_video_bitrate_gross->setText(getBitrateString(t->bitrate_avg));
-            ui->label_video_bitratemode->setText(getBitrateModeString(t->bitrate_mode));
+            ui->label_video_bitrate_gross->setText(getBitrateQString(t->bitrate_avg));
+            ui->label_video_bitratemode->setText(getBitrateModeQString(t->bitrate_mode));
 
             ui->label_video_definition->setText(QString::number(t->width) + " x " + QString::number(t->height));
-            ui->label_video_sar->setText(getAspectRatioString(t->video_aspect_ratio, true));
+            ui->label_video_sar->setText(getAspectRatioQString(t->video_aspect_ratio, true));
 
             if (t->video_projection)
             {
                 ui->label_5->setVisible(true);
                 ui->label_video_projection->setVisible(true);
-                ui->label_video_projection->setText(getProjectionString(t->video_projection));
+                ui->label_video_projection->setText(getProjectionQString(t->video_projection));
             }
             else
             {
@@ -1032,7 +1032,7 @@ int MainWindow::printVideoDetails()
             {
                 ui->label_87->setVisible(true);
                 ui->label_video_rotation->setVisible(true);
-                ui->label_video_rotation->setText(getRotationString(t->video_rotation));
+                ui->label_video_rotation->setText(getRotationQString(t->video_rotation));
             }
             else
             {
@@ -1043,7 +1043,7 @@ int MainWindow::printVideoDetails()
             {
                 ui->label_85->setVisible(true);
                 ui->label_video_stereomode->setVisible(true);
-                ui->label_video_stereomode->setText(getStereoModeString(t->stereo_mode));
+                ui->label_video_stereomode->setText(getStereoModeQString(t->stereo_mode));
             }
             else
             {
@@ -1069,7 +1069,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_definition_display->setText(QString::number(t->width_display) + " x " + QString::number(t->height_display));
                 ui->label_81->setVisible(true);
                 ui->label_video_dar->setVisible(true);
-                ui->label_video_dar->setText(getAspectRatioString(t->display_aspect_ratio, false));
+                ui->label_video_dar->setText(getAspectRatioQString(t->display_aspect_ratio, false));
             }
             else
             {
@@ -1082,7 +1082,7 @@ int MainWindow::printVideoDetails()
             {
                 ui->label_38->setVisible(true);
                 ui->label_video_par->setVisible(true);
-                ui->label_video_par->setText(getAspectRatioString(t->pixel_aspect_ratio, false));
+                ui->label_video_par->setText(getAspectRatioQString(t->pixel_aspect_ratio, false));
             }
             else
             {
@@ -1232,7 +1232,7 @@ int MainWindow::printVideoDetails()
             // Framerate mode
             ui->label_77->setVisible(t->framerate_mode);
             ui->label_video_framerate_mode->setVisible(t->framerate_mode);
-            ui->label_video_framerate_mode->setText(getFramerateModeString(t->framerate_mode));
+            ui->label_video_framerate_mode->setText(getFramerateModeQString(t->framerate_mode));
 
             // Frame duration
                 ui->label_34->setVisible(frameduration > 0);
@@ -1301,8 +1301,8 @@ int MainWindow::printVideoDetails()
                 t->bitrate_min = bitratemin;
                 t->bitrate_max = bitratemax;
 
-                ui->label_video_bitrate_lowest->setText(getBitrateString(bitratemin));
-                ui->label_video_bitrate_highest->setText(getBitrateString(bitratemax));
+                ui->label_video_bitrate_lowest->setText(getBitrateQString(bitratemin));
+                ui->label_video_bitrate_highest->setText(getBitrateQString(bitratemax));
                 wrapper->xRangeMax = static_cast<double>(entries);
                 wrapper->yRangeMax = static_cast<double>(bitratemax_instant);
 
@@ -1385,7 +1385,7 @@ int MainWindow::printSubtitlesDetails()
                 ui->label_sub_title->setText(track_title);
             }
 
-            QString track_language = getLanguageString(t->track_languagecode);
+            QString track_language = getLanguageQString(t->track_languagecode);
             if (track_language.isEmpty())
             {
                 ui->label_66->hide();
@@ -1398,8 +1398,8 @@ int MainWindow::printSubtitlesDetails()
                 ui->label_sub_lng->setText(track_language);
             }
 
-            ui->label_sub_size->setText(getTrackSizeString(t, media->file_size, true));
-            ui->label_sub_codec->setText(getCodecString(stream_TEXT, t->stream_codec, true));
+            ui->label_sub_size->setText(getTrackSizeQString(t, media->file_size, true));
+            ui->label_sub_codec->setText(getCodecQString(stream_TEXT, t->stream_codec, true));
 
             // TODO // set subtitles encoding!
             ui->label_80->setVisible(false);
@@ -1414,7 +1414,7 @@ int MainWindow::printSubtitlesDetails()
             {
                 for (unsigned i = 0; i < t->sample_count; i++)
                 {
-                    text += "[" + getTimestampPreciseString(t->sample_pts[i]) + "]\n";
+                    text += "[" + getTimestampPreciseQString(t->sample_pts[i]) + "]\n";
 
                     MediaSample_t *s = minivideo_get_sample(media, t, i);
                     if (s)
@@ -1464,7 +1464,7 @@ int MainWindow::printOtherDetails()
             { // ▸
                 const MediaStream_t *t = media->tracks_others[i];
 
-                QString text = "<b>" + getTrackTypeString(t) + tr(" track</b> (internal id  #") + QString::number(t->track_id) + ")";
+                QString text = "<b>" + getTrackTypeQString(t) + tr(" track</b> (internal id  #") + QString::number(t->track_id) + ")";
 
                 if (t->track_title)
                 {
@@ -1483,7 +1483,7 @@ int MainWindow::printOtherDetails()
                 }
 
                 text += tr("<br>- Size: ");
-                text += getSizeString(t->stream_size);
+                text += getSizeQString(t->stream_size);
 
                 text += tr("<br>- ");
                 text += QString::number(t->sample_count);

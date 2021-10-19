@@ -297,7 +297,7 @@ unsigned tabContainer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_video[i]) + " #" + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeQString(media->tracks_video[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_video[i];
                 track_loaded++;
             }
@@ -308,7 +308,7 @@ unsigned tabContainer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_audio[i]) + " #" + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeQString(media->tracks_audio[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_audio[i];
                 track_loaded++;
             }
@@ -319,7 +319,7 @@ unsigned tabContainer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_subt[i]) + " #" + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeQString(media->tracks_subt[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_subt[i];
                 track_loaded++;
             }
@@ -330,7 +330,7 @@ unsigned tabContainer::loadTracks()
             {
                 QWidget *placeholder = new QWidget();
 
-                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeString(media->tracks_others[i]) + " #" + QString::number(i));
+                ui->tabWidget_tracks->addTab(placeholder, getTrackTypeQString(media->tracks_others[i]) + " #" + QString::number(i));
                 tracks[index++] = media->tracks_others[i];
                 track_loaded++;
             }
@@ -359,7 +359,7 @@ void tabContainer::loadSamples(int tid)
         for (i = 0; i < sample_to_load; i++)
         {
             if (track->sample_type && track->sample_type[i] != sample_OTHER)
-                ui->listWidget_samples->addItem(getSampleTypeString(track->sample_type[i]) + " #" + QString::number(i));
+                ui->listWidget_samples->addItem(getSampleTypeQString(track->sample_type[i]) + " #" + QString::number(i));
             else
                 ui->listWidget_samples->addItem(tr("Sample #") + QString::number(i));
         }
@@ -403,7 +403,7 @@ void tabContainer::sampleSelection(int sid)
 
         // Header infos
         ui->widgetHeader->show();
-        ui->labelTitle->setText(getSampleTypeString(track->sample_type[sid]) + " #" + QString::number(sid));
+        ui->labelTitle->setText(getSampleTypeQString(track->sample_type[sid]) + " #" + QString::number(sid));
         QLabel *lo = new QLabel(tr("> Offset"));
         QLabel *ls = new QLabel(tr("> Size"));
 
@@ -420,9 +420,9 @@ void tabContainer::sampleSelection(int sid)
         if (track->sample_pts[sid] >= 0 || track->sample_dts[sid] >= 0)
         {
             QString pts = QString::number(static_cast<double>(track->sample_pts[sid] / 1000.0), 'f', 3) + " ms";
-            pts += "   (" + getTimestampPreciseString(track->sample_pts[sid]) + ")";
+            pts += "   (" + getTimestampPreciseQString(track->sample_pts[sid]) + ")";
             if (track->stream_type == stream_VIDEO)
-                pts += "   (SMTPE: " + getTimestampSmtpeString(track->sample_pts[sid], track->framerate) + ")";
+                pts += "   (SMTPE: " + getTimestampSmtpeQString(track->sample_pts[sid], track->framerate) + ")";
             QLabel *lp = new QLabel(tr("> PTS"));
             QLineEdit *dp = new QLineEdit(pts);
             dp->setReadOnly(true);
@@ -430,7 +430,7 @@ void tabContainer::sampleSelection(int sid)
             ui->gridLayout_header->addWidget(dp, 3, 1);
 
             QString dts = QString::number(static_cast<double>(track->sample_dts[sid] / 1000.0), 'f', 3) + " ms";
-            dts += "   (" + getTimestampPreciseString(track->sample_dts[sid]) + ")";
+            dts += "   (" + getTimestampPreciseQString(track->sample_dts[sid]) + ")";
             QLabel *ld = new QLabel(tr("> DTS"));
             QLineEdit *dd = new QLineEdit(dts);
             dd->setReadOnly(true);

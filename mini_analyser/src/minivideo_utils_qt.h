@@ -25,6 +25,7 @@
 /* ************************************************************************** */
 
 #include "minivideo_mediastream.h"
+#include "minivideo_containers.h"
 
 #include <cstdint>
 
@@ -41,7 +42,7 @@
  *
  * Prints a duration in hours/min/sec/ms.
  */
-QString getDurationString(const uint64_t duration);
+QString getDurationQString(const uint64_t duration);
 
 /*!
  * \brief Get a timestamp string from a duration in milliseconds.
@@ -50,7 +51,7 @@ QString getDurationString(const uint64_t duration);
  *
  * Prints a 'precise' timestamp (ex: 1 h 2 m 3 s 40 ms 50 µs).
  */
-QString getTimestampPreciseString(const uint64_t timestamp);
+QString getTimestampPreciseQString(const uint64_t timestamp);
 
 /*!
  * \brief Get a SMTPE timestamp string from a duration in milliseconds.
@@ -64,7 +65,7 @@ QString getTimestampPreciseString(const uint64_t timestamp);
  * Prints a 'SMTPE' timestamp (ex: 01:02:03:32).
  * SMTPE timestamps are only valid for video streams.
  */
-QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate);
+QString getTimestampSmtpeQString(const uint64_t timestamp, const double framerate);
 
 /*!
  * \brief Get a size string from a size in bytes.
@@ -73,14 +74,14 @@ QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate
  *
  * Prints size in (G/M/K)iB and (G/M/K)B and bytes.
  */
-QString getSizeString(const int64_t size);
+QString getSizeQString(const int64_t size);
 
 /*!
  * \brief Get a track type string from a track structure.
  * \param track: Track structure (from StreamType_e).
  * \return Track type QString.
  */
-QString getTrackTypeString(const MediaStream_t *track);
+QString getTrackTypeQString(const MediaStream_t *track);
 
 /*!
  * \brief Compute a track size string from a track structure.
@@ -89,7 +90,7 @@ QString getTrackTypeString(const MediaStream_t *track);
  * \param detailed: More precise sizes.
  * \return Track size QString.
  */
-QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, const bool detailed = false);
+QString getTrackSizeQString(const MediaStream_t *track, const int64_t file_size, const bool detailed = false);
 
 /*!
  * \brief Get an aspect ratio string from a video definition.
@@ -100,7 +101,7 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
  *
  * More infos: http://en.wikipedia.org/wiki/Aspect_ratio_(image)
  */
-QString getAspectRatioString(const unsigned x, const unsigned y, const bool detailed = false);
+QString getAspectRatioQString(const unsigned x, const unsigned y, const bool detailed = false);
 
 /*!
  * \brief Get an aspect ratio string from a video aspect ratio.
@@ -110,7 +111,7 @@ QString getAspectRatioString(const unsigned x, const unsigned y, const bool deta
  *
  * More infos: http://en.wikipedia.org/wiki/Aspect_ratio_(image)
  */
-QString getAspectRatioString(const double ar, const bool detailed = false);
+QString getAspectRatioQString(const double ar, const bool detailed = false);
 
 /*!
  * \brief Get a bitrate string from a bitrate in bytes.
@@ -122,21 +123,25 @@ QString getAspectRatioString(const double ar, const bool detailed = false);
  * - Mb/s with 2 digits after the decimal point (if less than 100 Mb/s)
  * - Mb/s with 0 digits after the decimal point (if more than 100 Mb/s)
  */
-QString getBitrateString(const unsigned bitrate);
+QString getBitrateQString(const unsigned bitrate);
 
-QString getBitrateModeString(const BitrateMode_e bitrateMode);
+QString getBitrateModeQString(const BitrateMode_e bitrateMode);
 
-QString getFramerateModeString(const FramerateMode_e framerateMode);
+QString getFramerateModeQString(const FramerateMode_e framerateMode);
 
-QString getProjectionString(const Projection_e projection);
+QString getProjectionQString(const Projection_e projection);
 
-QString getRotationString(const Rotation_e rotation);
+QString getRotationQString(const Rotation_e rotation);
 
-QString getChannelModeString(const ChannelMode_e channelMode);
+QString getChannelModeQString(const ChannelMode_e channelMode);
 
-QString getStereoModeString(const StereoMode_e stereoMode);
+QString getStereoModeQString(const StereoMode_e stereoMode);
 
-QString getFourccString(const unsigned fourcc);
+QString getFourccQString(const unsigned fourcc);
+
+QString getContainerQString(const Containers_e container, const bool long_description);
+
+QString getCodecQString(const StreamType_e type, const Codecs_e codec, const bool long_description);
 
 /*!
  * \brief Get a readable language string.
@@ -146,14 +151,14 @@ QString getFourccString(const unsigned fourcc);
  * https://en.wikipedia.org/wiki/ISO_639
  * http://www.loc.gov/standards/iso639-2/php/English_list.php
  */
-QString getLanguageString(const char *languageCode);
+QString getLanguageQString(const char *languageCode);
 
 /*!
  * \brief Get a sample type string.
  * \param sampleType: The sample type (from SampleType_e).
  * \return Sample type QString.
  */
-QString getSampleTypeString(const unsigned sampleType);
+QString getSampleTypeQString(const unsigned sampleType);
 
 /* ************************************************************************** */
 

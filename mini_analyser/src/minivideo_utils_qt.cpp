@@ -31,7 +31,7 @@
 
 /* ************************************************************************** */
 
-QString getDurationString(const uint64_t duration)
+QString getDurationQString(const uint64_t duration)
 {
     QString duration_qstr;
 
@@ -69,12 +69,12 @@ QString getDurationString(const uint64_t duration)
         duration_qstr = QObject::tr("NULL duration");
     }
 
-    //qDebug() << "getDurationString(" << duration << ") >" << duration_qstr;
+    //qDebug() << "getDurationQString(" << duration << ") >" << duration_qstr;
 
     return duration_qstr;
 }
 
-QString getTimestampPreciseString(const uint64_t timestamp)
+QString getTimestampPreciseQString(const uint64_t timestamp)
 {
     QString timestamp_qstr;
 
@@ -116,12 +116,12 @@ QString getTimestampPreciseString(const uint64_t timestamp)
         }
     }
 
-    //qDebug() << "getTimestampPreciseString(" << timestamp << ") >" << timestamp_qstr;
+    //qDebug() << "getTimestampPreciseQString(" << timestamp << ") >" << timestamp_qstr;
 
     return timestamp_qstr;
 }
 
-QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate)
+QString getTimestampSmtpeQString(const uint64_t timestamp, const double framerate)
 {
     QString timestamp_qstr;
 
@@ -146,14 +146,14 @@ QString getTimestampSmtpeString(const uint64_t timestamp, const double framerate
                             .arg(frames, 3, 10, QChar('0'));
     }
 
-    //qDebug() << "getTimestampSmtpeString(" << timestamp << ") >" << timestamp_qstr;
+    //qDebug() << "getTimestampSmtpeQString(" << timestamp << ") >" << timestamp_qstr;
 
     return timestamp_qstr;
 }
 
 /* ************************************************************************** */
 
-QString getSizeString(const int64_t size)
+QString getSizeQString(const int64_t size)
 {
     QString size_qstr;
 
@@ -187,12 +187,12 @@ QString getSizeString(const int64_t size)
         size_qstr = QObject::tr("NULL size");
     }
 
-    //qDebug() << "getDurationString(" << size << ") >" << size_qstr;
+    //qDebug() << "getDurationQString(" << size << ") >" << size_qstr;
 
     return size_qstr;
 }
 
-QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, const bool detailed)
+QString getTrackSizeQString(const MediaStream_t *track, const int64_t file_size, const bool detailed)
 {
     QString size_qstr;
 
@@ -273,7 +273,7 @@ QString getTrackSizeString(const MediaStream_t *track, const int64_t file_size, 
 
 /* ************************************************************************** */
 
-QString getTrackTypeString(const MediaStream_t *track)
+QString getTrackTypeQString(const MediaStream_t *track)
 {
     QString type_qstr;
 
@@ -320,7 +320,7 @@ QString getTrackTypeString(const MediaStream_t *track)
     return type_qstr;
 }
 
-QString getSampleTypeString(const unsigned sampleType)
+QString getSampleTypeQString(const unsigned sampleType)
 {
     QString sample_type_qstr;
 
@@ -350,13 +350,13 @@ QString getSampleTypeString(const unsigned sampleType)
     return sample_type_qstr;
 }
 
-QString getAspectRatioString(const unsigned x, const unsigned y, const bool detailed)
+QString getAspectRatioQString(const unsigned x, const unsigned y, const bool detailed)
 {
     double ar_d = static_cast<double>(x) / static_cast<double>(y);
-    return getAspectRatioString(ar_d, detailed);
+    return getAspectRatioQString(ar_d, detailed);
 }
 
-QString getAspectRatioString(double ar_d, const bool detailed)
+QString getAspectRatioQString(double ar_d, const bool detailed)
 {
     QString aspectratio_qstr;
 
@@ -496,7 +496,7 @@ QString getAspectRatioString(double ar_d, const bool detailed)
     return aspectratio_qstr;
 }
 
-QString getBitrateString(const unsigned bitrate)
+QString getBitrateQString(const unsigned bitrate)
 {
     QString bitrate_qstr;
 
@@ -525,7 +525,7 @@ QString getBitrateString(const unsigned bitrate)
     return bitrate_qstr;
 }
 
-QString getBitrateModeString(const BitrateMode_e bitrateMode)
+QString getBitrateModeQString(const BitrateMode_e bitrateMode)
 {
     QString bitrate_mode_qstr;
 
@@ -541,7 +541,7 @@ QString getBitrateModeString(const BitrateMode_e bitrateMode)
     return bitrate_mode_qstr;
 }
 
-QString getFramerateModeString(const FramerateMode_e framerateMode)
+QString getFramerateModeQString(const FramerateMode_e framerateMode)
 {
     QString framerate_mode_qstr;
 
@@ -553,7 +553,7 @@ QString getFramerateModeString(const FramerateMode_e framerateMode)
     return framerate_mode_qstr;
 }
 
-QString getProjectionString(const Projection_e projection)
+QString getProjectionQString(const Projection_e projection)
 {
     QString projection_qstr;
 
@@ -573,7 +573,7 @@ QString getProjectionString(const Projection_e projection)
     return projection_qstr;
 }
 
-QString getRotationString(const Rotation_e rotation)
+QString getRotationQString(const Rotation_e rotation)
 {
     QString rotation_qstr;
 
@@ -591,7 +591,7 @@ QString getRotationString(const Rotation_e rotation)
     return rotation_qstr;
 }
 
-QString getChannelModeString(const ChannelMode_e channelMode)
+QString getChannelModeQString(const ChannelMode_e channelMode)
 {
     QString channel_mode_qstr;
 
@@ -631,7 +631,7 @@ QString getChannelModeString(const ChannelMode_e channelMode)
     return channel_mode_qstr;
 }
 
-QString getStereoModeString(const StereoMode_e stereoMode)
+QString getStereoModeQString(const StereoMode_e stereoMode)
 {
     QString channel_mode_qstr;
 
@@ -669,15 +669,31 @@ QString getStereoModeString(const StereoMode_e stereoMode)
 
 /* ************************************************************************** */
 
-QString getFourccString(const unsigned fourcc)
+QString getFourccQString(const unsigned fourcc)
 {
     char fcc_str[5];
     return QString::fromUtf8(getFccString_le(fourcc, fcc_str));
 }
 
+QString getContainerQString(const Containers_e container, const bool long_description)
+{
+    QString qcontainer = QString::fromUtf8(getContainerString(container, long_description));
+    if (qcontainer.isEmpty()) qcontainer = QObject::tr("Unknown");
+
+    return qcontainer;
+}
+
+QString getCodecQString(const StreamType_e type, const Codecs_e codec, const bool long_description)
+{
+    QString qcodec = QString::fromUtf8(getCodecString(type, codec, long_description));
+    if (qcodec.isEmpty()) qcodec = QObject::tr("Unknown");
+
+    return qcodec;
+}
+
 /* ************************************************************************** */
 
-QString getLanguageString(const char *languageCode)
+QString getLanguageQString(const char *languageCode)
 {
     QString langage_qstr;
 
