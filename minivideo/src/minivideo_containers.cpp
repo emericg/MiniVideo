@@ -37,62 +37,42 @@ const char *getContainerString(const Containers_e container, const bool long_des
     switch (container)
     {
         case CONTAINER_AVI:
-            if (long_description)
-                return "AVI (Audio Video Interleave)";
-            else
-                return "AVI";
+            if (long_description) return "AVI (Audio Video Interleave)";
+            else return "AVI";
 
         case CONTAINER_ASF:
-            if (long_description)
-                return "ASF (Advanced Systems Format)";
-            else
-                return "ASF";
+            if (long_description) return "ASF (Advanced Systems Format)";
+            else return "ASF";
 
         case CONTAINER_MKV:
-            if (long_description)
-                return "MKV (Matroska)";
-            else
-                return "MKV";
+            if (long_description) return "MKV (Matroska)";
+            else return "MKV";
 
         case CONTAINER_MP4:
-            if (long_description)
-                return "MP4 (ISO Base Media format)";
-            else
-                return "MP4";
+            if (long_description) return "MP4 (ISO Base Media format)";
+            else return "MP4";
 
         case CONTAINER_MPEG_PS:
-            if (long_description)
-                return "MPEG 'Program Stream'";
-            else
-                return "MPEG-PS";
+            if (long_description) return "MPEG 'Program Stream'";
+            else return "MPEG-PS";
         case CONTAINER_MPEG_TS:
-            if (long_description)
-                return "MPEG 'Transport Stream'";
-            else
-                return "MPEG-TS";
+            if (long_description) return "MPEG 'Transport Stream'";
+            else return "MPEG-TS";
         case CONTAINER_MPEG_MT:
-            if (long_description)
-                return "MPEG 'Media Transport'";
-            else
-                return "MPEG-MT";
+            if (long_description) return "MPEG 'Media Transport'";
+            else return "MPEG-MT";
 
         case CONTAINER_MXF:
-            if (long_description)
-                return "MXF Material eXchange Format";
-            else
-                return "MXF";
+            if (long_description) return "MXF Material eXchange Format";
+            else return "MXF";
 
         case CONTAINER_FLV:
-            if (long_description)
-                return "Flash Video file format";
-            else
-                return "FLV";
+            if (long_description) return "Flash Video file format";
+            else return "FLV";
 
         case CONTAINER_SWF:
-            if (long_description)
-                return "SWF (Small Web Format)";
-            else
-                return "SWF";
+            if (long_description) return "SWF (Small Web Format)";
+            else return "SWF";
 
         case CONTAINER_OGG:
             return "OGG";
@@ -104,37 +84,33 @@ const char *getContainerString(const Containers_e container, const bool long_des
             return "Redcode RAW";
 
         case CONTAINER_FLAC:
-            if (long_description)
-                return "FLAC (Free Lossless Audio Codec)";
-            else
-                return "FLAC";
+            if (long_description) return "FLAC (Free Lossless Audio Codec)";
+            else return "FLAC";
 
         case CONTAINER_WAVE:
-            if (long_description)
-                return "WAVE (Waveform Audio File Format)";
-            else
-                return "WAVE";
+            if (long_description) return "WAVE (Waveform Audio File Format)";
+            else return "WAVE";
 
         case CONTAINER_CAF:
-            if (long_description)
-                return "CAF (Core Audio Format)";
-            else
-                return "CAF";
+            if (long_description) return "CAF (Core Audio Format)";
+            else return "CAF";
 
         case CONTAINER_AU:
-            if (long_description)
-                return "AU (Au file format)";
-            else
-                return "AU";
+            if (long_description) return "AU (Au file format)";
+            else return "AU";
 
         case CONTAINER_ES:
-            return "Undefined 'Elementary Stream'";
+            if (long_description) return "Undefined 'Elementary Stream'";
+            else return "Undefined";
         case CONTAINER_ES_AAC:
-            return "AAC 'Elementary Stream'";
+            if (long_description) return "AAC 'Elementary Stream'";
+            else return "AAC";
         case CONTAINER_ES_AC3:
-            return "AC3 'Elementary Stream'";
+            if (long_description) return "AC3 'Elementary Stream'";
+            else return "AC3";
         case CONTAINER_ES_MP3:
-            return "MP3 'Elementary Stream'";
+            if (long_description) return "MP3 'Elementary Stream'";
+            else return "MP3";
 
         case CONTAINER_JPEG:
             return "JPEG";
@@ -388,6 +364,11 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
                  (buffer[1] == 0xFE || buffer[1] == 0xFD || buffer[1] == 0xFB))
         {
             TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected");
+            container = CONTAINER_ES_MP3;
+        }
+        else if (buffer[0] == 0x49 && buffer[1] == 0x44 && buffer[2] == 0x33)
+        {
+            TRACE_1(IO, "* File type      : MP1/2/3 Elementary Stream detected from ID3 tag");
             container = CONTAINER_ES_MP3;
         }
     }
