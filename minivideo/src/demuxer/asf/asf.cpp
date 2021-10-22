@@ -68,7 +68,7 @@ static int parse_bitratemutualexclusion(Bitstream_t *bitstr, AsfObject_t *obj, a
             asf->asfh.bme->StreamNumbers[i] = read_asf_int16(bitstr, asf->xml, "StreamNumbers");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -91,7 +91,7 @@ static int parse_errorcorrection(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *a
         asf->asfh.ec->ErrorCorrectionData = read_asf_binary(bitstr, asf->asfh.ec->ErrorCorrectionDataLength, asf->xml, "ErrorCorrectionData");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -112,7 +112,7 @@ static int parse_padding(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
         asf->asfh.pad->PaddingData = read_asf_binary(bitstr, asf->asfh.pad->PaddingDataLength, asf->xml, "PaddingData");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -135,7 +135,7 @@ static int parse_digitalsignature(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *
         asf->asfh.ds->SignatureData = read_asf_binary(bitstr, asf->asfh.ds->SignatureDataLength, asf->xml, "SignatureData");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -157,7 +157,7 @@ static int parse_extendedcontentencryption(Bitstream_t *bitstr, AsfObject_t *obj
         asf->asfh.ece->Data = read_asf_binary(bitstr, asf->asfh.ece->DataSize, asf->xml, "Data");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -185,7 +185,7 @@ static int parse_contentencryption(Bitstream_t *bitstr, AsfObject_t *obj, asf_t 
         asf->asfh.ce->LicenseURL = read_asf_string_utf16(bitstr, (asf->asfh.ce->LicenseURLLength/2), asf->xml, "LicenseURL");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -212,7 +212,7 @@ static int parse_contentbranding(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *a
         asf->asfh.cb->CopyrightURL = read_asf_string_utf16(bitstr, (asf->asfh.cb->CopyrightURLLength / 2), asf->xml, "CopyrightURL");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -262,7 +262,7 @@ static int parse_streambitrateproperties(Bitstream_t *bitstr, AsfObject_t *obj, 
         }
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -329,7 +329,7 @@ static int parse_extendedcontentdescription(Bitstream_t *bitstr, AsfObject_t *ob
         }
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -360,7 +360,7 @@ static int parse_contentdescription(Bitstream_t *bitstr, AsfObject_t *obj, asf_t
         asf->asfh.cd->Rating = read_asf_string_utf16(bitstr, (asf->asfh.cd->RatingLength / 2), asf->xml, "Rating");
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -432,7 +432,7 @@ static int parse_codeclist(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *asf)
         }
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -465,7 +465,7 @@ static int parse_streamproperties(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *
     asf->asfh.sp[tid].ErrorCorrectionData = read_asf_binary(bitstr, asf->asfh.sp[tid].ErrorCorrectionDataLength,
                                                             asf->xml, "ErrorCorrectionData");
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -497,7 +497,7 @@ static int parse_fileproperties(Bitstream_t *bitstr, AsfObject_t *obj, asf_t *as
     asf->asfh.fp.MaximumDataPacketSize = read_asf_int(bitstr, 1, asf->xml, "MaximumDataPacketSize");
     asf->asfh.fp.MaximumBitrate = read_asf_int(bitstr, 1, asf->xml, "MaximumBitrate");
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -518,7 +518,7 @@ static int parse_header_extension(Bitstream_t *bitstr, AsfObject_t *header, asf_
     asf->asfh.ex.HeaderExtensionDataSize = read_asf_int32(bitstr, asf->xml, "HeaderExtensionDataSize");
     asf->asfh.ex.HeaderExtensionData = read_asf_binary(bitstr, asf->asfh.ex.HeaderExtensionDataSize, asf->xml, "HeaderExtensionData");
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -620,7 +620,7 @@ static int parse_header(Bitstream_t *bitstr, AsfObject_t *header, asf_t *asf)
         retcode = jumpy_asf(bitstr, header, &asf_object);
     }
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -638,7 +638,7 @@ static int parse_data(Bitstream_t *bitstr, AsfObject_t *header, asf_t *asf)
 
     //
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -656,7 +656,7 @@ static int parse_index(Bitstream_t *bitstr, AsfObject_t *header, asf_t *asf)
 
     //
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
@@ -673,7 +673,7 @@ static int parse_simple_index(Bitstream_t *bitstr, AsfObject_t *header, asf_t *a
 
     //
 
-    fprintf(asf->xml, "  </a>\n");
+    if (asf->xml) fprintf(asf->xml, "  </a>\n");
 
     return retcode;
 }
