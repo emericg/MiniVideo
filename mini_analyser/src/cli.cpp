@@ -24,9 +24,10 @@
 #include "utils.h"
 #include "minivideo_textexport_qt.h"
 
+#include <QtGlobal>
 #include <QFile>
-#include <QDebug>
 #include <QTextStream>
+#include <QDebug>
 
 /* ************************************************************************** */
 
@@ -65,16 +66,20 @@ int CLI::printFile(const QString &file, bool details)
                 QString exportData;
                 status = textExport::generateExportData_text(*media, exportData, details);
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                QTextStream(stdout) << exportData << endl;
+#else
                 QTextStream(stdout) << exportData << Qt::endl;
+#endif
             }
             else
             {
-                qDebug() << "minivideo_parse() failed with retcode: " << status;
+                qWarning() << "minivideo_parse() failed with retcode: " << status;
             }
         }
         else
         {
-            qDebug() << "minivideo_open() failed with retcode: " << status;
+            qWarning() << "minivideo_open() failed with retcode: " << status;
         }
     }
 
