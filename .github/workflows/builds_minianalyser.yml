@@ -1,0 +1,155 @@
+#--------------------------------------------------------------------------------
+# Workflow configuration
+#--------------------------------------------------------------------------------
+
+name: "MiniAnalyser CI builds"
+on:
+  push:
+  pull_request:
+
+#--------------------------------------------------------------------------------
+# Define application name & version
+#--------------------------------------------------------------------------------
+
+env:
+  VERSION: "48"
+  APPLICATION: "MiniAnalyser"
+  QMAKE_PROJECT: "mini_analyser.pro"
+
+#--------------------------------------------------------------------------------
+# Workflow jobs
+#--------------------------------------------------------------------------------
+
+jobs:
+  ## GNU/Linux build ###########################################################
+  build-linux:
+    name: "Linux CI build"
+    runs-on: ubuntu-20.04
+    steps:
+      # Checkout the repository
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      # Install Qt
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          aqtversion: '==2.0.6'
+          version: '6.3.0'
+          modules: qtimageformats
+          cached: 'false'
+
+      # Install dependencies (from package manager)
+      - name: Install dependencies (from package manager)
+        run: |
+             sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libzstd-dev -y;
+             sudo apt-get install linux-headers-generic -y;
+             sudo apt-get install libgl1-mesa-dev -y;
+             sudo apt-get install appstream -y;
+
+      # Build library
+      - name: Build library
+        run: |
+             cd minivideo/build/
+             cmake --version
+             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
+             make -j$(nproc)
+
+      # Build application
+      - name: Build application
+        run: |
+             cd mini_analyser/
+             qmake --version
+             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release PREFIX=/usr
+             make -j$(nproc)
+
+  ## macOS build ###############################################################
+  build-mac:
+    name: "macOS CI build"
+    runs-on: macos-11
+    steps:
+      # Checkout the repository
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      # Install dependencies
+      #- name: Install dependencies
+      #  run: |
+      #       brew install qt6
+
+      # Install Qt
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          aqtversion: '==2.0.6'
+          version: '6.3.0'
+          modules: qtimageformats
+          cached: 'false'
+
+      # Build library
+      - name: Build library
+        run: |
+             cd minivideo/build/
+             cmake --version
+             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
+             make -j$(nproc)
+
+      # Build application
+      - name: Build application
+        run: |
+             qmake --version
+             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             make -j$(nproc)
+
+  ## Windows build #############################################################
+  build-windows:
+    name: "Windows CI build"
+    runs-on: windows-2022
+    steps:
+      # Checkout the repository
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      # Configure MSVC
+      - name: Configure MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          spectre: true
+
+      # Install Qt
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          aqtversion: '==2.0.6'
+          version: '6.3.0'
+          modules: qtimageformats
+          cached: 'false'
+
+      # Install NSIS (already installed in 'windows-2022')
+      #- name: Install NSIS
+      #  run: |
+      #       Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+      #       scoop bucket add extras
+      #       scoop install nsis
+
+      # Build library
+      - name: Build library
+        run: |
+             cd minivideo/build/
+             cmake --version
+             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
+             cmake --build --config Release .
+
+      # Build application
+      - name: Build application
+        run: |
+             qmake --version
+             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             nmake
