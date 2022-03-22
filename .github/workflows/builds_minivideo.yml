@@ -82,4 +82,4 @@ jobs:
              cd minivideo/build/
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             cmake --build --config Release .
+             cmake --build . --config Release
