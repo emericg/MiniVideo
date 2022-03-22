@@ -69,14 +69,15 @@ jobs:
       # Package application
       - name: Package application
         run: |
+             cd mini_analyser/
              make INSTALL_ROOT=appdir install;
-             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage";
-             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage";
-             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage";
-             chmod a+x contribs/deploy/linuxdeploy-x86_64.AppImage;
-             chmod a+x contribs/deploy/linuxdeploy-plugin-appimage-x86_64.AppImage;
-             chmod a+x contribs/deploy/linuxdeploy-plugin-qt-x86_64.AppImage;
-             export EXTRA_QT_PLUGINS="svg;"
+             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
+             wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+             chmod a+x contribs/deploy/linuxdeploy-x86_64.AppImage
+             chmod a+x contribs/deploy/linuxdeploy-plugin-appimage-x86_64.AppImage
+             chmod a+x contribs/deploy/linuxdeploy-plugin-qt-x86_64.AppImage
+             export EXTRA_QT_PLUGINS="svg"
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
 
       # Upload AppImage
@@ -130,8 +131,9 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             make install;
-             zip -r -X ${{env.EXECUTABLE}}.zip bin/${{env.EXECUTABLE}}.app;
+             cd mini_analyser/
+             make install
+             zip -r -X ${{env.EXECUTABLE}}.zip bin/${{env.EXECUTABLE}}.app
 
       # Upload app zip
       - name: Upload app zip
