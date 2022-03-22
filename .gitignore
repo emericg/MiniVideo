@@ -37,4 +37,5 @@ minivideo/doc/cppcheck_temp/
 
 # Others
 stash/*
+.qtc_clangd/*
 .DS_Store
