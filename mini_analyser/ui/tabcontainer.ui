@@ -168,9 +168,6 @@
          <bold>true</bold>
         </font>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(210, 210, 210);</string>
-       </property>
        <property name="text">
         <string>Title</string>
        </property>
@@ -223,9 +220,6 @@
          </item>
          <item row="0" column="0">
           <widget class="QWidget" name="widgetHeader" native="true">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(240, 240, 240)</string>
-           </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
              <number>6</number>
@@ -267,9 +261,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QWidget" name="widgetSamples" native="true">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(240, 240, 240)</string>
-           </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="leftMargin">
              <number>3</number>
