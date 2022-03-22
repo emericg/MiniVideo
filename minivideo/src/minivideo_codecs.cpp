@@ -843,7 +843,7 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 
 /* ************************************************************************** */
 
-minivideo_EXPORT const char *getColorPrimariesString(const ColorPrimaries_e primaries)
+const char *getColorPrimariesString(const ColorPrimaries_e primaries)
 {
     switch (primaries)
     {
@@ -875,7 +875,7 @@ minivideo_EXPORT const char *getColorPrimariesString(const ColorPrimaries_e prim
     }
 }
 
-minivideo_EXPORT const char *getColorTransferCharacteristicString(const ColorTransferCharacteristic_e transfer)
+const char *getColorTransferCharacteristicString(const ColorTransferCharacteristic_e transfer)
 {
     switch (transfer)
     {
@@ -917,7 +917,7 @@ minivideo_EXPORT const char *getColorTransferCharacteristicString(const ColorTra
     }
 }
 
-minivideo_EXPORT const char *getColorMatrixString(const ColorSpace_e space)
+const char *getColorMatrixString(const ColorSpace_e space)
 {
     switch (space)
     {
