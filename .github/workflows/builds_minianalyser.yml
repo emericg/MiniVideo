@@ -70,7 +70,7 @@ jobs:
       - name: Package application
         run: |
              cd mini_analyser/
-             make INSTALL_ROOT=appdir install;
+             make INSTALL_ROOT=appdir install
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{env.EXECUTABLE}}-${{env.VERSION}}-linux64.AppImage
-          path: ${{env.EXECUTABLE}}*.AppImage
+          path: ${{env.EXECUTABLE}}.AppImage
 
   ## macOS build ###############################################################
   build-mac:
@@ -140,7 +140,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{env.EXECUTABLE}}-${{env.VERSION}}-macOS.zip
-          path: bin/${{env.EXECUTABLE}}-${{env.VERSION}}-macOS.zip
+          path: ${{env.EXECUTABLE}}.zip
 
   ## Windows build #############################################################
   build-windows:
