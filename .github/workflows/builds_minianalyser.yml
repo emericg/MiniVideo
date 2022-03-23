@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.APPLICATION}}-${{env.VERSION}}-linux64.AppImage
-          path: ${{env.EXECUTABLE}}*.AppImage
+          path: mini_analyser/${{env.EXECUTABLE}}*.AppImage
 
   ## macOS build ###############################################################
   build-mac:
@@ -136,7 +136,7 @@ jobs:
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ${{env.EXECUTABLE}}.zip bin/${{env.EXECUTABLE}}.app
+             zip -r -X ${{env.APPLICATION}}.zip bin/${{env.EXECUTABLE}}.app
              find .
 
       # Upload app zip
@@ -144,7 +144,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.zip
-          path: mini_analyser.zip
+          path: mini_analyser/${{env.APPLICATION}}.zip
 
   ## Windows build #############################################################
   build-windows:
@@ -187,13 +187,14 @@ jobs:
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
              cmake --build . --config Release
-             mv Release/minivideo.dll minivideo.dll
              mv Release/minivideo.lib minivideo.lib
+             mv Release/minivideo.dll minivideo.dll
 
       # Build application
       - name: Build application
         run: |
-             mv minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
+             cp minivideo/build/minivideo.lib mini_analyser/bin/minivideo.lib
+             cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
              qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
