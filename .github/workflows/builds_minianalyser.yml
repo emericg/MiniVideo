@@ -79,9 +79,6 @@ jobs:
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_PLUGINS="svg"
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
-             find appdir/
-             find .
-             find ..
 
       # Upload AppImage
       - name: Upload AppImage
@@ -137,14 +134,13 @@ jobs:
              cd mini_analyser/
              make install
              zip -r -X ${{env.APPLICATION}}.zip bin/${{env.EXECUTABLE}}.app
-             find .
 
       # Upload app zip
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.zip
-          path: mini_analyser/${{env.APPLICATION}}.zip
+          path: mini_analyser/bin/${{env.EXECUTABLE}}.app
 
   ## Windows build #############################################################
   build-windows:
@@ -197,5 +193,5 @@ jobs:
              cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
-             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             qmake -tp vc
              nmake

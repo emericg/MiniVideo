@@ -77,6 +77,7 @@ HEADERS     += src/thirdparty/portable_endian.h \
 # minivideo library
 INCLUDEPATH += ../minivideo/src
 QMAKE_LIBDIR+= ../minivideo/build
+QMAKE_RPATHDIR+= ../minivideo/build
 LIBS        += -L../minivideo/build -lminivideo # dynamic linking
 #LIBS        += ../minivideo/build/libminivideo.a # static linking
 
