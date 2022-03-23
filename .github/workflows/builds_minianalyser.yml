@@ -79,10 +79,11 @@ jobs:
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_PLUGINS="svg"
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
+             find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq;
 
       # Upload AppImage
       - name: Upload AppImage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.EXECUTABLE}}-${{env.VERSION}}-linux64.AppImage
           path: ${{env.EXECUTABLE}}.AppImage
@@ -137,10 +138,10 @@ jobs:
 
       # Upload app zip
       - name: Upload app zip
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{env.EXECUTABLE}}-${{env.VERSION}}-macOS.zip
-          path: ${{env.EXECUTABLE}}.zip
+          name: ${{env.EXECUTABLE}}-${{env.VERSION}}-macOS
+          path: bin/${{env.EXECUTABLE}}.app
 
   ## Windows build #############################################################
   build-windows:
@@ -183,12 +184,11 @@ jobs:
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
              cmake --build . --config Release
-             mv Release/minivideo.dll minivideo.dll
-             mv Release/minivideo.lib minivideo.lib
 
       # Build application
       - name: Build application
         run: |
+             mv minivideo/build/Release/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
              qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
