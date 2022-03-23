@@ -80,7 +80,8 @@ jobs:
              export EXTRA_QT_PLUGINS="svg"
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
              find appdir/
-             find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+             find .
+             find ..
 
       # Upload AppImage
       - name: Upload AppImage
@@ -142,8 +143,8 @@ jobs:
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS
-          path: bin/${{env.EXECUTABLE}}.app
+          name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.zip
+          path: mini_analyser.zip
 
   ## Windows build #############################################################
   build-windows:

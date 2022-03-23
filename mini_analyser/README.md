@@ -1,6 +1,7 @@
 mini_analyser
 =============
 
+[![GitHub action](https://img.shields.io/github/workflow/status/emericg/MiniVideo/MiniAnalyser%20CI%20builds.svg?style=flat-square)](https://github.com/emericg/MiniVideo/actions)
 [![License: GPL v3](https://img.shields.io/badge/license-GPL%20v3-brightgreen.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-3.0)
 
 Introduction
