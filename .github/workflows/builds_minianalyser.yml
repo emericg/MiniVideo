@@ -193,5 +193,5 @@ jobs:
              cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
-             qmake -tp vc
-             nmake
+             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             make
