@@ -219,6 +219,8 @@ typedef enum Mp4BoxType_e
         BOX_GUSI = 0x47555349,                  //!< (v) GoPro GUSI
         BOX_GUMI = 0x47554D49,                  //!< (v) GoPro GUMI
         BOX_GPMF = 0x47504D46,                  //!< (v) GoPro Metadata Format
+        BOX_PMCC = 0x706D6363,                  //!< (v) Virb ActionCam
+        BOX_HMTP = 0x686D7470,                  //!< (v) Virb ActionCam
 
     BOX_MOOV = 0x6D6F6F76,                      //!< (*) container for all metadata
         BOX_MVHD = 0x6D766864,                  //!< (*) movie header, overall declarations

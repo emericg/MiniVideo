@@ -30,6 +30,7 @@
 #include "mp4_stbl.h"
 #include "mp4_spatial.h"
 #include "mp4_gopro.h"
+#include "mp4_virb.h"
 #include "mp4_convert.h"
 
 #include "../xml_mapper.h"
@@ -459,6 +460,16 @@ static int parse_udta(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
                 case BOX_CHPL:
                     retcode = parse_chpl(bitstr, &box_subheader, mp4);
+                    break;
+
+                case BOX_UUID:
+                    retcode = parse_virb_uuid(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_PMCC:
+                    retcode = parse_virb_pmcc(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_HMTP:
+                    retcode = parse_virb_hmtp(bitstr, &box_subheader, mp4);
                     break;
 
                 case BOX_FREE:
@@ -1475,14 +1486,14 @@ static int parse_moov(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                 case BOX_IODS:
                     retcode = parse_iods(bitstr, &box_subheader, mp4->xml);
                     break;
-                case BOX_TRAK:
-                    retcode = parse_trak(bitstr, &box_subheader, mp4);
-                    break;
                 case BOX_META:
                     retcode = parse_meta(bitstr, &box_subheader, mp4);
                     break;
                 case BOX_UDTA:
                     retcode = parse_udta(bitstr, &box_subheader, mp4);
+                    break;
+                case BOX_TRAK:
+                    retcode = parse_trak(bitstr, &box_subheader, mp4);
                     break;
                 default:
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
