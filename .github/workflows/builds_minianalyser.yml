@@ -139,7 +139,7 @@ jobs:
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.zip
+          name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.app
           path: mini_analyser/bin/${{env.EXECUTABLE}}.app
 
   ## Windows build #############################################################
