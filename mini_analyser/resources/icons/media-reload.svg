@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="emblem-ubuntuone-updating.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="51.9375"
+     inkscape:cx="7.990373"
+     inkscape:cy="8"
+     inkscape:current-layer="svg10" />
+  <rect
+     transform="matrix(0,-1,-1,0,0,0)"
+     x="-14.175991"
+     y="-14.177991"
+     width="12.355981"
+     height="12.355981"
+     rx="2.3182909"
+     ry="2.3167465"
+     fill="#728e2a"
+     id="rect2"
+     style="stroke-width:0.772249" />
+  <rect
+     transform="matrix(0,-1,-1,0,0,0)"
+     x="-13.403742"
+     y="-13.405742"
+     width="10.811483"
+     height="10.811483"
+     rx="2.0285432"
+     ry="2.0271533"
+     fill="#8fb633"
+     id="rect4"
+     style="stroke-width:0.772249" />
+  <path
+     d="M 8,4.1383004 A 3.8612441,3.8612441 0 0 0 4.1387559,7.9995445 3.8612441,3.8612441 0 0 0 8,11.860789 3.8612441,3.8612441 0 0 0 11.861244,7.9995445 H 10.316746 A 2.3167465,2.3167465 0 0 1 8,10.316291 2.3167465,2.3167465 0 0 1 5.6832535,7.9995445 2.3167465,2.3167465 0 0 1 8,5.6827981 Z"
+     fill="#ffffff"
+     paint-order="stroke fill markers"
+     id="path6"
+     style="stroke-width:0.772249" />
+  <path
+     d="m 11.088995,5.6827981 2.316747,2.3167464 H 8.7722488 Z"
+     fill="#ffffff"
+     paint-order="stroke fill markers"
+     id="path8"
+     style="stroke-width:0.772249" />
+</svg>

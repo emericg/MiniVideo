@@ -856,6 +856,7 @@ int MainWindow::printAudioDetails()
 
                 // Create graphs and assign data
                 ui->audioBitrateGraph->addGraph();
+                ui->audioBitrateGraph->setBackground(QBrush(QColor(0, 0, 0, 0)));
                 ui->audioBitrateGraph->graph(0)->setData(x, y);
                 ui->audioBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
                 ui->audioBitrateGraph->addGraph();
@@ -872,8 +873,9 @@ int MainWindow::printAudioDetails()
                 //ui->audioBitrateGraph->yAxis->setPadding(0);
                 //ui->audioBitrateGraph->xAxis->setPadding(0);
                 //ui->audioBitrateGraph->setBackground(QColor(0,0,0,0));
+
 #ifdef Q_OS_MACOS
-                ui->audioBitrateGraph->setBackground(QColor(218, 218, 218));
+                //ui->audioBitrateGraph->setBackground(QColor(218, 218, 218));
 #endif
 
                 // Allow interactions
@@ -1308,6 +1310,7 @@ int MainWindow::printVideoDetails()
 
                 // Create graphs and assign data
                 ui->videoBitrateGraph->addGraph();
+                ui->videoBitrateGraph->setBackground(QBrush(QColor(0, 0, 0, 0)));
                 ui->videoBitrateGraph->graph(0)->setData(x, y);
                 ui->videoBitrateGraph->graph(0)->setBrush(QBrush(QColor(10, 10, 200, 20)));
                 ui->videoBitrateGraph->addGraph();
@@ -1331,8 +1334,9 @@ int MainWindow::printVideoDetails()
                 //ui->videoBitrateGraph->yAxis->setPadding(0);
                 //ui->videoBitrateGraph->xAxis->setPadding(0);
                 //ui->videoBitrateGraph->setBackground(QColor(0,0,0,0));
+
 #ifdef Q_OS_MACOS
-                ui->videoBitrateGraph->setBackground(QColor(218, 218, 218));
+                //ui->videoBitrateGraph->setBackground(QColor(218, 218, 218));
 #endif
 
                 // Allow interactions

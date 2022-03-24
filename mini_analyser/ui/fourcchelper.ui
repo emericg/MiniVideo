@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
+    <normaloff>:/icons/icons/fourcc.svg</normaloff>:/icons/icons/fourcc.svg</iconset>
   </property>
   <layout class="QGridLayout" name="_3">
    <property name="leftMargin">
@@ -46,10 +46,6 @@
     <widget class="QPushButton" name="pushButton_close">
      <property name="text">
       <string>Close</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/icons/emblem-unreadable.svg</normaloff>:/icons/icons/emblem-unreadable.svg</iconset>
      </property>
      <property name="autoDefault">
       <bool>false</bool>
@@ -201,7 +197,6 @@ border-color: rgb(85, 255, 0);</string>
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -282,7 +277,6 @@ border-color: rgb(85, 255, 0);</string>
          <widget class="QLabel" name="label_3">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -429,7 +423,6 @@ border-color: rgb(85, 255, 0);</string>
          <widget class="QLabel" name="label_4">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -445,7 +438,6 @@ border-color: rgb(85, 255, 0);</string>
          <widget class="QLabel" name="label_6">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -461,7 +453,6 @@ border-color: rgb(85, 255, 0);</string>
          <widget class="QLabel" name="label">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>

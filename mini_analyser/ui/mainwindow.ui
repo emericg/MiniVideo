@@ -167,7 +167,6 @@
             <property name="font">
              <font>
               <pointsize>18</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -279,7 +278,6 @@
             <property name="font">
              <font>
               <pointsize>18</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -367,8 +365,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>500</width>
-             <height>765</height>
+             <width>614</width>
+             <height>768</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -428,7 +426,6 @@
                   <widget class="QLabel" name="label_info_container_profile">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -486,7 +483,6 @@
                   <widget class="QLabel" name="label_info_creation_app">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -502,7 +498,6 @@
                   <widget class="QLabel" name="label_info_creation_lib">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -518,7 +513,6 @@
                   <widget class="QLabel" name="label_info_container">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -544,7 +538,6 @@
                   <widget class="QLabel" name="label_info_container_overhead">
                    <property name="font">
                     <font>
-                     <weight>50</weight>
                      <bold>false</bold>
                     </font>
                    </property>
@@ -560,7 +553,6 @@
                   <widget class="QLabel" name="label_info_creation_date">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -610,7 +602,6 @@
                   <widget class="QLabel" name="label_info_filename">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -648,7 +639,6 @@
                   <widget class="QLabel" name="label_info_filesize">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -684,7 +674,6 @@
                   <widget class="QLabel" name="label_info_fullpath">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -710,7 +699,6 @@
                   <widget class="QLabel" name="label_info_duration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -766,7 +754,6 @@
                   <widget class="QLabel" name="label_info_video_framerate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -782,7 +769,6 @@
                   <widget class="QLabel" name="label_info_video_framerate_mode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -798,7 +784,6 @@
                   <widget class="QLabel" name="label_info_video_bitrate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -850,7 +835,6 @@
                   <widget class="QLabel" name="label_info_video_codec">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -876,7 +860,6 @@
                   <widget class="QLabel" name="label_info_video_bitratemode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -892,7 +875,6 @@
                   <widget class="QLabel" name="label_info_video_aspectratio">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -918,7 +900,6 @@
                   <widget class="QLabel" name="label_info_video_size">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -934,7 +915,6 @@
                   <widget class="QLabel" name="label_info_video_rotation">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -950,7 +930,6 @@
                   <widget class="QLabel" name="label_info_video_definition">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -988,7 +967,6 @@
                   <widget class="QLabel" name="label_info_video_duration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1034,7 +1012,6 @@
                   <widget class="QLabel" name="label_info_video_projection">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1090,7 +1067,6 @@
                   <widget class="QLabel" name="label_info_video_display_definition">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1106,7 +1082,6 @@
                   <widget class="QLabel" name="label_info_video_display_aspectratio">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1155,7 +1130,6 @@
                   <widget class="QLabel" name="label_info_audio_samplingrate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1191,7 +1165,6 @@
                   <widget class="QLabel" name="label_info_audio_bitpersample">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1227,7 +1200,6 @@
                   <widget class="QLabel" name="label_info_audio_bitratemode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1265,7 +1237,6 @@
                   <widget class="QLabel" name="label_info_audio_codec">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1281,7 +1252,6 @@
                   <widget class="QLabel" name="label_info_audio_lng">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1329,7 +1299,6 @@
                   <widget class="QLabel" name="label_info_audio_bitrate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1345,7 +1314,6 @@
                   <widget class="QLabel" name="label_info_audio_channels">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1361,7 +1329,6 @@
                   <widget class="QLabel" name="label_info_audio_size">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1387,7 +1354,6 @@
                   <widget class="QLabel" name="label_info_audio_duration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1423,7 +1389,6 @@
                   <widget class="QLabel" name="label_info_audio_channelmode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1535,8 +1500,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
-             <height>907</height>
+             <width>614</width>
+             <height>897</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -1605,7 +1570,6 @@
                   <widget class="QLabel" name="label_video_compression_ratio">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1641,7 +1605,6 @@
                   <widget class="QLabel" name="label_video_definition">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1667,7 +1630,6 @@
                   <widget class="QLabel" name="label_video_encoder">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1713,7 +1675,6 @@
                   <widget class="QLabel" name="label_video_sar">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1729,7 +1690,6 @@
                   <widget class="QLabel" name="label_video_codec_infos">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1761,7 +1721,6 @@
                   <widget class="QLabel" name="label_video_rotation">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1777,7 +1736,6 @@
                   <widget class="QLabel" name="label_video_fcc">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1793,7 +1751,6 @@
                   <widget class="QLabel" name="label_video_bitrate_highest">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1809,7 +1766,6 @@
                   <widget class="QLabel" name="label_video_par">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1845,7 +1801,6 @@
                   <widget class="QLabel" name="label_video_framerate_mode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1861,7 +1816,6 @@
                   <widget class="QLabel" name="label_video_framerate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1887,7 +1841,6 @@
                   <widget class="QLabel" name="label_video_bitratemode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1913,7 +1866,6 @@
                   <widget class="QLabel" name="label_video_projection">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -1929,7 +1881,6 @@
                   <widget class="QLabel" name="label_video_bitrate_lowest">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2017,7 +1968,6 @@
                   <widget class="QLabel" name="label_video_definition_display">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2033,7 +1983,6 @@
                   <widget class="QLabel" name="label_video_bitrate_gross">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2049,7 +1998,6 @@
                   <widget class="QLabel" name="label_video_dar">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2065,7 +2013,6 @@
                   <widget class="QLabel" name="label_video_stereomode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2091,7 +2038,6 @@
                   <widget class="QLabel" name="label_video_codec">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2147,7 +2093,6 @@
                   <widget class="QLabel" name="label_video_buffersize">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2183,7 +2128,6 @@
                   <widget class="QLabel" name="label_video_samplerepart">
                    <property name="font">
                     <font>
-                     <weight>50</weight>
                      <bold>false</bold>
                     </font>
                    </property>
@@ -2199,7 +2143,6 @@
                   <widget class="QLabel" name="label_video_frameduration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2316,7 +2259,6 @@
                   <widget class="QLabel" name="label_video_id">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2384,7 +2326,6 @@
                   <widget class="QLabel" name="label_video_size">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2400,7 +2341,6 @@
                   <widget class="QLabel" name="label_video_duration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2416,7 +2356,6 @@
                   <widget class="QLabel" name="label_video_title">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2432,7 +2371,6 @@
                   <widget class="QLabel" name="label_video_lng">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2471,7 +2409,6 @@
                   <widget class="QLabel" name="label_video_color_primaries">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2513,7 +2450,6 @@
                   <widget class="QLabel" name="label_video_color_depth">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2561,7 +2497,6 @@
                   <widget class="QLabel" name="label_video_color_space">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2599,7 +2534,6 @@
                   <widget class="QLabel" name="label_video_color_subsampling">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2615,7 +2549,6 @@
                   <widget class="QLabel" name="label_video_color_range">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2647,7 +2580,6 @@
                   <widget class="QLabel" name="label_video_color_matrix">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2673,7 +2605,6 @@
                   <widget class="QLabel" name="label_video_color_transfer">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2753,8 +2684,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>474</width>
-             <height>709</height>
+             <width>628</width>
+             <height>752</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -2895,7 +2826,6 @@
                   <widget class="QLabel" name="label_audio_default">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2927,7 +2857,6 @@
                   <widget class="QLabel" name="label_audio_forced">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2943,7 +2872,6 @@
                   <widget class="QLabel" name="label_audio_id">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2959,7 +2887,6 @@
                   <widget class="QLabel" name="label_audio_size">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2975,7 +2902,6 @@
                   <widget class="QLabel" name="label_audio_duration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -2991,7 +2917,6 @@
                   <widget class="QLabel" name="label_audio_title">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3007,7 +2932,6 @@
                   <widget class="QLabel" name="label_audio_lng">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3089,7 +3013,6 @@
                   <widget class="QLabel" name="label_audio_bitrate_lowest">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3131,7 +3054,6 @@
                   <widget class="QLabel" name="label_audio_bitrate_highest">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3147,7 +3069,6 @@
                   <widget class="QLabel" name="label_audio_codec">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3163,7 +3084,6 @@
                   <widget class="QLabel" name="label_audio_encoder">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3179,7 +3099,6 @@
                   <widget class="QLabel" name="label_audio_bitratemode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3217,7 +3136,6 @@
                   <widget class="QLabel" name="label_audio_bitrate_gross">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3253,7 +3171,6 @@
                   <widget class="QLabel" name="label_audio_compression_ratio">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3269,7 +3186,6 @@
                   <widget class="QLabel" name="label_audio_fcc">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3295,7 +3211,6 @@
                   <widget class="QLabel" name="label_audio_codec_profile">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3341,7 +3256,6 @@
                   <widget class="QLabel" name="label_audio_bitpersample">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3379,7 +3293,6 @@
                   <widget class="QLabel" name="label_audio_channelmode">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3395,7 +3308,6 @@
                   <widget class="QLabel" name="label_audio_channels">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3463,7 +3375,6 @@
                   <widget class="QLabel" name="label_audio_sampleduration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3479,7 +3390,6 @@
                   <widget class="QLabel" name="label_audio_samplingrate">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3505,7 +3415,6 @@
                   <widget class="QLabel" name="label_audio_sampleperframe">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3557,7 +3466,6 @@
                   <widget class="QLabel" name="label_audio_frameduration">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3573,7 +3481,6 @@
                   <widget class="QLabel" name="label_audio_framecount">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3589,7 +3496,6 @@
                   <widget class="QLabel" name="label_audio_samplecount">
                    <property name="font">
                     <font>
-                     <weight>75</weight>
                      <bold>true</bold>
                     </font>
                    </property>
@@ -3729,7 +3635,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -3756,7 +3661,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -3783,7 +3687,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -3810,7 +3713,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -3837,7 +3739,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -3864,7 +3765,6 @@
                <property name="font">
                 <font>
                  <pointsize>13</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -4071,9 +3971,6 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
-   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
@@ -4111,7 +4008,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/package-upgrade.svg</normaloff>:/icons/icons/package-upgrade.svg</iconset>
+     <normaloff>:/icons/icons/media-open.svg</normaloff>:/icons/icons/media-open.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4123,7 +4020,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/help-contents.svg</normaloff>:/icons/icons/help-contents.svg</iconset>
+     <normaloff>:/icons/icons/about.svg</normaloff>:/icons/icons/about.svg</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -4135,7 +4032,7 @@
   <action name="actionClose">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/package-remove.svg</normaloff>:/icons/icons/package-remove.svg</iconset>
+     <normaloff>:/icons/icons/media-close.svg</normaloff>:/icons/icons/media-close.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4150,7 +4047,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/dialog-question.svg</normaloff>:/icons/icons/dialog-question.svg</iconset>
+     <normaloff>:/icons/icons/about.svg</normaloff>:/icons/icons/about.svg</iconset>
    </property>
    <property name="text">
     <string>About Qt</string>
@@ -4159,7 +4056,7 @@
   <action name="actionExit">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/application-exit.svg</normaloff>:/icons/icons/application-exit.svg</iconset>
+     <normaloff>:/icons/icons/exit.svg</normaloff>:/icons/icons/exit.svg</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -4171,7 +4068,7 @@
   <action name="actionFourCC">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/applications-fonts.svg</normaloff>:/icons/icons/applications-fonts.svg</iconset>
+     <normaloff>:/icons/icons/fourcc.svg</normaloff>:/icons/icons/fourcc.svg</iconset>
    </property>
    <property name="text">
     <string>FCC</string>
@@ -4183,7 +4080,7 @@
   <action name="actionReload">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</normaloff>:/icons/icons/emblem-ubuntuone-updating.svg</iconset>
+     <normaloff>:/icons/icons/media-reload.svg</normaloff>:/icons/icons/media-reload.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4198,7 +4095,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/sysprof-icon.svg</normaloff>:/icons/icons/sysprof-icon.svg</iconset>
+     <normaloff>:/icons/icons/hardware.svg</normaloff>:/icons/icons/hardware.svg</iconset>
    </property>
    <property name="text">
     <string>HW</string>

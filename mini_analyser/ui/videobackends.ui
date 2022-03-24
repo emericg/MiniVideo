@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/sysprof-icon.svg</normaloff>:/icons/icons/sysprof-icon.svg</iconset>
+    <normaloff>:/icons/icons/hardware.svg</normaloff>:/icons/icons/hardware.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
