@@ -94,12 +94,12 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
 
     exportData += "\n\nTitle          : ";
     exportData += media.file_name;
-    exportData += "\nDuration       : ";
-    exportData += getDurationQString(media.duration);
     exportData += "\nSize           : ";
     exportData += getSizeQString(media.file_size);
+    exportData += "\nDuration       : ";
+    exportData += getDurationQString(media.duration);
     exportData += "\nContainer      : ";
-    exportData += getContainerString(media.container, true);
+    exportData += getContainerQString(media.container, true);
     if (media.creation_app)
     {
         exportData += "\nCreation app   : ";
@@ -125,8 +125,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
     for (unsigned i = 0; i < media.tracks_video_count; i++)
     {
         MediaStream_t *t = media.tracks_video[i];
-        if (t == nullptr)
-            break;
+        if (t == nullptr) break;
 
         // Section title
         if (media.tracks_video_count == 1)
@@ -255,8 +254,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
     for (unsigned i = 0; i < media.tracks_audio_count; i++)
     {
         MediaStream_t *t = media.tracks_audio[i];
-        if (t == nullptr)
-            break;
+        if (t == nullptr) break;
 
         // Section title
         if (media.tracks_audio_count == 1)
@@ -339,8 +337,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
     for (unsigned i = 0; i < media.tracks_subtitles_count; i++)
     {
         MediaStream_t *t = media.tracks_subt[i];
-        if (t == nullptr)
-            break;
+        if (t == nullptr) break;
 
         // Section title
         exportData += "\n\nSUBTITLES TRACK #" + QString::number(i);
@@ -381,8 +378,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
     for (unsigned i = 0; i < media.tracks_others_count; i++)
     {
         MediaStream_t *t = media.tracks_others[i];
-        if (t == nullptr)
-            break;
+        if (t == nullptr) break;
 
         // Section title
         if (t->stream_type == stream_TEXT)
@@ -472,7 +468,90 @@ int textExport::generateExportData_xml(MediaFile_t &media, QString &exportData, 
     Q_UNUSED(exportData)
     Q_UNUSED(detailed)
 
-    // TODO
+    exportData += "<media>\n";
+
+    exportData += "<file_path>" + QString(media.file_path) + "</file_path>\n";
+    exportData += "<file_name>" + QString(media.file_name) + "</file_name>\n";
+    exportData += "<file_size>" + getSizeQString(media.file_size) + "</file_size>\n";
+    exportData += "<duration>" + getDurationQString(media.duration) + "</duration>\n";
+
+    // CONTAINER ///////////////////////////////////////////////////////////////
+
+    exportData += "<container>";
+    exportData += "  <name>" + getContainerQString(media.container, true) + "</name>\n";
+    if (media.creation_app)
+    {
+        exportData += "  <creation_app>" + QString(media.creation_app) + "</creation_app>\n";
+    }
+    if (media.creation_lib)
+    {
+        exportData += "  <creation_lib>" + QString(media.creation_lib) + "</creation_lib>\n";
+    }
+    if (media.creation_time)
+    {
+        QDate date(1904, 1, 1);
+        QTime time(0, 0, 0, 0);
+        QDateTime datetime(date, time);
+        datetime = datetime.addSecs(static_cast<qint64>(media.creation_time));
+        exportData += "  <creation_time>" + datetime.toString("dddd d MMMM yyyy, hh:mm:ss") + "</creation_time>\n";
+    }
+    exportData += "</container>\n";
+
+    // VIDEO TRACKS ////////////////////////////////////////////////////////////
+
+    for (unsigned i = 0; i < media.tracks_video_count; i++)
+    {
+        MediaStream_t *t = media.tracks_video[i];
+        if (t == nullptr) break;
+
+        // TODO
+    }
+
+    // AUDIO TRACKS ////////////////////////////////////////////////////////////
+
+    for (unsigned i = 0; i < media.tracks_audio_count; i++)
+    {
+        MediaStream_t *t = media.tracks_audio[i];
+        if (t == nullptr) break;
+
+        exportData += "<video>";
+
+        if (detailed == true)
+        {
+            exportData += "<track_id>" + QString::number(t->track_id) + "</track_id>";
+            if (t->stream_fcc) exportData += "<fourcc>" + getFourccQString(t->stream_fcc) + "</fourcc>";
+        }
+        exportData += "<fourcc>" + getCodecQString(stream_VIDEO, t->stream_codec, true) + "</fourcc>";
+        exportData += "<size>" + getTrackSizeQString(t, media.file_size, detailed) + "</size>";
+        exportData += "<duration>" + getDurationQString(t->stream_duration_ms) + "</duration>";
+        exportData += "<width>" + QString::number(t->width) + "</width>";
+        exportData += "<height>" + QString::number(t->height) + "</height>";
+
+        exportData += "</video>";
+    }
+
+    // SUBTITLES TRACKS ////////////////////////////////////////////////////////
+
+    for (unsigned i = 0; i < media.tracks_subtitles_count; i++)
+    {
+        // TODO
+    }
+
+    // OTHER TRACKS ////////////////////////////////////////////////////////////
+
+    for (unsigned i = 0; i < media.tracks_others_count; i++)
+    {
+        // TODO
+    }
+
+    // CHAPTERS ////////////////////////////////////////////////////////////////
+
+    if (media.chapters_count > 0 && media.chapters)
+    {
+        // TODO
+    }
+
+    exportData += "</media>";
 
     return status;
 }
