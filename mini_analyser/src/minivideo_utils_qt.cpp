@@ -27,6 +27,7 @@
 #include <cstring>
 #include <cmath>
 
+#include <QObject>
 #include <QDebug>
 
 /* ************************************************************************** */

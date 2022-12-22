@@ -16,6 +16,7 @@ env:
   APPLICATION: "MiniAnalyser"
   EXECUTABLE: "mini_analyser"
   QMAKE_PROJECT: "mini_analyser.pro"
+  QT_VERSION: "6.4.1"
 
 #--------------------------------------------------------------------------------
 # Workflow jobs
@@ -29,18 +30,16 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          aqtversion: '==2.0.6'
-          version: '6.3.0'
+          version: ${{env.QT_VERSION}}
           modules: qtimageformats
-          cached: 'false'
 
       # Install dependencies (from package manager)
       - name: Install dependencies (from package manager)
@@ -94,7 +93,7 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -105,12 +104,10 @@ jobs:
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          aqtversion: '==2.0.6'
-          version: '6.3.0'
+          version: ${{env.QT_VERSION}}
           modules: qtimageformats
-          cached: 'false'
 
       # Build library
       - name: Build library
@@ -149,7 +146,7 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout repository and submodules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -162,12 +159,10 @@ jobs:
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          aqtversion: '==2.0.6'
-          version: '6.3.0'
+          version: ${{env.QT_VERSION}}
           modules: qtimageformats
-          cached: 'false'
 
       # Install NSIS (already installed in 'windows-2022')
       #- name: Install NSIS
@@ -195,3 +190,18 @@ jobs:
              qmake --version
              qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
              make
+
+      # Package application
+      - name: Package application
+        run: |
+             cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
+             cd mini_analyser/
+             windeployqt bin/
+             7z a mini_analyser/mini_analyser-%APPVEYOR_BUILD_VERSION%-win64.zip mini_analyser-%APPVEYOR_BUILD_VERSION%-win64
+
+      # Upload app zip
+      - name: Upload app zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.EXECUTABLE}}-${{env.VERSION}}-win64.zip
+          path: ${{env.EXECUTABLE}}.zip

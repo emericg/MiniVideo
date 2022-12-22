@@ -1,8 +1,8 @@
 MiniVideo framework
 ===================
 
-[![GitHub action](https://img.shields.io/github/workflow/status/emericg/MiniVideo/MiniVideo%20CI%20builds.svg?style=flat-square)](https://github.com/emericg/MiniVideo/actions)
-[![GitHub action](https://img.shields.io/github/workflow/status/emericg/MiniVideo/MiniAnalyser%20CI%20builds.svg?style=flat-square)](https://github.com/emericg/MiniVideo/actions)
+[![GitHub action](https://img.shields.io/github/actions/workflow/status/emericg/MiniVideo/builds_minivideo.yml?style=flat-square)](https://github.com/emericg/MiniVideo/actions)
+[![GitHub action](https://img.shields.io/github/actions/workflow/status/emericg/MiniVideo/builds_minianalyser.yml?style=flat-square)](https://github.com/emericg/MiniVideo/actions/workflows/builds_minianalyser.yml)
 
 MiniVideo is a **multimedia framework developed from scratch** in C/C++, bundled with small testing programs and a neat [media analyser](mini_analyser/).  
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
