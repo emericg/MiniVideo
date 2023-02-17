@@ -93,7 +93,8 @@ typedef enum Codecs_e
     CODEC_MSMPEG4       = 260,  //!< MPEG-4 Part 2 "ASP" implementation from Microsoft (note: 3 versions exists / NOT compatible with regular MPEG-4 ASP / Used in divx <= 3)
     CODEC_H263          = 261,  //!< H.263 (and its numerous variants)
     CODEC_H264          = 262,  //!< H.264 or MPEG-4 Part 10 "AVC" (ISO/IEC 14496-10)
-    CODEC_H265          = 263,  //!< H.265 or MPEG-H Part 2 "HEVC" (ISO/IEC 23008-2)
+    CODEC_H265          = 263,  //!< MPEG-H Part 2 "HEVC" (ISO/IEC 23008-2) or H.265
+    CODEC_H266          = 299,  //!< MPEG-I Part 3 "VVC" (ISO/IEC 23090-3) or H.266
 
     CODEC_WMV7          = 264,  //!< Windows Media Video 7
     CODEC_WMV8          = 265,  //!< Windows Media Video 8

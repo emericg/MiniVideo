@@ -348,6 +348,11 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "H.265 (MPEG-H part 2 'HEVC')";
                 else
                     return "H.265";
+            case CODEC_H266:
+                if (long_description)
+                    return "H.266 (MPEG-I part 3 'VVC')";
+                else
+                    return "H.266";
 
             case CODEC_WMV7:
                 if (long_description)

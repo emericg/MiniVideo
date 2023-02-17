@@ -202,7 +202,7 @@ typedef enum fourcc_list_e
     fcc_X264 = 0x58323634,
     fcc_x264 = 0x78323634,
 
-    fcc_HVC1 = 0x48764331, //!< H.265 / MPEG-H part 2 "HEVC"
+    fcc_HVC1 = 0x48564331, //!< H.265 / MPEG-H part 2 "HEVC"
     fcc_hvc1 = 0x68766331,
     fcc_HEVC = 0x48455643,
     fcc_hevc = 0x68657663,
@@ -212,6 +212,11 @@ typedef enum fourcc_list_e
     fcc_h265 = 0x68323635,
     fcc_X265 = 0x58323635,
     fcc_x265 = 0x78323635,
+
+    fcc_VVC1 = 0x56564331, //!< H.266 / MPEG-I part 3 "VVC"
+    fcc_vvc1 = 0x76766331,
+    fcc_H266 = 0x48323636,
+    fcc_h266 = 0x68323636,
 
     fcc_VP30 = 0x76503330,
     fcc_VP31 = 0x76503331, //!< Ogg Theora

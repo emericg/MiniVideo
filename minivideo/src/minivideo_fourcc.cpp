@@ -163,6 +163,13 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_H265;
         break;
 
+    case fcc_VVC1:
+    case fcc_vvc1:
+    case fcc_H266:
+    case fcc_h266:
+        codec = CODEC_H266;
+        break;
+
     case fcc_mpg4:
     case fcc_MPG4:
     case fcc_MP41:
