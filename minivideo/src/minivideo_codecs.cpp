@@ -328,14 +328,21 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
         {
             case CODEC_MPEG1:
                 return "MPEG-1";
-            case CODEC_H261:
-                return "H.261";
-            case CODEC_MPEG2:
-                return "MPEG-2";
             case CODEC_MPEG4_ASP:
                 return "MPEG-4 part 2 'ASP'";
-            case CODEC_MSMPEG4:
-                return "Microsoft MPEG-4";
+            case CODEC_MPEG4_IVC:
+                return "MPEG-4 part 33 'IVC'";
+            case CODEC_MPEG5_EVC:
+                return "MPEG-5 part 1 'EVC'";
+            case CODEC_MPEG5_LCEVC:
+                return "MPEG-5 part 2 'LCEVC'";
+
+            case CODEC_H120:
+                return "H.120";
+            case CODEC_H261:
+                return "H.261";
+            case CODEC_H262:
+                return "MPEG-2";
             case CODEC_H263:
                 return "H.263";
             case CODEC_H264:
@@ -354,6 +361,69 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 else
                     return "H.266";
 
+            case CODEC_VP3:
+                if (long_description)
+                    return "VP3 (Ogg Theora)";
+                else
+                    return "VP3";
+            case CODEC_VP4:
+                return "VP4";
+            case CODEC_VP5:
+                return "VP5";
+            case CODEC_VP6:
+                return "VP6";
+            case CODEC_VP7:
+                return "VP7";
+            case CODEC_VP8:
+                return "VP8";
+            case CODEC_VP9:
+                return "VP9";
+
+            case CODEC_DAALA:
+                return "Daala";
+            case CODEC_THOR:
+                return "Thor";
+            case CODEC_AV1:
+                if (long_description)
+                    return "AV1 (AOMedia Video 1)";
+                else
+                    return "AV1";
+
+            case CODEC_AVS1:
+                return "AVS1";
+            case CODEC_AVS2:
+                return "AVS2";
+            case CODEC_AVS3:
+                return "AVS3";
+
+            case CODEC_VC1:
+                if (long_description)
+                    return "VC-1 (Windows Media Video)";
+                else
+                    return "VC-1";
+            case CODEC_VC2:
+                if (long_description)
+                    return "VC-2 (Dirac)";
+                else
+                    return "VC-2";
+            case CODEC_VC3:
+                if (long_description)
+                    return "VC-3 (DNxHD)";
+                else
+                    return "VC-3";
+            case CODEC_VC5:
+                if (long_description)
+                    return "VC-5 (CineForm variant)";
+                else
+                    return "VC-5";
+            case CODEC_VC6:
+                if (long_description)
+                    return "VC-6 (?)";
+                else
+                    return "VC-6";
+
+            case CODEC_MSMPEG4:
+                return "Microsoft MPEG-4";
             case CODEC_WMV7:
                 if (long_description)
                     return "Windows Media Video 7";
@@ -389,99 +459,6 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
             case CODEC_RV40:
                 return "RealVideo 4";
 
-            case CODEC_VC1:
-                if (long_description)
-                    return "VC-1 (Windows Media Video)";
-                else
-                    return "VC-1";
-            case CODEC_VC2:
-                if (long_description)
-                    return "VC-2 (Dirac)";
-                else
-                    return "VC-2";
-            case CODEC_VC3:
-                if (long_description)
-                    return "VC-3 (DNxHD)";
-                else
-                    return "VC-3";
-            case CODEC_VC5:
-                if (long_description)
-                    return "VC-5 (CineForm variant)";
-                else
-                    return "VC-5";
-
-            case CODEC_CINEFORM:
-                return "CineForm";
-
-            case CODEC_PRORES_422_PROXY:
-                return "Apple ProRes 422 (Proxy)";
-            case CODEC_PRORES_422_LT:
-                return "Apple ProRes 422 (LT)";
-            case CODEC_PRORES_422:
-                return "Apple ProRes 422";
-            case CODEC_PRORES_422_HQ:
-                return "Apple ProRes 422 (HQ)";
-            case CODEC_PRORES_4444:
-                return "Apple ProRes 4444";
-            case CODEC_PRORES_4444_XQ:
-                return "Apple ProRes 4444 (XQ)";
-
-            case CODEC_REDCode:
-                return "REDCode";
-
-            case CODEC_DV_SONY:
-                return "Sony DV";
-            case CODEC_DV_CANOPUS:
-                return "Canopus DV";
-            case CODEC_DV_APPLE:
-                return "Apple DV";
-            case CODEC_DV_PANASONIC:
-                return "Panasonic DV";
-
-            case CODEC_VP3:
-                if (long_description)
-                    return "VP3 (Ogg Theora)";
-                else
-                    return "VP3";
-            case CODEC_VP4:
-                return "VP4";
-            case CODEC_VP5:
-                return "VP5";
-            case CODEC_VP6:
-                return "VP6";
-            case CODEC_VP7:
-                return "VP7";
-            case CODEC_VP8:
-                return "VP8";
-            case CODEC_VP9:
-                return "VP9";
-
-            case CODEC_DAALA:
-                return "Daala";
-            case CODEC_THOR:
-                return "Thor";
-            case CODEC_AV1:
-                if (long_description)
-                    return "AV1 (AOMedia Video 1)";
-                else
-                    return "AV1";
-
-            case CODEC_CINEPAK:
-                return "Cinepak";
-            case CODEC_SNOW:
-                return "SNOW";
-            case CODEC_SPARK:
-                return "Sorenson Spark";
-            case CODEC_SVQ1:
-                if (long_description)
-                    return "SVQ1 (Sorenson Video 1)";
-                else
-                    return "SVQ1";
-            case CODEC_SVQ3:
-                if (long_description)
-                    return "SVQ3 (Sorenson Video 3)";
-                else
-                    return "SVQ3";
             case CODEC_INDEO2:
                 if (long_description)
                     return "Indeo 2 (Intel Indeo Video 2)";
@@ -502,6 +479,18 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "Indeo 5 (Intel Indeo Video 5)";
                 else
                     return "Indeo 5";
+            case CODEC_SPARK:
+                return "Sorenson Spark";
+            case CODEC_SVQ1:
+                if (long_description)
+                    return "SVQ1 (Sorenson Video 1)";
+                else
+                    return "SVQ1";
+            case CODEC_SVQ3:
+                if (long_description)
+                    return "SVQ3 (Sorenson Video 3)";
+                else
+                    return "SVQ3";
             case CODEC_CanopusHQ:
                 return "Canopus HQ";
             case CODEC_CanopusHQA:
@@ -512,6 +501,12 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "Bink Video!";
             case CODEC_BINK2:
                 return "Bink2 Video!";
+            case CODEC_CINEPAK:
+                return "Cinepak";
+            case CODEC_DIRAC:
+                return "Dirac";
+            case CODEC_SNOW:
+                return "Snow";
             case CODEC_icod:
                 return "Apple Intermediate Codec";
             case CODEC_rpza:
@@ -521,20 +516,40 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
             case CODEC_QtGraphics:
                 return "Apple QuickTime Graphics";
 
-            case CODEC_JPEG:
-                if (long_description)
-                    return "JPEG (image)";
-                else
-                    return "JPEG";
-            case CODEC_MJPEG:
-                return "Motion JPEG";
-            case CODEC_JPEG2K:
-                if (long_description)
-                    return "JPEG 2000 (image)";
-                else
-                    return "JPEG 2000";
-            case CODEC_MJPEG2K:
-                return "Motion JPEG 2000";
+            case CODEC_CINEFORM:
+                return "CineForm";
+            case CODEC_REDCode:
+                return "REDCode";
+            case CODEC_DNxHD:
+                return "DNxHD";
+
+            case CODEC_PRORES_422_PROXY:
+                return "Apple ProRes 422 (Proxy)";
+            case CODEC_PRORES_422_LT:
+                return "Apple ProRes 422 (LT)";
+            case CODEC_PRORES_422:
+                return "Apple ProRes 422";
+            case CODEC_PRORES_422_HQ:
+                return "Apple ProRes 422 (HQ)";
+            case CODEC_PRORES_4444:
+                return "Apple ProRes 4444";
+            case CODEC_PRORES_4444_XQ:
+                return "Apple ProRes 4444 (XQ)";
+
+            case CODEC_DV_SONY:
+                return "Sony DV";
+            case CODEC_DV_CANOPUS:
+                return "Canopus DV";
+            case CODEC_DV_APPLE:
+                return "Apple DV";
+            case CODEC_DV_PANASONIC:
+                return "Panasonic DV";
+
+            case CODEC_FFV1:
+                return "FFV1";
+            case CODEC_CanopusLL:
+                return "Canopus Lossless";
+
             case CODEC_PNG:
                 if (long_description)
                     return "PNG (image)";
@@ -542,12 +557,6 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "PNG";
             case CODEC_CorePNG:
                 return "CorePNG";
-
-            case CODEC_GIF:
-                if (long_description)
-                    return "Graphic Interchange Format (image)";
-                else
-                    return "GIF";
             case CODEC_BMP:
                 if (long_description)
                     return "Windows Bitmap (image)";
@@ -563,6 +572,35 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "Tagged Image File Format (image)";
                 else
                     return "TIFF";
+
+            case CODEC_JPEG:
+                if (long_description)
+                    return "JPEG (image)";
+                else
+                    return "JPEG";
+            case CODEC_MJPEG:
+                return "Motion JPEG";
+            case CODEC_JPEG_2K:
+                if (long_description)
+                    return "JPEG 2000 (image)";
+                else
+                    return "JPEG 2000";
+            case CODEC_MJPEG_2K:
+                return "Motion JPEG 2000";
+            case CODEC_JPEG_XR:
+                return "JPEG XR";
+            case CODEC_JPEG_XS:
+                return "JPEG XS";
+            case CODEC_JPEG_XT:
+                return "JPEG XT";
+            case CODEC_JPEG_XL:
+                return "JPEG XL";
+
+            case CODEC_GIF:
+                if (long_description)
+                    return "Graphic Interchange Format (image)";
+                else
+                    return "GIF";
             case CODEC_WEBP:
                 if (long_description)
                     return "WebP (image)";
@@ -578,11 +616,6 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "AVIF (AV1 Image Format)";
                 else
                     return "AVIF";
-
-            case CODEC_FFV1:
-                return "FFV1";
-            case CODEC_CanopusLL:
-                return "Canopus Lossless";
         }
     }
 

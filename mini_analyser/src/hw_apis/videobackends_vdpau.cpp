@@ -52,8 +52,8 @@ struct Desc
 static Desc decoder_profiles_vdpau[] =
 {
     { VDP_DECODER_PROFILE_MPEG1,                        CODEC_MPEG1,    PROF_H262_SP, 8 },
-    { VDP_DECODER_PROFILE_MPEG2_SIMPLE,                 CODEC_MPEG2,    PROF_H262_SP, 8 },
-    { VDP_DECODER_PROFILE_MPEG2_MAIN,                   CODEC_MPEG2,    PROF_H262_MP, 8 },
+    { VDP_DECODER_PROFILE_MPEG2_SIMPLE,                 CODEC_H262,     PROF_H262_SP, 8 },
+    { VDP_DECODER_PROFILE_MPEG2_MAIN,                   CODEC_H262,     PROF_H262_MP, 8 },
 
     { VDP_DECODER_PROFILE_H264_BASELINE,                CODEC_H264,     PROF_H264_BP, 8 },
     { VDP_DECODER_PROFILE_H264_MAIN,                    CODEC_H264,     PROF_H264_MP, 8 },
@@ -80,19 +80,27 @@ static Desc decoder_profiles_vdpau[] =
     { VDP_DECODER_PROFILE_H264_CONSTRAINED_HIGH,        CODEC_H264,     PROF_H264_CHiP, 8 },
     { VDP_DECODER_PROFILE_H264_HIGH_444_PREDICTIVE,     CODEC_H264,     PROF_H264_Hi444PP, 8 },
 
+#ifdef VDP_DECODER_PROFILE_VP9_PROFILE_0
+    { VDP_DECODER_PROFILE_VP9_PROFILE_0,                CODEC_VP9,      PROF_VP9_0, 8 },
+    { VDP_DECODER_PROFILE_VP9_PROFILE_1,                CODEC_VP9,      PROF_VP9_1, 8 },
+    { VDP_DECODER_PROFILE_VP9_PROFILE_2,                CODEC_VP9,      PROF_VP9_2, 12 },
+    { VDP_DECODER_PROFILE_VP9_PROFILE_3,                CODEC_VP9,      PROF_VP9_3, 12 },
+#endif //
+
 #ifdef VDP_DECODER_PROFILE_HEVC_MAIN
     { VDP_DECODER_PROFILE_HEVC_MAIN,                    CODEC_H265,     PROF_H265_Main, 8 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_10,                 CODEC_H265,     PROF_H265_Main10, 10 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_STILL,              CODEC_H265,     PROF_H265_MainStill, 8 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_12,                 CODEC_H265,     PROF_H265_Main12, 12 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_444,                CODEC_H265,     PROF_H265_Main444, 8 },
+    { VDP_DECODER_PROFILE_HEVC_MAIN_444_10,             CODEC_H265,     PROF_H265_Main444, 10 },
+    { VDP_DECODER_PROFILE_HEVC_MAIN_444_12,             CODEC_H265,     PROF_H265_Main444, 12 },
 #endif //
 
-#ifdef VDP_DECODER_PROFILE_VP9_PROFILE_0
-    { VDP_DECODER_PROFILE_VP9_PROFILE_0,                CODEC_VP9,      PROF_VP9_0, 8 },
-    { VDP_DECODER_PROFILE_VP9_PROFILE_1,                CODEC_VP9,      PROF_VP9_1, 8 },
-    { VDP_DECODER_PROFILE_VP9_PROFILE_2,                CODEC_VP9,      PROF_VP9_2, 12 },
-    { VDP_DECODER_PROFILE_VP9_PROFILE_3,                CODEC_VP9,      PROF_VP9_3, 12 },
+#ifdef VDP_DECODER_PROFILE_AV1_MAIN
+    { VDP_DECODER_PROFILE_AV1_MAIN,                     CODEC_AV1, PROF_AV1_Main, 8 },
+    { VDP_DECODER_PROFILE_AV1_HIGH,                     CODEC_AV1, PROF_AV1_High, 8 },
+    { VDP_DECODER_PROFILE_AV1_PROFESSIONAL,             CODEC_AV1, PROF_AV1_Professional, 8 },
 #endif //
 };
 

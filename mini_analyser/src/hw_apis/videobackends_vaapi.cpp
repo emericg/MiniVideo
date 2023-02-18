@@ -84,8 +84,8 @@ static Desc decoder_profiles_vaapi[] =
 {
     { VAProfileNone,                        CODEC_UNKNOWN,  CODEC_PROF_UNKNOWN, 0 },
 
-    { VAProfileMPEG2Simple,                 CODEC_MPEG2,    PROF_H262_SP, 8 },
-    { VAProfileMPEG2Main,                   CODEC_MPEG2,    PROF_H262_MP, 8 },
+    { VAProfileMPEG2Simple,                 CODEC_H262,     PROF_H262_SP, 8 },
+    { VAProfileMPEG2Main,                   CODEC_H262,     PROF_H262_MP, 8 },
     { VAProfileMPEG4Simple,                 CODEC_MPEG4_ASP,PROF_MPEG4_SP, 8 },
     { VAProfileMPEG4AdvancedSimple,         CODEC_MPEG4_ASP,PROF_MPEG4_ASP, 8 },
     { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,CODEC_PROF_UNKNOWN, 8 },
@@ -98,30 +98,42 @@ static Desc decoder_profiles_vaapi[] =
     { VAProfileH263Baseline,                CODEC_H263,     CODEC_PROF_UNKNOWN, 8 },
     { VAProfileJPEGBaseline,                CODEC_JPEG,     CODEC_PROF_UNKNOWN, 8 },
     { VAProfileH264ConstrainedBaseline,     CODEC_H264,     PROF_H264_CBP, 8 },
-#if VA_CHECK_VERSION(0, 35, 0)
+#if VA_CHECK_VERSION(0, 35, 0) // libva 1.3
     { VAProfileVP8Version0_3,               CODEC_VP8,      PROF_VP8_0, 8 },
 #endif
-#if VA_CHECK_VERSION(0, 36, 0)
+#if VA_CHECK_VERSION(0, 36, 0) // libva 1.4
     { VAProfileH264MultiviewHigh,           CODEC_H264,     PROF_H264_MvHiP, 8 },
     { VAProfileH264StereoHigh,              CODEC_H264,     PROF_H264_StHiP, 8 },
 #endif
-#if VA_CHECK_VERSION(0, 37, 0)
+#if VA_CHECK_VERSION(0, 37, 0) // libva 1.5
     { VAProfileHEVCMain,                    CODEC_H265,     PROF_H265_Main, 8 },
     { VAProfileHEVCMain10,                  CODEC_H265,     PROF_H265_Main10, 10 },
 #endif
-#if VA_CHECK_VERSION(0, 38, 0)
+#if VA_CHECK_VERSION(0, 38, 0) // libva 1.6
     { VAProfileVP9Profile0,                 CODEC_VP9,      PROF_VP9_0, 8 },
 #endif
-#if VA_CHECK_VERSION(0, 39, 0)
+#if VA_CHECK_VERSION(0, 39, 0) // libva 1.7
     { VAProfileVP9Profile1,                 CODEC_VP9,      PROF_VP9_1, 8 },
     { VAProfileVP9Profile2,                 CODEC_VP9,      PROF_VP9_2, 12 },
     { VAProfileVP9Profile3,                 CODEC_VP9,      PROF_VP9_3, 12 },
 #endif
-#if VA_CHECK_VERSION(0, 40, 0)
-    // libva 1.8
+#if VA_CHECK_VERSION(1, 2, 0) // libva 2.2
+    { VAProfileHEVCMain12,                  CODEC_H265,     PROF_H265_Main12, 12 },
+    { VAProfileHEVCMain422_10,              CODEC_H265,     PROF_H265_Main422_10, 10 },
+    { VAProfileHEVCMain422_12,              CODEC_H265,     PROF_H265_Main422_12, 12 },
+    { VAProfileHEVCMain444,                 CODEC_H265,     PROF_H265_Main444, 8 },
+    { VAProfileHEVCMain444_10,              CODEC_H265,     PROF_H265_Main444_10, 10 },
+    { VAProfileHEVCMain444_12,              CODEC_H265,     PROF_H265_Main444_12, 12 },
+    { VAProfileHEVCSccMain,                 CODEC_H265,     PROF_H265_ScMain, 8 },
+    { VAProfileHEVCSccMain10,               CODEC_H265,     PROF_H265_ScMain10, 10 },
+    { VAProfileHEVCSccMain444,              CODEC_H265,     PROF_H265_ScMain444, 8 },
 #endif
-#if VA_CHECK_VERSION(1,  0, 0)
-    // libva 2.0
+#if VA_CHECK_VERSION(1, 7, 0) // libva 2.7
+    { VAProfileAV1Profile0,                 CODEC_AV1,      PROF_AV1_Main, 8 },
+    { VAProfileAV1Profile1,                 CODEC_AV1,      PROF_AV1_High, 8 },
+#endif
+#if VA_CHECK_VERSION(1, 8, 0) // libva 2.8
+    { VAProfileHEVCSccMain444_10,           CODEC_H265,     PROF_H265_ScMain444_10, 10 },
 #endif
 };
 

@@ -256,7 +256,7 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         }
         else if (strcmp(codec_str, "V_MPEG2") == 0)
         {
-            *codec = CODEC_MPEG2;
+            *codec = CODEC_H262;
         }
         else if (strcmp(codec_str, "V_MPEG1") == 0)
         {

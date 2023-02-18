@@ -110,7 +110,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_mpg2:
     case fcc_PIM2:
     case fcc_DVR:
-        codec = CODEC_MPEG2;
+        codec = CODEC_H262;
         break;
 
     case fcc_h261:
@@ -405,6 +405,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_PNG1:
         codec = CODEC_CorePNG;
         break;
+
     case fcc_JPEG:
     case fcc_jpeg:
         codec = CODEC_JPEG;
@@ -416,7 +417,7 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         break;
     case fcc_MJ2:
     case fcc_MJP2:
-        codec = CODEC_MJPEG2K;
+        codec = CODEC_MJPEG_2K;
         break;
 
 ////////////////////////////////////////////////////////////////////////////////

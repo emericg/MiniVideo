@@ -256,9 +256,7 @@ static int stream_output_filename(MediaFile_t *media, MediaStream_t *stream, cha
     }
     else // if (stream->stream_type == stream_VIDEO)
     {
-
-        if (stream->stream_codec == CODEC_MPEG1 ||
-            stream->stream_codec == CODEC_MPEG2)
+        if (stream->stream_codec == CODEC_MPEG1 || stream->stream_codec == CODEC_H262)
         {
             strncat(output_filename, ".mpegv", 254);
         }

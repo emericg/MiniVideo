@@ -1040,7 +1040,7 @@ int parse_pes_v(Bitstream_t *bitstr, PesHeader_t *header, PesPacket_t *packet,
             }
             else // if (_mpeg_version == 2)
             {
-                map->stream_codec = CODEC_MPEG2;
+                map->stream_codec = CODEC_H262;
 
                 switch (aspect_ratio_index)
                 {

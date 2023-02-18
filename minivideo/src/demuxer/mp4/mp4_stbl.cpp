@@ -1085,7 +1085,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                 case 0x66:
                 case 0x67:
                 case 0x68:
-                    track->codec = CODEC_MPEG2;
+                    track->codec = CODEC_H262;
                     break;
                 case 0x6A:
                     track->codec = CODEC_MPEG1;
