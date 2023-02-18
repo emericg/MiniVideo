@@ -48,7 +48,7 @@
  * - Doesn't depend on host endianness (i.e. the first character of the argument
  *  will always be in the most significant byte of the FourCC).
  */
-minivideo_EXPORT constexpr uint32_t fourcc_be(char const fcc_str[5])
+constexpr uint32_t fourcc_be(char const fcc_str[5])
 {
     return static_cast<uint32_t>((fcc_str[0] << 24) | (fcc_str[1] << 16) | (fcc_str[2] << 8) | fcc_str[3]);
 }
@@ -65,7 +65,7 @@ minivideo_EXPORT constexpr uint32_t fourcc_be(char const fcc_str[5])
  * - Doesn't depend on host endianness (i.e. the first character of the argument
  *  will always be in the most significant byte of the FourCC).
  */
-minivideo_EXPORT constexpr uint32_t fourcc_le(char const fcc_str[5])
+constexpr uint32_t fourcc_le(char const fcc_str[5])
 {
     return static_cast<uint32_t>((fcc_str[3] << 24) | (fcc_str[2] << 16) | (fcc_str[1] << 8) | fcc_str[0]);
 }

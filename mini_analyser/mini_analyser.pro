@@ -8,9 +8,14 @@ TARGET       = mini_analyser
 VERSION      = 48
 DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
 
-CONFIG      += c++11
-QT          += core svg gui widgets printsupport
-equals(QT_MAJOR_VERSION, 6) { QT += svgwidgets }
+equals(QT_MAJOR_VERSION, 5) {
+    CONFIG  += c++11
+    QT      += core svg gui widgets printsupport
+}
+equals(QT_MAJOR_VERSION, 6) {
+    CONFIG  += c++14
+    QT      += core svg gui widgets svgwidgets printsupport
+}
 
 # build artifacts
 OBJECTS_DIR  = build/
@@ -75,11 +80,11 @@ HEADERS     += src/thirdparty/portable_endian.h \
                src/thirdparty/pugixml/pugiconfig.hpp
 
 # minivideo library
-INCLUDEPATH += ../minivideo/src
-QMAKE_LIBDIR+= ../minivideo/build
-QMAKE_RPATHDIR+= ../minivideo/build
-LIBS        += -L../minivideo/build -lminivideo # dynamic linking
-#LIBS        += ../minivideo/build/libminivideo.a # static linking
+INCLUDEPATH     += ../minivideo/src
+QMAKE_LIBDIR    += ../minivideo/build
+QMAKE_RPATHDIR  += ../minivideo/build
+LIBS            += -L../minivideo/build -lminivideo     # dynamic linking
+#LIBS           += ../minivideo/build/libminivideo.a    # static linking
 
 # OS specifics -----------------------------------------------------------------
 
@@ -159,6 +164,9 @@ unix {
 win32 {
     # OS icon
     RC_ICONS = resources/app/mini_analyser.ico
+
+    #
+    QMAKE_CXXFLAGS += /MP /Zc:__cplusplus /std:c++17 /permissive-
 }
 
 # Deployment -------------------------------------------------------------------
