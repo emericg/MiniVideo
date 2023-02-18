@@ -12,11 +12,10 @@ on:
 #--------------------------------------------------------------------------------
 
 env:
-  VERSION: "48"
   APPLICATION: "MiniAnalyser"
-  EXECUTABLE: "mini_analyser"
-  QMAKE_PROJECT: "mini_analyser.pro"
-  QT_VERSION: "6.4.1"
+  APPLICATION_VERSION: "48"
+  APPLICATION_EXECUTABLE: "mini_analyser"
+  QT_VERSION: "6.4.2"
 
 #--------------------------------------------------------------------------------
 # Workflow jobs
@@ -62,7 +61,7 @@ jobs:
         run: |
              cd mini_analyser/
              qmake --version
-             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release PREFIX=/usr
+             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release PREFIX=/usr
              make -j$(nproc)
 
       # Package application
@@ -83,7 +82,7 @@ jobs:
       - name: Upload AppImage
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.VERSION}}-linux64.AppImage
+          name: ${{env.APPLICATION}}-${{env.APPLICATION_VERSION}}-linux64.AppImage
           path: mini_analyser/${{env.EXECUTABLE}}*.AppImage
 
   ## macOS build ###############################################################
@@ -122,7 +121,7 @@ jobs:
         run: |
              cd mini_analyser/
              qmake --version
-             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release
              make -j$(nproc)
 
       # Package application
@@ -136,7 +135,7 @@ jobs:
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.VERSION}}-macOS.app
+          name: ${{env.APPLICATION}}-${{env.APPLICATION_VERSION}}-macOS.app
           path: mini_analyser/bin/${{env.EXECUTABLE}}.app
 
   ## Windows build #############################################################
@@ -188,7 +187,7 @@ jobs:
              cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
-             qmake ${{env.QMAKE_PROJECT}} CONFIG+=release
+             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release
              make
 
       # Package application
@@ -201,7 +200,7 @@ jobs:
 
       # Upload app zip
       - name: Upload app zip
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{env.EXECUTABLE}}-${{env.VERSION}}-win64.zip
+          name: ${{env.EXECUTABLE}}-${{env.APPLICATION_VERSION}}-win64.zip
           path: ${{env.EXECUTABLE}}.zip

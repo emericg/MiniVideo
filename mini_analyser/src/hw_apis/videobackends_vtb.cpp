@@ -59,10 +59,10 @@ static Desc decoder_profiles_vtb[] =
 {
     { CODEC_MPEG1,  0,              4096, 4096, 8, nullptr },
     { CODEC_MPEG1,  0,              4096, 4096, 8, nullptr },
-    { CODEC_MPEG2,  PROF_H262_SP,   1280,  720, 8, nullptr },
-    { CODEC_MPEG2,  PROF_H262_SP,   4096, 4096, 8, nullptr },
-    { CODEC_MPEG2,  PROF_H262_MP,   1280,  720, 8, nullptr },
-    { CODEC_MPEG2,  PROF_H262_MP,   4096, 4096, 8, nullptr },
+    { CODEC_H262,   PROF_H262_SP,   1280,  720, 8, nullptr },
+    { CODEC_H262,   PROF_H262_SP,   4096, 4096, 8, nullptr },
+    { CODEC_H262,   PROF_H262_MP,   1280,  720, 8, nullptr },
+    { CODEC_H262,   PROF_H262_MP,   4096, 4096, 8, nullptr },
 
     { CODEC_H264,   PROF_H264_CBP,  1280,  720, 8, nullptr },
     { CODEC_H264,   PROF_H264_XP,   1280,  720, 8, nullptr },
