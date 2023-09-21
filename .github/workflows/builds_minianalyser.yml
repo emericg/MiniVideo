@@ -44,9 +44,8 @@ jobs:
       # Install dependencies (from package manager)
       - name: Install dependencies (from package manager)
         run: |
-             sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libzstd-dev -y;
+             sudo apt-get install libgl1-mesa-dev libxcb1-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-cursor0 libzstd-dev -y;
              sudo apt-get install linux-headers-generic -y;
-             sudo apt-get install libgl1-mesa-dev -y;
              sudo apt-get install appstream -y;
 
       # Build library
@@ -187,7 +186,7 @@ jobs:
              cd mini_analyser/
              qmake --version
              qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release
-             jom -j$(nproc)
+             nmake
 
       # Package application
       - name: Package application
