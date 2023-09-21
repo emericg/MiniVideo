@@ -510,7 +510,10 @@ void avi_clean(avi_t *avi)
         {
             if (avi->tracks[i])
             {
-                free(avi->tracks[i]->index_entries);
+                if (avi->tracks[i]->index_entries)
+                {
+                    free(avi->tracks[i]->index_entries);
+                }
                 free(avi->tracks[i]);
             }
         }
