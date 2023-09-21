@@ -16,7 +16,7 @@ env:
   APP_NAME: "MiniAnalyser"
   APP_VERSION: "48"
   APP_EXECUTABLE: "mini_analyser"
-  QT_VERSION: "6.4.2"
+  QT_VERSION: "6.5.2"
 
 #--------------------------------------------------------------------------------
 # Workflow jobs
@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
-          path: mini_analyser/${{env.EXECUTABLE}}*.AppImage
+          path: mini_analyser/${{env.APP_EXECUTABLE}}*.AppImage
 
   ## macOS build ###############################################################
   build-mac:
@@ -130,14 +130,14 @@ jobs:
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ${{env.APP_NAME}}.zip bin/${{env.EXECUTABLE}}.app
+             zip -r -X ${{env.APP_NAME}}.zip bin/${{env.APP_EXECUTABLE}}.app
 
       # Upload app zip
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
           name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.app
-          path: mini_analyser/bin/${{env.EXECUTABLE}}.app
+          path: mini_analyser/bin/${{env.APP_EXECUTABLE}}.app
 
   ## Windows build #############################################################
   build-windows:
@@ -178,18 +178,16 @@ jobs:
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
              cmake --build . --config Release
-             mv Release/minivideo.lib minivideo.lib
-             mv Release/minivideo.dll minivideo.dll
 
       # Build application
       - name: Build application
         run: |
-             cp minivideo/build/minivideo.lib mini_analyser/bin/minivideo.lib
-             cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
+             cp minivideo/build/Release/minivideo.lib mini_analyser/bin/minivideo.lib
+             cp minivideo/build/Release/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
              qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release
-             make
+             jom -j$(nproc)
 
       # Package application
       - name: Package application
@@ -202,5 +200,5 @@ jobs:
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.EXECUTABLE}}-${{env.APP_VERSION}}-win64.zip
-          path: ${{env.EXECUTABLE}}.zip
+          name: ${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}-win64.zip
+          path: ${{env.APP_EXECUTABLE}}.zip
