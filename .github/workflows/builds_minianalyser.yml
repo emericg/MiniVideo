@@ -6,15 +6,16 @@ name: "MiniAnalyser CI builds"
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 #--------------------------------------------------------------------------------
 # Define application name & version
 #--------------------------------------------------------------------------------
 
 env:
-  APPLICATION: "MiniAnalyser"
-  APPLICATION_VERSION: "48"
-  APPLICATION_EXECUTABLE: "mini_analyser"
+  APP_NAME: "MiniAnalyser"
+  APP_VERSION: "48"
+  APP_EXECUTABLE: "mini_analyser"
   QT_VERSION: "6.4.2"
 
 #--------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ jobs:
         run: |
              cd mini_analyser/
              qmake --version
-             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release PREFIX=/usr
+             qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release PREFIX=/usr
              make -j$(nproc)
 
       # Package application
@@ -82,7 +83,7 @@ jobs:
       - name: Upload AppImage
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.APPLICATION_VERSION}}-linux64.AppImage
+          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
           path: mini_analyser/${{env.EXECUTABLE}}*.AppImage
 
   ## macOS build ###############################################################
@@ -121,7 +122,7 @@ jobs:
         run: |
              cd mini_analyser/
              qmake --version
-             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release
+             qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release
              make -j$(nproc)
 
       # Package application
@@ -129,13 +130,13 @@ jobs:
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ${{env.APPLICATION}}.zip bin/${{env.EXECUTABLE}}.app
+             zip -r -X ${{env.APP_NAME}}.zip bin/${{env.EXECUTABLE}}.app
 
       # Upload app zip
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APPLICATION}}-${{env.APPLICATION_VERSION}}-macOS.app
+          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.app
           path: mini_analyser/bin/${{env.EXECUTABLE}}.app
 
   ## Windows build #############################################################
@@ -187,20 +188,19 @@ jobs:
              cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
-             qmake ${{env.APPLICATION_EXECUTABLE}}.pro CONFIG+=release
+             qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release
              make
 
       # Package application
       - name: Package application
         run: |
-             cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              windeployqt bin/
-             7z a mini_analyser/mini_analyser-%APPVEYOR_BUILD_VERSION%-win64.zip mini_analyser-%APPVEYOR_BUILD_VERSION%-win64
+             7z a mini_analyser/mini_analyser-${{env.APP_VERSION}}-win64.zip mini_analyser-${{env.APP_VERSION}}-win64
 
       # Upload app zip
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.EXECUTABLE}}-${{env.APPLICATION_VERSION}}-win64.zip
+          name: ${{env.EXECUTABLE}}-${{env.APP_VERSION}}-win64.zip
           path: ${{env.EXECUTABLE}}.zip

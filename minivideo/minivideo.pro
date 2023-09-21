@@ -60,7 +60,6 @@ macx {
 }
 
 win32 {
-    VERSION =
     DEFINES -= UNICODE
     DEFINES += minivideo_EXPORT=__declspec(dllimport)
     DEFINES += _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES

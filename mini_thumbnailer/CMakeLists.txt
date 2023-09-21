@@ -1,6 +1,6 @@
-project(mini_thumbnailer)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
+project(mini_thumbnailer)
 
 # Search for the custom "MiniVideo" module
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})

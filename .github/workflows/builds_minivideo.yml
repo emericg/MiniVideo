@@ -6,14 +6,15 @@ name: "MiniVideo CI builds"
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 #-------------------------------------------------------------------------------
 # Define application name & version
 #-------------------------------------------------------------------------------
 
 env:
-  APPLICATION: "MiniVideo"
-  APPLICATION_VERSION: "0.14"
+  APP_NAME: "MiniVideo"
+  APP_VERSION: "0.14"
 
 #-------------------------------------------------------------------------------
 # Workflow jobs
@@ -37,7 +38,7 @@ jobs:
              cd minivideo/build/
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             make -j$(nproc)
+             cmake --build . --config Release
 
   ## macOS build ###############################################################
   build-mac:
@@ -56,7 +57,7 @@ jobs:
              cd minivideo/build/
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             make -j$(nproc)
+             cmake --build . --config Release
 
   ## Windows build #############################################################
   build-windows:

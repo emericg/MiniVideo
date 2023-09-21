@@ -1,5 +1,6 @@
+cmake_minimum_required(VERSION 3.10)
+
 # MiniVideo "library" build system / CMake edition
-# This file allows you to build shared & static library of MiniVideo
 ################################################################################
 
 project(minivideo)
@@ -8,11 +9,6 @@ set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 14)
 set(minivideo_VERSION_PATCH 0)
 set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
-
-cmake_minimum_required(VERSION 3.0)
-cmake_policy(SET CMP0012 NEW)
-cmake_policy(SET CMP0054 NEW)
-
 
 # Build settings
 ################################################################################
@@ -115,7 +111,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     message(STATUS "Building with Clang compiler")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-missing-field-initializers")
     else()
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     endif()
@@ -129,7 +125,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     message(STATUS "Building with GCC compiler")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-missing-field-initializers")
     else()
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     endif()
@@ -273,14 +269,12 @@ if (BUILD_SHARED_LIBS)
     set_target_properties(minivideo_shared PROPERTIES VERSION ${minivideo_VERSION_STRING} SOVERSION ${minivideo_VERSION_MAJOR})
 
     if(WIN32)
-    if(CMAKE_VERSION VERSION_GREATER "3.3")
         message("* Generating symbols export header")
         GENERATE_EXPORT_HEADER(minivideo_shared
                                BASE_NAME minivideo_shared
                                EXPORT_MACRO_NAME minivideo_EXPORT
                                EXPORT_FILE_NAME "${CMAKE_SOURCE_DIR}/src/minivideo_export.h"
                                STATIC_DEFINE minivideo_BUILT_AS_STATIC)
-    endif()
     endif()
 endif (BUILD_SHARED_LIBS)
 
