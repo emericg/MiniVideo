@@ -3,9 +3,9 @@
 # This file allows you to build shared & static library of MiniVideo
 #-------------------------------------------------------------------------------
 
-# build config
 TARGET       = minivideo
 TEMPLATE     = lib
+
 CONFIG      += c++11 shared_and_static
 CONFIG      -= qt
 
@@ -52,10 +52,19 @@ unix {
 
 linux {
     DEFINES += ENABLE_MEMFD=1 # Enables memfd
+
+    # Linker flags
     QMAKE_LFLAGS += -lm -Wl,-z,now -Wl,-z,relro
 }
 
 macx {
+    # Target architecture(s)
+    #QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+
+    # Target OS
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+
+    # Linker flags
     QMAKE_LFLAGS += -lm
 }
 
@@ -63,6 +72,8 @@ win32 {
     DEFINES -= UNICODE
     DEFINES += minivideo_EXPORT=__declspec(dllimport)
     DEFINES += _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES
+
+    # Linker flags
     QMAKE_LFLAGS += -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc
 }
 

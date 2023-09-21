@@ -14,8 +14,8 @@ on:
 
 env:
   APP_NAME: "MiniAnalyser"
-  APP_VERSION: "48"
   APP_EXECUTABLE: "mini_analyser"
+  APP_VERSION: "48"
   QT_VERSION: "6.5.2"
 
 #--------------------------------------------------------------------------------
@@ -39,7 +39,6 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: ${{env.QT_VERSION}}
-          modules: qtimageformats
 
       # Install dependencies (from package manager)
       - name: Install dependencies (from package manager)
@@ -106,7 +105,6 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: ${{env.QT_VERSION}}
-          modules: qtimageformats
 
       # Build library
       - name: Build library
@@ -129,13 +127,13 @@ jobs:
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ${{env.APP_NAME}}.zip bin/${{env.APP_EXECUTABLE}}.app
+             zip -r -X ../../${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip bin/${{env.APP_EXECUTABLE}}.app
 
-      # Upload app zip
+      # Upload app bundle
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.app
+          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS
           path: mini_analyser/bin/${{env.APP_EXECUTABLE}}.app
 
   ## Windows build #############################################################
@@ -161,7 +159,6 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: ${{env.QT_VERSION}}
-          modules: qtimageformats
 
       # Install NSIS (already installed in 'windows-2022')
       #- name: Install NSIS
@@ -181,8 +178,8 @@ jobs:
       # Build application
       - name: Build application
         run: |
-             cp minivideo/build/Release/minivideo.lib mini_analyser/bin/minivideo.lib
-             cp minivideo/build/Release/minivideo.dll mini_analyser/bin/minivideo.dll
+             cp minivideo/build/Release/minivideo.lib mini_analyser/build/minivideo.lib
+             cp minivideo/build/Release/minivideo.dll mini_analyser/build/minivideo.dll
              cd mini_analyser/
              qmake --version
              qmake ${{env.APP_EXECUTABLE}}.pro CONFIG+=release
@@ -191,13 +188,15 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             cd mini_analyser/
-             windeployqt bin/
-             7z a mini_analyser/mini_analyser-${{env.APP_VERSION}}-win64.zip mini_analyser-${{env.APP_VERSION}}-win64
+             cp minivideo/build/Release/minivideo.lib mini_analyser/bin/minivideo.lib
+             cp minivideo/build/Release/minivideo.dll mini_analyser/bin/minivideo.dll
+             windeployqt mini_analyser/bin/
+             mv mini_analyser/bin mini_analyser/${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}-win64
+             7z a mini_analyser/${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}-win64.zip ${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}-win64
 
       # Upload app zip
       - name: Upload app zip
         uses: actions/upload-artifact@v3
         with:
-          name: ${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}-win64.zip
-          path: ${{env.APP_EXECUTABLE}}.zip
+          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
+          path: ${{env.APP_EXECUTABLE}}-${{env.APP_VERSION}}.zip

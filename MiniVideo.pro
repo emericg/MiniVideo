@@ -9,3 +9,7 @@ SUBDIRS = minivideo mini_thumbnailer mini_extractor mini_analyser
 mini_thumbnailer.depends = minivideo
 mini_extractor.depends = minivideo
 mini_analyser.depends = minivideo
+
+OTHER_FILES += README.md \
+               .github/workflows/builds_minivideo.yml \
+               .github/workflows/builds_minianalyser.yml

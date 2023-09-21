@@ -5,4 +5,4 @@ project(MiniVideo framework)
 add_subdirectory(minivideo)
 add_subdirectory(mini_thumbnailer)
 add_subdirectory(mini_extractor)
-#add_subdirectory(mini_analyser)
+#add_subdirectory(mini_analyser) # mini_analyser does not have a CMake file

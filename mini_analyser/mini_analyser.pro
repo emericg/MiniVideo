@@ -134,7 +134,7 @@ unix {
         QMAKE_INFO_PLIST = resources/app/Info.plist
 
         # Add videobackends
-        #DEFINES += VIDEOBACKEND_VDA
+        DEFINES += VIDEOBACKEND_VDA
         DEFINES += VIDEOBACKEND_VTB
 
         SOURCES += src/hw_apis/videobackends_vda.cpp \
@@ -145,6 +145,12 @@ unix {
         # Link with video decoding APIs
         LIBS += -Wl,-framework,Foundation -Wl,-framework,CoreFoundation -Wl,-framework,CoreMedia -Wl,-framework,CoreVideo
         LIBS += -Wl,-framework,VideoToolbox -Wl,-framework,VideoDecodeAcceleration
+
+        # Target architecture(s)
+        #QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+
+        # Target OS
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
         # Force compiler to use available macOS SDK version (with automatic detection)
         #XCODE_SDK_VERSION = $$system("xcodebuild -sdk macosx -version | grep SDKVersion | cut -d' ' -f2-")
