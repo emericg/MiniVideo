@@ -101,8 +101,10 @@ int main(int argc, char *argv[])
         minivideo_print_features();
         minivideo_endianness();
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
         QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
         // mini_analyser is a QApplication, with a mainwindow and which accepts QFileOpenEvent
         MiniAnalyserGUI app(argc, argv);

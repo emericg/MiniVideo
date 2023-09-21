@@ -17,14 +17,8 @@ equals(QT_MAJOR_VERSION, 6) {
     QT      += core svg gui widgets svgwidgets printsupport
 }
 
-# build artifacts
-OBJECTS_DIR  = build/
-MOC_DIR      = build/
-RCC_DIR      = build/
-UI_DIR       = build/
-DESTDIR      = bin/
+# Project files ################################################################
 
-# mini_analyser files
 SOURCES     += src/main.cpp \
                src/cli.cpp \
                src/mainwindow.cpp \
@@ -79,21 +73,42 @@ HEADERS     += src/thirdparty/portable_endian.h \
                src/thirdparty/pugixml/pugixml.hpp \
                src/thirdparty/pugixml/pugiconfig.hpp
 
+# Dependencies #################################################################
+
 # minivideo library
-INCLUDEPATH     += ../minivideo/src
-QMAKE_LIBDIR    += ../minivideo/build
-QMAKE_RPATHDIR  += ../minivideo/build
-LIBS            += -L../minivideo/build -lminivideo     # dynamic linking
+INCLUDEPATH     += ../minivideo/src/
+QMAKE_LIBDIR    += ../minivideo/build/
+QMAKE_RPATHDIR  += ../minivideo/build/
+LIBS            += -lminivideo                          # dynamic linking
 #LIBS           += ../minivideo/build/libminivideo.a    # static linking
+
+# Build settings ###############################################################
+
+unix {
+    # Enables AddressSanitizer
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
+    #QMAKE_LFLAGS += -fsanitize=address,undefined
+}
+
+win32 { DEFINES += _USE_MATH_DEFINES }
+
+DEFINES += QT_DEPRECATED_WARNINGS
+
+CONFIG(release, debug|release) : DEFINES += NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT
+
+# Build artifacts ##############################################################
+
+OBJECTS_DIR  = build/
+MOC_DIR      = build/
+RCC_DIR      = build/
+UI_DIR       = build/
+
+DESTDIR      = bin/
 
 # OS specifics -----------------------------------------------------------------
 
 unix {
     QMAKE_CXXFLAGS += -fPIE
-
-    # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
-    #QMAKE_LFLAGS += -fsanitize=address,undefined
 
     QMAKE_CXXFLAGS += -Wall -Wextra
     QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable
@@ -171,7 +186,7 @@ win32 {
     # OS icon
     RC_ICONS = resources/app/mini_analyser.ico
 
-    #
+    # MSVC compiler flags
     QMAKE_CXXFLAGS += /MP /Zc:__cplusplus /std:c++17 /permissive-
 }
 
