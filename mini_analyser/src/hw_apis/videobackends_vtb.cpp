@@ -199,7 +199,7 @@ static OSStatus CreateDecoderVTB (Desc &prof)
     CMVideoCodecType cm_format;
     if (prof.codec == CODEC_MPEG1)
         cm_format = kCMVideoCodecType_MPEG1Video;
-    else if (prof.codec == CODEC_MPEG2)
+    else if (prof.codec == CODEC_H262)
         cm_format = kCMVideoCodecType_MPEG2Video;
     else if (prof.codec == CODEC_H264)
         cm_format = kCMVideoCodecType_H264;

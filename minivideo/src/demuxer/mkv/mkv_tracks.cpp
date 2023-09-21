@@ -792,6 +792,23 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
             case eid_FlagForced:
                 mkv_track->FlagForced = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagForced");
                 break;
+
+            case eid_FlagHearingImpaired:
+                mkv_track->FlagHearingImpaired = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagHearingImpaired");
+                break;
+            case eid_FlagVisualImpaired:
+                mkv_track->FlagVisualImpaired = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagVisualImpaired");
+                break;
+            case eid_FlagTextDescriptions:
+                mkv_track->FlagTextDescriptions = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagTextDescriptions");
+                break;
+            case eid_FlagOriginal:
+                mkv_track->FlagOriginal = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagOriginal");
+                break;
+            case eid_FlagCommentary:
+                mkv_track->FlagCommentary = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagCommentary");
+                break;
+
             case eid_FlagLacing:
                 mkv_track->FlagLacing = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "FlagLacing");
                 break;

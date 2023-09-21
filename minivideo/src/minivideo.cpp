@@ -304,7 +304,7 @@ int minivideo_thumbnail(MediaFile_t *input_media,
             TRACE_ERROR(MAIN, "No picture to decode after filtering!");
         }
 
-        for (unsigned sid = 0; sid < picture_number_filtered; sid++)
+        for (unsigned sid = 0; sid < (unsigned)picture_number_filtered; sid++)
         {
             OutputFile_t out;
             memset(&out, 0, sizeof (OutputFile_t));

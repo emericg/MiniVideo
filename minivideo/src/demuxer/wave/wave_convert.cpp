@@ -76,11 +76,15 @@ int wave_indexer_initmap(MediaFile_t *media, wave_t *wave)
                 track->stream_size = wave->fact.dwSampleLength * (wave->fmt.wBitsPerSample*8) * wave->fmt.nChannels;
 
                 if (track->stream_size != (uint64_t)wave->data.dataSize)
+                {
                     TRACE_WARNING(WAV, "track->stream_size != wave->data.dataSize (%d vs %d)",
                                   track->stream_size, wave->data.dataSize);
+                }
 
                 if (wave->fmt.nSamplesPerSec)
+                {
                     track->stream_duration_ms = wave->fact.dwSampleLength * (1000.0 / (double)(wave->fmt.nSamplesPerSec));
+                }
             }
             else
             {

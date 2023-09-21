@@ -512,7 +512,9 @@ int jumpy_asf(Bitstream_t *bitstr, AsfObject_t *parent, AsfObject_t *current)
         if (offset_end >= file_size)
         {
             if (offset_end > file_size)
+            {
                 TRACE_WARNING(ASF, "JUMPY > going EOF (%lli)", file_size);
+            }
 
             bitstr->bitstream_offset = file_size;
             return SUCCESS;

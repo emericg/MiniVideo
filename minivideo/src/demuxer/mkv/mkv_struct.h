@@ -370,6 +370,11 @@ typedef struct mkv_track_t
     uint64_t FlagEnabled = 0;
     uint64_t FlagDefault = 0;
     uint64_t FlagForced = 0;
+    uint64_t FlagHearingImpaired = 0;
+    uint64_t FlagVisualImpaired = 0;
+    uint64_t FlagTextDescriptions = 0;
+    uint64_t FlagOriginal = 0;
+    uint64_t FlagCommentary = 0;
     uint64_t FlagLacing = 0;
     uint64_t MinCache = 0;
     uint64_t MaxCache = 0;
@@ -561,6 +566,11 @@ typedef enum EbmlElement_e
         eid_FlagEnabled = 0xB9,
         eid_FlagDefault = 0x88,
         eid_FlagForced = 0x55AA,
+        eid_FlagHearingImpaired = 0x55AB,
+        eid_FlagVisualImpaired = 0x55AC,
+        eid_FlagTextDescriptions = 0x55AD,
+        eid_FlagOriginal = 0x55AE,
+        eid_FlagCommentary = 0x55AF,
         eid_FlagLacing = 0x9C,
         eid_MinCache = 0x6DE7,
         eid_MaxCache = 0x6DF8,

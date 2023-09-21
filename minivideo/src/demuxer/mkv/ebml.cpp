@@ -543,7 +543,9 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
         if (offset_end >= file_size)
         {
             if (offset_end > file_size)
+            {
                 TRACE_WARNING(MKV, "JUMPY > going EOF (%lli)", file_size);
+            }
 
             bitstr->bitstream_offset = file_size;
             return SUCCESS;
