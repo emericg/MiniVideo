@@ -1,7 +1,7 @@
 MiniVideo library
 =================
 
-[![GitHub action](https://img.shields.io/github/workflow/status/emericg/MiniVideo/MiniVideo%20CI%20builds.svg?style=flat-square)](https://github.com/emericg/MiniVideo/actions)
+[![GitHub action](https://img.shields.io/github/actions/workflow/status/emericg/MiniVideo/builds_minivideo.yml?style=flat-square)](https://github.com/emericg/MiniVideo/actions/workflows/builds_minivideo.yml)
 [![License: LGPL v3](https://img.shields.io/badge/license-LGPL%20v3-brightgreen.svg?style=flat-square)](http://www.gnu.org/licenses/lgpl-3.0)
 
 Introduction

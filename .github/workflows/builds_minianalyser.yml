@@ -127,7 +127,7 @@ jobs:
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ../../${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip bin/${{env.APP_NAME}}.app
+             zip -r -X ../${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip bin/${{env.APP_NAME}}.app
 
       # Upload app zip
       - name: Upload app zip
@@ -174,14 +174,12 @@ jobs:
              cmake --version
              cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
              cmake --build . --config Release
+             mv Release/minivideo.lib minivideo.lib
+             mv Release/minivideo.dll minivideo.dll
 
       # Build application
       - name: Build application
         run: |
-             cp minivideo/build/Release/minivideo.lib mini_analyser/build/minivideo.lib
-             cp minivideo/build/Release/minivideo.dll mini_analyser/build/minivideo.dll
-             cp minivideo/build/Release/minivideo.lib mini_analyser/bin/minivideo.lib
-             cp minivideo/build/Release/minivideo.dll mini_analyser/bin/minivideo.dll
              cd mini_analyser/
              qmake --version
              qmake ${{env.APP_NAME}}.pro CONFIG+=release
@@ -190,6 +188,8 @@ jobs:
       # Package application
       - name: Package application
         run: |
+            cp minivideo/build/minivideo.lib mini_analyser/bin/minivideo.lib
+            cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              windeployqt mini_analyser/bin/
              mv mini_analyser/bin mini_analyser/${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
              7z a ../${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
