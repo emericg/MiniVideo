@@ -2,38 +2,20 @@
 #
 # This module defines:
 #  MEMFD_FOUND, TRUE if we have found a linux kernel version >= 3.17.
-#  KERNEL_RELEASE (ex: 4.10.8-1-ARCH)
-#  KERNEL_VERSION (ex: 410)
-#  KERNEL_VERSION_MAJOR (ex: 4)
-#  KERNEL_VERSION_MINOR (ex: 10)
+#  uname -r: 4.10.8-1-ARCH
+#  LINUX_KERNEL_VERSION (ex: 4.10)
 
 set(MEMFD_FOUND FALSE)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
-    execute_process(COMMAND uname -r
-                    OUTPUT_VARIABLE KERNEL_RELEASE
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND uname -r OUTPUT_VARIABLE UNAME_RESULT OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX MATCH "[0-9]+.[0-9]+" LINUX_KERNEL_VERSION ${UNAME_RESULT})
+    #message(-- " Kernel uname: " ${UNAME_RESULT})
+    #message(-- " Kernel version: " ${LINUX_KERNEL_VERSION})
 
-    execute_process(COMMAND uname -r
-                    COMMAND cut -d. -f1-2 --output-delimiter=
-                    OUTPUT_VARIABLE KERNEL_VERSION
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    execute_process(COMMAND uname -r
-                    COMMAND cut -c 3-4
-                    OUTPUT_VARIABLE KERNEL_VERSION_MINOR
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    execute_process(COMMAND uname -r
-                    COMMAND cut -c 1-1
-                    OUTPUT_VARIABLE KERNEL_VERSION_MAJOR
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    if(${KERNEL_VERSION})
-        if(${KERNEL_VERSION} GREATER 316)
-            set(MEMFD_FOUND TRUE)
-        endif()
+    if (LINUX_KERNEL_VERSION VERSION_GREATER_EQUAL 3.17)
+        set(MEMFD_FOUND TRUE)
     endif()
 
 endif()
