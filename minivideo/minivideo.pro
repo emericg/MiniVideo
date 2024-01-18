@@ -59,7 +59,7 @@ linux {
 
 macx {
     # Target architecture(s)
-    #QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
 
     # Target OS
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
@@ -70,7 +70,7 @@ macx {
 
 win32 {
     DEFINES -= UNICODE
-    DEFINES += _MINIVIDEO_BUILD
+    #DEFINES += _MINIVIDEO_BUILD
     #DEFINES += minivideo_EXPORT=__declspec(dllimport)
     DEFINES += _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES
 

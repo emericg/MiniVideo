@@ -162,7 +162,7 @@ unix {
         LIBS += -Wl,-framework,VideoToolbox -Wl,-framework,VideoDecodeAcceleration
 
         # Target architecture(s)
-        #QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+        QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
 
         # Target OS
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15

@@ -29,7 +29,6 @@
 // C++ standard libraries
 #include <iostream>
 #include <cstdlib>
-#include <cstring>
 
 // Qt
 #include <QtGlobal>
@@ -77,7 +76,7 @@ int main(int argc, char *argv[])
 
         MiniAnalyserCLI app(argc, argv);
 
-        for (auto const &file: qAsConst(files))
+        for (auto const &file: std::as_const(files))
         {
             app.cli.printFile(file, cli_details_enabled);
         }
@@ -121,7 +120,7 @@ int main(int argc, char *argv[])
         }
 
         // If files have been passed as arguments, load them
-        for (auto const &file: qAsConst(files))
+        for (auto const &file: std::as_const(files))
         {
             app.gui.loadFile(file);
         }
