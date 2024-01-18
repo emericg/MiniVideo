@@ -29,7 +29,19 @@
 
 /* ************************************************************************** */
 
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
+
+#if defined(_MINIVIDEO_BUILD)
+#define minivideo_EXPORT __declspec(dllexport)
+#else
+#define minivideo_EXPORT __declspec(dllimport)
+#endif
+
+#else
+
 #define minivideo_EXPORT
+
+#endif // WIN32
 
 /* ************************************************************************** */
 #endif // minivideo_EXPORT_H

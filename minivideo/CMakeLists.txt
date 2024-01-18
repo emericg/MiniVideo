@@ -170,9 +170,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-    if(CMAKE_VERSION VERSION_GREATER "3.3")
-        include(GenerateExportHeader)
-    endif()
+    include(GenerateExportHeader)
+
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
 

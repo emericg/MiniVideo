@@ -70,7 +70,8 @@ macx {
 
 win32 {
     DEFINES -= UNICODE
-    DEFINES += minivideo_EXPORT=__declspec(dllimport)
+    DEFINES += _MINIVIDEO_BUILD
+    #DEFINES += minivideo_EXPORT=__declspec(dllimport)
     DEFINES += _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES
 
     # Linker flags
