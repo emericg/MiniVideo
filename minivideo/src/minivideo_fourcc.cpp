@@ -431,6 +431,11 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
         codec = CODEC_AAC;
         break;
 
+    case fcc_opus:
+    case fcc_Opus:
+        codec = CODEC_OPUS;
+        break;
+
     case fcc_AC3:
     case fcc_ac3:
         codec = CODEC_AC3;

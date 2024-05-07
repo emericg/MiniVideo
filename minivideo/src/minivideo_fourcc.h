@@ -344,8 +344,11 @@ typedef enum fourcc_list_e
 
     fcc_AAC  = 0x41414320, //!< AAC
     fcc_AACP = 0x41414350,
-    fcc_MP4A = 0x4D503441, //!< Default MP4 audio handler. Means mostly AAC, but ESDS content should be use to be sure.
+    fcc_MP4A = 0x4D503441, //!< Default MP4 audio handler. Means mostly AAC, but ESDS content should be used to be sure.
     fcc_mp4a = 0x6D703461,
+
+    fcc_opus = 0x6F707573,
+    fcc_Opus = 0x4F707573,
 
     fcc_AC3  = 0x41432D33, //!< Ac-3
     fcc_ac3  = 0x61632D33, //!< ac-3
