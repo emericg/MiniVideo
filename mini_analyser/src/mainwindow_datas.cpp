@@ -470,7 +470,7 @@ int MainWindow::printData()
             ui->label_info_video_display_aspectratio->setVisible(t->display_aspect_ratio != t->video_aspect_ratio);
             ui->label_info_video_display_aspectratio->setText(getAspectRatioQString(t->display_aspect_ratio));
 
-            ui->label_info_video_framerate->setText(QString::number(t->framerate) + " fps");
+            ui->label_info_video_framerate->setText(QString::number(t->framerate) + " FPS");
             ui->label_info_video_size->setText(getTrackSizeQString(t, media->file_size));
             ui->label_info_video_bitratemode->setText(getBitrateModeQString(t->bitrate_mode));
 
@@ -1229,7 +1229,7 @@ int MainWindow::printVideoDetails()
             ui->label_video_framecount->setText(framecount);
 
             // Framerate
-            ui->label_video_framerate->setText(QString::number(framerate) + " fps");
+            ui->label_video_framerate->setText(QString::number(framerate) + " FPS");
 
             // Framerate mode
             ui->label_77->setVisible(t->framerate_mode);

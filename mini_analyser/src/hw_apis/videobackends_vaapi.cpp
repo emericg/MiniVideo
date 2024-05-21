@@ -26,7 +26,6 @@
 #include "videobackends_vaapi.h"
 #include <minivideo_codecs.h>
 
-#include <cstdarg>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -89,7 +88,7 @@ static Desc decoder_profiles_vaapi[] =
     { VAProfileMPEG4Simple,                 CODEC_MPEG4_ASP,PROF_MPEG4_SP, 8 },
     { VAProfileMPEG4AdvancedSimple,         CODEC_MPEG4_ASP,PROF_MPEG4_ASP, 8 },
     { VAProfileMPEG4Main,                   CODEC_MPEG4_ASP,CODEC_PROF_UNKNOWN, 8 },
-    { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED from libva 2.0.0
+    { VAProfileH264Baseline,                CODEC_H264,     PROF_H264_BP, 8 }, // DEPRECATED starting libva 2.0.0
     { VAProfileH264Main,                    CODEC_H264,     PROF_H264_MP, 8 },
     { VAProfileH264High,                    CODEC_H264,     PROF_H264_HiP, 8 },
     { VAProfileVC1Simple,                   CODEC_VC1,      PROF_VC1_SIMPLE, 8 },
@@ -124,16 +123,16 @@ static Desc decoder_profiles_vaapi[] =
     { VAProfileHEVCMain444,                 CODEC_H265,     PROF_H265_Main444, 8 },
     { VAProfileHEVCMain444_10,              CODEC_H265,     PROF_H265_Main444_10, 10 },
     { VAProfileHEVCMain444_12,              CODEC_H265,     PROF_H265_Main444_12, 12 },
-    { VAProfileHEVCSccMain,                 CODEC_H265,     PROF_H265_ScMain, 8 },
-    { VAProfileHEVCSccMain10,               CODEC_H265,     PROF_H265_ScMain10, 10 },
-    { VAProfileHEVCSccMain444,              CODEC_H265,     PROF_H265_ScMain444, 8 },
+    { VAProfileHEVCSccMain,                 CODEC_H265,     PROF_H265_ScreenExtended_Main, 8 },
+    { VAProfileHEVCSccMain10,               CODEC_H265,     PROF_H265_ScreenExtended_Main10, 10 },
+    { VAProfileHEVCSccMain444,              CODEC_H265,     PROF_H265_ScreenExtended_Main_444, 8 },
 #endif
 #if VA_CHECK_VERSION(1, 7, 0) // libva 2.7
     { VAProfileAV1Profile0,                 CODEC_AV1,      PROF_AV1_Main, 8 },
     { VAProfileAV1Profile1,                 CODEC_AV1,      PROF_AV1_High, 8 },
 #endif
 #if VA_CHECK_VERSION(1, 8, 0) // libva 2.8
-    { VAProfileHEVCSccMain444_10,           CODEC_H265,     PROF_H265_ScMain444_10, 10 },
+    { VAProfileHEVCSccMain444_10,           CODEC_H265,     PROF_H265_ScreenExtended_Main_444_10, 10 },
 #endif
 };
 

@@ -186,7 +186,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
         if (detailed == true)
         {
             exportData += "\nFramerate      : ";
-            exportData += QString::number(t->framerate) + " fps";
+            exportData += QString::number(t->framerate) + " FPS";
             if (t->framerate_mode)
             {
                 exportData += "\nFramerate mode : ";
@@ -208,7 +208,7 @@ int textExport::generateExportData_text(MediaFile_t &media, QString &exportData,
         else
         {
             exportData += "\nFramerate      : ";
-            exportData += QString::number(t->framerate) + " fps";
+            exportData += QString::number(t->framerate) + " FPS";
             if (t->framerate_mode)
             {
                 exportData += " (" + getFramerateModeQString(t->framerate_mode) + ")";

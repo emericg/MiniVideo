@@ -26,7 +26,6 @@
 #include "videobackends_vdpau.h"
 #include <minivideo_codecs.h>
 
-#include <cstdarg>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -90,7 +89,7 @@ static Desc decoder_profiles_vdpau[] =
 #ifdef VDP_DECODER_PROFILE_HEVC_MAIN
     { VDP_DECODER_PROFILE_HEVC_MAIN,                    CODEC_H265,     PROF_H265_Main, 8 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_10,                 CODEC_H265,     PROF_H265_Main10, 10 },
-    { VDP_DECODER_PROFILE_HEVC_MAIN_STILL,              CODEC_H265,     PROF_H265_MainStill, 8 },
+    { VDP_DECODER_PROFILE_HEVC_MAIN_STILL,              CODEC_H265,     PROF_H265_Main_still, 8 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_12,                 CODEC_H265,     PROF_H265_Main12, 12 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_444,                CODEC_H265,     PROF_H265_Main444, 8 },
     { VDP_DECODER_PROFILE_HEVC_MAIN_444_10,             CODEC_H265,     PROF_H265_Main444, 10 },
