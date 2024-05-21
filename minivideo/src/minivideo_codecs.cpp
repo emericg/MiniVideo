@@ -124,35 +124,35 @@ CodecProfiles_e getH265CodecProfile(const unsigned profil_idc,
             return PROF_H265_Main;
         case 2:
             if (general_one_picture_only_constraint_flag)
-                return PROF_H265_Main10Still;
+                return PROF_H265_Main10_still;
             else
                 return PROF_H265_Main10;
         case 3:
-            return PROF_H265_MainStill;
+            return PROF_H265_Main_still;
 
-        case 4: // TODO everything else Main and Monochrome
+        case 4: // TODO // everything else Main and Monochrome
             return PROF_H265_unknown;
 
         // Annex G Profiles
         case 6:
-            return PROF_H265_MvMain;
+            return PROF_H265_Multiview_Main;
 
         // Annex H Profiles
         case 7:
             if (general_max_8bit_constraint_flag == false)
-                return PROF_H265_ScMain10;
+                return PROF_H265_Scalable_Main10;
             else
-                return PROF_H265_ScMain;
+                return PROF_H265_Scalable_Main;
 
         // Annex I Profiles
         case 8:
-            return PROF_H265_3DMain;
+            return PROF_H265_3D_Main;
 
         case 10:
             if (chroma_format_idc == 0)
-                return PROF_H265_ScMonochrome; // TODO 12/16 bits
+                return PROF_H265_Scalable_Monochrome; // TODO // 12/16 bits
             else
-                return PROF_H265_ScMain444;
+                return PROF_H265_Scalable_Main444;
 
         case 5: // TODO High Throughput
         case 11: // TODO High Throughput
@@ -285,7 +285,7 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 if (long_description)
                     return "Sony ATRAC 3 plus";
                 else
-                    return "ATRAC3plus";
+                    return "ATRAC3+";
 
             case CODEC_AMR:
                 if (long_description)
@@ -319,6 +319,8 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "ALAC (Apple Lossless Audio Codec)";
                 else
                     return "ALAC";
+            case CODEC_WAVPACK:
+                return "WavPack";
         }
     }
 
@@ -383,6 +385,7 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "Daala";
             case CODEC_THOR:
                 return "Thor";
+
             case CODEC_AV1:
                 if (long_description)
                     return "AV1 (AOMedia Video 1)";
@@ -535,6 +538,10 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "Apple ProRes 4444";
             case CODEC_PRORES_4444_XQ:
                 return "Apple ProRes 4444 (XQ)";
+            case CODEC_PRORES_RAW:
+                return "Apple ProRes RAW";
+            case CODEC_PRORES_RAW_HQ:
+                return "Apple ProRes RAW (HQ)";
 
             case CODEC_DV_SONY:
                 return "Sony DV";
@@ -625,24 +632,74 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
         {
             case CODEC_SRT:
                 return "SubRip";
+            case CODEC_MicroDVD:
+                return "MicroDVD";
             case CODEC_SSA:
                 return "SubStation Alpha";
             case CODEC_ASS:
                 return "Advanced SubStation Alpha";
             case CODEC_USF:
                 return "Universal Subtitle Format";
-            case CODEC_VobSub:
-                return "VobSub";
-            case CODEC_MicroDVD:
-                return "MicroDVD";
+            case CODEC_SSF:
+                return "Structured Subtitle Format";
             case CODEC_SAMI:
-                return "Synchronized Accessible Media Interchange";
+                if (long_description)
+                    return "Synchronized Accessible Media Interchange (SAMI)";
+                else
+                    return "SAMI";
+            case CODEC_CMML:
+                if (long_description)
+                    return "Continuous Media Markup Language (CMML)";
+                else
+                    return "CMML";
+            case CODEC_SMIL:
+                if (long_description)
+                    return "Synchronized Multimedia Integration Language (SMIL)";
+                else
+                    return "SMIL";
+            case CODEC_STL:
+                if (long_description)
+                    return "Spruce Subtitle File (STL)";
+                else
+                    return "STL";
+            case CODEC_TTML:
+                if (long_description)
+                    return "Timed Text Markup Language (TTML)";
+                else
+                    return "TTML";
             case CODEC_MPEG4_TTXT:
                 return "MPEG-4 Timed Text";
-            case CODEC_TTML:
-                return "Timed Text Markup Language";
             case CODEC_WebVTT:
-                return "Web Video Text Tracks";
+                if (long_description)
+                    return "Web Video Text Tracks (WebVTT)";
+                else
+                    return "WebVTT";
+            case CODEC_Kate:
+                if (long_description)
+                    return "Karaoke and Text Encapsulation (Kate)";
+                else
+                    return "Kate";
+            case CODEC_LRC:
+                return "Song Lyrics (LRC)";
+
+            case CODEC_Telext:
+                return "Telext";
+            case CODEC_DvbSub:
+                return "DvbSub";
+            case CODEC_VobSub:
+                return "VobSub";
+            case CODEC_AriSub:
+                return "AriSub";
+            case CODEC_PGS:
+                return "Presentation Graphics Subtitles";
+            case CODEC_TextST:
+                return "TextST";
+            case CODEC_CineCanvas:
+                return "CineCanvas";
+            case CODEC_PAC:
+                return "Presentation Audio/Video Coding";
+            case CODEC_XDS:
+                return "Extended Data Services";
         }
     }
 
@@ -681,6 +738,22 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 {
     switch (profile)
     {
+        case PROF_VC1_SIMPLE:
+            return "Simple Profile";
+        case PROF_VC1_MAIN:
+            return "Main Profile";
+        case PROF_VC1_ADVANCED:
+            return "Advanced Profile";
+
+        case PROF_MPEG4_SP:
+            return "Simple Profile";
+        case PROF_MPEG4_ASP:
+            return "Advanced Simple Profile";
+        case PROF_MPEG4_AP:
+            return "Advanced Profile";
+        case PROF_MPEG4_SStP:
+            return "Simple Studio Profile";
+
         case PROF_H262_SP:
             return "Simple Profile";
         case PROF_H262_MP:
@@ -695,22 +768,6 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
             return "4:2:2 Profile";
         case PROF_H262_MVP:
             return "Multiview Profile";
-
-        case PROF_MPEG4_SP:
-            return "Simple Profile";
-        case PROF_MPEG4_ASP:
-            return "Advanced Simple Profile";
-        case PROF_MPEG4_AP:
-            return "Advanced Profile";
-        case PROF_MPEG4_SStP:
-            return "Simple Studio Profile";
-
-        case PROF_VC1_SIMPLE:
-            return "Simple Profile";
-        case PROF_VC1_MAIN:
-            return "Main Profile";
-        case PROF_VC1_ADVANCED:
-            return "Advanced Profile";
 
         case PROF_H264_BP:
             return "Baseline Profile";
@@ -771,62 +828,127 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 
         case PROF_H265_Main:
             return "Main Profile";
-        case PROF_H265_MainStill:
+        case PROF_H265_Main_still:
             return "Main Still Picture Profile";
         case PROF_H265_Main10:
             return "Main 10 Profile";
-        case PROF_H265_Main10Still:
+        case PROF_H265_Main10_still:
             return "Main 10 Still Picture Profile";
+        case PROF_H265_Main10_intra:
+            return "Main 10 Intra Profile";
         case PROF_H265_Main12:
             return "Main 12 Profile";
+        case PROF_H265_Main12_intra:
+            return "Main 12 Intra Profile";
         case PROF_H265_Monochrome:
             return "Monochrome Profile";
+        case PROF_H265_Monochrome10:
+            return "Monochrome 10 Profile";
         case PROF_H265_Monochrome12:
             return "Monochrome 12 Profile";
-        case PROF_H265_Monochrome12Intra:
+        case PROF_H265_Monochrome12_intra:
             return "Monochrome 12 Intra Profile";
         case PROF_H265_Monochrome16:
             return "Monochrome 16 Profile";
-        case PROF_H265_Monochrome16Intra:
+        case PROF_H265_Monochrome16_intra:
             return "Monochrome 16 Intra Profile";
         case PROF_H265_Main422_10:
-            return "Main 422 10 Profile";
-        case PROF_H265_Main422_10Intra:
-            return "Main 422 10 Intra Profile";
+            return "Main 4:2:2 10 Profile";
+        case PROF_H265_Main422_10_intra:
+            return "Main 4:2:2 10 Intra Profile";
         case PROF_H265_Main422_12:
-            return "Main 422 12 Profile";
-        case PROF_H265_Main422_12Intra:
-            return "Main 422 12 Intra Profile";
+            return "Main 4:2:2 12 Profile";
+        case PROF_H265_Main422_12_intra:
+            return "Main 4:2:2 12 Intra Profile";
         case PROF_H265_Main444:
-            return "Main 444 Profile";
-        case PROF_H265_Main444Still:
-            return "Main 444 Still Profile";
+            return "Main 4:4:4 Profile";
+        case PROF_H265_Main444_still:
+            return "Main 4:4:4 Still Picture Profile";
         case PROF_H265_Main444_10:
-            return "Main 444 10 Profile";
+            return "Main 4:4:4 10 Profile";
+        case PROF_H265_Main444_10_intra:
+            return "Main 4:4:4 10 Intra Profile";
         case PROF_H265_Main444_12:
-            return "Main 444 12 Profile";
-        case PROF_H265_Main444_16Still:
-            return "Main 444 16 Still Profile";
-        case PROF_H265_Main444_16Intra:
-            return "Main 444 16 Intra Profile";
-        case PROF_H265_MvMain:
+            return "Main 4:4:4 12 Profile";
+        case PROF_H265_Main444_12_intra:
+            return "Main 4:4:4 12 Intra Profile";
+        case PROF_H265_Main444_16_still:
+            return "Main 4:4:4 16 Still Picture Profile";
+        case PROF_H265_Main444_16_intra:
+            return "Main 4:4:4 16 Intra Profile";
+        case PROF_H265_HighThroughput_444:
+            return "High Throughput 4:4:4 Profile";
+        case PROF_H265_HighThroughput_444_10:
+            return "High Throughput 4:4:4 10 Profile";
+        case PROF_H265_HighThroughput_444_14:
+            return "High Throughput 4:4:4 14 Picture Profile";
+        case PROF_H265_HighThroughput_444_16_intra:
+            return "High Throughput 4:4:4 16 Intra Profile";
+        case PROF_H265_ScreenExtended_Main:
+            return "Screen Extended Main Profile";
+        case PROF_H265_ScreenExtended_Main10:
+            return "Screen Extended Main 10 Profile";
+        case PROF_H265_ScreenExtended_Main_444:
+            return "Screen Extended Main 4:4:4 Profile";
+        case PROF_H265_ScreenExtended_Main_444_10:
+            return "Screen Extended Main 4:4:4 10 Profile";
+        case PROF_H265_ScreenExtended_HighThroughput_444:
+            return "Screen Extended Main High Throughput 4:4:4 Profile";
+        case PROF_H265_ScreenExtended_HighThroughput_444_10:
+            return "Screen Extended High Throughput Main 4:4:4 10 Profile";
+        case PROF_H265_ScreenExtended_HighThroughput_444_14:
+            return "Screen Extended High Throughput Main 4:4:4 14 Profile";
+        case PROF_H265_Multiview_Main:
             return "MultiView Main Profile";
-        case PROF_H265_3DMain:
+        case PROF_H265_3D_Main:
             return "3D Main Profile";
-        case PROF_H265_ScMain:
+        case PROF_H265_Scalable_Main:
             return "Scalable Main Profile";
-        case PROF_H265_ScMain10:
+        case PROF_H265_Scalable_Main10:
             return "Scalable Main 10 Profile";
-        case PROF_H265_ScMain444:
-            return "Scalable Main 444 Profile";
-        case PROF_H265_ScMonochrome:
+        case PROF_H265_Scalable_Main444:
+            return "Scalable Main 4:4:4 Profile";
+        case PROF_H265_Scalable_Monochrome:
             return "Scalable Main Profile";
-        case PROF_H265_ScMonochrome12:
+        case PROF_H265_Scalable_Monochrome_12:
             return "Scalable Monochrome 12 Profile";
-        case PROF_H265_ScMonochrome16:
+        case PROF_H265_Scalable_Monochrome_16:
             return "Scalable Monochrome 16 Profile";
         case PROF_H265_unknown:
             return "Unknown H.265 profile...";
+
+        case PROF_H266_Main10:
+            return "Main 10 Profile";
+        case PROF_H266_Main10_still:
+            return "Main 10 Still Picture Profile";
+        case PROF_H266_Main10_444:
+            return "Main 10 4:4:4 Profile";
+        case PROF_H266_Main10_444_still:
+            return "Main 10 4:4:4 Still Picture Profile";
+        case PROF_H266_Main10_multilayer:
+            return "Main 10 Multilayer Profile";
+        case PROF_H266_Main10_444_multilayer:
+            return "Main 10 4:4:4 Multilayer Profile";
+        case PROF_H266_Main12:
+            return "Main 12 Profile";
+        case PROF_H266_Main12_intra:
+            return "Main 12 Intra Profile";
+        case PROF_H266_Main12_still:
+            return "Main 12 Still Picture Profile";
+        case PROF_H266_Main12_444:
+            return "Main 12 4:4:4 Profile";
+        case PROF_H266_Main12_444_intra:
+            return "Main 12 4:4:4 Intr   Profile";
+        case PROF_H266_Main12_444_still:
+            return "Main 12 4:4:4 Still Picture Profile";
+        case PROF_H266_Main16_444:
+            return "Main 16 4:4:4 Profile";
+        case PROF_H266_Main16_444_intra:
+            return "Main 16 4:4:4 Intra Profile";
+        case PROF_H266_Main16_444_still:
+            return "Main 16 4:4:4 Still Picture Profile";
+        case PROF_H266_unknown:
+            return "Unknown H.266 profile...";
 
         case PROF_VP8_0:
             return "Profile 0";
@@ -873,6 +995,8 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
             return "High Efficiency AAC Profile";
         case PROF_AAC_HEv2:
             return "High Efficiency AAC Profile v2";
+        case PROF_AAC_LTP:
+            return "Long Term Prediction Profile";
 
         default:
             return "";

@@ -208,6 +208,8 @@ typedef enum fourcc_list_e
     fcc_hevc = 0x68657663,
     fcc_HEV1 = 0x48455631,
     fcc_hev1 = 0x68657631,
+    fcc_dvhe = 0x64766865,
+    fcc_dvh1 = 0x64766831,
     fcc_H265 = 0x48323635,
     fcc_h265 = 0x68323635,
     fcc_X265 = 0x58323635,
@@ -215,6 +217,10 @@ typedef enum fourcc_list_e
 
     fcc_VVC1 = 0x56564331, //!< H.266 / MPEG-I part 3 "VVC"
     fcc_vvc1 = 0x76766331,
+    fcc_vvcC = 0x76766343,
+    fcc_vvcc = 0x76766363,
+    fcc_dvcC = 0x64766343,
+    fcc_dvvC = 0x64767643,
     fcc_H266 = 0x48323636,
     fcc_h266 = 0x68323636,
 
@@ -329,6 +335,9 @@ typedef enum fourcc_list_e
     fcc_MJ2  = 0x4D4A3220, //!< Motion JPEG 2000
     fcc_MJP2 = 0x4D4A5032,
     fcc_PNG1 = 0x504E4731, //!< CorePNG
+    fcc_png  = 0x706E6720, //!< PNG
+    fcc_tga  = 0x74676120, //!< TGA
+    fcc_gif  = 0x67696620, //!< GIF
 
     // Lossless video codecs ///////////////////////////////////////////////////
 
@@ -352,6 +361,7 @@ typedef enum fourcc_list_e
 
     fcc_AC3  = 0x41432D33, //!< Ac-3
     fcc_ac3  = 0x61632D33, //!< ac-3
+    fcc_ec3  = 0x65632D33, //!< ec-3
     fcc_AC4  = 0x41432D34, //!< Ac-4
     fcc_ac4  = 0x61632D34, //!< ac-4
 

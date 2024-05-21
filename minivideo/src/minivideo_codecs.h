@@ -36,10 +36,10 @@ typedef enum Codecs_e
 
     // Audio codecs ////////////////////////////////////////////////////////////
 
-    CODEC_MPEG_L1       =  1,   //!< MP1, or MPEG 1/2 Audio Layer I
+    CODEC_MPEG_L1       =  1,   //!< MP1, or MPEG 1/2 Audio Layer I (ISO/IEC 11172-3 and ISO/IEC 13818-3)
     CODEC_MPEG_L2       =  2,   //!< MP2, or MPEG 1/2 Audio Layer II
-    CODEC_MPEG_L3       =  3,   //!< MP3, or MPEG 1/2 Audio Layer III
-    CODEC_AAC           =  4,   //!< Advanced Audio Coding, or MPEG-2 Part 7 and MPEG-4 Part 3
+    CODEC_MPEG_L3       =  3,   //!< MP3, or MPEG 1/2/2.5 Audio Layer III
+    CODEC_AAC           =  4,   //!< Advanced Audio Coding (MPEG-2 Part 7 and MPEG-4 Part 3) (ISO/IEC 13818-7 and ISO/IEC 14496-3)
     CODEC_MPEG4_ALS     =  7,   //!<
     CODEC_MPEG4_CELP    =  8,   //!<
     CODEC_MPEG4_DST     =  9,   //!<
@@ -83,6 +83,7 @@ typedef enum Codecs_e
     CODEC_APE           = 100,  //!< Monkey's Audio
     CODEC_ALAC          = 101,  //!< Apple Lossless Audio Codec
     CODEC_FLAC          = 102,  //!< Free Lossless Audio Codec
+    CODEC_WAVPACK       = 103,  //!< WavPack
 
     // Video codecs ////////////////////////////////////////////////////////////
 
@@ -167,6 +168,7 @@ typedef enum Codecs_e
     CODEC_PRORES_4444       = 374,  //!< Apple ProRes 4444
     CODEC_PRORES_4444_XQ    = 375,  //!< Apple ProRes 4444 (XQ)
     CODEC_PRORES_RAW        = 376,  //!< Apple ProRes RAW
+    CODEC_PRORES_RAW_HQ     = 377,  //!< Apple ProRes RAW (HQ)
 
     CODEC_DV_SONY           = 380,  //!< Sony DV
     CODEC_DV_CANOPUS        = 381,  //!< Canopus DV
@@ -203,15 +205,31 @@ typedef enum Codecs_e
     // Subtitles codecs ////////////////////////////////////////////////////////
 
     CODEC_SRT           = 512,  //!< SubRip (.srt)
-    CODEC_SSA           = 513,  //!< SubStation Alpha (.ssa)
-    CODEC_ASS           = 514,  //!< Advanced SubStation Alpha (.ass)
-    CODEC_USF           = 515,  //!< Universal Subtitle Format (.usf)
-    CODEC_VobSub        = 516,  //!< VobSub (.sub/.idx)
-    CODEC_MicroDVD      = 517,  //!< MicroDVD (.sub)
+    CODEC_MicroDVD      = 513,  //!< MicroDVD (.sub)
+    CODEC_SSA           = 514,  //!< SubStation Alpha (.ssa)
+    CODEC_ASS           = 515,  //!< Advanced SubStation Alpha (.ass)
+    CODEC_USF           = 516,  //!< Universal Subtitle Format (.usf)
+    CODEC_SSF           = 517,  //!< Structured Subtitle Format  (.ssf)
     CODEC_SAMI          = 518,  //!< Synchronized Accessible Media Interchange (.smi, .sami)
-    CODEC_MPEG4_TTXT    = 519,  //!< MPEG-4 Part 17 "Timed Text" (.ttxt)
-    CODEC_TTML          = 520,  //!< Timed Text Markup Language (.ttml, .dfxp)
-    CODEC_WebVTT        = 521,  //!< Web Video Text Tracks (.vtt)
+    CODEC_CMML          = 519,  //!< Continuous Media Markup Language
+    CODEC_SMIL          = 520,  //!< Synchronized Multimedia Integration Language (.smil)
+    CODEC_STL           = 521,  //!< Spruce Subtitle File (.stl)
+    CODEC_TTML          = 522,  //!< Timed Text Markup Language (variants: DFXP, SMPTE-TT, EBU-TT, IMSC) (.ttml, .dfxp)
+    CODEC_MPEG4_TTXT    = 523,  //!< MPEG-4 Part 17 "Timed Text" (.ttxt)
+    CODEC_WebVTT        = 524,  //!< Web Video Text Tracks (.vtt)
+    CODEC_Kate          = 525,  //!< Karaoke And Text Encapsulation
+    CODEC_LRC           = 526,  //!< "Song Lyrics"
+
+    CODEC_Telext        = 540,  //!< Teletext subtitles
+    CODEC_DvbSub        = 541,  //!< Digital Video Broadcasting subtitles (same format than Teletext?)
+    CODEC_VobSub        = 542,  //!< VobSub (.sub/.idx)
+    CODEC_XSub          = 543,  //!< DivX embedded sutitles
+    CODEC_AriSub        = 544,  //!< ARIB STD-B24 subtitles
+    CODEC_PGS           = 545,  //!< Presentation Graphics Subtitles (.sup)
+    CODEC_TextST        = 546,  //!< TextST subtitles (same format than PGS?)
+    CODEC_CineCanvas    = 547,  //!< CineCanvas
+    CODEC_PAC           = 548,  //!< Presentation Audio/Video Coding
+    CODEC_XDS           = 549,  //!< Extended Data Services
 
     // Uncompressed audio //////////////////////////////////////////////////////
 
@@ -229,6 +247,15 @@ typedef enum CodecProfiles_e
 {
     CODEC_PROF_UNKNOWN  = 0,
 
+    PROF_VC1_SIMPLE,
+    PROF_VC1_MAIN,
+    PROF_VC1_ADVANCED,
+
+    PROF_MPEG4_SP,
+    PROF_MPEG4_ASP,
+    PROF_MPEG4_AP,
+    PROF_MPEG4_SStP,
+
     PROF_H262_SP,
     PROF_H262_MP,
     PROF_H262_SNR,
@@ -236,15 +263,6 @@ typedef enum CodecProfiles_e
     PROF_H262_HP,
     PROF_H262_422,
     PROF_H262_MVP,
-
-    PROF_MPEG4_SP,
-    PROF_MPEG4_ASP,
-    PROF_MPEG4_AP,
-    PROF_MPEG4_SStP,
-
-    PROF_VC1_SIMPLE,
-    PROF_VC1_MAIN,
-    PROF_VC1_ADVANCED,
 
     PROF_H264_BP,
     PROF_H264_CBP,
@@ -273,41 +291,72 @@ typedef enum CodecProfiles_e
     PROF_H264_EMvDHiP,
     PROF_H264_MfcHiP,
     PROF_H264_MfcDHiP,
-    PROF_H264_unknown,
+    PROF_H264_unknown, // because they keep adding and adding them...
 
     PROF_H265_Main,
-    PROF_H265_MainStill,
+    PROF_H265_Main_still,
+    PROF_H265_Main_intra,
     PROF_H265_Main10,
-    PROF_H265_Main10Still,
+    PROF_H265_Main10_still,
+    PROF_H265_Main10_intra,
     PROF_H265_Main12,
+    PROF_H265_Main12_intra,
     PROF_H265_Monochrome,
+    PROF_H265_Monochrome10,
     PROF_H265_Monochrome12,
-    PROF_H265_Monochrome12Intra,
+    PROF_H265_Monochrome12_intra,
     PROF_H265_Monochrome16,
-    PROF_H265_Monochrome16Intra,
+    PROF_H265_Monochrome16_intra,
     PROF_H265_Main422_10,
-    PROF_H265_Main422_10Intra,
+    PROF_H265_Main422_10_intra,
     PROF_H265_Main422_12,
-    PROF_H265_Main422_12Intra,
+    PROF_H265_Main422_12_intra,
     PROF_H265_Main444,
-    PROF_H265_Main444Still,
+    PROF_H265_Main444_still,
+    PROF_H265_Main444_intra,
     PROF_H265_Main444_10,
+    PROF_H265_Main444_10_intra,
     PROF_H265_Main444_12,
-    PROF_H265_Main444_16Still,
-    PROF_H265_Main444_16Intra,
-    PROF_H265_MvMain,
-    PROF_H265_3DMain,
-    PROF_H265_ScMain,
-    PROF_H265_ScMain10,
-    PROF_H265_ScMain444,
-    PROF_H265_ScMain444_10,
-    PROF_H265_ScMonochrome,
-    PROF_H265_ScMonochrome12,
-    PROF_H265_ScMonochrome16,
-//Screen-Extended Main, Screen-Extended Main 10, Screen-Extended Main 4:4:4, Screen-Extended Main 4:4:4 10
-//Screen-Extended High Throughput 4:4:4, Screen-Extended High Throughput 4:4:4 10, Screen-Extended High Throughput 4:4:4 14,
-//High Throughput 4:4:4, High Throughput 4:4:4 10, High Throughput 4:4:4 14, High Throughput 4:4:4 16 Intra
-    PROF_H265_unknown,
+    PROF_H265_Main444_12_intra,
+    PROF_H265_Main444_16_still,
+    PROF_H265_Main444_16_intra,
+    PROF_H265_HighThroughput_444,
+    PROF_H265_HighThroughput_444_10,
+    PROF_H265_HighThroughput_444_14,
+    PROF_H265_HighThroughput_444_16_intra,
+    PROF_H265_ScreenExtended_Main,
+    PROF_H265_ScreenExtended_Main10,
+    PROF_H265_ScreenExtended_Main_444,
+    PROF_H265_ScreenExtended_Main_444_10,
+    PROF_H265_ScreenExtended_HighThroughput_444,
+    PROF_H265_ScreenExtended_HighThroughput_444_10,
+    PROF_H265_ScreenExtended_HighThroughput_444_14,
+    PROF_H265_Multiview_Main,   // Annex G Multiview
+    PROF_H265_3D_Main,          // Annex I 3D
+    PROF_H265_Scalable_Main,    // Annex H Scalable
+    PROF_H265_Scalable_Main10,
+    PROF_H265_Scalable_Main444,
+    PROF_H265_Scalable_Monochrome,
+    PROF_H265_Scalable_Monochrome_12,
+    PROF_H265_Scalable_Monochrome_16,
+    PROF_H265_unknown, // because they keep adding and adding them...
+
+    PROF_H266_Main10,
+    PROF_H266_Main10_still,
+    PROF_H266_Main10_444,
+    PROF_H266_Main10_444_still,
+    PROF_H266_Main10_multilayer,
+    PROF_H266_Main10_444_multilayer,
+    PROF_H266_Main12,
+    PROF_H266_Main12_intra,
+    PROF_H266_Main12_still,
+    PROF_H266_Main12_444,
+    PROF_H266_Main12_444_intra,
+    PROF_H266_Main12_444_still,
+    PROF_H266_Main16_444,
+    PROF_H266_Main16_444_intra,
+    PROF_H266_Main16_444_still,
+    PROF_H266_unknown, // because they keep adding and adding them...
 
     PROF_VP8_0,
     PROF_VP8_1,
@@ -333,6 +382,8 @@ typedef enum CodecProfiles_e
     PROF_AAC_AAC,
     PROF_AAC_HE,
     PROF_AAC_HEv2,
+    PROF_AAC_LTP,
+    PROF_AAC_unknown, // because they keep adding and adding them...
 
 } CodecProfiles_e;
 

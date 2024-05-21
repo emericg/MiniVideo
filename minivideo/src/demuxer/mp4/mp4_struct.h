@@ -205,7 +205,7 @@ typedef enum Mp4BoxType_e
     BOX_STYP = 0x73747970,                      //!< (*) segment type
     BOX_PDIN = 0x7064696E,                      //!< progressive download information
 
-    BOX_UDTA = 0x75647461,                      //!< user data box
+    BOX_UDTA = 0x75647461,                      //!< User DaTA box
         BOX_CHPL = 0x6368706C,                  //!< Chapters
         BOX_AMBA = 0x414D4241,                  //!< (v) Ambarella stuff
         BOX_FIRM = 0x4649524D,                  //!< (v) GoPro Firmware
@@ -246,25 +246,31 @@ typedef enum Mp4BoxType_e
                         BOX_URN = 0x75726E20,           //!< data entry urn box
                     BOX_STBL = 0x7374626C,              //!< (*) sample table box, container for the time/space map
                         BOX_STSD = 0x73747364,          //!< (*) sample descriptions (codec types, initialization, etc)
+                            BOX_D263 = 0x64323633,      //!< (v) H.263 configuration box
                             BOX_AVCC = 0x61766343,      //!< (v) AVC configuration box
                             BOX_HVCC = 0x68766343,      //!< (v) HEVC configuration box
+                            BOX_VVCC = 0x76766343,      //!< (v) VVC configuration box
                             BOX_VPCC = 0x76706343,      //!< (v) VPx configuration box
                             BOX_AV1C = 0x61763143,      //!< (v) AV1 configuration box
+                            BOX_DVCC = 0x64766343,      //!< (v) Dolby Vision configuration box
                             BOX_JPGC = 0x6A706743,      //!< (v) JPEG 2k configuration box
-                            BOX_BTRT = 0x62747274,      //!< bitrate box
-                            BOX_CLAP = 0x636C6170,      //!< clean aperture box
-                            BOX_COLR = 0x636f6C72,      //!< color infos box
-                            BOX_COLL = 0x436F4C4C,      //!< Content Light Level Box
-                            BOX_SMDM = 0x536D446D,      //!< SMPTE-2086 Mastering Display Metadata Box
+                            BOX_BTRT = 0x62747274,      //!< Bitrate box
+                            BOX_CLAP = 0x636C6170,      //!< CLean APerture box
+                            BOX_COLR = 0x636f6C72,      //!< Color infos box
+                            BOX_COLL = 0x436F4C4C,      //!< Content Light Level box
+                            BOX_CHRM = 0x6368726D,      //!< Chromacity box
+                            BOX_SMDM = 0x536D446D,      //!< SMPTE-2086 Mastering Display Metadata box
                             BOX_FIEL = 0x6669656C,      //!<
                             BOX_GAMA = 0x67616D61,      //!<
-                            BOX_PASP = 0x70617370,      //!< pixel aspect ratio box
+                            BOX_PASP = 0x70617370,      //!< Pixel Aspect Ratio box
                             BOX_ESDS = 0x65736473,      //!< elementary stream descriptor box
 
                             BOX_WAVE = 0x77617665,              //!< QuickTime siDecompressionParam
                             BOX_FRMA = 0x66726D61,              //!< QuickTime Format atom
                             BOX_ENDA = 0x656E6461,              //!< QuickTime Endianness atom
                             BOX_CHAN = 0x6368616E,              //!< QuickTime Channel Layout atom
+                            BOX_DAMR = 0x64616D72,              //!< AMR parameters
+                            BOX_DEC3 = 0x64656333,              //!< E-AC3 parameters
 
                             BOX_SA3D = 0x53413344,              //!< (v) Google Spatial Audio Box
                             BOX_SAND = 0x53414E44,              //!< (v) Non-Diegetic Audio Box

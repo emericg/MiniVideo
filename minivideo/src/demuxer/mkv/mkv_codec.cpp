@@ -52,7 +52,7 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
     *codec = CODEC_UNKNOWN;
     *profile = (CodecProfiles_e)PROF_UNKNOWN;
 
-    if (strncmp(codec_str, "A_", 2) == 0)
+    if (strncmp(codec_str, "A_", 2) == 0) //////////////////////////////////////
     {
         if (strncmp(codec_str, "A_AAC", 5) == 0)
         {
@@ -97,7 +97,7 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
                 }
                 else if (strcmp(codec_str, "A_AAC/MPEG4/LTP") == 0)
                 {
-                    //*profile = PROF_AAC_HQ;
+                    *profile = PROF_AAC_LTP;
                 }
             }
         }
@@ -135,11 +135,12 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         {
             *codec = CODEC_MPC;
         }
-        else if (strcmp(codec_str, "A_AC3") == 0)
+        else if (strncmp(codec_str, "A_AC3", 5) == 0)
         {
+            *codec = CODEC_AC3;
+
             //A_AC3/BSID9
             //A_AC3/BSID10
-            *codec = CODEC_AC3;
         }
         else if (strcmp(codec_str, "A_EAC3") == 0)
         {
@@ -153,11 +154,12 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         {
             *codec = CODEC_ALAC;
         }
-        else if (strcmp(codec_str, "A_DTS") == 0)
+        else if (strncmp(codec_str, "A_DTS", 5) == 0)
         {
+            *codec = CODEC_DTS;
+
             //A_DTS/EXPRESS
             //A_DTS/LOSSLESS
-            *codec = CODEC_DTS;
         }
         else if (strcmp(codec_str, "A_VORBIS") == 0)
         {
@@ -191,27 +193,34 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
             }
             else if (strcmp(codec_str, "A_REAL/RALF") == 0)
             {
-                *codec = CODEC_RA_cook;
+                *codec = CODEC_RA_ralf;
             }
             else if (strcmp(codec_str, "A_REAL/ATRC") == 0)
             {
-                *codec = CODEC_ATRAC;
+                *codec = CODEC_ATRAC3plus;
             }
         }
-    }
-    else if (strncmp(codec_str, "V_", 2) == 0)
-    {
-        // V_MS/VFW/FOURCC
-        // V_UNCOMPRESSED
-        // V_QUICKTIME
+        else if (strcmp(codec_str, "A_WAVPACK4") == 0)
+        {
+            *codec = CODEC_WAVPACK;
+        }
+        else if (strcmp(codec_str, "A_ATRAC/AT1") == 0)
+        {
+            *codec = CODEC_ATRAC;
+        }
 
+        // Not handled:
+        // A_MS/ACM
+        // A_QUICKTIME
+        // A_QUICKTIME/QDMC
+        // A_QUICKTIME/QDM2
+        // A_TTA1
+    }
+    else if (strncmp(codec_str, "V_", 2) == 0) /////////////////////////////////
+    {
         if (strncmp(codec_str, "V_MPEG4/ISO", 11) == 0)
         {
-            if (strcmp(codec_str, "V_MPEG4/ISO/AVC") == 0)
-            {
-                *codec = CODEC_H264;
-            }
-            else if (strcmp(codec_str, "V_MPEG4/ISO/SP") == 0)
+            if (strcmp(codec_str, "V_MPEG4/ISO/SP") == 0)
             {
                 *codec = CODEC_MPEG4_ASP;
                 *profile = PROF_MPEG4_SP;
@@ -225,6 +234,10 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
             {
                 *codec = CODEC_MPEG4_ASP;
                 *profile = PROF_MPEG4_AP;
+            }
+            else if (strcmp(codec_str, "V_MPEG4/ISO/AVC") == 0)
+            {
+                *codec = CODEC_H264;
             }
         }
         else if (strcmp(codec_str, "V_MPEGH/ISO/HEVC") == 0)
@@ -253,6 +266,14 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         else if (strcmp(codec_str, "V_AV1") == 0)
         {
             *codec = CODEC_AV1;
+        }
+        else if (strcmp(codec_str, "V_AVS2") == 0)
+        {
+            *codec = CODEC_AVS2;
+        }
+        else if (strcmp(codec_str, "V_AVS3") == 0)
+        {
+            *codec = CODEC_AVS3;
         }
         else if (strcmp(codec_str, "V_MPEG2") == 0)
         {
@@ -291,10 +312,19 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         }
         else if (strcmp(codec_str, "V_PRORES") == 0)
         {
-            *codec = CODEC_PRORES_422;
+            *codec = CODEC_PRORES_422; // Actually we don't know about what codec version is used
         }
+        else if (strcmp(codec_str, "V_FFV1") == 0)
+        {
+            *codec = CODEC_FFV1;
+        }
+
+        // Not handled:
+        // V_MS/VFW/FOURCC
+        // V_UNCOMPRESSED
+        // V_QUICKTIME
     }
-    else if (strncmp(codec_str, "S_", 2) == 0)
+    else if (strncmp(codec_str, "S_", 2) == 0) /////////////////////////////////
     {
         if (strcmp(codec_str, "S_TEXT/UTF8") == 0)
         {
@@ -320,10 +350,23 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
         {
             *codec = CODEC_VobSub;
         }
-/*
-        S_IMAGE/BMP
-        S_KATE
-*/
+        else if (strcmp(codec_str, "S_DVBSUB") == 0)
+        {
+            *codec = CODEC_DvbSub;
+        }
+        else if (strcmp(codec_str, "S_ARIBSUB") == 0)
+        {
+            *codec = CODEC_AriSub;
+        }
+        else if (strcmp(codec_str, "S_KATE") == 0)
+        {
+            *codec = CODEC_Kate;
+        }
+
+        // Not handled:
+        // S_HDMV/PGS
+        // S_HDMV/TEXTST
+        // S_IMAGE/BMP
     }
 }
 
