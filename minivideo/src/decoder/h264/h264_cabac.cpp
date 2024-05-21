@@ -2282,7 +2282,7 @@ static int assign_ctxIdxInc_se(DecodingContext_t *dc, const SyntaxElementType_e 
 
         if (blkType == blk_CHROMA_DC_Cb || blkType == blk_CHROMA_DC_Cr)
         {
-            sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+            h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
             int NumC8x8 = 4 / (sps->SubWidthC * sps->SubHeightC);
 
             ctxIdxInc = std::min(levelListIdx / NumC8x8, 2);

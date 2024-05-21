@@ -421,11 +421,11 @@ typedef struct mkv_track_t
     bool use_Bframes = false;
 
     unsigned int sps_count = 0;
-    sps_t *sps_array[MAX_SPS] = { nullptr };
+    h264_sps_t *sps_array[MAX_SPS] = { nullptr };
     unsigned int *sps_sample_size = nullptr;
     int64_t *sps_sample_offset = nullptr;
     unsigned int pps_count = 0;
-    pps_t *pps_array[MAX_PPS] = { nullptr };
+    h264_pps_t *pps_array[MAX_PPS] = { nullptr };
     unsigned int *pps_sample_size = nullptr;
     int64_t *pps_sample_offset = nullptr;
 

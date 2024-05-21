@@ -53,7 +53,7 @@ static int NumMbPart(const unsigned int slice_type, const unsigned int mb_type);
 static int MbPartPredMode(Macroblock_t *mb, const unsigned int slice_type, const int mbPartIdx);
 static int MbPartWidth(const unsigned int slice_type, const unsigned int mb_type);
 static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_type);
-static void MbPosition(Macroblock_t *mb, sps_t *sps);
+static void MbPosition(Macroblock_t *mb, h264_sps_t *sps);
 
 // Sub-macroblock related functions
 static int NumSubMbPart(const unsigned int slice_type, const unsigned int sub_mb_type);
@@ -95,8 +95,8 @@ int macroblock_layer(DecodingContext_t *dc, const int mbAddr)
         dc->mb_array[mbAddr]->mbAddr = mbAddr;
 
         // Shortcuts
-        pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
-        sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+        h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+        h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
         slice_t *slice = dc->active_slice;
         Macroblock_t *mb = dc->mb_array[mbAddr];
 
@@ -889,7 +889,7 @@ static int MbPartHeight(const unsigned int slice_type, const unsigned int mb_typ
  * \param *mb The macroblock.
  * \param *sps The SPS currently in use.
  */
-static void MbPosition(Macroblock_t *mb, sps_t *sps)
+static void MbPosition(Macroblock_t *mb, h264_sps_t *sps)
 {
     TRACE_2(MB, "  > " BLD_GREEN "MbPosition()" CLR_RESET);
 
@@ -1230,7 +1230,7 @@ static void residual_chroma(DecodingContext_t *dc, const int startIdx, const int
 
     // Shortcuts
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
 
     //
     if (dc->ChromaArrayType == 1 || dc->ChromaArrayType == 2)

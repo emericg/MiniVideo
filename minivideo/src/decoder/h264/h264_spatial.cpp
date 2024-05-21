@@ -341,7 +341,7 @@ void deriv_macroblockneighbours_availability(DecodingContext_t *dc, const int mb
     ----------------------------------------
 */
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[mbAddr];
     int PicWidthInMbs = (int)sps->PicWidthInMbs;
 

@@ -38,14 +38,14 @@
 /* ************************************************************************** */
 
 /*!
- * \struct hrd_t
+ * \struct h264_hrd_t
  * \brief HRD - Hypothetical Reference Decoder.
  *
  * From 'ITU-T H.264' recommendation:
  * - E.1.2 HRD parameters syntax.
  * - E.2.2 HRD parameters semantics.
  */
-typedef struct hrd_t
+typedef struct h264_hrd_t
 {
     unsigned int cpb_cnt_minus1;
     unsigned int bit_rate_scale;
@@ -61,17 +61,17 @@ typedef struct hrd_t
     unsigned int cpb_removal_delay_length_minus1;
     unsigned int dpb_output_delay_length_minus1;
     unsigned int time_offset_length;
-} hrd_t;
+} h264_hrd_t;
 
 /*!
- * \struct vui_t
+ * \struct h264_vui_t
  * \brief VUI - Video Usability Information.
  *
  * From 'ITU-T H.264' recommendation:
  * - Annex E.1.1 VUI parameters syntax.
  * - Annex E.2.1 VUI parameters semantics.
  */
-typedef struct vui_t
+typedef struct h264_vui_t
 {
     bool aspect_ratio_info_present_flag;
     //if (aspect_ratio_info_present_flag)
@@ -109,9 +109,9 @@ typedef struct vui_t
     bool vcl_hrd_parameters_present_flag;
 
     //if (nal_hrd_parameters_present_flag)
-        hrd_t *nal_hrd;
+        h264_hrd_t *nal_hrd;
     //if (vcl_hrd_parameters_present_flag)
-        hrd_t *vcl_hrd;
+        h264_hrd_t *vcl_hrd;
     //if (nal_hrd_parameters_present_flag || vcl_hrd_parameters_present_flag)
         bool low_delay_hrd_flag;
     bool pic_struct_present_flag;
@@ -125,7 +125,7 @@ typedef struct vui_t
         unsigned int log2_max_mv_length_vertical;
         unsigned int num_reorder_frames;
         unsigned int max_dec_frame_buffering;
-} vui_t;
+} h264_vui_t;
 
 /*!
  * \struct spse_t
@@ -165,17 +165,18 @@ typedef struct ScalingStruct_t
 
     bool UseDefaultScalingMatrix4x4Flag[6];
     bool UseDefaultScalingMatrix8x8Flag[6];
+
 } ScalingStruct_t;
 
 /*!
- * \struct sps_t
+ * \struct h264_sps_t
  * \brief SPS - Sequence Parameter Set.
  *
  * From 'ITU-T H.264' recommendation:
  * - 7.3.2.1.1 Sequence parameter set data syntax.
  * - 7.4.2.1.1 Sequence parameter set data semantics.
  */
-typedef struct sps_t
+typedef struct h264_sps_t
 {
     unsigned int profile_idc;
     unsigned int level_idc;
@@ -252,18 +253,19 @@ typedef struct sps_t
         unsigned int CropUnitX; // derived from SubWidthC, frame_mbs_only_flag
         unsigned int CropUnitY; // derived from SubHeightC, frame_mbs_only_flag
     bool vui_parameters_present_flag;
-    vui_t *vui;
-} sps_t;
+    h264_vui_t *vui;
+
+} h264_sps_t;
 
 /*!
- * \struct pps_t
+ * \struct h264_pps_t
  * \brief PPS - Picture Parameter Set.
  *
  * From 'ITU-T H.264' recommendation:
  * - 7.3.2.2 Picture parameter set RBSP syntax.
  * - 7.4.2.2 Picture parameter set RBSP semantics.
  */
-typedef struct pps_t
+typedef struct h264_pps_t
 {
     unsigned int pic_parameter_set_id;
     unsigned int seq_parameter_set_id;
@@ -312,10 +314,11 @@ typedef struct pps_t
             //bool UseDefaultScalingMatrix8x8Flag[6];
 
         int second_chroma_qp_index_offset;
-} pps_t;
+
+} h264_pps_t;
 
 /*!
- * \struct sei_t
+ * \struct h264_sei_t
  * \brief SEI - Supplemental Enhancement Information.
  *
  * From 'ITU-T H.264' recommendation:
@@ -323,24 +326,26 @@ typedef struct pps_t
  * - Annex D.1 SEI payload syntax.
  * - Annex D.2 SEI payload semantics.
  */
-typedef struct sei_t
+typedef struct h264_sei_t
 {
-    unsigned int payloadType;
-    unsigned int payloadSize;
-} sei_t;
+    //unsigned int payloadType;
+    //unsigned int payloadSize;
+
+} h264_sei_t;
 
 /*!
- * \struct aud_t
+ * \struct h264_aud_t
  * \brief AUD - Access Unit Delimiter.
  *
  * From 'ITU-T H.264' recommendation:
  * - 7.3.2.4 Access unit delimiter RBSP syntax.
  * - 7.4.2.4 Access unit delimiter RBSP semantics.
  */
-typedef struct aud_t
+typedef struct h264_aud_t
 {
     unsigned int primary_pic_type;
-} aud_t;
+
+} h264_aud_t;
 
 /* ************************************************************************** */
 #endif // H264_PARAMETER_SET_STRUCT_H

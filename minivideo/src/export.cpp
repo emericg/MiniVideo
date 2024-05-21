@@ -74,7 +74,7 @@ static int export_idr_yuv420(DecodingContext_t *dc, FILE *PictureFile)
     unsigned int missing_mbs = 0;
 
     // Shortcut
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
     unsigned int i = 0;
@@ -206,7 +206,7 @@ static int export_idr_yuv444(DecodingContext_t *dc, FILE *PictureFile)
     unsigned int missing_mbs = 0;
 
     // Shortcut
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
     int i = 0;
@@ -490,7 +490,7 @@ static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
@@ -611,7 +611,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
@@ -727,7 +727,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 #if ENABLE_STBIMWRITE
     TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()" CLR_RESET);
 
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
@@ -761,7 +761,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 #if ENABLE_STBIMWRITE
     TRACE_INFO(IO, BLD_GREEN "export_idr_tga()" CLR_RESET);
 
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
     const unsigned int img_width = sps->PicWidthInMbs * 16;
     const unsigned int img_height = sps->PicHeightInMapUnits * 16;
 
@@ -911,7 +911,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     }
     else
     {
-        sps_t *sps = dc->sps_array[dc->active_sps];
+        h264_sps_t *sps = dc->sps_array[dc->active_sps];
         if (!sps) return retcode;
 
         TRACE_1(IO, "* Picture file name   : '%s'", out->file_name);
@@ -984,7 +984,7 @@ int export_idr_surface(DecodingContext_t *dc, OutputSurface_t *out)
     TRACE_INFO(IO, BLD_GREEN "export_idr_surface()" CLR_RESET);
     int retcode = FAILURE;
 
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
     if (!sps) return retcode;
 
     out->width = sps->PicWidthInMbs * 16;

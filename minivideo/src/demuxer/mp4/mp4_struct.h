@@ -110,11 +110,11 @@ typedef struct Mp4Track_t
         bool use_Bframes;
 
         unsigned int sps_count;
-        sps_t *sps_array[MAX_SPS];
+        h264_sps_t *sps_array[MAX_SPS];
         unsigned int *sps_sample_size;
         int64_t *sps_sample_offset;
         unsigned int pps_count;
-        pps_t *pps_array[MAX_PPS];
+        h264_pps_t *pps_array[MAX_PPS];
         unsigned int *pps_sample_size;
         int64_t *pps_sample_offset;
 

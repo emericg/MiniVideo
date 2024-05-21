@@ -30,8 +30,8 @@
 
 /* ************************************************************************** */
 
-void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps);
-void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps);
+void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps);
+void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps);
 
 void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkIdx);
 void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkIdx);

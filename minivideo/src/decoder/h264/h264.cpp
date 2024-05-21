@@ -26,10 +26,8 @@
 #include "h264_parameterset.h"
 #include "h264_slice.h"
 #include "h264_macroblock.h"
-#include "h264_transform.h"
 #include "../../depacketizer/depack.h"
 #include "../../export.h"
-#include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
@@ -172,7 +170,7 @@ DecodingContext_t *initDecodingContext(MediaFile_t *media, unsigned tid)
             else
             {
                 // Init NAL Unit
-                dc->active_nalu = initNALU();
+                dc->active_nalu = h264_nalu_init();
 
                 if (dc->active_nalu == NULL)
                 {
@@ -236,7 +234,7 @@ int checkDecodingContext(DecodingContext_t *dc)
     }
     else
     {
-        pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+        h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
         if (pps == NULL)
         {
             TRACE_WARNING(H264, "* The slice structure refer to an invalid PPS!");
@@ -244,7 +242,7 @@ int checkDecodingContext(DecodingContext_t *dc)
         }
         else
         {
-            sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+            h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
             if (sps == NULL)
             {
                 TRACE_WARNING(H264, "* The slice structure refer to an invalid SPS!");
@@ -322,7 +320,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
     buffer_feed_manual(dc->bitstr, nalu_offset, nalu_size);
 
     // Check header validity
-    if (nalu_parse_header(dc->bitstr, dc->active_nalu))
+    if (h264_nalu_parse_header(dc->bitstr, dc->active_nalu))
     {
         TRACE_1(H264, "decode: " BLD_GREEN "NALU_TYPE %i (at %lli) " CLR_RESET,
                 dc->active_nalu->nal_unit_type,
@@ -342,7 +340,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                 TRACE_INFO(H264, "> " BLD_GREEN "decodeIDR(%i at %lli)" CLR_RESET,
                            dc->idrCounter, bitstream_get_absolute_byte_offset(dc->bitstr));
 
-                nalu_clean_sample(dc->bitstr);
+                h264_nalu_clean_sample(dc->bitstr);
                 dc->IdrPicFlag = true;
 
                 if (decode_slice(dc))
@@ -359,9 +357,9 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
             case NALU_TYPE_AUD: ////////////////////////////////////////
             {
-                nalu_clean_sample(dc->bitstr);
+                h264_nalu_clean_sample(dc->bitstr);
 
-                aud_t aud;
+                h264_aud_t aud;
                 if (decodeAUD(dc->bitstr, &aud))
                 {
                     retcode = SUCCESS;
@@ -373,12 +371,12 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
             case NALU_TYPE_SEI: ////////////////////////////////////////
             {
-                nalu_clean_sample(dc->bitstr);
+                h264_nalu_clean_sample(dc->bitstr);
 
                 if (dc->active_sei != NULL)
                     free(dc->active_sei);
 
-                dc->active_sei = (sei_t*)calloc(1, sizeof(sei_t));
+                dc->active_sei = (h264_sei_t*)calloc(1, sizeof(h264_sei_t));
                 if (dc->active_sei)
                 {
                     if (decodeSEI(dc->bitstr, dc->active_sei))
@@ -394,7 +392,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
             case NALU_TYPE_SPS: ////////////////////////////////////////
             {
-                nalu_clean_sample(dc->bitstr);
+                h264_nalu_clean_sample(dc->bitstr);
 
                 retcode = decodeSPS_legacy(dc);
 /*
@@ -429,9 +427,9 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
             case NALU_TYPE_PPS: ////////////////////////////////////////
             {
-                nalu_clean_sample(dc->bitstr);
+                h264_nalu_clean_sample(dc->bitstr);
 
-                pps_t *pps = (pps_t*)calloc(1, sizeof(pps_t));
+                h264_pps_t *pps = (h264_pps_t*)calloc(1, sizeof(h264_pps_t));
                 if (pps)
                 {
                     if (decodePPS(dc->bitstr, pps, dc->sps_array))
@@ -458,7 +456,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
         }
 
         // Reset NAL Unit structure
-        nalu_reset(dc->active_nalu);
+        h264_nalu_reset(dc->active_nalu);
     }
     else
     {

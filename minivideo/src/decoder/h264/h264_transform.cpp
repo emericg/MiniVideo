@@ -84,19 +84,19 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr);
 static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int dcY[4][4]);
 
 static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr, const int c[2][2], int dcC[2][2]);
-    static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP, const int f[2][2], int dcC[2][2]);
+    static void quant2x2_chromadc(h264_sps_t *sps, const int YCbCr, const int qP, const int f[2][2], int dcC[2][2]);
     static void idct2x2_chromadc(const int c[2][2], int f[2][2]);
 
 static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr, const int c[4][4], int dcC[4][4]);
-    static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP, const int f[4][4], int dcC[4][4]);
+    static void quant4x4_chromadc(h264_sps_t *sps, const int YCbCr, const int qP, const int f[4][4], int dcC[4][4]);
     static void idct4x4_chromadc(const int c[4][4], int f[4][4]);
 
 static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr, const int c[4][4], int r[4][4]);
-    static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, const int c[4][4], int d[4][4]);
+    static void quant4x4(h264_sps_t *sps, const int YCbCr, const int mbPartPredMode, const int qP, const int c[4][4], int d[4][4]);
     static void idct4x4(const int d[4][4], int r[4][4]);
 
 static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr, const int c[8][8], int r[8][8]);
-    static void quant8x8(sps_t *sps, const int YCbCr, const int qP, const int c[8][8], int r[8][8]);
+    static void quant8x8(h264_sps_t *sps, const int YCbCr, const int qP, const int c[8][8], int r[8][8]);
     static void idct8x8(const int d[8][8], int r[8][8]);
 
 static int picture_construction_process_4x4(DecodingContext_t *dc, const int blkIdx, const int u[4][4]);
@@ -287,8 +287,8 @@ void transform4x4_chroma(DecodingContext_t *dc, Macroblock_t *mb)
     TRACE_1(TRANS, "<> " BLD_GREEN "transform4x4_chroma()" CLR_RESET);
 
     // Shortcuts
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
-    sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Init
     unsigned int i = 0, j = 0, k = 0;
@@ -598,8 +598,8 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
 
     // Shortcuts
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
-    sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Initialization
     int qPOffset = 0;
@@ -641,7 +641,7 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
  * \param *dc The current DecodingContext.
  * \param *sps The SPS currently in use.
  */
-void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
+void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
@@ -693,7 +693,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, sps_t *sps)
  * \param *dc The current DecodingContext.
  * \param *sps The SPS currently in use.
  */
-void computeLevelScale8x8(DecodingContext_t *dc, sps_t *sps)
+void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
@@ -758,7 +758,7 @@ static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int 
     int retcode = SUCCESS;
 
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
 
     // Initialization
@@ -830,7 +830,7 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr,
     int retcode = SUCCESS;
 
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
 
     // Initialization
@@ -876,7 +876,7 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr,
     int retcode = SUCCESS;
 
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
 
     // Initialization
@@ -916,7 +916,7 @@ static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr,
  *
  * Quantification for 2x2 chroma dc blocks, ChromaArrayType == 1, 4:2:0 subsampling.
  */
-static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP,
+static void quant2x2_chromadc(h264_sps_t *sps, const int YCbCr, const int qP,
                               const int f[2][2], int dcC[2][2])
 {
     TRACE_2(TRANS, "quant2x2_chromadc()");
@@ -945,7 +945,7 @@ static void quant2x2_chromadc(sps_t *sps, const int YCbCr, const int qP,
  *
  * Quantification for 4x4 chroma dc blocks, ChromaArrayType == 2, 4:2:0 subsampling.
  */
-static void quant4x4_chromadc(sps_t *sps, const int YCbCr, const int qP,
+static void quant4x4_chromadc(h264_sps_t *sps, const int YCbCr, const int qP,
                               const int f[4][4], int dcC[4][4])
 {
     TRACE_2(TRANS, "quant4x4_chromadc()");
@@ -1050,7 +1050,7 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr,
     int retcode = SUCCESS;
 
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
 
     // Initialization
@@ -1092,7 +1092,7 @@ static int transform_4x4_residual(DecodingContext_t *dc, const int YCbCr,
  * From 'ITU-T H.264' recommendation:
  * 8.5.12.1 Scaling process for residual 4x4 blocks.
  */
-static void quant4x4(sps_t *sps, const int YCbCr, const int mbPartPredMode,
+static void quant4x4(h264_sps_t *sps, const int YCbCr, const int mbPartPredMode,
                      const int qP, const int c[4][4], int d[4][4])
 {
     TRACE_2(TRANS, " quant4x4()");
@@ -1205,7 +1205,7 @@ static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr,
     int retcode = SUCCESS;
 
     // Shortcuts
-    sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id];
     Macroblock_t *mb = dc->mb_array[dc->CurrMbAddr];
 
     // Initialization
@@ -1247,7 +1247,7 @@ static int transform_8x8_residual(DecodingContext_t *dc, const int YCbCr,
  * From 'ITU-T H.264' recommendation:
  * 8.5.13.1 Scaling process for residual 8x8 blocks.
  */
-static void quant8x8(sps_t *sps, const int YCbCr, const int qP,
+static void quant8x8(h264_sps_t *sps, const int YCbCr, const int qP,
                      const int c[8][8], int d[8][8])
 {
     TRACE_2(TRANS, " quant8x8()");

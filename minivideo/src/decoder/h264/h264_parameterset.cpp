@@ -34,7 +34,6 @@
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
-#include <climits>
 #include <cmath>
 #include <cinttypes>
 
@@ -126,20 +125,20 @@ typedef enum SEI_PicStructType_e
 
 /* ************************************************************************** */
 
-static vui_t *decodeVUI(Bitstream_t *bitstr);
-static hrd_t *decodeHRD(Bitstream_t *bitstr);
+static h264_vui_t *decodeVUI(Bitstream_t *bitstr);
+static h264_hrd_t *decodeHRD(Bitstream_t *bitstr);
 
-static void mapVUI(vui_t *vui, FILE *xml);
-static void mapHRD(hrd_t *hrd, FILE *xml);
+static void mapVUI(h264_vui_t *vui, FILE *xml);
+static void mapHRD(h264_hrd_t *hrd, FILE *xml);
 
-static void printVUI(vui_t *vui);
-static void printHRD(hrd_t *hrd);
+static void printVUI(h264_vui_t *vui);
+static void printHRD(h264_hrd_t *hrd);
 
-static int checkSPS(sps_t *sps);
-static int checkPPS(pps_t *pps, sps_t *sps);
-static int checkSEI(sei_t *sei);
-static int checkVUI(vui_t *vui, sps_t *sps);
-static int checkHRD(hrd_t *hrd);
+static int checkSPS(h264_sps_t *sps);
+static int checkPPS(h264_pps_t *pps, h264_sps_t *sps);
+static int checkSEI(h264_sei_t *sei);
+static int checkVUI(h264_vui_t *vui, h264_sps_t *sps);
+static int checkHRD(h264_hrd_t *hrd);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -153,7 +152,7 @@ static int checkHRD(hrd_t *hrd);
  * 7.4.2.1.1.1 Scaling list semantics.
  * 8.5.9 Derivation process for scaling functions.
  */
-static void scaling_list_4x4(Bitstream_t *bitstr, sps_t *sps, int i)
+static void scaling_list_4x4(Bitstream_t *bitstr, h264_sps_t *sps, int i)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_4x4()" CLR_RESET);
 
@@ -193,7 +192,7 @@ static void scaling_list_4x4(Bitstream_t *bitstr, sps_t *sps, int i)
  * 7.4.2.1.1.1 Scaling list semantics.
  * 8.5.9 Derivation process for scaling functions.
  */
-static void scaling_list_8x8(Bitstream_t *bitstr, sps_t *sps, int i)
+static void scaling_list_8x8(Bitstream_t *bitstr, h264_sps_t *sps, int i)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_8x8()" CLR_RESET);
 
@@ -241,7 +240,7 @@ int decodeSPS_legacy(DecodingContext_t *dc)
     // SPS allocation
     ////////////////////////////////////////////////////////////////////////////
 
-    sps_t *sps = (sps_t*)calloc(1, sizeof(sps_t));
+    h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
     if (sps == NULL)
     {
         TRACE_ERROR(PARAM, "Unable to alloc new SPS!");
@@ -512,7 +511,7 @@ int decodeSPS_legacy(DecodingContext_t *dc)
  * 7.3.2.1 Sequence parameter set RBSP syntax.
  * 7.4.2.1 Sequence parameter set RBSP semantics.
  */
-int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
+int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS()" CLR_RESET);
     int retcode = SUCCESS;
@@ -750,7 +749,7 @@ int decodeSPS(Bitstream_t *bitstr, sps_t *sps)
 /*!
  * \param **sps_ptr A pointer to the SPS structure we want to freed.
  */
-void freeSPS(sps_t **sps_ptr)
+void freeSPS(h264_sps_t **sps_ptr)
 {
     if (*sps_ptr != NULL)
     {
@@ -777,7 +776,7 @@ void freeSPS(sps_t **sps_ptr)
  * \brief Check if Minivideo H.264 decoder will be able to decode this video.
  * \return 1 if SPS seems compatible, 0 otherwise.
  */
-int checkSPScompat(sps_t *sps)
+int checkSPScompat(h264_sps_t *sps)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "checkSPS()" CLR_RESET);
     int retcode = SUCCESS;
@@ -839,7 +838,7 @@ int checkSPScompat(sps_t *sps)
  *
  * Check parsed values (and not derived ones) for inconsistencies.
  */
-static int checkSPS(sps_t *sps)
+static int checkSPS(h264_sps_t *sps)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "checkSPS()" CLR_RESET);
     int retcode = SUCCESS;
@@ -961,7 +960,7 @@ static int checkSPS(sps_t *sps)
  * \brief Print informations about sequence_parameter_set decoding.
  * \param *sps: .
  */
-void printSPS(sps_t *sps)
+void printSPS(h264_sps_t *sps)
 {
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printSPS()" CLR_RESET);
@@ -1073,7 +1072,7 @@ void printSPS(sps_t *sps)
 
 /* ************************************************************************** */
 
-void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml)
+void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (sps && xml)
     {
@@ -1181,7 +1180,7 @@ void mapSPS(sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
+int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodePPS()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1303,7 +1302,7 @@ int decodePPS(Bitstream_t *bitstr, pps_t *pps, sps_t **sps_array)
 /*!
  * \param **pps_ptr A pointer to the pps structure we want to freed.
  */
-void freePPS(pps_t **pps_ptr)
+void freePPS(h264_pps_t **pps_ptr)
 {
     if (*pps_ptr != NULL)
     {
@@ -1324,7 +1323,7 @@ void freePPS(pps_t **pps_ptr)
  *
  * Check parsed values (and not derived ones) for inconsistencies.
  */
-static int checkPPS(pps_t *pps, sps_t *sps)
+static int checkPPS(h264_pps_t *pps, h264_sps_t *sps)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "checkPPS()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1414,7 +1413,7 @@ static int checkPPS(pps_t *pps, sps_t *sps)
  * \brief Print informations about picture_parameter_set decoding.
  * \param *dc The current DecodingContext.
  */
-void printPPS(pps_t *pps, sps_t **sps_array)
+void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
 {
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printPPS()" CLR_RESET);
@@ -1496,7 +1495,7 @@ void printPPS(pps_t *pps, sps_t **sps_array)
 
 /* ************************************************************************** */
 
-void mapPPS(pps_t *pps, sps_t **sps, int64_t offset, int64_t size, FILE *xml)
+void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (pps && sps && xml)
     {
@@ -1587,7 +1586,7 @@ void mapPPS(pps_t *pps, sps_t **sps, int64_t offset, int64_t size, FILE *xml)
  * 7.3.2.4 Access unit delimiter RBSP syntax.
  * 7.4.2.4 Access unit delimiter RBSP semantics.
  */
-int decodeAUD(Bitstream_t *bitstr, aud_t *aud)
+int decodeAUD(Bitstream_t *bitstr, h264_aud_t *aud)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeAUD()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1611,7 +1610,18 @@ int decodeAUD(Bitstream_t *bitstr, aud_t *aud)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-int decodeSEI(Bitstream_t *bitstr, sei_t *sei)
+/*!
+ * \param *bitstr:
+ * \param *sei:
+ * \return 1 if SEI seems consistent, 0 otherwise.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 7.3.2.3 Supplemental enhancement information RBSP syntax.
+ * 7.4.2.3 Supplemental enhancement information RBSP semantics.
+ * D.1 SEI payload syntax.
+ * D.1 SEI payload semantics.
+ */
+int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSEI()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1650,7 +1660,7 @@ int decodeSEI(Bitstream_t *bitstr, sei_t *sei)
  *
  * Check parsed values (and not derived ones) for inconsistencies.
  */
-static int checkSEI(sei_t *sei)
+static int checkSEI(h264_sei_t *sei)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "checkSEI()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1675,7 +1685,7 @@ static int checkSEI(sei_t *sei)
 /*!
  * \param **sei_ptr A pointer to the SEI structure we want to freed.
  */
-void freeSEI(sei_t  **sei_ptr)
+void freeSEI(h264_sei_t  **sei_ptr)
 {
     if (*sei_ptr != NULL)
     {
@@ -1692,7 +1702,7 @@ void freeSEI(sei_t  **sei_ptr)
  * \brief Print informations about supplemental_enhancement_information decoding.
  * \param *dc The current DecodingContext.
  */
-void printSEI(sei_t *sei)
+void printSEI(h264_sei_t *sei)
 {
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printSEI()" CLR_RESET);
@@ -1715,7 +1725,7 @@ void printSEI(sei_t *sei)
 
 /*!
  * \param bitstr: Our bitstream reader.
- * \return vui_t initialized data structure.
+ * \return h264_vui_t initialized data structure.
  *
  * From 'ITU-T H.264' recommendation:
  * E.1.1 VUI parameters syntax.
@@ -1724,14 +1734,14 @@ void printSEI(sei_t *sei)
  * VUI can only be found inside SPS structure.
  * This function must only be called by decodeSPS().
  */
-static vui_t *decodeVUI(Bitstream_t *bitstr)
+static h264_vui_t *decodeVUI(Bitstream_t *bitstr)
 {
     TRACE_INFO(PARAM, "  > " BLD_GREEN "decodeVUI()" CLR_RESET);
 
     // VUI allocation
     ////////////////////////////////////////////////////////////////////////////
 
-    vui_t *vui = (vui_t*)calloc(1, sizeof(vui_t));
+    h264_vui_t *vui = (h264_vui_t*)calloc(1, sizeof(h264_vui_t));
 
     if (vui == NULL)
     {
@@ -1829,7 +1839,7 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
 /* ************************************************************************** */
 
 /*!
- * \param *vui (vui_t) data structure.
+ * \param *vui (h264_vui_t) data structure.
  * \return 1 if VUI seems consistent, 0 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1841,7 +1851,7 @@ static vui_t *decodeVUI(Bitstream_t *bitstr)
  *
  * Check parsed values (and not derived ones) for inconsistencies.
  */
-static int checkVUI(vui_t *vui, sps_t *sps)
+static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
 {
     TRACE_INFO(PARAM, "  > " BLD_GREEN "checkVUI()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1996,12 +2006,12 @@ static int checkVUI(vui_t *vui, sps_t *sps)
 
 /*!
  * \brief Print informations about video_usability_information decoding.
- * \param *vui (vui_t) data structure.
+ * \param *vui (h264_vui_t) data structure.
  *
  * VUI can only be found inside SPS structure.
  * This function must only be called by printSPS().
  */
-static void printVUI(vui_t *vui)
+static void printVUI(h264_vui_t *vui)
 {
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "  > " BLD_GREEN "printVUI()" CLR_RESET);
@@ -2093,7 +2103,7 @@ static void printVUI(vui_t *vui)
 
 /* ************************************************************************** */
 
-static void mapVUI(vui_t *vui, FILE *xml)
+static void mapVUI(h264_vui_t *vui, FILE *xml)
 {
     if (vui && xml)
     {
@@ -2180,7 +2190,7 @@ static void mapVUI(vui_t *vui, FILE *xml)
 
 /*!
  * \param bitstr: Our bitstream reader.
- * \return hrd_t initialized data structure.
+ * \return h264_hrd_t initialized data structure.
  *
  * From 'ITU-T H.264' recommendation:
  * E.1.2 HRD parameters syntax.
@@ -2189,14 +2199,14 @@ static void mapVUI(vui_t *vui, FILE *xml)
  * HRD can only be found inside VUI structure.
  * This function must only be called by decodeVUI().
  */
-hrd_t *decodeHRD(Bitstream_t *bitstr)
+h264_hrd_t *decodeHRD(Bitstream_t *bitstr)
 {
     TRACE_INFO(PARAM, "  > " BLD_GREEN "decodeHRD()" CLR_RESET);
 
     // HRD allocation
     ////////////////////////////////////////////////////////////////////////////
 
-    hrd_t *hrd = (hrd_t*)calloc(1, sizeof(hrd_t));
+    h264_hrd_t *hrd = (h264_hrd_t*)calloc(1, sizeof(h264_hrd_t));
 
     if (hrd == NULL)
     {
@@ -2245,7 +2255,7 @@ hrd_t *decodeHRD(Bitstream_t *bitstr)
  *
  * Check parsed values (and not derived ones) for inconsistencies.
  */
-static int checkHRD(hrd_t *hrd)
+static int checkHRD(h264_hrd_t *hrd)
 {
     TRACE_INFO(PARAM, "  > " BLD_GREEN "checkHRD()" CLR_RESET);
     int retcode = SUCCESS;
@@ -2312,7 +2322,7 @@ static int checkHRD(hrd_t *hrd)
  * HRD can only be found inside VUI structure.
  * This function must only be called by printVUI().
  */
-static void printHRD(hrd_t *hrd)
+static void printHRD(h264_hrd_t *hrd)
 {
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "  > " BLD_GREEN "printHRD()" CLR_RESET);
@@ -2347,7 +2357,7 @@ static void printHRD(hrd_t *hrd)
 
 /* ************************************************************************** */
 
-static void mapHRD(hrd_t *hrd, FILE *xml)
+static void mapHRD(h264_hrd_t *hrd, FILE *xml)
 {
     if (hrd && xml)
     {

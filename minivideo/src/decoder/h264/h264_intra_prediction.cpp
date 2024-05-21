@@ -211,7 +211,7 @@ static void Intra_4x4_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
     8   Intra_4x4_Horizontal_Up
 */
     // Shortcut
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
 
     // Initialization
     int mbAddrA_temp = -1, mbAddrB_temp = -1;
@@ -320,7 +320,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
     TRACE_1(INTRA, "  > blkIdx %i", luma4x4BlkIdx);
 
     // Shortcut
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
 
     // Initialization
     int retcode = FAILURE;
@@ -992,7 +992,7 @@ static void Intra_8x8_deriv_PredMode(DecodingContext_t *dc, Macroblock_t *mb, co
     8   Intra_8x8_Horizontal_Up
 */
     // Shortcut
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
 
     // Initialization
     int mbAddrA_temp = -1, mbAddrB_temp = -1;
@@ -1112,7 +1112,7 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
     TRACE_1(INTRA, "  > blkIdx %i", luma8x8BlkIdx);
 
     // Shortcut
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
 
     // Initialization
     int retcode = FAILURE;
@@ -1818,7 +1818,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
     3   Intra_16x16_Plane
 */
     // Shortcut
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
 
     // Initialization
     int retcode = SUCCESS;
@@ -2161,8 +2161,8 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
     TRACE_1(INTRA, "  > blkIdx %i", dc->CurrMbAddr);
 
     // Shortcuts
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
-    sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Initialization
     int retcode = SUCCESS;
@@ -2590,7 +2590,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb)
 
 #if ENABLE_IPCM
     // Shortcuts
-    pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[dc->active_slice->pic_parameter_set_id];
     sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Initialization

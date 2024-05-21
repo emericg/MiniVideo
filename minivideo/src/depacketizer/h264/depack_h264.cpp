@@ -62,9 +62,9 @@ unsigned depack_h264_sample(Bitstream_t *bitstr, MediaStream_t *track,
             essample_list[samplefound].offset = current_nalu_offset;
             essample_list[samplefound].size = current_nalu_size;
 
-            nalu_t n;
-            nalu_parse_header(bitstr, &n);
-            essample_list[samplefound].type_str = (char *)nalu_get_string_type0(&n);
+            h264_nalu_t n;
+            h264_nalu_parse_header(bitstr, &n);
+            essample_list[samplefound].type_str = (char *)h264_nalu_get_string_type0(&n);
             samplefound++;
 
             TRACE_1(DEPAK, "> SAMPLE %i (offset: %lli / size: %u)",

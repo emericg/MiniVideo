@@ -149,8 +149,8 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
     slice->pic_parameter_set_id = read_ue(dc->bitstr);
 
     // Shortcuts
-    pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
-    sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     if (sps->separate_colour_plane_flag)
     {
@@ -339,8 +339,8 @@ static void printSliceHeader(DecodingContext_t *dc)
     }
 
     // Shortcuts
-    pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
-    sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
+    h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
     // Print values
     TRACE_1(SLICE, "  - first_mb_in_slice   = %i", slice->first_mb_in_slice);
@@ -475,8 +475,8 @@ static int checkSliceHeader(DecodingContext_t *dc)
     else // Check values
     {
         // Shortcuts
-        pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
-        sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
+        h264_pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
+        h264_sps_t *sps = dc->sps_array[pps->seq_parameter_set_id];
 
         if (slice->slice_type > 9)
         {
@@ -994,7 +994,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
     slice->prevMbSkipped = false;
 
     // Shortcut
-    pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
+    h264_pps_t *pps = dc->pps_array[slice->pic_parameter_set_id];
 
     // Slice data decoding
     ////////////////////////////////////////////////////////////////////////////

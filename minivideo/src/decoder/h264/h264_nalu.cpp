@@ -37,13 +37,13 @@
  * \brief Allocate and initialize a new NAL Unit.
  * \return A pointer to the newly allocated NAL Unit.
  */
-nalu_t *initNALU(void)
+h264_nalu_t *h264_nalu_init(void)
 {
-    TRACE_INFO(NALU, BLD_GREEN "initNALU()" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "h264_nalu_init()" CLR_RESET);
 
     // NAL Unit allocation
-    nalu_t *nalu = NULL;
-    if ((nalu = (nalu_t*)calloc(1, sizeof(nalu_t))) == NULL)
+    h264_nalu_t *nalu = NULL;
+    if ((nalu = (h264_nalu_t*)calloc(1, sizeof(h264_nalu_t))) == NULL)
     {
         TRACE_ERROR(NALU, "Unable to alloc new NAL Unit!");
     }
@@ -62,18 +62,18 @@ nalu_t *initNALU(void)
  * \param *nalu The NAL Unit to initialize.
  * \return 1 if success, 0 otherwise.
  */
-void nalu_reset(nalu_t *nalu)
+void h264_nalu_reset(h264_nalu_t *nalu)
 {
-    TRACE_INFO(NALU, BLD_GREEN "nalu_reset()" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "h264_nalu_reset()" CLR_RESET);
 
     if (nalu != NULL)
     {
-        // Set default params
         nalu->nal_offset = 0;
 
+        // Set default params
         nalu->nal_ref_idc = 0;
         nalu->nal_unit_type = 0;
-
+        // Extensions
         nalu->idr_flag = 0;
         nalu->priority_id = 0;
         nalu->no_inter_layer_pred_flag = 0;
@@ -102,17 +102,16 @@ void nalu_reset(nalu_t *nalu)
  * - A nal_unit_type, which indicate precisly the content of the NAL Unit.
  *
  * If nal_unit_type is 14 or 20, it indicate the presence of three additional
- * bytes in the NAL unit header:
- * http://r2d2n3po.tistory.com/26
+ * bytes in the NAL unit header, corresponding to annex G or H of the specification.
  */
-int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
+int h264_nalu_parse_header(Bitstream_t *bitstr, h264_nalu_t *nalu)
 {
-    TRACE_INFO(NALU, "> " BLD_GREEN "nalu_parse_header()" CLR_RESET);
+    TRACE_INFO(NALU, "> " BLD_GREEN "h264_nalu_parse_header()" CLR_RESET);
     int retcode = FAILURE;
 
     if (bitstr && nalu)
     {
-        // Set NAL Unit header offset
+        // Save NAL Unit header offset
         nalu->nal_offset = bitstream_get_absolute_byte_offset(bitstr);
 
         // Check forbidden_zero_bit
@@ -209,11 +208,6 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
                     }
                 }
             }
-            else
-            {
-                retcode = SUCCESS;
-                TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
-            }
         }
         else
         {
@@ -242,9 +236,9 @@ int nalu_parse_header(Bitstream_t *bitstr, nalu_t *nalu)
  * and "7.4.1.1 Encapsulation of an SODB within an RBSP"
  * for more informations about that issue.
  */
-int nalu_clean_sample(Bitstream_t *bitstr)
+int h264_nalu_clean_sample(Bitstream_t *bitstr)
 {
-    TRACE_INFO(NALU, BLD_GREEN "nalu_clean_sample()" CLR_RESET);
+    TRACE_INFO(NALU, BLD_GREEN "h264_nalu_clean_sample()" CLR_RESET);
 
     unsigned int buffer_offset_saved = bitstr->buffer_offset;
 
@@ -300,12 +294,12 @@ int nalu_clean_sample(Bitstream_t *bitstr)
 
 /* ************************************************************************** */
 
-const char *nalu_get_string_type0(nalu_t *nalu)
+const char *h264_nalu_get_string_type0(h264_nalu_t *nalu)
 {
-    return nalu_get_string_type1(nalu->nal_unit_type);
+    return h264_nalu_get_string_type1(nalu->nal_unit_type);
 }
 
-const char *nalu_get_string_type1(unsigned nal_unit_type)
+const char *h264_nalu_get_string_type1(unsigned nal_unit_type)
 {
     switch (nal_unit_type)
     {
@@ -342,13 +336,12 @@ const char *nalu_get_string_type1(unsigned nal_unit_type)
         case NALU_TYPE_DPS:
             return "DPS (Depth Parameter Set)";
         case NALU_TYPE_SLICE_AUX:
-            return "SLICE AUX(coded slice of an auxiliary coded picture)";
+            return "SLICE AUX (coded slice of an auxiliary coded picture)";
         case NALU_TYPE_SLICE_EXT:
-            return "SLICE EXT(coded slice extension)";
+            return "SLICE EXT (coded slice extension)";
         case NALU_TYPE_SLICE_EXT_3D:
             return "SLICE EXT 3D (coded slice extension for depth view / 3D-AVC texture view)";
 
-        case NALU_TYPE_UNKNOWN:
         default:
             return "Unknown";
     }

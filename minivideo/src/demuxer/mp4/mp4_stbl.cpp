@@ -1335,7 +1335,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         track->sps_sample_size[i] = read_bits(bitstr, 16);
         track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
-        track->sps_array[i] = (sps_t *)calloc(1, sizeof(sps_t));
+        track->sps_array[i] = (h264_sps_t *)calloc(1, sizeof(h264_sps_t));
 
         skip_bits(bitstr, 8); // skip NAL header
         decodeSPS(bitstr, track->sps_array[i]);
@@ -1360,7 +1360,7 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     {
         track->pps_sample_size[i] = read_bits(bitstr, 16);
         track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
-        track->pps_array[i] = (pps_t *)calloc(1, sizeof(pps_t));
+        track->pps_array[i] = (h264_pps_t *)calloc(1, sizeof(h264_pps_t));
 
         skip_bits(bitstr, 8); // skip NAL header
         decodePPS(bitstr, track->pps_array[i], track->sps_array);

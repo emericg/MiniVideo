@@ -54,18 +54,18 @@ typedef struct DecodingContext_t
     unsigned errorCounter;          //!< The number of decoding error so far
 
     // NAL
-    nalu_t *active_nalu;            //!< Current NAL Unit // FIXME should be local
+    h264_nalu_t *active_nalu;       //!< Current NAL Unit // FIXME should be local
 
     // SPS
     unsigned active_sps;            //!< ID of the last/current SPS. May be inaccurate!
-    sps_t *sps_array[MAX_SPS];
+    h264_sps_t *sps_array[MAX_SPS];
 
     // PPS
     unsigned active_pps;            //!< ID of the last/current PPS. May be inaccurate!
-    pps_t *pps_array[MAX_PPS];
+    h264_pps_t *pps_array[MAX_PPS];
 
     // SEI
-    sei_t *active_sei;              //!< Current SEI
+    h264_sei_t *active_sei;         //!< Current SEI
 
     // Some useful parameters (shortcuts from SPS/PPS)
     unsigned profile_idc;           //!< Current H.264 profile, set from SPS

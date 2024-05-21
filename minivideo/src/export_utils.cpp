@@ -121,7 +121,7 @@ unsigned mb_to_ycbcr(DecodingContext_t *dc, unsigned char *buffer_ycbcr)
     unsigned missing_mbs = 0;
 
     // Shortcut
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
     unsigned i = 0;
@@ -213,7 +213,7 @@ unsigned mb_to_rgb(DecodingContext_t *dc, unsigned char *buffer_rgb)
     unsigned missing_mbs = 0;
 
     // Shortcut
-    sps_t *sps = dc->sps_array[dc->active_sps];
+    h264_sps_t *sps = dc->sps_array[dc->active_sps];
 
     // Loops init
     unsigned i = 0;
