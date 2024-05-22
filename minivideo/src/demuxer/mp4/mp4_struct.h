@@ -25,11 +25,13 @@
 #define PARSER_MP4_STRUCT_H
 
 // minivideo headers
-#include "../../minivideo_typedef.h"
-#include "../../minivideo_codecs.h"
-#include "../../decoder/h264/h264_parameterset.h"
+#include "../../minivideo_containers.h"
+#include "../../minivideo_mediastream.h"
+#include "../../minivideo_metadata_vendors.h"
+#include "../../decoder/h264/h264_parameterset_struct.h"
 
-#include <cstdio>
+// C standard libraries
+#include <cstdint>
 
 /* ************************************************************************** */
 
@@ -270,6 +272,7 @@ typedef enum Mp4BoxType_e
                             BOX_ENDA = 0x656E6461,              //!< QuickTime Endianness atom
                             BOX_CHAN = 0x6368616E,              //!< QuickTime Channel Layout atom
                             BOX_DAMR = 0x64616D72,              //!< AMR parameters
+                            BOX_DAC3 = 0x64616333,              //!< AC3 parameters
                             BOX_DEC3 = 0x64656333,              //!< E-AC3 parameters
 
                             BOX_SA3D = 0x53413344,              //!< (v) Google Spatial Audio Box
@@ -370,9 +373,8 @@ typedef enum Mp4HandlerType_e
     MP4_HANDLER_META  = 0x6D657461, //!< 'meta' // Metadata
     MP4_HANDLER_TMCD  = 0x746D6364, //!< 'tmcd' // Timecode track
     MP4_HANDLER_HINT  = 0x68696E74, //!< 'hint' // Hint track
-
-    // sdsm // SceneDescriptionStream
-    // odsm // ObjectDescriptorStream
+    MP4_HANDLER_ODSM  = 0x6F64736D, //!< 'odsm' // Scene description track
+    MP4_HANDLER_SDSM  = 0x7364736D, //!< 'odsm' // Object descriptor track
 
 } Mp4HandlerType_e;
 

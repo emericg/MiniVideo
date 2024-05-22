@@ -303,6 +303,10 @@ int parse_ipco(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     track->codec = CODEC_H265;
                     retcode = parse_hvcC(bitstr, &box_subheader, track, mp4);
                 } break;
+                case BOX_VVCC: {
+                    track->codec = CODEC_H266;
+                    retcode = parse_vvcC(bitstr, &box_subheader, track, mp4);
+                } break;
                 case BOX_AV1C: {
                     track->codec = CODEC_AV1;
                     retcode = parse_av1C(bitstr, &box_subheader, track, mp4);

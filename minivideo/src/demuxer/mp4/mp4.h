@@ -25,7 +25,7 @@
 #define PARSER_MP4_H
 
 // minivideo headers
-#include "../../import.h"
+#include "../../minivideo_mediafile.h"
 
 /* ************************************************************************** */
 

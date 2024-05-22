@@ -27,7 +27,7 @@
 #include "mp4_struct.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
-#include "../../bitstream.h"
+#include "../../decoder/h264/h264_parameterset.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
 
@@ -35,8 +35,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cmath>
-#include <climits>
 
 /* ************************************************************************** */
 

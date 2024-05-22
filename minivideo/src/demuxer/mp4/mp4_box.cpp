@@ -25,7 +25,6 @@
 #include "mp4_box.h"
 #include "mp4_struct.h"
 
-#include "../xml_mapper.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_uuid.h"
 #include "../../minivideo_typedef.h"
@@ -37,7 +36,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cmath>
 #include <climits>
 #include <cinttypes>
 
@@ -281,26 +279,10 @@ int parse_unknown_box(Bitstream_t *bitstr, Mp4Box_t *box_header, FILE *xml)
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name)
+uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *name)
 {
-    TRACE_2(MP4, "read_mp4_uint64()");
-    uint64_t value = read_bits_64(bitstr, 64);
-
-    if (name)
-    {
-        TRACE_1(MP4, "* %s  = %u", name, value);
-        if (xml)
-        {
-            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
-        }
-    }
-
-    return value;
-}
-uint32_t read_mp4_uint32(Bitstream_t *bitstr, FILE *xml, const char *name)
-{
-    TRACE_2(MP4, "read_mp4_uint32()");
-    uint32_t value = read_bits(bitstr, 32);
+    TRACE_2(MP4, "read_mp4_uint()");
+    uint32_t value = read_bits(bitstr, bits);
 
     if (name)
     {
@@ -313,10 +295,11 @@ uint32_t read_mp4_uint32(Bitstream_t *bitstr, FILE *xml, const char *name)
 
     return value;
 }
-uint16_t read_mp4_uint16(Bitstream_t *bitstr, FILE *xml, const char *name)
+
+bool read_mp4_flag(Bitstream_t *bitstr, FILE *xml, const char *name)
 {
-    TRACE_2(MP4, "read_mp4_uint16()");
-    uint16_t value = read_bits(bitstr, 16);
+    TRACE_2(MP4, "read_mp4_flag()");
+    bool value = read_bits(bitstr, 1);
 
     if (name)
     {
@@ -345,10 +328,10 @@ uint8_t read_mp4_uint8(Bitstream_t *bitstr, FILE *xml, const char *name)
 
     return value;
 }
-uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *name)
+uint16_t read_mp4_uint16(Bitstream_t *bitstr, FILE *xml, const char *name)
 {
-    TRACE_2(MP4, "read_mp4_uint()");
-    uint32_t value = read_bits(bitstr, bits);
+    TRACE_2(MP4, "read_mp4_uint16()");
+    uint16_t value = read_bits(bitstr, 16);
 
     if (name)
     {
@@ -356,6 +339,63 @@ uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *nam
         if (xml)
         {
             fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint32_t read_mp4_uint32(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint32()");
+    uint32_t value = read_bits(bitstr, 32);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%u</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+uint64_t read_mp4_uint64(Bitstream_t *bitstr, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_uint64()");
+    uint64_t value = read_bits_64(bitstr, 64);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %u", name, value);
+        if (xml)
+        {
+            fprintf(xml, "  <%s>%" PRId64 "</%s>\n", name, value, name);
+        }
+    }
+
+    return value;
+}
+
+float read_mp4_f1616(Bitstream_t *bitstr, int precision, FILE *xml, const char *name)
+{
+    TRACE_2(MP4, "read_mp4_f1616()");
+
+    uint16_t intpart = read_bits(bitstr, 16);
+    uint16_t decpart = read_bits(bitstr, 16);
+
+    float value = intpart + (decpart / 65535.f);
+
+    if (name)
+    {
+        TRACE_1(MP4, "* %s  = %.4f", name, value);
+        if (xml)
+        {
+            if (precision == 1) fprintf(xml, "  <%s>%.1f</%s>\n", name, value, name);
+            else if (precision == 2) fprintf(xml, "  <%s>%.2f</%s>\n", name, value, name);
+            else if (precision == 3) fprintf(xml, "  <%s>%.3f</%s>\n", name, value, name);
+            else if (precision == 4) fprintf(xml, "  <%s>%.4f</%s>\n", name, value, name);
+            else fprintf(xml, "  <%s>%f</%s>\n", name, value, name);
         }
     }
 
