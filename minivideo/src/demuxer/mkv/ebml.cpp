@@ -34,8 +34,6 @@
 
 // C standard libraries
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <cmath>
 #include <climits>
 #include <cinttypes>
@@ -280,7 +278,7 @@ uint64_t read_ebml_data_uint_UID(Bitstream_t *bitstr, EbmlElement_t *element,
 int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
                            FILE *xml, const char *name)
 {
-    TRACE_2(MKV, "read_ebml_data_int2(%i bits)", element->size*8);
+    TRACE_2(MKV, "read_ebml_data_int(%i bits)", element->size*8);
     int64_t value = static_cast<int64_t>(read_bits_64(bitstr, 64));
 
     if (name)
@@ -300,7 +298,7 @@ int64_t read_ebml_data_int(Bitstream_t *bitstr, EbmlElement_t *element,
 int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
                             FILE *xml, const char *name)
 {
-    TRACE_2(MKV, "read_ebml_data_date2(%i bits)", element->size*8);
+    TRACE_2(MKV, "read_ebml_data_date(%i bits)", element->size*8);
     int64_t value = static_cast<int64_t>(read_bits_64(bitstr, 64));
 
     if (name)
@@ -321,7 +319,7 @@ int64_t read_ebml_data_date(Bitstream_t *bitstr, EbmlElement_t *element,
 double read_ebml_data_float(Bitstream_t *bitstr, EbmlElement_t *element,
                             FILE *xml, const char *name)
 {
-    TRACE_2(MKV, "read_ebml_data_float2(%i bits)", element->size*8);
+    TRACE_2(MKV, "read_ebml_data_float(%i bits)", element->size*8);
     double x = 0;
 
     if (element->size == 4)
@@ -485,7 +483,7 @@ int ebml_parse_unknown(Bitstream_t *bitstr, EbmlElement_t *element, FILE *xml)
     TRACE_WARNING(MKV, "ebml_parse_unknown(0x%X / %i bytes)", element->eid, element->size);
 
     print_ebml_element(element);
-    write_ebml_element(element, xml, nullptr);
+    write_ebml_element(element, xml, "unknown");
     if (xml) fprintf(xml, "  </a>\n");
 
     return SUCCESS;

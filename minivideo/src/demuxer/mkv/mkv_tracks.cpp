@@ -29,7 +29,6 @@
 
 #include "../xml_mapper.h"
 #include "../../bitstream.h"
-#include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
@@ -323,7 +322,7 @@ static int mkv_parse_tracks_entry_video_colour(Bitstream_t *bitstr, EbmlElement_
                 break;
 
             case eid_MasteringMetadata:
-                retcode = mkv_parse_tracks_entry_video_colour_mastering(bitstr, element, mkv, track);
+                retcode = mkv_parse_tracks_entry_video_colour_mastering(bitstr, &element_sub, mkv, track);
                 break;
 
             case eid_void:
