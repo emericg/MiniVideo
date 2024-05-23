@@ -39,25 +39,29 @@ typedef enum Codecs_e
     CODEC_MPEG_L1       =  1,   //!< MP1, or MPEG 1/2 Audio Layer I (ISO/IEC 11172-3 and ISO/IEC 13818-3)
     CODEC_MPEG_L2       =  2,   //!< MP2, or MPEG 1/2 Audio Layer II
     CODEC_MPEG_L3       =  3,   //!< MP3, or MPEG 1/2/2.5 Audio Layer III
-    CODEC_AAC           =  4,   //!< Advanced Audio Coding (MPEG-2 Part 7 and MPEG-4 Part 3) (ISO/IEC 13818-7 and ISO/IEC 14496-3)
-    CODEC_MPEG4_ALS     =  7,   //!<
-    CODEC_MPEG4_CELP    =  8,   //!<
-    CODEC_MPEG4_DST     =  9,   //!<
-    CODEC_MPEG4_HVXC    = 10,   //!<
-    CODEC_MPEG4_SLS     = 11,   //!<
-    CODEC_MPEGH_3D_AUDIO= 12,   //!<
+
+    CODEC_AAC           =  4,   //!< Advanced Audio Coding (MPEG-2 Part 7 and MPEG-4 Part 3, Subpart 4) (ISO/IEC 13818-7 and ISO/IEC 14496-3)
+    CODEC_MPEG4_HVXC    =  5,   //!< MPEG-4 Part 3, Subpart 2
+    CODEC_MPEG4_CELP    =  6,   //!< MPEG-4 Part 3, Subpart 3
+    CODEC_MPEG4_TwinVQ  =  7,   //!< MPEG-4 Part 3, Subpart 4
+    CODEC_MPEG4_HILN    =  8,   //!< MPEG-4 Part 3, Subpart 7
+    CODEC_MPEG4_DST     =  9,   //!< MPEG-4 Part 3, Subpart 10
+    CODEC_MPEG4_ALS     = 10,   //!< MPEG-4 Part 3, Subpart 11
+    CODEC_MPEG4_SLS     = 11,   //!< MPEG-4 Part 3, Subpart 12
+    CODEC_MPEGH_3D_AUDIO= 12,   //!< ISO/IEC 23008-3 (MPEG-H Part 3)
 
     CODEC_SPEEX         = 24,   //!< Xiph Speex
-    CODEC_VORBIS        = 25,   //!< Xiph Ogg Vorbis
+    CODEC_VORBIS        = 25,   //!< Xiph Vorbis
     CODEC_OPUS          = 26,   //!< Xiph Opus
 
-    CODEC_AC2           = 32,   //!< Dolby Labs AC-2
-    CODEC_AC3           = 33,   //!< Dolby Digital AC-3, or A/52A
-    CODEC_EAC3          = 34,   //!< Dolby Digital Plus, or Enhanced AC-3, or A/52B
+    CODEC_AC2           = 32,   //!< Dolby Labs, AC-2
+    CODEC_AC3           = 33,   //!< Dolby Digital, AC-3, or A/52A
+    CODEC_EAC3          = 34,   //!< Dolby Digital Plus, or Enhanced AC-3, or AC-3+, or A/52B
     CODEC_AC4           = 35,   //!< Dolby AC-4
-    //Dolby Digital EX
+    CODEC_DolbyTrueHD   = 36,   //!< Dolby TrueHD
+    //Dolby Digital EX          // ?
+    //Dolby Digital Surround EX
     //Dolby Digital Live
-    //Dolby TrueHD
 
     CODEC_DTS           = 42,   //!< "Dedicated To Sound"
     CODEC_DTS_HD        = 43,

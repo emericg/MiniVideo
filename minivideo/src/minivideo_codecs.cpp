@@ -211,44 +211,68 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "MP3 (MPEG-1/2 Layer 3)";
                 else
                     return "MP3";
+
             case CODEC_AAC:
                 if (long_description)
                     return "AAC (Advance Audio Coding)";
                 else
                     return "AAC";
-            case CODEC_MPEG4_ALS:
-                return "MPEG-4 ALS";
-            case CODEC_MPEG4_CELP:
-                return "MPEG-4 CELP";
-            case CODEC_MPEG4_DST:
-                return "MPEG-4 DST";
+
             case CODEC_MPEG4_HVXC:
-                return "MPEG-4 HVXC";
+                if (long_description)
+                    return "MPEG-4 HVXC (Harmonic Vector eXcitation Coding)";
+                else
+                    return "MPEG-4 HVXC";
+            case CODEC_MPEG4_CELP:
+                if (long_description)
+                    return "MPEG-4 CELP (Code Excited Linear Prediction)";
+                else
+                    return "MPEG-4 CELP";
+            case CODEC_MPEG4_TwinVQ:
+                return "MPEG-4 TwinVQ";
+            case CODEC_MPEG4_HILN:
+                if (long_description)
+                    return "MPEG-4 HILN (Harmonic and Individual Line plus Noise)";
+                else
+                    return "MPEG-4 HILN";
+            case CODEC_MPEG4_DST:
+                if (long_description)
+                    return "MPEG-4 DST (Direct Stream Transfer)";
+                else
+                    return "MPEG-4 DST";
+            case CODEC_MPEG4_ALS:
+                if (long_description)
+                    return "MPEG-4 ALS (Audio Lossless Coding)";
+                else
+                    return "MPEG-4 ALS";
             case CODEC_MPEG4_SLS:
-                return "MPEG-4 SLS";
+                if (long_description)
+                    return "MPEG-4 SLS (Scalable Lossless Coding)";
+                else
+                    return "MPEG-4 SLS";
             case CODEC_MPEGH_3D_AUDIO:
                 return "MPEG-H 3D AUDIO";
 
             case CODEC_SPEEX:
                 return "Speex";
             case CODEC_VORBIS:
-                return "Ogg Vorbis";
+                return "Vorbis";
             case CODEC_OPUS:
-                return "OPUS";
+                return "Opus";
 
             case CODEC_AC2:
                 if (long_description)
-                    return "AC-2 (Dolby Labs AC-2)";
+                    return "AC-2 (Dolby Labs)";
                 else
                     return "AC-2";
             case CODEC_AC3:
                 if (long_description)
-                    return "AC-3 (Dolby Digital AC-3)";
+                    return "AC-3 (Dolby Digital)";
                 else
                     return "AC-3";
             case CODEC_EAC3:
                 if (long_description)
-                    return "EAC-3 (Dolby Digital AC-3+)";
+                    return "EAC-3 (Dolby Digital Plus)";
                 else
                     return "EAC-3";
             case CODEC_AC4:
@@ -256,6 +280,9 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "AC-4 (Dolby AC-4)";
                 else
                     return "AC-4";
+            case CODEC_DolbyTrueHD:
+                return "Dolby TrueHD";
+
             case CODEC_DTS:
                 return "DTS";
             case CODEC_DTS_HD:
