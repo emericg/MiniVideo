@@ -28,9 +28,6 @@
 
 #include "mediawrapper.h"
 
-// QHexEdit widget
-#include "thirdparty/qhexedit2/qhexedit.h"
-
 // pugixml
 #include "thirdparty/pugixml/pugixml.hpp"
 

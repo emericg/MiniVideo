@@ -21,7 +21,6 @@
  */
 
 #include "cli.h"
-#include "utils.h"
 #include "minivideo_textexport_qt.h"
 
 #include <QtGlobal>

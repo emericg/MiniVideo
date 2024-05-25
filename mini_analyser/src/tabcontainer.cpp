@@ -31,6 +31,9 @@
 #include <bitstream.h>
 #include <depacketizer/depack.h>
 
+// QHexEdit2 widget
+#include "thirdparty/qhexedit2/qhexedit.h"
+
 #ifdef _MSC_VER
 #include <windows.h>
 #include <Lmcons.h>

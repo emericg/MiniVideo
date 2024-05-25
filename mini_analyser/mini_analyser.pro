@@ -59,19 +59,10 @@ FORMS       += ui/mainwindow.ui \
 RESOURCES   += resources/resources.qrc
 
 # third party libraries
-SOURCES     += src/thirdparty/qcustomplot/qcustomplot.cpp \
-               src/thirdparty/qhexedit2/qhexedit.cpp \
-               src/thirdparty/qhexedit2/chunks.cpp \
-               src/thirdparty/qhexedit2/commands.cpp \
-               src/thirdparty/pugixml/pugixml.cpp
-
-HEADERS     += src/thirdparty/portable_endian.h \
-               src/thirdparty/qcustomplot/qcustomplot.h \
-               src/thirdparty/qhexedit2/qhexedit.h \
-               src/thirdparty/qhexedit2/chunks.h \
-               src/thirdparty/qhexedit2/commands.h \
-               src/thirdparty/pugixml/pugixml.hpp \
-               src/thirdparty/pugixml/pugiconfig.hpp
+HEADERS     += $${PWD}/src/thirdparty/portable_endian.h
+include(src/thirdparty/pugixml/pugixml.pri)
+include(src/thirdparty/qhexedit2/qhexedit2.pri)
+include(src/thirdparty/qcustomplot/qcustomplot.pri)
 
 # Dependencies #################################################################
 

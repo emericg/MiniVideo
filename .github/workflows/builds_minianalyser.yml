@@ -15,7 +15,7 @@ on:
 env:
   APP_NAME: "mini_analyser"
   APP_VERSION: "48"
-  QT_VERSION: "6.6.1"
+  QT_VERSION: "6.6.3"
 
 #--------------------------------------------------------------------------------
 # Workflow jobs
@@ -35,7 +35,7 @@ jobs:
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{env.QT_VERSION}}
 
@@ -102,7 +102,7 @@ jobs:
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{env.QT_VERSION}}
 
@@ -156,7 +156,7 @@ jobs:
 
       # Install Qt
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{env.QT_VERSION}}
 
