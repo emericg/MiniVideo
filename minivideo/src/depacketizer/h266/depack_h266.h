@@ -17,28 +17,21 @@
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
  * \author    Emeric Grange <emeric.grange@gmail.com>
- * \date      2017
+ * \date      2024
  */
 
-#ifndef DEPACKETIZER_H
-#define DEPACKETIZER_H
+#ifndef DEPACK_H266_H
+#define DEPACK_H266_H
 /* ************************************************************************** */
 
 // minivideo headers
-#include "depack_struct.h"
-#include "../bitstream.h"
+#include "../depack_struct.h"
+#include "../../bitstream.h"
 
 /* ************************************************************************** */
 
-minivideo_EXPORT unsigned depack_file(MediaFile_t *media,
-                                      es_sample_t *essample_list);
-
-minivideo_EXPORT unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
-                                        unsigned sample_index, es_sample_t *essample_list);
-
-unsigned depack_loaded_sample(Bitstream_t *bitstr,
-                              MediaFile_t *media, MediaStream_t *track,
-                              unsigned sample_index, es_sample_t *essample_list);
+unsigned depack_h266_sample(Bitstream_t *bitstr, MediaStream_t *track,
+                            unsigned sample_index, es_sample_t *essample_list);
 
 /* ************************************************************************** */
-#endif // DEPACKETIZER_H
+#endif // DEPACK_H266_H

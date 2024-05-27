@@ -24,6 +24,9 @@
 #include "depack.h"
 #include "depack_struct.h"
 #include "h264/depack_h264.h"
+#include "h265/depack_h265.h"
+#include "h266/depack_h266.h"
+
 #include "../utils.h"
 #include "../bitstream.h"
 #include "../bitstream_utils.h"
@@ -94,6 +97,14 @@ unsigned depack_loaded_sample(Bitstream_t *bitstr,
         if (track->stream_codec == CODEC_H264)
         {
             samplefound = depack_h264_sample(bitstr, track, sample_index, essample_list);
+        }
+        else if (track->stream_codec == CODEC_H265)
+        {
+            samplefound = depack_h265_sample(bitstr, track, sample_index, essample_list);
+        }
+        else if (track->stream_codec == CODEC_H266)
+        {
+            samplefound = depack_h266_sample(bitstr, track, sample_index, essample_list);
         }
     }
 
