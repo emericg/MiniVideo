@@ -12,8 +12,9 @@ namespace QHexFlags {
         StyledHeader     = (1 << 3),
         StyledAddress    = (1 << 4),
         NoHeader         = (1 << 5),
-        HighlightAddress = (1 << 6),
-        HighlightColumn  = (1 << 7),
+        NoAddress        = (1 << 6),
+        HighlightAddress = (1 << 7),
+        HighlightColumn  = (1 << 8),
 
         Separators = HSeparator | VSeparator,
         Styled     = StyledHeader | StyledAddress,

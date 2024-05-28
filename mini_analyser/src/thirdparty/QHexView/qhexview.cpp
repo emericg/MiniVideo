@@ -609,21 +609,25 @@ void QHexView::drawDocument(QTextCursor& c) const
         QString addrstr = QString::number(address, 16).rightJustified(this->addressWidth(), '0').toUpper();
 
         // Address Part
-        QTextCharFormat acf;
-        acf.setForeground(m_options.headercolor);
-
-        if(m_options.hasFlag(QHexFlags::StyledAddress))
-            acf.setBackground(this->palette().color(QPalette::Window));
-
-        if(m_hexdelegate) m_hexdelegate->renderAddress(address, acf, this);
-
-        if(m_hexcursor->line() == static_cast<qint64>(line) && m_options.hasFlag(QHexFlags::HighlightAddress))
+        if(!m_options.hasFlag(QHexFlags::NoAddress))
         {
-            acf.setBackground(this->palette().color(QPalette::Highlight));
-            acf.setForeground(this->palette().color(QPalette::HighlightedText));
-        }
+            QTextCharFormat acf;
+            acf.setForeground(m_options.headercolor);
 
-        c.insertText(" " + addrstr + " ", acf);
+            if(m_options.hasFlag(QHexFlags::StyledAddress))
+                acf.setBackground(this->palette().color(QPalette::Window));
+
+            if(m_hexdelegate)
+                if(m_hexdelegate) m_hexdelegate->renderAddress(address, acf, this);
+
+            if(m_hexcursor->line() == static_cast<qint64>(line) && m_options.hasFlag(QHexFlags::HighlightAddress))
+            {
+                acf.setBackground(this->palette().color(QPalette::Highlight));
+                acf.setForeground(this->palette().color(QPalette::HighlightedText));
+            }
+
+            c.insertText(" " + addrstr + " ", acf);
+        }
 
         auto linebytes = this->getLine(line);
         c.insertText(" ", { });
@@ -700,6 +704,7 @@ qreal QHexView::hexColumnWidth() const
 
 unsigned int QHexView::addressWidth() const
 {
+    if(m_options.hasFlag(QHexFlags::NoAddress)) return 0;
     if(!m_hexdocument || m_options.addresswidth) return m_options.addresswidth;
     return this->calcAddressWidth();
 }
@@ -750,7 +755,7 @@ qint64 QHexView::find(const QVariant& value, qint64 offset, QHexFindMode mode, u
     return res.first;
 }
 
-qreal QHexView::hexColumnX() const { return this->getNCellsWidth(this->addressWidth() + 2); }
+qreal QHexView::hexColumnX() const { return this->getNCellsWidth(this->addressWidth() + 1); }
 qreal QHexView::asciiColumnX() const { return this->hexColumnX() + this->hexColumnWidth() + this->cellWidth(); }
 qreal QHexView::endColumnX() const { return this->asciiColumnX() + this->getNCellsWidth(m_options.linelength + 1) + this->cellWidth(); }
 qreal QHexView::getNCellsWidth(int n) const { return n * this->cellWidth(); }
@@ -889,9 +894,9 @@ QTextCharFormat QHexView::drawFormat(QTextCursor& c, quint8 b, const QString& s,
 
     if(this->hexCursor()->position() == pos)
     {
-        auto cursorbg = this->palette().color(this->hasFocus() ? QPalette::Normal : QPalette::Disabled, QPalette::WindowText);
+        auto cursorbg = QColor("lightGrey"); // this->palette().color(this->hasFocus() ? QPalette::Normal : QPalette::Disabled, QPalette::WindowText);
         auto cursorfg = this->palette().color(this->hasFocus() ? QPalette::Normal : QPalette::Disabled, QPalette::Base);
-        auto discursorbg = this->palette().color(QPalette::Disabled, QPalette::WindowText);
+        auto discursorbg = QColor("lightGrey"); // this->palette().color(QPalette::Disabled, QPalette::WindowText);
         auto discursorfg = this->palette().color(QPalette::Disabled, QPalette::Base);
 
         switch(m_hexcursor->mode())
