@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      h264_expgolomb.c
+ * \file      h264_expgolomb.cpp
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2010
  */

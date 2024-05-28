@@ -24,8 +24,7 @@
 #ifndef H264_PARAMETER_SET_STRUCT_H
 #define H264_PARAMETER_SET_STRUCT_H
 
-// minivideo headers
-#include "../../minivideo_typedef.h"
+#include <cstdint>
 
 /* ************************************************************************** */
 
@@ -61,6 +60,7 @@ typedef struct h264_hrd_t
     unsigned int cpb_removal_delay_length_minus1;
     unsigned int dpb_output_delay_length_minus1;
     unsigned int time_offset_length;
+
 } h264_hrd_t;
 
 /*!
@@ -125,6 +125,7 @@ typedef struct h264_vui_t
         unsigned int log2_max_mv_length_vertical;
         unsigned int num_reorder_frames;
         unsigned int max_dec_frame_buffering;
+
 } h264_vui_t;
 
 /*!
@@ -147,6 +148,7 @@ typedef struct spse_t
         unsigned int alpha_transparent_value;
 
     bool additional_extension_flag;
+
 } spse_t;
 
 /*!
@@ -328,8 +330,51 @@ typedef struct h264_pps_t
  */
 typedef struct h264_sei_t
 {
-    //unsigned int payloadType;
-    //unsigned int payloadSize;
+    // D.1.2 // Buffering period SEI message syntax
+    uint8_t eq_parameter_set_id;
+    //if(NalHrdBpPresentFlag || VclHrdBpPresentFlag)
+        //for( SchedSelIdx = 0; SchedSelIdx <= cpb_cnt_minus1; SchedSelIdx++ )
+        uint8_t initial_cpb_removal_delay[MAX_CPB];
+        uint8_t initial_cpb_removal_delay_offset[MAX_CPB];
+
+    // D.1.3 // Picture timing SEI message syntax
+    // D.1.4 // Pan-scan rectangle SEI message syntax
+    // D.1.5 // Filler payload SEI message syntax
+    // D.1.6 // User data registered by Rec. ITU-T T.35 SEI message syntax
+    // D.1.7 // User data unregistered SEI message syntax
+    // D.1.8 // Recovery point SEI message syntax
+    // D.1.9 // Decoded reference picture marking repetition SEI message syntax
+    // D.1.10 // Spare picture SEI message syntax
+    // D.1.11 // Scene information SEI message syntax
+    // D.1.12 // Sub-sequence information SEI message syntax
+    // D.1.13 // Sub-sequence layer characteristics SEI message syntax
+    // D.1.14 // Sub-sequence characteristics SEI message syntax
+    // D.1.15 // Full-frame freeze SEI message syntax
+    // D.1.16 // Full-frame freeze release SEI message syntax
+    // D.1.17 // Full-frame snapshot SEI message syntax
+    // D.1.18 // Progressive refinement segment start SEI message syntax
+    // D.1.19 // Progressive refinement segment end SEI message syntax
+    // D.1.20 // Motion-constrained slice group set SEI message syntax
+    // D.1.21 // Film grain characteristics SEI message syntax
+    // D.1.22 // Deblocking filter display preference SEI message syntax
+    // D.1.23 // Stereo video information SEI message syntax
+    // D.1.24 // Post-filter hint SEI message syntax
+    // D.1.25 // Tone mapping information SEI message syntax
+    // D.1.26 // Frame packing arrangement SEI message syntax
+    // D.1.27 // Display orientation SEI message syntax
+    // D.1.28 // Green metadata SEI message syntax
+    // D.1.29 // Mastering display colour volume SEI message syntax
+    // D.1.30 // Colour remapping information SEI message syntax
+    // D.1.31 // Content light level information SEI message syntax
+    // D.1.32 // Alternative transfer characteristics SEI message syntax
+    // D.1.33 // Content colour volume SEI message syntax
+    // D.1.34 // Ambient viewing environment SEI message syntax
+    // D.1.35 // Syntax of omnidirectional video specific SEI messages
+    // D.1.36 // SEI manifest SEI message syntax
+    // D.1.37 // SEI prefix indication SEI message syntax
+    // D.1.38 // Annotated regions SEI message syntax
+    // D.1.39 // Shutter interval information SEI message syntax
+    // D.1.40 // Reserved SEI message syntax
 
 } h264_sei_t;
 

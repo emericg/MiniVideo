@@ -25,7 +25,6 @@
 #define H264_NALU_H
 
 // minivideo headers
-#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
 
 /* ************************************************************************** */
@@ -65,35 +64,35 @@ typedef struct h264_nalu_t
     int64_t nal_offset;             //!< Absolute offset of the NAL Unit header (in byte)
 
     // Nal Unit header
-    unsigned int nal_ref_idc;       //!< Define NAL Unit priority (see NALUnit_RefIdc enum)
-    unsigned int nal_unit_type;     //!< Define NAL Unit content type (see NALUnit_Type enum)
+    uint8_t nal_ref_idc;       //!< Define NAL Unit priority (see NALUnit_RefIdc enum)
+    uint8_t nal_unit_type;     //!< Define NAL Unit content type (see NALUnit_Type enum)
 
     // Nal Unit header (SVC extension)
-    unsigned int idr_flag;
-    unsigned int priority_id;
-    unsigned int no_inter_layer_pred_flag;
-    unsigned int dependency_id;
-    unsigned int quality_id;
-    unsigned int temporal_id;
-    unsigned int use_ref_base_pic_flag;
-    unsigned int discardable_flag;
-    unsigned int output_flag;
+    uint8_t idr_flag;
+    uint8_t priority_id;
+    uint8_t no_inter_layer_pred_flag;
+    uint8_t dependency_id;
+    uint8_t quality_id;
+    uint8_t temporal_id;
+    uint8_t use_ref_base_pic_flag;
+    uint8_t discardable_flag;
+    uint8_t output_flag;
 
     // Nal Unit header (MVC extension)
-    unsigned int non_idr_flag;
-    //unsigned int priority_id;
-    unsigned int view_id;
-    //unsigned int temporal_id;
-    unsigned int anchor_pic_flag;
-    unsigned int inter_view_flag;
+    uint8_t non_idr_flag;
+    //uint8_t priority_id; // re-used
+    uint16_t view_id;
+    //uint8_t temporal_id; // re-used
+    uint8_t anchor_pic_flag;
+    uint8_t inter_view_flag;
 
     // Nal Unit header (3D AVC extension)
-    unsigned int view_idx;
-    unsigned int depth_flag;
-    //unsigned int non_idr_flag;
-    //unsigned int temporal_id;
-    //unsigned int anchor_pic_flag;
-    //unsigned int inter_view_flag;
+    uint8_t view_idx;
+    uint8_t depth_flag;
+    //uint8_t non_idr_flag; // re-used
+    //uint8_t temporal_id; // re-used
+    //uint8_t anchor_pic_flag; // re-used
+    //uint8_t inter_view_flag; // re-used
 
 } h264_nalu_t;
 

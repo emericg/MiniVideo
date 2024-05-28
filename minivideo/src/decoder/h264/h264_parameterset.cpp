@@ -1636,8 +1636,33 @@ int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei)
         // SEI decoding
         ////////////////////////////////////////////////////////////////////////
 
-        TRACE_WARNING(PARAM, ">>> UNIMPLEMENTED (SEI decoding)");
-        retcode = FAILURE;
+        while (h264_more_rbsp_data(bitstr) == true)
+        {
+            // SEI payload header
+            unsigned int payloadType = 0;
+            unsigned int payloadSize = 0;
+
+            while (next_bits(bitstr, 8) == 0xFF)
+            {
+                unsigned int ff_byte = read_bits(bitstr, 8); // equal to 0xFF
+                payloadType += 255;
+            }
+
+            unsigned int last_payload_type_byte = read_bits(bitstr, 8);
+            payloadType += last_payload_type_byte;
+
+            while (next_bits(bitstr, 8) == 0xFF)
+            {
+                unsigned int ff_byte = read_bits(bitstr, 8); // equal to 0xFF
+                payloadSize += 255;
+            }
+
+            unsigned int last_payload_size_byte = read_bits(bitstr, 8);
+            payloadSize += last_payload_size_byte;
+
+            // SEI payload
+            //sei_payload( payloadType, payloadSize )
+        }
 
         // SEI check
         ////////////////////////////////////////////////////////////////////////
@@ -1718,6 +1743,13 @@ void printSEI(h264_sei_t *sei)
     TRACE_WARNING(PARAM, ">>> UNIMPLEMENTED (printSEI)");
 
 #endif // ENABLE_DEBUG
+}
+
+/* ************************************************************************** */
+
+void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml)
+{
+    //
 }
 
 /* ************************************************************************** */

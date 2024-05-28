@@ -396,7 +396,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
 
                 retcode = decodeSPS_legacy(dc);
 /*
-                sps_t *sps = (sps_t*)calloc(1, sizeof(sps_t));
+                h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
                 if (sps)
                 {
                     if (decodeSPS(dc->bitstr, sps))
@@ -503,10 +503,16 @@ DecodingContext_t *h264_init(MediaFile_t *input_video, unsigned tid)
                 int64_t samplesize = dc->MediaFile->tracks_video[tid]->parameter_size[pid];
 
                 if (buffer_feed_manual(dc->bitstr, samplesoffset-1, samplesize+1) != SUCCESS)
+                {
                     error_count++;
+                }
                 else
+                {
                     if (h264_decode_nalu(dc, samplesoffset, samplesize) != SUCCESS)
+                    {
                         error_count++;
+                    }
+                }
             }
 
             if (error_count != 0)
