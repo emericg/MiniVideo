@@ -774,7 +774,7 @@ void MainWindow::About()
     QMessageBox about(QMessageBox::Information, tr("About mini_analyser"),
                       tr("<big><b>mini_analyser</b></big> \
                          <p align='justify'>mini_analyser is a software designed \
-                         to help you extract the maximum of informations and metadata from multimedia files.</p> \
+                         to help you extract the maximum of information and metadata from multimedia files.</p> \
                          <p>This application is part of the MiniVideo framework.</p> \
                          <p>Emeric Grange (emeric.grange@gmail.com)</p>"),
                          QMessageBox::Ok);

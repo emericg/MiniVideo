@@ -36,7 +36,7 @@
  * \brief Form a PES packet header for each sample from a track.
  * \param f_src: The input file, where to read samples.
  * \param f_dst: The output file, where we write PES header + data.
- * \param stream: Informations about the track.
+ * \param stream: Information about the track.
  * \return SUCCESS if so.
  */
 int pes_packetizer(FILE *f_src, FILE *f_dst, MediaStream_t *stream)

@@ -957,7 +957,7 @@ static int checkSPS(h264_sps_t *sps)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about sequence_parameter_set decoding.
+ * \brief Print information about sequence_parameter_set decoding.
  * \param *sps: .
  */
 void printSPS(h264_sps_t *sps)
@@ -1410,7 +1410,7 @@ static int checkPPS(h264_pps_t *pps, h264_sps_t *sps)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about picture_parameter_set decoding.
+ * \brief Print information about picture_parameter_set decoding.
  * \param *dc The current DecodingContext.
  */
 void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
@@ -1724,7 +1724,7 @@ void freeSEI(h264_sei_t  **sei_ptr)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about supplemental_enhancement_information decoding.
+ * \brief Print information about supplemental_enhancement_information decoding.
  * \param *dc The current DecodingContext.
  */
 void printSEI(h264_sei_t *sei)
@@ -2037,7 +2037,7 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about video_usability_information decoding.
+ * \brief Print information about video_usability_information decoding.
  * \param *vui (h264_vui_t) data structure.
  *
  * VUI can only be found inside SPS structure.
@@ -2348,7 +2348,7 @@ static int checkHRD(h264_hrd_t *hrd)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about hypothetical_reference_decoder decoding.
+ * \brief Print information about hypothetical_reference_decoder decoding.
  * \param *hrd (hrd_t) data structure.
  *
  * HRD can only be found inside VUI structure.

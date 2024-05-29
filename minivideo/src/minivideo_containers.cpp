@@ -217,7 +217,7 @@ const char *getContainerProfileString(const ContainerProfiles_e profile, const b
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in] *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  * \return container: A ContainerFormat_e value.
  *
  * This function check the first 16 bytes of a media file in order to find
@@ -382,7 +382,7 @@ Containers_e getContainerUsingStartcodes(uint8_t buffer[16])
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in] *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  * \return container: A ContainerFormat_e value.
  *
  * This function check the file extension to guess the container. As this method

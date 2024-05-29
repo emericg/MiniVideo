@@ -39,7 +39,7 @@
  *
  * The IDR filter aim to remove irrelevant frames from the decode stream. By irrelevant we mean:
  * - Unicolor images (black or green screen) like the very first or very last frames of a stream.
- * - Images carrying less visual informations than the average.
+ * - Images carrying less visual information than the average.
  * - If specified, the filter select images spread over the duration of the media.
  */
 int idr_filtering(MediaStream_t **stream_ptr,

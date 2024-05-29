@@ -31,7 +31,7 @@
 
 /*!
  * \brief Initialize an H.264 decoder.
- * \param *input_video: A pointer to a MediaFile_t structure, containing every informations available about the current video file.
+ * \param *input_video: A pointer to a MediaFile_t structure, containing every information available about the current video file.
  * \param tid: The video track ID to decode.
  * \return A pointer to a DecodingContext_t.
  *

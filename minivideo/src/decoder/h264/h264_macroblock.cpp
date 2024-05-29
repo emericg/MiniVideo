@@ -388,7 +388,7 @@ unsigned int NextMbAddress(DecodingContext_t *dc, const unsigned int CurrMbAddr)
 /* ************************************************************************** */
 
 /*!
- * \brief Read prediction informations for current macroblock.
+ * \brief Read prediction information for current macroblock.
  * \param *dc The current DecodingContext.
  * \param *mb The current macroblock.
  *

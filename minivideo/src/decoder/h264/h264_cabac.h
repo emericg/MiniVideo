@@ -55,7 +55,7 @@ typedef enum SyntaxElementType_e
     SE_end_of_slice_flag
 } SyntaxElementType_e;
 
-//! Binarization informations needed to decode a syntax element with CABAC
+//! Binarization information needed to decode a syntax element with CABAC
 typedef struct binarization_t
 {
     int SyntaxElementValue;

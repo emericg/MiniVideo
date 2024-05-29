@@ -489,7 +489,7 @@ static int Intra_4x4_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 /*!
  * \brief Intra 4x4 vertical prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -524,7 +524,7 @@ static int Intra_4x4_Vertical(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 horizontal prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -559,7 +559,7 @@ static int Intra_4x4_Horizontal(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 DC prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -640,7 +640,7 @@ static int Intra_4x4_DC(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 Diagonal Down Left prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -683,7 +683,7 @@ static int Intra_4x4_Diagonal_Down_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *
 /*!
  * \brief Intra 4x4 Diagonal Down Right prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -729,7 +729,7 @@ static int Intra_4x4_Diagonal_Down_Right(uint8_t pred4x4L[4][4], intrapred4x4_t 
 /*!
  * \brief Intra 4x4 Vertical Right prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -784,7 +784,7 @@ static int Intra_4x4_Vertical_Right(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 Horizontal Down prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -839,7 +839,7 @@ static int Intra_4x4_Horizontal_Down(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 Vertical Left prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -882,7 +882,7 @@ static int Intra_4x4_Vertical_Left(uint8_t pred4x4L[4][4], intrapred4x4_t *ip)
 /*!
  * \brief Intra 4x4 Horizontal Up prediction.
  * \param pred4x4L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1288,8 +1288,8 @@ static int Intra_8x8_pred_sample(DecodingContext_t *dc, Macroblock_t *mb, const 
 
 /*!
  * \brief Intra_8x8 sample filtering.
- * \param *ip A structure containing informations about prediction samples and there availability.
- * \param *ipprime A structure containing informations about filtered prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
+ * \param *ipprime A structure containing information about filtered prediction samples and there availability.
  *
  * From 'ITU-T H.264' recommendation:
  * 8.3.2.2.1 Reference sample filtering process for Intra_8x8 sample prediction.
@@ -1358,7 +1358,7 @@ static void Intra_8x8_sample_filtering(intrapred8x8_t *ip, intrapred8x8_t *ippri
 /*!
  * \brief Intra 8x8 Vertical prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1393,7 +1393,7 @@ static int Intra_8x8_Vertical(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 Horizontal prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1428,7 +1428,7 @@ static int Intra_8x8_Horizontal(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 DC prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1504,7 +1504,7 @@ static int Intra_8x8_DC(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 Diagonal Down Left prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1546,7 +1546,7 @@ static int Intra_8x8_Diagonal_Down_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *
 /*!
  * \brief Intra 8x8 Diagonal Down Right prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1592,7 +1592,7 @@ static int Intra_8x8_Diagonal_Down_Right(uint8_t pred8x8L[8][8], intrapred8x8_t 
 /*!
  * \brief Intra 8x8 Vertical Right prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1647,7 +1647,7 @@ static int Intra_8x8_Vertical_Right(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 Horizontal Down prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1702,7 +1702,7 @@ static int Intra_8x8_Horizontal_Down(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 Vertical Left prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1745,7 +1745,7 @@ static int Intra_8x8_Vertical_Left(uint8_t pred8x8L[8][8], intrapred8x8_t *ip)
 /*!
  * \brief Intra 8x8 Horizontal Up prediction.
  * \param pred8x8L[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1937,7 +1937,7 @@ static int Intra_16x16_luma_prediction_process(DecodingContext_t *dc, Macroblock
 /*!
  * \brief Intra 16x16 vertical prediction.
  * \param predL[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1972,7 +1972,7 @@ static int Intra_16x16_Vertical(uint8_t predL[16][16], intrapred16x16_t *ip)
 /*!
  * \brief Intra 16x16 horizontal prediction.
  * \param predL[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2007,7 +2007,7 @@ static int Intra_16x16_Horizontal(uint8_t predL[16][16], intrapred16x16_t *ip)
 /*!
  * \brief Intra 16x16 DC prediction.
  * \param predL[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2088,7 +2088,7 @@ static int Intra_16x16_DC(uint8_t predL[16][16], intrapred16x16_t *ip)
 /*!
  * \brief Intra 16x16 plane prediction.
  * \param predL[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2328,7 +2328,7 @@ static int Intra_Chroma_prediction_process(DecodingContext_t *dc, Macroblock_t *
 /*!
  * \brief Intra chroma DC prediction.
  * \param predC[][] The Cb or Cr block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2446,7 +2446,7 @@ static int Intra_Chroma_DC(uint8_t predC[8][8], intrapredChroma_t *ip)
 /*!
  * \brief Intra chroma horizontal prediction.
  * \param predC[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2481,7 +2481,7 @@ static int Intra_Chroma_Horizontal(uint8_t predC[8][8], intrapredChroma_t *ip)
 /*!
  * \brief Intra chroma  vertical prediction.
  * \param predC[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -2516,7 +2516,7 @@ static int Intra_Chroma_Vertical(uint8_t predC[8][8], intrapredChroma_t *ip)
 /*!
  * \brief Intra chroma plane prediction.
  * \param predC[][] The block to fill with predicted coefficients.
- * \param *ip A structure containing informations about prediction samples and there availability.
+ * \param *ip A structure containing information about prediction samples and there availability.
  * \return 0 if failed, 1 otherwise.
  *
  * From 'ITU-T H.264' recommendation:

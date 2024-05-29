@@ -321,7 +321,7 @@ static int decodeSliceHeader(DecodingContext_t *dc, slice_t *slice)
 
 /*!
  * \param *dc The current DecodingContext.
- * \brief Print informations about slice header decoding.
+ * \brief Print information about slice header decoding.
  */
 static void printSliceHeader(DecodingContext_t *dc)
 {
@@ -706,7 +706,7 @@ static rplm_t *decodeRPLM(DecodingContext_t *dc, slice_t *slice)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about reference_picture_list_modification decoding.
+ * \brief Print information about reference_picture_list_modification decoding.
  * \param *dc The current DecodingContext.
  * \param *rplm (rplm_t) data structure.
  */
@@ -882,7 +882,7 @@ static drpm_t *decodeDRPM(DecodingContext_t *dc, slice_t *slice)
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about decoded_reference_picture_marking decoding.
+ * \brief Print information about decoded_reference_picture_marking decoding.
  * \param *dc The current DecodingContext.
  * \param *drpm (drpm_t) data structre.
  */

@@ -423,7 +423,7 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
 /*!
  * \brief PCM sample size hack
  *
- * PCM sample size can be recomputed if the informations gathered from the
+ * PCM sample size can be recomputed if the information gathered from the
  * containers seems wrong (like the sample size). This will also trigger a new
  * bitrate computation.
  */

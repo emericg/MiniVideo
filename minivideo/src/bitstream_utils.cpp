@@ -233,7 +233,7 @@ bool more_bitstream_data(Bitstream_t *bitstr)
  * \param *bitstr The bitstream to check.
  * \return true everything went as expected, false otherwise.
  *
- * More informations available at 7.3.2.11 'RBSP trailing bits syntax' of H.264 standard.
+ * More information available at 7.3.2.11 'RBSP trailing bits syntax' of H.264 standard.
  */
 bool h264_rbsp_trailing_bits(Bitstream_t *bitstr)
 {
@@ -270,7 +270,7 @@ bool h264_rbsp_trailing_bits(Bitstream_t *bitstr)
  * for a trailing bits structure (1 rbsp_stop_one_bit + less than 7 rbsp_alignment_zero_bit).
  * In this function trailing bits are NOT considered as data.
  *
- * More informations available at 7.4.1 'NAL unit semantics' of H.264 standard.
+ * More information available at 7.4.1 'NAL unit semantics' of H.264 standard.
  */
 bool h264_more_rbsp_data(Bitstream_t *bitstr)
 {
@@ -397,7 +397,7 @@ bool h264_more_rbsp_data(Bitstream_t *bitstr)
  * left in the RBSP.
  * In this function trailing bits are considered as data.
  *
- * More informations available at 7.4.1 'NAL unit semantics' of H.264 standard.
+ * More information available at 7.4.1 'NAL unit semantics' of H.264 standard.
  */
 bool h264_more_rbsp_trailing_data(Bitstream_t *bitstr)
 {

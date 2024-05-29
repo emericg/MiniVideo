@@ -37,7 +37,7 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Informations about a media file and its content.
+ * \brief Information about a media file and its content.
  */
 typedef struct MediaFile_t
 {
@@ -96,7 +96,7 @@ typedef struct MediaFile_t
 } MediaFile_t;
 
 /*!
- * \brief Essential informations about an output file, mostly used to export thumbnails from mini_thumbnailer.
+ * \brief Essential information about an output file, mostly used to export thumbnails from mini_thumbnailer.
  */
 typedef struct OutputFile_t
 {

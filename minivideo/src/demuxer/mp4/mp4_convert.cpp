@@ -87,7 +87,7 @@ int mp4_convert(MediaFile_t *media, Mp4_t *mp4)
 
 /*!
  * \brief Convert a Mp4Track_t structure into a generic MediaStream_t.
- * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  * \param *track: A pointer to the mp4 track structure we want to extract data from.
  * \param idr_only Set to true if we only want to extract IDR samples.
  *

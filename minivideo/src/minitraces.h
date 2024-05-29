@@ -32,7 +32,7 @@ extern "C" {
 /* ************************************************************************** */
 
 /*!
- * This function displays informations about MiniTraces, which "trace levels"
+ * This function displays information about MiniTraces, which "trace levels"
  * and "trace modules" are currently enabled. Its output is quite heavy so you
  * should keep this for debug builds.
  */

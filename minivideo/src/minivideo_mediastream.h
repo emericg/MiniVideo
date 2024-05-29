@@ -40,7 +40,7 @@
  * \todo split into 'per codec' metadata structures
  *
  * This structure basically represent an audio or a video track. It contains
- * general informations about the track type and the positions of all the samples
+ * general information about the track type and the positions of all the samples
  * of the track inside the bitstream.
  */
 typedef struct MediaStream_t

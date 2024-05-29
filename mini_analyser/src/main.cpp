@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 #endif
         std::cout << "* Qt version " << QT_VERSION_STR << std::endl;
 
-        // Print informations about libMiniVideo and system endianness
+        // Print information about libMiniVideo and system endianness
         minivideo_print_infos();
         minivideo_print_features();
         minivideo_endianness();

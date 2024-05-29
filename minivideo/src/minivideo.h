@@ -49,17 +49,17 @@ typedef enum MiniVideoErrorCodes_e
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about the library (version, date of the build, ...) into standard output.
+ * \brief Print information about the library (version, date of the build, ...) into standard output.
  */
 minivideo_EXPORT void minivideo_print_infos(void);
 
 /*!
- * \brief Print informations about the library (enabled features, traces levels, ...) into standard output.
+ * \brief Print information about the library (enabled features, traces levels, ...) into standard output.
  */
 minivideo_EXPORT void minivideo_print_features(void);
 
 /*!
- * \brief Get informations about the library (version and build date/time).
+ * \brief Get information about the library (version and build date/time).
  *
  * The date and time strings are static data and do not need to be freed.
  */
@@ -89,7 +89,7 @@ minivideo_EXPORT int minivideo_endianness(void);
  * \return TODO ERROR CODE (1 if file opening is a success, 0 otherwise).
  *
  * The first step in the decoding process is to open the file with the given fileptath.
- * If the file is successfully opened, the program start gathering informations about
+ * If the file is successfully opened, the program start gathering information about
  * the file, print them if in debug mode.
  */
 minivideo_EXPORT int minivideo_open(const char *input_filepath,
@@ -104,7 +104,7 @@ minivideo_EXPORT int minivideo_open(const char *input_filepath,
  *
  * The second step in the decoding process is to parse the file's container infos
  * (if appropriate parser is available) and fill the MediaFile_t structure with
- * the tracks samples informations.
+ * the tracks samples information.
  */
 minivideo_EXPORT int minivideo_parse(MediaFile_t *input_media,
                                      const bool compute_metadata,

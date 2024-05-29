@@ -34,7 +34,7 @@
 /* ************************************************************************** */
 
 /*!
- * \brief Print informations about macroblock_layer decoding.
+ * \brief Print information about macroblock_layer decoding.
  * \param *dc The current DecodingContext.
  * \param *mb The current macroblock.
  */

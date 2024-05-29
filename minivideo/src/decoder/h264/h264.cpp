@@ -126,7 +126,7 @@ static int computeNormAdjust(DecodingContext_t *dc)
 /* ************************************************************************** */
 
 /*!
- * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  * \param tid: Track ID.
  * \return A pointer to the newlee allocated DecodingContext.
  *

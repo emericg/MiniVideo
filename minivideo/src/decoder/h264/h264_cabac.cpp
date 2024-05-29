@@ -610,8 +610,8 @@ int initCabacDecodingEngine(DecodingContext_t *dc)
  * \param *dc The current DecodingContext.
  * \param seType The type of syntax element we want to decode.
  * \param blkType The type of block we are decoding, correspond to ctxBlkCat.
- * \param *prefix Structure containing necessary informations about decoding prefix bins string.
- * \param *suffix Structure containing necessary informations about decoding suffix bins string.
+ * \param *prefix Structure containing necessary information about decoding prefix bins string.
+ * \param *suffix Structure containing necessary information about decoding suffix bins string.
  *
  * From 'ITU-T H.264' recommendation:
  * 9.3.2 Binarization process.

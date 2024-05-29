@@ -119,8 +119,8 @@ Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint3
 
 /*!
  * \brief Init a new bitstream.
- * \param *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
- * \param *stream: A pointer to a MediaStream_t structure, containing informations about video payload data.
+ * \param *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
+ * \param *stream: A pointer to a MediaStream_t structure, containing information about video payload data.
  * \return *bitstr: A pointer to our newly allocated bitstream structure.
  *
  * If no MediaStream_t is available, it mean we have continuous video data,

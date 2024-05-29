@@ -47,7 +47,7 @@
 
 /*!
  * \brief Get various from a media filepath.
- * \param[in] *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in] *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  *
  * Get absolute file path, file directory, file name and extension.
  * This function will only work with Unix-style file systems.
@@ -158,7 +158,7 @@ static void getInfosFromPath(MediaFile_t *media)
 
 /*!
  * \brief Get media file size.
- * \param[in] *media: A pointer to a MediaFile_t structure containing various informations about the file.
+ * \param[in] *media: A pointer to a MediaFile_t structure containing various information about the file.
  */
 static void getSize(MediaFile_t *media)
 {
@@ -186,7 +186,7 @@ static void getSize(MediaFile_t *media)
 
 /*!
  * \brief Detect the container used by a multimedia file.
- * \param[in] *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in] *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  */
 static void getContainer(MediaFile_t *media)
 {
@@ -227,9 +227,9 @@ static void getContainer(MediaFile_t *media)
 /*!
  * \brief Open a file and check what's inside it.
  * \param[in] *filepath: The path of the file to load.
- * \param[in,out] **media_ptr: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \param[in,out] **media_ptr: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  *
- * Some more informations about supported files:
+ * Some more information about supported files:
  * Size and offset are coded on int64_t (signed long long), so this library should
  * be able to handle file of 1073741824 GiB if Large File Support is enabled during
  * compilation, 2 GiB otherwise.
@@ -374,8 +374,8 @@ int import_fileClose(MediaFile_t **media_ptr)
 /* ************************************************************************** */
 
 /*!
- * \brief Print various informations about a file.
- * \param[in] *media: A pointer to a MediaFile_t structure, containing every informations available about the current media file.
+ * \brief Print various information about a file.
+ * \param[in] *media: A pointer to a MediaFile_t structure, containing every information available about the current media file.
  */
 void import_fileStatus(MediaFile_t *media)
 {

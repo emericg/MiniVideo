@@ -473,7 +473,7 @@ int parse_unknown_object(Bitstream_t *bitstr, AsfObject_t *asf_object, FILE *xml
  * 'Jumpy' is in charge of checking your position into the stream after your
  * parser finish parsing a box / list / chunk / element, never leaving you
  * stranded  in the middle of nowhere with no easy way to get back on track.
- * It will check available informations to known if the current element has been
+ * It will check available information to known if the current element has been
  * fully parsed, and if not perform a jump (or even a rewind) to the next known
  * element.
  */

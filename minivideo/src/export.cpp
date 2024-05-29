@@ -483,7 +483,7 @@ static int export_idr_webp_advanced(DecodingContext_t *dc, FILE *PictureFile)
 
 /*!
  * \param *dc: The current DecodingContext.
- * \param *PictureFile: A file structure containing useful informations.
+ * \param *PictureFile: A file structure containing useful information.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
@@ -604,7 +604,7 @@ static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
 /*!
  * \param *dc: The current DecodingContext.
- * \param *PictureFile: A file structure containing useful informations.
+ * \param *PictureFile: A file structure containing useful information.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
@@ -717,7 +717,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
 /*!
  * \param *dc: The current DecodingContext.
- * \param *PictureFile: A file structure containing useful informations.
+ * \param *PictureFile: A file structure containing useful information.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
@@ -751,7 +751,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
 /*!
  * \param *dc: The current DecodingContext.
- * \param *PictureFile: A file structure containing useful informations.
+ * \param *PictureFile: A file structure containing useful information.
  * \return 1 if success, 0 otherwise.
  */
 static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)

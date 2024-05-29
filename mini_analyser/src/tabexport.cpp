@@ -121,7 +121,7 @@ void tabExport::saveFileDialog()
         fileType = tr("Files (*.xml)");
     }
 
-    filePath = QFileDialog::getSaveFileName(this, tr("Save media informations in a text file"),
+    filePath = QFileDialog::getSaveFileName(this, tr("Save media information in a text file"),
                                             filePath, fileExtension);
 
     if (filePath.isEmpty() == false)

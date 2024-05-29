@@ -793,7 +793,7 @@ static int parse_urn(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *trac
  *
  * The data reference object contains a table of data references (normally URLs)
  * that declare the location(s) of the media data used within the presentation.
- * This box does not contain informations, only other boxes.
+ * This box does not contain information, only other boxes.
  */
 static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -857,7 +857,7 @@ static int parse_dref(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  *
  * The data information box contains objects that declare the location of the
  * media information in a track.
- * This box does not contain informations, only other boxes.
+ * This box does not contain information, only other boxes.
  */
 static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -907,7 +907,7 @@ static int parse_dinf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  *
  * This box contains all the objects that declare characteristic information of
  * the media in the track.
- * This box does not contain informations, only other boxes.
+ * This box does not contain information, only other boxes.
  */
 static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -975,7 +975,7 @@ static int parse_minf(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  *
  * The media declaration container contains all the objects that declare information
  * about the media data within a track.
- * This box does not contain informations, only other boxes.
+ * This box does not contain information, only other boxes.
  */
 static int parse_mdia(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
 {
@@ -1252,7 +1252,7 @@ static int parse_tkhd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *tra
  * presentation.
  * Exactly one Track Reference Box can be contained within the Track Box.
  *
- * This box does not contain informations, only other boxes.
+ * This box does not contain information, only other boxes.
  */
 static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 {
