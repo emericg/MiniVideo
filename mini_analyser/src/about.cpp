@@ -23,6 +23,8 @@
 #include "about.h"
 #include "ui_about.h"
 
+#include "minivideo.h"
+
 #include <QFile>
 #include <QTextStream>
 
@@ -32,13 +34,15 @@ AboutWindows::AboutWindows(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QString title = "<p align=\"left\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-size:16pt; font-weight:600;\"> (" + QString::fromUtf8(VERSION_STR) + ")</span></p></body></html>";
+    ui->textBrowser_title->setHtml(title);
+
     tabAbout();
 
     connect(ui->pushButton_about, SIGNAL(clicked(bool)), this, SLOT(tabAbout()));
     connect(ui->pushButton_license, SIGNAL(clicked(bool)), this, SLOT(tabLicense()));
     connect(ui->pushButton_authors, SIGNAL(clicked(bool)), this, SLOT(tabAuthors()));
     connect(ui->pushButton_thirdparties, SIGNAL(clicked(bool)), this, SLOT(tabThirdParties()));
-    //connect(ui->pushButton_close, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
 AboutWindows::~AboutWindows()
@@ -46,79 +50,71 @@ AboutWindows::~AboutWindows()
     delete ui;
 }
 
-void AboutWindows::setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,
-                                       const char *minivideo_builddate, const char *minivideo_buildtime,
-                                       bool minivideo_builddebug)
-{
-    QString title = "<p align=\"left\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Cantarell'; font-size:28pt; font-weight:600;\">mini_analyser</span><span style=\" font-family:'Cantarell'; font-size:16pt; font-weight:600;\"> (" + QString::fromUtf8(VERSION_STR) + ")</span></p></body></html>";
-
-    QString text = "<html>";
-    text += tr("MiniAnalyser") + " " + QString::fromUtf8(VERSION_STR);
-#ifdef QT_DEBUG
-    text += " / <b>DEBUG</b>";
-#endif
-    text += " / " + tr("built on:") + " " + QString::fromUtf8(__DATE__) + " at " + QString::fromUtf8(__TIME__);
-
-    text += "<br>" + tr("MiniVideo library") + " " + QString::number(minivideo_major) + "." + QString::number(minivideo_minor) + "-" + QString::number(minivideo_patch);
-    if (minivideo_builddebug) text += " / <b>DEBUG</b>";
-    text += " / " + tr("built on:") + " " + minivideo_builddate + " at " + minivideo_buildtime;
-    text += "</html>";
-
-    ui->textBrowser_title->setText(title);
-    ui->textBrowser_version->setText(text);
-}
-
 void AboutWindows::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
-
-    // we may want to resize the app icon?
 }
 
 void AboutWindows::tabAbout()
 {
-    ui->textBrowser_desc->show();
-    ui->textBrowser_version->show();
-    ui->textBrowser_license->hide();
-    ui->textBrowser_copyright->hide();
-    ui->textBrowser_thirdparties->hide();
+#ifdef QT_DEBUG
+    bool minianalyser_debug = true;
+#else
+    bool minianalyser_debug = false;
+#endif
+
+    int minivideo_major, minivideo_minor, minivideo_patch;
+    const char *minivideo_builddate, *minivideo_buildtime;
+    bool minivideo_builddebug;
+    minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
+                        &minivideo_builddate, &minivideo_buildtime, &minivideo_builddebug);
+
+    QFile file(":/about/about/about.html");
+    if (file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QString about = file.readAll();
+
+        about.replace("$$VERSION_STR", QString::fromUtf8(VERSION_STR));
+        if (minianalyser_debug) about.replace("$$DEBUG_STR", " / <b>DEBUG</b>");
+        else about.replace("$$DEBUG_STR", "");
+        about.replace("$$DATE_STR", QString::fromUtf8(__DATE__));
+        about.replace("$$TIME_STR", QString::fromUtf8(__TIME__));
+
+        about.replace("$$minivideo_major", QString::number(minivideo_major));
+        about.replace("$$minivideo_minor", QString::number(minivideo_minor));
+        about.replace("$$minivideo_patch", QString::number(minivideo_patch));
+        if (minivideo_builddebug) about.replace("$$minivideo_debug", " / <b>DEBUG</b>");
+        else about.replace("$$minivideo_debug", "");
+        about.replace("$$minivideo_builddate", QString::fromUtf8(minivideo_builddate));
+        about.replace("$$minivideo_buildtime", QString::fromUtf8(minivideo_buildtime));
+
+        ui->textBrowser_content->setHtml(about);
+    }
 }
 
 void AboutWindows::tabAuthors()
 {
-    ui->textBrowser_desc->hide();
-    ui->textBrowser_version->hide();
-    ui->textBrowser_license->hide();
-    ui->textBrowser_copyright->show();
-    ui->textBrowser_thirdparties->hide();
+    QFile file(":/about/about/authors.html");
+    if (file.open(QFile::ReadOnly | QFile::Text))
+    {
+        ui->textBrowser_content->setHtml(file.readAll());
+    }
 }
 
 void AboutWindows::tabLicense()
 {
-    ui->textBrowser_desc->hide();
-    ui->textBrowser_version->hide();
-    ui->textBrowser_license->show();
-    ui->textBrowser_copyright->hide();
-    ui->textBrowser_thirdparties->hide();
-
-    if (!licenseLoaded)
+    QFile file(":/about/about/gpl-3.0-standalone.html");
+    if (file.open(QFile::ReadOnly | QFile::Text))
     {
-        QFile file(":/licenses/LICENSE");
-        if (file.open(QFile::ReadOnly | QFile::Text))
-        {
-            QTextStream ReadFile(&file);
-            ui->textBrowser_license->setText(ReadFile.readAll());
-
-            licenseLoaded = true;
-        }
+        ui->textBrowser_content->setHtml(file.readAll());
     }
 }
 
 void AboutWindows::tabThirdParties()
 {
-    ui->textBrowser_desc->hide();
-    ui->textBrowser_version->hide();
-    ui->textBrowser_license->hide();
-    ui->textBrowser_copyright->hide();
-    ui->textBrowser_thirdparties->show();
+    QFile file(":/about/about/thirdparties.html");
+    if (file.open(QFile::ReadOnly | QFile::Text))
+    {
+        ui->textBrowser_content->setHtml(file.readAll());
+    }
 }

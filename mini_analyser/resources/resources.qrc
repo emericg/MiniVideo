@@ -43,6 +43,12 @@
         <file>img/T.png</file>
         <file>img/P.png</file>
     </qresource>
+    <qresource prefix="/about">
+        <file>about/about.html</file>
+        <file>about/authors.html</file>
+        <file>about/gpl-3.0-standalone.html</file>
+        <file>about/thirdparties.html</file>
+    </qresource>
     <qresource prefix="/licenses">
         <file>../LICENSE</file>
     </qresource>

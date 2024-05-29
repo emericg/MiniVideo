@@ -37,10 +37,6 @@ public:
     explicit AboutWindows(QWidget *parent = nullptr);
     ~AboutWindows();
 
-    void setMinivideoVersion(int minivideo_major, int minivideo_minor, int minivideo_patch,
-                             const char *minivideo_builddate, const char *minivideo_buildtime,
-                             bool minivideo_builddebug);
-
 private slots:
     void tabAbout();
     void tabAuthors();
@@ -52,8 +48,6 @@ protected:
 
 private:
     Ui::About *ui;
-
-    bool licenseLoaded = false;
 };
 
 #endif // ABOUT_H

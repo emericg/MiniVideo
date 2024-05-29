@@ -754,15 +754,7 @@ void MainWindow::openAbout()
     }
     else
     {
-        int minivideo_major, minivideo_minor, minivideo_patch;
-        const char *minivideo_builddate, *minivideo_buildtime;
-        bool minivideo_builddebug;
-        minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
-                            &minivideo_builddate, &minivideo_buildtime, &minivideo_builddebug);
-
-        aboutwindows = new AboutWindows();
-        aboutwindows->setMinivideoVersion(minivideo_major, minivideo_minor, minivideo_patch,
-                                          minivideo_builddate, minivideo_buildtime, minivideo_builddebug);
+        aboutwindows = new AboutWindows(this);
         aboutwindows->show();
     }
 }

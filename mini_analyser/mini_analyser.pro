@@ -89,12 +89,12 @@ CONFIG(release, debug|release) : DEFINES += NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPU
 
 # Build artifacts ##############################################################
 
-OBJECTS_DIR  = build/
-MOC_DIR      = build/
-RCC_DIR      = build/
-UI_DIR       = build/
+OBJECTS_DIR  = build/$${QT_ARCH}
+MOC_DIR      = build/$${QT_ARCH}
+RCC_DIR      = build/$${QT_ARCH}
+UI_DIR       = build/$${QT_ARCH}
 
-DESTDIR      = bin/
+DESTDIR      = bin/$${QT_ARCH}
 
 # OS specifics -----------------------------------------------------------------
 

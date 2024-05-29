@@ -14,8 +14,10 @@
 				<string>3iv</string>
 				<string>AVI</string>
 				<string>DIVX</string>
-				<string>H264</string>
 				<string>I263</string>
+				<string>H264</string>
+				<string>H265</string>
+				<string>H266</string>
 				<string>M2TS</string>
 				<string>M4V</string>
 				<string>MKV</string>
@@ -34,8 +36,10 @@
 				<string>flac</string>
 				<string>fli</string>
 				<string>flv</string>
-				<string>h264</string>
 				<string>i263</string>
+				<string>h264</string>
+				<string>h265</string>
+				<string>h266</string>
 				<string>m2ts</string>
 				<string>m4v</string>
 				<string>mkv</string>
@@ -97,7 +101,7 @@
 	<key>CFBundleName</key>
 	<string>mini_analyser</string>
 	<key>CFBundleIdentifier</key>
-    <string>com.minivideo.minianalyser</string>
+	<string>com.minivideo.minianalyser</string>
 	<key>CFBundleShortVersionString</key>
 	<string>@SHORT_VERSION@</string>
 	<key>CFBundlePackageType</key>
