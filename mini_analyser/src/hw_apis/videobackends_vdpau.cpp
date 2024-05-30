@@ -97,9 +97,9 @@ static Desc decoder_profiles_vdpau[] =
 #endif //
 
 #ifdef VDP_DECODER_PROFILE_AV1_MAIN
-    { VDP_DECODER_PROFILE_AV1_MAIN,                     CODEC_AV1, PROF_AV1_Main, 8 },
-    { VDP_DECODER_PROFILE_AV1_HIGH,                     CODEC_AV1, PROF_AV1_High, 8 },
-    { VDP_DECODER_PROFILE_AV1_PROFESSIONAL,             CODEC_AV1, PROF_AV1_Professional, 8 },
+    { VDP_DECODER_PROFILE_AV1_MAIN,                     CODEC_AV1, PROF_AV1_Main, 10 },
+    { VDP_DECODER_PROFILE_AV1_HIGH,                     CODEC_AV1, PROF_AV1_High, 10 },
+    { VDP_DECODER_PROFILE_AV1_PROFESSIONAL,             CODEC_AV1, PROF_AV1_Professional, 10 },
 #endif //
 };
 

@@ -128,8 +128,8 @@ static Desc decoder_profiles_vaapi[] =
     { VAProfileHEVCSccMain444,              CODEC_H265,     PROF_H265_ScreenExtended_Main_444, 8 },
 #endif
 #if VA_CHECK_VERSION(1, 7, 0) // libva 2.7
-    { VAProfileAV1Profile0,                 CODEC_AV1,      PROF_AV1_Main, 8 },
-    { VAProfileAV1Profile1,                 CODEC_AV1,      PROF_AV1_High, 8 },
+    { VAProfileAV1Profile0,                 CODEC_AV1,      PROF_AV1_Main, 10 },
+    { VAProfileAV1Profile1,                 CODEC_AV1,      PROF_AV1_High, 10 },
 #endif
 #if VA_CHECK_VERSION(1, 8, 0) // libva 2.8
     { VAProfileHEVCSccMain444_10,           CODEC_H265,     PROF_H265_ScreenExtended_Main_444_10, 10 },
