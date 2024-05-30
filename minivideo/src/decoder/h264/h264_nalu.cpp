@@ -208,6 +208,11 @@ int h264_nalu_parse_header(Bitstream_t *bitstr, h264_nalu_t *nalu)
                     }
                 }
             }
+            else
+            {
+                retcode = SUCCESS;
+                TRACE_1(NALU, "  * NAL Unit confirmed at byte offset %i", nalu->nal_offset);
+            }
         }
         else
         {
