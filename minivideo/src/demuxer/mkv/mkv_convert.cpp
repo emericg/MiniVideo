@@ -260,7 +260,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
             map->max_ref_frames = track->max_ref_frames;
             map->h264_feature_cabac = track->use_cabac;
             map->h264_feature_8x8 = track->use_8x8_blocks;
-            //map->h264_feature_Bframes = track->use_Bframes;
+            map->h264_feature_b_frames = track->use_B_frames;
 
             if (track->video->StereoMode)
             {

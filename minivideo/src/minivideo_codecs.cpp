@@ -162,6 +162,15 @@ CodecProfiles_e getH265CodecProfile(const unsigned profil_idc,
     }
 }
 
+CodecProfiles_e getH266CodecProfile(const unsigned profil_idc)
+{
+    switch (profil_idc)
+    {
+        default:
+            return PROF_H266_unknown;
+    }
+}
+
 /* ************************************************************************** */
 
 const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description)
@@ -282,6 +291,8 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "AC-4";
             case CODEC_DolbyTrueHD:
                 return "Dolby TrueHD";
+            case CODEC_DolbyE:
+                return "Dolby E";
 
             case CODEC_DTS:
                 return "DTS";

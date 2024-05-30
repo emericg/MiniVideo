@@ -137,6 +137,8 @@ QString getChannelModeQString(const ChannelMode_e channelMode);
 
 QString getStereoModeQString(const StereoMode_e stereoMode);
 
+QString getHdrModeQString(const HdrMode_e hdrMode);
+
 QString getFourccQString(const unsigned fourcc);
 
 QString getContainerQString(const Containers_e container, const bool long_description);

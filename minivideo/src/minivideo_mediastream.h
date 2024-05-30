@@ -82,6 +82,7 @@ typedef struct MediaStream_t
     unsigned int width_display;             //!< Display width, in pixels, including crop/padding/orientation
     unsigned int height_display;            //!< Display height, in pixels, including crop/padding/orientation
 
+    HdrMode_e hdr_mode;                     //!< HDR mode
     ScanType_e scan_mode;                   //!< Scan type
     StereoMode_e stereo_mode;               //!< Stereo mode
     Rotation_e video_rotation;              //!< Rotation
@@ -111,6 +112,8 @@ typedef struct MediaStream_t
     double video_level;                     //!< Codec video level set by the encoder
     bool h264_feature_cabac;                //!< CABAC compression (for H.264 only)
     bool h264_feature_8x8;                  //!< 8x8 blocks (for H.264 only)
+    bool h264_feature_b_frames;             //!< B frames (for H.264 only)
+    bool h265_feature_parallelization;      //!< TODO (for H.265 only)
     unsigned int max_ref_frames;            //!< Maximum reference frames
     unsigned int color_planes;              //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
     unsigned int color_subsampling;         //!< Chroma sub-sampling

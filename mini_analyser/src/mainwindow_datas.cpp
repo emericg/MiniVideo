@@ -141,6 +141,7 @@ void MainWindow::cleanData()
     ui->label_video_rotation->clear();
     ui->label_video_projection->clear();
     ui->label_video_stereomode->clear();
+    ui->label_video_hdr->clear();
 
     ui->label_video_framerate->clear();
     ui->label_video_framerate_mode->clear();
@@ -1051,6 +1052,17 @@ int MainWindow::printVideoDetails()
             {
                 ui->label_85->setVisible(false);
                 ui->label_video_stereomode->setVisible(false);
+            }
+            if (t->hdr_mode)
+            {
+                ui->label_97->setVisible(true);
+                ui->label_video_hdr->setVisible(true);
+                ui->label_video_hdr->setText(getHdrModeQString(t->hdr_mode));
+            }
+            else
+            {
+                ui->label_97->setVisible(false);
+                ui->label_video_hdr->setVisible(false);
             }
             if ((t->width_encoded > 0 && t->width_encoded != t->width) ||
                 (t->height_encoded > 0 &&t->height_encoded != t->height))

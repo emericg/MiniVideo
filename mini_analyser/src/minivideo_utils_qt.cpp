@@ -634,38 +634,56 @@ QString getChannelModeQString(const ChannelMode_e channelMode)
 
 QString getStereoModeQString(const StereoMode_e stereoMode)
 {
-    QString channel_mode_qstr;
+    QString stereo_mode_qstr;
 
     if (stereoMode == MONOSCOPIC)
-        channel_mode_qstr = QObject::tr("Monoscopic");
+        stereo_mode_qstr = QObject::tr("Monoscopic");
     else if (stereoMode == STEREO_ANAGLYPH_CR)
-        channel_mode_qstr = QObject::tr("Anaglyph (cyan/red)");
+        stereo_mode_qstr = QObject::tr("Anaglyph (cyan/red)");
     else if (stereoMode == STEREO_ANAGLYPH_GM)
-        channel_mode_qstr = QObject::tr("Anaglyph (green/magenta)");
+        stereo_mode_qstr = QObject::tr("Anaglyph (green/magenta)");
     else if (stereoMode == STEREO_SIDEBYSIDE_LEFT)
-        channel_mode_qstr = QObject::tr("Side by side (left eye is first)");
+        stereo_mode_qstr = QObject::tr("Side by side (left eye is first)");
     else if (stereoMode == STEREO_SIDEBYSIDE_RIGHT)
-        channel_mode_qstr = QObject::tr("Side by side (righ eye is first)");
+        stereo_mode_qstr = QObject::tr("Side by side (righ eye is first)");
     else if (stereoMode == STEREO_TOPBOTTOM_LEFT)
-        channel_mode_qstr = QObject::tr("Top-bottom (left eye is first)");
+        stereo_mode_qstr = QObject::tr("Top-bottom (left eye is first)");
     else if (stereoMode == STEREO_TOPBOTTOM_RIGHT)
-        channel_mode_qstr = QObject::tr("Top-bottom (righ eye is first)");
+        stereo_mode_qstr = QObject::tr("Top-bottom (righ eye is first)");
     else if (stereoMode == STEREO_CHECKBOARD_LEFT)
-        channel_mode_qstr = QObject::tr("Checkboard (left eye is first)");
+        stereo_mode_qstr = QObject::tr("Checkboard (left eye is first)");
     else if (stereoMode == STEREO_CHECKBOARD_RIGHT)
-        channel_mode_qstr = QObject::tr("Checkboard (righ eye is first)");
+        stereo_mode_qstr = QObject::tr("Checkboard (righ eye is first)");
     else if (stereoMode == STEREO_ROWINTERLEAVED_LEFT)
-        channel_mode_qstr = QObject::tr("Row interleaved (left eye is first)");
+        stereo_mode_qstr = QObject::tr("Row interleaved (left eye is first)");
     else if (stereoMode == STEREO_ROWINTERLEAVED_RIGHT)
-        channel_mode_qstr = QObject::tr("Row interleaved (righ eye is first)");
+        stereo_mode_qstr = QObject::tr("Row interleaved (righ eye is first)");
     else if (stereoMode == STEREO_COLUMNINTERLEAVED_LEFT)
-        channel_mode_qstr = QObject::tr("Column interleaved (left eye is first)");
+        stereo_mode_qstr = QObject::tr("Column interleaved (left eye is first)");
     else if (stereoMode == STEREO_COLUMNINTERLEAVED_RIGHT)
-        channel_mode_qstr = QObject::tr("Column interleaved (righ eye is first)");
+        stereo_mode_qstr = QObject::tr("Column interleaved (righ eye is first)");
     else
-        channel_mode_qstr = QObject::tr("Unknown");
+        stereo_mode_qstr = QObject::tr("Unknown");
 
-    return channel_mode_qstr;
+    return stereo_mode_qstr;
+}
+
+QString getHdrModeQString(const HdrMode_e hdrMode)
+{
+    QString hdr_mode_qstr;
+
+    if (hdrMode == HLG)
+        hdr_mode_qstr = "HDR10";
+    else if (hdrMode == HDR10)
+        hdr_mode_qstr = "HDR10";
+    else if (hdrMode == HDR10plus)
+        hdr_mode_qstr = "HDR10+";
+    else if (hdrMode == DolbyVision)
+        hdr_mode_qstr = "Dolby Vision";
+    else
+        hdr_mode_qstr = "SDR";
+
+    return hdr_mode_qstr;
 }
 
 /* ************************************************************************** */

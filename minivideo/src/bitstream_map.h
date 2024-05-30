@@ -38,6 +38,8 @@ void print_bitstream_map(MediaStream_t *stream);
 
 bool computeCodecs(MediaFile_t *media);
 
+bool computeHDR(MediaFile_t *media);
+
 bool computeAspectRatios(MediaFile_t *media);
 
 bool computeSamplesDatas(MediaFile_t *media);

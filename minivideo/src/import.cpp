@@ -278,7 +278,7 @@ int import_fileOpen(const char *filepath, MediaFile_t **media_ptr)
             {
                 TRACE_1(IO, "* File successfully opened");
 
-                // Extract some informations from the media file
+                // Extract some information from the media file
                 getInfosFromPath(media);
                 getSize(media);
                 getContainer(media);

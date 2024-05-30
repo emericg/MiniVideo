@@ -284,6 +284,20 @@ typedef enum ColorSpace_e
 
 /* ************************************************************************** */
 
+//! HDR mode
+typedef enum HdrMode_e
+{
+    SDR = 0,
+
+    HLG,
+    HDR10,
+    HDR10plus,
+    DolbyVision,
+
+} HdrMode_e;
+
+/* ************************************************************************** */
+
 /*!
  * \brief Audio speakers from WAVEFORMATEXTENSIBLE 'dwChannelMask' field.
  *

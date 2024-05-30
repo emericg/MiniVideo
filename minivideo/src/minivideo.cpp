@@ -261,6 +261,7 @@ int minivideo_parse(MediaFile_t *input_media,
 
         // Compute some additional metadata
         computeCodecs(input_media);
+        computeHDR(input_media);
         computeAspectRatios(input_media);
 
         if (compute_metadata)

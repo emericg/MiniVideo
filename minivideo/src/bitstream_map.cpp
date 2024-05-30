@@ -459,7 +459,7 @@ bool computeCodecs(MediaFile_t *media)
     {
         if (media->tracks_video[i] && media->tracks_video[i]->stream_codec == CODEC_UNKNOWN)
         {
-             media->tracks_video[i]->stream_codec = getCodecFromFourCC(media->tracks_video[i]->stream_fcc);
+            media->tracks_video[i]->stream_codec = getCodecFromFourCC(media->tracks_video[i]->stream_fcc);
         }
     }
 
@@ -501,6 +501,32 @@ bool computeCodecs(MediaFile_t *media)
             if (media->tracks_others[i]->stream_codec == CODEC_UNKNOWN)
             {
                 media->tracks_others[i]->stream_codec = getCodecFromFourCC(media->tracks_others[i]->stream_fcc);
+            }
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+bool computeHDR(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeHDR()" CLR_RESET);
+    bool retcode = SUCCESS;
+
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
+    {
+        if (media->tracks_video[i])
+        {
+            if (media->tracks_video[i]->color_transfer == COLOR_TRC_BT2020_10 ||
+                media->tracks_video[i]->color_transfer == COLOR_TRC_ARIB_STD_B67)
+            {
+                media->tracks_video[i]->hdr_mode = HLG;
+            }
+            if (media->tracks_video[i]->color_transfer == COLOR_TRC_SMPTE2084)
+            {
+                // HDR
             }
         }
     }

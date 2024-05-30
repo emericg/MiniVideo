@@ -59,6 +59,7 @@ typedef enum Codecs_e
     CODEC_EAC3          = 34,   //!< Dolby Digital Plus, or Enhanced AC-3, or AC-3+, or A/52B
     CODEC_AC4           = 35,   //!< Dolby AC-4
     CODEC_DolbyTrueHD   = 36,   //!< Dolby TrueHD
+    CODEC_DolbyE        = 37,   //!< Dolby E
     //Dolby Digital EX          // ?
     //Dolby Digital Surround EX
     //Dolby Digital Live
@@ -416,10 +417,15 @@ CodecProfiles_e getH264CodecProfile(const unsigned profil_idc,
                                     const bool constraint_set4_flag = false,
                                     const bool constraint_set5_flag = false,
                                     const bool constraint_set6_flag = false);
+
 CodecProfiles_e getH265CodecProfile(const unsigned profil_idc,
                                     const bool general_one_picture_only_constraint_flag = false,
                                     const bool general_max_8bit_constraint_flag = false,
                                     const int chroma_format_idc = 1);
+
+CodecProfiles_e getH266CodecProfile(const unsigned profil_idc);
+
+/* ************************************************************************** */
 
 minivideo_EXPORT const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description = false);
 minivideo_EXPORT const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description = false);
