@@ -61,6 +61,7 @@ RESOURCES   += resources/resources.qrc
 # third party libraries
 HEADERS     += $${PWD}/src/thirdparty/portable_endian.h
 include(src/thirdparty/pugixml/pugixml.pri)
+include(src/thirdparty/QHexView/QHexView.pri)
 include(src/thirdparty/qhexedit2/qhexedit2.pri)
 include(src/thirdparty/qcustomplot/qcustomplot.pri)
 

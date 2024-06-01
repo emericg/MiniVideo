@@ -295,7 +295,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QHexEdit" name="widget_hex" native="true">
+      <widget class="QHexEdit" name="widget_hex1" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>512</width>
+         <height>256</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>256</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QHexView" name="widget_hex2" native="true">
        <property name="minimumSize">
         <size>
          <width>512</width>
@@ -319,6 +335,12 @@
    <class>QHexEdit</class>
    <extends>QWidget</extends>
    <header>src/thirdparty/qhexedit2/qhexedit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QHexView</class>
+   <extends>QWidget</extends>
+   <header>src/thirdparty/QHexView/qhexview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

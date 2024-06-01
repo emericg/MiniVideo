@@ -34,6 +34,9 @@
 // QHexEdit2 widget
 #include "thirdparty/qhexedit2/qhexedit.h"
 
+// QHexView widget
+#include "thirdparty/QHexView/qhexview.h"
+
 #ifdef _MSC_VER
 #include <windows.h>
 #include <Lmcons.h>
@@ -51,7 +54,9 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 
-#define THUMBNAILS_ENABLED 0
+#define THUMBNAILS_ENABLED  0
+#define HEX_WIDGET_V1       1
+#define HEX_WIDGET_V2       0
 
 tabContainer::tabContainer(QWidget *parent) :
     QWidget(parent),
@@ -71,22 +76,42 @@ tabContainer::tabContainer(QWidget *parent) :
     icon_ext.addFile(":/img/img/E.png");
     icon_track.addFile(":/img/img/T.png");
 
-    // Setup HEX widget
-    ui->widget_hex->setReadOnly(true);
-    ui->widget_hex->setAddressArea(false);
-    ui->widget_hex->setBytesPerLine(16);
-    ui->widget_hex->setHexCaps(true);
+    ui->widget_hex1->setVisible(false);
+    ui->widget_hex2->setVisible(false);
+
+    // Setup HEX widget (v1) ///////////////////////////////////////////////////
+
+#if (HEX_WIDGET_V1 == 1)
+    ui->widget_hex1->setVisible(true);
+    ui->widget_hex1->setReadOnly(true);
+
+    ui->widget_hex1->setAddressArea(false);
+    ui->widget_hex1->setBytesPerLine(16);
+    ui->widget_hex1->setHexCaps(true);
 
 #if defined(Q_OS_WINDOWS)
-    ui->widget_hex->setFont(QFont("Lucida Console", 12));
+    ui->widget_hex1->setFont(QFont("Lucida Console", 12));
 #elif defined(Q_OS_MACOS)
-    ui->widget_hex->setFont(QFont("Andale Mono", 12));
+    ui->widget_hex1->setFont(QFont("Andale Mono", 12));
 #elif defined(Q_OS_LINUX)
-    ui->widget_hex->setFont(QFont("Monospace", 12));
+    ui->widget_hex1->setFont(QFont("Monospace", 12));
 #else
     //int id = QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-    //ui->widget_hex->setFont(QFont("DejaVu Sans Mono", 12));
-    ui->widget_hex->setFont(QFont("Monospace", 12));
+    //ui->widget_hex1->setFont(QFont("DejaVu Sans Mono", 12));
+    ui->widget_hex1->setFont(QFont("Monospace", 12));
+#endif
+#endif
+
+    // Setup HEX widget (v2) ///////////////////////////////////////////////////
+
+#if (HEX_WIDGET_V2 == 1)
+    ui->widget_hex2->setVisible(true);
+    ui->widget_hex2->setReadOnly(true);
+
+    QHexOptions opts;
+    opts.flags = QHexFlags::NoHeader | QHexFlags::NoAddress;
+    //opts.flags = QHexFlags::HighlightAddress | QHexFlags::HighlightColumn;
+    ui->widget_hex2->setOptions(opts);
 #endif
 }
 
@@ -476,11 +501,17 @@ void tabContainer::sampleSelection(int sid)
         }
 
         // HexEditor
-        //if (mediaFile.isOpen())
-        {
-            ui->widget_hex->setData(mediaFile);
-            ui->widget_hex->setData(ui->widget_hex->dataAt(offset, size));
-        }
+#if (HEX_WIDGET_V1 == 1)
+        ui->widget_hex1->setData(mediaFile);
+        ui->widget_hex1->setData(ui->widget_hex1->dataAt(offset, size));
+#endif
+#if (HEX_WIDGET_V2 == 1)
+        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaFile.fileName());
+        ui->widget_hex2->setDocument(mediaFileHexa);
+        QByteArray data = mediaFileHexa->read(offset, size);
+        ui->widget_hex2->setData(data);
+        ui->widget_hex2->setVisible(true);
+#endif
     }
 }
 
@@ -535,8 +566,7 @@ void tabContainer::containerSelectionEmpty()
 {
     clearContent();
 
-    if (!media)
-        return;
+    if (!media) return;
 
     // Header infos
     ui->labelTitle->setText(QString::fromUtf8(media->file_name) + "." + QString::fromUtf8(media->file_extension));
@@ -555,7 +585,8 @@ void tabContainer::containerSelectionEmpty()
     ui->widgetSamples->hide();
 
     // HexEditor
-    //ui->widget_hex->setData(mediaFile);
+    ui->widget_hex1->setVisible(false);
+    ui->widget_hex2->setVisible(false);
 }
 
 void tabContainer::containerSelectionChanged()
@@ -782,11 +813,25 @@ void tabContainer::containerSelection(int64_t selected_offset)
         }
 
         // HexEditor
-        //if (mediaFile.isOpen())
-        {
-            ui->widget_hex->setData(mediaFile);
-            ui->widget_hex->setData(ui->widget_hex->dataAt(selected_offset, selected_size));
-        }
+#if (HEX_WIDGET_V1 == 1)
+        ui->widget_hex1->setData(mediaFile);
+        ui->widget_hex1->setData(ui->widget_hex1->dataAt(selected_offset, selected_size));
+        ui->widget_hex1->setVisible(true);
+#endif
+#if (HEX_WIDGET_V2 == 1)
+        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaFile.fileName());
+        ui->widget_hex2->setDocument(mediaFileHexa);
+        QByteArray data = mediaFileHexa->read(selected_offset, selected_size);
+        ui->widget_hex2->setData(data);
+        ui->widget_hex2->setVisible(true);
+
+        //ui->widget_hex2->setBackground(0, 10, Qt::red);
+        //ui->widget_hex2->setForeground(15, 30, Qt::blue);
+        //ui->widget_hex2->setComment(0, 12, "I'm a comment!");
+
+        //ui->widget_hex2->unhighlight();
+        //ui->widget_hex2->clearMetadata();
+#endif
     }
 }
 
