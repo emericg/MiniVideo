@@ -26,6 +26,7 @@
 
 // minivideo headers
 #include "minivideo_codecs.h"
+#include "demuxer/codecs/codec_private_struct.h"
 
 // C standard libraries
 #include <cstdint>
@@ -82,12 +83,6 @@ typedef struct MediaStream_t
     unsigned int width_display;             //!< Display width, in pixels, including crop/padding/orientation
     unsigned int height_display;            //!< Display height, in pixels, including crop/padding/orientation
 
-    HdrMode_e hdr_mode;                     //!< HDR mode
-    ScanType_e scan_mode;                   //!< Scan type
-    StereoMode_e stereo_mode;               //!< Stereo mode
-    Rotation_e video_rotation;              //!< Rotation
-    Projection_e video_projection;          //!< Projection
-
     double video_aspect_ratio;              //!< Video / Storage aspect ratio (from video geometry, ignore crop/padding/orientation)
         unsigned int video_aspect_ratio_h;
         unsigned int video_aspect_ratio_v;
@@ -109,12 +104,6 @@ typedef struct MediaStream_t
     double frame_duration;                  //!< Frame duration (in ms)
     FramerateMode_e framerate_mode;         //!< Framerate mode
 
-    double video_level;                     //!< Codec video level set by the encoder
-    bool h264_feature_cabac;                //!< CABAC compression (for H.264 only)
-    bool h264_feature_8x8;                  //!< 8x8 blocks (for H.264 only)
-    bool h264_feature_b_frames;             //!< B frames (for H.264 only)
-    bool h265_feature_parallelization;      //!< TODO (for H.265 only)
-    unsigned int max_ref_frames;            //!< Maximum reference frames
     unsigned int color_planes;              //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
     unsigned int color_subsampling;         //!< Chroma sub-sampling
     unsigned int color_depth;               //!< Color resolution per channel
@@ -123,6 +112,31 @@ typedef struct MediaStream_t
     unsigned int color_primaries;           //!< Color primaries
     unsigned int color_transfer;            //!< Color transfer function
     unsigned int color_matrix;              //!< Color matrix
+
+    HdrMode_e hdr_mode;                     //!< HDR mode
+    ScanType_e scan_mode;                   //!< Scan type
+    StereoMode_e stereo_mode;               //!< Stereo mode
+    Rotation_e video_rotation;              //!< Rotation
+    Projection_e video_projection;          //!< Projection
+
+    double video_level;                     //!< Codec video profile/level set by the encoder
+    unsigned int max_ref_frames;            //!< Maximum reference frames
+
+    bool h264_feature_cabac;                //!< CABAC compression (for H.264 only)
+    bool h264_feature_8x8_blocks;           //!< 8x8 blocks (for H.264 only)
+    bool h264_feature_b_frames;             //!< B frames (for H.264 only)
+    bool h265_feature_parallelization;      //!< TODO (for H.265 only)
+
+    // Codec specific parameters (video)
+    codecprivate_avcC_t *avcC = nullptr;
+    codecprivate_hvcC_t *hvcC = nullptr;
+    codecprivate_vvcC_t *vvcC = nullptr;
+    codecprivate_vpcC_t *vpcC = nullptr;
+    codecprivate_av1C_t *av1C = nullptr;
+
+    // Codec specific parameters (other)
+    codecprivate_dvcC_t *dvcC = nullptr;
+    codecprivate_mvcC_t *mvcC = nullptr;
 
     // Audio metadata
     unsigned int channel_count;             //!< Number of audio channels

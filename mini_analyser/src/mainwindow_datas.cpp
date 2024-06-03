@@ -974,7 +974,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_codec_profile->setVisible(false);
             }
 
-            if (t->h264_feature_cabac || t->h264_feature_8x8 || t->max_ref_frames > 0)
+            if (t->h264_feature_cabac || t->h264_feature_8x8_blocks || t->max_ref_frames > 0)
             {
                 QString str;
                 if (t->stream_codec == CODEC_H264)
@@ -982,7 +982,7 @@ int MainWindow::printVideoDetails()
                     if (t->h264_feature_cabac) str = "CABAC";
                     else str = "CAVLC";
                 }
-                if (t->h264_feature_8x8 == true)
+                if (t->h264_feature_8x8_blocks == true)
                 {
                     if (!str.isEmpty()) str += " / ";
                     str += tr("8x8 blocks");

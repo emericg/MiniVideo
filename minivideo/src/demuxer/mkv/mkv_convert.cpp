@@ -103,7 +103,7 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
         if (sample_count <= 0)
             sample_count = 1;
 
-        if (track->TrackType == MKV_TRACK_AUDIO || track->audio)
+        if (track->TrackType == MKV_TRACK_AUDIO)
         {
             retcode = init_bitstream_map(&media->tracks_audio[media->tracks_audio_count], 0, sample_count);
             if (retcode == SUCCESS)
@@ -112,9 +112,12 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
                 media->tracks_audio_count++;
             }
         }
-        else if (track->TrackType == MKV_TRACK_VIDEO || track->video)
+        else if (track->TrackType == MKV_TRACK_VIDEO)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, sample_count);
+            int parameters_count = 0;
+            if (track->avcC) parameters_count = track->avcC->sps_count + track->avcC->pps_count;
+
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], parameters_count, sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -156,8 +159,8 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
         if (track->Name && strnlen(track->Name, 256) > 0)
         {
-            map->track_title = (char *)malloc(strnlen(track->Name, 256) + 1);
-            strcpy(map->track_title, track->Name);
+            map->track_title = (char *)malloc(256);
+            strncpy(map->track_title, track->Name, 256);
         }
 
         if (track->Language && strlen(track->Language) > 0)
@@ -258,9 +261,6 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
 
             map->video_level = track->codec_level;
             map->max_ref_frames = track->max_ref_frames;
-            map->h264_feature_cabac = track->use_cabac;
-            map->h264_feature_8x8 = track->use_8x8_blocks;
-            map->h264_feature_b_frames = track->use_B_frames;
 
             if (track->video->StereoMode)
             {
@@ -300,23 +300,32 @@ int mkv_convert_track(MediaFile_t *media, mkv_t *mkv, mkv_track_t *track)
                     map->video_projection = PROJECTION_MESH;
             }
 
-            // Codec specific metadata
-            if (map->stream_codec == CODEC_H264 || map->stream_codec == CODEC_H265)
+            // Codec specific metadata (v2)
+            map->avcC = track->avcC;
+            map->hvcC = track->hvcC;
+            map->vvcC = track->vvcC;
+            map->vpcC = track->vpcC;
+            map->av1C = track->av1C;
+            map->dvcC = track->dvcC;
+            map->mvcC = track->mvcC;
+
+            // Parametersets
+            if (map->avcC)
             {
                 // Set SPS
-                for (unsigned i = 0; i < track->sps_count; i++)
+                for (unsigned i = 0; i < map->avcC->sps_count; i++)
                 {
                     map->parameter_type[i] = sample_VIDEO_PARAM;
-                    map->parameter_offset[i] = track->sps_sample_offset[i];
-                    map->parameter_size[i] = track->sps_sample_size[i];
+                    map->parameter_offset[i] = map->avcC->sps_sample_offset[i];
+                    map->parameter_size[i] = map->avcC->sps_sample_size[i];
                     map->parameter_count++;
                 }
                 // Set PPS
-                for (unsigned i = 0; i < track->pps_count; i++)
+                for (unsigned i = 0; i < map->avcC->pps_count; i++)
                 {
-                    map->parameter_type[i + track->sps_count] = sample_VIDEO_PARAM;
-                    map->parameter_offset[i + track->sps_count] = track->pps_sample_offset[i];
-                    map->parameter_size[i + track->sps_count] = track->pps_sample_size[i];
+                    map->parameter_type[i + map->avcC->sps_count] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i + map->avcC->sps_count] = map->avcC->pps_sample_offset[i];
+                    map->parameter_size[i + map->avcC->sps_count] = map->avcC->pps_sample_size[i];
                     map->parameter_count++;
                 }
             }
@@ -443,6 +452,10 @@ void mkv_clean(mkv_t *mkv)
                 delete [] mkv->tracks[stream_id]->CodecPrivate;
                 delete [] mkv->tracks[stream_id]->CodecName;
 
+                delete [] mkv->tracks[stream_id]->BlockAdditionName;
+                delete [] mkv->tracks[stream_id]->BlockAdditionType;
+                delete [] mkv->tracks[stream_id]->BlockAdditionExtra;
+
                 if (mkv->tracks[stream_id]->video)
                 {
                     if (mkv->tracks[stream_id]->video->Projection)
@@ -452,10 +465,11 @@ void mkv_clean(mkv_t *mkv)
                     }
                     if (mkv->tracks[stream_id]->video->Colour)
                     {
-                        delete [] mkv->tracks[stream_id]->video->Colour->MasteringMetadata;
+                        delete mkv->tracks[stream_id]->video->Colour->MasteringMetadata;
                         delete mkv->tracks[stream_id]->video->Colour;
                     }
                     delete [] mkv->tracks[stream_id]->video->ColourSpace;
+
                     delete mkv->tracks[stream_id]->video;
                 }
                 if (mkv->tracks[stream_id]->audio)
@@ -475,20 +489,6 @@ void mkv_clean(mkv_t *mkv)
                     delete mkv->tracks[stream_id]->encodings->encoding;
                     delete mkv->tracks[stream_id]->encodings;
                 }
-
-                // SPS
-                for (unsigned sps_id = 0; sps_id < mkv->tracks[stream_id]->sps_count && sps_id < MAX_SPS; sps_id++)
-                    freeSPS(&mkv->tracks[stream_id]->sps_array[sps_id]);
-                delete *mkv->tracks[stream_id]->sps_array;
-                delete [] mkv->tracks[stream_id]->sps_sample_offset;
-                delete [] mkv->tracks[stream_id]->sps_sample_size;
-
-                // PPS
-                for (unsigned pps_id = 0; pps_id < mkv->tracks[stream_id]->pps_count && pps_id < MAX_PPS; pps_id++)
-                    freePPS(&mkv->tracks[stream_id]->pps_array[pps_id]);
-                delete *mkv->tracks[stream_id]->pps_array;
-                delete [] mkv->tracks[stream_id]->pps_sample_offset;
-                delete [] mkv->tracks[stream_id]->pps_sample_size;
 
                 // Samples
                 for (unsigned sample_id = 0; sample_id < mkv->tracks[stream_id]->sample_vector.size(); sample_id++)

@@ -752,6 +752,81 @@ static int mkv_parse_tracks_entry_contentencodings(Bitstream_t *bitstr, EbmlElem
 
 /* ************************************************************************** */
 
+static int mkv_parse_block_additional_mapping(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *mkv_track)
+{
+    TRACE_INFO(MKV, BLD_GREEN "mkv_parse_block_addition_mapping()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    print_ebml_element(element);
+    write_ebml_element(element, mkv->xml, "Block Addition Mapping");
+
+    while (mkv->run == true &&
+           retcode == SUCCESS &&
+           bitstream_get_absolute_byte_offset(bitstr) < element->offset_end)
+    {
+        // Parse sub element
+        EbmlElement_t element_sub;
+        retcode = parse_ebml_element(bitstr, &element_sub);
+
+        // Then parse subbox content
+        if (mkv->run == true && retcode == SUCCESS)
+        {
+            switch (element_sub.eid)
+            {
+            case eid_BlockAddIDValue:
+                read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "BlockAddIDValue");
+                break;
+            case eid_BlockAddIDName:
+                mkv_track->BlockAdditionName = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "BlockAddIDName");
+                break;
+            case eid_BlockAddIDType:
+                mkv_track->BlockAdditionType = read_ebml_data_string(bitstr, &element_sub, mkv->xml, "BlockAddIDType");
+                break;
+            case eid_BlockAddIDExtraData:
+                mkv_track->BlockAdditionExtra = read_ebml_data_binary(bitstr, &element_sub, mkv->xml, "BlockAddIDExtraData");
+                mkv_track->BlockAdditionExtra_offset = bitstream_get_absolute_byte_offset(bitstr) - element_sub.size;
+                mkv_track->BlockAdditionExtra_size = element_sub.size;
+
+                if (mkv_track->BlockAdditionExtra && mkv_track->BlockAdditionType)
+                {
+                    int64_t savedOffset = bitstream_get_absolute_byte_offset(bitstr);
+                    bitstream_goto_offset(bitstr, mkv_track->BlockAdditionExtra_offset);
+
+                    if (strncmp(mkv_track->BlockAdditionType, "dvcC", 4) == 0 ||
+                        strncmp(mkv_track->BlockAdditionType, "dvvC", 4) == 0)
+                    {
+                        parse_dolbyvision_private(bitstr, mkv_track, mkv);
+                    }
+                    else if (strncmp(mkv_track->BlockAdditionType, "mvcC", 4) == 0)
+                    {
+                        parse_mvc_private(bitstr, mkv_track, mkv);
+                    }
+                    else
+                    {
+                        // Unknown data
+                        parse_codec_private(bitstr, &element_sub, mkv);
+                    }
+
+                    bitstream_goto_offset(bitstr, savedOffset); // restore offset
+                }
+                break;
+
+            default:
+                retcode = ebml_parse_unknown(bitstr, &element_sub, mkv->xml);
+                break;
+            }
+
+            retcode = jumpy_mkv(bitstr, element, &element_sub);
+        }
+    }
+
+    if (mkv->xml) fprintf(mkv->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
 static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv, mkv_track_t *mkv_track)
 {
     TRACE_INFO(MKV, BLD_GREEN "mkv_parse_tracks_entry()" CLR_RESET);
@@ -848,22 +923,39 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                     mkv_track->CodecPrivate_offset = bitstream_get_absolute_byte_offset(bitstr) - element_sub.size;
                     mkv_track->CodecPrivate_size = element_sub.size;
 
-                    if (mkv_track->CodecPrivate_offset && mkv_track->CodecPrivate_size)
+                    if (mkv_track->CodecID && mkv_track->CodecPrivate_offset && mkv_track->CodecPrivate_size)
                     {
                         int64_t saveOffset = bitstream_get_absolute_byte_offset(bitstr);
-
                         bitstream_goto_offset(bitstr, mkv_track->CodecPrivate_offset);
 
-                        if (mkv_track->CodecID && strcmp(mkv_track->CodecID, "V_MPEG4/ISO/AVC") == 0)
+                        if (strcmp(mkv_track->CodecID, "V_MPEG4/ISO/AVC") == 0)
                         {
                             parse_h264_private(bitstr, mkv_track, mkv);
                         }
-                        else if (mkv_track->CodecID && strcmp(mkv_track->CodecID, "V_MPEGH/ISO/HEVC") == 0)
+                        else if (strcmp(mkv_track->CodecID, "V_MPEGH/ISO/HEVC") == 0)
                         {
                             parse_h265_private(bitstr, mkv_track, mkv);
                         }
+                        else if (strcmp(mkv_track->CodecID, "V_MPEGI/ISO/VVC") == 0)
+                        {
+                            parse_h266_private(bitstr, mkv_track, mkv);
+                        }
+                        else if (strcmp(mkv_track->CodecID, "V_VP8") == 0 ||
+                                 strcmp(mkv_track->CodecID, "V_VP9") == 0)
+                        {
+                            parse_vpx_private(bitstr, mkv_track, mkv);
+                        }
+                        else if (strcmp(mkv_track->CodecID, "V_AV1") == 0)
+                        {
+                            parse_av1_private(bitstr, mkv_track, mkv);
+                        }
+                        else
+                        {
+                            // Unknown data
+                            parse_codec_private(bitstr, &element_sub, mkv);
+                        }
 
-                        bitstream_goto_offset(bitstr, saveOffset);
+                        bitstream_goto_offset(bitstr, saveOffset); // restore offset
                     }
                 }
                 break;
@@ -900,6 +992,10 @@ static int mkv_parse_tracks_entry(Bitstream_t *bitstr, EbmlElement_t *element, m
                 break;
             case eid_ContentEncodings:
                 retcode = mkv_parse_tracks_entry_contentencodings(bitstr, &element_sub, mkv, mkv_track);
+                break;
+
+            case eid_BlockAdditionMapping:
+                retcode = mkv_parse_block_additional_mapping(bitstr, &element_sub, mkv, mkv_track);
                 break;
 
             case eid_void:

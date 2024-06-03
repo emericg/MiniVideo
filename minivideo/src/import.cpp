@@ -326,22 +326,22 @@ int import_fileClose(MediaFile_t **media_ptr)
 
         unsigned i = 0;
 
-        for (i = 0; i < 16 /*(*media_ptr)->tracks_audio_count*/; i++)
+        for (i = 0; i < (*media_ptr)->tracks_audio_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_audio[i]);
         }
 
-        for (i = 0; i < 16/*(*media_ptr)->tracks_video_count*/; i++)
+        for (i = 0; i < (*media_ptr)->tracks_video_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_video[i]);
         }
 
-        for (i = 0; i < 16/*(*media_ptr)->tracks_subtitles_count*/; i++)
+        for (i = 0; i < (*media_ptr)->tracks_subtitles_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_subt[i]);
         }
 
-        for (i = 0; i < 16/*(*media_ptr)->tracks_others_count*/; i++)
+        for (i = 0; i < (*media_ptr)->tracks_others_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_others[i]);
         }
@@ -351,13 +351,13 @@ int import_fileClose(MediaFile_t **media_ptr)
         {
             if (&(*media_ptr)->chapters[i])
             {
-                if ((*media_ptr)->chapters[i].name)
-                    free((*media_ptr)->chapters[i].name);
-                //free(&(*media_ptr)->chapters[i]);
+                free((*media_ptr)->chapters[i].name);
+                free(&(*media_ptr)->chapters[i]);
             }
         }
         free((*media_ptr)->chapters);
 
+        // Vendors
         free((*media_ptr)->metadata_gopro);
 
         {

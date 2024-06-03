@@ -31,7 +31,11 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
+
+#include "../../decoder/h264/h264_nalu.h"
 #include "../../decoder/h264/h264_parameterset.h"
+#include "../../decoder/h265/h265_nalu.h"
+//#include "../../decoder/h265/h265_parameterset.h"
 
 // C standard libraries
 #include <cstdio>
@@ -1129,165 +1133,144 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_avcC()" CLR_RESET);
     int retcode = SUCCESS;
 
+    // Init
+    if (track->avcC)
+    {
+        TRACE_WARNING(MKV, "parse_avcC() we aleady have an codecprivate_avcC_t structure!");
+        return FAILURE;
+    }
+    track->avcC = (codecprivate_avcC_t *)calloc(1, sizeof(codecprivate_avcC_t));
+    if (!track->avcC)
+    {
+        TRACE_ERROR(MKV, "parse_avcC() codecprivate_avcC_t allocation error!");
+        return FAILURE;
+    }
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "AVC Configuration");
+
     // Parse box content
-    unsigned configurationVersion = read_bits(bitstr, 8);
-    unsigned AVCProfileIndication = read_bits(bitstr, 8);
-    unsigned profile_compatibility = read_bits(bitstr, 8);
-    unsigned AVCLevelIndication = read_bits(bitstr, 8);
+    track->avcC->configurationVersion = read_bits(bitstr, 8);
+    track->avcC->AVCProfileIndication = read_bits(bitstr, 8);
+    track->avcC->profile_compatibility = read_bits(bitstr, 8);
+    track->avcC->AVCLevelIndication = read_bits(bitstr, 8);
     skip_bits(bitstr, 6); // reserved
-    unsigned lengthSizeMinusOne = read_bits(bitstr, 2);
+    track->avcC->lengthSizeMinusOne = read_bits(bitstr, 2);
     skip_bits(bitstr, 3); // reserved
 
     // SPS
-    track->sps_count = read_bits(bitstr, 5);
-    track->sps_sample_offset = (int64_t *)calloc(track->sps_count, sizeof(int64_t));
-    track->sps_sample_size = (unsigned int *)calloc(track->sps_count, sizeof(unsigned int));
+    track->avcC->sps_count = read_bits(bitstr, 5);
+    track->avcC->sps_sample_offset = (int64_t *)calloc(track->avcC->sps_count, sizeof(int64_t));
+    track->avcC->sps_sample_size = (int32_t *)calloc(track->avcC->sps_count, sizeof(int32_t));
 
-    for (unsigned i = 0; i < track->sps_count && i < MAX_SPS; i++) // MAX_SPS = 32
+    for (unsigned i = 0; i < track->avcC->sps_count && i < MAX_SPS; i++) // MAX_SPS = 32
     {
-        track->sps_sample_size[i] = read_bits(bitstr, 16);
-        track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
-        track->sps_array[i] = (h264_sps_t *)calloc(1, sizeof(h264_sps_t));
+        track->avcC->sps_sample_size[i] = read_bits(bitstr, 16);
+        track->avcC->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+        track->avcC->sps_array[i] = (h264_sps_t *)calloc(1, sizeof(h264_sps_t));
 
         skip_bits(bitstr, 8); // skip NAL header
-        decodeSPS(bitstr, track->sps_array[i]);
+        decodeSPS(bitstr, track->avcC->sps_array[i]);
         bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
 
-        if (bitstream_get_absolute_byte_offset(bitstr) != (track->sps_sample_offset[i] + track->sps_sample_size[i]))
+        if (bitstream_get_absolute_byte_offset(bitstr) != (track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]))
         {
             TRACE_WARNING(MP4, "SPS OFFSET ERROR  %lli vs %lli",
                           bitstream_get_absolute_byte_offset(bitstr),
-                          (track->sps_sample_offset[i] + track->sps_sample_size[i]));
+                          (track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]));
 
-            skip_bits(bitstr, ((track->sps_sample_offset[i] + track->sps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+            skip_bits(bitstr, ((track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
         }
     }
 
     // PPS
-    track->pps_count = read_bits(bitstr, 8);
-    track->pps_sample_offset = (int64_t *)calloc(track->pps_count, sizeof(int64_t));
-    track->pps_sample_size = (unsigned int *)calloc(track->pps_count, sizeof(unsigned int));
+    track->avcC->pps_count = read_bits(bitstr, 8);
+    track->avcC->pps_sample_offset = (int64_t *)calloc(track->avcC->pps_count, sizeof(int64_t));
+    track->avcC->pps_sample_size = (int32_t *)calloc(track->avcC->pps_count, sizeof(int32_t));
 
-    for (unsigned i = 0; i < track->pps_count && i < MAX_PPS; i++) // MAX_PPS = 256
+    for (unsigned i = 0; i < track->avcC->pps_count && i < MAX_PPS; i++) // MAX_PPS = 256
     {
-        track->pps_sample_size[i] = read_bits(bitstr, 16);
-        track->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
-        track->pps_array[i] = (h264_pps_t *)calloc(1, sizeof(h264_pps_t));
+        track->avcC->pps_sample_size[i] = read_bits(bitstr, 16);
+        track->avcC->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+        track->avcC->pps_array[i] = (h264_pps_t *)calloc(1, sizeof(h264_pps_t));
 
         skip_bits(bitstr, 8); // skip NAL header
-        decodePPS(bitstr, track->pps_array[i], track->sps_array);
+        decodePPS(bitstr, track->avcC->pps_array[i], track->avcC->sps_array);
         bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
 
-        if (bitstream_get_absolute_byte_offset(bitstr) != (track->pps_sample_offset[i] + track->pps_sample_size[i]))
+        if (bitstream_get_absolute_byte_offset(bitstr) != (track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]))
         {
             TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
                           bitstream_get_absolute_byte_offset(bitstr),
-                          (track->pps_sample_offset[i] + track->pps_sample_size[i]));
-            skip_bits(bitstr, ((track->pps_sample_offset[i] + track->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+                          (track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]));
+            skip_bits(bitstr, ((track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
         }
-    }
-
-    // Handle H.264 profile & level
-    if (track->sps_count > 0 && track->sps_array[0])
-    {
-        track->codec_profile = getH264CodecProfile(track->sps_array[0]->profile_idc,
-                                                   track->sps_array[0]->constraint_setX_flag[0],
-                                                   track->sps_array[0]->constraint_setX_flag[1],
-                                                   track->sps_array[0]->constraint_setX_flag[2],
-                                                   track->sps_array[0]->constraint_setX_flag[3],
-                                                   track->sps_array[0]->constraint_setX_flag[4],
-                                                   track->sps_array[0]->constraint_setX_flag[5]);
-        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
-
-        track->max_ref_frames = track->sps_array[0]->max_num_ref_frames;
-        track->color_depth = track->sps_array[0]->BitDepthY;
-
-        if (track->sps_array[0]->vui)
-        {
-            track->color_range = track->sps_array[0]->vui->video_full_range_flag;
-            track->color_primaries = track->sps_array[0]->vui->colour_primaries;
-            track->color_transfer = track->sps_array[0]->vui->transfer_characteristics;
-            track->color_matrix = track->sps_array[0]->vui->matrix_coefficients;
-        }
-
-        if (track->pps_count && track->pps_array[0])
-        {
-            track->use_cabac = track->pps_array[0]->entropy_coding_mode_flag;
-            track->use_8x8_blocks = track->pps_array[0]->transform_8x8_mode_flag;
-        }
-    }
-    else
-    {
-        track->codec_profile = getH264CodecProfile(AVCProfileIndication);
-        track->codec_level = static_cast<double>(AVCLevelIndication) / 10.0;
     }
 
 #if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> configurationVersion  : %u", configurationVersion);
-    TRACE_1(MP4, "> AVCProfileIndication  : %u", AVCProfileIndication);
-    TRACE_1(MP4, "> profile_compatibility : %u", profile_compatibility);
-    TRACE_1(MP4, "> AVCLevelIndication    : %u", AVCLevelIndication);
-    TRACE_1(MP4, "> lengthSizeMinusOne    : %u", lengthSizeMinusOne);
+    TRACE_1(MP4, "> configurationVersion  : %u", track->avcC->configurationVersion);
+    TRACE_1(MP4, "> AVCProfileIndication  : %u", track->avcC->AVCProfileIndication);
+    TRACE_1(MP4, "> profile_compatibility : %u", track->avcC->profile_compatibility);
+    TRACE_1(MP4, "> AVCLevelIndication    : %u", track->avcC->AVCLevelIndication);
+    TRACE_1(MP4, "> lengthSizeMinusOne    : %u", track->avcC->lengthSizeMinusOne);
 
-    TRACE_1(MP4, "> numOfSequenceParameterSets    = %u", track->sps_count);
-    for (unsigned i = 0; i < track->sps_count; i++)
+    TRACE_1(MP4, "> numOfSequenceParameterSets    = %u", track->avcC->sps_count);
+    for (unsigned i = 0; i < track->avcC->sps_count; i++)
     {
-        TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->sps_sample_size[i]);
-        TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %li", i, track->sps_sample_offset[i]);
+        TRACE_1(MP4, "> sequenceParameterSetLength[%u] : %u", i, track->avcC->sps_sample_size[i]);
+        TRACE_1(MP4, "> sequenceParameterSetOffset[%u] : %li", i, track->avcC->sps_sample_offset[i]);
     }
 
-    TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->pps_count);
-    for (unsigned i = 0; i < track->pps_count; i++)
+    TRACE_1(MP4, "> numOfPictureParameterSets     = %u", track->avcC->pps_count);
+    for (unsigned i = 0; i < track->avcC->pps_count; i++)
     {
-        TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->pps_sample_size[i]);
-        TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %li", i, track->pps_sample_offset[i]);
+        TRACE_1(MP4, "> pictureParameterSetLength[%u]  : %u", i, track->avcC->pps_sample_size[i]);
+        TRACE_1(MP4, "> pictureParameterSetOffset[%u]  : %li", i, track->avcC->pps_sample_offset[i]);
     }
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "AVC Configuration");
-        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
-        fprintf(mp4->xml, "  <AVCProfileIndication>%u</AVCProfileIndication>\n", AVCProfileIndication);
-        fprintf(mp4->xml, "  <profile_compatibility>%u</profile_compatibility>\n", profile_compatibility);
-        fprintf(mp4->xml, "  <AVCLevelIndication>%u</AVCLevelIndication>\n", AVCLevelIndication);
-        fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
+        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", track->avcC->configurationVersion);
+        fprintf(mp4->xml, "  <AVCProfileIndication>%u</AVCProfileIndication>\n", track->avcC->AVCProfileIndication);
+        fprintf(mp4->xml, "  <profile_compatibility>%u</profile_compatibility>\n", track->avcC->profile_compatibility);
+        fprintf(mp4->xml, "  <AVCLevelIndication>%u</AVCLevelIndication>\n", track->avcC->AVCLevelIndication);
+        fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", track->avcC->lengthSizeMinusOne);
 
-        fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->sps_count);
-        for (unsigned i = 0; i < track->sps_count; i++)
+        fprintf(mp4->xml, "  <numOfSequenceParameterSets>%u</numOfSequenceParameterSets>\n", track->avcC->sps_count);
+        for (unsigned i = 0; i < track->avcC->sps_count; i++)
         {
             xmlSpacer(mp4->xml, "SequenceParameterSet infos", i);
-            fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->sps_sample_size[i]);
-            fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%" PRId64 "</sequenceParameterSetOffset>\n", i, track->sps_sample_offset[i]);
+            fprintf(mp4->xml, "  <sequenceParameterSetLength index=\"%u\">%u</sequenceParameterSetLength>\n", i, track->avcC->sps_sample_size[i]);
+            fprintf(mp4->xml, "  <sequenceParameterSetOffset index=\"%u\">%" PRId64 "</sequenceParameterSetOffset>\n", i, track->avcC->sps_sample_offset[i]);
         }
 
-        fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->pps_count);
-        for (unsigned i = 0; i < track->pps_count; i++)
+        fprintf(mp4->xml, "  <numOfPictureParameterSets>%u</numOfPictureParameterSets>\n", track->avcC->pps_count);
+        for (unsigned i = 0; i < track->avcC->pps_count; i++)
         {
             xmlSpacer(mp4->xml, "PictureParameterSet", i);
-            fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->pps_sample_size[i]);
-            fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%" PRId64 "</pictureParameterSetOffset>\n", i, track->pps_sample_offset[i]);
+            fprintf(mp4->xml, "  <pictureParameterSetLength index=\"%u\">%u</pictureParameterSetLength>\n", i, track->avcC->pps_sample_size[i]);
+            fprintf(mp4->xml, "  <pictureParameterSetOffset index=\"%u\">%" PRId64 "</pictureParameterSetOffset>\n", i, track->avcC->pps_sample_offset[i]);
         }
 
-        for (unsigned i = 0; i < track->sps_count; i++)
+        for (unsigned i = 0; i < track->avcC->sps_count; i++)
         {
-            printPPS(track->pps_array[i], track->sps_array);
+            printPPS(track->avcC->pps_array[i], track->avcC->sps_array);
 
-            mapSPS(track->sps_array[i],
-                   track->sps_sample_offset[i],
-                   track->sps_sample_size[i],
+            mapSPS(track->avcC->sps_array[i],
+                   track->avcC->sps_sample_offset[i],
+                   track->avcC->sps_sample_size[i],
                    mp4->xml);
         }
-        for (unsigned i = 0; i < track->pps_count; i++)
+        for (unsigned i = 0; i < track->avcC->pps_count; i++)
         {
-            printPPS(track->pps_array[i], track->sps_array);
+            printPPS(track->avcC->pps_array[i], track->avcC->sps_array);
 
-            mapPPS(track->pps_array[i],
-                   track->sps_array,
-                   track->pps_sample_offset[i],
-                   track->pps_sample_size[i],
+            mapPPS(track->avcC->pps_array[i],
+                   track->avcC->sps_array,
+                   track->avcC->pps_sample_offset[i],
+                   track->avcC->pps_sample_size[i],
                    mp4->xml);
         }
 
@@ -1310,121 +1293,137 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_hvcC()" CLR_RESET);
     int retcode = SUCCESS;
 
+    // Init
+    if (track->hvcC)
+    {
+        TRACE_WARNING(MKV, "parse_hvcC() we aleady have an codecprivate_hvcC_t structure!");
+        return FAILURE;
+    }
+    track->hvcC = (codecprivate_hvcC_t *)calloc(1, sizeof(codecprivate_hvcC_t));
+    if (!track->hvcC)
+    {
+        TRACE_ERROR(MKV, "parse_hvcC() codecprivate_hvcC_t allocation error!");
+        return FAILURE;
+    }
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "HEVC Configuration");
+
     // Parse box content
-    unsigned configurationVersion = read_bits(bitstr, 8);
-    unsigned general_profile_space = read_bits(bitstr, 2);
-    bool general_tier_flag = read_bits(bitstr, 1);
-    unsigned general_profile_idc = read_bits(bitstr, 5);
-    uint32_t general_profile_compatibility_flags = read_bits(bitstr, 32);
-    uint64_t general_constraint_indicator_flags = read_bits_64(bitstr, 48);
-    unsigned general_level_idc = read_bits(bitstr, 8);
+    track->hvcC->configurationVersion = read_bits(bitstr, 8);
+    track->hvcC->general_profile_space = read_bits(bitstr, 2);
+    track->hvcC->general_tier_flag = read_bits(bitstr, 1);
+    track->hvcC->general_profile_idc = read_bits(bitstr, 5);
+    track->hvcC->general_profile_compatibility_flags = read_bits(bitstr, 32);
+    track->hvcC->general_constraint_indicator_flags = read_bits_64(bitstr, 48);
+    track->hvcC->general_level_idc = read_bits(bitstr, 8);
+
     skip_bits(bitstr, 4); // reserved
-    unsigned min_spatial_segmentation_idc = read_bits(bitstr, 12);
+    track->hvcC->min_spatial_segmentation_idc = read_bits(bitstr, 12);
     skip_bits(bitstr, 6); // reserved
-    unsigned parallelismType = read_bits(bitstr, 2);
+    track->hvcC->parallelismType = read_bits(bitstr, 2);
     skip_bits(bitstr, 6); // reserved
-    unsigned chromaFormat = read_bits(bitstr, 2);
+    track->hvcC->chromaFormat = read_bits(bitstr, 2);
     skip_bits(bitstr, 5); // reserved
-    unsigned bitDepthLumaMinus8 = read_bits(bitstr, 3);
+    track->hvcC->bitDepthLumaMinus8 = read_bits(bitstr, 3);
     skip_bits(bitstr, 5); // reserved
-    unsigned bitDepthChromaMinus8 = read_bits(bitstr, 3);
+    track->hvcC->bitDepthChromaMinus8 = read_bits(bitstr, 3);
+    track->hvcC->avgFrameRate = read_bits(bitstr, 16);
+    track->hvcC->constantFrameRate = read_bits(bitstr, 2);
+    track->hvcC->numTemporalLayers = read_bits(bitstr, 3);
+    track->hvcC->temporalIdNested = read_bits(bitstr, 1);
+    track->hvcC->lengthSizeMinusOne = read_bits(bitstr, 2);
 
-    unsigned avgFrameRate = read_bits(bitstr, 16);
-    unsigned constantFrameRate = read_bits(bitstr, 2);
-    unsigned numTemporalLayers = read_bits(bitstr, 3);
-    bool temporalIdNested = read_bits(bitstr, 1);
-    unsigned lengthSizeMinusOne = read_bits(bitstr, 1);
-
-    unsigned numOfArrays = read_bits(bitstr, 1);
+    track->hvcC->numOfArrays = read_bits(bitstr, 8);
+/*
     bool *array_completeness = NULL;
     uint8_t *NAL_unit_type = NULL;
     uint16_t *numNalus = NULL;
     uint16_t **nalUnitLength = NULL;
     uint8_t ***nalUnit = NULL;
 
-    for (unsigned i = 0; i < numOfArrays; i++)
+    for (unsigned j = 0; j < track->hvcC->numOfArrays; j++)
     {
-        break;
-
-        array_completeness = (bool *)malloc(numOfArrays);
-        NAL_unit_type = (uint8_t *)malloc(numOfArrays);
-        numNalus = (uint16_t *)malloc(numOfArrays);
-        nalUnitLength = (uint16_t **)malloc(numOfArrays);
-        nalUnit = (uint8_t ***)malloc(numOfArrays);
+        array_completeness = (bool *)malloc(track->hvcC->numOfArrays);
+        NAL_unit_type = (uint8_t *)malloc(track->hvcC->numOfArrays);
+        numNalus = (uint16_t *)malloc(track->hvcC->numOfArrays);
+        nalUnitLength = (uint16_t **)malloc(track->hvcC->numOfArrays);
+        nalUnit = (uint8_t ***)malloc(track->hvcC->numOfArrays);
         if (array_completeness && NAL_unit_type && numNalus && nalUnitLength && nalUnit)
         {
-            for (unsigned j = 0; j < numOfArrays; j++)
+            array_completeness[j] = read_bits(bitstr, 1);
+            skip_bits(bitstr, 1); // reserved
+            NAL_unit_type[j] = read_bits(bitstr, 6); // can be VPS, SPS, PPS, or SEI NAL unit
+            numNalus[j] = read_bits(bitstr, 16);
+
+            for (unsigned i = 0; i < numNalus[j]; i++)
             {
-                array_completeness[j] = read_bits(bitstr, 1);
-                skip_bits(bitstr, 1); // reserved
-                NAL_unit_type[j] = read_bits(bitstr, 6); // can be VPS, SPS, PPS, or SEI NAL unit
-                numNalus[j] = read_bits(bitstr, 16);
-
-                if (numNalus[j] > 0)
+                nalUnitLength[j] = (uint16_t *)malloc(numNalus[j]);
+                nalUnit[j] = (uint8_t **)malloc(numNalus[j]);
+                //if (nalUnitLength[j][i] && nalUnit[j][i])
                 {
-                    nalUnitLength[j] = (uint16_t *)malloc(numNalus[j]);
-                    nalUnit[j] = (uint8_t **)malloc(numNalus[j]);
-                    if (nalUnitLength[j] && nalUnit[j])
-                    {
-                        for (unsigned k = 0; k < numNalus[j]; k++)
-                        {
-                            nalUnitLength[j][k] = read_bits(bitstr, 16);
-/*
-                            // TODO register SPS & PPS
-                            if (NAL_unit_type[j] == SPS)
-                            {
-                                track->sps_count = read_bits(bitstr, 5); // MAX_SPS = 32
-                                track->sps_sample_offset = (int64_t*)calloc(track->sps_count, sizeof(int64_t));
-                                track->sps_sample_size = (unsigned int*)calloc(track->sps_count, sizeof(unsigned int));
-                                for (i = 0; i < track->sps_count; i++)
-                                {
-                                    track->sps_sample_size[i] = read_bits(bitstr, 16);
-                                    track->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
+                    nalUnitLength[j][i] = read_bits(bitstr, 16);
 
-                                    skip_bits(bitstr, track->sps_sample_size[i] * 8); // sequenceParameterSetNALUnit
-                                }
-                            }
-*/
-                        }
+                    if (NAL_unit_type[j] == NALU_TYPE_VPS_NUT)
+                    {
+                        skip_bits(bitstr, nalUnitLength[j][i] * 8);
+                    }
+                    else if (NAL_unit_type[j] == NALU_TYPE_SPS_NUT)
+                    {
+                        skip_bits(bitstr, nalUnitLength[j][i] * 8);
+                    }
+                    else if (NAL_unit_type[j] == NALU_TYPE_PPS_NUT)
+                    {
+                        skip_bits(bitstr, nalUnitLength[j][i] * 8);
+                    }
+                    else if (NAL_unit_type[j] == NALU_TYPE_PREFIX_SEI_NUT)
+                    {
+                        skip_bits(bitstr, nalUnitLength[j][i] * 8);
+                    }
+                    else if (NAL_unit_type[j] == NALU_TYPE_SUFFIX_SEI_NUT)
+                    {
+                        skip_bits(bitstr, nalUnitLength[j][i] * 8);
                     }
                     else
-                        retcode = FAILURE;
+                    {
+                        //skip_bits(bitstr, nalUnitLength[j][i] * 8);
+                    }
                 }
+                //else
+                //{
+                //    retcode = FAILURE;
+                //}
             }
         }
         else
+        {
             retcode = FAILURE;
+        }
     }
-
-    // Handle H.265 profile & level
-    track->codec_profile = getH265CodecProfile(general_profile_idc);
-    track->codec_level = static_cast<double>(general_level_idc) / 30.0;
-    track->color_depth = bitDepthLumaMinus8 + 8;
-
+*/
 #if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> configurationVersion : %u", configurationVersion);
-    TRACE_1(MP4, "> general_profile_space: %u", general_profile_space);
-    TRACE_1(MP4, "> general_tier_flag    : %u", general_tier_flag);
-    TRACE_1(MP4, "> general_profile_idc  : %u", general_profile_idc);
-    TRACE_1(MP4, "> general_profile_compatibility_flags: %u", general_profile_compatibility_flags);
-    TRACE_1(MP4, "> general_constraint_indicator_flags : %lu", general_constraint_indicator_flags);
-    TRACE_1(MP4, "> general_level_idc    : %u", general_level_idc);
+    TRACE_1(MP4, "> configurationVersion : %u", track->hvcC->configurationVersion);
+    TRACE_1(MP4, "> general_profile_space: %u", track->hvcC->general_profile_space);
+    TRACE_1(MP4, "> general_tier_flag    : %u", track->hvcC->general_tier_flag);
+    TRACE_1(MP4, "> general_profile_idc  : %u", track->hvcC->general_profile_idc);
+    TRACE_1(MP4, "> general_profile_compatibility_flags: %u", track->hvcC->general_profile_compatibility_flags);
+    TRACE_1(MP4, "> general_constraint_indicator_flags : %lu", track->hvcC->general_constraint_indicator_flags);
+    TRACE_1(MP4, "> general_level_idc    : %u", track->hvcC->general_level_idc);
 
-    TRACE_1(MP4, "> min_spatial_segmentation_idc: %u", min_spatial_segmentation_idc);
-    TRACE_1(MP4, "> parallelismType      : %u", parallelismType);
-    TRACE_1(MP4, "> chromaFormat         : %u", chromaFormat);
-    TRACE_1(MP4, "> bitDepthLumaMinus8   : %u", bitDepthLumaMinus8);
-    TRACE_1(MP4, "> bitDepthChromaMinus8 : %u", bitDepthChromaMinus8);
+    TRACE_1(MP4, "> min_spatial_segmentation_idc: %u", track->hvcC->min_spatial_segmentation_idc);
+    TRACE_1(MP4, "> parallelismType      : %u", track->hvcC->parallelismType);
+    TRACE_1(MP4, "> chromaFormat         : %u", track->hvcC->chromaFormat);
+    TRACE_1(MP4, "> bitDepthLumaMinus8   : %u", track->hvcC->bitDepthLumaMinus8);
+    TRACE_1(MP4, "> bitDepthChromaMinus8 : %u", track->hvcC->bitDepthChromaMinus8);
 
-    TRACE_1(MP4, "> avgFrameRate         : %u", avgFrameRate);
-    TRACE_1(MP4, "> constantFrameRate    : %u", constantFrameRate);
-    TRACE_1(MP4, "> numTemporalLayers    : %u", numTemporalLayers);
-    TRACE_1(MP4, "> temporalIdNested     : %u", temporalIdNested);
-    TRACE_1(MP4, "> lengthSizeMinusOne   : %u", lengthSizeMinusOne);
-    TRACE_1(MP4, "> numOfArrays          : %u", numOfArrays);
+    TRACE_1(MP4, "> avgFrameRate         : %u", track->hvcC->avgFrameRate);
+    TRACE_1(MP4, "> constantFrameRate    : %u", track->hvcC->constantFrameRate);
+    TRACE_1(MP4, "> numTemporalLayers    : %u", track->hvcC->numTemporalLayers);
+    TRACE_1(MP4, "> temporalIdNested     : %u", track->hvcC->temporalIdNested);
+    TRACE_1(MP4, "> lengthSizeMinusOne   : %u", track->hvcC->lengthSizeMinusOne);
 
-    for (unsigned j = 0; j < numOfArrays; j++)
+    TRACE_1(MP4, "> numOfArrays          : %u", track->hvcC->numOfArrays);
+    for (unsigned j = 0; j < track->hvcC->numOfArrays; j++)
     {
         // TODO // NAL unit table
     }
@@ -1433,56 +1432,47 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "HEVC Configuration");
-        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", configurationVersion);
-        fprintf(mp4->xml, "  <general_profile_space>%u</general_profile_space>\n", general_profile_space);
-        fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", general_tier_flag);
-        fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", general_profile_idc);
-        fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", general_profile_compatibility_flags);
-        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", general_constraint_indicator_flags);
-        fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", general_level_idc);
+        fprintf(mp4->xml, "  <configurationVersion>%u</configurationVersion>\n", track->hvcC->configurationVersion);
+        fprintf(mp4->xml, "  <general_profile_space>%u</general_profile_space>\n", track->hvcC->general_profile_space);
+        fprintf(mp4->xml, "  <general_tier_flag>%u</general_tier_flag>\n", track->hvcC->general_tier_flag);
+        fprintf(mp4->xml, "  <general_profile_idc>%u</general_profile_idc>\n", track->hvcC->general_profile_idc);
+        fprintf(mp4->xml, "  <general_profile_compatibility_flags>%u</general_profile_compatibility_flags>\n", track->hvcC->general_profile_compatibility_flags);
+        fprintf(mp4->xml, "  <general_constraint_indicator_flags>%" PRId64 "</general_constraint_indicator_flags>\n", track->hvcC->general_constraint_indicator_flags);
+        fprintf(mp4->xml, "  <general_level_idc>%u</general_level_idc>\n", track->hvcC->general_level_idc);
 
-        fprintf(mp4->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", min_spatial_segmentation_idc);
-        fprintf(mp4->xml, "  <parallelismType>%u</parallelismType>\n", parallelismType);
-        fprintf(mp4->xml, "  <chromaFormat>%u</chromaFormat>\n", chromaFormat);
-        fprintf(mp4->xml, "  <bitDepthLumaMinus8>%u</bitDepthLumaMinus8>\n", bitDepthLumaMinus8);
-        fprintf(mp4->xml, "  <bitDepthChromaMinus8>%u</bitDepthChromaMinus8>\n", bitDepthChromaMinus8);
+        fprintf(mp4->xml, "  <min_spatial_segmentation_idc>%u</min_spatial_segmentation_idc>\n", track->hvcC->min_spatial_segmentation_idc);
+        fprintf(mp4->xml, "  <parallelismType>%u</parallelismType>\n", track->hvcC->parallelismType);
+        fprintf(mp4->xml, "  <chromaFormat>%u</chromaFormat>\n", track->hvcC->chromaFormat);
+        fprintf(mp4->xml, "  <bitDepthLumaMinus8>%u</bitDepthLumaMinus8>\n", track->hvcC->bitDepthLumaMinus8);
+        fprintf(mp4->xml, "  <bitDepthChromaMinus8>%u</bitDepthChromaMinus8>\n", track->hvcC->bitDepthChromaMinus8);
 
-        fprintf(mp4->xml, "  <avgFrameRate>%u</avgFrameRate>\n", avgFrameRate);
-        fprintf(mp4->xml, "  <constantFrameRate>%u</constantFrameRate>\n", constantFrameRate);
-        fprintf(mp4->xml, "  <numTemporalLayers>%u</numTemporalLayers>\n", numTemporalLayers);
-        fprintf(mp4->xml, "  <temporalIdNested>%u</temporalIdNested>\n", temporalIdNested);
-        fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", lengthSizeMinusOne);
-
-        for (unsigned j = 0; j < numOfArrays; j++)
+        fprintf(mp4->xml, "  <avgFrameRate>%u</avgFrameRate>\n", track->hvcC->avgFrameRate);
+        fprintf(mp4->xml, "  <constantFrameRate>%u</constantFrameRate>\n", track->hvcC->constantFrameRate);
+        fprintf(mp4->xml, "  <numTemporalLayers>%u</numTemporalLayers>\n", track->hvcC->numTemporalLayers);
+        fprintf(mp4->xml, "  <temporalIdNested>%u</temporalIdNested>\n", track->hvcC->temporalIdNested);
+        fprintf(mp4->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", track->hvcC->lengthSizeMinusOne);
+/*
+        fprintf(mp4->xml, "  <numOfArrays>%u</numOfArrays>\n", track->hvcC->numOfArrays);
+        for (unsigned j = 0; j < track->hvcC->numOfArrays; j++)
         {
-            // TODO // NAL unit table
-        }
+            xmlSpacer(mp4->xml, "Array infos", j);
+            fprintf(mp4->xml, "  <array_completeness>%u</array_completeness>\n", track->hvcC->array_completeness[j]);
+            fprintf(mp4->xml, "  <NAL_unit_type>%u</NAL_unit_type>\n", track->hvcC->NAL_unit_type[j]);
+            fprintf(mp4->xml, "  <numNalus>%u</numNalus>\n", track->hvcC->numNalus[j]);
 
-        fprintf(mp4->xml, "  </a>\n");
-    }
-
-    if (array_completeness && NAL_unit_type && numNalus && nalUnitLength && nalUnit)
-    {
-        for (unsigned j = 0; j < numOfArrays; j++)
-        {
-            if (nalUnitLength[j] && nalUnit[j])
+            for (unsigned i = 0; i < track->hvcC->numNalus[j]; i++)
             {
-                for (unsigned i = 0; i < numNalus[j]; i++)
+                xmlSpacer(mp4->xml, "nal unit", i);
+                //nalUnitLength[j] = (uint16_t *)malloc(numNalus[j]);
+                //nalUnit[j] = (uint8_t **)malloc(numNalus[j]);
+                //if (nalUnitLength[j] && nalUnit[j])
                 {
-                    //
+                    fprintf(mp4->xml, "  <nalUnitLength>%u</nalUnitLength>\n", nalUnitLength[j][i]);
                 }
-
-                free(nalUnitLength[j]);
-                free(nalUnit[j]);
             }
         }
-
-        free(array_completeness);
-        free(NAL_unit_type);
-        free(numNalus);
-        free(nalUnitLength);
-        free(nalUnit);
+*/
+        fprintf(mp4->xml, "  </a>\n");
     }
 
     return retcode;
@@ -1498,21 +1488,33 @@ int parse_dvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_dvcC()" CLR_RESET);
     int retcode = SUCCESS;
 
+    // Init
+    if (track->dvcC)
+    {
+        TRACE_WARNING(MKV, "parse_dvcC() we aleady have an codecprivate_dvcC_t structure!");
+        return FAILURE;
+    }
+    track->dvcC = (codecprivate_dvcC_t *)calloc(1, sizeof(codecprivate_dvcC_t));
+    if (!track->dvcC)
+    {
+        TRACE_ERROR(MKV, "parse_dvcC() we aleady have an codecprivate_dvcC_t structure!");
+        return FAILURE;
+    }
+
     print_box_header(box_header);
-    write_box_header(box_header, mp4->xml, "Dolby Vision Configuration Box");
+    write_box_header(box_header, mp4->xml, "Dolby Vision Configuration");
 
     // Parse box content
-    uint8_t dv_version_major = read_mp4_uint8(bitstr, mp4->xml, "dv_version_major");
-    uint8_t dv_version_minor = read_mp4_uint8(bitstr, mp4->xml, "dv_version_minor");
-    uint8_t dv_profile = read_mp4_uint(bitstr, 7, mp4->xml, "dv_profile");
-    uint8_t dv_level = read_mp4_uint(bitstr, 6, mp4->xml, "dv_level");
-    uint8_t rpu_present_flag = read_mp4_flag(bitstr, mp4->xml, "rpu_present_flag");
-    uint8_t el_present_flag = read_mp4_flag(bitstr, mp4->xml, "el_present_flag");
-    uint8_t bl_present_flag = read_mp4_flag(bitstr, mp4->xml, "bl_present_flag");
-
-    if (bl_present_flag)
+    track->dvcC->dv_version_major = read_mp4_uint8(bitstr, mp4->xml, "dv_version_major");
+    track->dvcC->dv_version_minor = read_mp4_uint8(bitstr, mp4->xml, "dv_version_minor");
+    track->dvcC->dv_profile = read_mp4_uint(bitstr, 7, mp4->xml, "dv_profile");
+    track->dvcC->dv_level = read_mp4_uint(bitstr, 6, mp4->xml, "dv_level");
+    track->dvcC->rpu_present_flag = read_mp4_flag(bitstr, mp4->xml, "rpu_present_flag");
+    track->dvcC->el_present_flag = read_mp4_flag(bitstr, mp4->xml, "el_present_flag");
+    track->dvcC->bl_present_flag = read_mp4_flag(bitstr, mp4->xml, "bl_present_flag");
+    if (track->dvcC->bl_present_flag)
     {
-        uint8_t dv_bl_signal_compatibility_id = read_mp4_uint(bitstr, 4, mp4->xml, "dv_bl_signal_compatibility_id");
+        track->dvcC->dv_bl_signal_compatibility_id = read_mp4_uint(bitstr, 4, mp4->xml, "dv_bl_signal_compatibility_id");
     }
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -1525,7 +1527,7 @@ int parse_dvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /*!
  * \brief VVC Configuration Box.
  *
- * From 'ISO/IEC 14496-15 (2015)' specification:
+ * From 'ISO/IEC 14496-15 (2022)' specification:
  * 8.3.3.1 Decoder configuration information.
  */
 int parse_vvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
@@ -1537,22 +1539,33 @@ int parse_vvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
+    // Init
+    if (track->vvcC)
+    {
+        TRACE_WARNING(MKV, "parse_vvcC() we aleady have an codecprivate_vvcC_t structure!");
+        return FAILURE;
+    }
+    track->vvcC = (codecprivate_vvcC_t *)calloc(1, sizeof(codecprivate_vvcC_t));
+    if (!track->vvcC)
+    {
+        TRACE_ERROR(MKV, "parse_vvcC() codecprivate_vvcC_t allocation error!");
+        return FAILURE;
+    }
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "VVC Configuration");
+
     // Parse box content
     // TODO
 
-    // Handle H.266 profile & level
-    //track->codec_profile = getH266CodecProfile(general_profile_idc);
-    //track->codec_level = static_cast<double>(general_level_idc) / 30.0;
-    //track->color_depth = bitDepthLumaMinus8 + 8;
-
 #if ENABLE_DEBUG
-    print_box_header(box_header);
+    // TODO
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "VVC Configuration");
+        // TODO
 
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -1563,7 +1576,7 @@ int parse_vvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief vpcC Configuration Box.
+ * \brief VPx Configuration Box.
  *
  * From 'VP Codec ISO Media File Format Binding':
  * VP Codec Sample Entry Box
@@ -1578,65 +1591,50 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    // Parse box content
-    unsigned profile = read_bits(bitstr, 8);
-    unsigned level = read_bits(bitstr, 8);
-    unsigned bitDepth = read_bits(bitstr, 4);
-    unsigned chromaSubsampling = read_bits(bitstr, 3);
-    bool videoFullRangeFlag = read_bits(bitstr, 1);
-    unsigned colourPrimaries = read_bits(bitstr, 8);
-    unsigned transferCharacteristics = read_bits(bitstr, 8);
-    unsigned matrixCoefficients = read_bits(bitstr, 8);
+    // Init
+    if (track->vpcC)
+    {
+        TRACE_WARNING(MKV, "parse_vpcC() we aleady have an codecprivate_vpcC_t structure!");
+        return FAILURE;
+    }
+    track->vpcC = (codecprivate_vpcC_t *)calloc(1, sizeof(codecprivate_vpcC_t));
+    if (!track->vpcC)
+    {
+        TRACE_ERROR(MKV, "parse_vpcC() codecprivate_vpcC_t allocation error!");
+        return FAILURE;
+    }
 
-    unsigned codecIntializationDataSize = read_bits(bitstr, 16);
-    if (codecIntializationDataSize > 0)
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "VPx Configuration");
+
+    // Parse box content
+    track->vpcC->profile = read_bits(bitstr, 8);
+    track->vpcC->level = read_bits(bitstr, 8);
+    track->vpcC->bitDepth = read_bits(bitstr, 4);
+    track->vpcC->chromaSubsampling = read_bits(bitstr, 3);
+    track->vpcC->videoFullRangeFlag = read_bits(bitstr, 1);
+    track->vpcC->colourPrimaries = read_bits(bitstr, 8);
+    track->vpcC->transferCharacteristics = read_bits(bitstr, 8);
+    track->vpcC->matrixCoefficients = read_bits(bitstr, 8);
+
+    track->vpcC->codecIntializationDataSize = read_bits(bitstr, 16);
+    if (track->vpcC->codecIntializationDataSize > 0)
     {
         // Note: must be 0 for VP8 and VP9
-        // TODO // unsigned codecIntializationData = read_bits(bitstr, 8);
     }
-
-    // Handle VPx profile & level
-    if (track->codec == CODEC_VP8)
-    {
-        if (profile == 0)
-            track->codec_profile = PROF_VP8_0;
-        else if (profile == 1)
-            track->codec_profile = PROF_VP8_1;
-    }
-    if (track->codec == CODEC_VP9)
-    {
-        if (profile == 0)
-            track->codec_profile = PROF_VP9_0;
-        else if (profile == 1)
-            track->codec_profile = PROF_VP9_1;
-        else if (profile == 2)
-            track->codec_profile = PROF_VP9_2;
-        else if (profile == 3)
-            track->codec_profile = PROF_VP9_3;
-    }
-
-    track->codec_level = static_cast<double>(level) / 10.0;
-
-    track->color_depth = bitDepth;
-    track->color_range = videoFullRangeFlag;
-
-    track->color_primaries = colourPrimaries;
-    track->color_transfer = transferCharacteristics;
-    track->color_matrix = matrixCoefficients;
 
 #if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> profile : %u", profile);
-    TRACE_1(MP4, "> level: %u", level);
-    TRACE_1(MP4, "> bitDepth: %u", bitDepth);
-    TRACE_1(MP4, "> chromaSubsampling: %u", chromaSubsampling);
-    TRACE_1(MP4, "> videoFullRangeFlag: %u", videoFullRangeFlag);
-    TRACE_1(MP4, "> colourPrimaries: %u", colourPrimaries);
-    TRACE_1(MP4, "> transferCharacteristics: %u", transferCharacteristics);
-    TRACE_1(MP4, "> matrixCoefficients: %u", matrixCoefficients);
+    TRACE_1(MP4, "> profile : %u", track->vpcC->profile);
+    TRACE_1(MP4, "> level: %u", track->vpcC->level);
+    TRACE_1(MP4, "> bitDepth: %u", track->vpcC->bitDepth);
+    TRACE_1(MP4, "> chromaSubsampling: %u", track->vpcC->chromaSubsampling);
+    TRACE_1(MP4, "> videoFullRangeFlag: %u", track->vpcC->videoFullRangeFlag);
+    TRACE_1(MP4, "> colourPrimaries: %u", track->vpcC->colourPrimaries);
+    TRACE_1(MP4, "> transferCharacteristics: %u", track->vpcC->transferCharacteristics);
+    TRACE_1(MP4, "> matrixCoefficients: %u", track->vpcC->matrixCoefficients);
 
-    TRACE_1(MP4, "> codecIntializationDataSize: %u", codecIntializationDataSize);
-    if (codecIntializationDataSize)
+    TRACE_1(MP4, "> codecIntializationDataSize: %u", track->vpcC->codecIntializationDataSize);
+    if (track->vpcC->codecIntializationDataSize)
     {
         // TODO
     }
@@ -1645,18 +1643,17 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "vpcC Configuration");
-        fprintf(mp4->xml, "  <profile>%u</profile>\n", profile);
-        fprintf(mp4->xml, "  <level>%u</level>\n", level);
-        fprintf(mp4->xml, "  <bitDepth>%u</bitDepth>\n", bitDepth);
-        fprintf(mp4->xml, "  <chromaSubsampling>%u</chromaSubsampling>\n", chromaSubsampling);
-        fprintf(mp4->xml, "  <videoFullRangeFlag>%u</videoFullRangeFlag>\n", videoFullRangeFlag);
-        fprintf(mp4->xml, "  <colourPrimaries>%u</colourPrimaries>\n", colourPrimaries);
-        fprintf(mp4->xml, "  <transferCharacteristics>%u</transferCharacteristics>\n", transferCharacteristics);
-        fprintf(mp4->xml, "  <matrixCoefficients>%u</matrixCoefficients>\n", matrixCoefficients);
+        fprintf(mp4->xml, "  <profile>%u</profile>\n", track->vpcC->profile);
+        fprintf(mp4->xml, "  <level>%u</level>\n", track->vpcC->level);
+        fprintf(mp4->xml, "  <bitDepth>%u</bitDepth>\n", track->vpcC->bitDepth);
+        fprintf(mp4->xml, "  <chromaSubsampling>%u</chromaSubsampling>\n", track->vpcC->chromaSubsampling);
+        fprintf(mp4->xml, "  <videoFullRangeFlag>%u</videoFullRangeFlag>\n", track->vpcC->videoFullRangeFlag);
+        fprintf(mp4->xml, "  <colourPrimaries>%u</colourPrimaries>\n", track->vpcC->colourPrimaries);
+        fprintf(mp4->xml, "  <transferCharacteristics>%u</transferCharacteristics>\n", track->vpcC->transferCharacteristics);
+        fprintf(mp4->xml, "  <matrixCoefficients>%u</matrixCoefficients>\n", track->vpcC->matrixCoefficients);
 
-        fprintf(mp4->xml, "  <codecIntializationDataSize>%u</codecIntializationDataSize>\n", codecIntializationDataSize);
-        if (codecIntializationDataSize)
+        fprintf(mp4->xml, "  <codecIntializationDataSize>%u</codecIntializationDataSize>\n", track->vpcC->codecIntializationDataSize);
+        if (track->vpcC->codecIntializationDataSize)
         {
             // TODO
         }
@@ -1669,7 +1666,7 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief AV1C Configuration Box.
+ * \brief AV1 Configuration Box.
  *
  * From 'AV1 Codec ISO Media File Format Binding':
  * v1.2.0, 12 December 2019
@@ -1681,25 +1678,40 @@ int parse_av1C(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_av1C()" CLR_RESET);
     int retcode = SUCCESS;
 
+    // Init
+    if (track->av1C)
+    {
+        TRACE_WARNING(MKV, "parse_av1C() we aleady have an codecprivate_av1C_t structure!");
+        return FAILURE;
+    }
+    track->av1C = (codecprivate_av1C_t *)calloc(1, sizeof(codecprivate_av1C_t));
+    if (!track->av1C)
+    {
+        TRACE_ERROR(MKV, "parse_av1C() codecprivate_av1C_t allocation error!");
+        return FAILURE;
+    }
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "AV1 Configuration");
+
     // Parse box content
-    bool marker = read_bit(bitstr);
-    unsigned version = read_bits(bitstr, 7);
-    unsigned seq_profile = read_bits(bitstr, 3);
-    unsigned seq_level_idx_0 = read_bits(bitstr, 5);
-    bool seq_tier_0 = read_bit(bitstr);
-    bool high_bitdepth = read_bit(bitstr);
-    bool twelve_bit = read_bit(bitstr);
-    bool monochrome = read_bit(bitstr);
-    bool chroma_subsampling_x = read_bit(bitstr);
-    bool chroma_subsampling_y = read_bit(bitstr);
-    unsigned chroma_sample_position = read_bits(bitstr, 2);
+    track->av1C->marker = read_bit(bitstr);
+    track->av1C->version = read_bits(bitstr, 7);
+    track->av1C->seq_profile = read_bits(bitstr, 3);
+    track->av1C->seq_level_idx_0 = read_bits(bitstr, 5);
+    track->av1C->seq_tier_0 = read_bit(bitstr);
+    track->av1C->high_bitdepth = read_bit(bitstr);
+    track->av1C->twelve_bit = read_bit(bitstr);
+    track->av1C->monochrome = read_bit(bitstr);
+    track->av1C->chroma_subsampling_x = read_bit(bitstr);
+    track->av1C->chroma_subsampling_y = read_bit(bitstr);
+    track->av1C->chroma_sample_position = read_bits(bitstr, 2);
     read_bits(bitstr, 3); // reserved
 
-    bool initial_presentation_delay_present = read_bit(bitstr);
-    unsigned int initial_presentation_delay_minus_one = 0;
-    if (initial_presentation_delay_present)
+    track->av1C->initial_presentation_delay_present = read_bit(bitstr);
+    if (track->av1C->initial_presentation_delay_present)
     {
-        initial_presentation_delay_minus_one = read_bits(bitstr, 4);
+        track->av1C->initial_presentation_delay_minus_one = read_bits(bitstr, 4);
     }
     else
     {
@@ -1709,80 +1721,41 @@ int parse_av1C(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // TODO // Parse OBUs
     //unsigned int (8)[] configOBUs = read_bits(bitstr, 8);
 
-    // Handle AV1 profile & level
-    if (seq_profile == 0)
-        track->codec_profile = PROF_AV1_Main;
-    else if (seq_profile == 1)
-        track->codec_profile = PROF_AV1_High;
-    else if (seq_profile == 2)
-        track->codec_profile = PROF_AV1_Professional;
-
-    if (seq_level_idx_0 == 0) track->codec_level = 2.0;
-    if (seq_level_idx_0 == 1) track->codec_level = 2.1;
-    if (seq_level_idx_0 == 2) track->codec_level = 2.2;
-    if (seq_level_idx_0 == 3) track->codec_level = 2.3;
-    if (seq_level_idx_0 == 4) track->codec_level = 3.0;
-    if (seq_level_idx_0 == 5) track->codec_level = 3.1;
-    if (seq_level_idx_0 == 6) track->codec_level = 3.1;
-    if (seq_level_idx_0 == 7) track->codec_level = 3.1;
-    if (seq_level_idx_0 == 8) track->codec_level = 4.0;
-    if (seq_level_idx_0 == 9) track->codec_level = 4.1;
-    if (seq_level_idx_0 == 10) track->codec_level = 4.2;
-    if (seq_level_idx_0 == 11) track->codec_level = 4.3;
-    if (seq_level_idx_0 == 12) track->codec_level = 5.0;
-    if (seq_level_idx_0 == 13) track->codec_level = 5.1;
-    if (seq_level_idx_0 == 14) track->codec_level = 5.2;
-    if (seq_level_idx_0 == 15) track->codec_level = 5.3;
-    if (seq_level_idx_0 == 16) track->codec_level = 6.0;
-    if (seq_level_idx_0 == 17) track->codec_level = 6.1;
-    if (seq_level_idx_0 == 18) track->codec_level = 6.2;
-    if (seq_level_idx_0 == 19) track->codec_level = 6.3;
-    if (seq_level_idx_0 == 20) track->codec_level = 7.0;
-    if (seq_level_idx_0 == 21) track->codec_level = 7.1;
-    if (seq_level_idx_0 == 22) track->codec_level = 7.2;
-    if (seq_level_idx_0 == 23) track->codec_level = 7.3;
-
-    if (high_bitdepth) track->color_depth = 10;
-    else if (twelve_bit) track->color_depth = 12;
-    else track->color_depth = 8;
-
 #if ENABLE_DEBUG
-    print_box_header(box_header);
-    TRACE_1(MP4, "> version : %u", version);
-    TRACE_1(MP4, "> seq_profile: %u", seq_profile);
-    TRACE_1(MP4, "> seq_level_idx_0: %u", seq_level_idx_0);
-    TRACE_1(MP4, "> seq_tier_0: %u", seq_tier_0);
-    TRACE_1(MP4, "> high_bitdepth: %u", high_bitdepth);
-    TRACE_1(MP4, "> twelve_bit: %u", twelve_bit);
-    TRACE_1(MP4, "> monochrome: %u", monochrome);
-    TRACE_1(MP4, "> chroma_subsampling_x: %u", chroma_subsampling_x);
-    TRACE_1(MP4, "> chroma_subsampling_y: %u", chroma_subsampling_y);
-    TRACE_1(MP4, "> chroma_sample_position: %u", chroma_sample_position);
-    TRACE_1(MP4, "> initial_presentation_delay_present: %u", initial_presentation_delay_present);
-    if (initial_presentation_delay_present)
+    TRACE_1(MP4, "> version : %u", track->av1C->version);
+    TRACE_1(MP4, "> seq_profile: %u", track->av1C->seq_profile);
+    TRACE_1(MP4, "> seq_level_idx_0: %u", track->av1C->seq_level_idx_0);
+    TRACE_1(MP4, "> seq_tier_0: %u", track->av1C->seq_tier_0);
+    TRACE_1(MP4, "> high_bitdepth: %u", track->av1C->high_bitdepth);
+    TRACE_1(MP4, "> twelve_bit: %u", track->av1C->twelve_bit);
+    TRACE_1(MP4, "> monochrome: %u", track->av1C->monochrome);
+    TRACE_1(MP4, "> chroma_subsampling_x: %u", track->av1C->chroma_subsampling_x);
+    TRACE_1(MP4, "> chroma_subsampling_y: %u", track->av1C->chroma_subsampling_y);
+    TRACE_1(MP4, "> chroma_sample_position: %u", track->av1C->chroma_sample_position);
+    TRACE_1(MP4, "> initial_presentation_delay_present: %u", track->av1C->initial_presentation_delay_present);
+    if (track->av1C->initial_presentation_delay_present)
     {
-        TRACE_1(MP4, "> initial_presentation_delay_minus_one: %u", initial_presentation_delay_minus_one);
+        TRACE_1(MP4, "> initial_presentation_delay_minus_one: %u", track->av1C->initial_presentation_delay_minus_one);
     }
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (mp4->xml)
     {
-        write_box_header(box_header, mp4->xml, "AV1C Configuration");
-        fprintf(mp4->xml, "  <version>%u</version>\n", version);
-        fprintf(mp4->xml, "  <seq_profile>%u</seq_profile>\n", seq_profile);
-        fprintf(mp4->xml, "  <seq_level_idx_0>%u</seq_level_idx_0>\n", seq_level_idx_0);
-        fprintf(mp4->xml, "  <seq_tier_0>%u</seq_tier_0>\n", seq_tier_0);
-        fprintf(mp4->xml, "  <high_bitdepth>%u</high_bitdepth>\n", high_bitdepth);
-        fprintf(mp4->xml, "  <twelve_bit>%i</twelve_bit>\n", twelve_bit);
-        fprintf(mp4->xml, "  <monochrome>%u</monochrome>\n", monochrome);
-        fprintf(mp4->xml, "  <chroma_subsampling_x>%u</chroma_subsampling_x>\n", chroma_subsampling_x);
-        fprintf(mp4->xml, "  <chroma_subsampling_y>%u</chroma_subsampling_y>\n", chroma_subsampling_y);
-        fprintf(mp4->xml, "  <chroma_sample_position>%u</chroma_sample_position>\n", chroma_sample_position);
-        fprintf(mp4->xml, "  <initial_presentation_delay_present>%u</initial_presentation_delay_present>\n", initial_presentation_delay_present);
-        if (initial_presentation_delay_present)
+        fprintf(mp4->xml, "  <version>%u</version>\n", track->av1C->version);
+        fprintf(mp4->xml, "  <seq_profile>%u</seq_profile>\n", track->av1C->seq_profile);
+        fprintf(mp4->xml, "  <seq_level_idx_0>%u</seq_level_idx_0>\n", track->av1C->seq_level_idx_0);
+        fprintf(mp4->xml, "  <seq_tier_0>%u</seq_tier_0>\n", track->av1C->seq_tier_0);
+        fprintf(mp4->xml, "  <high_bitdepth>%u</high_bitdepth>\n", track->av1C->high_bitdepth);
+        fprintf(mp4->xml, "  <twelve_bit>%i</twelve_bit>\n", track->av1C->twelve_bit);
+        fprintf(mp4->xml, "  <monochrome>%u</monochrome>\n", track->av1C->monochrome);
+        fprintf(mp4->xml, "  <chroma_subsampling_x>%u</chroma_subsampling_x>\n", track->av1C->chroma_subsampling_x);
+        fprintf(mp4->xml, "  <chroma_subsampling_y>%u</chroma_subsampling_y>\n", track->av1C->chroma_subsampling_y);
+        fprintf(mp4->xml, "  <chroma_sample_position>%u</chroma_sample_position>\n", track->av1C->chroma_sample_position);
+        fprintf(mp4->xml, "  <initial_presentation_delay_present>%u</initial_presentation_delay_present>\n", track->av1C->initial_presentation_delay_present);
+        if (track->av1C->initial_presentation_delay_present)
         {
-            fprintf(mp4->xml, "  <initial_presentation_delay_minus_one>%u</initial_presentation_delay_minus_one>\n", initial_presentation_delay_minus_one);
+            fprintf(mp4->xml, "  <initial_presentation_delay_minus_one>%u</initial_presentation_delay_minus_one>\n", track->av1C->initial_presentation_delay_minus_one);
         }
         fprintf(mp4->xml, "  </a>\n");
     }
@@ -1825,7 +1798,7 @@ int parse_jpgC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 /* ************************************************************************** */
 
 /*!
- * \brief H.263 configuration box ('d263')
+ * \brief H.263 Configuration Box ('d263')
  *
  * 3GPP TS 26.244 specification
  */

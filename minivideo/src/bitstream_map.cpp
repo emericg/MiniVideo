@@ -26,6 +26,7 @@
 #include "minivideo_fourcc.h"
 #include "minitraces.h"
 #include "minivideo_typedef.h"
+#include "decoder/h264/h264_parameterset.h"
 
 // C standard libraries
 #include <cstdlib>
@@ -148,6 +149,29 @@ void free_bitstream_map(MediaStream_t **stream_ptr)
         (*stream_ptr)->track_languagecode = nullptr;
         free((*stream_ptr)->subtitles_name);
         (*stream_ptr)->subtitles_name = nullptr;
+
+        // Codec privates
+        if ((*stream_ptr)->avcC)
+        {
+            for (unsigned i = 0; i < (*stream_ptr)->avcC->sps_count && i < MAX_SPS; i++)
+                freeSPS(&(*stream_ptr)->avcC->sps_array[i]);
+            free(*(*stream_ptr)->avcC->sps_array);
+            free((*stream_ptr)->avcC->sps_sample_offset);
+            free((*stream_ptr)->avcC->sps_sample_size);
+            for (unsigned i = 0; i < (*stream_ptr)->avcC->pps_count && i < MAX_PPS; i++)
+                freePPS(&(*stream_ptr)->avcC->pps_array[i]);
+            free(*(*stream_ptr)->avcC->pps_array);
+            free((*stream_ptr)->avcC->pps_sample_offset);
+            free((*stream_ptr)->avcC->pps_sample_size);
+
+            free((*stream_ptr)->avcC);
+        }
+        free((*stream_ptr)->hvcC);
+        free((*stream_ptr)->vvcC);
+        free((*stream_ptr)->vpcC);
+        free((*stream_ptr)->av1C);
+        free((*stream_ptr)->dvcC);
+        free((*stream_ptr)->mvcC);
 
         // "Parameter sets" arrays
         free((*stream_ptr)->parameter_type);
@@ -510,6 +534,142 @@ bool computeCodecs(MediaFile_t *media)
 
 /* ************************************************************************** */
 
+bool computeCodecsSpecifics(MediaFile_t *media)
+{
+    TRACE_INFO(DEMUX, BLD_GREEN "computeCodecsSpecifics()" CLR_RESET);
+    bool retcode = SUCCESS;
+
+    for (unsigned i = 0; i < media->tracks_video_count; i++)
+    {
+        if (media->tracks_video[i])
+        {
+            // shortcuts
+            MediaStream_t *track = media->tracks_video[i];
+            codecprivate_avcC_t *avcC = media->tracks_video[i]->avcC;
+            codecprivate_hvcC_t *hvcC = media->tracks_video[i]->hvcC;
+            codecprivate_vvcC_t *vvcC = media->tracks_video[i]->vvcC;
+            codecprivate_vpcC_t *vpcC = media->tracks_video[i]->vpcC;
+            codecprivate_av1C_t *av1C = media->tracks_video[i]->av1C;
+
+            if (track->stream_codec == CODEC_H264 && track->avcC)
+            {
+                // Handle H.264 profile & level
+                if (avcC->sps_count > 0 && avcC->sps_array[0])
+                {
+                    track->stream_codec_profile = getH264CodecProfile(
+                        avcC->sps_array[0]->profile_idc,
+                        avcC->sps_array[0]->constraint_setX_flag[0],
+                        avcC->sps_array[0]->constraint_setX_flag[1],
+                        avcC->sps_array[0]->constraint_setX_flag[2],
+                        avcC->sps_array[0]->constraint_setX_flag[3],
+                        avcC->sps_array[0]->constraint_setX_flag[4],
+                        avcC->sps_array[0]->constraint_setX_flag[5]);
+                    track->video_level = static_cast<double>(avcC->AVCLevelIndication) / 10.0;
+
+                    track->max_ref_frames = avcC->sps_array[0]->max_num_ref_frames;
+                    track->color_depth = avcC->sps_array[0]->BitDepthY;
+
+                    if (avcC->sps_array[0]->vui)
+                    {
+                        track->color_range = avcC->sps_array[0]->vui->video_full_range_flag;
+                        track->color_primaries = avcC->sps_array[0]->vui->colour_primaries;
+                        track->color_transfer = avcC->sps_array[0]->vui->transfer_characteristics;
+                        track->color_matrix = avcC->sps_array[0]->vui->matrix_coefficients;
+                    }
+
+                    if (avcC->pps_count && avcC->pps_array[0])
+                    {
+                        track->h264_feature_cabac = avcC->pps_array[0]->entropy_coding_mode_flag;
+                        track->h264_feature_8x8_blocks = avcC->pps_array[0]->transform_8x8_mode_flag;
+                    }
+                }
+                else
+                {
+                    track->stream_codec_profile = getH264CodecProfile(avcC->AVCProfileIndication);
+                    track->video_level = static_cast<double>(avcC->AVCLevelIndication) / 10.0;
+                }
+            }
+            else if (track->stream_codec == CODEC_H265 && track->hvcC)
+            {
+                // Handle H.265 profile & level
+                track->stream_codec_profile = getH265CodecProfile(hvcC->general_profile_idc);
+                track->video_level = static_cast<double>(hvcC->general_level_idc) / 30.0;
+                track->color_depth = hvcC->bitDepthLumaMinus8 + 8;
+            }
+            else if (track->stream_codec == CODEC_H266 && track->vvcC)
+            {
+                // Handle H.266 profile & level
+                // TODO
+            }
+            else if (track->vpcC)
+            {
+                // Handle VPx profile & level
+                if (track->stream_codec == CODEC_VP9)
+                {
+                    if (vpcC->profile == 0) track->stream_codec_profile = PROF_VP9_0;
+                    else if (vpcC->profile == 1) track->stream_codec_profile = PROF_VP9_1;
+                    else if (vpcC->profile == 2) track->stream_codec_profile = PROF_VP9_2;
+                    else if (vpcC->profile == 3) track->stream_codec_profile = PROF_VP9_3;
+                }
+                else if (track->stream_codec == CODEC_VP8)
+                {
+                    if (vpcC->profile == 0) track->stream_codec_profile = PROF_VP8_0;
+                    else if (vpcC->profile == 1) track->stream_codec_profile = PROF_VP8_1;
+                }
+
+                track->video_level = static_cast<double>(vpcC->level) / 10.0;
+
+                track->color_depth = vpcC->bitDepth;
+                track->color_range = vpcC->videoFullRangeFlag;
+
+                track->color_primaries = vpcC->colourPrimaries;
+                track->color_transfer = vpcC->transferCharacteristics;
+                track->color_matrix = vpcC->matrixCoefficients;
+            }
+            else if (track->av1C)
+            {
+                // Handle AV1 profile & level
+                if (av1C->seq_profile == 0) track->stream_codec_profile = PROF_AV1_Main;
+                else if (av1C->seq_profile == 1) track->stream_codec_profile = PROF_AV1_High;
+                else if (av1C->seq_profile == 2) track->stream_codec_profile = PROF_AV1_Professional;
+
+                if (av1C->seq_level_idx_0 == 0) track->video_level = 2.0;
+                else if (av1C->seq_level_idx_0 == 1) track->video_level = 2.1;
+                else if (av1C->seq_level_idx_0 == 2) track->video_level = 2.2;
+                else if (av1C->seq_level_idx_0 == 3) track->video_level = 2.3;
+                else if (av1C->seq_level_idx_0 == 4) track->video_level = 3.0;
+                else if (av1C->seq_level_idx_0 == 5) track->video_level = 3.1;
+                else if (av1C->seq_level_idx_0 == 6) track->video_level = 3.1;
+                else if (av1C->seq_level_idx_0 == 7) track->video_level = 3.1;
+                else if (av1C->seq_level_idx_0 == 8) track->video_level = 4.0;
+                else if (av1C->seq_level_idx_0 == 9) track->video_level = 4.1;
+                else if (av1C->seq_level_idx_0 == 10) track->video_level = 4.2;
+                else if (av1C->seq_level_idx_0 == 11) track->video_level = 4.3;
+                else if (av1C->seq_level_idx_0 == 12) track->video_level = 5.0;
+                else if (av1C->seq_level_idx_0 == 13) track->video_level = 5.1;
+                else if (av1C->seq_level_idx_0 == 14) track->video_level = 5.2;
+                else if (av1C->seq_level_idx_0 == 15) track->video_level = 5.3;
+                else if (av1C->seq_level_idx_0 == 16) track->video_level = 6.0;
+                else if (av1C->seq_level_idx_0 == 17) track->video_level = 6.1;
+                else if (av1C->seq_level_idx_0 == 18) track->video_level = 6.2;
+                else if (av1C->seq_level_idx_0 == 19) track->video_level = 6.3;
+                else if (av1C->seq_level_idx_0 == 20) track->video_level = 7.0;
+                else if (av1C->seq_level_idx_0 == 21) track->video_level = 7.1;
+                else if (av1C->seq_level_idx_0 == 22) track->video_level = 7.2;
+                else if (av1C->seq_level_idx_0 == 23) track->video_level = 7.3;
+
+                if (av1C->high_bitdepth) track->color_depth = 10;
+                else if (av1C->twelve_bit) track->color_depth = 12;
+                else track->color_depth = 8;
+            }
+        }
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
 bool computeHDR(MediaFile_t *media)
 {
     TRACE_INFO(DEMUX, BLD_GREEN "computeHDR()" CLR_RESET);
@@ -526,7 +686,19 @@ bool computeHDR(MediaFile_t *media)
             }
             if (media->tracks_video[i]->color_transfer == COLOR_TRC_SMPTE2084)
             {
-                // HDR
+                if (media->tracks_video[i]->dvcC)
+                {
+                    media->tracks_video[i]->hdr_mode = DolbyVision;
+                }
+                else
+                {
+                    media->tracks_video[i]->hdr_mode = HDR10;
+                }
+            }
+
+            if (media->tracks_video[i]->dvcC) // hack
+            {
+                media->tracks_video[i]->hdr_mode = DolbyVision;
             }
         }
     }

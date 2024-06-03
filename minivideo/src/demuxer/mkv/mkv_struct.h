@@ -25,9 +25,8 @@
 #define PARSER_MKV_STRUCT_H
 
 // minivideo headers
-#include "../../minivideo_typedef.h"
-#include "../../minivideo_codecs.h"
-#include "../../decoder/h264/h264_parameterset.h"
+#include "../../minivideo_containers.h"
+#include "../codecs/codec_private_struct.h"
 
 #include <cstdio>
 #include <vector>
@@ -386,23 +385,25 @@ typedef struct mkv_track_t
     char *Language = nullptr;
     char *LanguageIETF = nullptr;
     char *CodecID = nullptr;
+
     int64_t CodecPrivate_offset = 0;
-    int CodecPrivate_size = 0;
+    int64_t CodecPrivate_size = 0;
     uint8_t *CodecPrivate = nullptr;
     char *CodecName = nullptr;
+
     uint64_t AttachmentLink = 0;
     uint64_t CodecDecodeAll = 0;
     uint64_t TrackOverlay = 0;
     uint64_t CodecDelay = 0;
     uint64_t SeekPreRoll = 0;
 
-    mkv_track_audio_t *audio = nullptr;
-    mkv_track_video_t *video = nullptr;
-    mkv_track_translate_t *translate = nullptr;
-    mkv_track_operation_t *operation = nullptr;
-    mkv_track_encodings_t *encodings = nullptr;
+    char *BlockAdditionName = nullptr;
+    char *BlockAdditionType = nullptr;
+    int64_t BlockAdditionExtra_offset = 0;
+    int64_t BlockAdditionExtra_size = 0;
+    uint8_t *BlockAdditionExtra = nullptr;
 
-    std::vector<mkv_sample_t *> sample_vector;
+    std::vector <mkv_sample_t *> sample_vector;
 
     // Video specific parameters
     unsigned int color_depth = 8;
@@ -412,22 +413,28 @@ typedef struct mkv_track_t
     unsigned int color_matrix = 0;
     unsigned int color_transfer = 0;
 
-    // AVC/HEVC specific parameters
+    // Codec specific parameters
     unsigned int codec_profile = 0;
     double codec_level = 0;
     unsigned int max_ref_frames = 0;
-    bool use_cabac = false;
-    bool use_8x8_blocks = false;
-    bool use_Bframes = false;
 
-    unsigned int sps_count = 0;
-    h264_sps_t *sps_array[MAX_SPS] = { nullptr };
-    unsigned int *sps_sample_size = nullptr;
-    int64_t *sps_sample_offset = nullptr;
-    unsigned int pps_count = 0;
-    h264_pps_t *pps_array[MAX_PPS] = { nullptr };
-    unsigned int *pps_sample_size = nullptr;
-    int64_t *pps_sample_offset = nullptr;
+    // Track type specific parameters
+    mkv_track_audio_t *audio = nullptr;
+    mkv_track_video_t *video = nullptr;
+    mkv_track_translate_t *translate = nullptr;
+    mkv_track_operation_t *operation = nullptr;
+    mkv_track_encodings_t *encodings = nullptr;
+
+    // Codec specific parameters (video)
+    codecprivate_avcC_t *avcC = nullptr;
+    codecprivate_hvcC_t *hvcC = nullptr;
+    codecprivate_vvcC_t *vvcC = nullptr;
+    codecprivate_vpcC_t *vpcC = nullptr;
+    codecprivate_av1C_t *av1C = nullptr;
+
+    // Codec specific parameters (other)
+    codecprivate_dvcC_t *dvcC = nullptr;
+    codecprivate_mvcC_t *mvcC = nullptr;
 
 } mkv_track_t;
 
@@ -578,6 +585,11 @@ typedef enum EbmlElement_e
         eid_DefaultDecodedFieldDuration = 0x234E7A,
         eid_TrackTimecodeScale = 0x23314F,  //!< DEPRECATED
         eid_MaxBlockAdditionID = 0x55EE,
+        eid_BlockAdditionMapping = 0x41E4,
+            eid_BlockAddIDValue = 0x41F0,
+            eid_BlockAddIDName = 0x41A4,
+            eid_BlockAddIDType = 0x41E7,
+            eid_BlockAddIDExtraData = 0x41ED,
         eid_Name = 0x536E,
         eid_Language = 0x22B59C,
         eid_LanguageIETF = 0x22B59D,

@@ -27,7 +27,6 @@
 #include "mp4_struct.h"
 #include "../../minivideo_fourcc.h"
 #include "../../minivideo_typedef.h"
-#include "../../decoder/h264/h264_parameterset.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
 
@@ -122,7 +121,10 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
         else if (track->handlerType == MP4_HANDLER_VIDEO)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->stsz_sample_count);
+            int parameters_count = 0;
+            if (track->avcC) parameters_count = track->avcC->sps_count + track->avcC->pps_count;
+
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], parameters_count, track->stsz_sample_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -131,7 +133,7 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         }
         else if (track->handlerType == MP4_HANDLER_PICT)
         {
-            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], track->sps_count + track->pps_count, track->pict_entry_count);
+            retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], 0, track->pict_entry_count);
             if (retcode == SUCCESS)
             {
                 map = media->tracks_video[media->tracks_video_count];
@@ -234,15 +236,6 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                 map->pixel_aspect_ratio_v = 1;
             }
 
-            map->video_level = track->codec_level;
-            map->max_ref_frames = track->max_ref_frames;
-            map->h264_feature_cabac = track->use_cabac;
-            map->h264_feature_8x8 = track->use_8x8_blocks;
-            map->h264_feature_b_frames = track->use_B_frames;
-
-            map->stereo_mode = (StereoMode_e)track->stereo;
-            map->video_projection = (Projection_e)track->projection;
-
             if (track->rotation == 90)
                 map->video_rotation = ROTATION_90;
             else if (track->rotation == 180)
@@ -252,6 +245,13 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             else
                 map->video_rotation = ROTATION_0;
 
+            map->stereo_mode = (StereoMode_e)track->stereo;
+            map->video_projection = (Projection_e)track->projection;
+
+            map->video_level = track->codec_level;
+            map->max_ref_frames = track->max_ref_frames;
+
+            // IDR count
             map->frame_count_idr = track->stss_entry_count;
 
             // Framerate
@@ -271,25 +271,42 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                         map->framerate_num, map->framerate_base);
             }
 
-            // Codec specific metadata
-            if (track->codec == CODEC_H264 || track->codec == CODEC_H265)
+            // Codec specific metadata (v2)
+            map->avcC = track->avcC;
+            map->hvcC = track->hvcC;
+            map->vvcC = track->vvcC;
+            map->vpcC = track->vpcC;
+            map->av1C = track->av1C;
+            map->dvcC = track->dvcC;
+            map->mvcC = track->mvcC;
+
+            // Parametersets
+            if (map->avcC)
             {
                 // Set SPS
-                for (unsigned i = 0; i < track->sps_count; i++)
+                for (unsigned i = 0; i < map->avcC->sps_count; i++)
                 {
                     map->parameter_type[i] = sample_VIDEO_PARAM;
-                    map->parameter_offset[i] = track->sps_sample_offset[i];
-                    map->parameter_size[i] = track->sps_sample_size[i];
+                    map->parameter_offset[i] = map->avcC->sps_sample_offset[i];
+                    map->parameter_size[i] = map->avcC->sps_sample_size[i];
                     map->parameter_count++;
                 }
                 // Set PPS
-                for (unsigned i = 0; i < track->pps_count; i++)
+                for (unsigned i = 0; i < map->avcC->pps_count; i++)
                 {
-                    map->parameter_type[i + track->sps_count] = sample_VIDEO_PARAM;
-                    map->parameter_offset[i + track->sps_count] = track->pps_sample_offset[i];
-                    map->parameter_size[i + track->sps_count] = track->pps_sample_size[i];
+                    map->parameter_type[i + map->avcC->sps_count] = sample_VIDEO_PARAM;
+                    map->parameter_offset[i + map->avcC->sps_count] = map->avcC->pps_sample_offset[i];
+                    map->parameter_size[i + map->avcC->sps_count] = map->avcC->pps_sample_size[i];
                     map->parameter_count++;
                 }
+            }
+            if (track->hvcC)
+            {
+                // TODO
+            }
+            if (track->vvcC)
+            {
+                // TODO
             }
         }
         else if (track->handlerType == MP4_HANDLER_PICT)
@@ -620,20 +637,6 @@ void mp4_clean_track(Mp4Track_t **track_ptr)
 {
     if (*track_ptr != nullptr)
     {
-        // SPS
-        for (unsigned i = 0; i < (*track_ptr)->sps_count && i < MAX_SPS; i++)
-            freeSPS(&(*track_ptr)->sps_array[i]);
-        free(*(*track_ptr)->sps_array);
-        free((*track_ptr)->sps_sample_offset);
-        free((*track_ptr)->sps_sample_size);
-
-        // PPS
-        for (unsigned i = 0; i < (*track_ptr)->pps_count && i < MAX_PPS; i++)
-            freePPS(&(*track_ptr)->pps_array[i]);
-        free(*(*track_ptr)->pps_array);
-        free((*track_ptr)->pps_sample_offset);
-        free((*track_ptr)->pps_sample_size);
-
         // stss
         free((*track_ptr)->stss_sample_number);
 

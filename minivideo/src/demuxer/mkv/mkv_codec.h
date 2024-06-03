@@ -25,9 +25,8 @@
 #define PARSER_MKV_CODEC_H
 
 // minivideo headers
+#include "ebml.h"
 #include "mkv_struct.h"
-#include "../../bitstream.h"
-#include "../../minivideo_mediafile.h"
 
 /* ************************************************************************** */
 
@@ -35,8 +34,17 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
 
 /* ************************************************************************** */
 
+int parse_codec_private(Bitstream_t *bitstr, EbmlElement_t *element, mkv_t *mkv);
+
 int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
 int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+int parse_h266_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+
+int parse_vpx_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+int parse_av1_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+
+int parse_mvc_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
+int parse_dolbyvision_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv);
 
 /* ************************************************************************** */
 #endif // PARSER_MKV_CODEC_H

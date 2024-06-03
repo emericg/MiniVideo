@@ -25,12 +25,11 @@
 #define PARSER_MP4_STRUCT_H
 
 // minivideo headers
+#include "../codecs/codec_private_struct.h"
 #include "../../minivideo_containers.h"
 #include "../../minivideo_mediastream.h"
 #include "../../minivideo_metadata_vendors.h"
-#include "../../decoder/h264/h264_parameterset_struct.h"
 
-// C standard libraries
 #include <cstdint>
 
 /* ************************************************************************** */
@@ -103,26 +102,30 @@ typedef struct Mp4Track_t
         double rotation;
         double scale[2];
 
-        // AVC/HEVC specific parameters
+        // Codec specific parameters
         unsigned int codec_profile;
         double codec_level;
         unsigned int max_ref_frames;
-        bool use_cabac;
-        bool use_8x8_blocks;
-        bool use_Bframes;
 
-        unsigned int sps_count;
-        h264_sps_t *sps_array[MAX_SPS];
-        unsigned int *sps_sample_size;
-        int64_t *sps_sample_offset;
-        unsigned int pps_count;
-        h264_pps_t *pps_array[MAX_PPS];
-        unsigned int *pps_sample_size;
-        int64_t *pps_sample_offset;
+        // Codec specific parameters (video)
+        codecprivate_avcC_t *avcC = nullptr;
+        codecprivate_hvcC_t *hvcC = nullptr;
+        codecprivate_vvcC_t *vvcC = nullptr;
+        codecprivate_vpcC_t *vpcC = nullptr;
+        codecprivate_av1C_t *av1C = nullptr;
+
+        // Codec specific parameters (other)
+        codecprivate_dvcC_t *dvcC = nullptr;
+        codecprivate_mvcC_t *mvcC = nullptr;
 
         // Picture specific parameters
         unsigned int main_item_reference;
         unsigned int pict_entry_count;
+        unsigned int *pict_entries_id;
+        unsigned int *pict_entries_type;
+        unsigned int *pict_entries_name;
+        unsigned int *pict_entries_size;
+        unsigned int *pict_entries_offset;
 
         // TimeCode Record specific parameters
         uint8_t number_of_frames;
