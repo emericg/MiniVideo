@@ -200,6 +200,9 @@ set(minivideo_SRC
     src/export.cpp
         src/export_utils.cpp
         src/thirdparty/stb_image_write.h
+    src/demuxer/idr_filter.cpp
+    src/demuxer/xml_mapper.cpp
+    src/demuxer/codecs/codec_private_struct.h
     src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp
         src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_stsd.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_picture.cpp src/demuxer/mp4/mp4_gopro.cpp
         src/demuxer/mp4/mp4_virb.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
@@ -207,8 +210,6 @@ set(minivideo_SRC
     src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/mkv.cpp src/demuxer/mkv/ebml.cpp
         src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp src/demuxer/mkv/mkv_convert.cpp
     src/demuxer/esparser/esparser.cpp
-    src/demuxer/idr_filter.cpp
-    src/demuxer/xml_mapper.cpp
     src/demuxer/mpeg/pes/pes_struct.h src/demuxer/mpeg/pes/pes.cpp
         src/demuxer/mpeg/descriptor_struct.h
         src/demuxer/mpeg/ps/ps_struct.h src/demuxer/mpeg/ps/ps.cpp
@@ -240,6 +241,12 @@ set(minivideo_SRC
         src/decoder/h264/h264_inter_prediction.cpp
         src/decoder/h264/h264_spatial.cpp
         src/decoder/h264/h264_transform.cpp
+        src/decoder/h265/h265_nalu.cpp
+            src/decoder/h265/h265_parameterset.cpp
+            src/decoder/h265/h265_parameterset_struct.h
+        src/decoder/h266/h266_nalu.cpp
+            src/decoder/h266/h266_parameterset.cpp
+            src/decoder/h266/h266_parameterset_struct.h
 )
 
 # MiniVideo public headers

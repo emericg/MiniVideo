@@ -10,7 +10,7 @@ CONFIG      += c++11 shared_and_static
 CONFIG      -= qt
 
 # build artifacts
-OBJECTS_DIR  = build/artifacts
+OBJECTS_DIR  = build/$${QT_ARCH}/
 DESTDIR      = build/
 
 # build settings ---------------------------------------------------------------
@@ -46,8 +46,8 @@ unix {
     contains(COMPILER_BASENAME, "clang++") { QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-private-field } # Clang only
 
     # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
-    #QMAKE_LFLAGS += -fsanitize=address,undefined
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract -fno-omit-frame-pointer
+    #QMAKE_LFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract
 }
 
 linux {

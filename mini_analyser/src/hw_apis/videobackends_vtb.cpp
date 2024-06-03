@@ -75,17 +75,17 @@ static Desc decoder_profiles_vtb[] =
     { CODEC_H264,   PROF_H264_HiP,  7680, 3840, 8, avcC_HiP_3840 },
     { CODEC_H264,   PROF_H264_HiP,  8192, 4096, 8, nullptr },
 
-    { CODEC_H264,   PROF_H264_PHiP, 1280,  720, 8, nullptr },
-    { CODEC_H264,   PROF_H264_CHiP, 1280,  720, 8, nullptr },
-    { CODEC_H264,   PROF_H264_Hi444PP, 1280, 720, 8, nullptr },
+    { CODEC_H264,   PROF_H264_PHiP,     1280,  720, 8, nullptr },
+    { CODEC_H264,   PROF_H264_CHiP,     1280,  720, 8, nullptr },
+    { CODEC_H264,   PROF_H264_Hi444PP,  1280, 720, 8, nullptr },
 
-    { CODEC_H265,   PROF_H265_Main,     1920, 1080, 8, hvcC_main_2160 },
-    { CODEC_H265,   PROF_H265_Main,     4096, 2160, 8, hvcC_main_2160 },
-    { CODEC_H265,   PROF_H265_Main10,   1920, 1080, 8, hvcC_main10_2160 },
-    { CODEC_H265,   PROF_H265_Main10,   4096, 2160, 8, hvcC_main10_2160 },
-    { CODEC_H265,   PROF_H265_MainStill,1280,  720, 8, nullptr },
-    { CODEC_H265,   PROF_H265_Main12,   1280,  720, 8, nullptr },
-    { CODEC_H265,   PROF_H265_Main444,  1280,  720, 8, nullptr },
+    { CODEC_H265,   PROF_H265_Main,         1920, 1080, 8, hvcC_main_2160 },
+    { CODEC_H265,   PROF_H265_Main,         4096, 2160, 8, hvcC_main_2160 },
+    { CODEC_H265,   PROF_H265_Main10,       1920, 1080, 8, hvcC_main10_2160 },
+    { CODEC_H265,   PROF_H265_Main10,       4096, 2160, 8, hvcC_main10_2160 },
+    { CODEC_H265,   PROF_H265_Main_still,   1280,  720, 8, nullptr },
+    { CODEC_H265,   PROF_H265_Main12,       1280,  720, 8, nullptr },
+    { CODEC_H265,   PROF_H265_Main444,      1280,  720, 8, nullptr },
 };
 
 const size_t decoder_profile_count = sizeof(decoder_profiles_vtb) / sizeof(Desc);

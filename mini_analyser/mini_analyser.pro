@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # mini_analyser build system
-# minivideo library must be built first in order for mini_analyser to work
+# minivideo library must be built first for mini_analyser to work
 #-------------------------------------------------------------------------------
 
 TARGET       = mini_analyser
@@ -78,8 +78,8 @@ LIBS            += -lminivideo                          # dynamic linking
 
 unix {
     # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
-    #QMAKE_LFLAGS += -fsanitize=address,undefined
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract -fno-omit-frame-pointer
+    #QMAKE_LFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract
 }
 
 win32 { DEFINES += _USE_MATH_DEFINES }

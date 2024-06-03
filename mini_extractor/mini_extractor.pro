@@ -9,10 +9,10 @@ CONFIG      += c++11 warn_off
 DESTDIR      = bin/
 
 # build artifacts
-OBJECTS_DIR  = build/
-MOC_DIR      = build/
-RCC_DIR      = build/
-UI_DIR       = build/
+OBJECTS_DIR  = build/$${QT_ARCH}
+MOC_DIR      = build/$${QT_ARCH}
+RCC_DIR      = build/$${QT_ARCH}
+UI_DIR       = build/$${QT_ARCH}
 
 # mini_extractor files
 SOURCES     += src/main.cpp
