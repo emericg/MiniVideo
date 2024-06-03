@@ -87,19 +87,22 @@ int parse_stbl(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                     retcode = parse_stsc(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STSZ:
-                    retcode = parse_stsz(bitstr, &box_subheader, track, mp4);
-                    break;
                 case BOX_STZ2:
                     retcode = parse_stsz(bitstr, &box_subheader, track, mp4);
                     break;
                 case BOX_STCO:
-                    retcode = parse_stco(bitstr, &box_subheader, track, mp4);
-                    break;
                 case BOX_CO64:
                     retcode = parse_stco(bitstr, &box_subheader, track, mp4);
                     break;
+
                 case BOX_SDTP:
                     retcode = parse_sdtp(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_SBGP:
+                    retcode = parse_sbgp(bitstr, &box_subheader, track, mp4);
+                    break;
+                case BOX_SGPD:
+                    retcode = parse_sgpd(bitstr, &box_subheader, track, mp4);
                     break;
 
                 default:
@@ -706,6 +709,94 @@ int parse_sdtp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
         fprintf(mp4->xml, "  </a>\n");
     }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Sample To Group Description Box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.9.2 Sample to Group Box
+ */
+int parse_sbgp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_sbgp()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributes
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Sample To Group");
+
+    // Parse box content
+    uint32_t grouping_type = read_mp4_uint32(bitstr, mp4->xml, "grouping_type");
+    if (box_header->version == 1)
+    {
+        uint32_t grouping_type_parameter = read_mp4_uint32(bitstr, mp4->xml, "grouping_type_parameter");
+    }
+
+    uint32_t entry_count = read_mp4_uint32(bitstr, mp4->xml, "entry_count");
+    for (uint32_t i = 1; i <= entry_count; i++)
+    {
+        uint32_t sample_count = read_mp4_uint32(bitstr, mp4->xml, "sample_count");
+        uint32_t group_description_index = read_mp4_uint32(bitstr, mp4->xml, "group_description_index");
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Sample Group Description Box - FullBox.
+ *
+ * From 'ISO/IEC 14496-12' specification:
+ * 8.9.3 Sample Group Description Box
+ */
+int parse_sgpd(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4_t *mp4)
+{
+    TRACE_INFO(MP4, BLD_GREEN "parse_sgpd()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    // Read FullBox attributes
+    box_header->version = (uint8_t)read_bits(bitstr, 8);
+    box_header->flags = read_bits(bitstr, 24);
+
+    print_box_header(box_header);
+    write_box_header(box_header, mp4->xml, "Sample Group Description");
+
+    // Parse box content
+    uint32_t grouping_type = read_mp4_uint32(bitstr, mp4->xml, "grouping_type");
+    uint32_t default_length = 0;
+    if (box_header->version == 1)
+    {
+        default_length = read_mp4_uint32(bitstr, mp4->xml, "default_length");
+    }
+    if (box_header->version >= 2)
+    {
+        uint32_t default_sample_description_index = read_mp4_uint32(bitstr, mp4->xml, "default_sample_description_index");
+    }
+
+    uint32_t entry_count = read_mp4_uint32(bitstr, mp4->xml, "entry_count");
+    for (unsigned i = 1 ; i <= entry_count ; i++)
+    {
+        if (box_header->version == 1)
+        {
+            if (default_length == 0)
+            {
+                uint32_t description_length = read_mp4_uint32(bitstr, mp4->xml, "description_length");
+            }
+        }
+    }
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }

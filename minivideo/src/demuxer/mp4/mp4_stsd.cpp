@@ -1335,7 +1335,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->hvcC->lengthSizeMinusOne = read_bits(bitstr, 2);
 
     track->hvcC->numOfArrays = read_bits(bitstr, 8);
-/*
+
     bool *array_completeness = NULL;
     uint8_t *NAL_unit_type = NULL;
     uint16_t *numNalus = NULL;
@@ -1344,6 +1344,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
 
     for (unsigned j = 0; j < track->hvcC->numOfArrays; j++)
     {
+/*
         array_completeness = (bool *)malloc(track->hvcC->numOfArrays);
         NAL_unit_type = (uint8_t *)malloc(track->hvcC->numOfArrays);
         numNalus = (uint16_t *)malloc(track->hvcC->numOfArrays);
@@ -1399,8 +1400,9 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         {
             retcode = FAILURE;
         }
-    }
 */
+    }
+
 #if ENABLE_DEBUG
     TRACE_1(MP4, "> configurationVersion : %u", track->hvcC->configurationVersion);
     TRACE_1(MP4, "> general_profile_space: %u", track->hvcC->general_profile_space);

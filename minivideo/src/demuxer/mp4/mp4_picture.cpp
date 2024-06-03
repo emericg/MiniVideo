@@ -630,21 +630,13 @@ int parse_pitm(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     box_header->version = (uint8_t)read_bits(bitstr, 8);
     box_header->flags = read_bits(bitstr, 24);
 
-    // Read box content
-    uint16_t mainref = read_bits(bitstr, 16);
-
-#if ENABLE_DEBUG
     print_box_header(box_header);
-    TRACE_1(MP4, "> main item reference : %u", mainref);
-#endif
+    write_box_header(box_header, mp4->xml, "Primary Item reference");
 
-    // xmlMapper
-    if (mp4->xml)
-    {
-        write_box_header(box_header, mp4->xml, "Primary Item reference");
-        fprintf(mp4->xml, "  <main_item_reference>%u</main_item_reference>\n", mainref);
-        fprintf(mp4->xml, "  </a>\n");
-    }
+    // Read box content
+    uint16_t mainref = read_mp4_uint16(bitstr, mp4->xml, "main_item_reference");
+
+    if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
 
     return retcode;
 }
