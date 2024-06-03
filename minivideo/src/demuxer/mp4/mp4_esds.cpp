@@ -23,21 +23,16 @@
 
 // minivideo headers
 #include "mp4_stsd.h"
-#include "mp4_spatial.h"
 #include "mp4_box.h"
 #include "mp4_struct.h"
 #include "../xml_mapper.h"
-#include "../../minivideo_fourcc.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
-#include "../../decoder/h264/h264_parameterset.h"
 
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
-#include <cinttypes>
 
 /* ************************************************************************** */
 

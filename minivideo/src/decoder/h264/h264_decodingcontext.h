@@ -25,7 +25,6 @@
 #define H264_DECODING_CONTEXT_H
 
 // minivideo headers
-#include "../../import.h"
 #include "h264_nalu.h"
 #include "h264_parameterset_struct.h"
 #include "h264_slice_struct.h"

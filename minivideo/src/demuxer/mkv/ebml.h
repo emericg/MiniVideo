@@ -25,7 +25,6 @@
 #define PARSER_EBML_H
 
 // minivideo headers
-#include "mkv_struct.h"
 #include "../../bitstream.h"
 
 #include <cstdint>

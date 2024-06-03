@@ -25,9 +25,8 @@
 #define PARSER_MKV_TRACKS_H
 
 // minivideo headers
-#include "../../bitstream.h"
 #include "ebml.h"
-#include "mkv.h"
+#include "mkv_struct.h"
 
 /* ************************************************************************** */
 

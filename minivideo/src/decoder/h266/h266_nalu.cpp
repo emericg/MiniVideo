@@ -85,7 +85,7 @@ void h266_nalu_reset(h266_nalu_t *nalu)
  * \param *nalu A NAL Unit structure.
  * \return 0 if no NAL Unit is found, 1 otherwise.
  *
- * A NAL Unit header contain (at least) 3 informations:
+ * A NAL Unit header contain (at least) 3 information:
  * - A forbidden_zero_bit equal to 0. Useful to check NAL Unit validity.
  * - A nuh_reserved_zero_bit. Useful to check NAL Unit validity.
  * - A nuh_layer_id.
@@ -138,7 +138,7 @@ int h266_nalu_parse_header(Bitstream_t *bitstr, h266_nalu_t *nalu)
  *
  * See "emulation_prevention_three_byte" section in "7.4.1 NAL unit semantics"
  * and "7.4.1.1 Encapsulation of an SODB within an RBSP"
- * for more informations about that issue.
+ * for more information about that issue.
  */
 int h266_nalu_clean_sample(Bitstream_t *bitstr)
 {

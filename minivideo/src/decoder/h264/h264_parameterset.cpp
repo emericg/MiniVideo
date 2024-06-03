@@ -1563,10 +1563,10 @@ void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FIL
             fprintf(xml, "  <pic_scaling_matrix_present_flag>%u</pic_scaling_matrix_present_flag>\n", pps->pic_scaling_matrix_present_flag);
             if (pps->pic_scaling_matrix_present_flag)
             {
-                 for (unsigned i = 0; i < ((sps[pps->seq_parameter_set_id]->ChromaArrayType != 3) ? 8 : 12); i++)
-                 {
-                     fprintf(xml, "  <pic_scaling_list_present_flag_%u>%u</pic_scaling_list_present_flag_%u>\n", i, pps->pic_scaling_list_present_flag[i], i);
-                 }
+                for (unsigned i = 0; i < ((sps[pps->seq_parameter_set_id]->ChromaArrayType != 3) ? 8 : 12); i++)
+                {
+                    fprintf(xml, "  <pic_scaling_list_present_flag_%u>%u</pic_scaling_list_present_flag_%u>\n", i, pps->pic_scaling_list_present_flag[i], i);
+                }
             }
             fprintf(xml, "  <second_chroma_qp_index_offset>%i</second_chroma_qp_index_offset>\n", pps->second_chroma_qp_index_offset);
         }

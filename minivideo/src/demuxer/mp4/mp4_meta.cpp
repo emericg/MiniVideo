@@ -165,7 +165,6 @@ static int parse_data(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
 
     // Read box content
     uint32_t reserved = read_mp4_uint32(bitstr, mp4->xml, "reserved");
-
     char *annotation = read_mp4_string(bitstr, box_header->size, mp4->xml, "annotation");
     free(annotation);
 
@@ -182,7 +181,7 @@ int parse_ilst(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_INFO(MP4, BLD_GREEN "parse_ilst()" CLR_RESET);
     int retcode = SUCCESS;
 
-    // Read FullBox attributes
+    // Read FullBox attributes?
     //box_header->version = (uint8_t)read_bits(bitstr, 8);
     //box_header->flags = read_bits(bitstr, 24);
 

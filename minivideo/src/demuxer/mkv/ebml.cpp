@@ -229,7 +229,7 @@ void write_ebml_element(EbmlElement_t *element, FILE *xml,
                     boxtypeadd,
                     element->eid,
                     element->offset_start,
-                    (element->eid_size + element->size_size +  element->size));
+                    (element->eid_size + element->size_size + element->size));
         }
     }
 }
@@ -416,6 +416,7 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element,
         if (name)
         {
 #if ENABLE_DEBUG
+/*
             TRACE_1(MKV, "* %s  = 0x", name);
 
             if (element->size > 1023)
@@ -424,6 +425,7 @@ uint8_t *read_ebml_data_binary(Bitstream_t *bitstr, EbmlElement_t *element,
                 TRACE_1(MKV, "* %s  = 0x", name);
             for (int i = 0; i < element->size && i < 1024; i++)
                 printf("%02X", value[i]);
+*/
 #endif // ENABLE_DEBUG
 
             if (xml)

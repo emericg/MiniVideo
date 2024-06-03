@@ -25,9 +25,8 @@
 #define PARSER_MKV_CONVERT_H
 
 // minivideo headers
-#include "mkv_struct.h"
-#include "../../bitstream.h"
 #include "../../minivideo_mediafile.h"
+#include "mkv_struct.h"
 
 /* ************************************************************************** */
 
