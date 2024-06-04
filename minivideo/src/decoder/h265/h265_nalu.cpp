@@ -24,6 +24,7 @@
 // minivideo headers
 #include "h265_nalu.h"
 #include "../../minitraces.h"
+#include "../../minivideo_typedef.h"
 
 // C standard libraries
 #include <cstdio>

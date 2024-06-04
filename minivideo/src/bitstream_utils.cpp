@@ -23,6 +23,7 @@
 // minivideo headers
 #include "bitstream.h"
 #include "minitraces.h"
+#include "minivideo_typedef.h"
 
 // C POSIX library
 #ifndef _MSC_VER

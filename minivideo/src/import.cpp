@@ -32,7 +32,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cmath>
 #include <algorithm>
 
 // C POSIX library

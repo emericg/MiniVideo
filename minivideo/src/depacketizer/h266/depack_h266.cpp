@@ -23,16 +23,9 @@
 // minivideo headers
 #include "depack_h266.h"
 #include "../../decoder/h266/h266_nalu.h"
-#include "../../utils.h"
 #include "../../bitstream.h"
-#include "../../bitstream_utils.h"
 #include "../../minivideo_typedef.h"
-#include "../../minivideo_fourcc.h"
 #include "../../minitraces.h"
-
-// C standard libraries
-#include <cstdio>
-#include <cstring>
 
 /* ************************************************************************** */
 

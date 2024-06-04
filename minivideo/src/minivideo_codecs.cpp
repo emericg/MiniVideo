@@ -21,7 +21,6 @@
  */
 
 #include "minivideo_codecs.h"
-#include "minitraces.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wswitch"

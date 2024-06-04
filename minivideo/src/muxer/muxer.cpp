@@ -24,12 +24,12 @@
 #include "muxer.h"
 #include "pes_packetizer.h"
 #include "../minitraces.h"
+#include "../minivideo_typedef.h"
 
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cerrno>
 
 /* ************************************************************************** */
 

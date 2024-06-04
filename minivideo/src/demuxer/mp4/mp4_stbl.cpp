@@ -28,8 +28,8 @@
 #include "mp4_struct.h"
 #include "../xml_mapper.h"
 #include "../../minivideo_fourcc.h"
+#include "../../minivideo_typedef.h"
 #include "../../bitstream.h"
-#include "../../bitstream_utils.h"
 #include "../../minitraces.h"
 
 // C standard libraries

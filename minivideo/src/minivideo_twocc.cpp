@@ -22,13 +22,6 @@
 
 // minivideo headers
 #include "minivideo_twocc.h"
-#include "minitraces.h"
-
-// C standard libraries
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <climits>
 
 /* ************************************************************************** */
 

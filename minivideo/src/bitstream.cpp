@@ -25,7 +25,6 @@
 #include "bitstream_utils.h"
 #include "minitraces.h"
 #include "minivideo_typedef.h"
-#include "import.h"
 
 // C POSIX library
 #ifndef _MSC_VER

@@ -31,7 +31,6 @@
 #include <climits>
 
 // C++ standard libraries
-#include <limits>
 #include <algorithm>
 
 /* ************************************************************************** */

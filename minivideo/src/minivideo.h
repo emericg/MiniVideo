@@ -28,6 +28,7 @@
 #include "minivideo_codecs.h"
 #include "minivideo_fourcc.h"
 #include "minivideo_mediafile.h"
+#include "minivideo_mediastream.h"
 
 /* ************************************************************************** */
 

@@ -22,7 +22,6 @@
 
 // minivideo headers
 #include "minivideo_uuid.h"
-#include "minitraces.h"
 
 // C standard libraries
 #include <cstdio>

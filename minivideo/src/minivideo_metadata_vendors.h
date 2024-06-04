@@ -26,6 +26,8 @@
 
 #include <cstdint>
 
+/* ************************************************************************** */
+
 typedef struct metadata_gopro_t {
     char camera_firmware[32];
     char camera_serial[32];

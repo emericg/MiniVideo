@@ -24,9 +24,6 @@
 #define DEPACKETIZER_STRUCT_H
 /* ************************************************************************** */
 
-// minivideo headers
-#include "../minivideo_typedef.h"
-
 // C standard libraries
 #include <cstdint>
 
