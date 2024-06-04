@@ -17,7 +17,7 @@ equals(QT_MAJOR_VERSION, 6) {
     QT      += core svg gui widgets svgwidgets printsupport
 }
 
-# Project files ################################################################
+# Project files ----------------------------------------------------------------
 
 SOURCES     += src/main.cpp \
                src/cli.cpp \
@@ -59,28 +59,31 @@ FORMS       += ui/mainwindow.ui \
 RESOURCES   += resources/resources.qrc
 
 # third party libraries
-HEADERS     += $${PWD}/src/thirdparty/portable_endian.h
+HEADERS += src/thirdparty/portable_endian.h
 include(src/thirdparty/pugixml/pugixml.pri)
 include(src/thirdparty/QHexView/QHexView.pri)
 include(src/thirdparty/qhexedit2/qhexedit2.pri)
 include(src/thirdparty/qcustomplot/qcustomplot.pri)
 
-# Dependencies #################################################################
+# Dependencies -----------------------------------------------------------------
 
 # minivideo library
-INCLUDEPATH     += ../minivideo/src/ ../../minivideo/src/
-QMAKE_LIBDIR    += ../minivideo/build/ ../../minivideo/build/
-QMAKE_RPATHDIR  += ../minivideo/build/ ../../minivideo/build/
-LIBS            += -lminivideo                          # dynamic linking
-#LIBS           += ../minivideo/build/libminivideo.a    # static linking
+INCLUDEPATH     += $${PWD}/../minivideo/src/
+QMAKE_LIBDIR    += $${PWD}/../minivideo/bin/$${QT_ARCH}/
+QMAKE_RPATHDIR  += $${PWD}/../minivideo/bin/$${QT_ARCH}/
+LIBS            += -lminivideo                                                  # dynamic linking
+#LIBS           += $${PWD}/../minivideo/bin/$${QT_ARCH}/libminivideo.a          # static linking
 
-# Build settings ###############################################################
+# Build artifacts --------------------------------------------------------------
 
-unix {
-    # Enables AddressSanitizer
-    #QMAKE_CXXFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract -fno-omit-frame-pointer
-    #QMAKE_LFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract
-}
+OBJECTS_DIR  = build/$${QT_ARCH}
+MOC_DIR      = build/$${QT_ARCH}
+RCC_DIR      = build/$${QT_ARCH}
+UI_DIR       = build/$${QT_ARCH}
+
+DESTDIR      = bin/
+
+# Build settings ---------------------------------------------------------------
 
 win32 { DEFINES += _USE_MATH_DEFINES }
 
@@ -88,14 +91,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG(release, debug|release) : DEFINES += NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT
 
-# Build artifacts ##############################################################
-
-OBJECTS_DIR  = build/$${QT_ARCH}
-MOC_DIR      = build/$${QT_ARCH}
-RCC_DIR      = build/$${QT_ARCH}
-UI_DIR       = build/$${QT_ARCH}
-
-DESTDIR      = bin/$${QT_ARCH}
+unix {
+    # Enables AddressSanitizer
+    #QMAKE_CXXFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract -fno-omit-frame-pointer
+    #QMAKE_LFLAGS += -fsanitize=address,undefined,pointer-compare,pointer-subtract
+}
 
 # OS specifics -----------------------------------------------------------------
 
@@ -129,10 +129,10 @@ unix {
         }
 
         # Using RPATH
-        QMAKE_RPATHDIR += $${PWD}/../minivideo/build
+        QMAKE_RPATHDIR += $${PWD}/../minivideo/bin/$${QT_ARCH}/
 
         # Using https://nixos.org/patchelf.html
-        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/build/ $${PWD}/bin/mini_analyser)
+        #QMAKE_POST_LINK = (patchelf --set-rpath $${PWD}/../minivideo/bin/$${QT_ARCH}/ $${PWD}/bin/mini_analyser)
     }
 
     macx {
@@ -166,7 +166,7 @@ unix {
 
         # Force RPATH to look into the 'Frameworks' dir (doesn't really seems to work...)
         #QMAKE_RPATHDIR += @executable_path/../Frameworks
-        #QMAKE_RPATHDIR += $${PWD}/../minivideo/build
+        #QMAKE_RPATHDIR += $${PWD}/../minivideo/bin/$${QT_ARCH}/
 
         # Rewrite minivideo rpath
         #QMAKE_POST_LINK = (install_name_tool -add_rpath @executable_path/../Frameworks/. "bin/mini_analyser.app/Contents/MacOS/mini_analyser")

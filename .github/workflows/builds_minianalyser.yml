@@ -27,8 +27,8 @@ jobs:
     name: "Linux CI build"
     runs-on: ubuntu-20.04
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -77,8 +77,8 @@ jobs:
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
              mv ${{env.APP_NAME}}-x86_64.AppImage ../${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
 
-      # Upload AppImage
-      - name: Upload AppImage
+      # Upload application
+      - name: Upload application
         uses: actions/upload-artifact@v4
         with:
           name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
@@ -89,8 +89,8 @@ jobs:
     name: "macOS CI build"
     runs-on: macos-12
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -129,8 +129,8 @@ jobs:
              make install
              zip -r -X ../${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip bin/${{env.APP_NAME}}.app
 
-      # Upload app zip
-      - name: Upload app zip
+      # Upload application
+      - name: Upload application
         uses: actions/upload-artifact@v4
         with:
           name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip
@@ -141,8 +141,8 @@ jobs:
     name: "Windows CI build"
     runs-on: windows-2022
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -152,7 +152,6 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
-          spectre: true
 
       # Install Qt
       - name: Install Qt
@@ -196,8 +195,8 @@ jobs:
              mv mini_analyser/bin mini_analyser/${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
              7z a ../${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
 
-      # Upload app zip
-      - name: Upload app zip
+      # Upload application
+      - name: Upload application
         uses: actions/upload-artifact@v4
         with:
           name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip

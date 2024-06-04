@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# MiniVideo "library" build system / qmake edition
+# MiniVideo library build system / qmake edition
 # This file allows you to build shared & static library of MiniVideo
 #-------------------------------------------------------------------------------
 
@@ -9,9 +9,16 @@ TEMPLATE     = lib
 CONFIG      += c++11 shared_and_static
 CONFIG      -= qt
 
-# build artifacts
+# minivideo files --------------------------------------------------------------
+
+SOURCES = $$files(src/*.cpp, true)
+HEADERS = $$files(src/*.h, true)
+
+# build artifacts --------------------------------------------------------------
+
 OBJECTS_DIR  = build/$${QT_ARCH}/
-DESTDIR      = build/
+
+DESTDIR      = bin/$${QT_ARCH}/
 
 # build settings ---------------------------------------------------------------
 
@@ -77,11 +84,6 @@ win32 {
     # Linker flags
     QMAKE_LFLAGS += -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc
 }
-
-# minivideo files --------------------------------------------------------------
-
-SOURCES = $$files(src/*.cpp, true)
-HEADERS = $$files(src/*.h, true)
 
 # minivideo installation -------------------------------------------------------
 
