@@ -222,16 +222,18 @@ set(minivideo_SRC
         src/muxer/pes_packetizer.cpp
     src/depacketizer/depack_struct.h src/depacketizer/depack.cpp
         src/depacketizer/h264/depack_h264.cpp
+        src/depacketizer/h265/depack_h265.cpp
+        src/depacketizer/h266/depack_h266.cpp
     src/decoder/h264/h264.cpp
+        src/decoder/h264/h264_nalu.cpp
+        src/decoder/h264/h264_parameterset.cpp
+        src/decoder/h264/h264_parameterset_struct.h
         src/decoder/h264/h264_decodingcontext.h
         src/decoder/h264/h264_expgolomb.cpp
         src/decoder/h264/h264_cavlc.cpp
         src/decoder/h264/h264_cavlc_tables.h
         src/decoder/h264/h264_cabac.cpp
         src/decoder/h264/h264_cabac_tables.h
-        src/decoder/h264/h264_nalu.cpp
-        src/decoder/h264/h264_parameterset.cpp
-        src/decoder/h264/h264_parameterset_struct.h
         src/decoder/h264/h264_slice.cpp
         src/decoder/h264/h264_slice_struct.h
         src/decoder/h264/h264_macroblock.cpp

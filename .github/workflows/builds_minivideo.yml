@@ -75,7 +75,6 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
-          spectre: true
 
       # Build library
       - name: Build library
