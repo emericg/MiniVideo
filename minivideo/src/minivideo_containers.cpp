@@ -494,6 +494,11 @@ Containers_e getContainerUsingExtension(const std::string &ext)
             container = CONTAINER_ES;
             //codec = CODEC_H265;
         }
+        else if (ext == "266" || ext == "h266")
+        {
+            container = CONTAINER_ES;
+            //codec = CODEC_H266;
+        }
         else if (ext == "aac")
         {
             container = CONTAINER_ES_AAC;

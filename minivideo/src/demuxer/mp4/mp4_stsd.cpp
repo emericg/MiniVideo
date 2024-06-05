@@ -35,12 +35,11 @@
 #include "../../decoder/h264/h264_nalu.h"
 #include "../../decoder/h264/h264_parameterset.h"
 #include "../../decoder/h265/h265_nalu.h"
-//#include "../../decoder/h265/h265_parameterset.h"
+#include "../../decoder/h265/h265_parameterset.h"
 
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <cinttypes>
 
 /* ************************************************************************** */
@@ -1312,7 +1311,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     // Parse box content
     track->hvcC->configurationVersion = read_bits(bitstr, 8);
     track->hvcC->general_profile_space = read_bits(bitstr, 2);
-    track->hvcC->general_tier_flag = read_bits(bitstr, 1);
+    track->hvcC->general_tier_flag = read_bit(bitstr);
     track->hvcC->general_profile_idc = read_bits(bitstr, 5);
     track->hvcC->general_profile_compatibility_flags = read_bits(bitstr, 32);
     track->hvcC->general_constraint_indicator_flags = read_bits_64(bitstr, 48);
@@ -1331,7 +1330,7 @@ int parse_hvcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->hvcC->avgFrameRate = read_bits(bitstr, 16);
     track->hvcC->constantFrameRate = read_bits(bitstr, 2);
     track->hvcC->numTemporalLayers = read_bits(bitstr, 3);
-    track->hvcC->temporalIdNested = read_bits(bitstr, 1);
+    track->hvcC->temporalIdNested = read_bit(bitstr);
     track->hvcC->lengthSizeMinusOne = read_bits(bitstr, 2);
 
     track->hvcC->numOfArrays = read_bits(bitstr, 8);
@@ -1614,7 +1613,7 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->vpcC->level = read_bits(bitstr, 8);
     track->vpcC->bitDepth = read_bits(bitstr, 4);
     track->vpcC->chromaSubsampling = read_bits(bitstr, 3);
-    track->vpcC->videoFullRangeFlag = read_bits(bitstr, 1);
+    track->vpcC->videoFullRangeFlag = read_bit(bitstr);
     track->vpcC->colourPrimaries = read_bits(bitstr, 8);
     track->vpcC->transferCharacteristics = read_bits(bitstr, 8);
     track->vpcC->matrixCoefficients = read_bits(bitstr, 8);

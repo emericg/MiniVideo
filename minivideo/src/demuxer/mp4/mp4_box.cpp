@@ -299,7 +299,7 @@ uint32_t read_mp4_uint(Bitstream_t *bitstr, int bits, FILE *xml, const char *nam
 bool read_mp4_flag(Bitstream_t *bitstr, FILE *xml, const char *name)
 {
     TRACE_2(MP4, "read_mp4_flag()");
-    bool value = read_bits(bitstr, 1);
+    bool value = read_bit(bitstr);
 
     if (name)
     {

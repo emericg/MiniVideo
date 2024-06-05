@@ -101,13 +101,13 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
         system_header.rate_bound = read_bits(bitstr, 22);
         MARKER_BIT
         system_header.audio_bound = read_bits(bitstr, 6);
-        system_header.fixed_flag = read_bits(bitstr, 1);
-        system_header.CSPS_flag = read_bits(bitstr, 1);
-        system_header.system_audio_lock_flag = read_bits(bitstr, 1);
-        system_header.system_video_lock_flag = read_bits(bitstr, 1);
+        system_header.fixed_flag = read_bit(bitstr);
+        system_header.CSPS_flag = read_bit(bitstr);
+        system_header.system_audio_lock_flag = read_bit(bitstr);
+        system_header.system_video_lock_flag = read_bit(bitstr);
         MARKER_BIT
         system_header.video_bound = read_bits(bitstr, 5);
-        system_header.packet_rate_restriction_flag = read_bits(bitstr, 1);
+        system_header.packet_rate_restriction_flag = read_bit(bitstr);
 
         /*unsigned reserved_bits =*/ read_bits(bitstr, 7);
 
@@ -117,7 +117,7 @@ static int parse_pack_header(Bitstream_t *bitstr, PesHeader_t *header, PackHeade
             system_header.stream_id = read_bits(bitstr, 8);
             MARKER_BIT
             MARKER_BIT
-            system_header.PSTD_buffer_bound_scale = read_bits(bitstr, 1);
+            system_header.PSTD_buffer_bound_scale = read_bit(bitstr);
             system_header.PSTD_buffer_size_bound = read_bits(bitstr, 13);
         }
     }
@@ -154,13 +154,13 @@ static int parse_system_header(Bitstream_t *bitstr, PesHeader_t *header, SystemH
     packet->rate_bound = read_bits(bitstr, 22);
     MARKER_BIT
     packet->audio_bound = read_bits(bitstr, 6);
-    packet->fixed_flag = read_bits(bitstr, 1);
-    packet->CSPS_flag = read_bits(bitstr, 1);
-    packet->system_audio_lock_flag = read_bits(bitstr, 1);
-    packet->system_video_lock_flag = read_bits(bitstr, 1);
+    packet->fixed_flag = read_bit(bitstr);
+    packet->CSPS_flag = read_bit(bitstr);
+    packet->system_audio_lock_flag = read_bit(bitstr);
+    packet->system_video_lock_flag = read_bit(bitstr);
     MARKER_BIT
     packet->video_bound = read_bits(bitstr, 5);
-    packet->packet_rate_restriction_flag = read_bits(bitstr, 1);
+    packet->packet_rate_restriction_flag = read_bit(bitstr);
 
     /*unsigned reserved_bits =*/ read_bits(bitstr, 7);
 
@@ -170,7 +170,7 @@ static int parse_system_header(Bitstream_t *bitstr, PesHeader_t *header, SystemH
         packet->stream_id = read_bits(bitstr, 8);
         MARKER_BIT
         MARKER_BIT
-        packet->PSTD_buffer_bound_scale = read_bits(bitstr, 1);
+        packet->PSTD_buffer_bound_scale = read_bit(bitstr);
         packet->PSTD_buffer_size_bound = read_bits(bitstr, 13);
     }
 

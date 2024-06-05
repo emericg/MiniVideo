@@ -100,7 +100,7 @@ typedef struct codecprivate_vvcC_t
     //if (ptl_sublayer_level_present_flag)
         uint8_t *sublayer_level_idc;
     uint8_t ptl_num_sub_profiles;
-        uint32_t *general_sub_profile_idc;
+    uint32_t *general_sub_profile_idc;
 
     // TODO // NALs
 

@@ -577,7 +577,7 @@ bool computeCodecsSpecifics(MediaFile_t *media)
                         track->color_matrix = avcC->sps_array[0]->vui->matrix_coefficients;
                     }
 
-                    if (avcC->pps_count && avcC->pps_array[0])
+                    if (avcC->pps_count > 0 && avcC->pps_array[0])
                     {
                         track->h264_feature_cabac = avcC->pps_array[0]->entropy_coding_mode_flag;
                         track->h264_feature_8x8_blocks = avcC->pps_array[0]->transform_8x8_mode_flag;

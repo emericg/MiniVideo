@@ -621,7 +621,7 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     // Parse box content
     track->hvcC->configurationVersion = read_bits(bitstr, 8);
     track->hvcC->general_profile_space = read_bits(bitstr, 2);
-    track->hvcC->general_tier_flag = read_bits(bitstr, 1);
+    track->hvcC->general_tier_flag = read_bit(bitstr);
     track->hvcC->general_profile_idc = read_bits(bitstr, 5);
     track->hvcC->general_profile_compatibility_flags = read_bits(bitstr, 32);
     track->hvcC->general_constraint_indicator_flags = read_bits_64(bitstr, 48);
@@ -641,10 +641,10 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     track->hvcC->avgFrameRate = read_bits(bitstr, 16);
     track->hvcC->constantFrameRate = read_bits(bitstr, 2);
     track->hvcC->numTemporalLayers = read_bits(bitstr, 3);
-    track->hvcC->temporalIdNested = read_bits(bitstr, 1);
-    track->hvcC->lengthSizeMinusOne = read_bits(bitstr, 1);
+    track->hvcC->temporalIdNested = read_bit(bitstr);
+    track->hvcC->lengthSizeMinusOne = read_bit(bitstr);
 
-    track->hvcC->numOfArrays = read_bits(bitstr, 1);
+    track->hvcC->numOfArrays = read_bit(bitstr);
     for (unsigned i = 0; i < track->hvcC->numOfArrays; i++)
     {
         // TODO // NAL unit table
@@ -783,7 +783,7 @@ int parse_vpx_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     track->vpcC->level = read_bits(bitstr, 8);
     track->vpcC->bitDepth = read_bits(bitstr, 4);
     track->vpcC->chromaSubsampling = read_bits(bitstr, 3);
-    track->vpcC->videoFullRangeFlag = read_bits(bitstr, 1);
+    track->vpcC->videoFullRangeFlag = read_bit(bitstr);
     track->vpcC->colourPrimaries = read_bits(bitstr, 8);
     track->vpcC->transferCharacteristics = read_bits(bitstr, 8);
     track->vpcC->matrixCoefficients = read_bits(bitstr, 8);
@@ -947,9 +947,9 @@ int parse_dolbyvision_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mk
     track->dvcC->dv_version_minor = read_bits(bitstr, 8);
     track->dvcC->dv_profile = read_bits(bitstr, 7);
     track->dvcC->dv_level = read_bits(bitstr, 6);
-    track->dvcC->rpu_present_flag = read_bits(bitstr, 1);
-    track->dvcC->el_present_flag = read_bits(bitstr, 1);
-    track->dvcC->bl_present_flag = read_bits(bitstr, 1);
+    track->dvcC->rpu_present_flag = read_bit(bitstr);
+    track->dvcC->el_present_flag = read_bit(bitstr);
+    track->dvcC->bl_present_flag = read_bit(bitstr);
     if (track->dvcC->bl_present_flag)
     {
         track->dvcC->dv_bl_signal_compatibility_id = read_bits(bitstr, 4);
