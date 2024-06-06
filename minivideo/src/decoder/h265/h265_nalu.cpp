@@ -34,6 +34,11 @@
 
 /* ************************************************************************** */
 
+#define start_code_prefix                   0x000001
+#define emulation_prevention_three_byte     0x000003
+
+/* ************************************************************************** */
+
 /*!
  * \brief Allocate and initialize a new NAL Unit.
  * \return A pointer to the newly allocated NAL Unit.

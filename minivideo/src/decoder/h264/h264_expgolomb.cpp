@@ -23,26 +23,23 @@
 
 // minivideo headers
 #include "h264_expgolomb.h"
-#include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
 
 // C standard libraries
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
 
 /* ************************************************************************** */
 
 //! Gives coded_block_pattern value from ChromaArrayType and codeNum values, both for intra and inter prediction modes.
 const uint8_t NCBP[2][48][2] =
 { // [ChromaArrayType][codeNum][intra/inter coding]
-    {   // 0      1        2       3       4       5       6       7       8       9      10      11
+    { //   0       1       2       3       4       5       6       7       8       9      10      11
         {15, 0},{ 0, 1},{ 7, 2},{11, 4},{13, 8},{14, 3},{ 3, 5},{ 5,10},{10,12},{12,15},{ 1, 7},{ 2,11},
         { 4,13},{ 8,14},{ 6, 6},{ 9, 9},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},
         { 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},
         { 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0},{ 0, 0}
     },
-    {   // 0      1        2       3       4       5       6       7       8       9      10      11
+    { //   0       1       2       3       4       5       6       7       8       9      10      11
         {47, 0},{31,16},{15, 1},{ 0, 2},{23, 4},{27, 8},{29,32},{30, 3},{ 7, 5},{11,10},{13,12},{14,15},
         {39,47},{43, 7},{45,11},{46,13},{16,14},{ 3, 6},{ 5, 9},{10,31},{12,35},{19,37},{21,42},{26,44},
         {28,33},{35,34},{37,36},{42,40},{44,39},{ 1,43},{ 2,45},{ 4,46},{ 8,17},{17,18},{18,20},{20,24},
@@ -59,8 +56,6 @@ const uint8_t NCBP[2][48][2] =
  */
 static unsigned int get_codeNum(Bitstream_t *bitstr)
 {
-    TRACE_1(EXPGO, "get_codeNum()");
-
     // Loop until a non zero bit is found
     int leadingZeroBits = -1;
     for (int b = 0; !b; leadingZeroBits++)
@@ -74,7 +69,7 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
         codeNum = std::pow(2, leadingZeroBits) - 1 + read_bits(bitstr, leadingZeroBits);
     }
 
-    TRACE_1(EXPGO, "codeNum  = %i", codeNum);
+    TRACE_1(EXPGO, "get_codeNum() = %i", codeNum);
     return codeNum;
 }
 
@@ -88,7 +83,6 @@ static unsigned int get_codeNum(Bitstream_t *bitstr)
 unsigned int read_ue(Bitstream_t *bitstr)
 {
     TRACE_1(EXPGO, "read_ue()");
-
     return get_codeNum(bitstr);
 }
 
@@ -102,8 +96,6 @@ unsigned int read_ue(Bitstream_t *bitstr)
  */
 int read_se(Bitstream_t *bitstr)
 {
-    TRACE_1(EXPGO, "read_se()");
-
     unsigned int codeNum = get_codeNum(bitstr);
     int se = std::pow(-1.0, codeNum+1) * std::ceil(codeNum/2.0);
 
@@ -125,16 +117,11 @@ int read_se(Bitstream_t *bitstr)
  */
 unsigned int read_me(Bitstream_t *bitstr, unsigned int ChromaArrayType, bool intracoding_flag)
 {
-    TRACE_1(EXPGO, "read_me()");
-
-    unsigned cat = 1;
-    if (ChromaArrayType == 0 || ChromaArrayType == 3)
-        cat = 0;
-
     // Fetch syntax element 'coded_block_pattern' value
+    unsigned cat = (ChromaArrayType == 0 || ChromaArrayType == 3) ? 0 : 1;
     unsigned coded_block_pattern = NCBP[cat][get_codeNum(bitstr)][!intracoding_flag];
 
-    TRACE_1(EXPGO, "coded_block_pattern = %i", coded_block_pattern);
+    TRACE_1(EXPGO, "read_me() coded_block_pattern = %i", coded_block_pattern);
     return coded_block_pattern;
 }
 

@@ -1113,10 +1113,10 @@ void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
         fprintf(xml, "  <seq_scaling_matrix_present_flag>%u</seq_scaling_matrix_present_flag>\n", sps->seq_scaling_matrix_present_flag);
         if (sps->seq_scaling_matrix_present_flag)
         {
-             for (unsigned i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
-             {
-                 fprintf(xml, "  <seq_scaling_list_present_flag_%u>%u</seq_scaling_list_present_flag_%u>\n", i, sps->seq_scaling_list_present_flag[i], i);
-             }
+            for (unsigned i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
+            {
+                fprintf(xml, "  <seq_scaling_list_present_flag_%u>%u</seq_scaling_list_present_flag_%u>\n", i, sps->seq_scaling_list_present_flag[i], i);
+            }
         }
         fprintf(xml, "  <log2_max_frame_num_minus4>%u</log2_max_frame_num_minus4>\n", sps->log2_max_frame_num_minus4);
         fprintf(xml, "  <MaxFrameNum>%u</MaxFrameNum>\n", sps->MaxFrameNum);

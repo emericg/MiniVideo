@@ -254,6 +254,7 @@ typedef struct h264_sps_t
         unsigned int frame_crop_bottom_offset;
         unsigned int CropUnitX; // derived from SubWidthC, frame_mbs_only_flag
         unsigned int CropUnitY; // derived from SubHeightC, frame_mbs_only_flag
+
     bool vui_parameters_present_flag;
     h264_vui_t *vui;
 
@@ -340,35 +341,126 @@ typedef struct h264_sei_t
     // D.1.3 // Picture timing SEI message syntax
     // D.1.4 // Pan-scan rectangle SEI message syntax
     // D.1.5 // Filler payload SEI message syntax
+
     // D.1.6 // User data registered by Rec. ITU-T T.35 SEI message syntax
+    uint8_t itu_t_t35_country_code;
+    uint8_t itu_t_t35_country_code_extension_byte;
+    char *itu_t_t35_payload;
+
     // D.1.7 // User data unregistered SEI message syntax
+    char uuid_iso_iec_11578[16];
+    char *user_data_payload;
+
     // D.1.8 // Recovery point SEI message syntax
+    unsigned recovery_frame_cnt;
+    uint8_t exact_match_flag;
+    uint8_t broken_link_flag;
+    uint8_t changing_slice_group_idc;
+
     // D.1.9 // Decoded reference picture marking repetition SEI message syntax
     // D.1.10 // Spare picture SEI message syntax
     // D.1.11 // Scene information SEI message syntax
     // D.1.12 // Sub-sequence information SEI message syntax
     // D.1.13 // Sub-sequence layer characteristics SEI message syntax
     // D.1.14 // Sub-sequence characteristics SEI message syntax
+
     // D.1.15 // Full-frame freeze SEI message syntax
+    unsigned full_frame_freeze_repetition_period;
+
     // D.1.16 // Full-frame freeze release SEI message syntax
+
     // D.1.17 // Full-frame snapshot SEI message syntax
+    unsigned snapshot_id;
+
     // D.1.18 // Progressive refinement segment start SEI message syntax
+    unsigned progressive_refinement_id_start;
+    unsigned num_refinement_steps_minus1;
+
     // D.1.19 // Progressive refinement segment end SEI message syntax
+    unsigned progressive_refinement_id_end;
+
     // D.1.20 // Motion-constrained slice group set SEI message syntax
     // D.1.21 // Film grain characteristics SEI message syntax
+
     // D.1.22 // Deblocking filter display preference SEI message syntax
+    bool deblocking_display_preference_cancel_flag;
+        //if (!deblocking_display_preference_cancel_flag)
+        bool display_prior_to_deblocking_preferred_flag;
+        bool dec_frame_buffering_constraint_flag;
+        unsigned deblocking_display_preference_repetition_period;
+
     // D.1.23 // Stereo video information SEI message syntax
+    bool field_views_flag;
+    // if (field_views_flag)
+        bool top_field_is_left_view_flag;
+    //else
+        bool current_frame_is_left_view_flag;
+        bool next_frame_is_second_view_flag;
+    bool left_view_self_contained_flag;
+    bool right_view_self_contained_flag;
+
     // D.1.24 // Post-filter hint SEI message syntax
+    unsigned filter_hint_size_y;
+    unsigned filter_hint_size_x;
+    uint8_t filter_hint_type;
+    //int filter_hint[3][cy][cx];
+    bool additional_extension_flag;
+
     // D.1.25 // Tone mapping information SEI message syntax
     // D.1.26 // Frame packing arrangement SEI message syntax
+
     // D.1.27 // Display orientation SEI message syntax
+    bool display_orientation_cancel_flag;
+    //if (!display_orientation_cancel_flag)
+        bool hor_flip;
+        bool ver_flip;
+        uint16_t anticlockwise_rotation;
+        unsigned display_orientation_repetition_period;
+        bool display_orientation_extension_flag;
+
     // D.1.28 // Green metadata SEI message syntax
+    // ISO/IEC 23001-11 (Green metadata)
+
     // D.1.29 // Mastering display colour volume SEI message syntax
+    uint16_t display_primaries_x[3];
+    uint16_t display_primaries_y[3];
+    uint16_t white_point_x;
+    uint16_t white_point_y;
+    uint32_t max_display_mastering_luminance;
+    uint32_t min_display_mastering_luminance;
+
     // D.1.30 // Colour remapping information SEI message syntax
+
     // D.1.31 // Content light level information SEI message syntax
+    uint16_t max_content_light_level;
+    uint16_t max_pic_average_light_level;
+
     // D.1.32 // Alternative transfer characteristics SEI message syntax
+    uint8_t preferred_transfer_characteristics;
+
     // D.1.33 // Content colour volume SEI message syntax
+    bool ccv_cancel_flag;
+        //if (!ccv_cancel_flag)
+        bool ccv_persistence_flag;
+        bool ccv_primaries_present_flag;
+        bool ccv_min_luminance_value_present_flag;
+        bool ccv_max_luminance_value_present_flag;
+        bool ccv_avg_luminance_value_present_flag;
+        //if (ccv_primaries_present_flag)
+            int32_t ccv_primaries_x[3];
+            int32_t ccv_primaries_y[3];
+        //if (ccv_min_luminance_value_present_flag)
+            uint32_t ccv_min_luminance_value;
+        //if (ccv_max_luminance_value_present_flag)
+            uint32_t ccv_max_luminance_value;
+        //if (ccv_avg_luminance_value_present_flag)
+            uint32_t ccv_avg_luminance_value;
+
     // D.1.34 // Ambient viewing environment SEI message syntax
+    uint32_t ambient_illuminance;
+    uint16_t ambient_light_x;
+    uint16_t ambient_light_y;
+
     // D.1.35 // Syntax of omnidirectional video specific SEI messages
     // D.1.36 // SEI manifest SEI message syntax
     // D.1.37 // SEI prefix indication SEI message syntax

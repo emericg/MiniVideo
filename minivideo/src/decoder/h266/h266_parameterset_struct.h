@@ -23,9 +23,6 @@
 
 #ifndef H266_PARAMETER_SET_STRUCT_H
 #define H266_PARAMETER_SET_STRUCT_H
-
-#include <cstdint>
-
 /* ************************************************************************** */
 
 #define H266_MAX_VPS     32

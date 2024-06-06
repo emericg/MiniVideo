@@ -16,29 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      h266_parameterset.h
+ * \file      h265_expgolomb.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2024
  */
 
-#ifndef H266_PARAMETER_SET_H
-#define H266_PARAMETER_SET_H
+#ifndef H265_EXPGOLOMB_H
+#define H265_EXPGOLOMB_H
 /* ************************************************************************** */
 
 // minivideo headers
-#include "h266_parameterset_struct.h"
 #include "../../bitstream.h"
 
 /* ************************************************************************** */
 
-int h266_decodeVPS(Bitstream_t *bitstr, h266_vps_t *vps);
-void h266_mapVPS(h266_vps_t *vps, int64_t offset, int64_t size, FILE *xml);
-
-int h266_decodeSPS(Bitstream_t *bitstr, h266_sps_t *sps);
-void h266_mapSPS(h266_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
-
-int h266_decodePPS(Bitstream_t *bitstr, h266_pps_t *pps, h266_sps_t **sps_array);
-void h266_mapPPS(h266_pps_t *pps, int64_t offset, int64_t size, FILE *xml);
+int h265_read_se(Bitstream_t *bitstr);
+unsigned int h265_read_ue(Bitstream_t *bitstr);
 
 /* ************************************************************************** */
-#endif // H266_PARAMETER_SET_H
+#endif // H265_EXPGOLOMB_H

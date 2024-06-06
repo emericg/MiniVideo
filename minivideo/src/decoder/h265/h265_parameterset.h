@@ -23,6 +23,7 @@
 
 #ifndef H265_PARAMETER_SET_H
 #define H265_PARAMETER_SET_H
+/* ************************************************************************** */
 
 // minivideo headers
 #include "h265_parameterset_struct.h"
@@ -31,15 +32,12 @@
 /* ************************************************************************** */
 
 int h265_decodeVPS(Bitstream_t *bitstr, h265_vps_t *vps);
-void h265_printVPS(h265_vps_t *vps);
 void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml);
 
 int h265_decodeSPS(Bitstream_t *bitstr, h265_sps_t *sps);
-void h265_printSPS(h265_sps_t *sps);
 void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
 
 int h265_decodePPS(Bitstream_t *bitstr, h265_pps_t *pps, h265_sps_t **sps_array);
-void h265_printPPS(h265_pps_t *pps);
 void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml);
 
 /* ************************************************************************** */

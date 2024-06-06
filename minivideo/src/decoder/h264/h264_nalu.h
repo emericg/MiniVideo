@@ -29,11 +29,6 @@
 
 /* ************************************************************************** */
 
-#define start_code_prefix                   0x000001
-#define emulation_prevention_three_byte     0x000003
-
-/* ************************************************************************** */
-
 /*!
  * \brief H.264 NAL Unit - Network Abstraction Layer Unit.
  *

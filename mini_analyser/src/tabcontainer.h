@@ -97,6 +97,7 @@ private:
 
     QIcon icon_atom;
     QIcon icon_data;
+    QIcon icon_data_ext;
     QIcon icon_ext;
     QIcon icon_track;
 

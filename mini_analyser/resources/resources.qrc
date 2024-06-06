@@ -42,6 +42,7 @@
         <file>img/E.png</file>
         <file>img/T.png</file>
         <file>img/P.png</file>
+        <file>img/PE.png</file>
     </qresource>
     <qresource prefix="/about">
         <file>about/about.html</file>

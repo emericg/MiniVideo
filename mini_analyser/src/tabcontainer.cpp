@@ -73,6 +73,7 @@ tabContainer::tabContainer(QWidget *parent) :
     // Preload icons
     icon_atom.addFile(":/img/img/A.png");
     icon_data.addFile(":/img/img/P.png");
+    icon_data_ext.addFile(":/img/img/PE.png");
     icon_ext.addFile(":/img/img/E.png");
     icon_track.addFile(":/img/img/T.png");
 
@@ -1143,6 +1144,8 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
 
                     if (add == "track")
                         child_item->setIcon(0, icon_track);
+                    else if (add == "private")
+                        child_item->setIcon(0, icon_data_ext);
                     else
                         child_item->setIcon(0, icon_ext);
 
