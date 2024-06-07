@@ -502,10 +502,10 @@ typedef struct h265_pps_t
         uint32_t num_tile_rows_minus1;
         bool uniform_spacing_flag;
         //if (!uniform_spacing_flag)
-        //for (i = 0; i < num_tile_columns_minus1; i++)
-            //column_width_minus1[ i ]
-        //for (i = 0; i < num_tile_rows_minus1; i++)
-            //row_height_minus1[ i ]
+            //for (i = 0; i < num_tile_columns_minus1; i++)
+                uint32_t *column_width_minus1;
+            //for (i = 0; i < num_tile_rows_minus1; i++)
+                uint32_t *row_height_minus1;
         bool loop_filter_across_tiles_enabled_flag;
     bool pps_loop_filter_across_slices_enabled_flag;
     bool deblocking_filter_control_present_flag;
@@ -518,7 +518,7 @@ typedef struct h265_pps_t
 
     bool pps_scaling_list_data_present_flag;
     //if (pps_scaling_list_data_present_flag)
-    //    scaling_list_data() // TODO
+        //scaling_list_data()
 
     bool lists_modification_present_flag;
     uint32_t log2_parallel_merge_level_minus2;
@@ -531,19 +531,19 @@ typedef struct h265_pps_t
         bool pps_3d_extension_flag;
         bool pps_scc_extension_flag;
         uint8_t pps_extension_4bits;
-/*
-    if (pps_range_extension_flag)
-        pps_range_extension()
-    if (pps_multilayer_extension_flag)
-        pps_multilayer_extension() // specified in Annex F
-    if (pps_3d_extension_flag)
-        pps_3d_extension() // specified in Annex I
-    if (pps_scc_extension_flag)
-        pps_scc_extension()
-    if (pps_extension_4bits)
-        while (more_rbsp_data())
+
+    //if (pps_range_extension_flag)
+        //pps_range_extension()
+    //if (pps_multilayer_extension_flag)
+        //pps_multilayer_extension() // specified in Annex F
+    //if (pps_3d_extension_flag)
+        //pps_3d_extension() // specified in Annex I
+    //if (pps_scc_extension_flag)
+        //pps_scc_extension()
+    //if (pps_extension_4bits)
+        //while (more_rbsp_data())
             bool pps_extension_data_flag;
-*/
+
 } h265_pps_t;
 
 /*!

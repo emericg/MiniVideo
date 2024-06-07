@@ -530,6 +530,107 @@ int h265_decodeSPS(Bitstream_t *bitstr, h265_sps_t *sps)
     sps->log2_max_pic_order_cnt_lsb_minus4 = h265_read_ue(bitstr);
     sps->sps_sub_layer_ordering_info_present_flag = read_bit(bitstr);
 
+    sps->sps_max_dec_pic_buffering_minus1 = (uint32_t*)calloc(sps->sps_max_sub_layers_minus1, sizeof(uint32_t));
+    sps->sps_max_num_reorder_pics = (uint32_t*)calloc(sps->sps_max_sub_layers_minus1, sizeof(uint32_t));
+    sps->sps_max_latency_increase_plus1 = (uint32_t*)calloc(sps->sps_max_sub_layers_minus1, sizeof(uint32_t));
+
+    for (int i = (sps->sps_sub_layer_ordering_info_present_flag ? 0 : sps->sps_max_sub_layers_minus1);
+         i <= sps->sps_max_sub_layers_minus1; i++)
+    {
+        sps->sps_max_dec_pic_buffering_minus1[i] = h265_read_ue(bitstr);
+        sps->sps_max_num_reorder_pics[i] = h265_read_ue(bitstr);
+        sps->sps_max_latency_increase_plus1[i] = h265_read_ue(bitstr);
+    }
+
+    sps->log2_min_luma_coding_block_size_minus3 = h265_read_ue(bitstr);
+    sps->log2_diff_max_min_luma_coding_block_size = h265_read_ue(bitstr);
+    sps->log2_min_luma_transform_block_size_minus2 = h265_read_ue(bitstr);
+    sps->log2_diff_max_min_luma_transform_block_size = h265_read_ue(bitstr);
+    sps->max_transform_hierarchy_depth_inter = h265_read_ue(bitstr);
+    sps->max_transform_hierarchy_depth_intra = h265_read_ue(bitstr);
+
+    sps->scaling_list_enabled_flag = read_bit(bitstr);
+    if (sps->scaling_list_enabled_flag)
+    {
+        sps->sps_scaling_list_data_present_flag = read_bit(bitstr);
+        if (sps->sps_scaling_list_data_present_flag)
+        {
+            //scaling_list_data() // TODO
+        }
+    }
+
+    sps->amp_enabled_flag = read_bit(bitstr);
+    sps->sample_adaptive_offset_enabled_flag = read_bit(bitstr);
+    sps->pcm_enabled_flag = read_bit(bitstr);
+    if (sps->pcm_enabled_flag)
+    {
+    sps->pcm_sample_bit_depth_luma_minus1 = read_bits(bitstr, 4);
+    sps->pcm_sample_bit_depth_chroma_minus1 = read_bits(bitstr, 4);
+    sps->log2_min_pcm_luma_coding_block_size_minus3 = h265_read_ue(bitstr);
+    sps->log2_diff_max_min_pcm_luma_coding_block_size = h265_read_ue(bitstr);
+    sps->pcm_loop_filter_disabled_flag = read_bit(bitstr);
+    }
+
+    sps->num_short_term_ref_pic_sets = h265_read_ue(bitstr);
+    for (unsigned i = 0; i < sps->num_short_term_ref_pic_sets; i++)
+    {
+        //st_ref_pic_set(i) // TODO
+    }
+
+    sps->long_term_ref_pics_present_flag = read_bit(bitstr);
+    if (sps->long_term_ref_pics_present_flag)
+    {
+        sps->num_long_term_ref_pics_sps = h265_read_ue(bitstr);
+
+        for (unsigned i = 0; i < sps->num_long_term_ref_pics_sps; i++)
+        {
+            //TODO
+        }
+    }
+
+    sps->sps_temporal_mvp_enabled_flag = read_bit(bitstr);
+    sps->strong_intra_smoothing_enabled_flag = read_bit(bitstr);
+
+    sps->vui_parameters_present_flag = read_bit(bitstr);
+    if (sps->vui_parameters_present_flag)
+    {
+        //vui_parameters() // TODO
+    }
+
+    sps->sps_extension_present_flag = read_bit(bitstr);
+    if (sps->sps_extension_present_flag)
+    {
+        sps->sps_range_extension_flag = read_bit(bitstr);
+        sps->sps_multilayer_extension_flag = read_bit(bitstr);
+        sps->sps_3d_extension_flag = read_bit(bitstr);
+        sps->sps_scc_extension_flag = read_bit(bitstr);
+        sps->sps_extension_4bits = read_bits(bitstr, 4);
+    }
+
+    if (sps->sps_range_extension_flag)
+    {
+        //sps_range_extension() // TODO
+    }
+    if (sps->sps_multilayer_extension_flag)
+    {
+        //sps_multilayer_extension() // TODO
+    }
+    if (sps->sps_3d_extension_flag)
+    {
+        //sps_3d_extension() // TODO
+    }
+    if (sps->sps_scc_extension_flag)
+    {
+        //sps_scc_extension() // TODO
+    }
+    if (sps->sps_extension_4bits)
+    {
+        //while (h264_more_rbsp_data())
+        //{
+        //    sps->sps_extension_data_flag = read_bit(bitstr);
+        //}
+    }
+
     return retcode;
 }
 
@@ -619,7 +720,82 @@ int h265_decodePPS(Bitstream_t *bitstr, h265_pps_t *pps, h265_sps_t **sps_array)
     pps->entropy_coding_sync_enabled_flag = read_bit(bitstr);
     if (pps->tiles_enabled_flag)
     {
-        //
+        pps->num_tile_columns_minus1 = h265_read_ue(bitstr);
+        pps->num_tile_rows_minus1 = h265_read_ue(bitstr);
+        pps->uniform_spacing_flag = h265_read_ue(bitstr);
+        if (!pps->uniform_spacing_flag)
+        {
+            pps->column_width_minus1 = (uint32_t *)calloc(pps->num_tile_columns_minus1, sizeof(uint32_t));
+            pps->row_height_minus1 = (uint32_t *)calloc(pps->num_tile_columns_minus1, sizeof(uint32_t));
+
+            for (unsigned i = 0; i < pps->num_tile_columns_minus1; i++)
+            {
+                pps->column_width_minus1[i] = h265_read_ue(bitstr);
+            }
+            for (unsigned i = 0; i < pps->num_tile_rows_minus1; i++)
+            {
+                pps->row_height_minus1[i] = h265_read_ue(bitstr);
+            }
+        }
+
+        pps->loop_filter_across_tiles_enabled_flag = read_bit(bitstr);
+    }
+
+    pps->pps_loop_filter_across_slices_enabled_flag = read_bit(bitstr);
+    pps->deblocking_filter_control_present_flag = read_bit(bitstr);
+    if (pps->deblocking_filter_control_present_flag)
+    {
+        pps->deblocking_filter_override_enabled_flag = read_bit(bitstr);
+        pps->pps_deblocking_filter_disabled_flag = read_bit(bitstr);
+        if (!pps->pps_deblocking_filter_disabled_flag)
+        {
+            pps->pps_beta_offset_div2 = h265_read_se(bitstr);
+            pps->pps_tc_offset_div2 = h265_read_se(bitstr);
+        }
+    }
+
+    pps->pps_scaling_list_data_present_flag = read_bit(bitstr);
+    if (pps->pps_scaling_list_data_present_flag)
+    {
+        //scaling_list_data() // TODO
+    }
+
+    pps->lists_modification_present_flag = read_bit(bitstr);
+    pps->log2_parallel_merge_level_minus2 = h265_read_ue(bitstr);
+    pps->slice_segment_header_extension_present_flag = read_bit(bitstr);
+
+    pps->pps_extension_present_flag = read_bit(bitstr);
+    if (pps->pps_extension_present_flag)
+    {
+        pps->pps_range_extension_flag = read_bit(bitstr);
+        pps->pps_multilayer_extension_flag = read_bit(bitstr);
+        pps->pps_3d_extension_flag = read_bit(bitstr);
+        pps->pps_scc_extension_flag = read_bit(bitstr);
+        pps->pps_extension_4bits = read_bits(bitstr, 4);
+    }
+
+    if (pps->pps_range_extension_flag)
+    {
+        //pps->pps_range_extension() // TODO
+    }
+    if (pps->pps_multilayer_extension_flag)
+    {
+        //pps_multilayer_extension() // TODO // specified in Annex F
+    }
+    if (pps->pps_3d_extension_flag)
+    {
+        //pps_3d_extension() // TODO // specified in Annex I
+    }
+    if (pps->pps_scc_extension_flag)
+    {
+        //pps_scc_extension() // TODO
+    }
+    if (pps->pps_extension_4bits)
+    {
+        //while (h264_more_rbsp_data())
+        //{
+        //    pps->pps_extension_data_flag = read_bit(bitstr);
+        //}
     }
 
     return retcode;
@@ -663,6 +839,77 @@ void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <tiles_enabled_flag>%u</tiles_enabled_flag>\n", pps->tiles_enabled_flag);
     fprintf(xml, "  <entropy_coding_sync_enabled_flag>%u</entropy_coding_sync_enabled_flag>\n", pps->entropy_coding_sync_enabled_flag);
     if (pps->tiles_enabled_flag)
+    {
+        fprintf(xml, "  <num_tile_columns_minus1>%u</num_tile_columns_minus1>\n", pps->num_tile_columns_minus1);
+        fprintf(xml, "  <num_tile_rows_minus1>%u</num_tile_rows_minus1>\n", pps->num_tile_rows_minus1);
+        fprintf(xml, "  <uniform_spacing_flag>%u</uniform_spacing_flag>\n", pps->uniform_spacing_flag);
+
+        if (!pps->uniform_spacing_flag)
+        {
+            for (unsigned i = 0; i < pps->num_tile_columns_minus1; i++)
+            {
+                fprintf(xml, "  <column_width_minus1 index=\"%u\">%u</column_width_minus1>\n", i, pps->column_width_minus1[i]);
+            }
+            for (unsigned i = 0; i < pps->num_tile_rows_minus1; i++)
+            {
+                fprintf(xml, "  <row_height_minus1 index=\"%u\">%u</row_height_minus1>\n", i, pps->row_height_minus1[i]);
+            }
+        }
+
+        fprintf(xml, "  <loop_filter_across_tiles_enabled_flag>%u</loop_filter_across_tiles_enabled_flag>\n", pps->loop_filter_across_tiles_enabled_flag);
+    }
+
+    fprintf(xml, "  <pps_loop_filter_across_slices_enabled_flag>%u</pps_loop_filter_across_slices_enabled_flag>\n", pps->pps_loop_filter_across_slices_enabled_flag);
+    fprintf(xml, "  <deblocking_filter_control_present_flag>%u</deblocking_filter_control_present_flag>\n", pps->deblocking_filter_control_present_flag);
+    if (pps->deblocking_filter_control_present_flag)
+    {
+        fprintf(xml, "  <deblocking_filter_override_enabled_flag>%u</deblocking_filter_override_enabled_flag>\n", pps->deblocking_filter_override_enabled_flag);
+        fprintf(xml, "  <pps_deblocking_filter_disabled_flag>%u</pps_deblocking_filter_disabled_flag>\n", pps->pps_deblocking_filter_disabled_flag);
+
+        if (!pps->pps_deblocking_filter_disabled_flag)
+        {
+            fprintf(xml, "  <pps_beta_offset_div2>%i</pps_beta_offset_div2>\n", pps->pps_beta_offset_div2);
+            fprintf(xml, "  <pps_tc_offset_div2>%i</pps_tc_offset_div2>\n", pps->pps_tc_offset_div2);
+        }
+    }
+
+    fprintf(xml, "  <pps_scaling_list_data_present_flag>%u</pps_scaling_list_data_present_flag>\n", pps->pps_scaling_list_data_present_flag);
+    if (pps->pps_scaling_list_data_present_flag)
+    {
+        //
+    }
+
+    fprintf(xml, "  <lists_modification_present_flag>%u</lists_modification_present_flag>\n", pps->lists_modification_present_flag);
+    fprintf(xml, "  <log2_parallel_merge_level_minus2>%u</log2_parallel_merge_level_minus2>\n", pps->log2_parallel_merge_level_minus2);
+    fprintf(xml, "  <slice_segment_header_extension_present_flag>%u</slice_segment_header_extension_present_flag>\n", pps->slice_segment_header_extension_present_flag);
+
+    fprintf(xml, "  <pps_extension_present_flag>%u</pps_extension_present_flag>\n", pps->pps_extension_present_flag);
+    if (pps->pps_extension_present_flag)
+    {
+        fprintf(xml, "  <pps_range_extension_flag>%u</pps_tc_offset_div2>\n", pps->pps_range_extension_flag);
+        fprintf(xml, "  <pps_multilayer_extension_flag>%u</pps_multilayer_extension_flag>\n", pps->pps_multilayer_extension_flag);
+        fprintf(xml, "  <pps_3d_extension_flag>%u</pps_3d_extension_flag>\n", pps->pps_3d_extension_flag);
+        fprintf(xml, "  <pps_scc_extension_flag>%u</pps_scc_extension_flag>\n", pps->pps_scc_extension_flag);
+        fprintf(xml, "  <pps_extension_4bits>%u</pps_extension_4bits>\n", pps->pps_extension_4bits);
+    }
+
+    if (pps->pps_range_extension_flag)
+    {
+        //
+    }
+    if (pps->pps_multilayer_extension_flag)
+    {
+        //
+    }
+    if (pps->pps_3d_extension_flag)
+    {
+        //
+    }
+    if (pps->pps_scc_extension_flag)
+    {
+        //
+    }
+    if (pps->pps_extension_4bits)
     {
         //
     }
