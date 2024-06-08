@@ -338,8 +338,8 @@ typedef struct h265_vps_t
         uint32_t vps_time_scale;
         bool vps_poc_proportional_to_timing_flag;
         //if (vps_poc_proportional_to_timing_flag)
-            uint32_t vps_num_ticks_poc_diff_one_minus1; // ue(v)
-        uint32_t vps_num_hrd_parameters; // ue(v)
+            uint32_t vps_num_ticks_poc_diff_one_minus1;
+        uint32_t vps_num_hrd_parameters;
         //for (i = 0; i < vps_num_hrd_parameters; i++)
             uint32_t *hrd_layer_set_idx;
             //if (i > 0)
@@ -351,7 +351,7 @@ typedef struct h265_vps_t
     bool vps_extension_flag;
     //if (vps_extension_flag)
         //while (more_rbsp_data())
-        bool vps_extension_data_flag;
+            bool vps_extension_data_flag;
 
 } h265_vps_t;
 
@@ -393,13 +393,13 @@ typedef struct h265_sps_t
     uint32_t log2_max_pic_order_cnt_lsb_minus4;
 
     bool sps_sub_layer_ordering_info_present_flag;
-/*
+
     //for(i = (sps_sub_layer_ordering_info_present_flag ? 0 : sps_max_sub_layers_minus1);
     //    i <= sps_max_sub_layers_minus1; i++)
-        uint32_t sps_max_dec_pic_buffering_minus1[ i ]; // TODO
-        uint32_t sps_max_num_reorder_pics[ i ];
-        uint32_t sps_max_latency_increase_plus1[ i ];
-*/
+        uint32_t *sps_max_dec_pic_buffering_minus1;
+        uint32_t *sps_max_num_reorder_pics;
+        uint32_t *sps_max_latency_increase_plus1;
+
     uint32_t log2_min_luma_coding_block_size_minus3;
     uint32_t log2_diff_max_min_luma_coding_block_size;
     uint32_t log2_min_luma_transform_block_size_minus2;
@@ -448,19 +448,19 @@ typedef struct h265_sps_t
         bool sps_3d_extension_flag;
         bool sps_scc_extension_flag;
         uint8_t sps_extension_4bits;
-/*
+
     //if (sps_range_extension_flag)
-        sps_range_extension()
+        //sps_range_extension()
     //if (sps_multilayer_extension_flag)
-        sps_multilayer_extension() // specified in Annex F
+        //sps_multilayer_extension() // specified in Annex F
     //if (sps_3d_extension_flag)
-        sps_3d_extension() // specified in Annex I
+        //sps_3d_extension() // specified in Annex I
     //if (sps_scc_extension_flag)
-        sps_scc_extension()
+        //sps_scc_extension()
     //if (sps_extension_4bits)
         //while (more_rbsp_data())
             bool sps_extension_data_flag;
-*/
+
 } h265_sps_t;
 
 /*!

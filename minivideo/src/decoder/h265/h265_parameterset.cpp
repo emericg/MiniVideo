@@ -460,9 +460,9 @@ void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
     for (unsigned i = (vps->vps_sub_layer_ordering_info_present_flag ? 0 : vps->vps_max_sub_layers_minus1);
          i <= vps->vps_max_sub_layers_minus1; i++)
     {
-        //fprintf(xml, "  <vps_max_dec_pic_buffering_minus1 index=\"%u\">%u</vps_max_dec_pic_buffering_minus1>\n", i, vps->vps_max_dec_pic_buffering_minus1[i]);
+        fprintf(xml, "  <vps_max_dec_pic_buffering_minus1 index=\"%u\">%u</vps_max_dec_pic_buffering_minus1>\n", i, vps->vps_max_dec_pic_buffering_minus1[i]);
         fprintf(xml, "  <vps_max_num_reorder_pics index=\"%u\">%u</vps_max_num_reorder_pics>\n", i, vps->vps_max_num_reorder_pics[i]);
-        //fprintf(xml, "  <vps_max_latency_increase_plus1 index=\"%u\">%u</vps_max_latency_increase_plus1>\n", i, vps->vps_max_latency_increase_plus1[i]);
+        fprintf(xml, "  <vps_max_latency_increase_plus1 index=\"%u\">%u</vps_max_latency_increase_plus1>\n", i, vps->vps_max_latency_increase_plus1[i]);
     }
 
     fprintf(xml, "  <vps_max_layer_id>%u</vps_max_layer_id>\n", vps->vps_max_layer_id);
@@ -476,10 +476,34 @@ void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
         }
     }
 
-    //xmlSpacer(xml, "Hypotetical Reference Decoder >>", -1);
-    //map_hrd(&vps->ptl, offset+1, size-1, xml);
+    fprintf(xml, "  <vps_timing_info_present_flag>%u</vps_timing_info_present_flag>\n", vps->vps_timing_info_present_flag);
+    if (vps->vps_timing_info_present_flag)
+    {
+        fprintf(xml, "  <vps_num_units_in_tick>%u</vps_num_units_in_tick>\n", vps->vps_num_units_in_tick);
+        fprintf(xml, "  <vps_time_scale>%u</vps_time_scale>\n", vps->vps_time_scale);
+        fprintf(xml, "  <vps_poc_proportional_to_timing_flag>%u</vps_poc_proportional_to_timing_flag>\n", vps->vps_poc_proportional_to_timing_flag);
+
+        if (vps->vps_poc_proportional_to_timing_flag)
+        {
+            fprintf(xml, "  <vps_num_ticks_poc_diff_one_minus1>%u</vps_num_ticks_poc_diff_one_minus1>\n", vps->vps_num_ticks_poc_diff_one_minus1);
+        }
+
+        fprintf(xml, "  <vps_num_hrd_parameters>%u</vps_num_hrd_parameters>\n", vps->vps_num_hrd_parameters);
+        for (unsigned i = 0; i < vps->vps_num_hrd_parameters; i++)
+        {
+            fprintf(xml, "  <hrd_layer_set_idx index=\"%u\">%u</hrd_layer_set_idx>\n", i, vps->hrd_layer_set_idx[i]);
+            if (i > 0)
+            {
+                fprintf(xml, "  <cprms_present_flag index=\"%u\">%u</cprms_present_flag>\n", i, vps->cprms_present_flag[i]);
+            }
+
+            xmlSpacer(xml, "Hypotetical Reference Decoder >>", -1);
+            //map_hrd(&vps->ptl, offset+1, size-1, xml);
+        }
+    }
 
     fprintf(xml, "  <vps_extension_flag>%u</vps_extension_flag>\n", vps->vps_extension_flag);
+    fprintf(xml, "  <vps_extension_data_flag>%u</vps_extension_data_flag>\n", vps->vps_extension_data_flag);
 
     fprintf(xml, "  </a>\n");
 }
@@ -649,7 +673,8 @@ void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <sps_max_sub_layers_minus1>%u</sps_max_sub_layers_minus1>\n", sps->sps_max_sub_layers_minus1);
     fprintf(xml, "  <sps_temporal_id_nesting_flag>%u</sps_temporal_id_nesting_flag>\n", sps->sps_temporal_id_nesting_flag);
 
-    // ptl
+    xmlSpacer(xml, "Profile, tier and level >>", -1);
+    map_ptl(&sps->ptl, offset+1, size-1, xml);
 
     fprintf(xml, "  <sps_seq_parameter_set_id>%u</sps_seq_parameter_set_id>\n", sps->sps_seq_parameter_set_id);
 
@@ -672,8 +697,84 @@ void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <bit_depth_luma_minus8>%u</bit_depth_luma_minus8>\n", sps->bit_depth_luma_minus8);
     fprintf(xml, "  <bit_depth_chroma_minus8>%u</bit_depth_chroma_minus8>\n", sps->bit_depth_chroma_minus8);
     fprintf(xml, "  <log2_max_pic_order_cnt_lsb_minus4>%u</log2_max_pic_order_cnt_lsb_minus4>\n", sps->log2_max_pic_order_cnt_lsb_minus4);
-
     fprintf(xml, "  <sps_sub_layer_ordering_info_present_flag>%u</sps_sub_layer_ordering_info_present_flag>\n", sps->sps_sub_layer_ordering_info_present_flag);
+
+    for (int i = (sps->sps_sub_layer_ordering_info_present_flag ? 0 : sps->sps_max_sub_layers_minus1);
+         i <= sps->sps_max_sub_layers_minus1; i++)
+    {
+        fprintf(xml, "  <sps_max_dec_pic_buffering_minus1 index=\"%u\">%u</sps_max_dec_pic_buffering_minus1>\n", i, sps->sps_max_dec_pic_buffering_minus1[i]);
+        fprintf(xml, "  <sps_max_num_reorder_pics index=\"%u\">%u</sps_max_num_reorder_pics>\n", i, sps->sps_max_num_reorder_pics[i]);
+        fprintf(xml, "  <sps_max_latency_increase_plus1 index=\"%u\">%u</sps_max_latency_increase_plus1>\n", i, sps->sps_max_latency_increase_plus1[i]);
+    }
+
+    fprintf(xml, "  <log2_min_luma_coding_block_size_minus3>%u</log2_min_luma_coding_block_size_minus3>\n", sps->log2_min_luma_coding_block_size_minus3);
+    fprintf(xml, "  <log2_diff_max_min_luma_coding_block_size>%u</log2_diff_max_min_luma_coding_block_size>\n", sps->log2_diff_max_min_luma_coding_block_size);
+    fprintf(xml, "  <log2_min_luma_transform_block_size_minus2>%u</log2_min_luma_transform_block_size_minus2>\n", sps->log2_min_luma_transform_block_size_minus2);
+    fprintf(xml, "  <log2_diff_max_min_luma_transform_block_size>%u</log2_diff_max_min_luma_transform_block_size>\n", sps->log2_diff_max_min_luma_transform_block_size);
+    fprintf(xml, "  <max_transform_hierarchy_depth_inter>%u</max_transform_hierarchy_depth_inter>\n", sps->max_transform_hierarchy_depth_inter);
+    fprintf(xml, "  <max_transform_hierarchy_depth_intra>%u</max_transform_hierarchy_depth_intra>\n", sps->max_transform_hierarchy_depth_intra);
+
+    fprintf(xml, "  <scaling_list_enabled_flag>%u</scaling_list_enabled_flag>\n", sps->scaling_list_enabled_flag);
+    if (sps->scaling_list_enabled_flag)
+    {
+        fprintf(xml, "  <sps_scaling_list_data_present_flag>%u</sps_scaling_list_data_present_flag>\n", sps->sps_scaling_list_data_present_flag);
+
+        if (sps->sps_scaling_list_data_present_flag)
+        {
+            xmlSpacer(xml, "scaling_list_data >>", -1);
+            //scaling_list_data() // TODO
+        }
+    }
+
+    fprintf(xml, "  <amp_enabled_flag>%u</amp_enabled_flag>\n", sps->amp_enabled_flag);
+    fprintf(xml, "  <sample_adaptive_offset_enabled_flag>%u</sample_adaptive_offset_enabled_flag>\n", sps->sample_adaptive_offset_enabled_flag);
+    fprintf(xml, "  <pcm_enabled_flag>%u</pcm_enabled_flag>\n", sps->pcm_enabled_flag);
+
+    if (sps->pcm_enabled_flag)
+    {
+        fprintf(xml, "  <pcm_sample_bit_depth_luma_minus1>%u</pcm_sample_bit_depth_luma_minus1>\n", sps->pcm_sample_bit_depth_luma_minus1);
+        fprintf(xml, "  <pcm_sample_bit_depth_chroma_minus1>%u</pcm_sample_bit_depth_chroma_minus1>\n", sps->pcm_sample_bit_depth_chroma_minus1);
+        fprintf(xml, "  <log2_min_pcm_luma_coding_block_size_minus3>%u</log2_min_pcm_luma_coding_block_size_minus3>\n", sps->log2_min_pcm_luma_coding_block_size_minus3);
+        fprintf(xml, "  <log2_diff_max_min_pcm_luma_coding_block_size>%u</log2_diff_max_min_pcm_luma_coding_block_size>\n", sps->log2_diff_max_min_pcm_luma_coding_block_size);
+        fprintf(xml, "  <pcm_loop_filter_disabled_flag>%u</pcm_loop_filter_disabled_flag>\n", sps->pcm_loop_filter_disabled_flag);
+    }
+
+    fprintf(xml, "  <num_short_term_ref_pic_sets>%u</num_short_term_ref_pic_sets>\n", sps->num_short_term_ref_pic_sets);
+    for (unsigned i = 0; i < sps->num_short_term_ref_pic_sets; i++)
+    {
+        //st_ref_pic_set(i) // TODO
+    }
+
+    fprintf(xml, "  <long_term_ref_pics_present_flag>%u</long_term_ref_pics_present_flag>\n", sps->long_term_ref_pics_present_flag);
+    if (sps->long_term_ref_pics_present_flag)
+    {
+        fprintf(xml, "  <num_long_term_ref_pics_sps>%u</num_long_term_ref_pics_sps>\n", sps->num_long_term_ref_pics_sps);
+        for (unsigned i = 0; i < sps->num_long_term_ref_pics_sps; i++)
+        {
+            //fprintf(xml, "  <lt_ref_pic_poc_lsb_sps index=\"%u\">%u</lt_ref_pic_poc_lsb_sps>\n", i, sps->lt_ref_pic_poc_lsb_sps[i]);
+            //fprintf(xml, "  <used_by_curr_pic_lt_sps_flag index=\"%u\">%u</used_by_curr_pic_lt_sps_flag>\n", i, sps->used_by_curr_pic_lt_sps_flag[i]);
+        }
+    }
+
+    fprintf(xml, "  <sps_temporal_mvp_enabled_flag>%u</sps_temporal_mvp_enabled_flag>\n", sps->sps_temporal_mvp_enabled_flag);
+    fprintf(xml, "  <strong_intra_smoothing_enabled_flag>%u</strong_intra_smoothing_enabled_flag>\n", sps->strong_intra_smoothing_enabled_flag);
+
+    fprintf(xml, "  <vui_parameters_present_flag>%u</vui_parameters_present_flag>\n", sps->vui_parameters_present_flag);
+    if (sps->vui_parameters_present_flag)
+    {
+        xmlSpacer(xml, "vui_parameters >>", -1);
+        //vui_parameters() // TODO
+    }
+
+    fprintf(xml, "  <sps_extension_present_flag>%u</sps_extension_present_flag>\n", sps->sps_extension_present_flag);
+    if (sps->sps_extension_present_flag)
+    {
+        fprintf(xml, "  <sps_range_extension_flag>%u</sps_range_extension_flag>\n", sps->sps_range_extension_flag);
+        fprintf(xml, "  <sps_multilayer_extension_flag>%u</sps_multilayer_extension_flag>\n", sps->sps_multilayer_extension_flag);
+        fprintf(xml, "  <sps_3d_extension_flag>%u</sps_3d_extension_flag>\n", sps->sps_3d_extension_flag);
+        fprintf(xml, "  <sps_scc_extension_flag>%u</sps_scc_extension_flag>\n", sps->sps_scc_extension_flag);
+        fprintf(xml, "  <sps_extension_4bits>%u</sps_extension_4bits>\n", sps->sps_extension_4bits);
+    }
 
     fprintf(xml, "  </a>\n");
 }
