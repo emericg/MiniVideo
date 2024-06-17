@@ -558,6 +558,7 @@ void tabContainer::previewSample(int sid)
             ui->label_pic->show();
         }
     }
+
 #else
     Q_UNUSED(sid)
 #endif //THUMBNAILS_ENABLED
@@ -628,12 +629,12 @@ void tabContainer::containerSelection(int64_t selected_offset)
         QTreeWidgetItemIterator it(ui->treeWidget_structure);
         while (*it)
         {
-          if ((*it)->data(0, Qt::UserRole).toLongLong() == selected_offset)
-          {
-              ui->treeWidget_structure->setCurrentItem((*it));
-            break;
-          }
-          ++it;
+            if ((*it)->data(0, Qt::UserRole).toLongLong() == selected_offset)
+            {
+                ui->treeWidget_structure->setCurrentItem((*it));
+                break;
+            }
+            ++it;
         }
     }
 

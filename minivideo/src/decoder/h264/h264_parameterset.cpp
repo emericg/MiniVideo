@@ -39,7 +39,7 @@
 
 /* ************************************************************************** */
 
-//! H.264 Profiles IDC definitions, see http://en.wikipedia.org/wiki/H264#Profiles
+//! H.264 Profiles IDC definitions (listing is not exhaustive)
 typedef enum H264Profiles_e
 {
     BASELINE            = 66,   //!< YUV 4:2:0/8  "Baseline profile"

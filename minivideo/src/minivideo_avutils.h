@@ -178,6 +178,7 @@ typedef enum ColorsRec_e
     COLORS_SMPTE_D65P3,
     COLORS_CIE_1931XYZ,
     COLORS_EBUTech_3213E
+
 } ColorsRec_e;
 
 //! The color matrix used by the video
@@ -196,7 +197,7 @@ typedef enum ColorMatrix_e
     CM_bt470,
     CM_bt601,
     CM_bt709,
-    CM_bt2020,
+    CM_bt2020
 
 } ColorMatrix_e;
 
@@ -292,7 +293,7 @@ typedef enum HdrMode_e
     HLG,
     HDR10,
     HDR10plus,
-    DolbyVision,
+    DolbyVision
 
 } HdrMode_e;
 

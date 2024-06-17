@@ -244,6 +244,7 @@ set(minivideo_SRC
         src/decoder/h264/h264_spatial.cpp
         src/decoder/h264/h264_transform.cpp
         src/decoder/h265/h265_nalu.cpp
+            src/decoder/h265/h265_expgolomb.cpp
             src/decoder/h265/h265_parameterset.cpp
             src/decoder/h265/h265_parameterset_struct.h
         src/decoder/h266/h266_nalu.cpp
