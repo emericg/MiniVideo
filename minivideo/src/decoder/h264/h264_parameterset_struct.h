@@ -321,6 +321,22 @@ typedef struct h264_pps_t
 } h264_pps_t;
 
 /*!
+ * \struct h264_aud_t
+ * \brief AUD - Access Unit Delimiter.
+ *
+ * From 'ITU-T H.264' recommendation:
+ * - 7.3.2.4 Access unit delimiter RBSP syntax.
+ * - 7.4.2.4 Access unit delimiter RBSP semantics.
+ */
+typedef struct h264_aud_t
+{
+    unsigned int primary_pic_type;
+
+} h264_aud_t;
+
+/* ************************************************************************** */
+
+/*!
  * \struct h264_sei_t
  * \brief SEI - Supplemental Enhancement Information.
  *
@@ -469,20 +485,6 @@ typedef struct h264_sei_t
     // D.1.40 // Reserved SEI message syntax
 
 } h264_sei_t;
-
-/*!
- * \struct h264_aud_t
- * \brief AUD - Access Unit Delimiter.
- *
- * From 'ITU-T H.264' recommendation:
- * - 7.3.2.4 Access unit delimiter RBSP syntax.
- * - 7.4.2.4 Access unit delimiter RBSP semantics.
- */
-typedef struct h264_aud_t
-{
-    unsigned int primary_pic_type;
-
-} h264_aud_t;
 
 /* ************************************************************************** */
 #endif // H264_PARAMETER_SET_STRUCT_H

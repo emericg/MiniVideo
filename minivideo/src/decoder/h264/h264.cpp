@@ -27,10 +27,10 @@
 #include "h264_slice.h"
 #include "h264_macroblock.h"
 #include "h264_transform.h"
-#include "../../depacketizer/depack.h"
-#include "../../export.h"
+#include "../../depacketizer/h264/depack_h264.h"
 #include "../../minivideo_typedef.h"
 #include "../../minitraces.h"
+#include "../../export.h"
 
 // C standard libraries
 #include <cstdio>
@@ -541,9 +541,9 @@ int h264_decode(DecodingContext_t *dc, unsigned sid)
 
     // Depacketize
     es_sample_t essample_list[16];
-    int essample_count = depack_loaded_sample(dc->bitstr, dc->MediaFile,
-                                              dc->MediaFile->tracks_video[dc->active_tid],
-                                              sid, essample_list);
+    int essample_count = depack_h264_sample_legacy(dc->bitstr,
+                                                   dc->MediaFile->tracks_video[dc->active_tid],
+                                                   sid, essample_list);
 
     for (int i = 0; i < essample_count && dc->decoderRunning; i++)
     {

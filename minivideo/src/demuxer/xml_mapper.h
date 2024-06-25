@@ -32,6 +32,11 @@
 
 /* ************************************************************************** */
 
+#define xmlMapper_VERSION_MAJOR 0
+#define xmlMapper_VERSION_MINOR 2
+
+/* ************************************************************************** */
+
 /*!
  * \brief Open the xmlMapper file and write header content.
  * \param *media[in]: A pointer to a MediaFile_t structure.

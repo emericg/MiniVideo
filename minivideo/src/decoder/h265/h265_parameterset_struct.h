@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-#define H265_MAX_VPS     32
+#define H265_MAX_VPS     1
 #define H265_MAX_SPS     32
 #define H265_MAX_PPS     256
 
@@ -173,7 +173,6 @@ typedef struct h265_sublayer_hrd_t
     }
 */
 } h265_sublayer_hrd_t;
-
 
 /*!
  * \struct h265_vui_t
@@ -559,6 +558,21 @@ typedef struct h265_aud_t
     uint8_t pic_type;
 
 } h265_aud_t;
+
+/* ************************************************************************** */
+
+/*!
+ * \struct h265_sei_t
+ * \brief SEI - Supplemental Enhancement Information.
+ *
+ * From 'ITU-T H.265' recommendation:
+ * - Annex D: Supplemental enhancement information.
+ */
+typedef struct h265_sei_t
+{
+    //
+
+} h265_sei_t;
 
 /* ************************************************************************** */
 #endif // H265_PARAMETER_SET_STRUCT_H

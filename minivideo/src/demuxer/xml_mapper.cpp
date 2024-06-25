@@ -49,9 +49,6 @@
 
 /* ************************************************************************** */
 
-#define xmlMapper_VERSION_MAJOR 0
-#define xmlMapper_VERSION_MINOR 2
-
 #if defined(_WIN16) || defined(_WIN32) || defined(_WIN64)
 #define MAX_PATH_SIZE 256
 #else
@@ -186,9 +183,11 @@ void xmlSpacer(FILE *xml, const char *name, const int index)
         }
         else
         {
-            char SpaceTitle[32];
-            snprintf(SpaceTitle, 32, "%s #%i", name, index);
-            fprintf(xml, "  <spacer>%s</spacer>\n", SpaceTitle);
+            char SpacerTitle[32];
+            snprintf(SpacerTitle, 32, "%s #%i", name, index);
+            fprintf(xml, "  <spacer>%s</spacer>\n", SpacerTitle);
         }
     }
 }
+
+/* ************************************************************************** */

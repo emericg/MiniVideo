@@ -24,8 +24,8 @@
 #define DEPACKETIZER_STRUCT_H
 /* ************************************************************************** */
 
-// C standard libraries
 #include <cstdint>
+#include <string>
 
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ typedef struct es_sample_t
 {
     int64_t offset;
     uint32_t size;
-    char *type_str;
+
+    uint32_t type;
+    const char *type_cstr;
+    //std::string type_str;
 
 } es_sample_t;
 

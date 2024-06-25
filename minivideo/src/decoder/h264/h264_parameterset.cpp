@@ -798,7 +798,7 @@ void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (sps && xml)
     {
-        fprintf(xml, "  <a tt=\"SPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+        fprintf(xml, " <a tt=\"SPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                 offset, size);
 
         xmlSpacer(xml, "Sequence Parameter Set", -1);
@@ -895,7 +895,7 @@ void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
             mapVUI(sps->vui, xml);
         }
 
-        fprintf(xml, "  </a>\n");
+        fprintf(xml, " </a>\n");
     }
 }
 
@@ -1221,7 +1221,7 @@ void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FIL
 {
     if (pps && sps && xml)
     {
-        fprintf(xml, "  <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+        fprintf(xml, " <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                 offset, size);
 
         xmlSpacer(xml, "Picture Parameter Set", -1);
@@ -1293,7 +1293,7 @@ void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FIL
             fprintf(xml, "  <second_chroma_qp_index_offset>%i</second_chroma_qp_index_offset>\n", pps->second_chroma_qp_index_offset);
         }
 
-        fprintf(xml, "  </a>\n");
+        fprintf(xml, " </a>\n");
     }
 }
 
@@ -1333,14 +1333,14 @@ void mapAUD(h264_aud_t *aud, int64_t offset, int64_t size, FILE *xml)
 {
     if (!aud || !xml) return;
 
-    fprintf(xml, "  <a tt=\"AUD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"AUD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Access Unit Delimiter", -1);
 
     fprintf(xml, "  <primary_pic_type>%i</primary_pic_type>\n", aud->primary_pic_type);
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 void freeAUD(h264_aud_t  **aud_ptr)
@@ -1498,7 +1498,7 @@ void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml)
 {
     if (!sei || !xml) return;
 
-    fprintf(xml, "  <a tt=\"SEI\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"SEI\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Supplemental Enhancement Information", -1);

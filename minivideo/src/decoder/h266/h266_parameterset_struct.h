@@ -25,7 +25,7 @@
 #define H266_PARAMETER_SET_STRUCT_H
 /* ************************************************************************** */
 
-#define H266_MAX_VPS     32
+#define H266_MAX_VPS     1
 #define H266_MAX_SPS     32
 #define H266_MAX_PPS     256
 
@@ -80,6 +80,21 @@ typedef struct h266_pps_t
     //
 
 } h266_pps_t;
+
+/* ************************************************************************** */
+
+/*!
+ * \struct h266_sei_t
+ * \brief SEI - Supplemental Enhancement Information.
+ *
+ * From 'ITU-T H.266' recommendation:
+ * - Annex D: Supplemental enhancement information and use of SEI and VUI.
+ */
+typedef struct h266_sei_t
+{
+    //
+
+} h266_sei_t;
 
 /* ************************************************************************** */
 #endif // H266_PARAMETER_SET_STRUCT_H

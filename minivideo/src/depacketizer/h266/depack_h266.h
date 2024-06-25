@@ -28,10 +28,13 @@
 #include "../depack_struct.h"
 #include "../../bitstream.h"
 
+#include <vector>
+
 /* ************************************************************************** */
 
-unsigned depack_h266_sample(Bitstream_t *bitstr, MediaStream_t *track,
-                            unsigned sample_index, es_sample_t *essample_list);
+unsigned depack_h266_sample(Bitstream_t *bitstr,
+                            MediaStream_t *track, unsigned sample_index,
+                            std::vector <es_sample_t> &samples, FILE *xml);
 
 /* ************************************************************************** */
 #endif // DEPACK_H266_H

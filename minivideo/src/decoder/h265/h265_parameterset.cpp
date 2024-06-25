@@ -238,7 +238,7 @@ void map_ptl(h265_ptl_t *ptl, int64_t offset, int64_t size, FILE *xml)
 {
     if (!ptl || !xml) return;
 
-    fprintf(xml, "  <a tt=\"PTL\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"PTL\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Profile, tier and level", -1);
@@ -270,7 +270,7 @@ void map_ptl(h265_ptl_t *ptl, int64_t offset, int64_t size, FILE *xml)
 
     fprintf(xml, "  <general_level_idc>%u</general_level_idc>\n", ptl->general_level_idc);
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 void hrd_parameters(Bitstream_t *bitstr, h265_hrd_t *hrd,
@@ -336,7 +336,7 @@ void map_hrd(h265_hrd_t *hrd, int64_t offset, int64_t size, FILE *xml)
 {
     if (!hrd || !xml) return;
 
-    fprintf(xml, "  <a tt=\"HRD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"HRD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Hypotetical Reference Decoder", -1);
@@ -344,7 +344,7 @@ void map_hrd(h265_hrd_t *hrd, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <nal_hrd_parameters_present_flag>%u</nal_hrd_parameters_present_flag>\n", hrd->nal_hrd_parameters_present_flag);
     fprintf(xml, "  <vcl_hrd_parameters_present_flag>%u</vcl_hrd_parameters_present_flag>\n", hrd->vcl_hrd_parameters_present_flag);
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 /* ************************************************************************** */
@@ -441,7 +441,7 @@ void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
 {
     if (!vps || !xml) return;
 
-    fprintf(xml, "  <a tt=\"VPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"VPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Video Parameter Set", -1);
@@ -505,7 +505,7 @@ void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <vps_extension_flag>%u</vps_extension_flag>\n", vps->vps_extension_flag);
     fprintf(xml, "  <vps_extension_data_flag>%u</vps_extension_data_flag>\n", vps->vps_extension_data_flag);
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 /* ************************************************************************** */
@@ -664,7 +664,7 @@ void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 {
     if (!sps || !xml) return;
 
-    fprintf(xml, "  <a tt=\"SPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"SPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Sequence Parameter Set", -1);
@@ -776,7 +776,7 @@ void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
         fprintf(xml, "  <sps_extension_4bits>%u</sps_extension_4bits>\n", sps->sps_extension_4bits);
     }
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 /* ************************************************************************** */
@@ -908,7 +908,7 @@ void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml)
 {
     if (!pps || !xml) return;
 
-    fprintf(xml, "  <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+    fprintf(xml, " <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
             offset, size);
 
     xmlSpacer(xml, "Picture Parameter Set", -1);
@@ -1015,7 +1015,7 @@ void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml)
         //
     }
 
-    fprintf(xml, "  </a>\n");
+    fprintf(xml, " </a>\n");
 }
 
 /* ************************************************************************** */

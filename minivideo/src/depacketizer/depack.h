@@ -30,15 +30,13 @@
 
 /* ************************************************************************** */
 
-minivideo_EXPORT unsigned depack_file(MediaFile_t *media,
-                                      es_sample_t *essample_list);
+minivideo_EXPORT unsigned depack_sample(MediaFile_t *media,
+                                        MediaStream_t *track, unsigned sample_index,
+                                        std::vector <es_sample_t> &essamples, FILE *xml);
 
-minivideo_EXPORT unsigned depack_sample(MediaFile_t *media, MediaStream_t *track,
-                                        unsigned sample_index, es_sample_t *essample_list);
-
-unsigned depack_loaded_sample(Bitstream_t *bitstr,
-                              MediaFile_t *media, MediaStream_t *track,
-                              unsigned sample_index, es_sample_t *essample_list);
+unsigned depack_loaded_sample(Bitstream_t *bitstr, MediaFile_t *media,
+                              MediaStream_t *track, unsigned sample_index,
+                              std::vector <es_sample_t> &essamples, FILE *xml);
 
 /* ************************************************************************** */
 #endif // DEPACKETIZER_H
