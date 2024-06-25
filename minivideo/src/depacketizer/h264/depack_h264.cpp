@@ -23,6 +23,7 @@
 // minivideo headers
 #include "depack_h264.h"
 #include "../../decoder/h264/h264_nalu.h"
+#include "../../decoder/h264/h264_parameterset.h"
 #include "../../bitstream.h"
 #include "../../minivideo_typedef.h"
 #include "../../minitraces.h"

@@ -25,31 +25,29 @@
 #define H264_PARAMETER_SET_H
 
 // minivideo headers
-#include "h264_decodingcontext.h"
 #include "h264_parameterset_struct.h"
+#include "../../bitstream.h"
 
 /* ************************************************************************** */
 
-int decodeSPS_legacy(DecodingContext_t *dc);
 int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps);
-int checkSPScompat(h264_sps_t *sps);
+void printSPS(h264_sps_t *sps);
+void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
 void freeSPS(h264_sps_t **sps_ptr);
 
 int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array);
+void printPPS(h264_pps_t *pps, h264_sps_t **sps_array);
+void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FILE *xml);
 void freePPS(h264_pps_t **pps_ptr);
 
 int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei);
+void printSEI(h264_sei_t *sei);
+void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml);
 void freeSEI(h264_sei_t **sei_ptr);
 
 int decodeAUD(Bitstream_t *bitstr, h264_aud_t *aud);
-
-void mapSPS(h264_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
-void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FILE *xml);
-void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml);
-
-void printSPS(h264_sps_t *sps);
-void printPPS(h264_pps_t *pps, h264_sps_t **sps_array);
-void printSEI(h264_sei_t *sei);
+void mapAUD(h264_aud_t *aud, int64_t offset, int64_t size, FILE *xml);
+void freeAUD(h264_aud_t  **aud_ptr);
 
 /* ************************************************************************** */
 #endif // H264_PARAMETER_SET_H

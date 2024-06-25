@@ -26,6 +26,7 @@
 #include "h264_parameterset.h"
 #include "h264_slice.h"
 #include "h264_macroblock.h"
+#include "h264_transform.h"
 #include "../../depacketizer/depack.h"
 #include "../../export.h"
 #include "../../minivideo_typedef.h"
@@ -394,8 +395,6 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             {
                 h264_nalu_clean_sample(dc->bitstr);
 
-                retcode = decodeSPS_legacy(dc);
-/*
                 h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
                 if (sps)
                 {
@@ -421,7 +420,6 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                     else
                         dc->errorCounter++;
                 }
-*/
             }
             break;
 

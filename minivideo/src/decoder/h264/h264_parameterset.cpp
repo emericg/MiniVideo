@@ -225,284 +225,6 @@ static void scaling_list_8x8(Bitstream_t *bitstr, h264_sps_t *sps, int i)
 /* ************************************************************************** */
 
 /*!
- * \param *dc The current DecodingContext.
- * \return 1 if SPS seems consistent, 0 otherwise.
- *
- * From 'ITU-T H.264' recommendation:
- * 7.3.2.1 Sequence parameter set RBSP syntax.
- * 7.4.2.1 Sequence parameter set RBSP semantics.
- */
-int decodeSPS_legacy(DecodingContext_t *dc)
-{
-    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSPS_legacy()" CLR_RESET);
-    int retcode = SUCCESS;
-
-    // SPS allocation
-    ////////////////////////////////////////////////////////////////////////////
-
-    h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
-    if (sps == NULL)
-    {
-        TRACE_ERROR(PARAM, "Unable to alloc new SPS!");
-        retcode = FAILURE;
-    }
-    else
-    {
-        // SPS decoding
-        ////////////////////////////////////////////////////////////////////////
-
-        sps->profile_idc = dc->profile_idc = read_bits(dc->bitstr, 8);
-
-        sps->constraint_setX_flag[0] = read_bit(dc->bitstr);
-        sps->constraint_setX_flag[1] = read_bit(dc->bitstr);
-        sps->constraint_setX_flag[2] = read_bit(dc->bitstr);
-        sps->constraint_setX_flag[3] = read_bit(dc->bitstr);
-        sps->constraint_setX_flag[4] = read_bit(dc->bitstr);
-        sps->constraint_setX_flag[5] = read_bit(dc->bitstr);
-
-        if (read_bits(dc->bitstr, 2) != 0)
-        {
-            TRACE_ERROR(PARAM, "  Error while reading reserved_zero_2bits: must be 0!");
-            freeSPS(&sps);
-            return FAILURE;
-        }
-
-        sps->level_idc = read_bits(dc->bitstr, 8);
-        sps->seq_parameter_set_id = read_ue(dc->bitstr);
-
-        // Put SPS in decoding context
-        freeSPS(&dc->sps_array[sps->seq_parameter_set_id]);
-        dc->sps_array[sps->seq_parameter_set_id] = sps;
-        dc->active_sps = sps->seq_parameter_set_id;
-
-        // Handle parameters for profiles >= HIGH
-        if (sps->profile_idc == HIGHP || sps->profile_idc == HIGH10 ||
-            sps->profile_idc == HIGH422 || sps->profile_idc == HIGH444 || sps->profile_idc == CAVLC444_INTRA ||
-            sps->profile_idc == 83 || sps->profile_idc == 86 || sps->profile_idc == MVC_HIGH ||
-            sps->profile_idc == STEREO_HIGH || sps->profile_idc == 138 || sps->profile_idc == 139 ||
-            sps->profile_idc == 134 || sps->profile_idc == 135)
-        {
-            sps->separate_colour_plane_flag = false;
-            sps->chroma_format_idc = read_ue(dc->bitstr);
-            dc->ChromaArrayType = sps->ChromaArrayType = sps->chroma_format_idc;
-
-            if (sps->chroma_format_idc == 0) // 4:0:0 subsampling
-            {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 0, yuv 4:0:0)");
-                return UNSUPPORTED;
-
-                sps->SubHeightC = 0;
-                sps->SubWidthC = 0;
-            }
-            else if (sps->chroma_format_idc == 1) // 4:2:0 subsampling
-            {
-                sps->SubHeightC = 2;
-                sps->SubWidthC = 2;
-            }
-            else if (sps->chroma_format_idc == 2) // 4:2:2 subsampling
-            {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 2, yuv 4:2:1)");
-                return UNSUPPORTED;
-
-                sps->SubHeightC = 1;
-                sps->SubWidthC = 2;
-            }
-            else if (sps->chroma_format_idc == 3) // 4:4:4 subsampling
-            {
-                TRACE_ERROR(PARAM, ">>> UNSUPPORTED (chroma_format_idc == 3, yuv 4:4:4)");
-                return UNSUPPORTED;
-
-                sps->separate_colour_plane_flag = read_bit(dc->bitstr);
-
-                if (sps->separate_colour_plane_flag)
-                {
-                    TRACE_ERROR(PARAM, ">>> UNSUPPORTED (separate_colour_plane_flag == 1)");
-                    return UNSUPPORTED;
-
-                    sps->ChromaArrayType = dc->ChromaArrayType = 0;
-
-                    sps->SubHeightC = 0;
-                    sps->SubWidthC = 0;
-                }
-                else
-                {
-                    sps->SubHeightC = 1;
-                    sps->SubWidthC = 1;
-                }
-            }
-
-            sps->MbWidthC = 16 / sps->SubWidthC;
-            sps->MbHeightC = 16 / sps->SubHeightC;
-
-            sps->bit_depth_luma_minus8 = read_ue(dc->bitstr);
-            sps->BitDepthY = 8 + sps->bit_depth_luma_minus8;
-            sps->QpBdOffsetY = 6 * sps->bit_depth_luma_minus8;
-
-            sps->bit_depth_chroma_minus8 = read_ue(dc->bitstr);
-            sps->BitDepthC = 8 + sps->bit_depth_chroma_minus8;
-            sps->QpBdOffsetC = 6 * sps->bit_depth_chroma_minus8;
-
-            sps->RawMbBits = 256 * sps->BitDepthY + 2 * sps->MbWidthC * sps->MbHeightC * sps->BitDepthC;
-
-            sps->qpprime_y_zero_transform_bypass_flag = read_bit(dc->bitstr);
-
-            // Extract scaling list from bitstream
-            sps->seq_scaling_matrix_present_flag = read_bit(dc->bitstr);
-            if (sps->seq_scaling_matrix_present_flag)
-            {
-                int i = 0;
-                for (i = 0; i < ((sps->chroma_format_idc != 3) ? 8 : 12); i++)
-                {
-                    sps->seq_scaling_list_present_flag[i] = read_bit(dc->bitstr);
-                    if (sps->seq_scaling_list_present_flag[i])
-                    {
-                        if (i < 6)
-                            scaling_list_4x4(dc->bitstr, sps, i);
-                        else
-                            scaling_list_8x8(dc->bitstr, sps, i - 6);
-                    }
-                }
-            }
-        }
-        else // Set default parameters for profiles < HIGH
-        {
-            dc->ChromaArrayType = 1;
-            sps->ChromaArrayType = 1;
-            sps->chroma_format_idc = 1;
-            sps->separate_colour_plane_flag = false;
-
-            sps->SubHeightC = sps->SubWidthC = 2;
-            sps->MbHeightC = sps->MbWidthC = 8;
-            sps->bit_depth_luma_minus8 = 0;
-            sps->BitDepthY = 8;
-            sps->QpBdOffsetY = 0;
-
-            sps->bit_depth_chroma_minus8 = 0;
-            sps->BitDepthC = 8;
-            sps->QpBdOffsetC = 0;
-
-            sps->RawMbBits = 3072;
-
-            sps->qpprime_y_zero_transform_bypass_flag = false;
-            sps->seq_scaling_matrix_present_flag = false;
-        }
-
-        // Initialize flat scaling list
-        if (sps->seq_scaling_matrix_present_flag == false)
-        {
-            int i = 0, k = 0;
-            for (i = 0; i < 6; i++)
-            {
-                for (k = 0; k < 16; k++)
-                {
-                    sps->ScalingList4x4[i][k] = 16;
-                }
-
-                for (k = 0; k < 64; k++)
-                {
-                    sps->ScalingList8x8[i][k] = 16;
-                }
-
-                // Transform the list into a matrix
-                inverse_scan_4x4(sps->ScalingList4x4[i], sps->ScalingMatrix4x4[i]);
-                inverse_scan_8x8(sps->ScalingList8x8[i], sps->ScalingMatrix8x8[i]);
-            }
-        }
-
-        // Init some quantization tables
-        computeLevelScale4x4(dc, sps);
-        computeLevelScale8x8(dc, sps);
-
-        sps->log2_max_frame_num_minus4 = read_ue(dc->bitstr);
-        sps->MaxFrameNum = pow(2, sps->log2_max_frame_num_minus4 + 4);
-
-        sps->pic_order_cnt_type = read_ue(dc->bitstr);
-        if (sps->pic_order_cnt_type == 0)
-        {
-            sps->log2_max_pic_order_cnt_lsb_minus4 = read_ue(dc->bitstr);
-            sps->MaxPicOrderCntLsb = pow(2, sps->log2_max_pic_order_cnt_lsb_minus4 + 4);
-        }
-        else if (sps->pic_order_cnt_type == 1)
-        {
-            sps->delta_pic_order_always_zero_flag = read_bit(dc->bitstr);
-            sps->offset_for_non_ref_pic = read_se(dc->bitstr);
-            sps->offset_for_top_to_bottom_field = read_se(dc->bitstr);
-            sps->num_ref_frames_in_pic_order_cnt_cycle = read_ue(dc->bitstr);
-
-            for (unsigned i = 0; i < sps->num_ref_frames_in_pic_order_cnt_cycle; i++)
-            {
-                sps->offset_for_ref_frame[i] = read_se(dc->bitstr);
-            }
-        }
-
-        sps->max_num_ref_frames = read_ue(dc->bitstr);
-        sps->gaps_in_frame_num_value_allowed_flag = read_bit(dc->bitstr);
-
-        sps->pic_width_in_mbs_minus1 = read_ue(dc->bitstr);
-        sps->PicWidthInMbs = sps->pic_width_in_mbs_minus1 + 1;
-        sps->PicWidthInSamplesL = sps->PicWidthInMbs * 16;
-        sps->PicWidthInSamplesC = sps->PicWidthInMbs * sps->MbWidthC;
-
-        sps->pic_height_in_map_units_minus1 = read_ue(dc->bitstr);
-        sps->PicHeightInMapUnits = sps->pic_height_in_map_units_minus1 + 1;
-        sps->PicSizeInMapUnits = sps->PicWidthInMbs * sps->PicHeightInMapUnits;
-
-        sps->frame_mbs_only_flag = read_bit(dc->bitstr);
-        if (sps->frame_mbs_only_flag == false)
-            sps->mb_adaptive_frame_field_flag = read_bit(dc->bitstr);
-        else
-            sps->mb_adaptive_frame_field_flag = false;
-
-        sps->FrameHeightInMbs = (2 - sps->frame_mbs_only_flag) * sps->PicHeightInMapUnits;
-
-        // Macroblocks number
-        dc->PicSizeInMbs = sps->FrameHeightInMbs * sps->PicWidthInMbs;
-
-            //FIXME desalloc on a new SPS
-
-            // Macroblocks "table" allocation (on macroblock **mbs_data):
-            dc->mb_array = (Macroblock_t**)calloc(dc->PicSizeInMbs, sizeof(Macroblock_t*));
-
-            // Macroblocks "chunk" allocation (on Macroblock_t *mbs_data):
-            //dc->mbs_data = (macroblock*)calloc(dc->PicSizeInMbs, sizeof(macroblock));
-
-        sps->direct_8x8_inference_flag = read_bit(dc->bitstr);
-
-        sps->frame_cropping_flag = read_bit(dc->bitstr);
-        if (sps->frame_cropping_flag)
-        {
-            sps->frame_crop_left_offset = read_ue(dc->bitstr);
-            sps->frame_crop_right_offset = read_ue(dc->bitstr);
-            sps->frame_crop_top_offset = read_ue(dc->bitstr);
-            sps->frame_crop_bottom_offset = read_ue(dc->bitstr);
-
-            if (!sps->ChromaArrayType)
-            {
-                sps->CropUnitX = 1;
-                sps->CropUnitY = 2 - sps->frame_mbs_only_flag;
-            }
-            else
-            {
-                sps->CropUnitX = sps->SubWidthC;
-                sps->CropUnitY = sps->SubHeightC * (2 - sps->frame_mbs_only_flag);
-            }
-        }
-
-        sps->vui_parameters_present_flag = read_bit(dc->bitstr);
-        if (sps->vui_parameters_present_flag)
-        {
-            // Decode VUI
-            sps->vui = decodeVUI(dc->bitstr);
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/*!
  * \param *bitstr:
  * \param *sps:
  * \return 1 if SPS seems consistent, 0 otherwise.
@@ -737,7 +459,7 @@ int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
         }
 
 #if ENABLE_DEBUG
-        retcode = checkSPS(sps);
+        checkSPS(sps);
 #endif
     }
 
@@ -947,7 +669,7 @@ static int checkSPS(h264_sps_t *sps)
         // Check VUI content
         if (retcode == SUCCESS && sps->vui_parameters_present_flag)
         {
-            retcode = checkVUI(sps->vui, sps);
+            checkVUI(sps->vui, sps);
         }
     }
 
@@ -1290,7 +1012,7 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
         retcode = h264_rbsp_trailing_bits(bitstr);
 
 #if ENABLE_DEBUG
-        retcode = checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
+        checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
 #endif
     }
 
@@ -1607,6 +1329,31 @@ int decodeAUD(Bitstream_t *bitstr, h264_aud_t *aud)
     return retcode;
 }
 
+void mapAUD(h264_aud_t *aud, int64_t offset, int64_t size, FILE *xml)
+{
+    if (!aud || !xml) return;
+
+    fprintf(xml, "  <a tt=\"AUD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+            offset, size);
+
+    xmlSpacer(xml, "Access Unit Delimiter", -1);
+
+    fprintf(xml, "  <primary_pic_type>%i</primary_pic_type>\n", aud->primary_pic_type);
+
+    fprintf(xml, "  </a>\n");
+}
+
+void freeAUD(h264_aud_t  **aud_ptr)
+{
+    if (*aud_ptr != NULL)
+    {
+        free(*aud_ptr);
+        *aud_ptr = NULL;
+
+        TRACE_1(PARAM, ">> AUD freed");
+    }
+}
+
 /* ************************************************************************** */
 /* ************************************************************************** */
 
@@ -1749,7 +1496,14 @@ void printSEI(h264_sei_t *sei)
 
 void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml)
 {
-    //
+    if (!sei || !xml) return;
+
+    fprintf(xml, "  <a tt=\"SEI\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+            offset, size);
+
+    xmlSpacer(xml, "Supplemental Enhancement Information", -1);
+
+    fprintf(xml, "  </a>\n");
 }
 
 /* ************************************************************************** */
@@ -1960,9 +1714,9 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
         if (retcode == SUCCESS)
         {
             if (vui->nal_hrd_parameters_present_flag == true)
-                retcode = checkHRD(vui->nal_hrd);
+                checkHRD(vui->nal_hrd);
             if (vui->vcl_hrd_parameters_present_flag == true)
-                retcode = checkHRD(vui->vcl_hrd);
+                checkHRD(vui->vcl_hrd);
         }
 
         if (vui->chroma_loc_info_present_flag)
