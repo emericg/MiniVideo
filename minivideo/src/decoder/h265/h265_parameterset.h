@@ -33,12 +33,19 @@
 
 int h265_decodeVPS(Bitstream_t *bitstr, h265_vps_t *vps);
 void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml);
+void h265_freeVPS(h265_vps_t **vps_ptr);
 
 int h265_decodeSPS(Bitstream_t *bitstr, h265_sps_t *sps);
 void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
+void h265_freeSPS(h265_sps_t **sps_ptr);
 
 int h265_decodePPS(Bitstream_t *bitstr, h265_pps_t *pps, h265_sps_t **sps_array);
 void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml);
+void h265_freePPS(h265_pps_t **pps_ptr);
+
+int h265_decodeAUD(Bitstream_t *bitstr, h265_aud_t *aud);
+void h265_mapAUD(h265_aud_t *aud, int64_t offset, int64_t size, FILE *xml);
+void h265_freeAUD(h265_aud_t **aud_ptr);
 
 /* ************************************************************************** */
 #endif // H265_PARAMETER_SET_H

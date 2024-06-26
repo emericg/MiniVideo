@@ -369,7 +369,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                     dc->errorCounter++;
             }
             break;
-
+/*
             case NALU_TYPE_SEI: ////////////////////////////////////////
             {
                 h264_nalu_clean_sample(dc->bitstr);
@@ -380,7 +380,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                 dc->active_sei = (h264_sei_t*)calloc(1, sizeof(h264_sei_t));
                 if (dc->active_sei)
                 {
-                    if (decodeSEI(dc->bitstr, dc->active_sei))
+                    if (decodeSEI(dc->bitstr, dc->active_sei, 0))
                     {
                         retcode = SUCCESS;
                         printSEI(NULL);
@@ -390,7 +390,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                 }
             }
             break;
-
+*/
             case NALU_TYPE_SPS: ////////////////////////////////////////
             {
                 h264_nalu_clean_sample(dc->bitstr);

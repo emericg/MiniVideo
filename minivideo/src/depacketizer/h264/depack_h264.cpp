@@ -141,16 +141,9 @@ unsigned depack_h264_sample(Bitstream_t *bitstr,
 
                 if (sample.type == NALU_TYPE_AUD)
                 {
-                    //int decodeAUD(Bitstream_t *bitstr, h264_aud_t *aud)
-                    //void mapAUD(h264_aud_t *aud, std::vector<std::pair<std::string, std::string>> *vector)
-
                     h264_aud_t *aud = (h264_aud_t*)calloc(1, sizeof(h264_aud_t));
                     decodeAUD(bitstr, aud);
                     mapAUD(aud, sample.offset, sample.size, xml);
-
-                    //sample.content = calloc(1, sizeof(h264_aud_t));
-                    //decodeAUD(bitstr, (h264_aud_t *)sample.content);
-                    //mapAUD((h264_aud_t *)sample.content, xml);
                 }
                 if (sample.type == NALU_TYPE_SPS)
                 {
@@ -169,7 +162,7 @@ unsigned depack_h264_sample(Bitstream_t *bitstr,
                 if (sample.type == NALU_TYPE_SEI)
                 {
                     h264_sei_t *sei = (h264_sei_t*)calloc(1, sizeof(h264_sei_t));
-                    decodeSEI(bitstr, sei);
+                    decodeSEI(bitstr, sei, sample.size);
                     mapSEI(sei, sample.offset, sample.size, xml);
                     freeSEI(&sei);
                 }

@@ -973,6 +973,7 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
         pps->redundant_pic_cnt_present_flag = read_bit(bitstr);
 
         if (h264_more_rbsp_data(bitstr) == true &&
+            sps_array &&
             sps_array[pps->seq_parameter_set_id] &&
             sps_array[pps->seq_parameter_set_id]->profile_idc >= HIGHP)
         {
@@ -1012,7 +1013,10 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
         retcode = h264_rbsp_trailing_bits(bitstr);
 
 #if ENABLE_DEBUG
-        checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
+        if (sps_array && sps_array[pps->seq_parameter_set_id])
+            checkPPS(pps, sps_array[pps->seq_parameter_set_id]);
+        else
+            checkPPS(pps, nullptr);
 #endif
     }
 
@@ -1206,10 +1210,10 @@ void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
     TRACE_1(PARAM, "  - pic_scaling_matrix_present_flag = %i", pps->pic_scaling_matrix_present_flag);
     if (pps->pic_scaling_matrix_present_flag)
     {
-         for (i = 0; i < ((sps_array[pps->seq_parameter_set_id]->ChromaArrayType != 3) ? 8 : 12); i++)
-         {
-             TRACE_1(PARAM, "  - pic_scaling_list_present_flag[%i]= %i", i, pps->pic_scaling_list_present_flag[i]);
-         }
+        for (i = 0; i < ((sps_array[pps->seq_parameter_set_id]->ChromaArrayType != 3) ? 8 : 12); i++)
+        {
+            TRACE_1(PARAM, "  - pic_scaling_list_present_flag[%i]= %i", i, pps->pic_scaling_list_present_flag[i]);
+        }
     }
     TRACE_1(PARAM, "  - second_chroma_qp_index_offset   = %i", pps->second_chroma_qp_index_offset);
 #endif // ENABLE_DEBUG
@@ -1219,7 +1223,7 @@ void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
 
 void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FILE *xml)
 {
-    if (pps && sps && xml)
+    if (pps && xml)
     {
         fprintf(xml, " <a tt=\"PPS\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
                 offset, size);
@@ -1283,7 +1287,7 @@ void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FIL
 
             fprintf(xml, "  <transform_8x8_mode_flag>%u</transform_8x8_mode_flag>\n", pps->transform_8x8_mode_flag);
             fprintf(xml, "  <pic_scaling_matrix_present_flag>%u</pic_scaling_matrix_present_flag>\n", pps->pic_scaling_matrix_present_flag);
-            if (pps->pic_scaling_matrix_present_flag)
+            if (pps->pic_scaling_matrix_present_flag && sps)
             {
                 for (unsigned i = 0; i < ((sps[pps->seq_parameter_set_id]->ChromaArrayType != 3) ? 8 : 12); i++)
                 {
@@ -1329,6 +1333,8 @@ int decodeAUD(Bitstream_t *bitstr, h264_aud_t *aud)
     return retcode;
 }
 
+/* ************************************************************************** */
+
 void mapAUD(h264_aud_t *aud, int64_t offset, int64_t size, FILE *xml)
 {
     if (!aud || !xml) return;
@@ -1342,6 +1348,8 @@ void mapAUD(h264_aud_t *aud, int64_t offset, int64_t size, FILE *xml)
 
     fprintf(xml, " </a>\n");
 }
+
+/* ************************************************************************** */
 
 void freeAUD(h264_aud_t  **aud_ptr)
 {
@@ -1358,8 +1366,9 @@ void freeAUD(h264_aud_t  **aud_ptr)
 /* ************************************************************************** */
 
 /*!
- * \param *bitstr:
- * \param *sei:
+ * \param *bitstr: our bitstream reader.
+ * \param *sei: SEI structure.
+ * \param size: size of the SEI, if known.
  * \return 1 if SEI seems consistent, 0 otherwise.
  *
  * From 'ITU-T H.264' recommendation:
@@ -1368,7 +1377,7 @@ void freeAUD(h264_aud_t  **aud_ptr)
  * D.1 SEI payload syntax.
  * D.1 SEI payload semantics.
  */
-int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei)
+int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei, int64_t size)
 {
     TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeSEI()" CLR_RESET);
     int retcode = SUCCESS;
@@ -1383,7 +1392,11 @@ int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei)
         // SEI decoding
         ////////////////////////////////////////////////////////////////////////
 
-        while (h264_more_rbsp_data(bitstr) == true)
+        int64_t startpos = bitstream_get_absolute_byte_offset(bitstr);
+        int64_t currentpos = startpos;
+
+        //while (h264_more_rbsp_data(bitstr) == true)
+        while (currentpos < (startpos + size))
         {
             // SEI payload header
             unsigned int payloadType = 0;
@@ -1408,45 +1421,43 @@ int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei)
             payloadSize += last_payload_size_byte;
 
             // SEI payload
-            //sei_payload( payloadType, payloadSize )
+            if (payloadType == 4)
+            {
+                // user_data_registered_itu_t_t35
+
+                sei->itu_t_t35_country_code = read_bits(bitstr, 8);
+                sei->itu_t_t35_country_code_extension_byte = read_bits(bitstr, 8);
+
+                if (payloadSize > 2)
+                {
+                    sei->itu_t_t35_payload = (char *)malloc(payloadSize-2+1);
+                }
+            }
+            else if (payloadType == 5)
+            {
+                // user_data_unregistered
+
+                for (int i = 0; i < 16; i++)
+                {
+                    sei->uuid_iso_iec_11578[i] = read_bits(bitstr, 8);
+                }
+
+                if (payloadSize > 16)
+                {
+                    sei->user_data_payload = (char *)malloc(payloadSize-16+1);
+                    for (unsigned i = 0; i < payloadSize-16; i++)
+                        sei->user_data_payload[i] = read_bits(bitstr, 8);
+                    sei->user_data_payload[payloadSize-16+1] = '\0';
+                }
+            }
+            else
+            {
+                TRACE_WARNING(PARAM, "  Unknown SEI payload type! (type: %i / size: %i)", payloadType, payloadSize);
+                skip_bits(bitstr, payloadSize*8);
+            }
+
+            currentpos = bitstream_get_absolute_byte_offset(bitstr);
         }
-
-        // SEI check
-        ////////////////////////////////////////////////////////////////////////
-
-        if (retcode == SUCCESS)
-        {
-            retcode = checkSEI(sei);
-        }
-    }
-
-    return retcode;
-}
-
-/* ************************************************************************** */
-
-/*!
- * \param *dc The current DecodingContext.
- * \param *sei (supplemental_enhancement_information) data structure.
- * \return 1 if SEI seems consistent, 0 otherwise.
- *
- * Check parsed values (and not derived ones) for inconsistencies.
- */
-static int checkSEI(h264_sei_t *sei)
-{
-    TRACE_INFO(PARAM, "> " BLD_GREEN "checkSEI()" CLR_RESET);
-    int retcode = SUCCESS;
-
-    // Check SEI structure
-    if (sei == NULL)
-    {
-        TRACE_ERROR(PARAM, "  Invalid SEI structure!");
-        retcode = FAILURE;
-    }
-    else // Check SEI values
-    {
-        TRACE_WARNING(PARAM, ">>> UNIMPLEMENTED (checkSEI)");
-        retcode = FAILURE;
     }
 
     return retcode;
@@ -1461,6 +1472,12 @@ void freeSEI(h264_sei_t  **sei_ptr)
 {
     if (*sei_ptr != NULL)
     {
+        if ((*sei_ptr)->itu_t_t35_payload)
+            free((*sei_ptr)->itu_t_t35_payload);
+
+        if ((*sei_ptr)->user_data_payload)
+            free((*sei_ptr)->user_data_payload);
+
         free(*sei_ptr);
         *sei_ptr = NULL;
 
@@ -1503,7 +1520,20 @@ void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml)
 
     xmlSpacer(xml, "Supplemental Enhancement Information", -1);
 
-    fprintf(xml, "  </a>\n");
+    if (sei->itu_t_t35_payload)
+    {
+        fprintf(xml, "  <itu_t_t35_country_code>%i</itu_t_t35_country_code>\n", sei->itu_t_t35_country_code);
+        fprintf(xml, "  <itu_t_t35_country_code_extension_byte>%i</itu_t_t35_country_code_extension_byte>\n", sei->itu_t_t35_country_code_extension_byte);
+        fprintf(xml, "  <itu_t_t35_payload>%s</itu_t_t35_payload>\n", sei->itu_t_t35_payload);
+    }
+
+    if (sei->user_data_payload)
+    {
+        fprintf(xml, "  <uuid_iso_iec_11578>%s</uuid_iso_iec_11578>\n", sei->uuid_iso_iec_11578);
+        fprintf(xml, "  <user_data_payload>%s</user_data_payload>\n", sei->user_data_payload);
+    }
+
+    fprintf(xml, " </a>\n");
 }
 
 /* ************************************************************************** */

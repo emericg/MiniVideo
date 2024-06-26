@@ -234,6 +234,8 @@ void profile_tier_level(Bitstream_t *bitstr, h265_ptl_t *ptl,
     }
 }
 
+/* ************************************************************************** */
+
 void map_ptl(h265_ptl_t *ptl, int64_t offset, int64_t size, FILE *xml)
 {
     if (!ptl || !xml) return;
@@ -272,6 +274,8 @@ void map_ptl(h265_ptl_t *ptl, int64_t offset, int64_t size, FILE *xml)
 
     fprintf(xml, " </a>\n");
 }
+
+/* ************************************************************************** */
 
 void hrd_parameters(Bitstream_t *bitstr, h265_hrd_t *hrd,
                      bool profilePresentFlag, uint8_t maxNumSubLayersMinus1)
@@ -506,6 +510,19 @@ void h265_mapVPS(h265_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
     fprintf(xml, "  <vps_extension_data_flag>%u</vps_extension_data_flag>\n", vps->vps_extension_data_flag);
 
     fprintf(xml, " </a>\n");
+}
+
+/* ************************************************************************** */
+
+void h265_freeVPS(h265_vps_t **vps_ptr)
+{
+    if (*vps_ptr != NULL)
+    {
+        free(*vps_ptr);
+        *vps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> VPS freed");
+    }
 }
 
 /* ************************************************************************** */
@@ -780,6 +797,19 @@ void h265_mapSPS(h265_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
 }
 
 /* ************************************************************************** */
+
+void h265_freeSPS(h265_sps_t **sps_ptr)
+{
+    if (*sps_ptr != NULL)
+    {
+        free(*sps_ptr);
+        *sps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> SPS freed");
+    }
+}
+
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 int h265_decodePPS(Bitstream_t *bitstr, h265_pps_t *pps, h265_sps_t **sps_array)
@@ -1016,6 +1046,70 @@ void h265_mapPPS(h265_pps_t *pps, int64_t offset, int64_t size, FILE *xml)
     }
 
     fprintf(xml, " </a>\n");
+}
+
+/* ************************************************************************** */
+
+void h265_freePPS(h265_pps_t **pps_ptr)
+{
+    if (*pps_ptr != NULL)
+    {
+        free(*pps_ptr);
+        *pps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> PPS freed");
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+int h265_decodeAUD(Bitstream_t *bitstr, h265_aud_t *aud)
+{
+    TRACE_INFO(PARAM, "<> " BLD_GREEN "decodeAUD()" CLR_RESET);
+    int retcode = SUCCESS;
+
+    if (aud == NULL)
+    {
+        TRACE_ERROR(PARAM, "NULL AUD!");
+        retcode = FAILURE;
+    }
+    else
+    {
+        aud->pic_type = read_bits(bitstr, 3);
+        TRACE_2(PARAM, "<> " BLD_GREEN "pic_type: %i" CLR_RESET, aud->pic_type);
+    }
+
+    return retcode;
+}
+
+/* ************************************************************************** */
+
+void h265_mapAUD(h265_aud_t *aud, int64_t offset, int64_t size, FILE *xml)
+{
+    if (!aud || !xml) return;
+
+    fprintf(xml, " <a tt=\"AUD\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+            offset, size);
+
+    xmlSpacer(xml, "Access Unit Delimiter", -1);
+
+    fprintf(xml, "  <pic_type>%i</pic_type>\n", aud->pic_type);
+
+    fprintf(xml, " </a>\n");
+}
+
+/* ************************************************************************** */
+
+void h265_freeAUD(h265_aud_t **aud_ptr)
+{
+    if (*aud_ptr != NULL)
+    {
+        free(*aud_ptr);
+        *aud_ptr = NULL;
+
+        TRACE_1(PARAM, ">> AUD freed");
+    }
 }
 
 /* ************************************************************************** */

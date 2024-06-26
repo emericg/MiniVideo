@@ -33,12 +33,15 @@
 
 int h266_decodeVPS(Bitstream_t *bitstr, h266_vps_t *vps);
 void h266_mapVPS(h266_vps_t *vps, int64_t offset, int64_t size, FILE *xml);
+void h266_freeVPS(h266_vps_t **vps_ptr);
 
 int h266_decodeSPS(Bitstream_t *bitstr, h266_sps_t *sps);
 void h266_mapSPS(h266_sps_t *sps, int64_t offset, int64_t size, FILE *xml);
+void h266_freeSPS(h266_sps_t **sps_ptr);
 
 int h266_decodePPS(Bitstream_t *bitstr, h266_pps_t *pps, h266_sps_t **sps_array);
 void h266_mapPPS(h266_pps_t *pps, int64_t offset, int64_t size, FILE *xml);
+void h266_freePPS(h266_pps_t **pps_ptr);
 
 /* ************************************************************************** */
 #endif // H266_PARAMETER_SET_H

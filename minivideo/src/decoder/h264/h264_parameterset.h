@@ -40,7 +40,7 @@ void printPPS(h264_pps_t *pps, h264_sps_t **sps_array);
 void mapPPS(h264_pps_t *pps, h264_sps_t **sps, int64_t offset, int64_t size, FILE *xml);
 void freePPS(h264_pps_t **pps_ptr);
 
-int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei);
+int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei, int64_t size);
 void printSEI(h264_sei_t *sei);
 void mapSEI(h264_sei_t *sei, int64_t offset, int64_t size, FILE *xml);
 void freeSEI(h264_sei_t **sei_ptr);

@@ -65,30 +65,31 @@ unsigned depack_h265_sample(Bitstream_t *bitstr,
 
                 if (sample.type == NALU_TYPE_AUD_NUT)
                 {
-                    //h265_aud_t *aud = (h265_aud_t*)calloc(1, sizeof(h265_aud_t));
-                    //h265_decodeAUD(bitstr, aud);
-                    //h265_mapAUD(aud, sample.offset, sample.size, xml);
+                    h265_aud_t *aud = (h265_aud_t*)calloc(1, sizeof(h265_aud_t));
+                    h265_decodeAUD(bitstr, aud);
+                    h265_mapAUD(aud, sample.offset, sample.size, xml);
+                    h265_freeAUD(&aud);
                 }
                 if (sample.type == NALU_TYPE_VPS_NUT)
                 {
-                    //h265_vps_t *vps = (h265_vps_t*)calloc(1, sizeof(h265_vps_t));
-                    //h265_decodeVPS(bitstr, vps);
-                    //h265_mapVPS(vps, sample.offset, sample.size, xml);
-                    //h265_freeVPS(&vps);
+                    h265_vps_t *vps = (h265_vps_t*)calloc(1, sizeof(h265_vps_t));
+                    h265_decodeVPS(bitstr, vps);
+                    h265_mapVPS(vps, sample.offset, sample.size, xml);
+                    h265_freeVPS(&vps);
                 }
                 if (sample.type == NALU_TYPE_SPS_NUT)
                 {
-                    //h265_sps_t *sps = (h265_sps_t*)calloc(1, sizeof(h265_sps_t));
-                    //h265_decodeSPS(bitstr, sps);
-                    //h265_mapSPS(sps, sample.offset, sample.size, xml);
-                    //h265_freeSPS(&sps);
+                    h265_sps_t *sps = (h265_sps_t*)calloc(1, sizeof(h265_sps_t));
+                    h265_decodeSPS(bitstr, sps);
+                    h265_mapSPS(sps, sample.offset, sample.size, xml);
+                    h265_freeSPS(&sps);
                 }
                 if (sample.type == NALU_TYPE_PPS_NUT)
                 {
-                    //h265_pps_t *pps = (h265_pps_t*)calloc(1, sizeof(h265_pps_t));
-                    //h265_decodePPS(bitstr, pps, nullptr);
-                    //h265_mapPPS(pps, nullptr, sample.offset, sample.size, xml);
-                    //h265_freePPS(&pps);
+                    h265_pps_t *pps = (h265_pps_t*)calloc(1, sizeof(h265_pps_t));
+                    h265_decodePPS(bitstr, pps, nullptr);
+                    h265_mapPPS(pps, sample.offset, sample.size, xml);
+                    h265_freePPS(&pps);
                 }
                 if (sample.type == NALU_TYPE_PREFIX_SEI_NUT ||
                     sample.type == NALU_TYPE_SUFFIX_SEI_NUT)

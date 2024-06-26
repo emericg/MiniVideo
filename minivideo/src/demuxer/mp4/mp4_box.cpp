@@ -440,6 +440,7 @@ uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *na
         if (name)
         {
 #if ENABLE_DEBUG
+/*
             TRACE_1(MP4, "* %s  = 0x", name);
 
             if (bytes > 1023)
@@ -448,6 +449,7 @@ uint8_t *read_mp4_data(Bitstream_t *bitstr, int bytes, FILE *xml, const char *na
                 TRACE_1(MP4, "* %s  = 0x", name);
             for (int i = 0; i < bytes && i < 1024; i++)
                 printf("%02X", value[i]);
+*/
 #endif // ENABLE_DEBUG
 
             if (xml)
