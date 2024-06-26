@@ -22,11 +22,12 @@
 
 #ifndef TABCONTAINER_H
 #define TABCONTAINER_H
+/* ************************************************************************** */
+
+#include "mediawrapper.h"
 
 // MiniVideo
 #include "minivideo_mediafile.h"
-
-#include "mediawrapper.h"
 
 // pugixml
 #include "thirdparty/pugixml/pugixml.hpp"
@@ -61,18 +62,20 @@ private slots:
     void previewSample(int sid);
     void sampleSelection();
     void sampleSelection(int sample_id);
+    void samplePacketSelection(int64_t selected_offset);
     void containerSelectionEmpty();
     void containerSelectionChanged();
     void containerSelection(QTreeWidgetItem *item, int column);
     void containerSelection(int64_t selected_offset);
 
-    bool loadXmlFile();
+    bool loadXmlMap_media();
+    bool loadXmlMap_samples();
         bool xmlFileParser(pugi::xml_node &root);
         void xmlHeaderParser(pugi::xml_node &root);
         void xmlStructureParser(pugi::xml_node &root);
         void xmlAtomParser(pugi::xml_node &root, QTreeWidgetItem *item);
-
-    bool findAtom(const pugi::xml_node &elem, const QString &attr, int64_t value, pugi::xml_node &foundElement);
+        bool xmlAtomFinder(const pugi::xml_node &elem, const QString &attr,
+                           int64_t value, pugi::xml_node &foundElement);
 
 private slots:
     void on_tabWidget_currentChanged(int index);
@@ -89,11 +92,15 @@ private:
 
     std::map <unsigned, OutputSurface_t *> thumbnails;
 
-    QFile mediaFile;
-    QByteArray mediaData;
+    QFile mediaHexFile;
+    QByteArray mediaHexData;
 
-    QFile xmlMapFile;
-    pugi::xml_document xmlMapData;
+    QFile mediaMapFile;
+    pugi::xml_document mediaMapData;
+
+    FILE *samplesMapFd;
+    QFile samplesMapFile;
+    pugi::xml_document samplesMapData;
 
     QIcon icon_atom;
     QIcon icon_data;
@@ -104,4 +111,5 @@ private:
     void resizeEvent(QResizeEvent *event);
 };
 
+/* ************************************************************************** */
 #endif // TABCONTAINER_H

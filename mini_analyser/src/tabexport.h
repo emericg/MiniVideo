@@ -22,6 +22,7 @@
 
 #ifndef TABEXPORT_H
 #define TABEXPORT_H
+/* ************************************************************************** */
 
 // minivideo library
 #include "minivideo_mediafile.h"
@@ -66,4 +67,5 @@ private slots:
     void on_comboBox_export_formats_currentIndexChanged(int index);
 };
 
+/* ************************************************************************** */
 #endif // TABEXPORT_H

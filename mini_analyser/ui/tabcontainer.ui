@@ -215,7 +215,7 @@
           <number>0</number>
          </property>
          <item row="3" column="0">
-          <widget class="QWidget" name="verticalWidget" native="true">
+          <widget class="QWidget" name="widgetStructure" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="leftMargin">
              <number>8</number>
@@ -230,7 +230,7 @@
              <number>8</number>
             </property>
             <item>
-             <layout class="QGridLayout" name="gridLayout_content"/>
+             <layout class="QGridLayout" name="gridLayout_structure"/>
             </item>
            </layout>
           </widget>

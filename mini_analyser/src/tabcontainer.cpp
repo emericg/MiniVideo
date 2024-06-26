@@ -177,9 +177,9 @@ bool tabContainer::loadMedia(MediaWrapper *wrap)
         wrapper = static_cast<MediaWrapper *>(wrap);
         media = static_cast<MediaFile_t *>(wrap->media);
 
-        mediaFile.setFileName(QString::fromUtf8(media->file_path));
+        mediaHexFile.setFileName(QString::fromUtf8(media->file_path));
 
-        bool structure_loaded = loadXmlFile();
+        bool structure_loaded = loadXmlMap_media();
         bool tracks_loaded = loadTracks();
 
         if (structure_loaded)
@@ -431,7 +431,6 @@ void tabContainer::sampleSelection(int sid)
         int64_t size = track->sample_size[sid];
 
         // Header infos
-        ui->widgetHeader->show();
         ui->labelTitle->setText(getSampleTypeQString(track->sample_type[sid]) + " #" + QString::number(sid));
         QLabel *lo = new QLabel(tr("> Offset"));
         QLabel *ls = new QLabel(tr("> Size"));
@@ -467,33 +466,58 @@ void tabContainer::sampleSelection(int sid)
             ui->gridLayout_header->addWidget(dd, 4, 1);
         }
 
-        // Content infos
         ui->widgetSamples->show();
+        ui->widgetStructure->hide();
 
-        es_sample_t essample_list[16];
-        int essample_count = depack_sample(media, track, sid, essample_list);
+        // Content infos
+        samplesMapFd = tmpfile();
+        std::vector <es_sample_t> essamples;
+        unsigned essample_count = depack_sample(media, track, sid, essamples, samplesMapFd);
 
         if (essample_count)
         {
-            for (int i = 0; i < essample_count && i < 16; i++)
+            loadXmlMap_samples();
+
+            // print map raw content
+            //{
+            //    rewind(samplesMapFd);
+            //    QFile file;
+            //    file.open(samplesMapFd, QIODevice::ReadOnly);
+            //    QLabel *c = new QLabel(file.readAll());
+            //    ui->gridLayout_samples->addWidget(c, 0, 1);
+            //}
+
+            for (unsigned i = 0, j = 0; i < essamples.size() && i < 16; i++, j++)
             {
-                QLabel *a = new QLabel("Sample #" + QString::number(i) + " @ " + QString::number(essample_list[i].offset - track->sample_offset[sid]) + " / " + QString::number(essample_list[i].size) + " bytes");
-                QLineEdit *b = new QLineEdit(QString::fromUtf8(essample_list[i].type_str));
+                // title
+                QLabel *a = new QLabel("<b>Sample #" + QString::number(i) + " @ " +
+                                       QString::number(essamples.at(i).offset - track->sample_offset[sid]) +
+                                       " / " + QString::number(essamples.at(i).size) + " bytes</b>");
+                QLineEdit *b = new QLineEdit(QString::fromLatin1(essamples.at(i).type_cstr));
+
+                a->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                 b->setReadOnly(true);
 
-                ui->gridLayout_samples->addWidget(a, i, 0);
-                ui->gridLayout_samples->addWidget(b, i, 1);
+                j = ui->gridLayout_samples->rowCount();
+                ui->gridLayout_samples->addWidget(a, j, 0);
+                ui->gridLayout_samples->addWidget(b, j, 1);
+
+                // content (from map)
+                samplePacketSelection(essamples.at(i).offset);
             }
         }
         else
         {
-            QLabel *a = new QLabel("Sample #0 @ 0 / " + QString::number(track->sample_size[sid]) + " bytes");
+            QLabel *a = new QLabel("<b>Sample #0 @ 0 / " + QString::number(track->sample_size[sid]) + " bytes</b>");
             QLineEdit *b = new QLineEdit(tr("Unknown..."));
             b->setReadOnly(true);
 
             ui->gridLayout_samples->addWidget(a, 0, 0);
             ui->gridLayout_samples->addWidget(b, 0, 1);
         }
+
+        fclose(samplesMapFd);
+        samplesMapFd = nullptr;
 
         // Preview thumbnail
         if (track->sample_type[sid] == sample_VIDEO_SYNC)
@@ -507,7 +531,7 @@ void tabContainer::sampleSelection(int sid)
         ui->widget_hex1->setData(ui->widget_hex1->dataAt(offset, size));
 #endif
 #if (HEX_WIDGET_V2 == 1)
-        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaFile.fileName());
+        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaHexFile.fileName());
         ui->widget_hex2->setDocument(mediaFileHexa);
         QByteArray data = mediaFileHexa->read(offset, size);
         ui->widget_hex2->setData(data);
@@ -518,7 +542,7 @@ void tabContainer::sampleSelection(int sid)
 
 void tabContainer::previewSample(int sid)
 {
-#if THUMBNAILS_ENABLED == 1
+#if (THUMBNAILS_ENABLED == 1)
 
     if (media && track &&
         sid >= 0 && static_cast<uint32_t>(sid) < track->sample_count &&
@@ -585,6 +609,7 @@ void tabContainer::containerSelectionEmpty()
 
     // Sample infos
     ui->widgetSamples->hide();
+    ui->widgetStructure->hide();
 
     // HexEditor
     ui->widget_hex1->setVisible(false);
@@ -640,9 +665,9 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
     // we need to find the atom with given offset
     pugi::xml_node eSelected;
-    pugi::xml_node root = xmlMapData.document_element();
+    pugi::xml_node root = mediaMapData.document_element();
 
-    if (findAtom(root.child("structure"), "off", selected_offset, eSelected))
+    if (xmlAtomFinder(root.child("structure"), "off", selected_offset, eSelected))
     {
         //QString selected_title = eSelected.attributeNode("tt").value();
         QString selected_fcc = QString::fromLatin1(eSelected.attribute("fcc").value());
@@ -658,6 +683,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
         // Set atom title (if it's an attribute of the selected element)
         ////////////////////////////////////////////////////////////////////////
+
         if (eSelected.attribute("tt"))
         {
             if (selected_fcc.isEmpty() == false)
@@ -676,6 +702,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
         // Set atom type
         ////////////////////////////////////////////////////////////////////////
+
         int fieldCount = 0;
         QLabel *atom_title = nullptr;
         QString type = QString::fromLatin1(eSelected.attribute("tp").value());
@@ -714,6 +741,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
         // Set atom settings
         ////////////////////////////////////////////////////////////////////////
+
         QLabel *atom_offset_label = new QLabel(tr("Offset"));
         QLineEdit *atom_offset_data = new QLineEdit(QString::number(selected_offset));
         atom_offset_data->setReadOnly(true);
@@ -759,6 +787,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
         ////////////////////////////////////////////////////////////////////////
 
         ui->widgetSamples->hide();
+        ui->widgetStructure->show();
 
         // Parse element and set atom fields
         ////////////////////////////////////////////////////////////////////////
@@ -773,16 +802,17 @@ void tabContainer::containerSelection(int64_t selected_offset)
             else if (strncmp(e.name(), "desc", 4) == 0)
             {
                 QLabel *fl = new QLabel(QString::fromLatin1(e.child_value()));
-                ui->gridLayout_content->addWidget(fl, fieldCount++, 1);
+                ui->gridLayout_structure->addWidget(fl, fieldCount++, 1);
             }
             else if (strncmp(e.name(), "spacer", 4) == 0)
             {
                 QLabel *fl = new QLabel("<strong>" + QString::fromLatin1(e.child_value()) + "</strong>");
-                fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                 QLabel *sp = new QLabel();
 
-                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
-                ui->gridLayout_content->addWidget(sp, fieldCount++, 1);
+                fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+
+                ui->gridLayout_structure->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_structure->addWidget(sp, fieldCount++, 1);
             }
             else if (strcmp(e.name(), "a"))
             {
@@ -809,8 +839,8 @@ void tabContainer::containerSelection(int64_t selected_offset)
                 fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
                 fv->setReadOnly(true);
 
-                ui->gridLayout_content->addWidget(fl, fieldCount, 0);
-                ui->gridLayout_content->addWidget(fv, fieldCount++, 1);
+                ui->gridLayout_structure->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_structure->addWidget(fv, fieldCount++, 1);
             }
         }
 
@@ -821,7 +851,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
         ui->widget_hex1->setVisible(true);
 #endif
 #if (HEX_WIDGET_V2 == 1)
-        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaFile.fileName());
+        QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaHexFile.fileName());
         ui->widget_hex2->setDocument(mediaFileHexa);
         QByteArray data = mediaFileHexa->read(selected_offset, selected_size);
         ui->widget_hex2->setData(data);
@@ -837,6 +867,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
     }
 }
 
+/* ************************************************************************** */
 /* ************************************************************************** */
 
 /**
@@ -912,8 +943,8 @@ void tabContainer::clearContent()
         removeColumn(ui->gridLayout_header, i, true);
     for (int i = 0;  i < ui->gridLayout_samples->columnCount(); i++)
         removeColumn(ui->gridLayout_samples, i, true);
-    for (int i = 0;  i < ui->gridLayout_content->columnCount(); i++)
-        removeColumn(ui->gridLayout_content, i, true);
+    for (int i = 0;  i < ui->gridLayout_structure->columnCount(); i++)
+        removeColumn(ui->gridLayout_structure, i, true);
 }
 
 void tabContainer::clearPreviews()
@@ -940,14 +971,15 @@ void tabContainer::clearPreviews()
 }
 
 /* ************************************************************************** */
+/* ************************************************************************** */
 
-bool tabContainer::loadXmlFile()
+bool tabContainer::loadXmlMap_media()
 {
-    //qDebug() << "loadXmlFile()";
+    //qDebug() << "loadXmlMap_media()";
     bool status = true;
 
     ui->treeWidget_structure->clear();
-    xmlMapFile.close();
+    mediaMapFile.close();
 
     if (!media)
         return false;
@@ -989,7 +1021,7 @@ bool tabContainer::loadXmlFile()
 
     // Load XML file (from given file descriptor)
     if (media->container_mapper_fd == nullptr ||
-        xmlMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
+        mediaMapFile.open(media->container_mapper_fd, QIODevice::ReadOnly) == false)
     {
         status = false;
         qDebug() << "xmlFile.open(FILE*) > error";
@@ -999,10 +1031,10 @@ bool tabContainer::loadXmlFile()
     if (status == false)
     {
         QString filename = "/tmp/" + QString::fromUtf8(media->file_name) + "_mapped.xml";
-        xmlMapFile.setFileName(filename);
+        mediaMapFile.setFileName(filename);
 
-        if (xmlMapFile.exists() == false ||
-            xmlMapFile.open(QIODevice::ReadOnly) == false)
+        if (mediaMapFile.exists() == false ||
+            mediaMapFile.open(QIODevice::ReadOnly) == false)
         {
             qDebug() << "xmlFile.open(" << filename << ") > error";
             status = false;
@@ -1012,11 +1044,11 @@ bool tabContainer::loadXmlFile()
 
     if (status == true)
     {
-        xmlMapFile.seek(0);
-        char *b = static_cast<char *>(pugi::get_memory_allocation_function()(xmlMapFile.size()));
-        xmlMapFile.read(b, xmlMapFile.size());
+        mediaMapFile.seek(0);
+        char *b = static_cast<char *>(pugi::get_memory_allocation_function()(mediaMapFile.size()));
+        mediaMapFile.read(b, mediaMapFile.size());
 
-        pugi::xml_parse_result result = xmlMapData.load_buffer_inplace_own(b, xmlMapFile.size());
+        pugi::xml_parse_result result = mediaMapData.load_buffer_inplace_own(b, mediaMapFile.size());
         if (!result)
         {
             qDebug() << "xmlFile parsed with errors";
@@ -1024,9 +1056,9 @@ bool tabContainer::loadXmlFile()
         }
 
         // Actual XML data parsing
-        pugi::xml_node root = xmlMapData.document_element();
+        pugi::xml_node root = mediaMapData.document_element();
 
-        pugi::xml_node fileNode = xmlMapData.child("file");
+        pugi::xml_node fileNode = mediaMapData.child("file");
         xmlFileParser(fileNode);
 
         pugi::xml_node headerNode = root.child("header");
@@ -1161,7 +1193,7 @@ void tabContainer::xmlAtomParser(pugi::xml_node &a, QTreeWidgetItem *item)
     }
 }
 
-bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int64_t value, pugi::xml_node &foundElement)
+bool tabContainer::xmlAtomFinder(const pugi::xml_node &elem, const QString &attr, int64_t value, pugi::xml_node &foundElement)
 {
     bool status = false;
 
@@ -1175,10 +1207,131 @@ bool tabContainer::findAtom(const pugi::xml_node &elem, const QString &attr, int
                 return true;
             }
 
-            if (findAtom(atom, attr, value, foundElement) == true)
+            if (xmlAtomFinder(atom, attr, value, foundElement) == true)
                 return true;
         }
     }
 
     return  status;
 }
+
+/* ************************************************************************** */
+/* ************************************************************************** */
+
+bool tabContainer::loadXmlMap_samples()
+{
+    //qDebug() << "loadXmlMap_samples()";
+    bool status = true;
+
+    samplesMapFile.close();
+
+    // Load XML file (from given file descriptor)
+    if (samplesMapFd == nullptr ||
+        samplesMapFile.open(samplesMapFd, QIODevice::ReadOnly) == false)
+    {
+        status = false;
+        qDebug() << "xmlSamples.open(FILE*) > error";
+    }
+
+    // XML data parsing
+    if (status == true)
+    {
+        samplesMapFile.seek(0);
+        char *b = static_cast<char *>(pugi::get_memory_allocation_function()(samplesMapFile.size()));
+        samplesMapFile.read(b, samplesMapFile.size());
+
+        pugi::xml_parse_result result = samplesMapData.load_buffer_inplace_own(b, samplesMapFile.size());
+        if (!result)
+        {
+            qDebug() << "xmlSamples parsed with errors";
+            qDebug() << "Error description: " << result.description() << "(error at [..." << (result.offset) << "]";
+        }
+    }
+
+    return status;
+}
+
+void tabContainer::samplePacketSelection(int64_t selected_offset)
+{
+    //qDebug() << "samplePacketSelection(offset) " << selected_offset;
+
+    // we need to find the atom with given offset
+    pugi::xml_node eSelected;
+    pugi::xml_node root = samplesMapData.document_element();
+
+    if (xmlAtomFinder(root.child("samples"), "off", selected_offset, eSelected))
+    {
+        //QString selected_title = eSelected.attributeNode("tt").value();
+        //QString selected_fcc = QString::fromLatin1(eSelected.attribute("fcc").value());
+        //QString selected_id = QString::fromLatin1(eSelected.attribute("id").value());
+        //QString selected_guid = QString::fromLatin1(eSelected.attribute("guid").value());
+        //QString selected_title = QString::fromLatin1(eSelected.attribute("tt").value());
+        //int selected_size = eSelected.attribute("sz").as_int();
+        //int selected_version = eSelected.attribute("v").as_int();
+        //int selected_flag = eSelected.attribute("f").as_int();
+        //QString selected_uuid = QString::fromLatin1(eSelected.attribute("uuid").value());
+
+        //qDebug() << "Atom :" << selected_title << "@" << selected_offset << "clicked";
+
+        for (pugi::xml_node e = eSelected.first_child(); e; e = e.next_sibling())
+        {
+            int fieldCount = ui->gridLayout_samples->rowCount();
+
+            if (strncmp(e.name(), "title", 5) == 0)
+            {
+                //
+            }
+            else if (strncmp(e.name(), "desc", 4) == 0)
+            {
+                //QLabel *fl = new QLabel(QString::fromLatin1(e.child_value()));
+                //ui->gridLayout_samples->addWidget(fl, fieldCount++, 1);
+            }
+            else if (strncmp(e.name(), "spacer", 4) == 0)
+            {
+                //QLabel *fl = new QLabel("<strong>" + QString::fromLatin1(e.child_value()) + "</strong>");
+                //fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                //QLabel *sp = new QLabel();
+
+                //ui->gridLayout_samples->addWidget(fl, fieldCount, 0);
+                //ui->gridLayout_samples->addWidget(sp, fieldCount++, 1);
+            }
+            else if (strcmp(e.name(), "a"))
+            {
+                QLabel *fl = new QLabel(QString::fromUtf8(e.name()));
+                if (e.attribute("index"))
+                {
+                    fl->setText(fl->text() + " #" + QString::fromUtf8(e.attribute("index").value()));
+                }
+
+                QString value = QString::fromUtf8(e.child_value());
+                if (e.attribute("string"))
+                {
+                    value.replace("&quot", "\"");
+                    value.replace("&apos", "'");
+                    value.replace("&lt", "<");
+                    value.replace("&gt", ">");
+                    value.replace("&amp", "&");
+                }
+
+                QLineEdit *fv = new QLineEdit(value);
+                if (e.attribute("unit"))
+                {
+                    fv->setText(fv->text() + "  (unit: " + QString::fromUtf8(e.attribute("unit").value()) + ")");
+                }
+                if (e.attribute("note"))
+                {
+                    fv->setText(fv->text() + "  (note: " + QString::fromUtf8(e.attribute("note").value()) + ")");
+                }
+
+                fl->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                fv->setReadOnly(true);
+
+                ui->gridLayout_samples->addWidget(fl, fieldCount, 0);
+                ui->gridLayout_samples->addWidget(fv, fieldCount++, 1);
+            }
+        }
+    }
+}
+
+/* ************************************************************************** */
+/* ************************************************************************** */

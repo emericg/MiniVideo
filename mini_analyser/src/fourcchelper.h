@@ -22,6 +22,7 @@
 
 #ifndef FOURCCHELPER_H
 #define FOURCCHELPER_H
+/* ************************************************************************** */
 
 #include <QDialog>
 #include <QButtonGroup>
@@ -71,4 +72,5 @@ private:
     QByteArray internal_hex;
 };
 
+/* ************************************************************************** */
 #endif // FOURCCHELPER_H

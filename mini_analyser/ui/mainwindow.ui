@@ -174,7 +174,7 @@
              <string notr="true">color: rgb(100, 100, 100);</string>
             </property>
             <property name="text">
-             <string>drag &amp; drop files to start</string>
+             <string>drag &amp; drop file(s) to start</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
