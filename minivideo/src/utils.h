@@ -104,7 +104,7 @@ void print2d(int **array2d, int arraySize);
 
 /* ************************************************************************** */
 
-int is_prime(const unsigned int n);
+bool is_prime(const unsigned n);
 
 int fast_mod8(const int n);
 
@@ -158,13 +158,13 @@ int rshift_rnd(int x, int a);
 
 int rshift_rnd_sign(int x, int a);
 
-unsigned int rshift_rnd_us(unsigned int x, unsigned int a);
+unsigned rshift_rnd_us(unsigned x, unsigned a);
 
 int rshift_rnd_sf(int x, int a);
 
 int shift_off_sf(int x, int o, int a);
 
-unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a);
+unsigned rshift_rnd_us_sf(unsigned x, unsigned a);
 
 int iClip1(int high, int x);
 

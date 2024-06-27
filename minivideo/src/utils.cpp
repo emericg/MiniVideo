@@ -152,23 +152,23 @@ void print2d(int **array2d, int arraySize)
  *
  * This function will only operate if n < 10000, in order to save cpu cycles.
  */
-int is_prime(const unsigned int n)
+bool is_prime(const unsigned n)
 {
     if (n > 9999)
     {
         TRACE_WARNING(TOOL, "is_prime(%i) will not be computed, too big!", n);
-        return 0;
+        return false;
     }
 
     for (unsigned i = 2; i < sqrt(n); i += 2)
     {
         if ((n % i == 0) && (i != n))
         {
-            return 0;
+            return false;
         }
     }
 
-    return 1;
+    return true;
 }
 
 /* ************************************************************************** */
@@ -346,7 +346,7 @@ int rshift_rnd_sign(int x, int a)
     return (x > 0) ? ((x + (1 << (a-1))) >> a) : (-((iabs(x) + (1 << (a-1))) >> a));
 }
 
-unsigned int rshift_rnd_us(unsigned int x, unsigned int a)
+unsigned rshift_rnd_us(unsigned x, unsigned a)
 {
     return (a > 0) ? ((x + (1 << (a-1))) >> a) : x;
 }
@@ -361,7 +361,7 @@ int shift_off_sf(int x, int o, int a)
     return ((x + o) >> a);
 }
 
-unsigned int rshift_rnd_us_sf(unsigned int x, unsigned int a)
+unsigned rshift_rnd_us_sf(unsigned x, unsigned a)
 {
     return ((x + (1 << (a-1))) >> a);
 }

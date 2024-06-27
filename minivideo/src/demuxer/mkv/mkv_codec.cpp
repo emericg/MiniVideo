@@ -870,7 +870,7 @@ int parse_av1_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     }
 
     // TODO // Parse OBUs
-    //unsigned int (8)[] configOBUs = read_bits(bitstr, 8);
+    //unsigned (8)[] configOBUs = read_bits(bitstr, 8);
 
 #if ENABLE_DEBUG
     TRACE_1(MP4, "> version : %u", track->av1C->version);

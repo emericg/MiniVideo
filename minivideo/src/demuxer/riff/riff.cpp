@@ -518,7 +518,7 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
             int64_t jump = offset_end - current_pos;
 
             if (jump < (UINT_MAX/8))
-                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+                retcode = skip_bits(bitstr, (unsigned)(jump*8));
             else
                 retcode = bitstream_goto_offset(bitstr, offset_end);
         }
@@ -529,7 +529,7 @@ int jumpy_riff(Bitstream_t *bitstr, RiffList_t *parent, int64_t offset_end)
             if (rewind > 0)
             {
                 if (rewind > (UINT_MAX/8))
-                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                    retcode = rewind_bits(bitstr, (unsigned)(rewind*8));
                 else
                     retcode = bitstream_goto_offset(bitstr, offset_end);
             }

@@ -29,7 +29,6 @@
 #include "h264_macroblock.h"
 #include "h264.h"
 #include "../../minivideo_typedef.h"
-#include "../../export.h"
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
@@ -961,7 +960,7 @@ static int checkDRPM(DecodingContext_t *dc, drpm_t *drpm)
                         retcode = FAILURE;
                     }
 
-                    unsigned int max_num_ref_frames = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id]->max_num_ref_frames;
+                    unsigned max_num_ref_frames = dc->sps_array[dc->pps_array[dc->active_slice->pic_parameter_set_id]->seq_parameter_set_id]->max_num_ref_frames;
                     if (drpm->max_long_term_frame_idx_plus1 > max_num_ref_frames)
                     {
                         TRACE_WARNING(SLICE, "    - max_long_term_frame_idx_plus1 is %i but should be in range [0,max_num_ref_frames=%i]", drpm->max_long_term_frame_idx_plus1, max_num_ref_frames);

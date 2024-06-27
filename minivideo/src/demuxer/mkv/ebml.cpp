@@ -563,7 +563,7 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
             int64_t jump = offset_end - current_pos;
 
             if (jump < (UINT_MAX/8))
-                retcode = skip_bits(bitstr, (unsigned int)(jump*8));
+                retcode = skip_bits(bitstr, (unsigned)(jump*8));
             else
                 retcode = bitstream_goto_offset(bitstr, offset_end);
         }
@@ -574,7 +574,7 @@ int jumpy_mkv(Bitstream_t *bitstr, EbmlElement_t *parent, EbmlElement_t *current
             if (rewind > 0)
             {
                 if (rewind > (UINT_MAX/8))
-                    retcode = rewind_bits(bitstr, (unsigned int)(rewind*8));
+                    retcode = rewind_bits(bitstr, (unsigned)(rewind*8));
                 else
                     retcode = bitstream_goto_offset(bitstr, offset_end);
             }

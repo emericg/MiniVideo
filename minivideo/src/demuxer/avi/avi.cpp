@@ -1188,7 +1188,7 @@ int avi_fileParse(MediaFile_t *media)
                     track_superindexed++;
             }
 
-            if ((unsigned int)(track_indexed + track_superindexed) == avi.tracks_count)
+            if ((unsigned)(track_indexed + track_superindexed) == avi.tracks_count)
             {
                 avi.run = false;
             }

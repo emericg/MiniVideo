@@ -46,20 +46,20 @@
  */
 typedef struct h264_hrd_t
 {
-    unsigned int cpb_cnt_minus1;
-    unsigned int bit_rate_scale;
-    unsigned int cpb_size_scale;
+    unsigned cpb_cnt_minus1;
+    uint8_t bit_rate_scale;
+    uint8_t cpb_size_scale;
 
     //for (SchedSelIdx = 0; SchedSelIdx <= cpb_cnt_minus1; SchedSelIdx++)
-        unsigned int bit_rate_value_minus1[MAX_CPB];
-        unsigned int cpb_size_value_minus1[MAX_CPB];
-        unsigned int CpbSize[MAX_CPB];
+        unsigned bit_rate_value_minus1[MAX_CPB];
+        unsigned cpb_size_value_minus1[MAX_CPB];
+        unsigned CpbSize[MAX_CPB];
         bool cbr_flag[MAX_CPB];
 
-    unsigned int initial_cpb_removal_delay_length_minus1;
-    unsigned int cpb_removal_delay_length_minus1;
-    unsigned int dpb_output_delay_length_minus1;
-    unsigned int time_offset_length;
+    uint8_t initial_cpb_removal_delay_length_minus1;
+    uint8_t cpb_removal_delay_length_minus1;
+    uint8_t dpb_output_delay_length_minus1;
+    uint8_t time_offset_length;
 
 } h264_hrd_t;
 
@@ -75,34 +75,34 @@ typedef struct h264_vui_t
 {
     bool aspect_ratio_info_present_flag;
     //if (aspect_ratio_info_present_flag)
-        unsigned int aspect_ratio_idc;
+        uint8_t aspect_ratio_idc;
         //if (aspect_ratio_idc == Extended_SAR)
-            unsigned int sar_width;
-            unsigned int sar_height;
+            uint16_t sar_width;
+            uint16_t sar_height;
 
     bool overscan_info_present_flag;
     //if (overscan_info_present_flag)
-        unsigned int overscan_appropriate_flag;
+        bool overscan_appropriate_flag;
 
     bool video_signal_type_present_flag;
     //if (video_signal_type_present_flag)
-        unsigned int video_format;
+        uint8_t video_format;
         bool video_full_range_flag;
         bool colour_description_present_flag;
         //if (colour_description_present_flag)
-            unsigned int colour_primaries;
-            unsigned int transfer_characteristics;
-            unsigned int matrix_coefficients;
+            uint8_t colour_primaries;
+            uint8_t transfer_characteristics;
+            uint8_t matrix_coefficients;
 
     bool chroma_loc_info_present_flag;
     //if (chroma_loc_info_present_flag)
-        unsigned int chroma_sample_loc_type_top_field;
-        unsigned int chroma_sample_loc_type_bottom_field;
+        unsigned chroma_sample_loc_type_top_field;
+        unsigned chroma_sample_loc_type_bottom_field;
 
     bool timing_info_present_flag;
     //if (timing_info_present_flag)
-        unsigned int num_units_in_tick;
-        unsigned int time_scale;
+        unsigned num_units_in_tick;
+        unsigned time_scale;
         bool fixed_frame_rate_flag;
 
     bool nal_hrd_parameters_present_flag;
@@ -119,12 +119,12 @@ typedef struct h264_vui_t
 
     //if (bitstream_restriction_flag)
         bool motion_vectors_over_pic_boundaries_flag;
-        unsigned int max_bytes_per_pic_denom;
-        unsigned int max_bits_per_mb_denom;
-        unsigned int log2_max_mv_length_horizontal;
-        unsigned int log2_max_mv_length_vertical;
-        unsigned int num_reorder_frames;
-        unsigned int max_dec_frame_buffering;
+        unsigned max_bytes_per_pic_denom;
+        unsigned max_bits_per_mb_denom;
+        unsigned log2_max_mv_length_horizontal;
+        unsigned log2_max_mv_length_vertical;
+        unsigned num_reorder_frames;
+        unsigned max_dec_frame_buffering;
 
 } h264_vui_t;
 
@@ -138,37 +138,39 @@ typedef struct h264_vui_t
  */
 typedef struct spse_t
 {
-    unsigned int seq_parameter_set_id;
-    unsigned int aux_format_idc;
+    unsigned seq_parameter_set_id;
+    unsigned aux_format_idc;
 
     //if (aux_format_idc != 0)
-        unsigned int bit_depth_aux_minus8;
+        unsigned bit_depth_aux_minus8;
         bool alpha_incr_flag;
-        unsigned int alpha_opaque_value;
-        unsigned int alpha_transparent_value;
+        unsigned alpha_opaque_value;
+        unsigned alpha_transparent_value;
 
     bool additional_extension_flag;
 
 } spse_t;
 
 /*!
- * \struct ScalingStruct_t
+ * \struct h264_ScalingStruct_t
  * \brief The scaling list, can be contained in sps or pps.
  */
-typedef struct ScalingStruct_t
+typedef struct h264_ScalingStruct_t
 {
     bool scaling_list_present_flag[12];
+
     int ScalingList4x4[6][16];
     int ScalingList8x8[6][64];
     int ScalingMatrix4x4[6][4][4]; // derived from ScalingList4x4
     int ScalingMatrix8x8[6][8][8]; // derived from ScalingList8x8
+
     int LevelScale4x4[3][6][4][4]; // [YCbCr][qP%6][i][j] derived from ScalingMatrix4x4, normAdjust4x4
     int LevelScale8x8[3][6][8][8]; // [YCbCr][qP%6][i][j] derived from ScalingMatrix8x8, normAdjust8x8
 
     bool UseDefaultScalingMatrix4x4Flag[6];
     bool UseDefaultScalingMatrix8x8Flag[6];
 
-} ScalingStruct_t;
+} h264_ScalingStruct_t;
 
 /*!
  * \struct h264_sps_t
@@ -180,29 +182,29 @@ typedef struct ScalingStruct_t
  */
 typedef struct h264_sps_t
 {
-    unsigned int profile_idc;
-    unsigned int level_idc;
+    unsigned profile_idc;
+    unsigned level_idc;
     bool constraint_setX_flag[6];
-    unsigned int seq_parameter_set_id;
+    unsigned seq_parameter_set_id;
 
     //if (profile_idc == x)
-        unsigned int chroma_format_idc;
-        unsigned int ChromaArrayType; // derived from chroma_format_idc
-        unsigned int SubWidthC; // derived from chroma_format_idc
-        unsigned int SubHeightC; // derived from chroma_format_idc
-        unsigned int MbWidthC; // derived from SubWidthC
-        unsigned int MbHeightC; // derived from  SubHeightC
+        unsigned chroma_format_idc;
+        unsigned ChromaArrayType; // derived from chroma_format_idc
+        unsigned SubWidthC; // derived from chroma_format_idc
+        unsigned SubHeightC; // derived from chroma_format_idc
+        unsigned MbWidthC; // derived from SubWidthC
+        unsigned MbHeightC; // derived from  SubHeightC
 
         //if (chroma_format_idc == 3)
             bool separate_colour_plane_flag;
 
-        unsigned int bit_depth_luma_minus8;
-        unsigned int BitDepthY; // derived from bit_depth_luma_minus8;
-        unsigned int QpBdOffsetY; // derived from bit_depth_luma_minus8;
-        unsigned int bit_depth_chroma_minus8;
-        unsigned int BitDepthC; // derived from bit_depth_chroma_minus8;
-        unsigned int QpBdOffsetC; // derived from bit_depth_chroma_minus8;
-        unsigned int RawMbBits; // derived from BitDepthY, MbWidthC, MbHeightC, BitDepth
+        unsigned bit_depth_luma_minus8;
+        unsigned BitDepthY; // derived from bit_depth_luma_minus8;
+        unsigned QpBdOffsetY; // derived from bit_depth_luma_minus8;
+        unsigned bit_depth_chroma_minus8;
+        unsigned BitDepthC; // derived from bit_depth_chroma_minus8;
+        unsigned QpBdOffsetC; // derived from bit_depth_chroma_minus8;
+        unsigned RawMbBits; // derived from BitDepthY, MbWidthC, MbHeightC, BitDepth
 
         bool qpprime_y_zero_transform_bypass_flag;
 
@@ -218,42 +220,42 @@ typedef struct h264_sps_t
             bool UseDefaultScalingMatrix4x4Flag[6];
             bool UseDefaultScalingMatrix8x8Flag[6];
 
-    unsigned int log2_max_frame_num_minus4;
-    unsigned int MaxFrameNum; // derived from log2_max_frame_num_minus4
-    unsigned int pic_order_cnt_type;
+    unsigned log2_max_frame_num_minus4;
+    unsigned MaxFrameNum; // derived from log2_max_frame_num_minus4
+    unsigned pic_order_cnt_type;
     //if (pic_order_cnt_type == 0)
-        unsigned int log2_max_pic_order_cnt_lsb_minus4;
-        unsigned int MaxPicOrderCntLsb; // derived from log2_max_pic_order_cnt_lsb_minus4
+        unsigned log2_max_pic_order_cnt_lsb_minus4;
+        unsigned MaxPicOrderCntLsb; // derived from log2_max_pic_order_cnt_lsb_minus4
     //else if (pic_order_cnt_type == 1)
         bool delta_pic_order_always_zero_flag;
         int offset_for_non_ref_pic;
         int offset_for_top_to_bottom_field;
-        unsigned int num_ref_frames_in_pic_order_cnt_cycle;
+        unsigned num_ref_frames_in_pic_order_cnt_cycle;
         //for (i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++)
             int offset_for_ref_frame[256];
 
-    unsigned int max_num_ref_frames;
+    unsigned max_num_ref_frames;
     bool gaps_in_frame_num_value_allowed_flag;
-    unsigned int pic_width_in_mbs_minus1;
-        unsigned int PicWidthInMbs; // derived from pic_width_in_mbs_minus1
-        unsigned int PicWidthInSamplesL; // derived from PicWidthInMbs
-        unsigned int PicWidthInSamplesC; // derived from PicWidthInMbs, MbWidthC
-    unsigned int pic_height_in_map_units_minus1;
-        unsigned int PicHeightInMapUnits; // derived from pic_height_in_map_units_minus1
-        unsigned int PicSizeInMapUnits; // derived from PicWidthInMbs, PicHeightInMapUnits
+    unsigned pic_width_in_mbs_minus1;
+        unsigned PicWidthInMbs; // derived from pic_width_in_mbs_minus1
+        unsigned PicWidthInSamplesL; // derived from PicWidthInMbs
+        unsigned PicWidthInSamplesC; // derived from PicWidthInMbs, MbWidthC
+    unsigned pic_height_in_map_units_minus1;
+        unsigned PicHeightInMapUnits; // derived from pic_height_in_map_units_minus1
+        unsigned PicSizeInMapUnits; // derived from PicWidthInMbs, PicHeightInMapUnits
     bool frame_mbs_only_flag;
-        unsigned int FrameHeightInMbs; // derived from frame_mbs_only_flag, PicHeightInMapUnits
+        unsigned FrameHeightInMbs; // derived from frame_mbs_only_flag, PicHeightInMapUnits
     //if (!frame_mbs_only_flag)
         bool mb_adaptive_frame_field_flag;
     bool direct_8x8_inference_flag;
     bool frame_cropping_flag;
     //if (frame_cropping_flag)
-        unsigned int frame_crop_left_offset;
-        unsigned int frame_crop_right_offset;
-        unsigned int frame_crop_top_offset;
-        unsigned int frame_crop_bottom_offset;
-        unsigned int CropUnitX; // derived from SubWidthC, frame_mbs_only_flag
-        unsigned int CropUnitY; // derived from SubHeightC, frame_mbs_only_flag
+        unsigned frame_crop_left_offset;
+        unsigned frame_crop_right_offset;
+        unsigned frame_crop_top_offset;
+        unsigned frame_crop_bottom_offset;
+        unsigned CropUnitX; // derived from SubWidthC, frame_mbs_only_flag
+        unsigned CropUnitY; // derived from SubHeightC, frame_mbs_only_flag
 
     bool vui_parameters_present_flag;
     h264_vui_t *vui;
@@ -270,32 +272,32 @@ typedef struct h264_sps_t
  */
 typedef struct h264_pps_t
 {
-    unsigned int pic_parameter_set_id;
-    unsigned int seq_parameter_set_id;
+    unsigned pic_parameter_set_id;
+    unsigned seq_parameter_set_id;
     bool entropy_coding_mode_flag;
     bool bottom_field_pic_order_in_frame_present_flag;
-    unsigned int num_slice_groups_minus1;
+    unsigned num_slice_groups_minus1;
     //if (num_slice_groups_minus1 > 0)
-        unsigned int slice_group_map_type;
+        unsigned slice_group_map_type;
         //if (slice_group_map_type == 0)
             //for (iGroup = 0; iGroup <= num_slice_groups_minus1; iGroup++)
-                unsigned int run_length_minus1[8];
+                unsigned run_length_minus1[8];
         //else if (slice_group_map_type == 2)
             //for (iGroup = 0; iGroup < num_slice_groups_minus1; iGroup++)
-                unsigned int top_left[8];
-                unsigned int bottom_right[8];
+                unsigned top_left[8];
+                unsigned bottom_right[8];
     //else if (slice_group_map_type == 3 || 4 || 5)
         bool slice_group_change_direction_flag;
-        unsigned int slice_group_change_rate_minus1;
+        unsigned slice_group_change_rate_minus1;
         //else if (slice_group_map_type == 6)
-            unsigned int pic_size_in_map_units_minus1;
+            unsigned pic_size_in_map_units_minus1;
             //for (i = 0; i <= pic_size_in_map_units_minus1; i++) // value of pic_size_in_map_units_minus1, see p76
-                unsigned int slice_group_id[MAX_SLICES];
+                unsigned slice_group_id[MAX_SLICES];
 
-    unsigned int num_ref_idx_l0_default_active_minus1;
-    unsigned int num_ref_idx_l1_default_active_minus1;
+    unsigned num_ref_idx_l0_default_active_minus1;
+    unsigned num_ref_idx_l1_default_active_minus1;
     bool weighted_pred_flag;
-    unsigned int weighted_bipred_idc;
+    uint8_t weighted_bipred_idc;
     int pic_init_qp_minus26;
     int pic_init_qs_minus26;
     int chroma_qp_index_offset;
@@ -330,7 +332,7 @@ typedef struct h264_pps_t
  */
 typedef struct h264_aud_t
 {
-    unsigned int primary_pic_type;
+    uint8_t primary_pic_type;
 
 } h264_aud_t;
 
@@ -368,7 +370,7 @@ typedef struct h264_sei_t
     char *user_data_payload;
 
     // D.1.8 // Recovery point SEI message syntax
-    unsigned recovery_frame_cnt;
+    uint32_t recovery_frame_cnt;
     uint8_t exact_match_flag;
     uint8_t broken_link_flag;
     uint8_t changing_slice_group_idc;
@@ -386,14 +388,14 @@ typedef struct h264_sei_t
     // D.1.16 // Full-frame freeze release SEI message syntax
 
     // D.1.17 // Full-frame snapshot SEI message syntax
-    unsigned snapshot_id;
+    uint32_t snapshot_id;
 
     // D.1.18 // Progressive refinement segment start SEI message syntax
-    unsigned progressive_refinement_id_start;
-    unsigned num_refinement_steps_minus1;
+    uint32_t progressive_refinement_id_start;
+    uint32_t num_refinement_steps_minus1;
 
     // D.1.19 // Progressive refinement segment end SEI message syntax
-    unsigned progressive_refinement_id_end;
+    uint32_t progressive_refinement_id_end;
 
     // D.1.20 // Motion-constrained slice group set SEI message syntax
     // D.1.21 // Film grain characteristics SEI message syntax
@@ -403,7 +405,7 @@ typedef struct h264_sei_t
         //if (!deblocking_display_preference_cancel_flag)
         bool display_prior_to_deblocking_preferred_flag;
         bool dec_frame_buffering_constraint_flag;
-        unsigned deblocking_display_preference_repetition_period;
+        uint32_t deblocking_display_preference_repetition_period;
 
     // D.1.23 // Stereo video information SEI message syntax
     bool field_views_flag;
@@ -416,8 +418,8 @@ typedef struct h264_sei_t
     bool right_view_self_contained_flag;
 
     // D.1.24 // Post-filter hint SEI message syntax
-    unsigned filter_hint_size_y;
-    unsigned filter_hint_size_x;
+    uint32_t filter_hint_size_y;
+    uint32_t filter_hint_size_x;
     uint8_t filter_hint_type;
     //int filter_hint[3][cy][cx];
     bool additional_extension_flag;
@@ -431,7 +433,7 @@ typedef struct h264_sei_t
         bool hor_flip;
         bool ver_flip;
         uint16_t anticlockwise_rotation;
-        unsigned display_orientation_repetition_period;
+        uint32_t display_orientation_repetition_period;
         bool display_orientation_extension_flag;
 
     // D.1.28 // Green metadata SEI message syntax

@@ -454,7 +454,6 @@ int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
         sps->vui_parameters_present_flag = read_bit(bitstr);
         if (sps->vui_parameters_present_flag)
         {
-            // Decode VUI
             sps->vui = decodeVUI(bitstr);
         }
 
@@ -687,7 +686,7 @@ void printSPS(h264_sps_t *sps)
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printSPS()" CLR_RESET);
 
-    unsigned int i = 0;
+    unsigned i = 0;
 
     // Check SPS structure
     if (sps == NULL)
@@ -1144,7 +1143,7 @@ void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
 #if ENABLE_DEBUG
     TRACE_INFO(PARAM, "> " BLD_GREEN "printPPS()" CLR_RESET);
 
-    unsigned int i = 0;
+    unsigned i = 0;
 
     // Check PPS structure
     if (pps == NULL)
@@ -1161,7 +1160,7 @@ void printPPS(h264_pps_t *pps, h264_sps_t **sps_array)
     TRACE_1(PARAM, "  - num_slice_groups_minus1     = %i", pps->num_slice_groups_minus1);
     if (pps->num_slice_groups_minus1 > 0)
     {
-        unsigned int iGroup = 0;
+        unsigned iGroup = 0;
         TRACE_1(PARAM, "  - slice_group_map_type    = %i", pps->slice_group_map_type);
         if (pps->slice_group_map_type == 0)
         {
@@ -1399,25 +1398,25 @@ int decodeSEI(Bitstream_t *bitstr, h264_sei_t *sei, int64_t size)
         while (currentpos < (startpos + size))
         {
             // SEI payload header
-            unsigned int payloadType = 0;
-            unsigned int payloadSize = 0;
+            unsigned payloadType = 0;
+            unsigned payloadSize = 0;
 
             while (next_bits(bitstr, 8) == 0xFF)
             {
-                unsigned int ff_byte = read_bits(bitstr, 8); // equal to 0xFF
+                /*unsigned ff_byte =*/ read_bits(bitstr, 8); // equal to 0xFF
                 payloadType += 255;
             }
 
-            unsigned int last_payload_type_byte = read_bits(bitstr, 8);
+            unsigned last_payload_type_byte = read_bits(bitstr, 8);
             payloadType += last_payload_type_byte;
 
             while (next_bits(bitstr, 8) == 0xFF)
             {
-                unsigned int ff_byte = read_bits(bitstr, 8); // equal to 0xFF
+                /*unsigned ff_byte =*/ read_bits(bitstr, 8); // equal to 0xFF
                 payloadSize += 255;
             }
 
-            unsigned int last_payload_size_byte = read_bits(bitstr, 8);
+            unsigned last_payload_size_byte = read_bits(bitstr, 8);
             payloadSize += last_payload_size_byte;
 
             // SEI payload
@@ -1684,7 +1683,7 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
         {
             if (vui->aspect_ratio_idc == 255) // 255 : Extended_SAR
             {
-                if (is_prime(vui->sar_width) == 0)
+                if (!is_prime(vui->sar_width))
                 {
                     if (vui->sar_width != 0)
                     {
@@ -1693,7 +1692,7 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
                     }
                 }
 
-                if (is_prime(vui->sar_height) == 0)
+                if (!is_prime(vui->sar_height))
                 {
                     if (vui->sar_height != 0)
                     {

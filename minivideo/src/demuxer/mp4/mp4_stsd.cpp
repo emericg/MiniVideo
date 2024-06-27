@@ -31,6 +31,7 @@
 #include "../../bitstream.h"
 #include "../../bitstream_utils.h"
 #include "../../minitraces.h"
+#include "../../minivideo_typedef.h"
 
 #include "../../decoder/h264/h264_nalu.h"
 #include "../../decoder/h264/h264_parameterset.h"

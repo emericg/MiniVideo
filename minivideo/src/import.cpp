@@ -108,7 +108,7 @@ static void getInfosFromPath(MediaFile_t *media)
     char *pos_last_slash_p = strrchr(media->file_path, '/');
     if (pos_last_slash_p != NULL)
     {
-        unsigned int pos_last_slash_i = pos_last_slash_p - media->file_path + 1;
+        unsigned pos_last_slash_i = pos_last_slash_p - media->file_path + 1;
         if (pos_last_slash_i > sizeof(media->file_directory) - 1)
         {
             pos_last_slash_i = sizeof(media->file_directory) - 1;
@@ -121,7 +121,7 @@ static void getInfosFromPath(MediaFile_t *media)
         char *pos_last_dot_p = strrchr(media->file_path, '.');
         if (pos_last_dot_p != NULL)
         {
-            unsigned int pos_last_dot_i = pos_last_dot_p - media->file_path - pos_last_slash_i;
+            unsigned pos_last_dot_i = pos_last_dot_p - media->file_path - pos_last_slash_i;
             if (pos_last_dot_i > sizeof(media->file_name) - 1)
             {
                 pos_last_dot_i = sizeof(media->file_name) - 1;
@@ -323,30 +323,26 @@ int import_fileClose(MediaFile_t **media_ptr)
         free((*media_ptr)->creation_app);
         free((*media_ptr)->creation_lib);
 
-        unsigned i = 0;
-
-        for (i = 0; i < (*media_ptr)->tracks_audio_count; i++)
+        // Tracks
+        for (unsigned i = 0; i < (*media_ptr)->tracks_audio_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_audio[i]);
         }
-
-        for (i = 0; i < (*media_ptr)->tracks_video_count; i++)
+        for (unsigned i = 0; i < (*media_ptr)->tracks_video_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_video[i]);
         }
-
-        for (i = 0; i < (*media_ptr)->tracks_subtitles_count; i++)
+        for (unsigned i = 0; i < (*media_ptr)->tracks_subtitles_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_subt[i]);
         }
-
-        for (i = 0; i < (*media_ptr)->tracks_others_count; i++)
+        for (unsigned i = 0; i < (*media_ptr)->tracks_others_count; i++)
         {
             free_bitstream_map(&(*media_ptr)->tracks_others[i]);
         }
-
+/*
         // Chapters
-        for (i = 0; i < (*media_ptr)->chapters_count; i++)
+        for (unsigned i = 0; i < (*media_ptr)->chapters_count; i++)
         {
             if (&(*media_ptr)->chapters[i])
             {
@@ -355,10 +351,11 @@ int import_fileClose(MediaFile_t **media_ptr)
             }
         }
         free((*media_ptr)->chapters);
-
+*/
         // Vendors
         free((*media_ptr)->metadata_gopro);
 
+        // MediaFile_t
         {
             free(*media_ptr);
             *media_ptr = NULL;

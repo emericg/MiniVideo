@@ -429,7 +429,7 @@ static void computeSamplesDatasTrack(MediaStream_t *track)
         // Set gross bitrate value (in bps)
         if (track->bitrate_avg == 0 && track->stream_duration_ms != 0)
         {
-            track->bitrate_avg = (unsigned int)round(((double)track->stream_size / (double)(track->stream_duration_ms)));
+            track->bitrate_avg = (unsigned)round(((double)track->stream_size / (double)(track->stream_duration_ms)));
             track->bitrate_avg *= 1000; // ms to s
             track->bitrate_avg *= 8; // B to b
         }

@@ -148,7 +148,7 @@ static const char *get_trace_level_string(unsigned level)
 /* ************************************************************************** */
 
 //! Count all of the user-defined trace modules
-static const unsigned int trace_module_count = sizeof(trace_modules_table) / sizeof(TraceModule_t);
+static const unsigned trace_module_count = sizeof(trace_modules_table) / sizeof(TraceModule_t);
 
 /* ************************************************************************** */
 /* ************************************************************************** */
