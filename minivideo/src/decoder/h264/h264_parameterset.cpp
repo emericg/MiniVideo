@@ -309,10 +309,8 @@ int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
                 }
             }
 
-            if (sps->SubWidthC)
-                sps->MbWidthC = 16 / sps->SubWidthC;
-            if (sps->SubHeightC)
-                sps->MbHeightC = 16 / sps->SubHeightC;
+            if (sps->SubWidthC) sps->MbWidthC = 16 / sps->SubWidthC;
+            if (sps->SubHeightC) sps->MbHeightC = 16 / sps->SubHeightC;
 
             sps->bit_depth_luma_minus8 = read_ue(bitstr);
             sps->BitDepthY = 8 + sps->bit_depth_luma_minus8;
@@ -322,7 +320,7 @@ int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
             sps->BitDepthC = 8 + sps->bit_depth_chroma_minus8;
             sps->QpBdOffsetC = 6 * sps->bit_depth_chroma_minus8;
 
-            sps->RawMbBits = 256 * sps->BitDepthY + 2 * sps->MbWidthC * sps->MbHeightC * sps->BitDepthC;
+            sps->RawMbBits = (256 * sps->BitDepthY) + (2 * sps->MbWidthC * sps->MbHeightC * sps->BitDepthC);
 
             sps->qpprime_y_zero_transform_bypass_flag = read_bit(bitstr);
 
@@ -728,10 +726,10 @@ void printSPS(h264_sps_t *sps)
     TRACE_1(PARAM, "  - seq_scaling_matrix_present_flag     = %i", sps->seq_scaling_matrix_present_flag);
     if (sps->seq_scaling_matrix_present_flag)
     {
-         for (i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
-         {
-             TRACE_1(PARAM, "  - seq_scaling_list_present_flag[%i]= %i", i, sps->seq_scaling_list_present_flag[i]);
-         }
+        for (i = 0; i < ((sps->ChromaArrayType != 3) ? 8 : 12); i++)
+        {
+            TRACE_1(PARAM, "  - seq_scaling_list_present_flag[%i]= %i", i, sps->seq_scaling_list_present_flag[i]);
+        }
     }
 
     TRACE_1(PARAM, "  - log2_max_frame_num_minus4   = %i", sps->log2_max_frame_num_minus4);

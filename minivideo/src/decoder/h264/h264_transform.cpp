@@ -680,8 +680,12 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
         {
             TRACE_1(TRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 4; i++)
+            {
                 for (j = 0; j < 4; j++)
+                {
                     TRACE_1(TRANS, "levelscale_4x4: %i", sps->LevelScale4x4[YCbCr][q][i][j]);
+                }
+            }
         }
     }
 */
@@ -732,8 +736,12 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
         {
             TRACE_1(TRANS, "YCbCr: %i / Qp: %i", YCbCr, q);
             for (i = 0; i < 8; i++)
+            {
                 for (j = 0; j < 8; j++)
+                {
                     TRACE_1(TRANS, "  levelscale_8x8[%i][%i]: %i", i, j, sps->LevelScale8x8[YCbCr][q][i][j]);
+                }
+            }
         }
     }
 */
@@ -750,7 +758,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
  * From 'ITU-T H.264' recommendation:
  * 8.5.10 Scaling and transformation process for DC transform coefficients for Intra_16x16 macroblock type.
  *
- * Note: For DC coefficients, the quantization is done after the idct.
+ * Note: For DC coefficients, the quantization is done after the IDCT.
  */
 static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int dcY[4][4])
 {
@@ -821,7 +829,7 @@ static int transform_16x16_lumadc(DecodingContext_t *dc, const int c[4][4], int 
  * From 'ITU-T H.264' recommendation:
  * 8.5.11 Scaling and transformation process for chroma DC transform coefficients.
  *
- * Note: For DC coefficients, the quantization is done after the idct.
+ * Note: For DC coefficients, the quantization is done after the IDCT.
  */
 static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr,
                                   const int c[2][2], int dcC[2][2])
@@ -867,7 +875,7 @@ static int transform_2x2_chromadc(DecodingContext_t *dc, const int YCbCr,
  * From 'ITU-T H.264' recommendation:
  * 8.5.11 Scaling and transformation process for chroma DC transform coefficients.
  *
- * Note: For DC coefficients, the quantization is done after the idct.
+ * Note: For DC coefficients, the quantization is done after the IDCT.
  */
 static int transform_4x4_chromadc(DecodingContext_t *dc, const int YCbCr,
                                   const int c[4][4], int dcC[4][4])

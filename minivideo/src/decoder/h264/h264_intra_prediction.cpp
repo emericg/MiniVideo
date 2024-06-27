@@ -95,7 +95,7 @@ static int ipcm_construction_process(DecodingContext_t *dc, Macroblock_t *mb);
  * process and, for Intra_NxN prediction modes (where NxN is equal to 4x4 or 8x8),
  * the values of IntraNxNPredMode from neighbouring macroblocks.
  *
- * The transformations (idct and quantization) must be done block by block inside
+ * The transformations (IDCT and quantization) must be done block by block inside
  * the intra prediction process, because the results (transformed blocks) are
  * directly used by the intra prediction process.
  *

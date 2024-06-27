@@ -406,7 +406,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                         dc->profile_idc = sps->profile_idc;
                         dc->ChromaArrayType = sps->ChromaArrayType;
 
-                        // Init some quantization tables
+                        // Init quantization tables
                         computeLevelScale4x4(dc, sps);
                         computeLevelScale8x8(dc, sps);
 

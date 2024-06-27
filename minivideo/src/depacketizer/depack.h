@@ -28,6 +28,8 @@
 #include "depack_struct.h"
 #include "../bitstream.h"
 
+#include <vector>
+
 /* ************************************************************************** */
 
 minivideo_EXPORT unsigned depack_sample(MediaFile_t *media,
