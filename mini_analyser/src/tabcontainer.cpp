@@ -527,8 +527,9 @@ void tabContainer::sampleSelection(int sid)
 
         // HexEditor
 #if (HEX_WIDGET_V1 == 1)
-        ui->widget_hex1->setData(mediaFile);
+        ui->widget_hex1->setData(mediaHexFile);
         ui->widget_hex1->setData(ui->widget_hex1->dataAt(offset, size));
+        ui->widget_hex1->setVisible(true);
 #endif
 #if (HEX_WIDGET_V2 == 1)
         QHexDocument *mediaFileHexa = QHexDocument::fromFile(mediaHexFile.fileName());
@@ -846,7 +847,7 @@ void tabContainer::containerSelection(int64_t selected_offset)
 
         // HexEditor
 #if (HEX_WIDGET_V1 == 1)
-        ui->widget_hex1->setData(mediaFile);
+        ui->widget_hex1->setData(mediaHexFile);
         ui->widget_hex1->setData(ui->widget_hex1->dataAt(selected_offset, selected_size));
         ui->widget_hex1->setVisible(true);
 #endif
