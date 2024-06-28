@@ -157,7 +157,7 @@ typedef struct spse_t
  */
 typedef struct h264_ScalingStruct_t
 {
-    bool scaling_list_present_flag[12];
+    bool seq_scaling_list_present_flag[12];
 
     int ScalingList4x4[6][16];
     int ScalingList8x8[6][64];
@@ -211,14 +211,17 @@ typedef struct h264_sps_t
         bool seq_scaling_matrix_present_flag;
         //if (seq_scaling_matrix_present_flag)
             bool seq_scaling_list_present_flag[12];
+
+            bool UseDefaultScalingMatrix4x4Flag[6];
             int ScalingList4x4[6][16];
-            int ScalingList8x8[6][64];
             int ScalingMatrix4x4[6][4][4]; // derived from ScalingList4x4
+
+            bool UseDefaultScalingMatrix8x8Flag[6];
+            int ScalingList8x8[6][64];
             int ScalingMatrix8x8[6][8][8]; // derived from ScalingList8x8
+
             int LevelScale4x4[3][6][4][4]; // derived from ScalingMatrix4x4, normAdjust4x4
             int LevelScale8x8[3][6][8][8]; // derived from ScalingMatrix8x8, normAdjust8x8
-            bool UseDefaultScalingMatrix4x4Flag[6];
-            bool UseDefaultScalingMatrix8x8Flag[6];
 
     unsigned log2_max_frame_num_minus4;
     unsigned MaxFrameNum; // derived from log2_max_frame_num_minus4
@@ -309,14 +312,7 @@ typedef struct h264_pps_t
         bool pic_scaling_matrix_present_flag;
         //if (pic_scaling_matrix_present_flag)
             bool pic_scaling_list_present_flag[12];
-            //int ScalingList4x4[6][16];
-            //int ScalingList8x8[6][64];
-            //int ScalingMatrix4x4[6][4][4]; // derived from ScalingList4x4
-            //int ScalingMatrix8x8[6][8][8]; // derived from ScalingList8x8
-            //int LevelScale4x4[3][6][4][4]; // [YCbCr][qP%6][i][j] derived from ScalingMatrix4x4, normAdjust4x4
-            //int LevelScale8x8[3][6][8][8]; // [YCbCr][qP%6][i][j] derived from ScalingMatrix8x8, normAdjust8x8
-            //bool UseDefaultScalingMatrix4x4Flag[6];
-            //bool UseDefaultScalingMatrix8x8Flag[6];
+            // TODO
 
         int second_chroma_qp_index_offset;
 

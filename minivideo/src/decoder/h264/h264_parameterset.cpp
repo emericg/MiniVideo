@@ -984,16 +984,7 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
                     pps->pic_scaling_list_present_flag[i] = read_bit(bitstr);
                     if (pps->pic_scaling_list_present_flag[i])
                     {
-                        TRACE_ERROR(PARAM, "UNIMPLEMENTED PPS scaling list !!!"); //FIXME
-/*
-                        // TODO
-                        if (i < 6)
-                            scaling_list_4x4(sps_array[pps->seq_parameter_set_id]->ScalingList4x4[i], 16,
-                                             sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix4x4Flag[i]);
-                        else
-                            scaling_list_8x8(sps_array[pps->seq_parameter_set_id]->ScalingList8x8[i-6], 64,
-                                             sps_array[pps->seq_parameter_set_id]->UseDefaultScalingMatrix8x8Flag[i-6]);
-*/
+                        TRACE_ERROR(PARAM, "UNIMPLEMENTED PPS scaling list !!!");
                     }
                 }
             }
@@ -1699,11 +1690,6 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
                     }
                 }
             }
-            else if (vui->aspect_ratio_idc > 255)
-            {
-                TRACE_WARNING(PARAM, "    - aspect_ratio_idc is %i but should be in range [0,255]", vui->aspect_ratio_idc);
-                retcode = FAILURE;
-            }
         }
 
         if (vui->video_signal_type_present_flag)
@@ -1712,28 +1698,6 @@ static int checkVUI(h264_vui_t *vui, h264_sps_t *sps)
             {
                 TRACE_WARNING(PARAM, "    - video_format is %i but should be in range [0,7]", vui->video_format);
                 retcode = FAILURE;
-            }
-
-            if (vui->colour_description_present_flag)
-            {
-                if (vui->colour_primaries > 255)
-                {
-                    TRACE_WARNING(PARAM, "    - colour_primaries is %i but should be in range [0,255]", vui->colour_primaries);
-                    retcode = FAILURE;
-                }
-
-                if (vui->transfer_characteristics > 255)
-                {
-                    TRACE_WARNING(PARAM, "    - transfer_characteristics is %i but should be in range [0,255]", vui->colour_primaries);
-                    retcode = FAILURE;
-                }
-
-                if (vui->matrix_coefficients > 255)
-                {
-                    //FIXME better check
-                    TRACE_WARNING(PARAM, "    - matrix_coefficients is %i but should be in range [0,255]", vui->colour_primaries);
-                    retcode = FAILURE;
-                }
             }
         }
 

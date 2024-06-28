@@ -34,44 +34,53 @@
 #include <cmath>
 
 /* ************************************************************************** */
-/*
+
+// Flat scaling lists
+
+int8_t Flat_4x4[16] = { 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 };
+
+int8_t Flat_8x8[64] = { 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+                        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+                        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+                        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 };
+
 // Default scaling lists
 
-int Default_4x4_Intra[16] = { 6, 13, 13, 20, 20, 20, 28, 28, 28, 28, 32, 32, 32, 37, 37, 42};
+int8_t Default_4x4_Intra[16] = {  6, 13, 13, 20, 20, 20, 28, 28, 28, 28, 32, 32, 32, 37, 37, 42 };
 
-int Default_4x4_Inter[16] = {10, 14, 14, 20, 20, 20, 24, 24, 24, 24, 27, 27, 27, 30, 30, 34};
+int8_t Default_4x4_Inter[16] = { 10, 14, 14, 20, 20, 20, 24, 24, 24, 24, 27, 27, 27, 30, 30, 34 };
 
-int Default_8x8_Intra[64] = { 6, 10, 10, 13, 11, 13, 16, 16, 16, 16, 18, 18, 18, 18, 18, 23,
-                             23, 23, 23, 23, 23, 25, 25, 25, 25, 25, 25, 25, 27, 27, 27, 27,
-                             27, 27, 27, 27, 29, 29, 29, 29, 29, 29, 29, 31, 31, 31, 31, 31,
-                             31, 33, 33, 33, 33, 33, 36, 36, 36, 36, 38, 38, 38, 40, 40, 42};
+int8_t Default_8x8_Intra[64] = {  6, 10, 10, 13, 11, 13, 16, 16, 16, 16, 18, 18, 18, 18, 18, 23,
+                                 23, 23, 23, 23, 23, 25, 25, 25, 25, 25, 25, 25, 27, 27, 27, 27,
+                                 27, 27, 27, 27, 29, 29, 29, 29, 29, 29, 29, 31, 31, 31, 31, 31,
+                                 31, 33, 33, 33, 33, 33, 36, 36, 36, 36, 38, 38, 38, 40, 40, 42 };
 
-int Default_8x8_Inter[64] = { 9, 13, 13, 15, 13, 15, 17, 17, 17, 17, 19, 19, 19, 19, 19, 21,
-                             21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 24, 24, 24, 24,
-                             24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 27, 27, 27, 27, 27,
-                             27, 28, 28, 28, 28, 28, 30, 30, 30, 30, 32, 32, 32, 33, 33, 35};
-*/
+int8_t Default_8x8_Inter[64] = {  9, 13, 13, 15, 13, 15, 17, 17, 17, 17, 19, 19, 19, 19, 19, 21,
+                                 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 24, 24, 24, 24,
+                                 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 27, 27, 27, 27, 27,
+                                 27, 28, 28, 28, 28, 28, 30, 30, 30, 30, 32, 32, 32, 33, 33, 35 };
+
 /* ************************************************************************** */
 
 const int idct_dccoeff_2x2[2][2] =
 {
-    { 1, 1},
-    { 1,-1}
+    { 1,  1 },
+    { 1, -1 }
 };
 
 const int idct_dccoeff_4x4[4][4] =
 {
-    { 1, 1, 1, 1},
-    { 1, 1,-1,-1},
-    { 1,-1,-1, 1},
-    { 1,-1, 1,-1}
+    { 1,  1,  1,  1 },
+    { 1,  1, -1, -1 },
+    { 1, -1, -1,  1 },
+    { 1, -1,  1, -1 }
 };
 
 /// Use Table 8-15: Specification of QPC as a function of qPI
-const int QPCfunctionofqPI[22] = {29, 30, 31, 32, 32, 33, 34, 34, 35, 35, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 39};
+const int QPCfunctionofqPI[22] = { 29, 30, 31, 32, 32, 33, 34, 34, 35, 35, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 39 };
 
 /// Figure 8-7: Assignment of the indices of dcC to chroma4x4BlkIdx when ChromaArrayType equal to 2
-const int raster_chroma_cat2_2d[8][2] = {{0,0}, {0,1}, {1,0}, {1,1}, {2,0}, {2,1}, {3,0}, {3,1}};
+const int raster_chroma_cat2_2d[8][2] = { {0,0}, {0,1}, {1,0}, {1,1}, {2,0}, {2,1}, {3,0}, {3,1} };
 
 /* ************************************************************************** */
 
@@ -645,10 +654,9 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
-
-#if ENABLE_INTER_PRED
     bool mbIsInterFlag = false;
 
+#if ENABLE_INTER_PRED
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
@@ -666,12 +674,20 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
 
-    // Compute
+    // Compute // if we have scaling lists
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
+    {
         for (q = 0; q < 6; q++)
+        {
             for (i = 0; i < 4; i++)
+            {
                 for (j = 0; j < 4; j++)
-                    sps->LevelScale4x4[YCbCr][q][i][j] = sps->ScalingMatrix4x4[YCbCr /*+ ((mbIsInterFlag == true) ? 3 : 0)*/][i][j] * dc->normAdjust4x4[q][i][j];
+                {
+                    sps->LevelScale4x4[YCbCr][q][i][j] = sps->ScalingMatrix4x4[YCbCr + ((mbIsInterFlag) ? 3 : 0)][i][j] * dc->normAdjust4x4[q][i][j];
+                }
+            }
+        }
+    }
 /*
     // Print
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
@@ -701,10 +717,9 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
-
-#if ENABLE_INTER_PRED
     bool mbIsInterFlag = false;
 
+#if ENABLE_INTER_PRED
     if (mb->MbPartPredMode[0] > 3)
     {
         mbIsInterFlag = true;
@@ -722,12 +737,20 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
 
-    // Compute
+    // Compute // we have SPS scaling lists
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
+    {
         for (q = 0; q < 6; q++)
+        {
             for (i = 0; i < 8; i++)
+            {
                 for (j = 0; j < 8; j++)
-                    sps->LevelScale8x8[YCbCr][q][i][j] = sps->ScalingMatrix8x8[YCbCr /*+ ((mbIsInterFlag == true) ? 3 : 0)*/][i][j] * dc->normAdjust8x8[q][i][j];
+                {
+                    sps->LevelScale8x8[YCbCr][q][i][j] = sps->ScalingMatrix8x8[YCbCr + ((mbIsInterFlag) ? 3 : 0)][i][j] * dc->normAdjust8x8[q][i][j];
+                }
+            }
+        }
+    }
 /*
     // Print
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
