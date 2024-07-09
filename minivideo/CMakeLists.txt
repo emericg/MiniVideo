@@ -259,6 +259,7 @@ set(minivideo_HEADERS
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
+    src/demuxer/codecs/codec_private_struct.h
     src/minivideo_settings.h src/minivideo_typedef.h # internals?
 )
 
