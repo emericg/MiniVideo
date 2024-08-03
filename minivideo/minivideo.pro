@@ -99,15 +99,14 @@ win32 {
 unix {
     isEmpty(PREFIX) { PREFIX = /usr/local }
 
-    library.files   += $${DESTDIR}/libminivideo.so
-    library.path     = $${PREFIX}/lib/
-    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ};
-    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ}.$${VER_MIN};
-    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT};
-    library_links.path  = $${PREFIX}/lib/
+    library.files  += $${DESTDIR}/libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
+    library.extra  += ln -sf libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT} $${PREFIX}/lib/libminivideo.so;
+    library.extra  += ln -sf libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT} $${PREFIX}/lib/libminivideo.so.$${VER_MAJ};
+    library.extra  += ln -sf libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT} $${PREFIX}/lib/libminivideo.so.$${VER_MAJ}.$${VER_MIN};
+    library.path    = $${PREFIX}/lib/
 
-    headers.files   += $${PWD}/src/minivideo*.h
-    headers.path     = $${PREFIX}/include/minivideo/
+    headers.files  += $${PWD}/src/minivideo*.h
+    headers.path    = $${PREFIX}/include/minivideo/
     headers_h264.files += $${PWD}/src/decoder/h264/h264_parameterset_struct.h
     headers_h264.path   = $${PREFIX}/include/minivideo/decoder/h264/
     headers_h265.files += $${PWD}/src/decoder/h265/h265_parameterset_struct.h
@@ -115,5 +114,5 @@ unix {
     headers_h266.files += $${PWD}/src/decoder/h266/h266_parameterset_struct.h
     headers_h266.path   = $${PREFIX}/include/minivideo/decoder/h266/
 
-    INSTALLS += library library_links headers headers_h264 headers_h265 headers_h266
+    INSTALLS += library headers headers_h264 headers_h265 headers_h266
 }

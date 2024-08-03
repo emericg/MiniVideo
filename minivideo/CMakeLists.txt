@@ -341,4 +341,4 @@ endif (BUILD_STATIC_LIBS)
 
 # Install headers
 install(FILES ${minivideo_PUBLIC_HEADERS} DESTINATION include/minivideo/)
-install(DIRECTORY src/decoder/ DESTINATION include/minivideo/decoder/ FILES_MATCHING PATTERN "*_parameterset.h")
+install(DIRECTORY src/decoder/ DESTINATION include/minivideo/decoder/ FILES_MATCHING PATTERN "*_parameterset_struct.h")
