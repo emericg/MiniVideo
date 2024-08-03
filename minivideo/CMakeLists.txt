@@ -204,7 +204,8 @@ set(minivideo_SRC
     src/minivideo.cpp
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
-        src/minivideo_codecs.cpp src/minivideo_containers.cpp src/utils.cpp src/minivideo_avutils.h
+        src/minivideo_codecs.cpp src/minivideo_codecs_private_structures.h
+        src/minivideo_containers.cpp src/utils.cpp src/minivideo_avutils.h
         src/minivideo_fourcc.cpp src/minivideo_twocc.cpp src/minivideo_uuid.cpp
     src/minitraces.cpp src/minitraces_conf.h
     src/bitstream.cpp
@@ -215,7 +216,6 @@ set(minivideo_SRC
         src/thirdparty/stb_image_write.h
     src/demuxer/idr_filter.cpp
     src/demuxer/xml_mapper.cpp
-    src/demuxer/codecs/codec_private_struct.h
     src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp
         src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_stsd.cpp src/demuxer/mp4/mp4_esds.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_picture.cpp src/demuxer/mp4/mp4_gopro.cpp
         src/demuxer/mp4/mp4_virb.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
