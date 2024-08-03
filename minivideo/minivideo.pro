@@ -11,6 +11,8 @@ CONFIG      += c++14 shared_and_static
 
 # minivideo files --------------------------------------------------------------
 
+INCLUDEPATH += $${PWD}/src/
+
 SOURCES = $$files(src/*.cpp, true)
 HEADERS = $$files(src/*.h, true)
 
@@ -23,6 +25,10 @@ OBJECTS_DIR  = build/$${QT_ARCH}/
 DESTDIR      = bin/$${QT_ARCH}/
 
 # build settings ---------------------------------------------------------------
+
+VER_MAJ = 0
+VER_MIN = 15
+VER_PAT = 0
 
 # build settings and version are usually set by the CMake build system.
 # we force MINIVIDEO_SETTINGS_H to make sure we don't use the CMake settings file.
@@ -92,10 +98,22 @@ win32 {
 
 unix {
     isEmpty(PREFIX) { PREFIX = /usr/local }
-    library.files   += $${OUT_PWD}/$${DESTDIR}/libminivideo.so
-    library.files   += $${OUT_PWD}/$${DESTDIR}/libminivideo.so.*
+
+    library.files   += $${DESTDIR}/libminivideo.so
     library.path     = $${PREFIX}/lib/
-    headers.files   += $${OUT_PWD}/src/minivideo*.h
+    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ};
+    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ}.$${VER_MIN};
+    library_links.extra+= ln -sf libminivideo.so $${PREFIX}/lib/libminivideo.so.$${VER_MAJ}.$${VER_MIN}.$${VER_PAT};
+    library_links.path  = $${PREFIX}/lib/
+
+    headers.files   += $${PWD}/src/minivideo*.h
     headers.path     = $${PREFIX}/include/minivideo/
-    INSTALLS += library headers
+    headers_h264.files += $${PWD}/src/decoder/h264/h264_parameterset_struct.h
+    headers_h264.path   = $${PREFIX}/include/minivideo/decoder/h264/
+    headers_h265.files += $${PWD}/src/decoder/h265/h265_parameterset_struct.h
+    headers_h265.path   = $${PREFIX}/include/minivideo/decoder/h265/
+    headers_h266.files += $${PWD}/src/decoder/h266/h266_parameterset_struct.h
+    headers_h266.path   = $${PREFIX}/include/minivideo/decoder/h266/
+
+    INSTALLS += library library_links headers headers_h264 headers_h265 headers_h266
 }

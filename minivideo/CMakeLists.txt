@@ -276,9 +276,9 @@ set(minivideo_PUBLIC_HEADERS
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
     src/minivideo_settings.h src/minivideo_typedef.h # internals?
     src/minivideo_codecs_private_struct.h
-    src/decoder/h264/h264_parameterset_struct.h
-    src/decoder/h265/h265_parameterset_struct.h
-    src/decoder/h266/h266_parameterset_struct.h
+    #src/decoder/h264/h264_parameterset_struct.h
+    #src/decoder/h265/h265_parameterset_struct.h
+    #src/decoder/h266/h266_parameterset_struct.h
 )
 
 # Build
@@ -316,7 +316,7 @@ if (BUILD_STATIC_LIBS)
 endif (BUILD_STATIC_LIBS)
 
 
-# Deployment
+# Deployment (optional step, requires root credentials, relative to CMAKE_INSTALL_PREFIX)
 ################################################################################
 
 # pkg-config integration
@@ -326,10 +326,12 @@ set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix 
 set(BIN_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/bin CACHE PATH "Installation prefix for user executables" FORCE)
 set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH "Installation prefix for object code libraries" FORCE)
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/minivideo CACHE PATH "Installation prefix for header files" FORCE)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc)
+configure_file(libminivideo.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc)
 
-# Install the shared library and its header into the system (optional step, requires root credentials)
-# Relative to $<INSTALL_PREFIX>
+# Install pkgconfig file
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
+
+# Install the library into the system
 if (BUILD_SHARED_LIBS)
     install(TARGETS minivideo_shared DESTINATION lib/)
 endif (BUILD_SHARED_LIBS)
@@ -337,5 +339,6 @@ if (BUILD_STATIC_LIBS)
     install(TARGETS minivideo_static DESTINATION lib/)
 endif (BUILD_STATIC_LIBS)
 
+# Install headers
 install(FILES ${minivideo_PUBLIC_HEADERS} DESTINATION include/minivideo/)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
+install(DIRECTORY src/decoder/ DESTINATION include/minivideo/decoder/ FILES_MATCHING PATTERN "*_parameterset.h")
