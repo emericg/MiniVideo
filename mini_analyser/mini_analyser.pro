@@ -3,19 +3,14 @@
 # minivideo library must be built first for mini_analyser to work
 #-------------------------------------------------------------------------------
 
-TARGET       = mini_analyser
+TARGET   = mini_analyser
+VERSION  = 49
+DEFINES += VERSION_STR=\\\"r$${VERSION}\\\"
 
-VERSION      = 48
-DEFINES     += VERSION_STR=\\\"r$${VERSION}\\\"
+CONFIG  += c++14
+QT      += core svg gui widgets svgwidgets printsupport
 
-equals(QT_MAJOR_VERSION, 5) {
-    CONFIG  += c++11
-    QT      += core svg gui widgets printsupport
-}
-equals(QT_MAJOR_VERSION, 6) {
-    CONFIG  += c++14
-    QT      += core svg gui widgets svgwidgets printsupport
-}
+!versionAtLeast(QT_VERSION, 6.0) : error("You need at least Qt version 6.0 for $${TARGET}")
 
 # Project files ----------------------------------------------------------------
 

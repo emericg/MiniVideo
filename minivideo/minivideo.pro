@@ -4,15 +4,17 @@
 #-------------------------------------------------------------------------------
 
 TARGET       = minivideo
-TEMPLATE     = lib
+VERSION      = 0.15.0
 
-CONFIG      += c++11 shared_and_static
-CONFIG      -= qt
+TEMPLATE     = lib
+CONFIG      += c++14 shared_and_static
 
 # minivideo files --------------------------------------------------------------
 
 SOURCES = $$files(src/*.cpp, true)
 HEADERS = $$files(src/*.h, true)
+
+INCLUDEPATH += $${PWD}/src/
 
 # build artifacts --------------------------------------------------------------
 
@@ -26,9 +28,8 @@ DESTDIR      = bin/$${QT_ARCH}/
 # we force MINIVIDEO_SETTINGS_H to make sure we don't use the CMake settings file.
 DEFINES += MINIVIDEO_SETTINGS_H
 
-VERSION      = 0.14.0
 DEFINES     += minivideo_VERSION_MAJOR=0
-DEFINES     += minivideo_VERSION_MINOR=14
+DEFINES     += minivideo_VERSION_MINOR=15
 DEFINES     += minivideo_VERSION_PATCH=0
 
 CONFIG(debug, debug|release) { DEFINES += ENABLE_DEBUG=1 }

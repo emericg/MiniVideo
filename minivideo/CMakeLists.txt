@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 # MiniVideo "library" build system / CMake edition
 ################################################################################
@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.10)
 project(minivideo)
 
 set(minivideo_VERSION_MAJOR 0)
-set(minivideo_VERSION_MINOR 14)
+set(minivideo_VERSION_MINOR 15)
 set(minivideo_VERSION_PATCH 0)
 set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
 
@@ -103,7 +103,7 @@ endif()
 # Build configuration
 ################################################################################
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -264,6 +264,8 @@ set(minivideo_SRC
         src/decoder/h266/h266_parameterset.cpp
         src/decoder/h266/h266_parameterset_struct.h
 )
+
+include_directories(src/)
 
 # MiniVideo public headers
 set(minivideo_PUBLIC_HEADERS

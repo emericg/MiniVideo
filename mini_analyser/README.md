@@ -17,7 +17,7 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
-- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- H.264 / H.265 / H.266 "elementary stream" ("Annex B" format) [.264, .265, .266]
 - MP3 "elementary stream" [.mp3]
 
 ![main screen](https://i.imgur.com/kDJ6NQx.png)
@@ -26,17 +26,21 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 ![HW decoding checker](https://i.imgur.com/0qGcZxR.png)
 
 
+Dependencies
+------------
+
+- minivideo library must have been built first!
+- Qt6
+
 Building mini_analyser
 ----------------------
-
-minivideo library must have been built first!
 
 You can either use CMake (recommanded, more configurable)
 > $ cd minivideo/build  
 > $ cmake ..  
 > $ make  
 
-Or qmake (simplier)
+Or qmake (simpler)
 > $ cd minivideo/  
 > $ qmake  
 > $ make  

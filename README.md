@@ -8,13 +8,15 @@ MiniVideo is a **multimedia framework developed from scratch** in C/C++, bundled
 MiniVideo has been tested with several CPU architectures (x86, SH4, MIPS, ARM).  
 The project uses a dual CMake/QMake build system (CMake is prefered though). Both library and test programs can be installed into your system.  
 
-MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*, as a small **video decoding library developed from scratch** in C. Its goal was to generate video thumbnails, with a source code easy to read and to understand for learning purpose. After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
+MiniVideo has been initially developed in 2010/2011 during an internship I did in a French company called *httv*, as a small **video decoding library developed from scratch** in C.
+Its goal was to generate video thumbnails, with a source code easy to read and to understand for learning purpose.
+After a clean-up pass, the code has been published early 2014 with *httv* permission under the LGPL v3 license (video framework) and GPLv3 (test softwares).  
 
 The minivideo library can:
 * Open video files with various container to demux and remux audios/videos content.
 * Open H.264 compressed videos and decode/export intra-coded pictures.
 * Extract various metadata from container and elementary streams.
-* Map exact container structure to xml file / GUI.
+* Map exact container structure to XML file / GUI.
 
 ### Supported video codec (decoding)
 - H.264 / MPEG-4 part 10 "Advance Video Coding"
@@ -29,7 +31,7 @@ The minivideo library can:
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
-- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- H.264 / H.265  / H.266 "elementary stream" ("Annex B" format) [.264, .265, .266]
 - MP3 "elementary stream" [.mp3]
 
 ### Supported container formats (export modules)
