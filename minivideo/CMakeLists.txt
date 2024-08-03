@@ -204,7 +204,7 @@ set(minivideo_SRC
     src/minivideo.cpp
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
-        src/minivideo_codecs.cpp src/minivideo_codecs_private_structures.h
+        src/minivideo_codecs.cpp src/minivideo_codecs_private_struct.h
         src/minivideo_containers.cpp src/utils.cpp src/minivideo_avutils.h
         src/minivideo_fourcc.cpp src/minivideo_twocc.cpp src/minivideo_uuid.cpp
     src/minitraces.cpp src/minitraces_conf.h
@@ -275,7 +275,7 @@ set(minivideo_PUBLIC_HEADERS
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
     src/minivideo_settings.h src/minivideo_typedef.h # internals?
-    src/minivideo_codecs_private_structures.h
+    src/minivideo_codecs_private_struct.h
     src/decoder/h264/h264_parameterset_struct.h
     src/decoder/h265/h265_parameterset_struct.h
     src/decoder/h266/h266_parameterset_struct.h
