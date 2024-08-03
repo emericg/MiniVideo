@@ -26,7 +26,7 @@
 
 // minivideo headers
 #include "../../minivideo_containers.h"
-#include "../codecs/codec_private_struct.h"
+#include "../../minivideo_codecs_private_struct.h"
 
 #include <cstdio>
 #include <vector>

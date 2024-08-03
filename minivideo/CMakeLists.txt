@@ -16,15 +16,15 @@ set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINO
 option(BUILD_STATIC_LIBS "Build static library" ON)
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
-set(ENABLE_COLORS 1)        # Toggle colored terminal output
+set(ENABLE_COLORS 1)            # Toggle colored terminal output
+set(ENABLE_MEMFD 1)             # Enable memfd support (for Linux kernels 3.17+)
 
-set(ENABLE_STBIMWRITE 1)    # Toggle internal stb_image_write library for bmp/png/tga support
-set(ENABLE_WEBP 0)          # Toggle external libwebp support
-set(ENABLE_JPEG 0)          # Toggle external libjpeg support
-set(ENABLE_PNG 0)           # Toggle external libpng support
-
-set(ENABLE_MEMFD 1)         # Enable memfd support, for Linux kernels 3.17+
-
+set(ENABLE_STB_IMAGE 1)         # Toggle internal stb_image library for bmp/png/tga/... import
+set(ENABLE_STB_IMAGE_WRITE 1)   # Toggle internal stb_image_write library for bmp/png/tga export
+set(ENABLE_PNG 0)               # Toggle external libpng support
+set(ENABLE_JPEG 0)              # Toggle external libjpeg support
+set(ENABLE_WEBP 0)              # Toggle external libwebp support
+set(ENABLE_AVIF 0)              # Toggle external libavif support
 
 # Build dependencies
 ################################################################################
@@ -39,6 +39,19 @@ if(ENABLE_MEMFD)
     else()
         message(WARNING "> memfd not found! Disabling MEMFD support.")
         set(ENABLE_MEMFD 0)
+    endif()
+endif()
+
+# custom libavif module
+if(ENABLE_AVIF)
+    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    find_package(AVIF) # FindAVIF.cmake
+
+    if(AVIF_FOUND)
+        message(STATUS "* libavif enabled")
+    else()
+        message(WARNING "> libavif not found! Disabling AVIF support.")
+        set(ENABLE_AVIF 0)
     endif()
 endif()
 
@@ -243,24 +256,27 @@ set(minivideo_SRC
         src/decoder/h264/h264_inter_prediction.cpp
         src/decoder/h264/h264_spatial.cpp
         src/decoder/h264/h264_transform.cpp
-        src/decoder/h265/h265_nalu.cpp
-            src/decoder/h265/h265_expgolomb.cpp
-            src/decoder/h265/h265_parameterset.cpp
-            src/decoder/h265/h265_parameterset_struct.h
-        src/decoder/h266/h266_nalu.cpp
-            src/decoder/h266/h266_parameterset.cpp
-            src/decoder/h266/h266_parameterset_struct.h
+    src/decoder/h265/h265_nalu.cpp
+        src/decoder/h265/h265_expgolomb.cpp
+        src/decoder/h265/h265_parameterset.cpp
+        src/decoder/h265/h265_parameterset_struct.h
+    src/decoder/h266/h266_nalu.cpp
+        src/decoder/h266/h266_parameterset.cpp
+        src/decoder/h266/h266_parameterset_struct.h
 )
 
 # MiniVideo public headers
-set(minivideo_HEADERS
+set(minivideo_PUBLIC_HEADERS
     src/minivideo.h src/minivideo_export.h
     src/minivideo_avutils.h
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
-    src/demuxer/codecs/codec_private_struct.h
     src/minivideo_settings.h src/minivideo_typedef.h # internals?
+    src/minivideo_codecs_private_structures.h
+    src/decoder/h264/h264_parameterset_struct.h
+    src/decoder/h265/h265_parameterset_struct.h
+    src/decoder/h266/h266_parameterset_struct.h
 )
 
 # Build
@@ -319,5 +335,5 @@ if (BUILD_STATIC_LIBS)
     install(TARGETS minivideo_static DESTINATION lib/)
 endif (BUILD_STATIC_LIBS)
 
-install(FILES ${minivideo_HEADERS} DESTINATION include/)
+install(FILES ${minivideo_PUBLIC_HEADERS} DESTINATION include/minivideo/)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)

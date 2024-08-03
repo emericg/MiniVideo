@@ -33,7 +33,9 @@ DEFINES     += minivideo_VERSION_PATCH=0
 
 CONFIG(debug, debug|release) { DEFINES += ENABLE_DEBUG=1 }
 DEFINES += ENABLE_COLORS=1
-DEFINES += ENABLE_STBIMWRITE=1
+DEFINES += ENABLE_STB_IMAGE=0
+DEFINES += ENABLE_STB_IMAGE_WRITE=1
+DEFINES += ENABLE_AVIF=0
 DEFINES += ENABLE_WEBP=0
 DEFINES += ENABLE_JPEG=0
 DEFINES += ENABLE_PNG=0
@@ -93,6 +95,6 @@ unix {
     library.files   += $${OUT_PWD}/$${DESTDIR}/libminivideo.so.*
     library.path     = $${PREFIX}/lib/
     headers.files   += $${OUT_PWD}/src/minivideo*.h
-    headers.path     = $${PREFIX}/include/
+    headers.path     = $${PREFIX}/include/minivideo/
     INSTALLS += library headers
 }

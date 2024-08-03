@@ -34,15 +34,17 @@
 #define minivideo_VERSION_MINOR @minivideo_VERSION_MINOR@
 #define minivideo_VERSION_PATCH @minivideo_VERSION_PATCH@
 
-#define ENABLE_DEBUG        @ENABLE_DEBUG@  //!< Toggle debug and trace output
-#define ENABLE_COLORS       @ENABLE_COLORS@  //!< Toggle colored terminal output
+#define ENABLE_DEBUG            @ENABLE_DEBUG@              //!< Toggle debug and trace output
+#define ENABLE_COLORS           @ENABLE_COLORS@             //!< Toggle colored terminal output
 
-#define ENABLE_STBIMWRITE   @ENABLE_STBIMWRITE@  //!< Toggle bundled stb_image_write support
-#define ENABLE_WEBP         @ENABLE_WEBP@  //!< Toggle external libwebp support
-#define ENABLE_JPEG         @ENABLE_JPEG@  //!< Toggle external libjpeg support
-#define ENABLE_PNG          @ENABLE_PNG@  //!< Toggle external libpng support
+#define ENABLE_STB_IMAGE        @ENABLE_STB_IMAGE@          //!< Toggle bundled stb_image support
+#define ENABLE_STB_IMAGE_WRITE  @ENABLE_STB_IMAGE_WRITE@    //!< Toggle bundled stb_image_write support
+#define ENABLE_AVIF             @ENABLE_AVIF@               //!< Toggle external libwebp support
+#define ENABLE_WEBP             @ENABLE_WEBP@               //!< Toggle external libwebp support
+#define ENABLE_JPEG             @ENABLE_JPEG@               //!< Toggle external libjpeg support
+#define ENABLE_PNG              @ENABLE_PNG@                //!< Toggle external libpng support
 
-#define ENABLE_MEMFD        @ENABLE_MEMFD@  //!< Enable memfd support for Linux
+#define ENABLE_MEMFD            @ENABLE_MEMFD@              //!< Enable memfd support for Linux
 
 /* ************************************************************************** */
 #endif // MINIVIDEO_SETTINGS_H

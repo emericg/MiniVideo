@@ -56,7 +56,7 @@
 void minivideo_print_infos(void)
 {
     printf(BLD_GREEN "minivideo_print_infos()\n" CLR_RESET);
-    printf("* Library version '%d.%d-%d'\n", minivideo_VERSION_MAJOR,
+    printf("* Library version '%d.%d.%d'\n", minivideo_VERSION_MAJOR,
                                              minivideo_VERSION_MINOR,
                                              minivideo_VERSION_PATCH);
 
@@ -97,10 +97,22 @@ void minivideo_print_features(void)
 {
     printf(BLD_GREEN "minivideo_print_features()\n" CLR_RESET);
 
-#if ENABLE_STBIMWRITE
+#if ENABLE_STB_IMAGE
+    printf("* STB_IMAGE support is " BLD_GREEN "ON\n" CLR_RESET);
+#else
+    printf("* STB_IMAGE support is " BLD_RED "OFF\n" CLR_RESET);
+#endif
+
+#if ENABLE_STB_IMAGE_WRITE
     printf("* STB_IMAGE_WRITE support is " BLD_GREEN "ON\n" CLR_RESET);
 #else
     printf("* STB_IMAGE_WRITE support is " BLD_RED "OFF\n" CLR_RESET);
+#endif
+
+#if ENABLE_AVIF
+    printf("* EXTERNAL AVIF support is " BLD_GREEN "ON\n" CLR_RESET);
+#else
+    printf("* EXTERNAL AVIF support is " BLD_RED "OFF\n" CLR_RESET);
 #endif
 
 #if ENABLE_WEBP

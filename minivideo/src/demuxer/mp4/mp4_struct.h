@@ -25,10 +25,10 @@
 #define PARSER_MP4_STRUCT_H
 
 // minivideo headers
-#include "../codecs/codec_private_struct.h"
 #include "../../minivideo_containers.h"
 #include "../../minivideo_mediastream.h"
 #include "../../minivideo_metadata_vendors.h"
+#include "../../minivideo_codecs_private_struct.h"
 
 #include <cstdint>
 

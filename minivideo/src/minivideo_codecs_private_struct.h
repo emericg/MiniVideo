@@ -16,18 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MiniVideo.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file      codec_private_struct.h
+ * \file      minivideo_codecs_private_struct.h
  * \author    Emeric Grange <emeric.grange@gmail.com>
  * \date      2024
  */
 
 #ifndef PARSER_CODEC_PRIVATE_STRUCT_H
 #define PARSER_CODEC_PRIVATE_STRUCT_H
+/* ************************************************************************** */
 
 // minivideo headers
-#include "../../decoder/h264/h264_parameterset_struct.h"
-#include "../../decoder/h265/h265_parameterset_struct.h"
-#include "../../decoder/h266/h266_parameterset_struct.h"
+#include "decoder/h264/h264_parameterset_struct.h"
+#include "decoder/h265/h265_parameterset_struct.h"
+#include "decoder/h266/h266_parameterset_struct.h"
 
 /* ************************************************************************** */
 
@@ -75,11 +76,11 @@ typedef struct codecprivate_hvcC_t
     uint8_t lengthSizeMinusOne;
 
     uint8_t numOfArrays;
-
-    h265_vps_t *vps_array[H265_MAX_VPS];
-    h265_sps_t *sps_array[H265_MAX_SPS];
-    h265_pps_t *pps_array[H265_MAX_PPS];
-    //h265_sei_t *sei_array[MAX_SEI];
+    uint8_t *array_completeness;
+    uint8_t *NAL_unit_type;
+    uint16_t *numNalus;
+    uint16_t **nalUnitLength;
+    uint8_t ***nalUnit;
 
 } codecprivate_hvcC_t;
 

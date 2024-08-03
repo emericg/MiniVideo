@@ -25,7 +25,6 @@
 /* ************************************************************************** */
 
 // minivideo headers
-#include "minivideo_codecs.h"
 #include "minivideo_containers.h"
 #include "minivideo_mediastream.h"
 #include "minivideo_metadata_vendors.h"

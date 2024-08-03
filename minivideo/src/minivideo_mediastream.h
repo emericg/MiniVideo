@@ -26,7 +26,7 @@
 
 // minivideo headers
 #include "minivideo_codecs.h"
-#include "demuxer/codecs/codec_private_struct.h"
+#include "minivideo_codecs_private_struct.h"
 
 // C standard libraries
 #include <cstdint>
