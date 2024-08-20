@@ -149,6 +149,8 @@ typedef enum StereoMode_e
 
 } StereoMode_e;
 
+/* ************************************************************************** */
+
 //! The color model used by the video
 typedef enum ColorModel_e
 {
@@ -164,6 +166,39 @@ typedef enum ColorModel_e
     CLR_ICtCp   = 8
 
 } ColorModel_e;
+
+//! The chroma subsampling format used by the video/pictures
+typedef enum ChromaSubSampling_e
+{
+    CHROMA_SS_UNKNOWN = 0,      //!< Unknown chroma subsampling
+
+    CHROMA_SS_311     = 1,      //!< 3:1:1 subsampling
+    CHROMA_SS_400     = 2,      //!< 4:0:0 subsampling (monochrome)
+    CHROMA_SS_410     = 3,      //!< 4:1:0 subsampling
+    CHROMA_SS_411     = 4,      //!< 4:1:1 subsampling
+    CHROMA_SS_420     = 5,      //!< 4:2:0 subsampling
+    CHROMA_SS_421     = 6,      //!< 4:2:1 subsampling
+    CHROMA_SS_422     = 7,      //!< 4:2:2 subsampling
+    CHROMA_SS_440     = 8,      //!< 4:4:0 subsampling
+    CHROMA_SS_441     = 9,      //!< 4:4:1 subsampling
+    CHROMA_SS_442     = 10,     //!< 4:4:2 subsampling
+    CHROMA_SS_444     = 11,     //!< 4:4:4 subsampling
+
+} ChromaSubSampling_e;
+
+//! The chroma subsampling format used by the video/pictures
+typedef enum ChromaLocation_e
+{
+    CHROMA_LOC_UNKNOWN  = 0,    //!< Unknown chroma location
+
+    CHROMA_LOC_LEFT     = 1,    //!<
+    CHROMA_LOC_CENTER   = 2,
+    CHROMA_LOC_TOPLEFT  = 3,
+    CHROMA_LOC_TOP      = 4,
+    CHROMA_LOC_BOTTOMLEFT = 5,
+    CHROMA_LOC_BOTTOM   = 6,
+
+} ChromaLocation_e;
 
 typedef enum ColorsRec_e
 {
@@ -200,20 +235,6 @@ typedef enum ColorMatrix_e
     CM_bt2020
 
 } ColorMatrix_e;
-
-//! The subsampling format used by the video
-typedef enum SubSampling_e
-{
-    SS_UNKNOWN = 0,     //!< Unknown subsampling
-
-    SS_400     = 1,     //!< 4:0:0 monochrome subsampling
-    SS_411     = 2,     //!< 4:1:1 subsampling
-    SS_420     = 3,     //!< 4:2:0 subsampling
-    SS_422     = 4,     //!< 4:2:2 subsampling
-    SS_444     = 5,     //!< 4:4:4 subsampling
-    SS_4444    = 6      //!< 4:4:4:4 subsampling
-
-} SubSampling_e;
 
 /* ************************************************************************** */
 

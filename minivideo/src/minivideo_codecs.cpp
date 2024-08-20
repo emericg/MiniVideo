@@ -1042,6 +1042,140 @@ const char *getCodecProfileString(const CodecProfiles_e profile, const bool long
 
 /* ************************************************************************** */
 
+const char *getScanModeString(const ScanType_e mode)
+{
+    switch (mode)
+    {
+        case SCAN_PROGRESSIVE:
+            return "Progressive";
+        case SCAN_INTERLACED:
+            return "Interlaced scan";
+
+        default:
+            return "";
+    }
+}
+/* ************************************************************************** */
+
+const char *getStereoModeString(const StereoMode_e mode)
+{
+    switch (mode)
+    {
+        case MONOSCOPIC:
+            return "Monoscopic";
+
+        case STEREO_ANAGLYPH_CR:
+            return "Anaglyph (cyan/red)";
+        case STEREO_ANAGLYPH_GM:
+            return "Anaglyph (green/magenta)";
+
+        case STEREO_SIDEBYSIDE_LEFT:
+            return "Side by side (left eye is first)";
+        case STEREO_SIDEBYSIDE_RIGHT:
+            return "Side by side (right eye is first)";
+        case STEREO_TOPBOTTOM_LEFT:
+            return "Top bottom (left eye is first)";
+        case STEREO_TOPBOTTOM_RIGHT:
+            return "Top bottom (right eye is first)";
+        case STEREO_CHECKBOARD_LEFT:
+            return "Checkerboard (left eye is first)";
+        case STEREO_CHECKBOARD_RIGHT:
+            return "Checkerboard (right eye is first)";
+        case STEREO_ROWINTERLEAVED_LEFT:
+            return "Row interleaved (left eye is first)";
+        case STEREO_ROWINTERLEAVED_RIGHT:
+            return "Row interleaved (right eye is first)";
+        case STEREO_COLUMNINTERLEAVED_LEFT:
+            return "Column interleaved (left eye is first)";
+        case STEREO_COLUMNINTERLEAVED_RIGHT:
+            return "Column interleaved (right eye is first)";
+
+        default:
+            return "";
+    }
+}
+
+/* ************************************************************************** */
+
+const char *getHdrModeString(const HdrMode_e mode)
+{
+    switch (mode)
+    {
+        case SDR:
+            return "SDR";
+
+        case HLG:
+            return "HLG";
+        case HDR10:
+            return "HDR10";
+        case HDR10plus:
+            return "HDR10+";
+        case DolbyVision:
+            return "Dolby Vision";
+
+        default:
+            return "";
+    }
+}
+
+/* ************************************************************************** */
+
+const char *getChromaSubsamplingString(const ChromaSubSampling_e subsampling)
+{
+    switch (subsampling)
+    {
+        case CHROMA_SS_311:
+            return "3:1:1";
+        case CHROMA_SS_400:
+            return "4:0:0";
+        case CHROMA_SS_410:
+            return "4:1:0";
+        case CHROMA_SS_411:
+            return "4:1:1";
+        case CHROMA_SS_420:
+            return "4:2:0+";
+        case CHROMA_SS_421:
+            return "4:2:1";
+        case CHROMA_SS_422:
+            return "4:2:2";
+        case CHROMA_SS_440:
+            return "4:4:0";
+        case CHROMA_SS_441:
+            return "4:4:1";
+        case CHROMA_SS_442:
+            return "4:4:2";
+        case CHROMA_SS_444:
+            return "4:4:4";
+
+        default:
+            return "";
+    }
+}
+
+const char *getChromaLocationString(const ChromaLocation_e location)
+{
+    switch (location)
+    {
+        case CHROMA_LOC_LEFT:
+            return "Left";
+        case CHROMA_LOC_CENTER:
+            return "Center";
+        case CHROMA_LOC_TOPLEFT:
+            return "Top left";
+        case CHROMA_LOC_TOP:
+            return "Top";
+        case CHROMA_LOC_BOTTOMLEFT:
+            return "Bottom left";
+        case CHROMA_LOC_BOTTOM:
+            return "Bottom";
+
+        default:
+            return "";
+    }
+}
+
+/* ************************************************************************** */
+
 const char *getColorPrimariesString(const ColorPrimaries_e primaries)
 {
     switch (primaries)

@@ -434,6 +434,13 @@ minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bo
 
 /* ************************************************************************** */
 
+minivideo_EXPORT const char *getScanModeString(const ScanType_e mode);
+minivideo_EXPORT const char *getStereoModeString(const StereoMode_e mode);
+minivideo_EXPORT const char *getHdrModeString(const HdrMode_e mode);
+
+minivideo_EXPORT const char *getChromaSubsamplingString(const ChromaSubSampling_e subsampling);
+minivideo_EXPORT const char *getChromaLocationString(const ChromaLocation_e location);
+
 minivideo_EXPORT const char *getColorPrimariesString(const ColorPrimaries_e primaries);
 minivideo_EXPORT const char *getColorTransferCharacteristicString(const ColorTransferCharacteristic_e transfert);
 minivideo_EXPORT const char *getColorMatrixString(const ColorSpace_e space);
