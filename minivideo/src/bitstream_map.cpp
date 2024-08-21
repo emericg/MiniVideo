@@ -553,9 +553,9 @@ bool computeCodecsSpecifics(MediaFile_t *media)
 
             if (track->stream_codec == CODEC_H264 && track->avcC)
             {
-                // Handle H.264 profile & level
                 if (avcC->sps_count > 0 && avcC->sps_array[0])
                 {
+                    // H.264 profile & level
                     track->stream_codec_profile = getH264CodecProfile(
                         avcC->sps_array[0]->profile_idc,
                         avcC->sps_array[0]->constraint_setX_flag[0],
@@ -568,6 +568,18 @@ bool computeCodecsSpecifics(MediaFile_t *media)
 
                     track->max_ref_frames = avcC->sps_array[0]->max_num_ref_frames;
                     track->color_depth = avcC->sps_array[0]->BitDepthY;
+
+                    // Chroma
+                    if (avcC->sps_array[0]->chroma_format_idc == 0)
+                        track->color_subsampling = CHROMA_SS_400;
+                    else if (avcC->sps_array[0]->chroma_format_idc == 1)
+                        track->color_subsampling = CHROMA_SS_420;
+                    else if (avcC->sps_array[0]->chroma_format_idc == 2)
+                        track->color_subsampling = CHROMA_SS_422;
+                    else if (avcC->sps_array[0]->chroma_format_idc == 3)
+                        track->color_subsampling = CHROMA_SS_444;
+                    else
+                        track->color_subsampling = CHROMA_SS_420;
 
                     if (avcC->sps_array[0]->vui)
                     {

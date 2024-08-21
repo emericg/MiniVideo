@@ -1963,12 +1963,9 @@ int parse_colr(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
             if (track->color_range) track->color_range = colour_range;
         }
 
-        if (track->color_matrix == 0 && track->color_matrix && track->color_matrix)
-        {
-            track->color_primaries = colour_primaries;
-            track->color_transfer = transfer_characteristics;
-            track->color_matrix = colour_primaries;
-        }
+        track->color_primaries = colour_primaries;
+        track->color_transfer = transfer_characteristics;
+        track->color_matrix = matrix_coefficients;
     }
     else if (colour_type == fourcc_be("rICC"))
     {

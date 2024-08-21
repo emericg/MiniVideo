@@ -670,20 +670,38 @@ QString getStereoModeQString(const StereoMode_e stereoMode)
 
 QString getHdrModeQString(const HdrMode_e hdrMode)
 {
-    QString hdr_mode_qstr;
+    // product names, not translated, so we can use the function from minivideo
+    return QString::fromLatin1(getHdrModeString(hdrMode));
+}
 
-    if (hdrMode == HLG)
-        hdr_mode_qstr = "HDR10";
-    else if (hdrMode == HDR10)
-        hdr_mode_qstr = "HDR10";
-    else if (hdrMode == HDR10plus)
-        hdr_mode_qstr = "HDR10+";
-    else if (hdrMode == DolbyVision)
-        hdr_mode_qstr = "Dolby Vision";
+/* ************************************************************************** */
+
+QString getChromaSubsamplingQString(const ChromaSubSampling_e subsampling)
+{
+    // technical terms, not translated, so we can use the function from minivideo
+    return QString::fromLatin1(getChromaSubsamplingString(subsampling));
+}
+
+QString getChromaLocationQString(const ChromaLocation_e location)
+{
+    QString loc_qstr;
+
+    if (location == CHROMA_LOC_LEFT)
+        loc_qstr = QObject::tr("Left");
+    else if (location == CHROMA_LOC_CENTER)
+        loc_qstr = QObject::tr("Center");
+    else if (location == CHROMA_LOC_TOPLEFT)
+        loc_qstr = QObject::tr("Top left");
+    else if (location == CHROMA_LOC_TOP)
+        loc_qstr = QObject::tr("Top");
+    else if (location == CHROMA_LOC_BOTTOMLEFT)
+        loc_qstr = QObject::tr("Bottom left");
+    else if (location == CHROMA_LOC_BOTTOM)
+        loc_qstr = QObject::tr("Bottom");
     else
-        hdr_mode_qstr = "SDR";
+        loc_qstr = QObject::tr("Unknown");
 
-    return hdr_mode_qstr;
+    return loc_qstr;
 }
 
 /* ************************************************************************** */

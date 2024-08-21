@@ -1126,20 +1126,7 @@ int MainWindow::printVideoDetails()
                 else
                     ui->label_video_color_space->setText("YCbCr (best guess)");
 
-                if (t->color_subsampling == SS_4444)
-                    ui->label_video_color_subsampling->setText("4:4:4:4");
-                else if (t->color_subsampling == SS_444)
-                    ui->label_video_color_subsampling->setText("4:4:4");
-                else if (t->color_subsampling == SS_422)
-                    ui->label_video_color_subsampling->setText("4:2:2");
-                else if (t->color_subsampling == SS_420)
-                    ui->label_video_color_subsampling->setText("4:2:0");
-                else if (t->color_subsampling == SS_411)
-                    ui->label_video_color_subsampling->setText("4:1:1");
-                else if (t->color_subsampling == SS_400)
-                    ui->label_video_color_subsampling->setText("4:0:0");
-                else
-                    ui->label_video_color_subsampling->setText("4:2:0 (best guess)");
+                ui->label_video_color_subsampling->setText(getChromaSubsamplingQString((ChromaSubSampling_e)t->color_subsampling));
             }
             else
             {

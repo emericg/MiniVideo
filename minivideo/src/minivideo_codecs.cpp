@@ -1133,7 +1133,7 @@ const char *getChromaSubsamplingString(const ChromaSubSampling_e subsampling)
         case CHROMA_SS_411:
             return "4:1:1";
         case CHROMA_SS_420:
-            return "4:2:0+";
+            return "4:2:0";
         case CHROMA_SS_421:
             return "4:2:1";
         case CHROMA_SS_422:

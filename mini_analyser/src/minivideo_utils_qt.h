@@ -145,6 +145,10 @@ QString getContainerQString(const Containers_e container, const bool long_descri
 
 QString getCodecQString(const StreamType_e type, const Codecs_e codec, const bool long_description);
 
+QString getChromaSubsamplingQString(const ChromaSubSampling_e subsampling);
+
+QString getChromaLocationQString(const ChromaLocation_e location);
+
 /*!
  * \brief Get a readable language string.
  * \param languageCode[in]: ISO 639-2 or ISO 639-3 language code.
