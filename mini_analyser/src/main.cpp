@@ -46,11 +46,15 @@
  */
 int main(int argc, char *argv[])
 {
-    bool cli_enabled = false;
-    bool cli_details_enabled = false;
-    QStringList files;
+    // Arguments parsing ///////////////////////////////////////////////////////
 
     std::cout << GREEN "mini_analyser() arguments" RESET << std::endl;
+
+    bool cli_enabled = false;
+    bool cli_details_enabled = false;
+
+    QStringList files;
+
     for (int i = 1; i < argc; i++)
     {
         if (argv[i])

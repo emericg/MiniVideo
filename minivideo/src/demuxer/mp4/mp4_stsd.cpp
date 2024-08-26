@@ -1619,8 +1619,8 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     track->vpcC->transferCharacteristics = read_bits(bitstr, 8);
     track->vpcC->matrixCoefficients = read_bits(bitstr, 8);
 
-    track->vpcC->codecIntializationDataSize = read_bits(bitstr, 16);
-    if (track->vpcC->codecIntializationDataSize > 0)
+    int codecIntializationDataSize = read_bits(bitstr, 16);
+    if (codecIntializationDataSize > 0)
     {
         // Note: must be 0 for VP8 and VP9
     }
@@ -1634,12 +1634,6 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     TRACE_1(MP4, "> colourPrimaries: %u", track->vpcC->colourPrimaries);
     TRACE_1(MP4, "> transferCharacteristics: %u", track->vpcC->transferCharacteristics);
     TRACE_1(MP4, "> matrixCoefficients: %u", track->vpcC->matrixCoefficients);
-
-    TRACE_1(MP4, "> codecIntializationDataSize: %u", track->vpcC->codecIntializationDataSize);
-    if (track->vpcC->codecIntializationDataSize)
-    {
-        // TODO
-    }
 #endif // ENABLE_DEBUG
 
     // xmlMapper
@@ -1653,12 +1647,6 @@ int parse_vpcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         fprintf(mp4->xml, "  <colourPrimaries>%u</colourPrimaries>\n", track->vpcC->colourPrimaries);
         fprintf(mp4->xml, "  <transferCharacteristics>%u</transferCharacteristics>\n", track->vpcC->transferCharacteristics);
         fprintf(mp4->xml, "  <matrixCoefficients>%u</matrixCoefficients>\n", track->vpcC->matrixCoefficients);
-
-        fprintf(mp4->xml, "  <codecIntializationDataSize>%u</codecIntializationDataSize>\n", track->vpcC->codecIntializationDataSize);
-        if (track->vpcC->codecIntializationDataSize)
-        {
-            // TODO
-        }
         fprintf(mp4->xml, "  </a>\n");
     }
 

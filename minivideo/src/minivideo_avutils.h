@@ -191,9 +191,9 @@ typedef enum ChromaLocation_e
 {
     CHROMA_LOC_UNKNOWN  = 0,    //!< Unknown chroma location
 
-    CHROMA_LOC_LEFT     = 1,    //!<
+    CHROMA_LOC_LEFT     = 1,    //!< vertical
     CHROMA_LOC_CENTER   = 2,
-    CHROMA_LOC_TOPLEFT  = 3,
+    CHROMA_LOC_TOPLEFT  = 3,    //!< colocated
     CHROMA_LOC_TOP      = 4,
     CHROMA_LOC_BOTTOMLEFT = 5,
     CHROMA_LOC_BOTTOM   = 6,

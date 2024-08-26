@@ -780,9 +780,9 @@ int MainWindow::printAudioDetails()
 
             if (t->stream_size)
             {
-                uint64_t rawsize = t->sampling_rate * t->channel_count * (t->bit_per_sample / 8);
+                uint64_t rawsize = t->sampling_rate * t->channel_count * (t->bit_per_sample / 8.0);
                 rawsize *= t->stream_duration_ms;
-                rawsize /= 1000;
+                rawsize /= 1000.0;
 
                 uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));
                 ui->label_audio_compression_ratio->setText(QString::number(ratio) + ":1");
@@ -1104,7 +1104,7 @@ int MainWindow::printVideoDetails()
                 ui->label_video_par->setVisible(false);
             }
 
-            if (t->color_space > 0 && t->color_subsampling > 0)
+            if (t->color_space > 0 && t->chroma_subsampling > 0)
             {
                 ui->label_50->setVisible(true);
                 ui->label_60->setVisible(true);
@@ -1126,7 +1126,7 @@ int MainWindow::printVideoDetails()
                 else
                     ui->label_video_color_space->setText("YCbCr (best guess)");
 
-                ui->label_video_color_subsampling->setText(getChromaSubsamplingQString((ChromaSubSampling_e)t->color_subsampling));
+                ui->label_video_color_subsampling->setText(getChromaSubsamplingQString((ChromaSubSampling_e)t->chroma_subsampling));
             }
             else
             {
@@ -1243,10 +1243,12 @@ int MainWindow::printVideoDetails()
             // Compression ratio
             if (t->stream_size)
             {
-                if (t->color_planes == 0) t->color_planes = 3;
-                if (t->color_depth == 0) t->color_depth = 8;
+                unsigned color_planes = t->color_planes;
+                unsigned color_depth = t->color_depth;
+                if (color_planes == 0) color_planes = 3;
+                if (color_depth == 0) color_depth = 8;
 
-                uint64_t rawsize = t->width * t->height * (t->color_depth / 8) * t->color_planes;
+                uint64_t rawsize = t->width * t->height * (color_depth / 8.0) * color_planes;
                 rawsize *= t->sample_count;
 
                 uint64_t ratio = std::round(static_cast<double>(rawsize) / static_cast<double>(t->stream_size));

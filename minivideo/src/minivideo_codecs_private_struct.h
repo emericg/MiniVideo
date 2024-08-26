@@ -109,6 +109,9 @@ typedef struct codecprivate_vvcC_t
 
 /* ************************************************************************** */
 
+/*!
+ * https://www.webmproject.org/vp9/mp4/
+ */
 typedef struct codecprivate_vpcC_t
 {
     uint8_t profile;
@@ -120,12 +123,13 @@ typedef struct codecprivate_vpcC_t
     uint8_t transferCharacteristics;
     uint8_t matrixCoefficients;
 
-    uint16_t codecIntializationDataSize;
-
 } codecprivate_vpcC_t;
 
 /* ************************************************************************** */
 
+/*!
+ * https://aomediacodec.github.io/av1-isobmff/
+ */
 typedef struct codecprivate_av1C_t
 {
     bool marker;

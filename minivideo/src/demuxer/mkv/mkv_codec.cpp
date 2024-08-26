@@ -797,8 +797,6 @@ int parse_vpx_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     TRACE_1(MP4, "> colourPrimaries: %u", track->vpcC->colourPrimaries);
     TRACE_1(MP4, "> transferCharacteristics: %u", track->vpcC->transferCharacteristics);
     TRACE_1(MP4, "> matrixCoefficients: %u", track->vpcC->matrixCoefficients);
-
-    TRACE_1(MP4, "> codecIntializationDataSize: %u", track->vpcC->codecIntializationDataSize);
 #endif // ENABLE_DEBUG
 
     // xmlMapper

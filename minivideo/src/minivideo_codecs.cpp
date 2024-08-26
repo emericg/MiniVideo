@@ -745,32 +745,6 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
 
 /* ************************************************************************** */
 
-const char *getPictureString(const Pictures_e picture, const bool long_description)
-{
-    switch (picture)
-    {
-        case PICTURE_BMP:
-            return "BMP";
-        case PICTURE_JPG:
-            return "JPG";
-        case PICTURE_PNG:
-            return "PNG";
-        case PICTURE_WEBP:
-            return "WebP";
-        case PICTURE_TGA:
-            return "TGA";
-        case PICTURE_YUV444:
-            return "YCbCr 4:4:4";
-        case PICTURE_YUV420:
-            return "YCbCr 4:2:0";
-
-        default:
-            return "";
-    }
-}
-
-/* ************************************************************************** */
-
 const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description)
 {
     switch (profile)

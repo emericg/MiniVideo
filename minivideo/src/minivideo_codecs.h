@@ -430,8 +430,6 @@ CodecProfiles_e getH266CodecProfile(const unsigned profil_idc);
 minivideo_EXPORT const char *getCodecString(const StreamType_e type, const Codecs_e codec, const bool long_description = false);
 minivideo_EXPORT const char *getCodecProfileString(const CodecProfiles_e profile, const bool long_description = false);
 
-minivideo_EXPORT const char *getPictureString(const Pictures_e picture, const bool long_description = false);
-
 /* ************************************************************************** */
 
 minivideo_EXPORT const char *getScanModeString(const ScanType_e mode);

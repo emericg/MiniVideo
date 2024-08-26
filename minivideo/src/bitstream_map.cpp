@@ -571,15 +571,15 @@ bool computeCodecsSpecifics(MediaFile_t *media)
 
                     // Chroma
                     if (avcC->sps_array[0]->chroma_format_idc == 0)
-                        track->color_subsampling = CHROMA_SS_400;
+                        track->chroma_subsampling = CHROMA_SS_400;
                     else if (avcC->sps_array[0]->chroma_format_idc == 1)
-                        track->color_subsampling = CHROMA_SS_420;
+                        track->chroma_subsampling = CHROMA_SS_420;
                     else if (avcC->sps_array[0]->chroma_format_idc == 2)
-                        track->color_subsampling = CHROMA_SS_422;
+                        track->chroma_subsampling = CHROMA_SS_422;
                     else if (avcC->sps_array[0]->chroma_format_idc == 3)
-                        track->color_subsampling = CHROMA_SS_444;
+                        track->chroma_subsampling = CHROMA_SS_444;
                     else
-                        track->color_subsampling = CHROMA_SS_420;
+                        track->chroma_subsampling = CHROMA_SS_420;
 
                     if (avcC->sps_array[0]->vui)
                     {
@@ -587,6 +587,16 @@ bool computeCodecsSpecifics(MediaFile_t *media)
                         track->color_primaries = avcC->sps_array[0]->vui->colour_primaries;
                         track->color_transfer = avcC->sps_array[0]->vui->transfer_characteristics;
                         track->color_matrix = avcC->sps_array[0]->vui->matrix_coefficients;
+
+                        if (avcC->sps_array[0]->vui->chroma_loc_info_present_flag)
+                        {
+                            if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 0) track->chroma_location = CHROMA_LOC_LEFT;
+                            else if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 1) track->chroma_location = CHROMA_LOC_CENTER;
+                            else if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 2) track->chroma_location = CHROMA_LOC_TOPLEFT;
+                            else if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 3) track->chroma_location = CHROMA_LOC_TOP;
+                            else if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 4) track->chroma_location = CHROMA_LOC_BOTTOMLEFT;
+                            else if (avcC->sps_array[0]->vui->chroma_sample_loc_type_top_field == 5) track->chroma_location = CHROMA_LOC_BOTTOM;
+                        }
                     }
 
                     if (avcC->pps_count > 0 && avcC->pps_array[0])
@@ -634,6 +644,18 @@ bool computeCodecsSpecifics(MediaFile_t *media)
                 track->color_depth = vpcC->bitDepth;
                 track->color_range = vpcC->videoFullRangeFlag;
 
+                if (vpcC->chromaSubsampling == 0 || vpcC->chromaSubsampling == 1)
+                    track->chroma_subsampling = CHROMA_SS_420;
+                else if (vpcC->chromaSubsampling == 2)
+                    track->chroma_subsampling = CHROMA_SS_422;
+                else if (vpcC->chromaSubsampling == 3)
+                    track->chroma_subsampling = CHROMA_SS_444;
+
+                if (vpcC->chromaSubsampling == 1)
+                    track->chroma_location = CHROMA_LOC_TOPLEFT;
+                else
+                    track->chroma_location = CHROMA_LOC_LEFT;
+
                 track->color_primaries = vpcC->colourPrimaries;
                 track->color_transfer = vpcC->transferCharacteristics;
                 track->color_matrix = vpcC->matrixCoefficients;
@@ -670,9 +692,43 @@ bool computeCodecsSpecifics(MediaFile_t *media)
                 else if (av1C->seq_level_idx_0 == 22) track->video_level = 7.2;
                 else if (av1C->seq_level_idx_0 == 23) track->video_level = 7.3;
 
-                if (av1C->high_bitdepth) track->color_depth = 10;
-                else if (av1C->twelve_bit) track->color_depth = 12;
+                if (av1C->twelve_bit) track->color_depth = 12;
+                else if (av1C->high_bitdepth) track->color_depth = 10;
                 else track->color_depth = 8;
+
+                if (av1C->chroma_subsampling_x == 0 && av1C->chroma_subsampling_y == 0 && av1C->monochrome == 0)
+                    track->chroma_subsampling = CHROMA_SS_444;
+                else if (av1C->chroma_subsampling_x == 1 && av1C->chroma_subsampling_y == 0 && av1C->monochrome == 0)
+                    track->chroma_subsampling = CHROMA_SS_422;
+                else if (av1C->chroma_subsampling_x == 1 && av1C->chroma_subsampling_y == 1 && av1C->monochrome == 0)
+                    track->chroma_subsampling = CHROMA_SS_420;
+                else if (av1C->chroma_subsampling_x == 1 && av1C->chroma_subsampling_y == 1 && av1C->monochrome == 1)
+                    track->chroma_subsampling = CHROMA_SS_400;
+
+                if (av1C->chroma_sample_position == 1)
+                    track->chroma_location = CHROMA_LOC_LEFT;
+                else if (av1C->chroma_sample_position == 2)
+                    track->chroma_location = CHROMA_LOC_TOPLEFT;
+            }
+
+            else if (track->stream_codec == CODEC_PRORES_422_PROXY ||
+                track->stream_codec == CODEC_PRORES_422_LT ||
+                track->stream_codec == CODEC_PRORES_422 ||
+                track->stream_codec == CODEC_PRORES_422_HQ)
+            {
+                track->chroma_subsampling = CHROMA_SS_422;
+            }
+            else if (track->stream_codec == CODEC_PRORES_4444 ||
+                     track->stream_codec == CODEC_PRORES_4444_XQ)
+            {
+                track->chroma_subsampling = CHROMA_SS_444;
+            }
+            else if (track->stream_codec == CODEC_PRORES_RAW ||
+                     track->stream_codec == CODEC_PRORES_RAW_HQ)
+            {
+                // RAW variants are not using YUV pixel subsampling
+                track->chroma_subsampling = CHROMA_SS_UNKNOWN;
+                track->color_depth = 16;
             }
         }
     }

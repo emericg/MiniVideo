@@ -105,9 +105,10 @@ typedef struct MediaStream_t
     FramerateMode_e framerate_mode;         //!< Framerate mode
 
     unsigned int color_planes;              //!< Number of encoded planes (ex: 1 for monochrome, 3 for YUV or 4 for RGBA)
-    unsigned int color_subsampling;         //!< Chroma sub-sampling
     unsigned int color_depth;               //!< Color resolution per channel
     unsigned int color_range;               //!< Colors are in restricted or full range
+    unsigned int chroma_subsampling;        //!< Chroma sub-sampling
+    unsigned int chroma_location;           //!< Chroma location
     unsigned int color_space;               //!< Internal color encoding
     unsigned int color_primaries;           //!< Color primaries
     unsigned int color_transfer;            //!< Color transfer function
