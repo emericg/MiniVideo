@@ -21,7 +21,8 @@
  */
 
 #include "minivideo_utils_qt.h"
-#include "minivideo_fourcc.h"
+
+#include <minivideo_fourcc.h>
 
 #include <cstdint>
 #include <cstring>

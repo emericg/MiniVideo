@@ -24,7 +24,7 @@
 #define MINIVIDEO_TEXTEXPORT_H
 /* ************************************************************************** */
 
-#include "minivideo_mediafile.h"
+#include <minivideo_mediafile.h>
 
 #include <QString>
 
