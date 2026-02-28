@@ -7,6 +7,7 @@
 
 #include "chunks.h"
 #include "commands.h"
+#include "color_manager.h"
 
 #ifdef QHEXEDIT_EXPORTS
 #define QHEXEDIT_API Q_DECL_EXPORT
@@ -19,7 +20,7 @@
 /** \mainpage
 QHexEdit is a binary editor widget for Qt.
 
-\version Version 0.8.9
+\version Version 0.9.0
 \image html qhexedit.png
 */
 
@@ -64,31 +65,6 @@ class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
     (show it), false (hide it).
     */
     Q_PROPERTY(bool addressArea READ addressArea WRITE setAddressArea)
-
-    /*! Property address area color sets (setAddressAreaColor()) the background
-    color of address areas. You can also read the color (addressAreaColor()).
-    */
-    Q_PROPERTY(QColor addressAreaColor READ addressAreaColor WRITE setAddressAreaColor)
-
-    /*! Property address font color sets (setAddressFontColor()) the text
-    color of address areas. You can also read the color (addressFontColor()).
-    */
-    Q_PROPERTY(QColor addressFontColor READ addressFontColor WRITE setAddressFontColor)
-
-    /*! Property ascii area color sets (setAsciiAreaColor()) the backgorund
-    color of ascii areas. You can also read the color (asciiAreaColor()).
-    */
-    Q_PROPERTY(QColor asciiAreaColor READ asciiAreaColor WRITE setAsciiAreaColor)
-
-    /*! Property ascii font color sets (setAsciiFontColor()) the text
-    color of ascii areas. You can also read the color (asciiFontColor()).
-    */
-    Q_PROPERTY(QColor asciiFontColor READ asciiFontColor WRITE setAsciiFontColor)
-
-    /*! Property hex font color sets (setHexFontColor()) the text
-    color of hex areas. You can also read the color (hexFontColor()).
-    */
-    Q_PROPERTY(QColor hexFontColor READ hexFontColor WRITE setHexFontColor)
 
     /*! Property addressOffset is added to the Numbers of the Address Area.
     A offset in the address area (left side) is sometimes useful, whe you show
@@ -147,12 +123,6 @@ class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
     */
     Q_PROPERTY(bool overwriteMode READ overwriteMode WRITE setOverwriteMode)
 
-    /*! Property selection color sets (setSelectionColor()) the background
-    color of selected text areas. You can also read the color
-    (selectionColor()).
-    */
-    Q_PROPERTY(QColor selectionColor READ selectionColor WRITE setSelectionColor)
-
     /*! Property readOnly sets (setReadOnly()) or gets (isReadOnly) the mode
     in which the editor works. In readonly mode the the user can only navigate
     through the data and select data; modifying is not possible. This
@@ -167,7 +137,7 @@ public:
     /*! Creates an instance of QHexEdit.
     \param parent Parent widget of QHexEdit.
     */
-    QHexEdit(QWidget *parent=0);
+    QHexEdit(QWidget *parent=NULL);
 
     // Access to data of qhexedit
 
@@ -229,7 +199,25 @@ public:
     void replace(qint64 pos, qint64 len, const QByteArray &ba);
 
 
+    // User marking areas
+    
+    /*! Adds a user defined marking area
+    \param posStart Index position, where the area starts (including)
+    \param posEnd Index position where the area ends (exluding)
+    \param fontColor Color of the font used in user marking area
+    \param areaColor Color of the background in user marking area
+    There is no limit to the number of user areas. The areas are 
+    prioritized in the event of overlaps. The areas defined first 
+    have priority over areas that follow later.
+    */
+    void addUserArea(qint64 posStart, qint64 posEnd, QColor fontColor, QBrush areaStyle);
+
+    /*! Delets all user defined areas
+    */
+    void clearUserAreas();
+
     // Utility functions
+
     /*! Calc cursor position from graphics position
      * \param point from where the cursor position should be calculated
      * \return Cursor position
@@ -276,7 +264,6 @@ public:
     */
     QString toReadableString();
 
-
 public slots:
     /*! Redoes the last operation. If there is no operation to redo, i.e.
       there is no redo step in the undo/redo history, nothing happens.
@@ -310,21 +297,6 @@ public:
     // Properties
     bool addressArea();
     void setAddressArea(bool addressArea);
-
-    QColor addressAreaColor();
-    void setAddressAreaColor(const QColor &color);
-
-    QColor addressFontColor();
-    void setAddressFontColor(const QColor &color);
-
-    QColor asciiAreaColor();
-    void setAsciiAreaColor(const QColor &color);
-
-    QColor asciiFontColor();
-    void setAsciiFontColor(const QColor &color);
-
-    QColor hexFontColor();
-    void setHexFontColor(const QColor &color);
 
     qint64 addressOffset();
     void setAddressOffset(qint64 addressArea);
@@ -362,11 +334,9 @@ public:
     bool isReadOnly();
     void setReadOnly(bool readOnly);
 
-    QColor selectionColor();
-    void setSelectionColor(const QColor &color);
-
 protected:
     // Handle events
+    bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void mouseMoveEvent(QMouseEvent * event);
     void mousePressEvent(QMouseEvent * event);
@@ -398,9 +368,7 @@ private:
     int _pxPosHexX;                             // X-Pos of HeaxArea
     int _pxPosAdrX;                             // X-Pos of Address Area
     int _pxPosAsciiX;                           // X-Pos of Ascii Area
-    int _pxGapAdr;                              // gap left from AddressArea
-    int _pxGapAdrHex;                           // gap between AddressArea and HexAerea
-    int _pxGapHexAscii;                         // gap between HexArea and AsciiArea
+    int _pxAreaMargin;                          // gap left and right from areas
     int _pxCursorWidth;                         // cursor width
     int _pxSelectionSub;                        // offset selection rect
     int _pxCursorX;                             // current cursor pos
@@ -409,18 +377,12 @@ private:
     // Name convention: absolute byte positions in chunks start with _b
     qint64 _bSelectionBegin;                    // first position of Selection
     qint64 _bSelectionEnd;                      // end of Selection
-    qint64 _bSelectionInit;                     // memory position of Selection
     qint64 _bPosFirst;                          // position of first byte shown
     qint64 _bPosLast;                           // position of last byte shown
     qint64 _bPosCurrent;                        // current position
 
     // variables to store the property values
     bool _addressArea;                          // left area of QHexEdit
-    QColor _addressAreaColor;
-    QColor _asciiAreaColor;
-    QColor _addressFontColor;
-    QColor _asciiFontColor;
-    QColor _hexFontColor;
     int _addressWidth;
     bool _asciiArea;
     qint64 _addressOffset;
@@ -428,10 +390,6 @@ private:
     int _hexCharsInLine;
     bool _highlighting;
     bool _overwriteMode;
-    QBrush _brushSelection;
-    QPen _penSelection;
-    QBrush _brushHighlighted;
-    QPen _penHighlighted;
     bool _readOnly;
     bool _hexCaps;
     bool _dynamicBytesPerLine;
@@ -452,7 +410,8 @@ private:
     QByteArray _markedShown;                    // marked data in view
     bool _modified;                             // Is any data in editor modified?
     int _rowsShown;                             // lines of text shown
-    UndoStack * _undoStack;                     // Stack to store edit actions for undo/redo
+    UndoStack * _undoStack;                     // stack to store edit actions for undo/redo
+    ColorManager * _colorManager;               // holds highlighting, selection and other area colors
     /*! \endcond docNever */
 };
 

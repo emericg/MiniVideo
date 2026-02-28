@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(qhexedit VERSION 0.8.9 LANGUAGES CXX)
+project(qhexedit VERSION 0.9.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,6 +17,7 @@ set(CORE_LIBRARIES Qt::Core Qt::Gui Qt::Widgets)
 set(CORE_SOURCES
     qhexedit.cpp qhexedit.h
     chunks.cpp chunks.h
+    color_manager.cpp color_manager.h
     commands.cpp commands.h)
 
 ################################################################################
