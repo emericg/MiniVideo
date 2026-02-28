@@ -348,13 +348,13 @@
   <customwidget>
    <class>QHexEdit</class>
    <extends>QWidget</extends>
-   <header>src/thirdparty/qhexedit2/qhexedit.h</header>
+   <header>thirdparty/qhexedit2/qhexedit.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QHexView</class>
    <extends>QWidget</extends>
-   <header>src/thirdparty/QHexView/qhexview.h</header>
+   <header>thirdparty/QHexView/qhexview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

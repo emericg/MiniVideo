@@ -80,7 +80,7 @@ tabContainer::tabContainer(QWidget *parent) :
     ui->widget_hex1->setVisible(false);
     ui->widget_hex2->setVisible(false);
 
-    // Setup HEX widget (v1) ///////////////////////////////////////////////////
+    // Setup HEX widget (v1 / QHexEdit) ////////////////////////////////////////
 
 #if (HEX_WIDGET_V1 == 1)
     ui->widget_hex1->setVisible(true);
@@ -103,14 +103,14 @@ tabContainer::tabContainer(QWidget *parent) :
 #endif
 #endif
 
-    // Setup HEX widget (v2) ///////////////////////////////////////////////////
+    // Setup HEX widget (v2 / QHexView) ////////////////////////////////////////
 
 #if (HEX_WIDGET_V2 == 1)
     ui->widget_hex2->setVisible(true);
     ui->widget_hex2->setReadOnly(true);
 
     QHexOptions opts;
-    opts.flags = QHexFlags::NoHeader | QHexFlags::NoAddress;
+    opts.flags = QHexFlags::NoHeader; // | QHexFlags::NoAddress;
     //opts.flags = QHexFlags::HighlightAddress | QHexFlags::HighlightColumn;
     ui->widget_hex2->setOptions(opts);
 #endif

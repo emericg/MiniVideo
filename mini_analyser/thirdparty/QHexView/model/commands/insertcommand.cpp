@@ -1,16 +1,18 @@
-#include "insertcommand.h"
-#include "../qhexdocument.h"
+#include <QHexView/model/commands/insertcommand.h>
+#include <QHexView/model/qhexdocument.h>
 
-InsertCommand::InsertCommand(QHexBuffer *buffer, QHexDocument* document, qint64 offset, const QByteArray &data, QUndoCommand *parent): HexCommand(buffer, document, parent)
-{
+QHexViewInsertCommand::QHexViewInsertCommand(
+    QHexBuffer* buffer, const QHexChanges& changes, QHexDocument* document,
+    qint64 offset, const QByteArray& data, QUndoCommand* parent)
+    : QHexViewCommand(buffer, changes, document, parent) {
     m_offset = offset;
     m_data = data;
 }
 
-void InsertCommand::undo()
-{
+void QHexViewInsertCommand::undo() {
     m_buffer->remove(m_offset, m_data.length());
-    Q_EMIT m_hexdocument->dataChanged(m_data, m_offset, QHexDocument::ChangeReason::Remove);
+    Q_EMIT m_hexdocument->dataChanged(m_data, m_offset,
+                                      QHexChangeReason::Remove);
 }
 
-void InsertCommand::redo() { m_buffer->insert(m_offset, m_data); }
+void QHexViewInsertCommand::redo() { m_buffer->insert(m_offset, m_data); }
