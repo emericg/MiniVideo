@@ -1,3 +1,8 @@
+#### Version 2.1.1+ from Wireshark source tree ####
+
+- https://gitlab.com/wireshark/wireshark/-/commits/master/ui/qt/widgets/qcustomplot.cpp
+- https://gitlab.com/wireshark/wireshark/-/commits/master/ui/qt/widgets/qcustomplot.h
+
 #### Version 2.1.1 released on 06.11.22 ####
 
 Added features:
