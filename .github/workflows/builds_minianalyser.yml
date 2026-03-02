@@ -65,8 +65,8 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             qmake ${{ env.APP_NAME }}.pro CONFIG+=release PREFIX=/usr
-             make -j$(nproc)
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release
+             cmake --build build/ --config Release
 
       # Package application
       - name: Package application
@@ -170,7 +170,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          arch: 'win64_msvc2022_64'
+          arch: 'win64_msvc2017_64'
 
       # Install NSIS (already installed in 'windows-2022')
       #- name: Install NSIS
