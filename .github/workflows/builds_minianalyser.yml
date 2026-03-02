@@ -1,6 +1,6 @@
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Workflow configuration
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 name: "MiniAnalyser CI builds"
 on:
@@ -8,36 +8,30 @@ on:
   pull_request:
   workflow_dispatch:
 
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Define application name & version
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 env:
   APP_NAME: "mini_analyser"
-  APP_VERSION: "48"
-  QT_VERSION: "6.6.3"
+  APP_VERSION: "50"
+  QT_VERSION: "6.5.3"
 
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Workflow jobs
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 jobs:
   ## GNU/Linux build ###########################################################
   build-linux:
     name: "Linux CI build"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # Checkout the repository (and submodules)
       - name: Checkout repository (and submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
-
-      # Install Qt
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{env.QT_VERSION}}
 
       # Install dependencies (from package manager)
       - name: Install dependencies (from package manager)
@@ -46,18 +40,32 @@ jobs:
              sudo apt-get install linux-headers-generic -y;
              sudo apt-get install appstream -y;
 
+      # Install Qt
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+
+      # Setup env
+      - name: Setup env
+        run: |
+             echo "CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)" >> $GITHUB_ENV
+             qmake --version
+             cmake --version
+             ninja --version
+
       # Build library
       - name: Build library
         run: |
              cd minivideo/
-             qmake minivideo.pro CONFIG+=release PREFIX=/usr
-             make -j$(nproc)
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON
+             cmake --build build/ --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             qmake ${{env.APP_NAME}}.pro CONFIG+=release PREFIX=/usr
+             qmake ${{ env.APP_NAME }}.pro CONFIG+=release PREFIX=/usr
              make -j$(nproc)
 
       # Package application
@@ -73,23 +81,23 @@ jobs:
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_PLUGINS="svg"
              ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
-             mv ${{env.APP_NAME}}-x86_64.AppImage ../${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
+             mv ${{ env.APP_NAME }}-x86_64.AppImage ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
-          path: ${{env.APP_NAME}}-${{env.APP_VERSION}}-linux64.AppImage
+          name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
+          path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
 
   ## macOS build ###############################################################
   build-mac:
     name: "macOS CI build"
-    runs-on: macos-12
+    runs-on: macos-15
     steps:
       # Checkout the repository (and submodules)
       - name: Checkout repository (and submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -102,35 +110,43 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: ${{env.QT_VERSION}}
+          version: ${{ env.QT_VERSION }}
+
+      # Setup env
+      - name: Setup env
+        run: |
+             echo "CMAKE_BUILD_PARALLEL_LEVEL=`sysctl -n hw.logicalcpu`" >> $GITHUB_ENV
+             qmake --version
+             cmake --version
+             ninja --version
 
       # Build library
       - name: Build library
         run: |
              cd minivideo/
-             qmake minivideo.pro CONFIG+=release
-             make -j$(nproc)
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr
+             cmake --build build/ --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             qmake ${{env.APP_NAME}}.pro CONFIG+=release
-             make -j$(nproc)
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+             cmake --build build/ --config Release
 
       # Package application
       - name: Package application
         run: |
              cd mini_analyser/
              make install
-             zip -r -X ../${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip bin/${{env.APP_NAME}}.app
+             zip -r -X ../${{ env.APP_NAME}}-${{ env.APP_VERSION }}-macOS.zip bin/${{ env.APP_NAME }}.app
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip
-          path: ${{env.APP_NAME}}-${{env.APP_VERSION}}-macOS.zip
+          name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip
+          path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip
 
   ## Windows build #############################################################
   build-windows:
@@ -139,7 +155,7 @@ jobs:
     steps:
       # Checkout the repository (and submodules)
       - name: Checkout repository (and submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -153,7 +169,8 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: ${{env.QT_VERSION}}
+          version: ${{ env.QT_VERSION }}
+          arch: 'win64_msvc2022_64'
 
       # Install NSIS (already installed in 'windows-2022')
       #- name: Install NSIS
@@ -162,19 +179,25 @@ jobs:
       #       scoop bucket add extras
       #       scoop install nsis
 
+      # Setup env
+      - name: Setup env
+        run: |
+             qmake --version
+             cmake --version
+
       # Build library
       - name: Build library
         run: |
              cd minivideo/
-             qmake minivideo.pro CONFIG+=release
-             nmake
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON
+             cmake --build . --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             qmake ${{env.APP_NAME}}.pro CONFIG+=release
-             nmake
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release
+             cmake --build . --config Release
 
       # Package application
       - name: Package application
@@ -182,12 +205,12 @@ jobs:
              cp minivideo/build/minivideo.lib mini_analyser/bin/minivideo.lib
              cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
              windeployqt mini_analyser/bin/
-             mv mini_analyser/bin mini_analyser/${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
-             7z a ../${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64
+             mv mini_analyser/bin mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
+             7z a ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          name: ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip
-          path: ${{env.APP_NAME}}-${{env.APP_VERSION}}-win64.zip
+          name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip
+          path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip

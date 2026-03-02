@@ -3,30 +3,25 @@ mini_analyser/bin/*
 mini_analyser/build/*
 mini_extractor/bin/*
 mini_extractor/build/*
+mini_tester/bin/*
+mini_tester/build/*
 mini_thumbnailer/bin/*
 mini_thumbnailer/build/*
 minivideo/bin/*
 minivideo/build/*
 
-# QtCreator project files
-MiniVideo*
-Makefile.*
-*.pro.user
-
-# QMake temporary files
-.qmake.stash
-
 # CMake temporary files
 CMakeLists.txt.user
 CMakeCache.txt
-CMakeFiles
-Makefile
-install_manifest.txt
-cmake_install.cmake
 
 # CMake generated files
 minivideo/src/minivideo_export.h
 minivideo/src/minivideo_settings.h
+
+# QtCreator & other IDEs project files
+**/.qtcreator/
+**/.qtc_clangd/
+**/.vscode/
 
 # Doxygen documentation
 minivideo/doc/doxygen_temp/html/*
@@ -37,6 +32,4 @@ minivideo/doc/cppcheck_temp/
 
 # Others
 stash/*
-.qtc_clangd/*
-*/.qtc_clangd/*
 .DS_Store

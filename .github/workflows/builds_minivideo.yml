@@ -24,11 +24,11 @@ jobs:
   ## GNU/Linux build ###########################################################
   build-linux:
     name: "Linux CI build"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
-        uses: actions/checkout@v4
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -43,11 +43,11 @@ jobs:
   ## macOS build ###############################################################
   build-mac:
     name: "macOS CI build"
-    runs-on: macos-12
+    runs-on: macos-15
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
-        uses: actions/checkout@v4
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -64,9 +64,9 @@ jobs:
     name: "Windows CI build"
     runs-on: windows-2022
     steps:
-      # Checkout the repository
-      - name: Checkout repository and submodules
-        uses: actions/checkout@v4
+      # Checkout the repository (and submodules)
+      - name: Checkout repository (and submodules)
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 

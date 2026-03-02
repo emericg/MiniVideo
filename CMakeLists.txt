@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.10)
-project(MiniVideo framework)
+project(MiniVideoFramework VERSION 0.1)
 
 add_subdirectory(minivideo)
 add_subdirectory(mini_thumbnailer)

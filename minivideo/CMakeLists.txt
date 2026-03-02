@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 
-# MiniVideo "library" build system / CMake edition
-################################################################################
+project(minivideo LANGUAGES CXX)
 
-project(minivideo)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Version
+################################################################################
 
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 15)
@@ -16,22 +20,22 @@ set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINO
 option(BUILD_STATIC_LIBS "Build static library" ON)
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
-set(ENABLE_COLORS 1)            # Toggle colored terminal output
-set(ENABLE_MEMFD 1)             # Enable memfd support (for Linux kernels 3.17+)
+option(ENABLE_COLORS "Toggle colored terminal output" ON)
+option(ENABLE_MEMFD "Enable memfd support (for Linux kernels 3.17+)" ON)
 
-set(ENABLE_STB_IMAGE 1)         # Toggle internal stb_image library for bmp/png/tga/... import
-set(ENABLE_STB_IMAGE_WRITE 1)   # Toggle internal stb_image_write library for bmp/png/tga export
-set(ENABLE_PNG 0)               # Toggle external libpng support
-set(ENABLE_JPEG 0)              # Toggle external libjpeg support
-set(ENABLE_WEBP 0)              # Toggle external libwebp support
-set(ENABLE_AVIF 0)              # Toggle external libavif support
+option(ENABLE_STB_IMAGE "Toggle internal stb_image library for bmp/png/tga/... import" ON)
+option(ENABLE_STB_IMAGE_WRITE "Toggle internal stb_image_write library for bmp/png/tga export" ON)
+option(ENABLE_PNG "Toggle external libpng support" OFF)
+option(ENABLE_JPEG "Toggle external libjpeg support" OFF)
+option(ENABLE_WEBP "Toggle external libwebp support" OFF)
+option(ENABLE_AVIF "Toggle external libavif support" OFF)
 
 # Build dependencies
 ################################################################################
 
 # custom memfd module
 if(ENABLE_MEMFD)
-    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
     find_package(MemFD) # FindMemFD.cmake
 
     if(MEMFD_FOUND)
@@ -44,7 +48,7 @@ endif()
 
 # custom libavif module
 if(ENABLE_AVIF)
-    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
     find_package(AVIF) # FindAVIF.cmake
 
     if(AVIF_FOUND)
@@ -57,7 +61,7 @@ endif()
 
 # custom libwebp module
 if(ENABLE_WEBP)
-    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
     find_package(WebP) # FindWebP.cmake
 
     if(WEBP_FOUND)
@@ -103,10 +107,6 @@ endif()
 # Build configuration
 ################################################################################
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
 # Detect build type (default is "Release")
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -124,7 +124,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     message(STATUS "Building with Clang compiler")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-missing-field-initializers")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field  -Wno-missing-field-initializers")
     else()
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     endif()
@@ -138,7 +138,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     message(STATUS "Building with GCC compiler")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-missing-field-initializers")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field  -Wno-missing-field-initializers")
     else()
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
     endif()
@@ -196,8 +196,8 @@ endif()
 ################################################################################
 
 # Generate "minivideo_settings.h" file from a template
-configure_file("${CMAKE_SOURCE_DIR}/src/minivideo_settings.h.in"
-               "${CMAKE_SOURCE_DIR}/src/minivideo_settings.h")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h")
 
 # MiniVideo source code
 set(minivideo_SRC
@@ -302,7 +302,7 @@ if (BUILD_SHARED_LIBS)
         GENERATE_EXPORT_HEADER(minivideo_shared
                                BASE_NAME minivideo_shared
                                EXPORT_MACRO_NAME minivideo_EXPORT
-                               EXPORT_FILE_NAME "${CMAKE_SOURCE_DIR}/src/minivideo_export.h"
+                               EXPORT_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_export.h"
                                STATIC_DEFINE minivideo_BUILT_AS_STATIC)
     endif()
 endif (BUILD_SHARED_LIBS)
