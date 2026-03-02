@@ -26,9 +26,7 @@ message(STATUS "[PROJECT] QT_HOST_PATH              = ${QT_HOST_PATH}")
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Svg SvgWidgets PrintSupport)
 
-qt_standard_project_setup(REQUIRES 6.5
-                          I18N_SOURCE_LANGUAGE en
-                          I18N_TRANSLATED_LANGUAGES fr)
+qt_standard_project_setup(REQUIRES 6.5)
 
 add_compile_definitions(VERSION_STR="r${PROJECT_VERSION}")
 add_compile_definitions(QT_DEPRECATED_WARNINGS)
