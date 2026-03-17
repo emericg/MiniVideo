@@ -65,11 +65,7 @@ int CLI::printFile(const QString &file, bool details)
                 QString exportData;
                 status = textExport::generateExportData_text(*media, exportData, details);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                QTextStream(stdout) << exportData << endl;
-#else
                 QTextStream(stdout) << exportData << Qt::endl;
-#endif
             }
             else
             {

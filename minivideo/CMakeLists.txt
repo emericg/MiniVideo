@@ -2,20 +2,32 @@ cmake_minimum_required(VERSION 3.20)
 
 project(minivideo LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Version
-################################################################################
-
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 15)
 set(minivideo_VERSION_PATCH 0)
 set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
 
-# Build settings
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 ################################################################################
+
+message(STATUS "[CMAKE]   CMAKE_VERSION             = ${CMAKE_VERSION}")
+message(STATUS "[CMAKE]   CMAKE_PREFIX_PATH         = ${CMAKE_PREFIX_PATH}")
+message(STATUS "[SYSTEM]  (HOST) SYSTEM NAME        = ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "[SYSTEM]  (HOST) SYSTEM VERSION     = ${CMAKE_HOST_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM]  (HOST) SYSTEM PROCESSOR   = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+message(STATUS "[SYSTEM]  (TARGET) SYSTEM NAME      = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "[SYSTEM]  (TARGET) SYSTEM VERSION   = ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM]  (TARGET) SYSTEM PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "[PROJECT] CURRENT_SOURCE_DIR        = ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "[PROJECT] SOURCE_DIR                = ${CMAKE_SOURCE_DIR}")
+message(STATUS "[PROJECT] BUILD_TYPE                = ${CMAKE_BUILD_TYPE}")
+message(STATUS "[PROJECT] TOOLCHAIN_FILE            = ${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "[PROJECT] QT_HOST_PATH              = ${QT_HOST_PATH}")
+
+# Build settings ###############################################################
 
 option(BUILD_STATIC_LIBS "Build static library" ON)
 option(BUILD_SHARED_LIBS "Build shared library" ON)
@@ -30,8 +42,7 @@ option(ENABLE_JPEG "Toggle external libjpeg support" OFF)
 option(ENABLE_WEBP "Toggle external libwebp support" OFF)
 option(ENABLE_AVIF "Toggle external libavif support" OFF)
 
-# Build dependencies
-################################################################################
+# Build dependencies ###########################################################
 
 # custom memfd module
 if(ENABLE_MEMFD)
@@ -103,16 +114,14 @@ if(DOXYGEN_FOUND)
     message(STATUS "* Doxygen found, you can use it to generate a nice API documentation!")
 endif()
 
-
-# Build configuration
-################################################################################
+# Build configuration ##########################################################
 
 # Detect build type (default is "Release")
 # Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(ENABLE_DEBUG 1)
     set(CMAKE_VERBOSE_MAKEFILE on)
-    message(WARNING "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
+    message(STATUS "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
 else()
     set(ENABLE_DEBUG 0)
     message(STATUS "> This is a RELEASE build.")
@@ -150,9 +159,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 
 endif()
 
-
-# Platform specific build configuration
-################################################################################
+# Platform specific build configuration ########################################
 
 # Linux specific stuff
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -191,9 +198,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 endif()
 
-
-# Source files
-################################################################################
+# Source files #################################################################
 
 # Generate "minivideo_settings.h" file from a template
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h.in"
@@ -281,8 +286,7 @@ set(minivideo_PUBLIC_HEADERS
     #src/decoder/h266/h266_parameterset_struct.h
 )
 
-# Build
-################################################################################
+# Build ########################################################################
 
 # Third party libraries
 include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})

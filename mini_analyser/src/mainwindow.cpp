@@ -22,7 +22,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "utils.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -37,9 +36,7 @@
 #include <QUrl>
 #include <QMimeData>
 
-#include <iostream>
 #include <chrono>
-#include <cmath>
 
 /* ************************************************************************** */
 
@@ -137,10 +134,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
     // Check if the object dropped has an url (and is a file)
     if (e->mimeData()->hasUrls())
     {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-        // TODO Filter by MimeType or file extension
-        // Use QMimeDatabase // Qt 5.5
-#endif
+        // TODO // Use QMimeDatabase
+        // Filter by MimeType or file extension
 
         e->acceptProposedAction();
     }
