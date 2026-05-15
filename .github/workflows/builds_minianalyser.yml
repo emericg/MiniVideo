@@ -58,7 +58,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=build/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -66,7 +66,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMiniVideo_ROOT=../minivideo/build/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
 
       # Package application
@@ -126,14 +126,14 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=build/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DMiniVideo_ROOT=../minivideo/build/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
 
       # Package application
@@ -192,7 +192,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build . --config Release
 
       # Build application

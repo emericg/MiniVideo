@@ -51,6 +51,7 @@ option(USE_AVIF                 "Toggle external libavif support"               
 
 set(minivideo_SOURCES
     src/minivideo.cpp
+        src/minivideo_export.h
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
         src/minivideo_codecs.cpp src/minivideo_codecs_private_struct.h
@@ -65,12 +66,13 @@ set(minivideo_SOURCES
         src/thirdparty/stb_image_write.h
     src/demuxer/idr_filter.cpp
     src/demuxer/xml_mapper.cpp
-    src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp
-        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_stsd.cpp src/demuxer/mp4/mp4_esds.cpp src/demuxer/mp4/mp4_meta.cpp src/demuxer/mp4/mp4_picture.cpp src/demuxer/mp4/mp4_gopro.cpp
-        src/demuxer/mp4/mp4_virb.cpp src/demuxer/mp4/mp4_spatial.cpp src/demuxer/mp4/mp4_convert.cpp
+    src/demuxer/mp4/mp4_struct.h src/demuxer/mp4/mp4.cpp src/demuxer/mp4/mp4_box.cpp src/demuxer/mp4/mp4_convert.cpp
+        src/demuxer/mp4/mp4_stbl.cpp src/demuxer/mp4/mp4_stsd.cpp src/demuxer/mp4/mp4_esds.cpp src/demuxer/mp4/mp4_meta.cpp
+        src/demuxer/mp4/mp4_picture.cpp src/demuxer/mp4/mp4_gopro.cpp src/demuxer/mp4/mp4_virb.cpp
+        src/demuxer/mp4/mp4_spatial.cpp
     src/demuxer/mp3/mp3_struct.h src/demuxer/mp3/mp3.cpp
-    src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/mkv.cpp src/demuxer/mkv/ebml.cpp
-        src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp src/demuxer/mkv/mkv_convert.cpp
+    src/demuxer/mkv/mkv_struct.h src/demuxer/mkv/mkv.cpp src/demuxer/mkv/ebml.cpp src/demuxer/mkv/mkv_convert.cpp
+        src/demuxer/mkv/mkv_tracks.cpp src/demuxer/mkv/mkv_cluster.cpp src/demuxer/mkv/mkv_codec.cpp
     src/demuxer/esparser/esparser.cpp
     src/demuxer/mpeg/pes/pes_struct.h src/demuxer/mpeg/pes/pes.cpp
         src/demuxer/mpeg/descriptor_struct.h
@@ -116,14 +118,16 @@ set(minivideo_SOURCES
 
 set(minivideo_PUBLIC_HEADERS
     src/minivideo.h src/minivideo_export.h
-    src/minivideo_avutils.h
+    src/minivideo_settings.h src/minivideo_typedef.h # internals?
+    src/minivideo_avutils.h src/minivideo_codecs_private_struct.h
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
     src/bitstream.h src/bitstream_map.h
-    src/depacketizer/depack.h
-    src/minivideo_settings.h src/minivideo_typedef.h # internals?
-    src/minivideo_codecs_private_struct.h
+    src/depacketizer/depack.h src/depacketizer/depack_struct.h
+    src/decoder/h264/h264_parameterset_struct.h
+    src/decoder/h265/h265_parameterset_struct.h
+    src/decoder/h266/h266_parameterset_struct.h
 )
 
 # Internal settings file
@@ -132,7 +136,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h.in"
                @ONLY
 )
 
-# Includ our custom cmake module files
+# Include our custom cmake module files
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 # Public header handling #######################################################
@@ -141,23 +145,24 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 set(minivideo_PUBLIC_HEADERS_export "")
 
-foreach(HEADER ${minivideo_PUBLIC_HEADERS})
-    get_filename_component(HEADER_NAME "${HEADER}" NAME)
-    set(STAGED "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/${HEADER_NAME}")
+foreach(HEADER_SRC ${minivideo_PUBLIC_HEADERS})
+    file(RELATIVE_PATH HEADER_DST "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_SRC}")
+    set(STAGED "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/${HEADER_DST}")
+    get_filename_component(STAGED_DIR "${STAGED}" DIRECTORY)
 
     add_custom_command(OUTPUT  "${STAGED}"
+                       COMMAND  ${CMAKE_COMMAND} -E make_directory "${STAGED_DIR}"
                        COMMAND  ${CMAKE_COMMAND} -E copy_if_different
-                               "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER}"
+                               "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_SRC}"
                                "${STAGED}"
-                       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER}"
-                       COMMENT "Staging public header: ${HEADER_NAME}"
+                       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_SRC}"
+                       COMMENT "Staging public header: ${HEADER_DST}"
     )
 
     list(APPEND minivideo_PUBLIC_HEADERS_export "${STAGED}")
 endforeach()
 
 add_custom_target(minivideo_stage_headers DEPENDS ${minivideo_PUBLIC_HEADERS_export})
-
 
 # TARGET CONFIGURATION MACRO ###################################################
 
@@ -243,6 +248,8 @@ endif()
 # This must happen unconditionally so export() below always finds the set,
 # whether we are the top-level project or a subproject/submodule.
 
+include(GNUInstallDirs)
+
 set(INSTALL_TARGETS "")
 
 if(MINIVIDEO_BUILD_SHARED)
@@ -258,6 +265,9 @@ install(TARGETS ${INSTALL_TARGETS}
         LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
 
 # Export build-tree targets (used by super project, no install needed)
 export(EXPORT MiniVideoTargets
@@ -268,7 +278,6 @@ export(EXPORT MiniVideoTargets
 # Deployment steps (for installation) ##########################################
 
 if(MINIVIDEO_INSTALL)
-    include(GNUInstallDirs)
     include(CMakePackageConfigHelpers)
 
     # CMake package files
@@ -297,7 +306,7 @@ if(MINIVIDEO_INSTALL)
     )
 
     # Also install the Find*.cmake modules so consumers can reuse them
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo/modules"
     )
 

@@ -14,7 +14,7 @@ on:
 
 env:
   APP_NAME: "MiniVideo"
-  APP_VERSION: "0.14"
+  APP_VERSION: "0.15"
 
 #-------------------------------------------------------------------------------
 # Workflow jobs
@@ -32,13 +32,21 @@ jobs:
         with:
           submodules: recursive
 
+      # Setup env
+      - name: Setup env
+        run: |
+             echo "CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)" >> $GITHUB_ENV
+             qmake --version
+             cmake --version
+             ninja --version
+
       # Build library
       - name: Build library
         run: |
-             cd minivideo/build/
-             cmake --version
-             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             cmake --build . --config Release
+             cd minivideo/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
+             cmake --build build/ --config Release
+             cmake --install build/
 
   ## macOS build ###############################################################
   build-mac:
@@ -51,13 +59,21 @@ jobs:
         with:
           submodules: recursive
 
+      # Setup env
+      - name: Setup env
+        run: |
+             echo "CMAKE_BUILD_PARALLEL_LEVEL=`sysctl -n hw.logicalcpu`" >> $GITHUB_ENV
+             qmake --version
+             cmake --version
+             ninja --version
+
       # Build library
       - name: Build library
         run: |
-             cd minivideo/build/
-             cmake --version
-             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             cmake --build . --config Release
+             cd minivideo/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
+             cmake --build build/ --config Release
+             cmake --install build/
 
   ## Windows build #############################################################
   build-windows:
@@ -76,10 +92,16 @@ jobs:
         with:
           arch: x64
 
+      # Setup env
+      - name: Setup env
+        run: |
+             qmake --versions
+             cmake --version
+
       # Build library
       - name: Build library
         run: |
-             cd minivideo/build/
-             cmake --version
-             cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-             cmake --build . --config Release
+             cd minivideo/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
+             cmake --build build/ --config Release
+             cmake --install build/
