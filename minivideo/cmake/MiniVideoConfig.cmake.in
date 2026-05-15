@@ -1,9 +1,16 @@
 @PACKAGE_INIT@
 
-# Bring in the exported targets (MiniVideo::shared, MiniVideo::static, MiniVideo::MiniVideo)
 include("${CMAKE_CURRENT_LIST_DIR}/MiniVideoTargets.cmake")
 
-# Make the custom Find modules available to consumers
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
+# ALIAS targets can't be exported, so we recreate MiniVideo::MiniVideo here.
+# Prefer shared, fall back to static.
+if(TARGET MiniVideo::shared AND NOT TARGET MiniVideo::MiniVideo)
+    add_library(MiniVideo::MiniVideo ALIAS MiniVideo::shared)
+elseif(TARGET MiniVideo::static AND NOT TARGET MiniVideo::MiniVideo)
+    add_library(MiniVideo::MiniVideo ALIAS MiniVideo::static)
+else()
+    message(FATAL_ERROR "MiniVideo: neither MiniVideo::shared nor MiniVideo::static was found in MiniVideoTargets.cmake")
+endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
 check_required_components(MiniVideo)
