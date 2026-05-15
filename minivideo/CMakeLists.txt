@@ -82,7 +82,7 @@ set(minivideo_SOURCES
     src/demuxer/asf/asf_struct.h src/demuxer/asf/asf.cpp src/demuxer/asf/asf_object.cpp src/demuxer/asf/asf_convert.cpp
     src/muxer/muxer.cpp
         src/muxer/pes_packetizer.cpp
-    src/depacketizer/depack_struct.h src/depacketizer/depack.cpp
+    src/depacketizer/depack_struct.h src/depacketizer/depack.h src/depacketizer/depack.cpp
         src/depacketizer/h264/depack_h264.cpp
         src/depacketizer/h265/depack_h265.cpp
         src/depacketizer/h266/depack_h266.cpp
@@ -254,3 +254,50 @@ export(EXPORT MiniVideoTargets
        FILE      "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoTargets.cmake"
        NAMESPACE MiniVideo::
 )
+
+# Deployment steps (for installation) ##########################################
+
+if(MINIVIDEO_INSTALL)
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
+
+    # CMake package files
+    install(EXPORT MiniVideoTargets
+            FILE MiniVideoTargets.cmake
+            NAMESPACE MiniVideo::
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
+    )
+
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
+        VERSION          ${PROJECT_VERSION}
+        COMPATIBILITY    SameMajorVersion
+    )
+
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/MiniVideoConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
+    )
+
+    install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
+    )
+
+    # Also install the Find*.cmake modules so consumers can reuse them
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo/modules"
+    )
+
+    # pkg-config
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc"
+        @ONLY
+    )
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    )
+endif()
