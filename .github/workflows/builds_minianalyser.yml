@@ -126,7 +126,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=build/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=build/
              cmake --build build/ --config Release
 
       # Build application

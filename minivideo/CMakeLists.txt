@@ -203,10 +203,12 @@ if(MINIVIDEO_BUILD_SHARED)
 
     # libminivideo.so / libminivideo.dll
     set_target_properties(minivideo_shared PROPERTIES
-                          OUTPUT_NAME   minivideo
-                          VERSION       ${PROJECT_VERSION}
-                          SOVERSION     ${PROJECT_VERSION_MAJOR}
-                          POSITION_INDEPENDENT_CODE ON)
+                          OUTPUT_NAME minivideo
+                          VERSION ${PROJECT_VERSION}
+                          SOVERSION ${PROJECT_VERSION_MAJOR}
+                          EXPORT_NAME shared
+                          POSITION_INDEPENDENT_CODE ON
+    )
 
     target_compile_definitions(minivideo_shared PRIVATE MINIVIDEO_SHARED_BUILD)
     minivideo_configure_target(minivideo_shared)
@@ -226,7 +228,10 @@ if(MINIVIDEO_BUILD_STATIC)
     #add_library(MiniVideo::MiniVideo ALIAS minivideo_static) # FIXME can't be the same as the shared target
 
     # libminivideo.a
-    set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
+    set_target_properties(minivideo_static PROPERTIES
+                          OUTPUT_NAME minivideo
+                          EXPORT_NAME static
+    )
 
     target_compile_definitions(minivideo_static PRIVATE MINIVIDEO_STATIC_BUILD)
     minivideo_configure_target(minivideo_static)
