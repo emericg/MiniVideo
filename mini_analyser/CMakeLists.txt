@@ -190,7 +190,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Svg
         Qt6::SvgWidgets
         Qt6::PrintSupport
-        MiniVideo::MiniVideo
+        minivideo_shared
         pugixml
         qhexedit
         QHexView

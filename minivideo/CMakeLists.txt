@@ -187,6 +187,11 @@ macro(minivideo_configure_target TARGET_NAME)
     if(UNIX)
         target_link_libraries(${TARGET_NAME} PRIVATE m)
     endif()
+
+    # Math defines on Windows
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        add_definitions(-D_USE_MATH_DEFINES)
+    endif()
 endmacro()
 
 # SHARED TARGET ################################################################
