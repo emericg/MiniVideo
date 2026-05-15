@@ -26,8 +26,8 @@
 
 #include "mediawrapper.h"
 
-// MiniVideo
-#include "minivideo_mediafile.h"
+// MiniVideo library
+#include <minivideo/minivideo_mediafile.h>
 
 // pugixml
 #include "thirdparty/pugixml/pugixml.hpp"

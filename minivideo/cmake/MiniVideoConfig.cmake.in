@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+# Bring in the exported targets (MiniVideo::shared, MiniVideo::static, MiniVideo::MiniVideo)
+include("${CMAKE_CURRENT_LIST_DIR}/MiniVideoTargets.cmake")
+
+# Make the custom Find modules available to consumers
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/modules")
+
+check_required_components(MiniVideo)

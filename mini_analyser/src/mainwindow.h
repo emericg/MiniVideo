@@ -24,8 +24,8 @@
 #define MAINWINDOW_H
 /* ************************************************************************** */
 
-// minivideo library
-#include <minivideo.h>
+// MiniVideo library
+#include <minivideo/minivideo.h>
 
 // minianalyser
 #include "mediawrapper.h"

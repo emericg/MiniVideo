@@ -24,8 +24,8 @@
 #define TABEXPORT_H
 /* ************************************************************************** */
 
-// minivideo library
-#include "minivideo_mediafile.h"
+// MiniVideo library
+#include <minivideo/minivideo_mediafile.h>
 
 #include "mediawrapper.h"
 

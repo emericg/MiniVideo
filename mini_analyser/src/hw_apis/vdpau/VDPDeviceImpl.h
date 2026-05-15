@@ -3,6 +3,9 @@
 
 #include <cassert>
 
+#include <vdpau/vdpau.h>
+#include <vdpau/vdpau_x11.h>
+
 struct VDPDeviceImpl
 {
     VDPDeviceImpl(VdpDevice dev, VdpGetProcAddress *get_proc_address);

@@ -24,7 +24,8 @@
  */
 
 #include "videobackends_vdpau.h"
-#include <minivideo_codecs.h>
+
+#include <minivideo/minivideo_codecs.h>
 
 #include <cstdlib>
 #include <cstdio>

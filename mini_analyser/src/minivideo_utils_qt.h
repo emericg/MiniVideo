@@ -24,8 +24,9 @@
 #define MINIVIDEO_UTILS_QT_H
 /* ************************************************************************** */
 
-#include <minivideo_mediastream.h>
-#include <minivideo_containers.h>
+// MiniVideo library
+#include <minivideo/minivideo_mediastream.h>
+#include <minivideo/minivideo_containers.h>
 
 #include <cstdint>
 

@@ -15,7 +15,7 @@ on:
 env:
   APP_NAME: "mini_analyser"
   APP_VERSION: "50"
-  QT_VERSION: "6.5.3"
+  QT_VERSION: "6.8.3"
 
 #-------------------------------------------------------------------------------
 # Workflow jobs
@@ -85,10 +85,11 @@ jobs:
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
           path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
+          archive: false
 
   ## macOS build ###############################################################
   build-mac:
@@ -143,10 +144,11 @@ jobs:
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip
           path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip
+          archive: false
 
   ## Windows build #############################################################
   build-windows:
@@ -210,7 +212,8 @@ jobs:
 
       # Upload application
       - name: Upload application
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip
           path: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip
+          archive: false

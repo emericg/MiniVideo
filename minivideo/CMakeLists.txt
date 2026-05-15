@@ -1,211 +1,55 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(minivideo LANGUAGES CXX)
+project(MiniVideo VERSION 0.15 LANGUAGES CXX C)
 
 set(minivideo_VERSION_MAJOR 0)
 set(minivideo_VERSION_MINOR 15)
 set(minivideo_VERSION_PATCH 0)
 set(minivideo_VERSION_STRING ${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}.${minivideo_VERSION_PATCH})
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ################################################################################
 
-message(STATUS "[CMAKE]   CMAKE_VERSION             = ${CMAKE_VERSION}")
-message(STATUS "[CMAKE]   CMAKE_PREFIX_PATH         = ${CMAKE_PREFIX_PATH}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM NAME        = ${CMAKE_HOST_SYSTEM_NAME}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM VERSION     = ${CMAKE_HOST_SYSTEM_VERSION}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM PROCESSOR   = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM NAME      = ${CMAKE_SYSTEM_NAME}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM VERSION   = ${CMAKE_SYSTEM_VERSION}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS ">>> BUILDING ${PROJECT_NAME} >>>")
+message(STATUS "[CMAKE] CMAKE_VERSION               = ${CMAKE_VERSION}")
+message(STATUS "[CMAKE] CMAKE_PREFIX_PATH           = ${CMAKE_PREFIX_PATH}")
+message(STATUS "[BUILD] QT_HOST_PATH                = ${QT_HOST_PATH}")
+message(STATUS "[BUILD] TOOLCHAIN_FILE              = ${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM NAME         = ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM VERSION      = ${CMAKE_HOST_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM PROCESSOR    = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM NAME       = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM VERSION    = ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM PROCESSOR  = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "[PROJECT] CMAKE_PROJECT_NAME        = ${PROJECT_NAME}")
 message(STATUS "[PROJECT] CURRENT_SOURCE_DIR        = ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "[PROJECT] PROJECT_NAME              = ${CMAKE_PROJECT_NAME}")
 message(STATUS "[PROJECT] SOURCE_DIR                = ${CMAKE_SOURCE_DIR}")
 message(STATUS "[PROJECT] BUILD_TYPE                = ${CMAKE_BUILD_TYPE}")
-message(STATUS "[PROJECT] TOOLCHAIN_FILE            = ${CMAKE_TOOLCHAIN_FILE}")
-message(STATUS "[PROJECT] QT_HOST_PATH              = ${QT_HOST_PATH}")
 
-# Build settings ###############################################################
+# Build options ################################################################
 
-option(BUILD_STATIC_LIBS "Build static library" ON)
-option(BUILD_SHARED_LIBS "Build shared library" ON)
+option(MINIVIDEO_BUILD_SHARED   "Build shared library"                          ON)
+option(MINIVIDEO_BUILD_STATIC   "Build static library"                          ON)
+option(MINIVIDEO_INSTALL        "Generate install targets"                      ON)
 
-option(ENABLE_COLORS "Toggle colored terminal output" ON)
-option(ENABLE_MEMFD "Enable memfd support (for Linux kernels 3.17+)" ON)
+option(USE_COLORS               "Toggle colored terminal output"                ON)
+option(USE_MEMFD                "Enable memfd support (for Linux kernels)"      ON)
 
-option(ENABLE_STB_IMAGE "Toggle internal stb_image library for bmp/png/tga/... import" ON)
-option(ENABLE_STB_IMAGE_WRITE "Toggle internal stb_image_write library for bmp/png/tga export" ON)
-option(ENABLE_PNG "Toggle external libpng support" OFF)
-option(ENABLE_JPEG "Toggle external libjpeg support" OFF)
-option(ENABLE_WEBP "Toggle external libwebp support" OFF)
-option(ENABLE_AVIF "Toggle external libavif support" OFF)
+option(USE_STB_IMAGE            "Toggle internal stb_image library for bmp/png/tga/... import" OFF)
+option(USE_STB_IMAGE_WRITE      "Toggle internal stb_image_write library for bmp/png/tga export" ON)
+option(USE_PNG                  "Toggle external libpng support"                OFF)
+option(USE_JPEG                 "Toggle external libjpeg support"               OFF)
+option(USE_JPEGXL               "Toggle external libjpeg support"               OFF)
+option(USE_WEBP                 "Toggle external libwebp support"               OFF)
+option(USE_AVIF                 "Toggle external libavif support"               OFF)
 
-# Build dependencies ###########################################################
+# Project files ################################################################
 
-# custom memfd module
-if(ENABLE_MEMFD)
-    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-    find_package(MemFD) # FindMemFD.cmake
-
-    if(MEMFD_FOUND)
-        message(STATUS "* memfd enabled")
-    else()
-        message(WARNING "> memfd not found! Disabling MEMFD support.")
-        set(ENABLE_MEMFD 0)
-    endif()
-endif()
-
-# custom libavif module
-if(ENABLE_AVIF)
-    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-    find_package(AVIF) # FindAVIF.cmake
-
-    if(AVIF_FOUND)
-        message(STATUS "* libavif enabled")
-    else()
-        message(WARNING "> libavif not found! Disabling AVIF support.")
-        set(ENABLE_AVIF 0)
-    endif()
-endif()
-
-# custom libwebp module
-if(ENABLE_WEBP)
-    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
-    find_package(WebP) # FindWebP.cmake
-
-    if(WEBP_FOUND)
-        message(STATUS "* libwebp enabled")
-    else()
-        message(WARNING "> libwebp not found! Disabling WEBP support.")
-        set(ENABLE_WEBP 0)
-    endif()
-endif()
-
-# libjpeg module
-if(ENABLE_JPEG)
-    find_package(JPEG) # FindJPEG.cmake
-
-    if(JPEG_FOUND)
-        message(STATUS "* libjpeg enabled")
-    else()
-        message(WARNING "> libjpeg not found! Disabling JPEG support.")
-        set(ENABLE_JPEG 0)
-    endif()
-endif()
-
-# libpng module
-if(ENABLE_PNG)
-    find_package(PNG) # FindPNG.cmake
-
-    if(PNG_FOUND)
-        message(STATUS "* libpng enabled")
-    else()
-        message(WARNING "> libpng not found! Disabling external PNG support. 'stb_image_write' library will still provide PNG export.")
-        set(ENABLE_PNG 0)
-    endif()
-endif()
-
-# Doxygen OPTIONAL module
-#find_package(Doxygen) # FindDoxygen.cmake
-
-if(DOXYGEN_FOUND)
-    message(STATUS "* Doxygen found, you can use it to generate a nice API documentation!")
-endif()
-
-# Build configuration ##########################################################
-
-# Detect build type (default is "Release")
-# Change it using "-DCMAKE_BUILD_TYPE= Debug / Release / RelWithDebInfo / MinSizeRel"
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(ENABLE_DEBUG 1)
-    set(CMAKE_VERBOSE_MAKEFILE on)
-    message(STATUS "> This is a DEBUG build. You can change this using -DCMAKE_BUILD_TYPE=Release")
-else()
-    set(ENABLE_DEBUG 0)
-    message(STATUS "> This is a RELEASE build.")
-endif()
-
-# Add per-compiler custom rules
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-
-    message(STATUS "Building with Clang compiler")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field  -Wno-missing-field-initializers")
-    else()
-        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
-    endif()
-
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-
-    message(STATUS "Building with Intel C++ compiler")
-
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-
-    message(STATUS "Building with GCC compiler")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-private-field  -Wno-missing-field-initializers")
-    else()
-        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2")
-    endif()
-
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
-
-    message(STATUS "Building with Visual Studio C++ compiler")
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
-endif()
-
-# Platform specific build configuration ########################################
-
-# Linux specific stuff
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
-    message(STATUS "Building on Linux plateform")
-    add_definitions(-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-z,now -Wl,-z,relro")
-
-endif()
-
-# macOS specific stuff
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
-    message(STATUS "Building on macOS plateform")
-    add_definitions(-D_GNU_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
-
-endif()
-
-# Windows specific stuff
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-
-    message(STATUS "Building on Windows plateform")
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES)
-
-    # Turn on the ability to create folders to organize projects (.vcproj)
-    # It creates "CMakePredefinedTargets" folder by default and adds CMake
-    # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-    include(GenerateExportHeader)
-
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm -Wl,-no-undefined -Wl,--enable-runtime-pseudo-reloc")
-
-endif()
-
-# Source files #################################################################
-
-# Generate "minivideo_settings.h" file from a template
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h")
-
-# MiniVideo source code
-set(minivideo_SRC
+set(minivideo_SOURCES
     src/minivideo.cpp
         src/minivideo_settings.h src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
@@ -270,79 +114,143 @@ set(minivideo_SRC
         src/decoder/h266/h266_parameterset_struct.h
 )
 
-include_directories(src/)
-
-# MiniVideo public headers
 set(minivideo_PUBLIC_HEADERS
     src/minivideo.h src/minivideo_export.h
     src/minivideo_avutils.h
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
     src/minivideo_mediafile.h src/minivideo_mediastream.h src/minivideo_metadata_vendors.h
+    src/bitstream.h src/bitstream_map.h
+    src/depacketizer/depack.h
     src/minivideo_settings.h src/minivideo_typedef.h # internals?
     src/minivideo_codecs_private_struct.h
-    #src/decoder/h264/h264_parameterset_struct.h
-    #src/decoder/h265/h265_parameterset_struct.h
-    #src/decoder/h266/h266_parameterset_struct.h
 )
 
-# Build ########################################################################
+# Internal settings file
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_settings.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_settings.h"
+               @ONLY
+)
 
-# Third party libraries
-include_directories(${WEBP_INCLUDE_DIR} ${JPEG_INCLUDE_DIR} ${PNG_INCLUDE_DIR})
-set(EXTRA_LIBS ${WEBP_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY})
+# Includ our custom cmake module files
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
-# Build library
-if (BUILD_SHARED_LIBS)
+# Public header handling #######################################################
 
-    message("** Building shared library")
-    add_library(minivideo_shared SHARED ${minivideo_SRC})
-    target_link_libraries(minivideo_shared ${EXTRA_LIBS})
-    set_target_properties(minivideo_shared PROPERTIES OUTPUT_NAME minivideo)
-    set_target_properties(minivideo_shared PROPERTIES VERSION ${minivideo_VERSION_STRING} SOVERSION ${minivideo_VERSION_MAJOR})
+# Selected headers are put in a common directory, exported as <minivideo/minivideo.h>
 
-    if(WIN32)
-        message("* Generating symbols export header")
-        GENERATE_EXPORT_HEADER(minivideo_shared
-                               BASE_NAME minivideo_shared
-                               EXPORT_MACRO_NAME minivideo_EXPORT
-                               EXPORT_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/src/minivideo_export.h"
-                               STATIC_DEFINE minivideo_BUILT_AS_STATIC)
+set(minivideo_PUBLIC_HEADERS_export "")
+
+foreach(HEADER ${minivideo_PUBLIC_HEADERS})
+    get_filename_component(HEADER_NAME "${HEADER}" NAME)
+    set(STAGED "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/${HEADER_NAME}")
+
+    add_custom_command(OUTPUT  "${STAGED}"
+                       COMMAND  ${CMAKE_COMMAND} -E copy_if_different
+                               "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER}"
+                               "${STAGED}"
+                       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${HEADER}"
+                       COMMENT "Staging public header: ${HEADER_NAME}"
+    )
+
+    list(APPEND minivideo_PUBLIC_HEADERS_export "${STAGED}")
+endforeach()
+
+add_custom_target(minivideo_stage_headers DEPENDS ${minivideo_PUBLIC_HEADERS_export})
+
+
+# TARGET CONFIGURATION MACRO ###################################################
+
+macro(minivideo_configure_target TARGET_NAME)
+    # Private: src/ for internal includes
+    target_include_directories(${TARGET_NAME} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    )
+
+    # Public: staged build-dir structure → consumers get <minivideo/foo.h>
+    target_include_directories(${TARGET_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+
+    # Ensure headers are staged before this target compiles
+    add_dependencies(${TARGET_NAME} minivideo_stage_headers)
+
+    # Build-tree vs install-tree include paths
+    target_include_directories(${TARGET_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src> # for generated settings.h
+        $<INSTALL_INTERFACE:include/minivideo>
+    )
+
+    # Math lib on Linux/Unix
+    if(UNIX)
+        target_link_libraries(${TARGET_NAME} PRIVATE m)
     endif()
-endif (BUILD_SHARED_LIBS)
+endmacro()
 
-if (BUILD_STATIC_LIBS)
-    message("** Building static library")
-    add_library(minivideo_static STATIC ${minivideo_SRC})
-    target_link_libraries(minivideo_static ${EXTRA_LIBS})
+# SHARED TARGET ################################################################
+
+if(MINIVIDEO_BUILD_SHARED)
+    add_library(minivideo_shared SHARED ${minivideo_SOURCES})
+    add_library(MiniVideo::shared ALIAS minivideo_shared)
+    add_library(MiniVideo::MiniVideo ALIAS minivideo_shared)
+
+    # libminivideo.so / libminivideo.dll
+    set_target_properties(minivideo_shared PROPERTIES
+                          OUTPUT_NAME   minivideo
+                          VERSION       ${PROJECT_VERSION}
+                          SOVERSION     ${PROJECT_VERSION_MAJOR}
+                          POSITION_INDEPENDENT_CODE ON)
+
+    target_compile_definitions(minivideo_shared PRIVATE MINIVIDEO_SHARED_BUILD)
+    minivideo_configure_target(minivideo_shared)
+
+    # Generate export header (handles dllexport/dllimport on Windows)
+    include(GenerateExportHeader)
+    generate_export_header(minivideo_shared
+                           BASE_NAME MINIVIDEO
+                           EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_export.h")
+endif()
+
+# STATIC TARGET ################################################################
+
+if(MINIVIDEO_BUILD_STATIC)
+    add_library(minivideo_static STATIC ${minivideo_SOURCES})
+    add_library(MiniVideo::static ALIAS minivideo_static)
+    #add_library(MiniVideo::MiniVideo ALIAS minivideo_static) # FIXME can't be the same as the shared target
+
+    # libminivideo.a
     set_target_properties(minivideo_static PROPERTIES OUTPUT_NAME minivideo)
-    set_target_properties(minivideo_static PROPERTIES VERSION ${minivideo_VERSION_STRING} SOVERSION ${minivideo_VERSION_MAJOR})
-endif (BUILD_STATIC_LIBS)
 
+    target_compile_definitions(minivideo_static PRIVATE MINIVIDEO_STATIC_BUILD)
+    minivideo_configure_target(minivideo_static)
+endif()
 
-# Deployment (optional step, requires root credentials, relative to CMAKE_INSTALL_PREFIX)
-################################################################################
+# Deployment steps #############################################################
 
-# pkg-config integration
-set(PROJECT_VERSION "${minivideo_VERSION_MAJOR}.${minivideo_VERSION_MINOR}")
-set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name")
-set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix for executables and object code libraries" FORCE)
-set(BIN_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/bin CACHE PATH "Installation prefix for user executables" FORCE)
-set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH "Installation prefix for object code libraries" FORCE)
-set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/minivideo CACHE PATH "Installation prefix for header files" FORCE)
-configure_file(libminivideo.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc)
+# Register targets into the export set
+# This must happen unconditionally so export() below always finds the set,
+# whether we are the top-level project or a subproject/submodule.
 
-# Install pkgconfig file
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc DESTINATION lib/pkgconfig/)
+set(INSTALL_TARGETS "")
 
-# Install the library into the system
-if (BUILD_SHARED_LIBS)
-    install(TARGETS minivideo_shared DESTINATION lib/)
-endif (BUILD_SHARED_LIBS)
-if (BUILD_STATIC_LIBS)
-    install(TARGETS minivideo_static DESTINATION lib/)
-endif (BUILD_STATIC_LIBS)
+if(MINIVIDEO_BUILD_SHARED)
+    list(APPEND INSTALL_TARGETS minivideo_shared)
+endif()
+if(MINIVIDEO_BUILD_STATIC)
+    list(APPEND INSTALL_TARGETS minivideo_static)
+endif()
 
-# Install headers
-install(FILES ${minivideo_PUBLIC_HEADERS} DESTINATION include/minivideo/)
-install(DIRECTORY src/decoder/ DESTINATION include/minivideo/decoder/ FILES_MATCHING PATTERN "*_parameterset_struct.h")
+install(TARGETS ${INSTALL_TARGETS}
+        EXPORT   MiniVideoTargets # populates the export set, always
+        ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Export build-tree targets (used by super project, no install needed)
+export(EXPORT MiniVideoTargets
+       FILE      "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoTargets.cmake"
+       NAMESPACE MiniVideo::
+)

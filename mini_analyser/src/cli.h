@@ -24,8 +24,8 @@
 #define CLI_H
 /* ************************************************************************** */
 
-// minivideo library
-#include <minivideo.h>
+// MiniVideo library
+#include <minivideo/minivideo.h>
 
 #include <QString>
 

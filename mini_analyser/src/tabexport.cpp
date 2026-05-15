@@ -28,7 +28,6 @@
 
 // mini_analyser
 #include "minivideo_textexport_qt.h"
-#include "minivideo_utils_qt.h"
 
 #include <QMessageBox>
 #include <QFontDatabase>

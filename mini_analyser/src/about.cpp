@@ -23,7 +23,8 @@
 #include "about.h"
 #include "ui_about.h"
 
-#include "minivideo.h"
+// minivideo library
+#include <minivideo.h>
 
 #include <QFile>
 #include <QTextStream>

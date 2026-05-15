@@ -41,7 +41,7 @@
     //
 #endif
 
-#include "minivideo_codecs.h"
+#include <minivideo/minivideo_codecs.h>
 
 VideoBackendsUI::VideoBackendsUI(QWidget *parent) :
     QWidget(parent),

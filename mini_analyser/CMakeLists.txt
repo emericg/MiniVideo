@@ -11,33 +11,32 @@ set(CMAKE_AUTORCC ON)
 
 ################################################################################
 
-message(STATUS "[CMAKE]   CMAKE_VERSION             = ${CMAKE_VERSION}")
-message(STATUS "[CMAKE]   CMAKE_PREFIX_PATH         = ${CMAKE_PREFIX_PATH}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM NAME        = ${CMAKE_HOST_SYSTEM_NAME}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM VERSION     = ${CMAKE_HOST_SYSTEM_VERSION}")
-message(STATUS "[SYSTEM]  (HOST) SYSTEM PROCESSOR   = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM NAME      = ${CMAKE_SYSTEM_NAME}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM VERSION   = ${CMAKE_SYSTEM_VERSION}")
-message(STATUS "[SYSTEM]  (TARGET) SYSTEM PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS ">>> BUILDING ${PROJECT_NAME} >>>")
+message(STATUS "[CMAKE] CMAKE_VERSION               = ${CMAKE_VERSION}")
+message(STATUS "[CMAKE] CMAKE_PREFIX_PATH           = ${CMAKE_PREFIX_PATH}")
+message(STATUS "[BUILD] QT_HOST_PATH                = ${QT_HOST_PATH}")
+message(STATUS "[BUILD] TOOLCHAIN_FILE              = ${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM NAME         = ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM VERSION      = ${CMAKE_HOST_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM] (HOST) SYSTEM PROCESSOR    = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM NAME       = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM VERSION    = ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "[SYSTEM] (TARGET) SYSTEM PROCESSOR  = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "[PROJECT] CMAKE_PROJECT_NAME        = ${PROJECT_NAME}")
 message(STATUS "[PROJECT] CURRENT_SOURCE_DIR        = ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "[PROJECT] PROJECT_NAME              = ${CMAKE_PROJECT_NAME}")
 message(STATUS "[PROJECT] SOURCE_DIR                = ${CMAKE_SOURCE_DIR}")
 message(STATUS "[PROJECT] BUILD_TYPE                = ${CMAKE_BUILD_TYPE}")
-message(STATUS "[PROJECT] TOOLCHAIN_FILE            = ${CMAKE_TOOLCHAIN_FILE}")
-message(STATUS "[PROJECT] QT_HOST_PATH              = ${QT_HOST_PATH}")
 
 ################################################################################
+
+set(OpenGL_GL_PREFERENCE GLVND) # CMake policy CMP0072
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Svg SvgWidgets PrintSupport)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
 add_compile_definitions(VERSION_STR="r${PROJECT_VERSION}")
-add_compile_definitions(QT_DEPRECATED_WARNINGS)
-
-# Release flags
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_compile_definitions(NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT)
-endif()
 
 set(SOURCES
     src/main.cpp
@@ -87,10 +86,16 @@ set(RESOURCES
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ui)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ui)
+
+################################################################################
+
+# Release flags
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT)
+endif()
 
 # --------------------------------------------------
 # Optional Linux video backends
@@ -145,30 +150,6 @@ if(APPLE)
 endif()
 
 # --------------------------------------------------
-# Third-party includes (from .pri files)
-# --------------------------------------------------
-add_subdirectory(thirdparty/pugixml)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE pugixml)
-
-add_subdirectory(thirdparty/QHexView)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QHexView)
-
-add_subdirectory(thirdparty/qhexedit2)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE qhexedit2)
-
-add_subdirectory(thirdparty/qcustomplot)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE qcustomplot)
-
-# --------------------------------------------------
-# minivideo dependency
-# --------------------------------------------------
-
-set(MINIVIDEO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../minivideo")
-
-include_directories(${MINIVIDEO_ROOT}/src)
-link_directories(${MINIVIDEO_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR})
-
-# --------------------------------------------------
 # Target
 # --------------------------------------------------
 qt_add_executable(${PROJECT_NAME}
@@ -178,6 +159,30 @@ qt_add_executable(${PROJECT_NAME}
     ${RESOURCES}
 )
 
+# --------------------------------------------------
+# minivideo dependency
+# --------------------------------------------------
+
+if(NOT TARGET MiniVideo::MiniVideo)
+    find_package(MiniVideo REQUIRED)
+endif()
+
+# --------------------------------------------------
+# Third-party includes (from .pri files)
+# --------------------------------------------------
+
+add_subdirectory(thirdparty/pugixml)
+#target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
+
+add_subdirectory(thirdparty/QHexView)
+#target_link_libraries(${PROJECT_NAME} PRIVATE QHexView)
+
+add_subdirectory(thirdparty/qhexedit2)
+#target_link_libraries(${PROJECT_NAME} PRIVATE qhexedit2)
+
+add_subdirectory(thirdparty/qcustomplot)
+#target_link_libraries(${PROJECT_NAME} PRIVATE qcustomplot)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Core
         Qt6::Gui
@@ -185,13 +190,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Svg
         Qt6::SvgWidgets
         Qt6::PrintSupport
-        minivideo
+        MiniVideo::MiniVideo
         pugixml
         qhexedit
         QHexView
         qcustomplot
         ${EXTRA_LIBS}
 )
+
+################################################################################
 
 # --------------------------------------------------
 # Output directory
