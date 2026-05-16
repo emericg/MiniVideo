@@ -93,43 +93,46 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
-################################################################################
+qt_add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    ${HEADERS}
+    ${FORMS}
+    ${RESOURCES}
+)
 
-# Release flags
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_compile_definitions(NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT)
-endif()
+#target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE src/)
+#target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE thirdparty/)
+
+################################################################################
 
 # --------------------------------------------------
 # Optional Linux video backends
 # --------------------------------------------------
 if(UNIX AND NOT APPLE)
 
-    add_compile_options(-fPIE -Wall -Wextra)
-
     # VAAPI
-    if(EXISTS "/usr/lib/libva.so")
-        add_compile_definitions(VIDEOBACKEND_VAAPI)
-        list(APPEND SOURCES src/hw_apis/videobackends_vaapi.cpp)
-        list(APPEND HEADERS src/hw_apis/videobackends_vaapi.h)
-        list(APPEND EXTRA_LIBS va va-drm va-x11 X11)
-    endif()
+    #if(EXISTS "/usr/lib/libva.so")
+    #    add_compile_definitions(VIDEOBACKEND_VAAPI)
+    #    list(APPEND SOURCES src/hw_apis/videobackends_vaapi.cpp)
+    #    list(APPEND HEADERS src/hw_apis/videobackends_vaapi.h)
+    #    list(APPEND EXTRA_LIBS va va-drm va-x11 X11)
+    #endif()
 
-    # VDPAU
-    if(EXISTS "/usr/lib/libvdpau.so")
-        add_compile_definitions(VIDEOBACKEND_VDPAU)
-        list(APPEND SOURCES src/hw_apis/videobackends_vdpau.cpp)
-        list(APPEND HEADERS
-            src/hw_apis/videobackends_vdpau.h
-            src/hw_apis/vdpau/VDPDeviceImpl.h
-        )
-        list(APPEND EXTRA_LIBS vdpau X11)
-    endif()
+    ## VDPAU
+    #if(EXISTS "/usr/lib/libvdpau.so")
+    #    add_compile_definitions(VIDEOBACKEND_VDPAU)
+    #    list(APPEND SOURCES src/hw_apis/videobackends_vdpau.cpp)
+    #    list(APPEND HEADERS
+    #        src/hw_apis/videobackends_vdpau.h
+    #        src/hw_apis/vdpau/VDPDeviceImpl.h
+    #    )
+    #    list(APPEND EXTRA_LIBS vdpau X11)
+    #endif()
 
 endif()
 
 # --------------------------------------------------
-# macOS specifics
+# macOS specifics video backends
 # --------------------------------------------------
 if(APPLE)
 
@@ -148,19 +151,9 @@ if(APPLE)
     #    src/hw_apis/videobackends_vtb.h
     #)
 
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-
 endif()
 
-# --------------------------------------------------
-# Target
-# --------------------------------------------------
-qt_add_executable(${PROJECT_NAME}
-    ${SOURCES}
-    ${HEADERS}
-    ${FORMS}
-    ${RESOURCES}
-)
+#target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTRA_LIBS})
 
 # --------------------------------------------------
 # minivideo dependency
@@ -169,22 +162,27 @@ qt_add_executable(${PROJECT_NAME}
 if(NOT TARGET MiniVideo::MiniVideo)
     find_package(MiniVideo REQUIRED)
 endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE MiniVideo::MiniVideo)
 
 # --------------------------------------------------
-# Third-party includes (from .pri files)
+# Third-party libraries
 # --------------------------------------------------
 
 add_subdirectory(thirdparty/pugixml)
-#target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
+target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
 
 add_subdirectory(thirdparty/QHexView)
-#target_link_libraries(${PROJECT_NAME} PRIVATE QHexView)
+target_link_libraries(${PROJECT_NAME} PRIVATE QHexView)
 
 add_subdirectory(thirdparty/qhexedit2)
-#target_link_libraries(${PROJECT_NAME} PRIVATE qhexedit2)
+target_link_libraries(${PROJECT_NAME} PRIVATE qhexedit)
 
 add_subdirectory(thirdparty/qcustomplot)
-#target_link_libraries(${PROJECT_NAME} PRIVATE qcustomplot)
+target_link_libraries(${PROJECT_NAME} PRIVATE qcustomplot)
+
+# --------------------------------------------------
+# Qt libraries
+# --------------------------------------------------
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Core
@@ -193,52 +191,25 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Svg
         Qt6::SvgWidgets
         Qt6::PrintSupport
-        MiniVideo::MiniVideo
-        pugixml
-        qhexedit
-        QHexView
-        qcustomplot
         ${EXTRA_LIBS}
 )
 
 ################################################################################
 
-# --------------------------------------------------
-# Output directory
-# --------------------------------------------------
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-)
-
-# --------------------------------------------------
-# Windows specifics
-# --------------------------------------------------
-if(WIN32)
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        /MP /Zc:__cplusplus /permissive-
+# Release build? Set "no debug" macros
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+        NDEBUG
+        QT_NO_DEBUG
+        QT_NO_DEBUG_OUTPUT
     )
 endif()
 
-# --------------------------------------------------
-# Installation
-# --------------------------------------------------
-
-include(GNUInstallDirs)
-
-install(TARGETS mini_analyser
-        BUNDLE  DESTINATION .
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-# --------------------------------------------------
-# Installation (Linux artifacts)
-# --------------------------------------------------
+################################################################################
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
+    #
 endif()
 
 ## macOS
@@ -253,4 +224,43 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         MACOSX_BUNDLE ON
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/assets/macos/Info.plist"
     )
+endif()
+
+## Windows
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        /MP /Zc:__cplusplus /permissive-
+    )
+
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE ON
+    )
+endif()
+
+################################################################################
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+include(GNUInstallDirs)
+
+install(TARGETS mini_analyser
+        BUNDLE  DESTINATION .
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+## Linux
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # System install rules
+    #install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin/)
+    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/applications/)
+    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION share/appdata/)
+    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.svg DESTINATION share/pixmaps/)
+    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.svg DESTINATION share/icons/hicolor/scalable/apps/)
+    #install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION share/licenses/${CMAKE_PROJECT_NAME}/)
+
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
 endif()
