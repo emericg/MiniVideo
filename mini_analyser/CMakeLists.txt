@@ -130,20 +130,20 @@ endif()
 # --------------------------------------------------
 if(APPLE)
 
-    add_compile_definitions(
-        VIDEOBACKEND_VDA
-        VIDEOBACKEND_VTB
-    )
+    #add_compile_definitions(
+    #    VIDEOBACKEND_VDA
+    #    VIDEOBACKEND_VTB
+    #)
 
-    list(APPEND SOURCES
-        src/hw_apis/videobackends_vda.cpp
-        src/hw_apis/videobackends_vtb.cpp
-    )
+    #list(APPEND SOURCES
+    #    src/hw_apis/videobackends_vda.cpp
+    #    src/hw_apis/videobackends_vtb.cpp
+    #)
 
-    list(APPEND HEADERS
-        src/hw_apis/videobackends_vda.h
-        src/hw_apis/videobackends_vtb.h
-    )
+    #list(APPEND HEADERS
+    #    src/hw_apis/videobackends_vda.h
+    #    src/hw_apis/videobackends_vtb.h
+    #)
 
     set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
 
@@ -217,28 +217,12 @@ if(WIN32)
 endif()
 
 # --------------------------------------------------
-# Installation (Linux)
+# Installation
 # --------------------------------------------------
-if(UNIX AND NOT APPLE)
 
-    if(NOT PREFIX)
-        set(PREFIX /usr/local)
-    endif()
+include(GNUInstallDirs)
 
-    install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${PREFIX}/bin
-    )
-
-    install(FILES resources/app/mini_analyser.svg
-        DESTINATION ${PREFIX}/share/pixmaps
-    )
-
-    install(FILES resources/app/mini_analyser.desktop
-        DESTINATION ${PREFIX}/share/applications
-    )
-
-    install(FILES resources/app/mini_analyser.appdata.xml
-        DESTINATION ${PREFIX}/share/appdata
-    )
-
-endif()
+install(TARGETS mini_analyser
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

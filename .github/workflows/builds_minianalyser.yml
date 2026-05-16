@@ -193,14 +193,14 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build . --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build . --config Release
 
       # Package application
