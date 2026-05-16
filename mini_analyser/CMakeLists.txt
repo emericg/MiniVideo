@@ -223,6 +223,22 @@ endif()
 include(GNUInstallDirs)
 
 install(TARGETS mini_analyser
-    BUNDLE  DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        BUNDLE  DESTINATION .
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+# --------------------------------------------------
+# Installation (Linux artifacts)
+# --------------------------------------------------
+
+if(UNIX AND NOT APPLE)
+    install(FILES resources/app/mini_analyser.svg
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps
+    )
+    install(FILES resources/app/mini_analyser.desktop
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+    )
+    install(FILES resources/app/mini_analyser.appdata.xml
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata
+    )
+endif()

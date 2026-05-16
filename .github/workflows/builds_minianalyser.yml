@@ -68,12 +68,12 @@ jobs:
              cd mini_analyser/
              cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
+             cmake --install build/
 
       # Package application
       - name: Package application
         run: |
              cd mini_analyser/
-             make INSTALL_ROOT=appdir install
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
@@ -81,7 +81,7 @@ jobs:
              chmod a+x linuxdeploy-plugin-appimage-x86_64.AppImage
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_PLUGINS="svg"
-             ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
+             ./linuxdeploy-x86_64.AppImage --appdir bin/ --plugin qt --output appimage
              mv ${{ env.APP_NAME }}-x86_64.AppImage ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
 
       # Upload application
@@ -136,12 +136,12 @@ jobs:
              cd mini_analyser/
              cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
+             cmake --install build/
 
       # Package application
       - name: Package application
         run: |
              cd mini_analyser/
-             make install
              zip -r -X ../${{ env.APP_NAME}}-${{ env.APP_VERSION }}-macOS.zip bin/${{ env.APP_NAME }}.app
 
       # Upload application
