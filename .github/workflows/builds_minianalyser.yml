@@ -75,6 +75,7 @@ jobs:
         run: |
              mkdir -p ${{ github.workspace }}/mini_analyser/bin/usr/lib/
              cp ${{ github.workspace }}/minivideo/bin/lib/libminivideo.so* ${{ github.workspace }}/mini_analyser/bin/usr/lib/
+             find mini_analyser/bin/
              cd mini_analyser/
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
@@ -145,6 +146,7 @@ jobs:
       - name: Package application
         run: |
              cd mini_analyser/
+             macdeployqt bin/${{ env.APP_NAME }}.app
              zip -r -X ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip bin/${{ env.APP_NAME }}.app
 
       # Upload application
