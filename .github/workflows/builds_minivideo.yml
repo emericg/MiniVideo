@@ -43,11 +43,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-<<<<<<< HEAD
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
-=======
              cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
->>>>>>> 8eab5565 (Work on the build system)
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -73,11 +69,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-<<<<<<< HEAD
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_STATIC_LIBS:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
-=======
              cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
->>>>>>> 8eab5565 (Work on the build system)
              cmake --build build/ --config Release
              cmake --install build/
 
