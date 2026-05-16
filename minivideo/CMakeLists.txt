@@ -161,7 +161,24 @@ foreach(HEADER_SRC ${minivideo_PUBLIC_HEADERS})
     list(APPEND minivideo_PUBLIC_HEADERS_export "${STAGED}")
 endforeach()
 
-add_custom_target(minivideo_stage_headers DEPENDS ${minivideo_PUBLIC_HEADERS_export})
+add_custom_command(OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_settings.h"
+                           "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_export.h"
+                   COMMAND  ${CMAKE_COMMAND} -E copy_if_different
+                           "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_settings.h"
+                           "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_settings.h"
+                   COMMAND  ${CMAKE_COMMAND} -E copy_if_different
+                           "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_export.h"
+                           "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_export.h"
+                   DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_settings.h"
+                           "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_export.h"
+                   COMMENT "Staging generated headers"
+)
+
+add_custom_target(minivideo_stage_headers
+                  DEPENDS ${minivideo_PUBLIC_HEADERS_export}
+                         "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_settings.h"
+                         "${CMAKE_CURRENT_BINARY_DIR}/include/minivideo/minivideo_export.h"
+)
 
 # TARGET CONFIGURATION MACRO ###################################################
 
