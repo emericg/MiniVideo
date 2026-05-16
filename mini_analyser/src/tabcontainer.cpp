@@ -1009,10 +1009,10 @@ bool tabContainer::loadXmlMap_media()
 #endif // _MSC_VER
 
     // Load XML file (fallback from windows file path)
-    xmlMapFile.setFileName(filename);
+    mediaMapFile.setFileName(filename);
 
-    if (xmlMapFile.exists() == false ||
-        xmlMapFile.open(QIODevice::ReadOnly) == false)
+    if (mediaMapFile.exists() == false ||
+        mediaMapFile.open(QIODevice::ReadOnly) == false)
     {
         qDebug() << "xmlFile.open(" << filename << ") > error";
         status = false;
