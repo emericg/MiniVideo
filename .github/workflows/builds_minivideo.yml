@@ -99,6 +99,6 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
              cmake --install build/
