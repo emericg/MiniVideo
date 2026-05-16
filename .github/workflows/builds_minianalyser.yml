@@ -67,8 +67,8 @@ jobs:
         run: |
              cd mini_analyser/
              cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DMiniVideo_ROOT=../minivideo/bin/
-             DESTDIR=bin/ cmake --build build/ --config Release
-             cmake --install build/
+             cmake --build build/ --config Release
+             DESTDIR=bin/ cmake --install build/
 
       # Package application
       - name: Package application
@@ -126,7 +126,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -195,6 +195,7 @@ jobs:
              cd minivideo/
              cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
+             cmake --install build/
 
       # Build application
       - name: Build application
@@ -202,6 +203,7 @@ jobs:
              cd mini_analyser/
              cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
+             cmake --install build/
 
       # Package application
       - name: Package application
