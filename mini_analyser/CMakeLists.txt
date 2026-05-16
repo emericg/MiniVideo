@@ -9,8 +9,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(APP_NAME ${CMAKE_PROJECT_NAME})
-set(APP_VERSION ${CMAKE_PROJECT_VERSION})
+set(APP_NAME ${PROJECT_NAME})
+set(APP_VERSION ${PROJECT_VERSION})
 
 ################################################################################
 
@@ -25,9 +25,9 @@ message(STATUS "[SYSTEM] (HOST) SYSTEM PROCESSOR    = ${CMAKE_HOST_SYSTEM_PROCES
 message(STATUS "[SYSTEM] (TARGET) SYSTEM NAME       = ${CMAKE_SYSTEM_NAME}")
 message(STATUS "[SYSTEM] (TARGET) SYSTEM VERSION    = ${CMAKE_SYSTEM_VERSION}")
 message(STATUS "[SYSTEM] (TARGET) SYSTEM PROCESSOR  = ${CMAKE_SYSTEM_PROCESSOR}")
-message(STATUS "[PROJECT] CMAKE_PROJECT_NAME        = ${PROJECT_NAME}")
+message(STATUS "[PROJECT] PROJECT_NAME              = ${PROJECT_NAME}")
 message(STATUS "[PROJECT] CURRENT_SOURCE_DIR        = ${CMAKE_CURRENT_SOURCE_DIR}")
-message(STATUS "[PROJECT] PROJECT_NAME              = ${CMAKE_PROJECT_NAME}")
+message(STATUS "[PROJECT] CMAKE_PROJECT_NAME        = ${CMAKE_PROJECT_NAME}")
 message(STATUS "[PROJECT] SOURCE_DIR                = ${CMAKE_SOURCE_DIR}")
 message(STATUS "[PROJECT] BUILD_TYPE                = ${CMAKE_BUILD_TYPE}")
 
@@ -100,8 +100,8 @@ qt_add_executable(${PROJECT_NAME}
     ${RESOURCES}
 )
 
-#target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE src/)
-#target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE thirdparty/)
+#target_include_directories(${PROJECT_NAME} PRIVATE src/)
+#target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/)
 
 ################################################################################
 
@@ -185,25 +185,22 @@ target_link_libraries(${PROJECT_NAME} PRIVATE qcustomplot)
 # --------------------------------------------------
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
-        Qt6::Svg
-        Qt6::SvgWidgets
-        Qt6::PrintSupport
-        ${EXTRA_LIBS}
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Svg
+    Qt6::SvgWidgets
+    Qt6::PrintSupport
 )
 
 ################################################################################
 
 # Release build? Set "no debug" macros
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-        NDEBUG
-        QT_NO_DEBUG
-        QT_NO_DEBUG_OUTPUT
-    )
-endif()
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    $<$<CONFIG:Release>:NDEBUG>
+    $<$<CONFIG:Release>:QT_NO_DEBUG>
+    $<$<CONFIG:Release>:QT_NO_DEBUG_OUTPUT>
+)
 
 ################################################################################
 
@@ -217,10 +214,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
-    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${CMAKE_PROJECT_NAME}.icns")
+    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
     set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+    set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/assets/macos/Info.plist"
     )
@@ -232,7 +229,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         /MP /Zc:__cplusplus /permissive-
     )
 
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+    set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE ON
     )
 endif()
@@ -252,15 +249,7 @@ install(TARGETS mini_analyser
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    # System install rules
-    #install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin/)
-    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/applications/)
-    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION share/appdata/)
-    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.svg DESTINATION share/pixmaps/)
-    #install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${CMAKE_PROJECT_NAME}.svg DESTINATION share/icons/hicolor/scalable/apps/)
-    #install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION share/licenses/${CMAKE_PROJECT_NAME}/)
-
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
 endif()
