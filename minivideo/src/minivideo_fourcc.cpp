@@ -300,6 +300,9 @@ Codecs_e getCodecFromFourCC(const uint32_t fcc)
     case fcc_rv40:
         codec = CODEC_RV40;
         break;
+    case fcc_rv60:
+        codec = CODEC_RV60;
+        break;
 
     case fcc_cvid:
     case fcc_CVID:

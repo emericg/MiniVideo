@@ -117,6 +117,7 @@ typedef enum Codecs_e
     CODEC_DAALA         = 280,  //!< Xiph Daala
     CODEC_THOR          = 281,  //!< Cisco Thor
     CODEC_AV1           = 282,  //!< AOM (Alliance for Open Media) Video 1
+    CODEC_AV2           = 283,  //!< AOM (Alliance for Open Media) Video 2
 
     CODEC_AVS1          = 291,  //!<
     CODEC_AVS2          = 292,  //!<
@@ -139,6 +140,7 @@ typedef enum Codecs_e
     CODEC_RV20          = 321,  //!< RealVideo G2
     CODEC_RV30          = 322,  //!< RealVideo 3
     CODEC_RV40          = 323,  //!< RealVideo 4
+    CODEC_RV60          = 324,  //!< RealVideo 6
 
     CODEC_INDEO2        = 330,  //!< Intel Indeo Video 2
     CODEC_INDEO3        = 331,  //!< Intel Indeo Video 3

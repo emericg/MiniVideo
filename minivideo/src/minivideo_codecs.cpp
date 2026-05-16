@@ -428,6 +428,11 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                     return "AV1 (AOMedia Video 1)";
                 else
                     return "AV1";
+            case CODEC_AV2:
+                if (long_description)
+                    return "AV2 (AOMedia Video 2)";
+                else
+                    return "AV2";
 
             case CODEC_AVS1:
                 return "AVS1";
@@ -498,6 +503,8 @@ const char *getCodecString(const StreamType_e type, const Codecs_e codec, const 
                 return "RealVideo 3";
             case CODEC_RV40:
                 return "RealVideo 4";
+            case CODEC_RV60:
+                return "RealVideo 6";
 
             case CODEC_INDEO2:
                 if (long_description)

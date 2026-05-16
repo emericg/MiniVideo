@@ -265,6 +265,7 @@ typedef enum fourcc_list_e
     fcc_rv20 = 0x72763230, //!< RealVideo G2
     fcc_rv30 = 0x72763330, //!< RealVideo 3
     fcc_rv40 = 0x72763430, //!< RealVideo 4
+    fcc_rv60 = 0x72763630, //!< RealVideo 6
 
     // Uncommon video codecs ///////////////////////////////////////////////////
 

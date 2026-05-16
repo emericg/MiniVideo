@@ -318,6 +318,10 @@ void mkv_codec_from_string(char *codec_str, Codecs_e *codec, CodecProfiles_e *pr
             {
                 *codec = CODEC_RV40;
             }
+            else if (strcmp(codec_str, "V_REAL/RV60") == 0)
+            {
+                *codec = CODEC_RV60;
+            }
         }
         else if (strcmp(codec_str, "V_THEORA") == 0)
         {
