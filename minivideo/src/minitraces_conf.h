@@ -36,7 +36,7 @@ extern "C" {
 // =============================================================================
 
 // Import setting macros from minivideo, and map them to the ones from MiniTraces.
-#include "minivideo_settings.h"
+#include <minivideo_settings.h>
 
 #if ENABLE_DEBUG == 1
 #define MINITRACES_LEVEL    2   // Enables all traces levels

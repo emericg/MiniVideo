@@ -25,7 +25,7 @@
 /* ************************************************************************** */
 
 // minivideo headers
-#include "minivideo_export.h"
+#include <minivideo_export.h>
 #include "minivideo_codecs.h"
 
 // C standard library

@@ -36,23 +36,22 @@ option(MINIVIDEO_BUILD_SHARED   "Build shared library"                          
 option(MINIVIDEO_BUILD_STATIC   "Build static library"                          ON)
 option(MINIVIDEO_INSTALL        "Generate install targets"                      ON)
 
-option(USE_COLORS               "Toggle colored terminal output"                ON)
-option(USE_MEMFD                "Enable memfd support (for Linux kernels)"      ON)
+option(ENABLE_COLORS            "Toggle colored terminal output"                ON)
+option(ENABLE_MEMFD             "Enable memfd support (for Linux kernels)"      ON)
 
-option(USE_STB_IMAGE            "Toggle internal stb_image library for bmp/png/tga/... import" OFF)
-option(USE_STB_IMAGE_WRITE      "Toggle internal stb_image_write library for bmp/png/tga export" ON)
-option(USE_PNG                  "Toggle external libpng support"                OFF)
-option(USE_JPEG                 "Toggle external libjpeg support"               OFF)
-option(USE_JPEGXL               "Toggle external libjpeg support"               OFF)
-option(USE_WEBP                 "Toggle external libwebp support"               OFF)
-option(USE_AVIF                 "Toggle external libavif support"               OFF)
+option(ENABLE_STB_IMAGE         "Toggle internal stb_image library for bmp/png/tga/... import" OFF)
+option(ENABLE_STB_IMAGE_WRITE   "Toggle internal stb_image_write library for bmp/png/tga export" ON)
+option(ENABLE_PNG               "Toggle external libpng support"                OFF)
+option(ENABLE_JPEG              "Toggle external libjpeg support"               OFF)
+option(ENABLE_JPEGXL            "Toggle external libjpeg support"               OFF)
+option(ENABLE_WEBP              "Toggle external libwebp support"               OFF)
+option(ENABLE_AVIF              "Toggle external libavif support"               OFF)
 
 # Project files ################################################################
 
 set(minivideo_SOURCES
     src/minivideo.cpp
-        src/minivideo_export.h
-        src/minivideo_settings.h src/minivideo_typedef.h
+        src/minivideo_typedef.h
         src/minivideo_mediafile.h src/minivideo_mediastream.h
         src/minivideo_codecs.cpp src/minivideo_codecs_private_struct.h
         src/minivideo_containers.cpp src/utils.cpp src/minivideo_avutils.h
@@ -117,8 +116,8 @@ set(minivideo_SOURCES
 )
 
 set(minivideo_PUBLIC_HEADERS
-    src/minivideo.h src/minivideo_export.h
-    src/minivideo_settings.h src/minivideo_typedef.h # internals?
+    src/minivideo.h
+    src/minivideo_typedef.h # internals?
     src/minivideo_avutils.h src/minivideo_codecs_private_struct.h
     src/minivideo_codecs.h src/minivideo_containers.h
     src/minivideo_fourcc.h src/minivideo_twocc.h src/minivideo_uuid.h
@@ -221,7 +220,8 @@ if(MINIVIDEO_BUILD_SHARED)
     # Generate export header (handles dllexport/dllimport on Windows)
     include(GenerateExportHeader)
     generate_export_header(minivideo_shared
-                           BASE_NAME MINIVIDEO
+                           BASE_NAME minivideo
+                           EXPORT_MACRO_NAME minivideo_EXPORT
                            EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/src/minivideo_export.h")
 endif()
 

@@ -24,7 +24,7 @@
 #define MINIVIDEO_CONTAINERS_H
 /* ************************************************************************** */
 
-#include "minivideo_export.h"
+#include <minivideo_export.h>
 
 #include <cstdint>
 #include <string>
