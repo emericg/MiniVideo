@@ -304,21 +304,18 @@ if(MINIVIDEO_INSTALL)
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
     )
 
-    write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
-        VERSION          ${PROJECT_VERSION}
-        COMPATIBILITY    SameMajorVersion
+    write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
+                                     VERSION          ${PROJECT_VERSION}
+                                     COMPATIBILITY    SameMajorVersion
     )
 
-    configure_package_config_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/MiniVideoConfig.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
+    configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/MiniVideoConfig.cmake.in"
+                                  "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
+                                  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
     )
 
-    install(FILES
-            "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
-            "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfig.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/MiniVideoConfigVersion.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MiniVideo"
     )
 
@@ -328,10 +325,9 @@ if(MINIVIDEO_INSTALL)
     )
 
     # pkg-config
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc"
-        @ONLY
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/libminivideo.pc.cmake.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc"
+                   @ONLY
     )
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libminivideo.pc"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"

@@ -58,7 +58,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -66,7 +66,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
 
       # Package application
@@ -126,7 +126,7 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -134,7 +134,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
 
       # Package application
@@ -174,7 +174,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
-          arch: 'win64_msvc2019_64'
+          arch: 'win64_msvc2022_64'
 
       # Install NSIS (already installed in 'windows-2022')
       #- name: Install NSIS
@@ -193,14 +193,14 @@ jobs:
       - name: Build library
         run: |
              cd minivideo/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=bin/
              cmake --build . --config Release
 
       # Build application
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build . --config Release
 
       # Package application
