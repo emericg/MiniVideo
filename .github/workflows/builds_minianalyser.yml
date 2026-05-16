@@ -73,8 +73,8 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             mkdir -p ${{ github.workspace }}/mini_analyser/bin/usr/lib/
-             cp ${{ github.workspace }}/minivideo/bin/lib/libminivideo.so* ${{ github.workspace }}/mini_analyser/bin/usr/lib/
+             mkdir -p mini_analyser/bin/usr/lib/
+             cp minivideo/bin/lib/libminivideo.so* mini_analyser/bin/usr/lib/
              find mini_analyser/bin/
              cd mini_analyser/
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
@@ -213,8 +213,8 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             cp minivideo/build/minivideo.lib mini_analyser/bin/minivideo.lib
-             cp minivideo/build/minivideo.dll mini_analyser/bin/minivideo.dll
+             cp minivideo/bin/lib/minivideo.lib mini_analyser/bin/minivideo.lib
+             cp minivideo/bin/bin/minivideo.dll mini_analyser/bin/minivideo.dll
              windeployqt mini_analyser/bin/
              mv mini_analyser/bin mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
              7z a ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64

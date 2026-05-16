@@ -9,6 +9,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+set(APP_NAME ${CMAKE_PROJECT_NAME})
+set(APP_VERSION ${CMAKE_PROJECT_VERSION})
+
 ################################################################################
 
 message(STATUS ">>> BUILDING ${PROJECT_NAME} >>>")
@@ -231,14 +234,23 @@ install(TARGETS mini_analyser
 # Installation (Linux artifacts)
 # --------------------------------------------------
 
-if(UNIX AND NOT APPLE)
-    install(FILES resources/app/mini_analyser.svg
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps
-    )
-    install(FILES resources/app/mini_analyser.desktop
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
-    )
-    install(FILES resources/app/mini_analyser.appdata.xml
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata
+## Linux
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${CMAKE_PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
+endif()
+
+## macOS
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+
+    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${CMAKE_PROJECT_NAME}.icns")
+    set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE ON
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/assets/macos/Info.plist"
     )
 endif()

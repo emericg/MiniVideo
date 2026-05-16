@@ -2,6 +2,51 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+
+	<key>CFBundleName</key>
+	<string>mini_analyser</string>
+
+	<key>CFBundleDisplayName</key>
+	<string>mini_analyser</string>
+
+	<key>CFBundleExecutable</key>
+	<string>mini_analyser</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>com.minivideo.mini_analyser</string>
+
+	<key>CFBundleIconFile</key>
+	<string>mini_analyser.icns</string>
+
+	<key>CFBundleVersion</key>
+	<string>50.0</string>
+
+	<key>CFBundleShortVersionString</key>
+	<string>0.50</string>
+
+	<key>LSMinimumSystemVersion</key>
+	<string>12.0</string>
+
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright Emeric Grange 2026</string>
+
+	<key>NSHighResolutionCapable</key>
+	<true/>
+
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -98,25 +143,5 @@
 			<string>Viewer</string>
 		</dict>
 	</array>
-	<key>CFBundleName</key>
-	<string>mini_analyser</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.minivideo.minianalyser</string>
-	<key>CFBundleShortVersionString</key>
-	<string>@SHORT_VERSION@</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleIconFile</key>
-	<string>@ICON@</string>
-	<key>CFBundleExecutable</key>
-	<string>@EXECUTABLE@</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>NSHighResolutionCapable</key>
-	<true/>
 </dict>
 </plist>
