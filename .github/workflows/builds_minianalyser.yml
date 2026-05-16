@@ -66,9 +66,9 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=usr/bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
-             DESTDIR=bin/ cmake --install build/
+             cmake --install build/
 
       # Package application
       - name: Package application
@@ -138,7 +138,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_INSTALL_PREFIX=. -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
              cmake --install build/
 
@@ -206,7 +206,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=${{ github.workspace }}/minivideo/bin/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DMiniVideo_ROOT=${{ github.workspace }}/minivideo/bin/
              cmake --build build/ --config Release
              cmake --install build/
 
