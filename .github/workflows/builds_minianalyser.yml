@@ -73,6 +73,8 @@ jobs:
       # Package application
       - name: Package application
         run: |
+             mkdir -p ${{ github.workspace }}/mini_analyser/bin/usr/lib/
+             cp ${{ github.workspace }}/minivideo/bin/lib/libminivideo.so* ${{ github.workspace }}/mini_analyser/bin/usr/lib/
              cd mini_analyser/
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
@@ -81,10 +83,9 @@ jobs:
              chmod a+x linuxdeploy-plugin-appimage-x86_64.AppImage
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_MODULES="svg;waylandcompositor;"
-             export EXTRA_PLATFORM_PLUGINS="libqwayland.so"
-             cp ../minivideo/bin/lib/libminivideo.so* bin/usr/lib/
-             ./linuxdeploy-x86_64.AppImage --appdir bin/ --plugin qt --output appimage
-             mv ${{ env.APP_NAME }}-x86_64.AppImage ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
+             export EXTRA_PLATFORM_PLUGINS="libqwayland.so;"
+             ./linuxdeploy-x86_64.AppImage --appdir mini_analyser/bin/ --plugin qt --output appimage
+             mv ${{ env.APP_NAME }}-x86_64.AppImage ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
 
       # Upload application
       - name: Upload application
@@ -136,7 +137,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=../minivideo/bin/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DMiniVideo_ROOT=../minivideo/bin/
              cmake --build build/ --config Release
              cmake --install build/
 
