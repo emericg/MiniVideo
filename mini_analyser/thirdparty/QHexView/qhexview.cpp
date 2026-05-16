@@ -425,7 +425,7 @@ void QHexView::copyVisual() const {
         s += " ";
 
         for(unsigned int col = 0u; col < m_options.line_length; col++) {
-            qint64 adjcol, pos = this->positionFromLineCol(line, col, adjcol);
+            qint64 adjcol = 0, pos = this->positionFromLineCol(line, col, adjcol);
 
             if(m_hexdocument->accept(pos)) {
                 s += (i + adjcol) >= nbytes
@@ -685,7 +685,6 @@ void QHexView::ensureVisible() {
 
     QHexPosition pos = m_hexcursor->position();
     int vlines = this->visibleLines();
-    int vscroll = this->verticalScrollBar()->value();
 
     // Calculate target scroll position to center the cursor
     qint64 tgtscroll = pos.line - (vlines / 2);
@@ -693,7 +692,7 @@ void QHexView::ensureVisible() {
     // Ensure we don't scroll past the beginning or end
     if(tgtscroll < 0)
         tgtscroll = 0;
-    else if(tgtscroll > this->lines() - vlines)
+    else if(tgtscroll > ((qint64)this->lines() - vlines))
         tgtscroll = this->lines() - vlines;
 
     // Line is outside of visible range
@@ -970,7 +969,7 @@ void QHexView::drawAsciiPart(PaintContext* ctx, const QByteArray& linebytes,
     for(unsigned int col = 0u; col < m_options.line_length; col++) {
         QString s;
         quint8 b{};
-        qint64 adjcol;
+        qint64 adjcol = 0;
 
         if(m_hexdocument->accept(
                this->positionFromLineCol(line, col, adjcol))) {

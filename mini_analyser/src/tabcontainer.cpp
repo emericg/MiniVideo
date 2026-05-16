@@ -471,53 +471,56 @@ void tabContainer::sampleSelection(int sid)
 
         // Content infos
         samplesMapFd = tmpfile();
-        std::vector <es_sample_t> essamples;
-        unsigned essample_count = depack_sample(media, track, sid, essamples, samplesMapFd);
-
-        if (essample_count)
+        if (samplesMapFd)
         {
-            loadXmlMap_samples();
+            std::vector <es_sample_t> essamples;
+            unsigned essample_count = depack_sample(media, track, sid, essamples, samplesMapFd);
 
-            // print map raw content
-            //{
-            //    rewind(samplesMapFd);
-            //    QFile file;
-            //    file.open(samplesMapFd, QIODevice::ReadOnly);
-            //    QLabel *c = new QLabel(file.readAll());
-            //    ui->gridLayout_samples->addWidget(c, 0, 1);
-            //}
-
-            for (unsigned i = 0, j = 0; i < essamples.size() && i < 16; i++, j++)
+            if (essample_count)
             {
-                // title
-                QLabel *a = new QLabel("<b>Sample #" + QString::number(i) + " @ " +
-                                       QString::number(essamples.at(i).offset - track->sample_offset[sid]) +
-                                       " / " + QString::number(essamples.at(i).size) + " bytes</b>");
-                QLineEdit *b = new QLineEdit(QString::fromLatin1(essamples.at(i).type_cstr));
+                loadXmlMap_samples();
 
-                a->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                // print map raw content
+                //{
+                //    rewind(samplesMapFd);
+                //    QFile file;
+                //    file.open(samplesMapFd, QIODevice::ReadOnly);
+                //    QLabel *c = new QLabel(file.readAll());
+                //    ui->gridLayout_samples->addWidget(c, 0, 1);
+                //}
+
+                for (unsigned i = 0, j = 0; i < essamples.size() && i < 16; i++, j++)
+                {
+                    // title
+                    QLabel *a = new QLabel("<b>Sample #" + QString::number(i) + " @ " +
+                                           QString::number(essamples.at(i).offset - track->sample_offset[sid]) +
+                                           " / " + QString::number(essamples.at(i).size) + " bytes</b>");
+                    QLineEdit *b = new QLineEdit(QString::fromLatin1(essamples.at(i).type_cstr));
+
+                    a->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+                    b->setReadOnly(true);
+
+                    j = ui->gridLayout_samples->rowCount();
+                    ui->gridLayout_samples->addWidget(a, j, 0);
+                    ui->gridLayout_samples->addWidget(b, j, 1);
+
+                    // content (from map)
+                    samplePacketSelection(essamples.at(i).offset);
+                }
+            }
+            else
+            {
+                QLabel *a = new QLabel("<b>Sample #0 @ 0 / " + QString::number(track->sample_size[sid]) + " bytes</b>");
+                QLineEdit *b = new QLineEdit(tr("Unknown..."));
                 b->setReadOnly(true);
 
-                j = ui->gridLayout_samples->rowCount();
-                ui->gridLayout_samples->addWidget(a, j, 0);
-                ui->gridLayout_samples->addWidget(b, j, 1);
-
-                // content (from map)
-                samplePacketSelection(essamples.at(i).offset);
+                ui->gridLayout_samples->addWidget(a, 0, 0);
+                ui->gridLayout_samples->addWidget(b, 0, 1);
             }
-        }
-        else
-        {
-            QLabel *a = new QLabel("<b>Sample #0 @ 0 / " + QString::number(track->sample_size[sid]) + " bytes</b>");
-            QLineEdit *b = new QLineEdit(tr("Unknown..."));
-            b->setReadOnly(true);
 
-            ui->gridLayout_samples->addWidget(a, 0, 0);
-            ui->gridLayout_samples->addWidget(b, 0, 1);
+            fclose(samplesMapFd);
+            samplesMapFd = nullptr;
         }
-
-        fclose(samplesMapFd);
-        samplesMapFd = nullptr;
 
         // Preview thumbnail
         if (track->sample_type[sid] == sample_VIDEO_SYNC)
