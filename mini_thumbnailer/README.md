@@ -12,26 +12,31 @@ mini_thumbnailer is a thumbnail picture extraction software.
 Building mini_thumbnailer
 -------------------------
 
-Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
-how to find the library (libminivideo.so file) and its header (minivideo.h file)
-In case of problem, it may be necessary to manually indicate the paths of these files.
+> minivideo library must have been built first!
 
-minivideo library must have been built first!
+```bash
+$ cd mini_thumbnailer/
+$ cmake -B build/ -DMiniVideo_ROOT=/path/to/minivideo/
+$ cmake --build build/
+```
 
-> $ cd mini_thumbnailer/build/  
-> $ cmake ..  
-> $ make  
+System wide installation:
 
-Installation into the system, available for root user with both testing softwares:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+```bash
+$ cd mini_thumbnailer/
+$ cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DMiniVideo_ROOT=/path/to/minivideo/
+$ cmake --build build/
+# cmake --install build/
+```
 
 
 Using mini_thumbnailer
 ----------------------
 
-> $ cd mini_thumbnailer/build/  
-> $ ./mini_thumbnailer -i 'myfilepath' [-o 'mydirectory'] [-f picture_format] [-q picture_quality] [-n picture_number] [-m picture_extractionmode]  
+```bash
+$ cd mini_thumbnailer/bin/
+$ ./mini_thumbnailer -i 'myfilepath' [-o 'mydirectory'] [-f picture_format] [-q picture_quality] [-n picture_number] [-m picture_extractionmode]
+```
 
 Command line arguments:
 > -h : print help  

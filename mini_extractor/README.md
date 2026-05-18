@@ -12,26 +12,31 @@ mini_extractor is an elementary stream extractor software.
 Building mini_extractor
 -----------------------
 
-Do not forget "FindLibMiniVideo.cmake" directory in the cmake/modules/, which defines
-how to find the library (libminivideo.so file) and its header (minivideo.h file)
-In case of problem, it may be necessary to manually indicate the paths of these files.
+> minivideo library must have been built first!
 
-minivideo library must have been built first!
+```bash
+$ cd mini_extractor/
+$ cmake -B build/ -DMiniVideo_ROOT=/path/to/minivideo/
+$ cmake --build build/
+```
 
-> $ cd mini_extractor/build/  
-> $ cmake ..  
-> $ make  
+System wide installation:
 
-Installation into the system, available for root user with both testing softwares:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
+```bash
+$ cd mini_extractor/
+$ cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DMiniVideo_ROOT=/path/to/minivideo/
+$ cmake --build build/
+# cmake --install build/
+```
 
 
 Using mini_extractor
 --------------------
 
-> $ cd mini_extractor/build/  
-> $ ./mini_extractor -i 'myfilepath' [-o 'mydirectory'] [-a nb_tracks] [-v nb_tracks]  
+```bash
+$ cd mini_extractor/bin/
+$ ./mini_extractor -i 'myfilepath' [-o 'mydirectory'] [-a nb_tracks] [-v nb_tracks]
+```
 
 Command line arguments:
 > -h : print help  

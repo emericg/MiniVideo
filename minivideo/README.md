@@ -4,19 +4,13 @@ MiniVideo library
 [![GitHub action](https://img.shields.io/github/actions/workflow/status/emericg/MiniVideo/builds_minivideo.yml?style=flat-square)](https://github.com/emericg/MiniVideo/actions/workflows/builds_minivideo.yml)
 [![License: LGPL v3](https://img.shields.io/badge/license-LGPL%20v3-brightgreen.svg?style=flat-square)](http://www.gnu.org/licenses/lgpl-3.0)
 
-Introduction
-------------
+## Introduction
 
 The minivideo library can:
-* Open video files with various container to demux and remux audios/videos content.
-* Open H.264 compressed videos and decode them to export intra-coded pictures.
+* Open video files with various container to demux and remux audio/video content.
+* Open H.264 compressed streams and decode & export intra-coded pictures.
 * Extract various metadata from container and elementary streams.
-* Map exact container structure to xml file.
-
-### Supported video codec (decoding)
-- H.264 / MPEG-4 part 10 "Advance Video Coding"
-  - I frames only...
-  - please note that at still a few bugs inside CABAC decoding process being worked on...
+* Map exact container structure to XML file / GUI.
 
 ### Supported container formats (import modules)
 - AVI [.avi]
@@ -26,13 +20,18 @@ The minivideo library can:
 - MP4 / MOV (ISOM container) [.mp4, .mov, .3gp, ...]
 - MPEG-PS (MPEG "Program Stream") [.mpg, .mpeg, .vob, ...]
 - MPEG-1/2 "elementary stream" [.mpg, .mpeg]
-- H.264 / H.265 "elementary stream" ("Annex B" format) [.264, .265]
+- H.264 / H.265  / H.266 "elementary stream" ("Annex B" format) [.264, .265, .266]
 - MP3 "elementary stream" [.mp3]
 
 ### Supported container formats (export modules)
 - Elementary Streams
 
-### Supported picture formats (output modules)
+### Supported video codec (decoding)
+- H.264 / MPEG-4 part 10 "Advance Video Coding"
+  - I frames only...
+  - A few bugs inside the CABAC decoding process are still being worked on...
+
+### Supported picture formats (decoding output modules)
 - jpeg (internal OR when libjpeg support is available)
 - png (internal OR when libpng support is available)
 - webp (when libwebp support is available)
@@ -41,52 +40,64 @@ The minivideo library can:
 - tga
 
 
-Building minivideo library
---------------------------
+## Documentation
 
-> $ cd minivideo/build/  
-> $ cmake ..  
-> $ make  
+### Building libminivideo
 
-Note: You can easily enable multithreaded build with the "make -jX" argument:
-> $ make -j$(grep -c ^processor /proc/cpuinfo)  
+Build for development:
 
-Note: You can tune CMake by adding extra arguments:
+```bash
+$ cd minivideo/
+$ cmake -B build/ -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=ON -DCMAKE_INSTALL_PREFIX=bin/
+$ cmake --build build/
+```
+
+Build for release and installation:
+
+```bash
+$ cd minivideo/
+$ cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DMINIVIDEO_BUILD_SHARED:BOOL=ON -DMINIVIDEO_BUILD_STATIC:BOOL=OFF -DCMAKE_INSTALL_PREFIX=/usr
+$ cmake --build build/ --config Release
+$ cmake --install build/
+```
+
+Note: You can tune the build by using some options:
+> -DMINIVIDEO_BUILD_SHARED:BOOL=ON  
+> -DMINIVIDEO_BUILD_STATIC:BOOL=OFF  
 > -DCMAKE_BUILD_TYPE=Release/Debug  
-> -DCMAKE_BUILD_Mode=Dynamic/Static  
-> -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/xxx.cmake  
 > -DCMAKE_INSTALL_PREFIX=/usr/bin  
+> -DCMAKE_TOOLCHAIN_FILE=custom/cmake/toolchains/toolchain.cmake  
 
-Note: You can also change several build options directly into the "minivideo/CMakeLists.txt" file.
+Note: Use ninja for faster builds:
+> $ cmake -B build/ -G Ninja
 
-Installation into the system, available for root user:
->  $ su  
->  **#** make install # INSTALLATION INTO THE SYSTEM, ROOT USER ONLY  
-
-
-Generating online documentation with Doxygen
---------------------------------------------
-
-> $ cd minivideo/doc/  
-> $ ./generate_doxygen.sh  
-
-Open "minivideo/doc/doxygen.html" with your favorite browser.
+Note: You can also change many build options directly in the `minivideo/CMakeLists.txt` file.
 
 
-Generating error report with cppcheck
--------------------------------------
+### Generating online documentation with Doxygen
 
-> $ cd minivideo/doc/  
-> $ ./generate_cppcheck.sh  
+```bash
+$ cd minivideo/doc/
+$ ./generate_doxygen.sh
+```
 
-Open "minivideo/doc/cppcheck.html" with your favorite browser.
+Open the `minivideo/doc/doxygen.html` file with your favorite browser.
+
+### Generating error report with cppcheck
+
+```bash
+$ cd minivideo/doc/
+$ ./generate_cppcheck.sh
+```
+
+Open the `minivideo/doc/cppcheck.html` file with your favorite browser.
 
 
-MiniVideo decoding capabilities
-===============================
+## MiniVideo decoding capabilities
 
-H.264 unsupported features
---------------------------
+### H.264 unsupported features
+
+- I frames only...
 
 // UNSUPPORTED for BP and XP profiles
 - (FMO) Flexible Macroblock Ordering
@@ -115,3 +126,22 @@ H.264 unsupported features
 - 4:4:4 subsampling
 - Separate color plane coding
 - IPCM macroblocks
+
+
+## Get involved!
+
+### Developers
+
+You can browse the code on the GitHub page, submit patches and pull requests! Your help would be greatly appreciated ;-)
+
+### Users
+
+You can help us find and report bugs, suggest new features, help with translation, documentation and more! Visit the Issues section of the GitHub page to start!
+
+
+## License
+
+MiniVideo is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.  
+Read the [LICENSE](LICENSE.md) file or [consult the license on the FSF website](https://www.gnu.org/licenses/lgpl-3.0.txt) directly.
+
+> Emeric Grange <emeric.grange@gmail.com>
