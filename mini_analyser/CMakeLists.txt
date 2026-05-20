@@ -107,9 +107,6 @@ qt_add_executable(${PROJECT_NAME}
     ${app_icon_windows}
 )
 
-#target_include_directories(${PROJECT_NAME} PRIVATE src/)
-#target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/)
-
 ################################################################################
 
 # --------------------------------------------------
@@ -247,7 +244,3 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 ################################################################################
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-)

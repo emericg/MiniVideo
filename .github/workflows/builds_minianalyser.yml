@@ -70,12 +70,16 @@ jobs:
              cmake --build build/ --config Release
              cmake --install build/
 
+      # Recap application build
+      - name: Package application
+        run: |
+            find mini_analyser/bin/
+
       # Package application
       - name: Package application
         run: |
              mkdir -p mini_analyser/bin/usr/lib/
              cp minivideo/bin/lib/libminivideo.so* mini_analyser/bin/usr/lib/
-             find mini_analyser/bin/
              cd mini_analyser/
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
@@ -142,6 +146,11 @@ jobs:
              cmake --build build/ --config Release
              cmake --install build/
 
+      # Recap application build
+      - name: Package application
+        run: |
+            find mini_analyser/bin/
+
       # Package application
       - name: Package application
         run: |
@@ -206,9 +215,14 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DMiniVideo_ROOT=${{ github.workspace }}/minivideo/bin/
+             cmake -B build/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=bin/ -DMiniVideo_ROOT=${{ github.workspace }}/minivideo/bin/
              cmake --build build/ --config Release
              cmake --install build/
+
+      # Recap application build
+      - name: Package application
+        run: |
+            find mini_analyser/bin/
 
       # Package application
       - name: Package application
