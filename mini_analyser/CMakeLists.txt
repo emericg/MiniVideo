@@ -19,17 +19,17 @@ message(STATUS "[CMAKE] CMAKE_VERSION               = ${CMAKE_VERSION}")
 message(STATUS "[CMAKE] CMAKE_PREFIX_PATH           = ${CMAKE_PREFIX_PATH}")
 message(STATUS "[BUILD] QT_HOST_PATH                = ${QT_HOST_PATH}")
 message(STATUS "[BUILD] TOOLCHAIN_FILE              = ${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "[BUILD] BUILD_TYPE                  = ${CMAKE_BUILD_TYPE}")
 message(STATUS "[SYSTEM] (HOST) SYSTEM NAME         = ${CMAKE_HOST_SYSTEM_NAME}")
 message(STATUS "[SYSTEM] (HOST) SYSTEM VERSION      = ${CMAKE_HOST_SYSTEM_VERSION}")
 message(STATUS "[SYSTEM] (HOST) SYSTEM PROCESSOR    = ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 message(STATUS "[SYSTEM] (TARGET) SYSTEM NAME       = ${CMAKE_SYSTEM_NAME}")
 message(STATUS "[SYSTEM] (TARGET) SYSTEM VERSION    = ${CMAKE_SYSTEM_VERSION}")
 message(STATUS "[SYSTEM] (TARGET) SYSTEM PROCESSOR  = ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "[TOP PROJECT] CMAKE_PROJECT_NAME    = ${CMAKE_PROJECT_NAME}")
+message(STATUS "[TOP PROJECT] CMAKE_SOURCE_DIR      = ${CMAKE_SOURCE_DIR}")
 message(STATUS "[PROJECT] PROJECT_NAME              = ${PROJECT_NAME}")
-message(STATUS "[PROJECT] CURRENT_SOURCE_DIR        = ${CMAKE_CURRENT_SOURCE_DIR}")
-message(STATUS "[PROJECT] CMAKE_PROJECT_NAME        = ${CMAKE_PROJECT_NAME}")
-message(STATUS "[PROJECT] SOURCE_DIR                = ${CMAKE_SOURCE_DIR}")
-message(STATUS "[PROJECT] BUILD_TYPE                = ${CMAKE_BUILD_TYPE}")
+message(STATUS "[PROJECT] CMAKE_CURRENT_SOURCE_DIR  = ${CMAKE_CURRENT_SOURCE_DIR}")
 
 ################################################################################
 
@@ -93,9 +93,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 # Set app desktop icons
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(app_icon_windows "${CMAKE_SOURCE_DIR}/assets/windows/${PROJECT_NAME}.rc")
+    set(app_icon_windows "${CMAKE_CURRENT_SOURCE_DIR}/assets/windows/${PROJECT_NAME}.rc")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
+    set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
 endif()
 
 qt_add_executable(${PROJECT_NAME}
@@ -210,11 +210,11 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/applications/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/appdata/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/pixmaps/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/icons/hicolor/scalable/apps/)
-    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/licenses/${PROJECT_NAME}/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/applications/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/appdata/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/pixmaps/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/icons/hicolor/scalable/apps/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/licenses/${PROJECT_NAME}/)
 endif()
 
 ## macOS
@@ -222,12 +222,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
-    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
+    set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
     set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/assets/macos/Info.plist"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/assets/macos/Info.plist"
     )
 endif()
 
@@ -244,7 +244,7 @@ endif()
 
 ################################################################################
 
-# Install binary (or app bundle) in the
+# Install binary (or app bundle) in the ${CMAKE_INSTALL_BINDIR}
 install(TARGETS ${PROJECT_NAME}
         BUNDLE  DESTINATION ${CMAKE_INSTALL_BINDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
