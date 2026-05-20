@@ -143,7 +143,7 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             mkdir -p mini_analyser/bin/mini_analyser.app/Frameworks/
+             mkdir -p mini_analyser/bin/mini_analyser.app/Contents/Frameworks/
              export DYLIB=$(find ${{ github.workspace }}/minivideo/bin/lib -name "libminivideo.*.dylib" | head -1)
              export BUNDLE=${{ github.workspace }}/mini_analyser/bin/mini_analyser.app
              cp "$DYLIB" "$BUNDLE/Contents/Frameworks/"
@@ -219,7 +219,8 @@ jobs:
              cp minivideo/bin/bin/minivideo.dll mini_analyser/bin/minivideo.dll
              windeployqt mini_analyser/bin/
              mv mini_analyser/bin/ mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
-             7z a ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
+             cd mini_analyser/
+             7z a ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
 
       # Upload application
       - name: Upload application
