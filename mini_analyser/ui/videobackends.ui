@@ -14,8 +14,8 @@
    <string>HW API capability checker</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/hardware.svg</normaloff>:/icons/icons/hardware.svg</iconset>
+   <iconset resource="../assets/assets.qrc">
+    <normaloff>:/assets/gfx/icons/hardware.svg</normaloff>:/assets/gfx/icons/hardware.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -546,7 +546,6 @@
  </widget>
  <resources>
   <include location="../assets/assets.qrc"/>
-  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

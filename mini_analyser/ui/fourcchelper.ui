@@ -26,8 +26,8 @@
    <string>FourCC helper</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/resources.qrc">
-    <normaloff>:/icons/icons/fourcc.svg</normaloff>:/icons/icons/fourcc.svg</iconset>
+   <iconset resource="../assets/assets.qrc">
+    <normaloff>:/assets/gfx/icons/fourcc.svg</normaloff>:/assets/gfx/icons/fourcc.svg</iconset>
   </property>
   <layout class="QGridLayout" name="_3">
    <property name="leftMargin">
@@ -142,8 +142,8 @@ border-color: rgb(85, 255, 0);</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/icons_material/icons_material/ic_content_copy_48px.svg</normaloff>:/icons_material/icons_material/ic_content_copy_48px.svg</iconset>
+           <iconset resource="../assets/assets.qrc">
+            <normaloff>:/assets/gfx/icons_symbolic/ic_content_copy_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_content_copy_48px.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -680,7 +680,6 @@ border-color: rgb(85, 255, 0);</string>
  </widget>
  <resources>
   <include location="../assets/assets.qrc"/>
-  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

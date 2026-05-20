@@ -59,8 +59,8 @@
          <string>Export</string>
         </property>
         <property name="icon">
-         <iconset resource="../resources/resources.qrc">
-          <normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</normaloff>:/icons_material/icons_material/ic_file_download_48px.svg</iconset>
+         <iconset resource="../assets/assets.qrc">
+          <normaloff>:/assets/gfx/icons_symbolic/ic_file_download_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_file_download_48px.svg</iconset>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -140,8 +140,8 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../resources/resources.qrc">
-            <normaloff>:/icons_material/icons_material/ic_folder_48px.svg</normaloff>:/icons_material/icons_material/ic_folder_48px.svg</iconset>
+           <iconset resource="../assets/assets.qrc">
+            <normaloff>:/assets/gfx/icons_symbolic/ic_folder_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_folder_48px.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -177,7 +177,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="../assets/assets.qrc"/>
  </resources>
  <connections/>
 </ui>
