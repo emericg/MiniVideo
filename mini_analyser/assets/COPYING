@@ -1,0 +1,12 @@
+
+# Application logo and icons:
+- gfx/logos/mini_analyser.*             // JuMo // CC BY-SA 4.0
+
+# Icons:
+- gfx/icons/*                           // Colloid icon theme // GPL v3
+- gfx/icons_symbolic/*                  // Google Material Design icons // Apache License v2.0
+
+# Others:
+- gfx/atom_*.png                        // Emeric Grange // CC BY-SA 4.0
+- gfx/dragNdrop.svg                     //
+- gfx/loading.svg                       //

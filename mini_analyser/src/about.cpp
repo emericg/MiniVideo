@@ -70,7 +70,7 @@ void AboutWindows::tabAbout()
     minivideo_get_infos(&minivideo_major, &minivideo_minor, &minivideo_patch,
                         &minivideo_builddate, &minivideo_buildtime, &minivideo_builddebug);
 
-    QFile file(":/about/about/about.html");
+    QFile file(":/assets/about/about.html");
     if (file.open(QFile::ReadOnly | QFile::Text))
     {
         QString about = file.readAll();
@@ -95,7 +95,7 @@ void AboutWindows::tabAbout()
 
 void AboutWindows::tabAuthors()
 {
-    QFile file(":/about/about/authors.html");
+    QFile file(":/assets/about/authors.html");
     if (file.open(QFile::ReadOnly | QFile::Text))
     {
         ui->textBrowser_content->setHtml(file.readAll());
@@ -104,7 +104,7 @@ void AboutWindows::tabAuthors()
 
 void AboutWindows::tabLicense()
 {
-    QFile file(":/about/about/gpl-3.0-standalone.html");
+    QFile file(":/assets/about/gpl-3.0-standalone.html");
     if (file.open(QFile::ReadOnly | QFile::Text))
     {
         ui->textBrowser_content->setHtml(file.readAll());
@@ -113,7 +113,7 @@ void AboutWindows::tabLicense()
 
 void AboutWindows::tabThirdParties()
 {
-    QFile file(":/about/about/thirdparties.html");
+    QFile file(":/assets/about/thirdparties.html");
     if (file.open(QFile::ReadOnly | QFile::Text))
     {
         ui->textBrowser_content->setHtml(file.readAll());

@@ -708,7 +708,7 @@ void MainWindow::loadingTab()
     ui->tabWidget->setCurrentIndex(0);
 
     // Loading animation
-    QString anim = ":/img/img/loading.svg";
+    QString anim = ":/assets/gfx/loading.svg";
     ui->widget_animation->load(anim);
 }
 
@@ -758,7 +758,8 @@ void MainWindow::openAbout()
 
 void MainWindow::About()
 {
-    QMessageBox about(QMessageBox::Information, tr("About mini_analyser"),
+    QMessageBox about(QMessageBox::Information,
+                      tr("About mini_analyser"),
                       tr("<big><b>mini_analyser</b></big> \
                          <p align='justify'>mini_analyser is a software designed \
                          to help you extract the maximum of information and metadata from multimedia files.</p> \

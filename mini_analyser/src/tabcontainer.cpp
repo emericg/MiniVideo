@@ -71,16 +71,16 @@ tabContainer::tabContainer(QWidget *parent) :
     connect(ui->treeWidget_structure, SIGNAL(itemSelectionChanged()), this, SLOT(containerSelectionChanged()));
 
     // Preload icons
-    icon_atom.addFile(":/img/img/A.png");
-    icon_data.addFile(":/img/img/P.png");
-    icon_data_ext.addFile(":/img/img/PE.png");
-    icon_ext.addFile(":/img/img/E.png");
-    icon_track.addFile(":/img/img/T.png");
+    icon_atom.addFile(":/assets/gfx/atom_A.png");
+    icon_data.addFile(":/assets/gfx/atom_P.png");
+    icon_data_ext.addFile(":/assets/gfx/atom_PE.png");
+    icon_ext.addFile(":/assets/gfx/atom_E.png");
+    icon_track.addFile(":/assets/gfx/atom_T.png");
 
     ui->widget_hex1->setVisible(false);
     ui->widget_hex2->setVisible(false);
 
-    // Setup HEX widget (v1 / QHexEdit) ////////////////////////////////////////
+    // Setup HEX widget (v1 / QHexEdit2) ////////////////////////////////////////
 
 #if (HEX_WIDGET_V1 == 1)
     ui->widget_hex1->setVisible(true);

@@ -26,8 +26,8 @@
    <string>About</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/resources.qrc">
-    <normaloff>:/img/app/mini_analyser.png</normaloff>:/img/app/mini_analyser.png</iconset>
+   <iconset resource="../assets/assets.qrc">
+    <normaloff>:/assets/gfx/mini_analyser.png</normaloff>:/assets/gfx/mini_analyser.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(245, 245, 245);</string>
@@ -200,13 +200,13 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
        </property>
        <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
        </property>
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -223,16 +223,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <item row="1" column="0">
       <widget class="QTextBrowser" name="textBrowser_content">
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="lineWidth">
         <number>0</number>
        </property>
        <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
        </property>
        <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
+        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
        </property>
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -282,7 +282,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../resources/resources.qrc">:/img/app/mini_analyser.png</pixmap>
+         <pixmap resource="../assets/assets.qrc">:/assets/gfx/mini_analyser.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -292,7 +292,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <item>
        <spacer name="verticalSpacer_2">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -310,7 +310,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <zorder>widget</zorder>
  </widget>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="../assets/assets.qrc"/>
  </resources>
  <connections/>
 </ui>

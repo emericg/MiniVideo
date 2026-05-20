@@ -143,7 +143,7 @@
              <string>Unknown</string>
             </property>
             <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -185,7 +185,7 @@
              <string>Unknown</string>
             </property>
             <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -545,6 +545,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../assets/assets.qrc"/>
   <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>875</height>
+    <width>720</width>
+    <height>960</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,8 +20,8 @@
    <bool>true</bool>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/resources.qrc">
-    <normaloff>:/img/app/mini_analyser.png</normaloff>:/img/app/mini_analyser.png</iconset>
+   <iconset resource="../assets/assets.qrc">
+    <normaloff>:/assets/gfx/mini_analyser.png</normaloff>:/assets/gfx/mini_analyser.png</iconset>
   </property>
   <property name="iconSize">
    <size>
@@ -61,8 +61,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/resources.qrc">
-        <normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</normaloff>:/icons_material/icons_material/ic_open_in_new_48px.svg</iconset>
+       <iconset resource="../assets/assets.qrc">
+        <normaloff>:/assets/gfx/icons_symbolic/ic_open_in_new_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_open_in_new_48px.svg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -100,8 +100,8 @@
         <string>Drag and drop files to get them analysed!</string>
        </property>
        <property name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_info_48px.svg</normaloff>:/icons_material/icons_material/ic_info_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_info_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_info_48px.svg</iconset>
        </property>
       </item>
      </widget>
@@ -122,7 +122,7 @@
         <item row="0" column="1">
          <spacer name="verticalSpacer_3">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -138,7 +138,7 @@
            <number>12</number>
           </property>
           <property name="sizeConstraint">
-           <enum>QLayout::SetFixedSize</enum>
+           <enum>QLayout::SizeConstraint::SetFixedSize</enum>
           </property>
           <item>
            <widget class="QLabel" name="label_drop_icon">
@@ -152,13 +152,13 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../resources/resources.qrc">:/img/img/dragNdrop.svg</pixmap>
+             <pixmap resource="../assets/assets.qrc">:/assets/gfx/dragNdrop.svg</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -177,7 +177,7 @@
              <string>drag &amp; drop file(s) to start</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -186,7 +186,7 @@
         <item row="3" column="1">
          <spacer name="verticalSpacer_4">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -199,7 +199,7 @@
         <item row="1" column="0" rowspan="2">
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -212,7 +212,7 @@
         <item row="2" column="2">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -232,7 +232,7 @@
         <item row="0" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -245,7 +245,7 @@
         <item row="1" column="0">
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -288,7 +288,7 @@
              <string>loading...</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -297,7 +297,7 @@
         <item row="1" column="2">
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -310,7 +310,7 @@
         <item row="2" column="1">
          <spacer name="verticalSpacer_8">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -324,8 +324,8 @@
       </widget>
       <widget class="QWidget" name="tab_infos">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_info_outline_48px.svg</normaloff>:/icons_material/icons_material/ic_info_outline_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_info_outline_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_info_outline_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Infos</string>
@@ -352,10 +352,10 @@
            <string notr="true">QScrollArea { background-color:transparent; }</string>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
+           <enum>QFrame::Shadow::Plain</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -377,7 +377,7 @@
              <number>8</number>
             </property>
             <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
+             <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
             </property>
             <property name="leftMargin">
              <number>4</number>
@@ -433,7 +433,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -455,7 +455,7 @@
                     <string>Container</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -465,7 +465,7 @@
                     <string>Overhead</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -475,7 +475,7 @@
                     <string>Creation lib.</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -490,7 +490,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -505,7 +505,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -520,7 +520,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -530,7 +530,7 @@
                     <string>Creation date</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -545,7 +545,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -560,7 +560,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -570,7 +570,7 @@
                     <string>Profile</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -580,7 +580,7 @@
                     <string>Creation app.</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -609,7 +609,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -631,7 +631,7 @@
                     <string>Path</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -646,7 +646,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -656,7 +656,7 @@
                     <string>Name</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -666,7 +666,7 @@
                     <string>Size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -681,7 +681,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -691,7 +691,7 @@
                     <string>Duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -706,7 +706,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -715,7 +715,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="Line" name="line_7">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -761,7 +761,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -776,7 +776,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -791,7 +791,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -801,7 +801,7 @@
                     <string>Duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -811,7 +811,7 @@
                     <string>Definition</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -827,7 +827,7 @@
                     <string>Stream size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -842,7 +842,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -852,7 +852,7 @@
                     <string>Frame rate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -867,7 +867,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -882,7 +882,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -892,7 +892,7 @@
                     <string>Frame rate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -907,7 +907,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -922,7 +922,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -937,7 +937,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -959,7 +959,7 @@
                     <string>Codec</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -974,7 +974,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -984,7 +984,7 @@
                     <string>Bitrate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -994,7 +994,7 @@
                     <string>Aspect Ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1004,7 +1004,7 @@
                     <string>Projection</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1019,7 +1019,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1029,7 +1029,7 @@
                     <string>Bitrate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1039,7 +1039,7 @@
                     <string>Rotation</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1049,7 +1049,7 @@
                     <string>Display</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1059,7 +1059,7 @@
                     <string>Aspect Ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1074,7 +1074,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1089,7 +1089,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1137,7 +1137,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1147,7 +1147,7 @@
                     <string>Sampling rate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1157,7 +1157,7 @@
                     <string>Bitrate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1172,7 +1172,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1182,7 +1182,7 @@
                     <string>Duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1192,7 +1192,7 @@
                     <string>Bit per sample</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1207,7 +1207,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1229,7 +1229,7 @@
                     <string>Codec</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1244,7 +1244,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1259,7 +1259,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1269,7 +1269,7 @@
                     <string>Bitrate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1291,7 +1291,7 @@
                     <string>Stream size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1306,7 +1306,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1321,7 +1321,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1336,7 +1336,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1346,7 +1346,7 @@
                     <string>Language</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1361,7 +1361,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1371,7 +1371,7 @@
                     <string>Channel(s)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1381,7 +1381,7 @@
                     <string>Channel mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1396,7 +1396,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1441,7 +1441,7 @@
             <item>
              <spacer name="verticalSpacer_5">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -1459,8 +1459,8 @@
       </widget>
       <widget class="QWidget" name="tab_video">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_theaters_48px.svg</normaloff>:/icons_material/icons_material/ic_theaters_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_theaters_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_theaters_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Video track(s)</string>
@@ -1487,10 +1487,10 @@
            <string notr="true">QScrollArea { background-color:transparent; }</string>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
+           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -1577,7 +1577,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1587,7 +1587,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1597,7 +1597,7 @@
                     <string>Bitrate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1607,7 +1607,7 @@
                     <string>Frame rate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1617,7 +1617,7 @@
                     <string>Definition</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1632,7 +1632,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1642,7 +1642,7 @@
                     <string>Infos</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1652,7 +1652,7 @@
                     <string>Bitrate (mean)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1662,7 +1662,7 @@
                     <string>Profile</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1672,7 +1672,7 @@
                     <string>Encoder</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1687,7 +1687,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1702,7 +1702,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1712,7 +1712,7 @@
                     <string>Rotation</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1727,7 +1727,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1742,7 +1742,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1757,7 +1757,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1767,7 +1767,7 @@
                     <string>Frame rate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1782,7 +1782,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1792,7 +1792,7 @@
                     <string>Compress. ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1807,7 +1807,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1822,7 +1822,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1832,7 +1832,7 @@
                     <string>Aspect Ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1842,7 +1842,7 @@
                     <string>Projection</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1857,7 +1857,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1872,7 +1872,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1887,7 +1887,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1897,7 +1897,7 @@
                     <string>Pixel Aspect Ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1907,7 +1907,7 @@
                     <string>Buffer size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1917,7 +1917,7 @@
                     <string>Bitrate (highest)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1932,7 +1932,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1947,7 +1947,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1962,7 +1962,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -1972,7 +1972,7 @@
                     <string>Bitrate (lowest)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1987,7 +1987,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2002,7 +2002,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2018,7 +2018,7 @@
                     <string>Codec</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2028,7 +2028,7 @@
                     <string>Display</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2043,7 +2043,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2053,7 +2053,7 @@
                     <string>Stereo mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2068,7 +2068,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2090,7 +2090,7 @@
                     <string>FourCC</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2100,7 +2100,7 @@
                     <string>Aspect Ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2110,7 +2110,7 @@
                     <string>HDR mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2125,7 +2125,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2160,7 +2160,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2175,7 +2175,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2185,7 +2185,7 @@
                     <string>Frame count</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2207,7 +2207,7 @@
                     <string>Sample count</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2217,7 +2217,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2227,7 +2227,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2249,7 +2249,7 @@
                     <string>Frame duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2258,7 +2258,7 @@
                <item row="1" column="0">
                 <widget class="Line" name="line_5">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -2276,7 +2276,7 @@
                     <string>Title</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2291,7 +2291,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2301,7 +2301,7 @@
                     <string>Size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2311,7 +2311,7 @@
                     <string>Duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2333,7 +2333,7 @@
                     <string>Internal ID</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2343,7 +2343,7 @@
                     <string>Language</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2358,7 +2358,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2373,7 +2373,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2388,7 +2388,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2403,7 +2403,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2412,7 +2412,7 @@
                <item row="8" column="0">
                 <spacer name="verticalSpacer_2">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -2441,7 +2441,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2457,7 +2457,7 @@
                     <string>Color depth</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2467,7 +2467,7 @@
                     <string>Color matrix</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2482,7 +2482,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2504,7 +2504,7 @@
                     <string>Subsampling</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2514,7 +2514,7 @@
                     <string>Range</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2529,7 +2529,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2551,7 +2551,7 @@
                     <string>Color space</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2566,7 +2566,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2581,7 +2581,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2597,7 +2597,7 @@
                     <string>Color primaries</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2612,7 +2612,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2622,7 +2622,7 @@
                     <string>Color transfer</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2637,7 +2637,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2646,14 +2646,14 @@
                <item row="6" column="0">
                 <widget class="Line" name="line_3">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
                <item row="4" column="0">
                 <widget class="Line" name="line_4">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -2668,8 +2668,8 @@
       </widget>
       <widget class="QWidget" name="tab_audio">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_volume_up_48px.svg</normaloff>:/icons_material/icons_material/ic_volume_up_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_volume_up_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_volume_up_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Audio track(s)</string>
@@ -2696,10 +2696,10 @@
            <string notr="true">QScrollArea { background-color:transparent; }</string>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
+           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -2781,7 +2781,7 @@
                     <string>Size</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2791,7 +2791,7 @@
                     <string>Language</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2801,7 +2801,7 @@
                     <string>Default track</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2823,7 +2823,7 @@
                     <string>Forced</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2833,7 +2833,7 @@
                     <string>Duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2843,7 +2843,7 @@
                     <string>Title</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2858,7 +2858,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2874,7 +2874,7 @@
                     <string>Internal ID</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -2889,7 +2889,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2904,7 +2904,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2919,7 +2919,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2934,7 +2934,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2949,7 +2949,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2964,7 +2964,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -2973,14 +2973,14 @@
                <item row="4" column="0">
                 <widget class="Line" name="line_2">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
                <item row="6" column="0">
                 <widget class="Line" name="line_6">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -3010,7 +3010,7 @@
                     <string>FourCC</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3020,7 +3020,7 @@
                     <string>Encoder</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3030,7 +3030,7 @@
                     <string>Bitrate (highest)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3045,7 +3045,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3055,7 +3055,7 @@
                     <string>Bitrate (lowest)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3071,7 +3071,7 @@
                     <string>Codec</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3086,7 +3086,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3101,7 +3101,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3116,7 +3116,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3131,7 +3131,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3153,7 +3153,7 @@
                     <string>Bitrate mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3168,7 +3168,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3178,7 +3178,7 @@
                     <string>Bitrate (mean)</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3188,7 +3188,7 @@
                     <string>Compress. ratio</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3203,7 +3203,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3218,7 +3218,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3228,7 +3228,7 @@
                     <string>Profile</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3243,7 +3243,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3252,14 +3252,14 @@
                <item row="1" column="0">
                 <widget class="Line" name="line">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
                <item row="10" column="0">
                 <spacer name="verticalSpacer_6">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -3288,7 +3288,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3310,7 +3310,7 @@
                     <string>Bit per sample</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3325,7 +3325,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3340,7 +3340,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3350,7 +3350,7 @@
                     <string>Sampling rate</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3360,7 +3360,7 @@
                     <string>Sample duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3382,7 +3382,7 @@
                     <string>Channel count</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3392,7 +3392,7 @@
                     <string>Channel mode</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3407,7 +3407,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3422,7 +3422,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3432,7 +3432,7 @@
                     <string>Sample per frame</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3447,7 +3447,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3467,7 +3467,7 @@
                     <string>Frame count</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3483,7 +3483,7 @@
                     <string>Frame duration</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3498,7 +3498,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3513,7 +3513,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3528,7 +3528,7 @@
                     <string>Unknown</string>
                    </property>
                    <property name="textInteractionFlags">
-                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -3550,7 +3550,7 @@
                     <string>Sample count</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -3577,8 +3577,8 @@
       </widget>
       <widget class="QWidget" name="tab_subtitles">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_closed_caption_48px.svg</normaloff>:/icons_material/icons_material/ic_closed_caption_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_closed_caption_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_closed_caption_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Subtitles track(s)</string>
@@ -3651,7 +3651,7 @@
                 <string>Internal ID</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3667,7 +3667,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3677,7 +3677,7 @@
                 <string>Size</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3693,7 +3693,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3703,7 +3703,7 @@
                 <string>Codec</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3719,7 +3719,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3729,7 +3729,7 @@
                 <string>Title</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3745,7 +3745,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3755,7 +3755,7 @@
                 <string>Language</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3771,7 +3771,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3781,7 +3781,7 @@
                 <string>Encoding</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -3797,7 +3797,7 @@
                 <string>Unknown</string>
                </property>
                <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -3809,10 +3809,10 @@
            <item row="3" column="0">
             <spacer name="verticalSpacer_sub">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Ignored</enum>
+              <enum>QSizePolicy::Policy::Ignored</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -3829,8 +3829,8 @@
       </widget>
       <widget class="QWidget" name="tab_other">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_style_48px.svg</normaloff>:/icons_material/icons_material/ic_style_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_style_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_style_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Other track(s)</string>
@@ -3949,7 +3949,7 @@
         <item>
          <spacer name="verticalSpacer_7">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -3963,8 +3963,8 @@
       </widget>
       <widget class="tabContainer" name="tab_container">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_developer_board_48px.svg</normaloff>:/icons_material/icons_material/ic_developer_board_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_developer_board_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_developer_board_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Container</string>
@@ -3972,8 +3972,8 @@
       </widget>
       <widget class="tabExport" name="tab_export">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_next_week_48px.svg</normaloff>:/icons_material/icons_material/ic_next_week_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_next_week_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_next_week_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>Export</string>
@@ -3981,8 +3981,8 @@
       </widget>
       <widget class="tabDev" name="tab_dev">
        <attribute name="icon">
-        <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons_material/icons_material/ic_bug_report_48px.svg</normaloff>:/icons_material/icons_material/ic_bug_report_48px.svg</iconset>
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/assets/gfx/icons_symbolic/ic_bug_report_48px.svg</normaloff>:/assets/gfx/icons_symbolic/ic_bug_report_48px.svg</iconset>
        </attribute>
        <attribute name="title">
         <string notr="true">DEV</string>
@@ -4000,7 +4000,7 @@
     <bool>false</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::TopToolBarArea</set>
+    <set>Qt::ToolBarArea::TopToolBarArea</set>
    </property>
    <property name="iconSize">
     <size>
@@ -4009,7 +4009,7 @@
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
+    <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
@@ -4032,8 +4032,8 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/media-open.svg</normaloff>:/icons/icons/media-open.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/media-open.svg</normaloff>:/assets/gfx/icons/media-open.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4044,8 +4044,8 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/about.svg</normaloff>:/icons/icons/about.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/about.svg</normaloff>:/assets/gfx/icons/about.svg</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -4056,8 +4056,8 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/media-close.svg</normaloff>:/icons/icons/media-close.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/media-close.svg</normaloff>:/assets/gfx/icons/media-close.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4071,8 +4071,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/about.svg</normaloff>:/icons/icons/about.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/about.svg</normaloff>:/assets/gfx/icons/about.svg</iconset>
    </property>
    <property name="text">
     <string>About Qt</string>
@@ -4080,8 +4080,8 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/exit.svg</normaloff>:/icons/icons/exit.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/exit.svg</normaloff>:/assets/gfx/icons/exit.svg</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -4092,8 +4092,8 @@
   </action>
   <action name="actionFourCC">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/fourcc.svg</normaloff>:/icons/icons/fourcc.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/fourcc.svg</normaloff>:/assets/gfx/icons/fourcc.svg</iconset>
    </property>
    <property name="text">
     <string>FCC</string>
@@ -4104,8 +4104,8 @@
   </action>
   <action name="actionReload">
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/media-reload.svg</normaloff>:/icons/icons/media-reload.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/media-reload.svg</normaloff>:/assets/gfx/icons/media-reload.svg</iconset>
    </property>
    <property name="text">
     <string/>
@@ -4119,8 +4119,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/icons/icons/hardware.svg</normaloff>:/icons/icons/hardware.svg</iconset>
+    <iconset resource="../assets/assets.qrc">
+     <normaloff>:/assets/gfx/icons/hardware.svg</normaloff>:/assets/gfx/icons/hardware.svg</iconset>
    </property>
    <property name="text">
     <string>HW</string>
@@ -4164,7 +4164,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="../assets/assets.qrc"/>
  </resources>
  <connections/>
 </ui>

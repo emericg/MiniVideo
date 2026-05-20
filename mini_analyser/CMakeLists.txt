@@ -85,19 +85,26 @@ set(FORMS
 )
 
 set(RESOURCES
-    resources/resources.qrc
+    assets/assets.qrc
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ui)
+
+# Set app desktop icons
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(app_icon_windows "${CMAKE_SOURCE_DIR}/assets/windows/${PROJECT_NAME}.rc")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(app_icon_macos "${CMAKE_SOURCE_DIR}/assets/macos/${PROJECT_NAME}.icns")
+endif()
 
 qt_add_executable(${PROJECT_NAME}
     ${SOURCES}
     ${HEADERS}
     ${FORMS}
     ${RESOURCES}
+    ${app_icon_macos}
+    ${app_icon_windows}
 )
 
 #target_include_directories(${PROJECT_NAME} PRIVATE src/)
@@ -206,7 +213,12 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    #
+    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION share/applications/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION share/appdata/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION share/pixmaps/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION share/icons/hicolor/scalable/apps/)
+    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION share/licenses/${PROJECT_NAME}/)
 endif()
 
 ## macOS
@@ -239,17 +251,3 @@ endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
-
-include(GNUInstallDirs)
-
-install(TARGETS mini_analyser
-        BUNDLE  DESTINATION .
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-## Linux
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-    install(FILES ${CMAKE_SOURCE_DIR}/resources/app/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata)
-endif()

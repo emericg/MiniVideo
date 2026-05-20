@@ -1,0 +1,49 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file>gfx/mini_analyser.png</file>
+        <file>gfx/dragNdrop.svg</file>
+        <file>gfx/loading.svg</file>
+        <file>gfx/atom_A.png</file>
+        <file>gfx/atom_E.png</file>
+        <file>gfx/atom_T.png</file>
+        <file>gfx/atom_P.png</file>
+        <file>gfx/atom_PE.png</file>
+
+        <file>gfx/icons/media-open.svg</file>
+        <file>gfx/icons/media-reload.svg</file>
+        <file>gfx/icons/media-close.svg</file>
+        <file>gfx/icons/about.svg</file>
+        <file>gfx/icons/exit.svg</file>
+        <file>gfx/icons/fourcc.svg</file>
+        <file>gfx/icons/hardware.svg</file>
+        <file>gfx/icons/settings.svg</file>
+
+        <file>gfx/icons_symbolic/ic_bug_report_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_closed_caption_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_compare_arrows_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_content_copy_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_developer_board_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_error_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_error_outline_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_file_download_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_folder_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_highlight_off_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_info_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_info_outline_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_list_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_movie_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_music_video_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_next_week_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_open_in_new_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_query_builder_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_speaker_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_style_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_theaters_48px.svg</file>
+        <file>gfx/icons_symbolic/ic_volume_up_48px.svg</file>
+
+        <file>about/about.html</file>
+        <file>about/authors.html</file>
+        <file>about/gpl-3.0-standalone.html</file>
+        <file>about/thirdparties.html</file>
+    </qresource>
+</RCC>

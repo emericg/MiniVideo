@@ -34,6 +34,8 @@ mini_analyser is a software designed to help you extract a maximum of informatio
 
 ### Building mini_analyser
 
+> minivideo library must have been built first!
+
 ```bash
 $ cd mini_analyser/
 $ cmake -B build/ -DMiniVideo_ROOT=/path/to/minivideo/
@@ -54,10 +56,11 @@ Just drag and drop multimedia files to analyse them!
 * Qt6 [website](https://www.qt.io) ([LGPL 3](https://www.gnu.org/licenses/lgpl-3.0.txt))
 * MiniVideo [website](https://github.com/emericg/MiniVideo) ([LGPL 3](https://www.gnu.org/licenses/lgpl-3.0.txt))
 * pugixml [website](https://pugixml.org/) ([MIT](https://opensource.org/licenses/MIT))
-* QCustomPlot [website](https://www.qcustomplot.com/) ([GPL 3](https://www.gnu.org/licenses/gpl-3.0.txt))
-* QHexEdit2 [website](https://github.com/Simsys/qhexedit2) ([LGPL 2.1+](https://www.gnu.org/licenses/lgpl-2.1.txt))
 * QHexView [website](https://github.com/Dax89/QHexView) ([MIT](https://opensource.org/licenses/MIT))
+* QHexEdit2 [website](https://github.com/Simsys/qhexedit2) ([LGPL 2.1+](https://www.gnu.org/licenses/lgpl-2.1.txt))
+* QCustomPlot [website](https://www.qcustomplot.com/) ([GPL 3](https://www.gnu.org/licenses/gpl-3.0.txt))
 * Graphical resources: [assets/COPYING](assets/COPYING)
+
 
 ## Get involved!
 
