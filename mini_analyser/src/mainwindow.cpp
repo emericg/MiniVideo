@@ -94,11 +94,11 @@ MainWindow::MainWindow(QWidget *parent) :
     handleTabWidget();
 
     // Preload icons
-    icon_empty.addFile(":/icons_material/icons_material/ic_info_48px.svg");
-    icon_load.addFile(":/icons_material/icons_material/ic_query_builder_48px.svg");
-    icon_movie.addFile(":/icons_material/icons_material/ic_movie_48px.svg");
-    icon_music.addFile(":/icons_material/icons_material/ic_music_video_48px.svg");
-    icon_error.addFile(":/icons_material/icons_material/ic_error_outline_48px.svg");
+    icon_empty.addFile(":/assets/gfx/icons_symbolic/ic_info_48px.svg");
+    icon_load.addFile(":/assets/gfx/icons_symbolic/ic_query_builder_48px.svg");
+    icon_movie.addFile(":/assets/gfx/icons_symbolic/ic_movie_48px.svg");
+    icon_music.addFile(":/assets/gfx/icons_symbolic/ic_music_video_48px.svg");
+    icon_error.addFile(":/assets/gfx/icons_symbolic/ic_error_outline_48px.svg");
 
 #ifdef Q_OS_LINUX
 #if !defined(VIDEOBACKEND_VDPAU) && !defined(VIDEOBACKEND_VAAPI)
