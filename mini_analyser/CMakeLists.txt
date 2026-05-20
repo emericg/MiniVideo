@@ -210,7 +210,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin/)
     install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION share/applications/)
     install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION share/appdata/)
     install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION share/pixmaps/)
@@ -244,3 +243,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 ################################################################################
+
+# Install binary (or app bundle) in the
+install(TARGETS ${PROJECT_NAME}
+        BUNDLE  DESTINATION ${CMAKE_INSTALL_BINDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

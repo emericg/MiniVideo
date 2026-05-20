@@ -70,8 +70,8 @@ jobs:
              cmake --build build/ --config Release
              cmake --install build/
 
-      # Recap application build
-      - name: Package application
+      # Recap application bin dir
+      - name: Recap application bin dir
         run: |
             find mini_analyser/bin/
 
@@ -146,8 +146,8 @@ jobs:
              cmake --build build/ --config Release
              cmake --install build/
 
-      # Recap application build
-      - name: Package application
+      # Recap application bin dir
+      - name: Recap application bin dir
         run: |
             find mini_analyser/bin/
 
@@ -219,10 +219,10 @@ jobs:
              cmake --build build/ --config Release
              cmake --install build/
 
-      # Recap application build
-      - name: Package application
-        run: |
-            find mini_analyser/bin/
+      # Recap application bin dir
+      #- name: Recap application bin dir
+      #  run: |
+      #      find mini_analyser/bin/
 
       # Package application
       - name: Package application
