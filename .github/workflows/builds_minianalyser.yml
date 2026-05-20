@@ -90,6 +90,7 @@ jobs:
              chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
              export EXTRA_QT_MODULES="svg;waylandcompositor;"
              export EXTRA_PLATFORM_PLUGINS="libqwayland.so;"
+             export LD_LIBRARY_PATH=${{ github.workspace }}/minivideo/bin/lib:$LD_LIBRARY_PATH
              ./linuxdeploy-x86_64.AppImage --appdir bin/ --plugin qt --output appimage
              mv ${{ env.APP_NAME }}-x86_64.AppImage ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-linux64.AppImage
 
@@ -155,10 +156,8 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             mkdir -p mini_analyser/bin/mini_analyser.app/Frameworks/
-             cp minivideo/bin/lib/libminivideo.0.15.dylib mini_analyser/bin/{{ env.APP_NAME }}.app/Frameworks/libminivideo.0.15.dylib
-             DYLIB=$(find ${{ github.workspace }}/minivideo/bin/lib -name "libminivideo.*.dylib" | head -1)
-             BUNDLE=${{ github.workspace }}/mini_analyser/bin/mini_analyser.app
+             export DYLIB=$(find ${{ github.workspace }}/minivideo/bin/lib -name "libminivideo.*.dylib" | head -1)
+             export BUNDLE=${{ github.workspace }}/mini_analyser/bin/mini_analyser.app
              cp "$DYLIB" "$BUNDLE/Contents/Frameworks/"
              install_name_tool -change $(otool -D "$DYLIB" | tail -1) @executable_path/../Frameworks/$(basename $DYLIB) $BUNDLE/Contents/MacOS/mini_analyser"
              macdeployqt mini_analyser/bin/${{ env.APP_NAME }}.app
