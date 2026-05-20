@@ -80,6 +80,7 @@ jobs:
         run: |
              mkdir -p mini_analyser/bin/usr/lib/
              cp minivideo/bin/lib/libminivideo.so* mini_analyser/bin/usr/lib/
+             find mini_analyser/bin/
              cd mini_analyser/
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
              wget -c -nv "https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage"
@@ -154,6 +155,12 @@ jobs:
       # Package application
       - name: Package application
         run: |
+             mkdir -p mini_analyser/bin/mini_analyser.app/Frameworks/
+             cp minivideo/bin/lib/libminivideo.0.15.dylib mini_analyser/bin/{{ env.APP_NAME }}.app/Frameworks/libminivideo.0.15.dylib
+             DYLIB=$(find ${{ github.workspace }}/minivideo/bin/lib -name "libminivideo.*.dylib" | head -1)
+             BUNDLE=${{ github.workspace }}/mini_analyser/bin/mini_analyser.app
+             cp "$DYLIB" "$BUNDLE/Contents/Frameworks/"
+             install_name_tool -change $(otool -D "$DYLIB" | tail -1) @executable_path/../Frameworks/$(basename $DYLIB) $BUNDLE/Contents/MacOS/mini_analyser"
              macdeployqt mini_analyser/bin/${{ env.APP_NAME }}.app
              cd mini_analyser/bin
              zip -r -X ../../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip ${{ env.APP_NAME }}.app
