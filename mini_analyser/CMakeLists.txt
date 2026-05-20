@@ -210,11 +210,11 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION share/applications/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION share/appdata/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION share/pixmaps/)
-    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION share/icons/hicolor/scalable/apps/)
-    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION share/licenses/${PROJECT_NAME}/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/applications/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/appdata/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/pixmaps/)
+    install(FILES ${CMAKE_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/icons/hicolor/scalable/apps/)
+    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/licenses/${PROJECT_NAME}/)
 endif()
 
 ## macOS
