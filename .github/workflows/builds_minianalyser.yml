@@ -66,7 +66,7 @@ jobs:
       - name: Build application
         run: |
              cd mini_analyser/
-             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMiniVideo_ROOT=../minivideo/bin/-DCMAKE_INSTALL_PREFIX=/usr/
+             cmake -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DMiniVideo_ROOT=../minivideo/bin/ -DCMAKE_INSTALL_PREFIX=/usr/
              cmake --build build/ --config Release
              DESTDIR=bin/ cmake --install build/
 
@@ -154,9 +154,9 @@ jobs:
       # Package application
       - name: Package application
         run: |
-             cd mini_analyser/
-             macdeployqt bin/${{ env.APP_NAME }}.app
-             zip -r -X ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip bin/${{ env.APP_NAME }}.app
+             macdeployqt mini_analyser/bin/${{ env.APP_NAME }}.app
+             cd mini_analyser/bin
+             zip -r -X ../../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip ${{ env.APP_NAME }}.app
 
       # Upload application
       - name: Upload application
@@ -230,8 +230,8 @@ jobs:
              cp minivideo/bin/lib/minivideo.lib mini_analyser/bin/minivideo.lib
              cp minivideo/bin/bin/minivideo.dll mini_analyser/bin/minivideo.dll
              windeployqt mini_analyser/bin/
-             mv mini_analyser/bin mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
-             7z a ../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
+             mv mini_analyser/bin/ mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
+             7z a ${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64.zip mini_analyser/${{ env.APP_NAME }}-${{ env.APP_VERSION }}-win64
 
       # Upload application
       - name: Upload application
