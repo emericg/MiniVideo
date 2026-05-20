@@ -208,13 +208,15 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 ################################################################################
 
+include(GNUInstallDirs)
+
 ## Linux
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/applications/)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/appdata/)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/pixmaps/)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/icons/hicolor/scalable/apps/)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/share/licenses/${PROJECT_NAME}/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/linux/${PROJECT_NAME}.svg DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}/)
 endif()
 
 ## macOS
@@ -242,10 +244,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
-################################################################################
+# Build binary in ${CMAKE_BINARY_DIR}/bin
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
 
 # Install binary (or app bundle) in the ${CMAKE_INSTALL_BINDIR}
 install(TARGETS ${PROJECT_NAME}
         BUNDLE  DESTINATION ${CMAKE_INSTALL_BINDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+################################################################################
