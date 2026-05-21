@@ -147,7 +147,7 @@ jobs:
              export DYLIB=$(find ${{ github.workspace }}/minivideo/bin/lib -name "libminivideo.*.dylib" | head -1)
              export BUNDLE=${{ github.workspace }}/mini_analyser/bin/mini_analyser.app
              cp "$DYLIB" "$BUNDLE/Contents/Frameworks/"
-             install_name_tool -change $(otool -D "$DYLIB" | tail -1) @executable_path/../Frameworks/$(basename $DYLIB) $BUNDLE/Contents/MacOS/mini_analyser"
+             install_name_tool -change $(otool -D "$DYLIB" | tail -1) @executable_path/../Frameworks/$(basename $DYLIB) $BUNDLE/Contents/MacOS/mini_analyser
              macdeployqt mini_analyser/bin/${{ env.APP_NAME }}.app
              cd mini_analyser/bin
              zip -r -X ../../${{ env.APP_NAME }}-${{ env.APP_VERSION }}-macOS.zip ${{ env.APP_NAME }}.app
