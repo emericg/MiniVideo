@@ -1,33 +1,26 @@
 # Build directories
-mini_analyser/bin/*
-mini_analyser/build/*
-mini_extractor/bin/*
-mini_extractor/build/*
-mini_tester/bin/*
-mini_tester/build/*
-mini_thumbnailer/bin/*
-mini_thumbnailer/build/*
-minivideo/bin/*
-minivideo/build/*
+build/
+minivideo/bin/
+minivideo/build/
+mini_analyser/bin/
+mini_analyser/build/
+mini_extractor/bin/
+mini_extractor/build/
+mini_thumbnailer/bin/
+mini_thumbnailer/build/
 
 # CMake temporary files
 CMakeLists.txt.user
 CMakeCache.txt
 
-# CMake generated files
-minivideo/src/minivideo_export.h
-minivideo/src/minivideo_settings.h
-
-# QtCreator & other IDEs project files
+# QtCreator & other IDEs project directories
 **/.qtcreator/
 **/.qtc_clangd/
 **/.vscode/
 
-# Doxygen documentation
-minivideo/doc/doxygen_temp/html/*
-minivideo/doc/doxygen_temp/latex/*
-
-# cppcheck temporary files
+# Doxygen & cppcheck generated content
+minivideo/doc/doxygen_temp/html/
+minivideo/doc/doxygen_temp/latex/
 minivideo/doc/cppcheck_temp/
 
 # Others

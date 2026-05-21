@@ -14,7 +14,7 @@ on:
 
 env:
   APP_NAME: "mini_analyser"
-  APP_VERSION: "50"
+  APP_VERSION: "r50"
   QT_VERSION: "6.8.3"
 
 #-------------------------------------------------------------------------------
