@@ -373,6 +373,11 @@ void QHexView::redo() {
         m_hexdocument->redo();
 }
 
+void QHexView::clear() {
+    if(m_hexdocument)
+        m_hexdocument->clear();
+}
+
 void QHexView::cut(bool hex) {
     this->copy(hex);
     if(m_readonly)
@@ -425,7 +430,7 @@ void QHexView::copyVisual() const {
         s += " ";
 
         for(unsigned int col = 0u; col < m_options.line_length; col++) {
-            qint64 adjcol = 0, pos = this->positionFromLineCol(line, col, adjcol);
+            qint64 adjcol, pos = this->positionFromLineCol(line, col, adjcol);
 
             if(m_hexdocument->accept(pos)) {
                 s += (i + adjcol) >= nbytes
@@ -685,6 +690,7 @@ void QHexView::ensureVisible() {
 
     QHexPosition pos = m_hexcursor->position();
     int vlines = this->visibleLines();
+    int vscroll = this->verticalScrollBar()->value();
 
     // Calculate target scroll position to center the cursor
     qint64 tgtscroll = pos.line - (vlines / 2);
@@ -692,7 +698,7 @@ void QHexView::ensureVisible() {
     // Ensure we don't scroll past the beginning or end
     if(tgtscroll < 0)
         tgtscroll = 0;
-    else if(tgtscroll > ((qint64)this->lines() - vlines))
+    else if(tgtscroll > this->lines() - vlines)
         tgtscroll = this->lines() - vlines;
 
     // Line is outside of visible range
@@ -969,7 +975,7 @@ void QHexView::drawAsciiPart(PaintContext* ctx, const QByteArray& linebytes,
     for(unsigned int col = 0u; col < m_options.line_length; col++) {
         QString s;
         quint8 b{};
-        qint64 adjcol = 0;
+        qint64 adjcol;
 
         if(m_hexdocument->accept(
                this->positionFromLineCol(line, col, adjcol))) {
@@ -1300,8 +1306,20 @@ QHexCharFormat QHexView::drawFormat(PaintContext* ctx, quint8 b,
             }
         }
 
-        if(hasdelegate && column < this->getLastColumn(line))
-            selcf = cf;
+        if(hasdelegate) { // check if highlight strip continues
+            bool hasnext = column + 1 <= this->getLastColumn(line);
+            QHexCharFormat nextcf;
+
+            // peek next byte's style
+            if(hasnext) {
+                uchar nextb = this->getByte(offset + 1);
+
+                if(m_hexdelegate->renderByte(offset + 1, nextb, nextcf, this) &&
+                   cf.background == nextcf.background) {
+                    selcf = cf;
+                }
+            }
+        }
     }
 
     if(m_hexdocument->trackChanges()) {
@@ -1634,7 +1652,18 @@ bool QHexView::event(QEvent* e) {
                                  m_currentarea == QHexArea::Ascii)) {
                 auto* helpevent = static_cast<QHelpEvent*>(e);
                 auto pos = this->positionFromPoint(helpevent->pos());
-                auto comment = m_hexmetadata->getComment(pos.line, pos.column);
+
+                QString comment;
+
+                if(m_hexdelegate) {
+                    auto offset = m_hexcursor->positionToOffset(pos);
+                    comment = m_hexdelegate->comment(
+                        offset, this->getByte(offset), this);
+                }
+
+                if(comment.isEmpty())
+                    comment = m_hexmetadata->getComment(pos.line, pos.column);
+
                 if(!comment.isEmpty())
                     QToolTip::showText(helpevent->globalPos(), comment);
                 return true;
@@ -1840,4 +1869,10 @@ QByteArray QHexView::getLine(qint64 line) const {
     return m_hexdocument ? m_hexdocument->read(line * m_options.line_length,
                                                m_options.line_length)
                          : QByteArray{};
+}
+
+uchar QHexView::getByte(qint64 offset) const {
+    return m_hexdocument && offset < m_hexdocument->length()
+               ? m_hexdocument->at(offset)
+               : uchar{};
 }

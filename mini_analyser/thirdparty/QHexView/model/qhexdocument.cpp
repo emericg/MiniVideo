@@ -113,7 +113,7 @@ qint64 QHexDocument::length() const {
     return m_buffer ? m_buffer->length() : 0;
 }
 
-uchar QHexDocument::at(int offset) const { return m_buffer->at(offset); }
+uchar QHexDocument::at(qint64 offset) const { return m_buffer->at(offset); }
 
 QHexDocument* QHexDocument::fromFile(QString filename, QObject* parent) {
     QFile f(filename);
@@ -136,12 +136,22 @@ void QHexDocument::redo() {
     Q_EMIT changed();
 }
 
+void QHexDocument::clear() { this->remove(0, this->length()); }
+
+void QHexDocument::append(uchar b) {
+    this->insert(this->length(), QByteArray(1, b));
+}
+
 void QHexDocument::insert(qint64 offset, uchar b) {
     this->insert(offset, QByteArray(1, b));
 }
 
 void QHexDocument::replace(qint64 offset, uchar b) {
     this->replace(offset, QByteArray(1, b));
+}
+
+void QHexDocument::append(const QByteArray& data) {
+    this->insert(this->length(), data);
 }
 
 void QHexDocument::insert(qint64 offset, const QByteArray& data) {
@@ -183,6 +193,9 @@ void QHexDocument::replace(qint64 offset, const QByteArray& data) {
 }
 
 void QHexDocument::remove(qint64 offset, int len) {
+    if(len <= 0)
+        return;
+
     QByteArray data = m_buffer->read(offset, len);
     m_undostack->push(
         new QHexViewRemoveCommand(m_buffer, m_changes, this, offset, len));

@@ -63,6 +63,7 @@ public:
     QByteArray selectedBytes() const;
     QByteArray visibleBytes() const;
     QByteArray getLine(qint64 line) const;
+    uchar getByte(qint64 offset) const;
     unsigned int addressWidth() const;
     unsigned int lineLength() const;
     bool isModified() const;
@@ -124,6 +125,7 @@ public Q_SLOTS:
     void invertByteOrder();
     void undo();
     void redo();
+    void clear();
     void cut(bool hex = false);
     void copyVisual() const;
     void copyFormat(const QHexCopyFormat& cf) const;

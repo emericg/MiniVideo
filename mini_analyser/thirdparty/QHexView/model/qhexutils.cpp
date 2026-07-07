@@ -243,6 +243,7 @@ QByteArray variantToByteArray(QVariant value, QHexFindMode mode,
 
         case QHexFindMode::Hex: {
             if(QHEXVIEW_VARIANT_EQ(value, String)) {
+                qint64 len = 0;
                 auto s = value.toString();
                 if(!QHexUtils::checkPattern(s))
                     return {};

@@ -36,15 +36,18 @@ public:
     qint64 indexOf(const QByteArray& ba, qint64 from = 0);
     qint64 lastIndexOf(const QByteArray& ba, qint64 from = 0);
     QByteArray read(qint64 offset, int len = 0) const;
-    uchar at(int offset) const;
+    uchar at(qint64 offset) const;
 
 public Q_SLOTS:
     void clearChanges();
     void clearModified();
     void undo();
     void redo();
+    void clear();
+    void append(uchar b);
     void insert(qint64 offset, uchar b);
     void replace(qint64 offset, uchar b);
+    void append(const QByteArray& data);
     void insert(qint64 offset, const QByteArray& data);
     void replace(qint64 offset, const QByteArray& data);
     void remove(qint64 offset, int len);
