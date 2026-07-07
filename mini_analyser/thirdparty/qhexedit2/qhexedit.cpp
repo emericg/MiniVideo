@@ -28,11 +28,17 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
     , _undoStack(new UndoStack(_chunks, this))
     , _colorManager(new ColorManager())
 {
-#ifdef Q_OS_WIN32
-    setFont(QFont("Courier", 10));
+#if defined(Q_OS_WINDOWS)
+    setFont(QFont("Courier", 12));
+#elif defined(Q_OS_MACOS)
+    setFont(QFont("Andale Mono", 12));
+    ui->widget_hex1->setFont(QFont("Andale Mono", 12));
+#elif defined(Q_OS_LINUX)
+    setFont(QFont("Monospace", 12));
 #else
-    setFont(QFont("Monospace", 10));
+    setFont(QFont("Monospace", 12));
 #endif
+
     connect(&_cursorTimer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
