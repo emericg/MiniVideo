@@ -32,7 +32,6 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
     setFont(QFont("Courier", 12));
 #elif defined(Q_OS_MACOS)
     setFont(QFont("Andale Mono", 12));
-    ui->widget_hex1->setFont(QFont("Andale Mono", 12));
 #elif defined(Q_OS_LINUX)
     setFont(QFont("Monospace", 12));
 #else
