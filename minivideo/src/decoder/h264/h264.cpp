@@ -356,6 +356,13 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
+            case NALU_TYPE_SEI: ////////////////////////////////////////
+            {
+                // SEI messages are not needed for decoding, skip them
+                retcode = SUCCESS;
+            }
+            break;
+
             case NALU_TYPE_AUD: ////////////////////////////////////////
             {
                 h264_nalu_clean_sample(dc->bitstr);

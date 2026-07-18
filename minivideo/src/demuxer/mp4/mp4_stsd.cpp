@@ -1173,13 +1173,19 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         decodeSPS(bitstr, track->avcC->sps_array[i]);
         bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
 
-        if (bitstream_get_absolute_byte_offset(bitstr) != (track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]))
         {
-            TRACE_WARNING(MP4, "SPS OFFSET ERROR  %lli vs %lli",
-                          bitstream_get_absolute_byte_offset(bitstr),
-                          (track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]));
+            int64_t expected = track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i];
+            int64_t current = bitstream_get_absolute_byte_offset(bitstr);
+            if (current != expected)
+            {
+                TRACE_WARNING(MP4, "SPS OFFSET ERROR  %lli vs %lli", current, expected);
 
-            skip_bits(bitstr, ((track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+                // decodeSPS() may have under or overshot the SPS: resync in the right direction
+                if (current < expected)
+                    skip_bits(bitstr, (unsigned int)((expected - current) * 8));
+                else
+                    rewind_bits(bitstr, (unsigned int)((current - expected) * 8));
+            }
         }
     }
 
@@ -1198,12 +1204,19 @@ int parse_avcC(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
         decodePPS(bitstr, track->avcC->pps_array[i], track->avcC->sps_array);
         bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
 
-        if (bitstream_get_absolute_byte_offset(bitstr) != (track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]))
         {
-            TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli",
-                          bitstream_get_absolute_byte_offset(bitstr),
-                          (track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]));
-            skip_bits(bitstr, ((track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i]) - bitstream_get_absolute_byte_offset(bitstr)) * 8);
+            int64_t expected = track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i];
+            int64_t current = bitstream_get_absolute_byte_offset(bitstr);
+            if (current != expected)
+            {
+                TRACE_WARNING(MP4, "PPS OFFSET ERROR  %lli vs %lli", current, expected);
+
+                // decodePPS() may have under or overshot the PPS: resync in the right direction
+                if (current < expected)
+                    skip_bits(bitstr, (unsigned int)((expected - current) * 8));
+                else
+                    rewind_bits(bitstr, (unsigned int)((current - expected) * 8));
+            }
         }
     }
 
