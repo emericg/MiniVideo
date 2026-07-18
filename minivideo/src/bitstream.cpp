@@ -513,51 +513,44 @@ uint32_t read_bits(Bitstream_t *bitstr, const unsigned int n)
         }
 
         fp = bitstr->buffer_offset % 8; // front padding, in bit
-        byte_current = (uint32_t)floor(bitstr->buffer_offset / 8.0);
-        tbr = (uint32_t)ceil((n + fp) / 8.0);
+        byte_current = (uint32_t)(bitstr->buffer_offset / 8);
+        tbr = (n + fp + 7) / 8;
         tbr_current = tbr;
+
+        // The buffer may have been cut short by the end of the file
+        if ((byte_current + tbr) > bitstr->buffer_size)
+        {
+            TRACE_ERROR(BITS, "<b> Cannot read %u bits: end of the bitstream reached!", n);
+            return FAILURE;
+        }
     }
 
     // Read
     ////////////////////////////////////////////////////////////////////////
 
-    if (fp > 0)
+    if (tbr == 1)
     {
-        // Read un-aligned bits
-        bits += bitstr->buffer[byte_current++];
-        bits &= 0xFF >> fp;
-        tbr_current--;
-
-        while (tbr_current > 0)
-        {
-            if (tbr > 4 &&
-                tbr_current == 1)
-            {
-                bits <<= fp;
-                bits += bitstr->buffer[byte_current++] & (0xFF >> fp);
-            }
-            else
-            {
-                bits <<= 8;
-                bits += bitstr->buffer[byte_current++];
-            }
-
-            tbr_current--;
-        }
-
-        bits >>= ((tbr*8) - n - fp);
+        // Everything we need is in a single byte
+        bits = (bitstr->buffer[byte_current] >> (8 - fp - n)) & (0xFF >> (8 - n));
     }
     else
     {
-        // Read aligned bits
-        while (tbr_current > 0)
+        // First byte: keep the (8 - fp) low bits
+        bits = bitstr->buffer[byte_current++] & (0xFF >> fp);
+
+        // Middle byte(s): 8 bits each
+        for (tbr_current = tbr - 2; tbr_current > 0; tbr_current--)
         {
             bits <<= 8;
             bits += bitstr->buffer[byte_current++];
-            tbr_current--;
         }
 
-        bits >>= (32 - n) % 8;
+        // Last byte: keep the top bits we still need
+        {
+            uint32_t last = n + fp - ((tbr - 1) * 8);
+            bits <<= last;
+            bits += bitstr->buffer[byte_current] >> (8 - last);
+        }
     }
 
     // Update bit offset
@@ -634,51 +627,44 @@ uint64_t read_bits_64(Bitstream_t *bitstr, const unsigned int n)
         }
 
         fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
-        byte_current = (uint32_t)floor(bitstr->buffer_offset / 8.0);
-        tbr = (uint32_t)ceil((n + fp) / 8.0);
+        byte_current = (uint32_t)(bitstr->buffer_offset / 8);
+        tbr = (n + fp + 7) / 8;
         tbr_current = tbr;
+
+        // The buffer may have been cut short by the end of the file
+        if ((byte_current + tbr) > bitstr->buffer_size)
+        {
+            TRACE_ERROR(BITS, "<b> Cannot read %u bits: end of the bitstream reached!", n);
+            return FAILURE;
+        }
     }
 
     // Read
     ////////////////////////////////////////////////////////////////////////
 
-    if (fp > 0)
+    if (tbr == 1)
     {
-        // Read un-aligned bits
-        bits += bitstr->buffer[byte_current++];
-        bits &= 0xFF >> fp;
-        tbr_current--;
-
-        while (tbr_current > 0)
-        {
-            if (tbr > 4 &&
-                tbr_current == 1)
-            {
-                bits <<= fp;
-                bits += bitstr->buffer[byte_current++] & (0xFF >> fp);
-            }
-            else
-            {
-                bits <<= 8;
-                bits += bitstr->buffer[byte_current++];
-            }
-
-            tbr_current--;
-        }
-
-        bits >>= ((tbr*8) - n - fp);
+        // Everything we need is in a single byte
+        bits = (bitstr->buffer[byte_current] >> (8 - fp - n)) & (0xFF >> (8 - n));
     }
     else
     {
-        // Read aligned bits
-        while (tbr_current > 0)
+        // First byte: keep the (8 - fp) low bits
+        bits = bitstr->buffer[byte_current++] & (0xFF >> fp);
+
+        // Middle byte(s): 8 bits each
+        for (tbr_current = tbr - 2; tbr_current > 0; tbr_current--)
         {
             bits <<= 8;
             bits += bitstr->buffer[byte_current++];
-            tbr_current--;
         }
 
-        bits >>= (64 - n) % 8;
+        // Last byte: keep the top bits we still need
+        {
+            uint32_t last = n + fp - ((tbr - 1) * 8);
+            bits <<= last;
+            bits += bitstr->buffer[byte_current] >> (8 - last);
+        }
     }
 
     // Update bit offset
@@ -905,52 +891,44 @@ uint32_t next_bits(Bitstream_t *bitstr, const unsigned int n)
         }
 
         fp = (uint32_t)(bitstr->buffer_offset % 8); // front padding, in bit
-        byte_current = (uint32_t)floor(bitstr->buffer_offset / 8.0);
-        tbr = (uint32_t)ceil((n + fp) / 8.0);
+        byte_current = (uint32_t)(bitstr->buffer_offset / 8);
+        tbr = (n + fp + 7) / 8;
         tbr_current = tbr;
+
+        // The buffer may have been cut short by the end of the file
+        if ((byte_current + tbr) > bitstr->buffer_size)
+        {
+            TRACE_ERROR(BITS, "<b> Cannot read %u bits: end of the bitstream reached!", n);
+            return FAILURE;
+        }
     }
 
     // Read
     ////////////////////////////////////////////////////////////////////////
 
-    if (fp > 0)
+    if (tbr == 1)
     {
-        // Read un-aligned bits
-        bits += bitstr->buffer[byte_current++];
-        bits &= 0xFF >> fp;
-        tbr_current--;
-
-        while (tbr_current > 0)
-        {
-            if (tbr > 4 &&
-                tbr_current == 1)
-            {
-                bits <<= fp;
-                bits += bitstr->buffer[byte_current++] & (0xFF >> fp);
-            }
-            else
-            {
-                bits <<= 8;
-                bits += bitstr->buffer[byte_current++];
-            }
-
-            tbr_current--;
-        }
-
-        bits >>= ((tbr*8) - n - fp);
+        // Everything we need is in a single byte
+        bits = (bitstr->buffer[byte_current] >> (8 - fp - n)) & (0xFF >> (8 - n));
     }
     else
     {
-        // Read aligned bits
-        while (tbr_current > 0)
+        // First byte: keep the (8 - fp) low bits
+        bits = bitstr->buffer[byte_current++] & (0xFF >> fp);
+
+        // Middle byte(s): 8 bits each
+        for (tbr_current = tbr - 2; tbr_current > 0; tbr_current--)
         {
             bits <<= 8;
-            bits += bitstr->buffer[byte_current];
-            byte_current++;
-            tbr_current--;
+            bits += bitstr->buffer[byte_current++];
         }
 
-        bits >>= (32 - n) % 8;
+        // Last byte: keep the top bits we still need
+        {
+            uint32_t last = n + fp - ((tbr - 1) * 8);
+            bits <<= last;
+            bits += bitstr->buffer[byte_current] >> (8 - last);
+        }
     }
 
     // Return result
@@ -986,10 +964,11 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
     int retcode = FAILURE;
 
     // Check if destination is outside the current buffer
-    if ((bitstr->buffer_offset + n) > (bitstr->buffer_size * 8))
+    // (64 bits math, so a huge 'n' cannot wrap around and be mistaken for a small in-buffer skip)
+    if (((uint64_t)bitstr->buffer_offset + n) > ((uint64_t)bitstr->buffer_size * 8))
     {
         // If it is, check if its in the next one
-        if (n < (bitstr->buffer_size * 8))
+        if ((uint64_t)n < ((uint64_t)bitstr->buffer_size * 8))
         {
             // Refresh buffer
             retcode = buffer_feed_dynamic(bitstr, -1);
@@ -999,7 +978,7 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
         }
         else // Or somewhere else entierly
         {
-            int64_t new_bit_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset + n);
+            int64_t new_bit_offset = bitstream_get_absolute_bit_offset(bitstr) + n;
 
             // Do not jump to the last byte of the file?
             //if (new_bit_offset/8 >= bitstr->bitstream_size)
@@ -1008,7 +987,7 @@ int skip_bits(Bitstream_t *bitstr, const unsigned int n)
                 retcode = bitstream_goto_offset(bitstr, new_bit_offset/8);
 
                 // Then skip x bits ?
-                if ((new_bit_offset % 8) != 0)
+                if (retcode == SUCCESS && (new_bit_offset % 8) != 0)
                 {
                     bitstr->buffer_offset += new_bit_offset % 8;
                 }
@@ -1062,8 +1041,14 @@ int rewind_bits(Bitstream_t *bitstr, const unsigned int n)
     else
     {
         // Must reload previous data and go directly to the offset we want
-        int64_t new_offset = (int64_t)(bitstr->bitstream_offset*8 + bitstr->buffer_offset - n);
-        retcode = bitstream_goto_offset(bitstr, new_offset);
+        int64_t new_bit_offset = bitstream_get_absolute_bit_offset(bitstr) - n;
+        retcode = bitstream_goto_offset(bitstr, new_bit_offset / 8);
+
+        // Then skip the remaining bits, if the target is not byte aligned
+        if ((new_bit_offset % 8) != 0)
+        {
+            bitstr->buffer_offset += new_bit_offset % 8;
+        }
     }
 
 #if ENABLE_DEBUG
