@@ -123,6 +123,8 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
         {
             int parameters_count = 0;
             if (track->avcC) parameters_count = track->avcC->sps_count + track->avcC->pps_count;
+            if (track->hvcC) parameters_count = track->hvcC->vps_count + track->hvcC->sps_count + track->hvcC->pps_count;
+            if (track->vvcC) parameters_count = track->vvcC->vps_count + track->vvcC->sps_count + track->vvcC->pps_count;
 
             retcode = init_bitstream_map(&media->tracks_video[media->tracks_video_count], parameters_count, track->stsz_sample_count);
             if (retcode == SUCCESS)
@@ -300,13 +302,57 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
                     map->parameter_count++;
                 }
             }
-            if (track->hvcC)
+            if (map->hvcC)
             {
-                // TODO
+                // Set VPS, SPS and PPS
+                unsigned p = 0;
+                for (unsigned i = 0; i < map->hvcC->vps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->hvcC->vps_sample_offset[i];
+                    map->parameter_size[p] = map->hvcC->vps_sample_size[i];
+                    map->parameter_count++;
+                }
+                for (unsigned i = 0; i < map->hvcC->sps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->hvcC->sps_sample_offset[i];
+                    map->parameter_size[p] = map->hvcC->sps_sample_size[i];
+                    map->parameter_count++;
+                }
+                for (unsigned i = 0; i < map->hvcC->pps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->hvcC->pps_sample_offset[i];
+                    map->parameter_size[p] = map->hvcC->pps_sample_size[i];
+                    map->parameter_count++;
+                }
             }
-            if (track->vvcC)
+            if (map->vvcC)
             {
-                // TODO
+                // Set VPS, SPS and PPS
+                unsigned p = 0;
+                for (unsigned i = 0; i < map->vvcC->vps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->vvcC->vps_sample_offset[i];
+                    map->parameter_size[p] = map->vvcC->vps_sample_size[i];
+                    map->parameter_count++;
+                }
+                for (unsigned i = 0; i < map->vvcC->sps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->vvcC->sps_sample_offset[i];
+                    map->parameter_size[p] = map->vvcC->sps_sample_size[i];
+                    map->parameter_count++;
+                }
+                for (unsigned i = 0; i < map->vvcC->pps_count; i++, p++)
+                {
+                    map->parameter_type[p] = sample_VIDEO_PARAM;
+                    map->parameter_offset[p] = map->vvcC->pps_sample_offset[i];
+                    map->parameter_size[p] = map->vvcC->pps_sample_size[i];
+                    map->parameter_count++;
+                }
             }
         }
         else if (track->handlerType == MP4_HANDLER_PICT)

@@ -27,6 +27,8 @@
 #include "minitraces.h"
 #include "minivideo_typedef.h"
 #include "decoder/h264/h264_parameterset.h"
+#include "decoder/h265/h265_parameterset.h"
+#include "decoder/h266/h266_parameterset.h"
 
 // C standard libraries
 #include <cstdlib>
@@ -153,12 +155,12 @@ void free_bitstream_map(MediaStream_t **stream_ptr)
         // Codec privates
         if ((*stream_ptr)->avcC)
         {
-            for (unsigned i = 0; i < (*stream_ptr)->avcC->sps_count && i < MAX_SPS; i++)
+            for (unsigned i = 0; i < (*stream_ptr)->avcC->sps_count && i < H264_MAX_SPS; i++)
                 freeSPS(&(*stream_ptr)->avcC->sps_array[i]);
             free(*(*stream_ptr)->avcC->sps_array);
             free((*stream_ptr)->avcC->sps_sample_offset);
             free((*stream_ptr)->avcC->sps_sample_size);
-            for (unsigned i = 0; i < (*stream_ptr)->avcC->pps_count && i < MAX_PPS; i++)
+            for (unsigned i = 0; i < (*stream_ptr)->avcC->pps_count && i < H264_MAX_PPS; i++)
                 freePPS(&(*stream_ptr)->avcC->pps_array[i]);
             free(*(*stream_ptr)->avcC->pps_array);
             free((*stream_ptr)->avcC->pps_sample_offset);
@@ -166,8 +168,28 @@ void free_bitstream_map(MediaStream_t **stream_ptr)
 
             free((*stream_ptr)->avcC);
         }
-        free((*stream_ptr)->hvcC);
-        free((*stream_ptr)->vvcC);
+        if ((*stream_ptr)->hvcC)
+        {
+            for (unsigned i = 0; i < (*stream_ptr)->hvcC->vps_count && i < H265_MAX_VPS; i++)
+                h265_freeVPS(&(*stream_ptr)->hvcC->vps_array[i]);
+            for (unsigned i = 0; i < (*stream_ptr)->hvcC->sps_count && i < H265_MAX_SPS; i++)
+                h265_freeSPS(&(*stream_ptr)->hvcC->sps_array[i]);
+            for (unsigned i = 0; i < (*stream_ptr)->hvcC->pps_count && i < H265_MAX_PPS; i++)
+                h265_freePPS(&(*stream_ptr)->hvcC->pps_array[i]);
+
+            free((*stream_ptr)->hvcC);
+        }
+        if ((*stream_ptr)->vvcC)
+        {
+            for (unsigned i = 0; i < (*stream_ptr)->vvcC->vps_count && i < H266_MAX_VPS; i++)
+                h266_freeVPS(&(*stream_ptr)->vvcC->vps_array[i]);
+            for (unsigned i = 0; i < (*stream_ptr)->vvcC->sps_count && i < H266_MAX_SPS; i++)
+                h266_freeSPS(&(*stream_ptr)->vvcC->sps_array[i]);
+            for (unsigned i = 0; i < (*stream_ptr)->vvcC->pps_count && i < H266_MAX_PPS; i++)
+                h266_freePPS(&(*stream_ptr)->vvcC->pps_array[i]);
+
+            free((*stream_ptr)->vvcC);
+        }
         free((*stream_ptr)->vpcC);
         free((*stream_ptr)->av1C);
         free((*stream_ptr)->dvcC);

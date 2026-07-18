@@ -34,6 +34,7 @@
 // C standard libraries
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cmath>
 
 /* ************************************************************************** */
@@ -273,6 +274,107 @@ int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t si
     }
 
     return retcode;
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Remove the emulation prevention bytes (00 00 03 -> 00 00) from the buffer.
+ *
+ * The buffer must contain exactly one NAL unit (loaded by buffer_feed_manual()),
+ * otherwise data that is not RBSP would be corrupted.
+ * Removed bytes are accounted into buffer_discarded_bytes so that the absolute
+ * offset math stays consistent.
+ */
+static void buffer_strip_epb(Bitstream_t *bitstr)
+{
+    unsigned int consecutive_zeros = 0;
+    uint32_t i = 0;
+
+    while (i < bitstr->buffer_size)
+    {
+        if (bitstr->buffer[i] == 0x00)
+        {
+            consecutive_zeros++;
+            i++;
+        }
+        else if (consecutive_zeros > 1 && bitstr->buffer[i] == 0x03)
+        {
+            memmove(bitstr->buffer + i, bitstr->buffer + i + 1, bitstr->buffer_size - i - 1);
+            bitstr->buffer_size--;
+            bitstr->buffer_discarded_bytes++;
+
+            // do not advance: re-examine the byte that followed the 0x03
+            consecutive_zeros = 0;
+        }
+        else
+        {
+            consecutive_zeros = 0;
+            i++;
+        }
+    }
+}
+
+/*!
+ * \brief Feed the bitstream buffer with one NAL unit, de-escaped (RBSP).
+ * \param *bitstr The bitstream to use.
+ * \param bitstream_offset The byte offset of the NAL unit (including its header).
+ * \param size The size of the NAL unit (in byte).
+ * \return 1 if success, 0 otherwise.
+ *
+ * Same as buffer_feed_manual(), but the emulation prevention bytes are removed
+ * from the buffer, so the parsers never see them.
+ */
+int buffer_feed_manual_rbsp(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t size)
+{
+    int retcode = buffer_feed_manual(bitstr, bitstream_offset, size);
+
+    if (retcode == SUCCESS)
+    {
+        buffer_strip_epb(bitstr);
+    }
+
+    return retcode;
+}
+
+/*!
+ * \brief Create a temporary bitstream over a de-escaped (RBSP) copy of one NAL unit.
+ * \param *parent An initialized bitstream, used only for its input file and size.
+ * \param bitstream_offset The byte offset of the NAL unit (including its header).
+ * \param size The size of the NAL unit (in byte).
+ * \return An allocated bitstream (to be freed with free_bitstream()), or NULL.
+ *
+ * The parent bitstream position and buffer are left untouched, which makes this
+ * suitable to parse SPS/PPS embedded in container metadata (ex: avcC boxes)
+ * without disturbing the demuxing in progress.
+ */
+Bitstream_t *init_bitstream_rbsp(Bitstream_t *parent, int64_t bitstream_offset, int64_t size)
+{
+    if (parent == NULL || parent->bitstream_file == NULL || size < 2 ||
+        bitstream_offset < 0 || (bitstream_offset + size) > parent->bitstream_size)
+    {
+        TRACE_ERROR(BITS, "<b> Cannot init RBSP bitstream (offset %lli / size %lli)", bitstream_offset, size);
+        return NULL;
+    }
+
+    Bitstream_t *bitstr = (Bitstream_t*)calloc(1, sizeof(Bitstream_t));
+    if (bitstr == NULL)
+    {
+        TRACE_ERROR(BITS, "<b> Unable to allocate bitstream structure!");
+        return NULL;
+    }
+
+    bitstr->bitstream_file = parent->bitstream_file;
+    bitstr->bitstream_size = parent->bitstream_size;
+
+    if (buffer_feed_manual_rbsp(bitstr, bitstream_offset, size) != SUCCESS)
+    {
+        free(bitstr->buffer);
+        free(bitstr);
+        return NULL;
+    }
+
+    return bitstr;
 }
 
 /* ************************************************************************** */

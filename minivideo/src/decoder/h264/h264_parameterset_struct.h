@@ -28,11 +28,10 @@
 
 /* ************************************************************************** */
 
-#define MAX_SPS     32
-#define MAX_PPS     256
-#define MAX_MMCO    66
-#define MAX_CPB     32
-#define MAX_SLICES  1
+#define H264_MAX_SPS     32
+#define H264_MAX_PPS     256
+#define H264_MAX_CPB     32
+#define H264_MAX_SLICES  1
 
 /* ************************************************************************** */
 
@@ -51,10 +50,10 @@ typedef struct h264_hrd_t
     uint8_t cpb_size_scale;
 
     //for (SchedSelIdx = 0; SchedSelIdx <= cpb_cnt_minus1; SchedSelIdx++)
-        unsigned bit_rate_value_minus1[MAX_CPB];
-        unsigned cpb_size_value_minus1[MAX_CPB];
-        unsigned CpbSize[MAX_CPB];
-        bool cbr_flag[MAX_CPB];
+        unsigned bit_rate_value_minus1[H264_MAX_CPB];
+        unsigned cpb_size_value_minus1[H264_MAX_CPB];
+        unsigned CpbSize[H264_MAX_CPB];
+        bool cbr_flag[H264_MAX_CPB];
 
     uint8_t initial_cpb_removal_delay_length_minus1;
     uint8_t cpb_removal_delay_length_minus1;
@@ -295,7 +294,7 @@ typedef struct h264_pps_t
         //else if (slice_group_map_type == 6)
             unsigned pic_size_in_map_units_minus1;
             //for (i = 0; i <= pic_size_in_map_units_minus1; i++) // value of pic_size_in_map_units_minus1, see p76
-                unsigned slice_group_id[MAX_SLICES];
+                unsigned slice_group_id[H264_MAX_SLICES];
 
     unsigned num_ref_idx_l0_default_active_minus1;
     unsigned num_ref_idx_l1_default_active_minus1;
@@ -358,8 +357,8 @@ typedef struct h264_sei_t
     uint8_t eq_parameter_set_id;
     //if(NalHrdBpPresentFlag || VclHrdBpPresentFlag)
         //for( SchedSelIdx = 0; SchedSelIdx <= cpb_cnt_minus1; SchedSelIdx++ )
-        uint8_t initial_cpb_removal_delay[MAX_CPB];
-        uint8_t initial_cpb_removal_delay_offset[MAX_CPB];
+        uint8_t initial_cpb_removal_delay[H264_MAX_CPB];
+        uint8_t initial_cpb_removal_delay_offset[H264_MAX_CPB];
 
     // D.1.3 // Picture timing SEI message syntax
     // D.1.4 // Pan-scan rectangle SEI message syntax

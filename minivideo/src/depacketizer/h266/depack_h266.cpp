@@ -63,29 +63,29 @@ unsigned depack_h266_sample(Bitstream_t *bitstr,
                 sample.type = n.nal_unit_type;
                 sample.type_cstr = h266_nalu_get_string_type1(n.nal_unit_type);
 
-                if (sample.type == NALU_TYPE_VPS_NUT)
+                if (sample.type == H266_NALU_VPS_NUT)
                 {
                     //h266_vps_t *vps = (h266_vps_t*)calloc(1, sizeof(h266_vps_t));
                     //h266_decodeVPS(bitstr, vps);
                     //h266_mapVPS(vps, sample.offset, sample.size, xml);
                     //h266_freeVPS(&vps);
                 }
-                if (sample.type == NALU_TYPE_SPS_NUT)
+                if (sample.type == H266_NALU_SPS_NUT)
                 {
                     //h266_sps_t *sps = (h266_sps_t*)calloc(1, sizeof(h266_sps_t));
                     //h266_decodeSPS(bitstr, sps);
                     //h266_mapSPS(sps, sample.offset, sample.size, xml);
                     //h266_freeSPS(&sps);
                 }
-                if (sample.type == NALU_TYPE_PPS_NUT)
+                if (sample.type == H266_NALU_PPS_NUT)
                 {
                     //h266_pps_t *pps = (h266_pps_t*)calloc(1, sizeof(h266_pps_t));
                     //h266_decodePPS(bitstr, pps, nullptr);
                     //h266_mapPPS(pps, nullptr, sample.offset, sample.size, xml);
                     //h266_freePPS(&pps);
                 }
-                if (sample.type == NALU_TYPE_PREFIX_SEI_NUT ||
-                    sample.type == NALU_TYPE_SUFFIX_SEI_NUT)
+                if (sample.type == H266_NALU_PREFIX_SEI_NUT ||
+                    sample.type == H266_NALU_SUFFIX_SEI_NUT)
                 {
                     //h266_sei_t *sei = (h266_sei_t*)calloc(1, sizeof(h266_sei_t));
                     //h266_decodeSEI(bitstr, sei);

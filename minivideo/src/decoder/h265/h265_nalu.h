@@ -66,43 +66,43 @@ typedef struct h265_nalu_t
 //! H.265 NAL Unit content type
 typedef enum h265_nalu_type_e
 {
-    NALU_TYPE_TRAIL_N       = 0,    //!< Coded slice segment of a non-TSA, non-STSA trailing picture
-    NALU_TYPE_TRAIL_R       = 1,
-    NALU_TYPE_TSA_N         = 2,    //!< Coded slice segment of a TSA picture
-    NALU_TYPE_TSA_R         = 3,
-    NALU_TYPE_STSA_N        = 4,    //!< Coded slice segment of an STSA picture
-    NALU_TYPE_STSA_R        = 5,
-    NALU_TYPE_RADL_N        = 6,    //!< Coded slice segment of a RADL picture
-    NALU_TYPE_RADL_R        = 7,
-    NALU_TYPE_RASL_N        = 8,    //!< Coded slice segment of a RASL picture
-    NALU_TYPE_RASL_R        = 9,
+    H265_NALU_TRAIL_N       = 0,    //!< Coded slice segment of a non-TSA, non-STSA trailing picture
+    H265_NALU_TRAIL_R       = 1,
+    H265_NALU_TSA_N         = 2,    //!< Coded slice segment of a TSA picture
+    H265_NALU_TSA_R         = 3,
+    H265_NALU_STSA_N        = 4,    //!< Coded slice segment of an STSA picture
+    H265_NALU_STSA_R        = 5,
+    H265_NALU_RADL_N        = 6,    //!< Coded slice segment of a RADL picture
+    H265_NALU_RADL_R        = 7,
+    H265_NALU_RASL_N        = 8,    //!< Coded slice segment of a RASL picture
+    H265_NALU_RASL_R        = 9,
 
-    NALU_TYPE_RSV_VCL_N10   = 10,   //!< Reserved non-IRAP SLNR VCL NAL unit types
-    NALU_TYPE_RSV_VCL_N12   = 12,
-    NALU_TYPE_RSV_VCL_N14   = 14,
-    NALU_TYPE_RSV_VCL_R11   = 11,   //!< Reserved non-IRAP sub-layer reference VCL NAL unit types
-    NALU_TYPE_RSV_VCL_R13   = 13,
-    NALU_TYPE_RSV_VCL_R15   = 15,
+    H265_NALU_RSV_VCL_N10   = 10,   //!< Reserved non-IRAP SLNR VCL NAL unit types
+    H265_NALU_RSV_VCL_N12   = 12,
+    H265_NALU_RSV_VCL_N14   = 14,
+    H265_NALU_RSV_VCL_R11   = 11,   //!< Reserved non-IRAP sub-layer reference VCL NAL unit types
+    H265_NALU_RSV_VCL_R13   = 13,
+    H265_NALU_RSV_VCL_R15   = 15,
 
-    NALU_TYPE_BLA_W_LP      = 16,   //!< Coded slice segment of a BLA picture
-    NALU_TYPE_BLA_W_RADL    = 17,
-    NALU_TYPE_BLA_N_LP      = 18,
-    NALU_TYPE_IDR_W_RADL    = 19,   //!< Coded slice segment of an IDR picture
-    NALU_TYPE_IDR_N_LP      = 20,
-    NALU_TYPE_CRA_NUT       = 21,   //!< Coded slice segment of a CRA picture
+    H265_NALU_BLA_W_LP      = 16,   //!< Coded slice segment of a BLA picture
+    H265_NALU_BLA_W_RADL    = 17,
+    H265_NALU_BLA_N_LP      = 18,
+    H265_NALU_IDR_W_RADL    = 19,   //!< Coded slice segment of an IDR picture
+    H265_NALU_IDR_N_LP      = 20,
+    H265_NALU_CRA_NUT       = 21,   //!< Coded slice segment of a CRA picture
 
-    NALU_TYPE_RSV_IRAP_VCL22= 22,   //!< Reserved IRAP VCL NAL unit types
-    NALU_TYPE_RSV_IRAP_VCL23= 23,
+    H265_NALU_RSV_IRAP_VCL22= 22,   //!< Reserved IRAP VCL NAL unit types
+    H265_NALU_RSV_IRAP_VCL23= 23,
 
-    NALU_TYPE_VPS_NUT       = 32,   //!< Video Parameter Set
-    NALU_TYPE_SPS_NUT       = 33,   //!< Sequence Parameter Set
-    NALU_TYPE_PPS_NUT       = 34,   //!< Picture Parameter Set
-    NALU_TYPE_AUD_NUT       = 35,   //!< Access Unit Delimiter
-    NALU_TYPE_EOS_NUT       = 36,   //!< End of Sequence
-    NALU_TYPE_EOB_NUT       = 37,   //!< End of Bitstream
-    NALU_TYPE_FD_NUT        = 38,   //!< Filler Data
-    NALU_TYPE_PREFIX_SEI_NUT= 39,   //!< Supplemental Enhancement Information
-    NALU_TYPE_SUFFIX_SEI_NUT= 40,   //!< Supplemental Enhancement Information
+    H265_NALU_VPS_NUT       = 32,   //!< Video Parameter Set
+    H265_NALU_SPS_NUT       = 33,   //!< Sequence Parameter Set
+    H265_NALU_PPS_NUT       = 34,   //!< Picture Parameter Set
+    H265_NALU_AUD_NUT       = 35,   //!< Access Unit Delimiter
+    H265_NALU_EOS_NUT       = 36,   //!< End of Sequence
+    H265_NALU_EOB_NUT       = 37,   //!< End of Bitstream
+    H265_NALU_FD_NUT        = 38,   //!< Filler Data
+    H265_NALU_PREFIX_SEI_NUT= 39,   //!< Supplemental Enhancement Information
+    H265_NALU_SUFFIX_SEI_NUT= 40,   //!< Supplemental Enhancement Information
 
 } h265_nalu_type_e;
 

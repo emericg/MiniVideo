@@ -57,11 +57,11 @@ typedef struct DecodingContext_t
 
     // SPS
     unsigned active_sps;            //!< ID of the last/current SPS. May be inaccurate!
-    h264_sps_t *sps_array[MAX_SPS];
+    h264_sps_t *sps_array[H264_MAX_SPS];
 
     // PPS
     unsigned active_pps;            //!< ID of the last/current PPS. May be inaccurate!
-    h264_pps_t *pps_array[MAX_PPS];
+    h264_pps_t *pps_array[H264_MAX_PPS];
 
     // SEI
     h264_sei_t *active_sei;         //!< Current SEI

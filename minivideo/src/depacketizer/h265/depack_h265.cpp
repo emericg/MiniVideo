@@ -63,36 +63,36 @@ unsigned depack_h265_sample(Bitstream_t *bitstr,
                 sample.type = n.nal_unit_type;
                 sample.type_cstr = h265_nalu_get_string_type1(n.nal_unit_type);
 
-                if (sample.type == NALU_TYPE_AUD_NUT)
+                if (sample.type == H265_NALU_AUD_NUT)
                 {
                     h265_aud_t *aud = (h265_aud_t*)calloc(1, sizeof(h265_aud_t));
                     h265_decodeAUD(bitstr, aud);
                     h265_mapAUD(aud, sample.offset, sample.size, xml);
                     h265_freeAUD(&aud);
                 }
-                if (sample.type == NALU_TYPE_VPS_NUT)
+                if (sample.type == H265_NALU_VPS_NUT)
                 {
                     h265_vps_t *vps = (h265_vps_t*)calloc(1, sizeof(h265_vps_t));
                     h265_decodeVPS(bitstr, vps);
                     h265_mapVPS(vps, sample.offset, sample.size, xml);
                     h265_freeVPS(&vps);
                 }
-                if (sample.type == NALU_TYPE_SPS_NUT)
+                if (sample.type == H265_NALU_SPS_NUT)
                 {
                     h265_sps_t *sps = (h265_sps_t*)calloc(1, sizeof(h265_sps_t));
                     h265_decodeSPS(bitstr, sps);
                     h265_mapSPS(sps, sample.offset, sample.size, xml);
                     h265_freeSPS(&sps);
                 }
-                if (sample.type == NALU_TYPE_PPS_NUT)
+                if (sample.type == H265_NALU_PPS_NUT)
                 {
                     h265_pps_t *pps = (h265_pps_t*)calloc(1, sizeof(h265_pps_t));
                     h265_decodePPS(bitstr, pps, nullptr);
                     h265_mapPPS(pps, sample.offset, sample.size, xml);
                     h265_freePPS(&pps);
                 }
-                if (sample.type == NALU_TYPE_PREFIX_SEI_NUT ||
-                    sample.type == NALU_TYPE_SUFFIX_SEI_NUT)
+                if (sample.type == H265_NALU_PREFIX_SEI_NUT ||
+                    sample.type == H265_NALU_SUFFIX_SEI_NUT)
                 {
                     //h265_sei_t *sei = (h265_sei_t*)calloc(1, sizeof(h265_sei_t));
                     //h265_decodeSEI(bitstr, sei);

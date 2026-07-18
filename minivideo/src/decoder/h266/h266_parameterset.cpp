@@ -23,6 +23,8 @@
 
 // minivideo headers
 #include "h266_parameterset.h"
+#include "../../minitraces.h"
+#include "../../minivideo_typedef.h"
 
 // C standard libraries
 #include <cstdio>
@@ -31,5 +33,75 @@
 #include <cinttypes>
 
 /* ************************************************************************** */
+
+int h266_decodeVPS(Bitstream_t *bitstr, h266_vps_t *vps)
+{
+    TRACE_WARNING(PARAM, "h266_decodeVPS() is not implemented yet");
+    return FAILURE;
+}
+
+void h266_mapVPS(h266_vps_t *vps, int64_t offset, int64_t size, FILE *xml)
+{
+    TRACE_WARNING(PARAM, "h266_mapVPS() is not implemented yet");
+}
+
+void h266_freeVPS(h266_vps_t **vps_ptr)
+{
+    if (*vps_ptr != NULL)
+    {
+        free(*vps_ptr);
+        *vps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> VPS freed");
+    }
+}
+
+/* ************************************************************************** */
+
+int h266_decodeSPS(Bitstream_t *bitstr, h266_sps_t *sps)
+{
+    TRACE_WARNING(PARAM, "h266_decodeSPS() is not implemented yet");
+    return FAILURE;
+}
+
+void h266_mapSPS(h266_sps_t *sps, int64_t offset, int64_t size, FILE *xml)
+{
+    TRACE_WARNING(PARAM, "h266_mapSPS() is not implemented yet");
+}
+
+void h266_freeSPS(h266_sps_t **sps_ptr)
+{
+    if (*sps_ptr != NULL)
+    {
+        free(*sps_ptr);
+        *sps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> SPS freed");
+    }
+}
+
+/* ************************************************************************** */
+
+int h266_decodePPS(Bitstream_t *bitstr, h266_pps_t *pps, h266_sps_t **sps_array)
+{
+    TRACE_WARNING(PARAM, "h266_decodePPS() is not implemented yet");
+    return FAILURE;
+}
+
+void h266_mapPPS(h266_pps_t *pps, int64_t offset, int64_t size, FILE *xml)
+{
+    TRACE_WARNING(PARAM, "h266_mapPPS() is not implemented yet");
+}
+
+void h266_freePPS(h266_pps_t **pps_ptr)
+{
+    if (*pps_ptr != NULL)
+    {
+        free(*pps_ptr);
+        *pps_ptr = NULL;
+
+        TRACE_1(PARAM, ">> PPS freed");
+    }
+}
 
 /* ************************************************************************** */

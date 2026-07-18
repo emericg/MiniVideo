@@ -27,6 +27,9 @@
 #include "ebml.h"
 
 #include "../../decoder/h264/h264_parameterset.h"
+#include "../../decoder/h265/h265_nalu.h"
+#include "../../decoder/h265/h265_parameterset.h"
+#include "../../decoder/h266/h266_nalu.h"
 
 #include "../xml_mapper.h"
 #include "../../bitstream.h"
@@ -464,7 +467,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     //avcC->sps_sample_offset = new int64_t [track->avcC->sps_count];
     //avcC->sps_sample_size = new int32_t[track->avcC->sps_count];
 
-    for (unsigned i = 0; i < track->avcC->sps_count && i < MAX_SPS; i++) // MAX_SPS = 32
+    for (unsigned i = 0; i < track->avcC->sps_count && i < H264_MAX_SPS; i++) // H264_MAX_SPS = 32
     {
         track->avcC->sps_sample_size[i] = read_bits(bitstr, 16);
         track->avcC->sps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -472,24 +475,25 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         track->avcC->sps_array[i] = (h264_sps_t *)calloc(1, sizeof(h264_sps_t));
         //track->avcC->sps_array[i] = new sps_t;
 
-        skip_bits(bitstr, 8); // skip NAL header
-        decodeSPS(bitstr, track->avcC->sps_array[i]);
-        bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
-
+        // Decode the SPS from a de-escaped (RBSP) copy of its payload
+        Bitstream_t *rbsp = init_bitstream_rbsp(bitstr, track->avcC->sps_sample_offset[i], track->avcC->sps_sample_size[i]);
+        if (rbsp)
         {
-            int64_t expected = track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i];
-            int64_t current = bitstream_get_absolute_byte_offset(bitstr);
-            if (current != expected)
-            {
-                TRACE_WARNING(MKV, "SPS OFFSET ERROR  %lli vs %lli", current, expected);
+            skip_bits(rbsp, 8); // skip NAL header
+            decodeSPS(rbsp, track->avcC->sps_array[i]);
 
-                // decodeSPS() may have under or overshot the SPS: resync in the right direction
-                if (current < expected)
-                    skip_bits(bitstr, (unsigned int)((expected - current) * 8));
-                else
-                    rewind_bits(bitstr, (unsigned int)((current - expected) * 8));
+            int64_t expected = track->avcC->sps_sample_offset[i] + track->avcC->sps_sample_size[i];
+            int64_t current = bitstream_get_absolute_byte_offset(rbsp);
+            if (current < (expected - 1) || current > expected)
+            {
+                TRACE_WARNING(MKV, "SPS SIZE ERROR  %lli vs %lli", current, expected);
             }
+
+            free_bitstream(&rbsp);
         }
+
+        // Jump the outer bitstream over the SPS
+        skip_bits(bitstr, track->avcC->sps_sample_size[i] * 8);
     }
 
     // PPS
@@ -499,7 +503,7 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     //avcC->pps_sample_offset = new int64_t[track->avcC->pps_count];
     //avcC->pps_sample_size = new int32_t[track->avcC->pps_count];
 
-    for (unsigned i = 0; i < track->avcC->pps_count && i < MAX_PPS; i++) // MAX_PPS = 256
+    for (unsigned i = 0; i < track->avcC->pps_count && i < H264_MAX_PPS; i++) // H264_MAX_PPS = 256
     {
        track->avcC->pps_sample_size[i] = read_bits(bitstr, 16);
        track->avcC->pps_sample_offset[i] = bitstream_get_absolute_byte_offset(bitstr);
@@ -507,24 +511,25 @@ int parse_h264_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
        track->avcC->pps_array[i] = (h264_pps_t *)calloc(1, sizeof(h264_pps_t));
        //track->avcC->pps_array[i] = new h264_pps_t;
 
-       skip_bits(bitstr, 8); // skip NAL header
-       decodePPS(bitstr, track->avcC->pps_array[i], track->avcC->sps_array);
-       bitstream_force_alignment(bitstr); // we might end up parsing in the middle of a byte
+       // Decode the PPS from a de-escaped (RBSP) copy of its payload
+       Bitstream_t *rbsp = init_bitstream_rbsp(bitstr, track->avcC->pps_sample_offset[i], track->avcC->pps_sample_size[i]);
+       if (rbsp)
+       {
+           skip_bits(rbsp, 8); // skip NAL header
+           decodePPS(rbsp, track->avcC->pps_array[i], track->avcC->sps_array);
 
-        {
-            int64_t expected = track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i];
-            int64_t current = bitstream_get_absolute_byte_offset(bitstr);
-            if (current != expected)
-            {
-                TRACE_WARNING(MKV, "PPS OFFSET ERROR  %lli vs %lli", current, expected);
+           int64_t expected = track->avcC->pps_sample_offset[i] + track->avcC->pps_sample_size[i];
+           int64_t current = bitstream_get_absolute_byte_offset(rbsp);
+           if (current < (expected - 1) || current > expected)
+           {
+               TRACE_WARNING(MKV, "PPS SIZE ERROR  %lli vs %lli", current, expected);
+           }
 
-                // decodePPS() may have under or overshot the PPS: resync in the right direction
-                if (current < expected)
-                    skip_bits(bitstr, (unsigned int)((expected - current) * 8));
-                else
-                    rewind_bits(bitstr, (unsigned int)((current - expected) * 8));
-            }
-        }
+           free_bitstream(&rbsp);
+       }
+
+       // Jump the outer bitstream over the PPS
+       skip_bits(bitstr, track->avcC->pps_sample_size[i] * 8);
     }
 
 #if ENABLE_DEBUG
@@ -659,12 +664,74 @@ int parse_h265_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
     track->hvcC->constantFrameRate = read_bits(bitstr, 2);
     track->hvcC->numTemporalLayers = read_bits(bitstr, 3);
     track->hvcC->temporalIdNested = read_bit(bitstr);
-    track->hvcC->lengthSizeMinusOne = read_bit(bitstr);
+    track->hvcC->lengthSizeMinusOne = read_bits(bitstr, 2);
 
-    track->hvcC->numOfArrays = read_bit(bitstr);
-    for (unsigned i = 0; i < track->hvcC->numOfArrays; i++)
+    track->hvcC->numOfArrays = read_bits(bitstr, 8);
+    for (unsigned j = 0; j < track->hvcC->numOfArrays; j++)
     {
-        // TODO // NAL unit table
+        /*bool array_completeness =*/ read_bit(bitstr);
+        skip_bits(bitstr, 1); // reserved
+        uint8_t NAL_unit_type = read_bits(bitstr, 6);
+        uint16_t numNalus = read_bits(bitstr, 16);
+
+        for (unsigned i = 0; i < numNalus; i++)
+        {
+            uint16_t nalUnitLength = read_bits(bitstr, 16);
+            int64_t nalUnitOffset = bitstream_get_absolute_byte_offset(bitstr);
+
+            if (NAL_unit_type == H265_NALU_VPS_NUT && track->hvcC->vps_count < H265_MAX_VPS)
+            {
+                uint32_t &cnt = track->hvcC->vps_count;
+                track->hvcC->vps_sample_size[cnt] = nalUnitLength;
+                track->hvcC->vps_sample_offset[cnt] = nalUnitOffset;
+                track->hvcC->vps_array[cnt] = (h265_vps_t *)calloc(1, sizeof(h265_vps_t));
+
+                // Decode from a de-escaped (RBSP) copy of the payload
+                Bitstream_t *rbsp = init_bitstream_rbsp(bitstr, nalUnitOffset, nalUnitLength);
+                if (rbsp)
+                {
+                    skip_bits(rbsp, 16); // skip NAL header
+                    h265_decodeVPS(rbsp, track->hvcC->vps_array[cnt]);
+                    free_bitstream(&rbsp);
+                }
+                cnt++;
+            }
+            else if (NAL_unit_type == H265_NALU_SPS_NUT && track->hvcC->sps_count < H265_MAX_SPS)
+            {
+                uint32_t &cnt = track->hvcC->sps_count;
+                track->hvcC->sps_sample_size[cnt] = nalUnitLength;
+                track->hvcC->sps_sample_offset[cnt] = nalUnitOffset;
+                track->hvcC->sps_array[cnt] = (h265_sps_t *)calloc(1, sizeof(h265_sps_t));
+
+                Bitstream_t *rbsp = init_bitstream_rbsp(bitstr, nalUnitOffset, nalUnitLength);
+                if (rbsp)
+                {
+                    skip_bits(rbsp, 16); // skip NAL header
+                    h265_decodeSPS(rbsp, track->hvcC->sps_array[cnt]);
+                    free_bitstream(&rbsp);
+                }
+                cnt++;
+            }
+            else if (NAL_unit_type == H265_NALU_PPS_NUT && track->hvcC->pps_count < H265_MAX_PPS)
+            {
+                uint32_t &cnt = track->hvcC->pps_count;
+                track->hvcC->pps_sample_size[cnt] = nalUnitLength;
+                track->hvcC->pps_sample_offset[cnt] = nalUnitOffset;
+                track->hvcC->pps_array[cnt] = (h265_pps_t *)calloc(1, sizeof(h265_pps_t));
+
+                Bitstream_t *rbsp = init_bitstream_rbsp(bitstr, nalUnitOffset, nalUnitLength);
+                if (rbsp)
+                {
+                    skip_bits(rbsp, 16); // skip NAL header
+                    h265_decodePPS(rbsp, track->hvcC->pps_array[cnt], track->hvcC->sps_array);
+                    free_bitstream(&rbsp);
+                }
+                cnt++;
+            }
+
+            // Jump the outer bitstream over the NAL unit (SEI and others are just skipped)
+            skip_bits(bitstr, nalUnitLength * 8);
+        }
     }
 
 #if ENABLE_DEBUG
@@ -756,17 +823,137 @@ int parse_h266_private(Bitstream_t *bitstr, mkv_track_t *track, mkv_t *mkv)
         return FAILURE;
     }
 
-    // Parse box content
-    // TODO
+    // Parse box content (VvcDecoderConfigurationRecord)
+    skip_bits(bitstr, 5); // reserved
+    track->vvcC->lengthSizeMinusOne = read_bits(bitstr, 2);
+    track->vvcC->ptl_present_flag = read_bit(bitstr);
+
+    if (track->vvcC->ptl_present_flag)
+    {
+        track->vvcC->ols_idx = read_bits(bitstr, 9);
+        track->vvcC->num_sublayers = read_bits(bitstr, 3);
+        track->vvcC->constant_frame_rate = read_bits(bitstr, 2);
+        track->vvcC->chroma_format_idc = read_bits(bitstr, 2);
+        track->vvcC->bit_depth_minus8 = read_bits(bitstr, 3);
+        skip_bits(bitstr, 5); // reserved
+
+        // VvcPTLRecord
+        skip_bits(bitstr, 2); // reserved
+        track->vvcC->num_bytes_constraint_info = read_bits(bitstr, 6);
+        track->vvcC->general_profile_idc = read_bits(bitstr, 7);
+        track->vvcC->general_tier_flag = read_bit(bitstr);
+        track->vvcC->general_level_idc = read_bits(bitstr, 8);
+        track->vvcC->ptl_frame_only_constraint_flag = read_bit(bitstr);
+        track->vvcC->ptl_multilayer_enabled_flag = read_bit(bitstr);
+        if (track->vvcC->num_bytes_constraint_info > 0)
+        {
+            // (num_bytes_constraint_info * 8 - 2) bits of general_constraint_info
+            track->vvcC->general_constraint_info[0] = read_bits(bitstr, 6);
+            for (unsigned i = 1; i < track->vvcC->num_bytes_constraint_info; i++)
+                track->vvcC->general_constraint_info[i] = read_bits(bitstr, 8);
+        }
+        for (int i = track->vvcC->num_sublayers - 2; i >= 0; i--)
+            track->vvcC->ptl_sublayer_level_present_flag[i] = read_bit(bitstr);
+        for (int j = track->vvcC->num_sublayers; j <= 8 && track->vvcC->num_sublayers > 1; j++)
+            skip_bits(bitstr, 1); // ptl_reserved_zero_bit
+        for (int i = track->vvcC->num_sublayers - 2; i >= 0; i--)
+            if (track->vvcC->ptl_sublayer_level_present_flag[i])
+                track->vvcC->sublayer_level_idc[i] = read_bits(bitstr, 8);
+        track->vvcC->ptl_num_sub_profiles = read_bits(bitstr, 8);
+        for (unsigned j = 0; j < track->vvcC->ptl_num_sub_profiles; j++)
+            track->vvcC->general_sub_profile_idc[j] = read_bits(bitstr, 32);
+
+        track->vvcC->max_picture_width = read_bits(bitstr, 16);
+        track->vvcC->max_picture_height = read_bits(bitstr, 16);
+        track->vvcC->avg_frame_rate = read_bits(bitstr, 16);
+    }
+
+    track->vvcC->num_of_arrays = read_bits(bitstr, 8);
+    for (unsigned j = 0; j < track->vvcC->num_of_arrays; j++)
+    {
+        /*bool array_completeness =*/ read_bit(bitstr);
+        skip_bits(bitstr, 2); // reserved
+        uint8_t NAL_unit_type = read_bits(bitstr, 5);
+        uint16_t numNalus = 1; // implicit for DCI and OPI arrays
+        if (NAL_unit_type != H266_NALU_DCI_NUT && NAL_unit_type != H266_NALU_OPI_NUT)
+            numNalus = read_bits(bitstr, 16);
+
+        for (unsigned i = 0; i < numNalus; i++)
+        {
+            uint16_t nalUnitLength = read_bits(bitstr, 16);
+            int64_t nalUnitOffset = bitstream_get_absolute_byte_offset(bitstr);
+
+            // TODO decode parameter sets from a de-escaped (RBSP) copy of their payload,
+            // with init_bitstream_rbsp(), once h266_decodeVPS/SPS/PPS() are implemented
+
+            if (NAL_unit_type == H266_NALU_VPS_NUT && track->vvcC->vps_count < H266_MAX_VPS)
+            {
+                uint32_t &cnt = track->vvcC->vps_count;
+                track->vvcC->vps_sample_size[cnt] = nalUnitLength;
+                track->vvcC->vps_sample_offset[cnt] = nalUnitOffset;
+                cnt++;
+            }
+            else if (NAL_unit_type == H266_NALU_SPS_NUT && track->vvcC->sps_count < H266_MAX_SPS)
+            {
+                uint32_t &cnt = track->vvcC->sps_count;
+                track->vvcC->sps_sample_size[cnt] = nalUnitLength;
+                track->vvcC->sps_sample_offset[cnt] = nalUnitOffset;
+                cnt++;
+            }
+            else if (NAL_unit_type == H266_NALU_PPS_NUT && track->vvcC->pps_count < H266_MAX_PPS)
+            {
+                uint32_t &cnt = track->vvcC->pps_count;
+                track->vvcC->pps_sample_size[cnt] = nalUnitLength;
+                track->vvcC->pps_sample_offset[cnt] = nalUnitOffset;
+                cnt++;
+            }
+
+            // Jump the outer bitstream over the NAL unit
+            skip_bits(bitstr, nalUnitLength * 8);
+        }
+    }
 
 #if ENABLE_DEBUG
-    // TODO
+    TRACE_1(MKV, "> lengthSizeMinusOne : %u", track->vvcC->lengthSizeMinusOne);
+    TRACE_1(MKV, "> ptl_present_flag   : %u", track->vvcC->ptl_present_flag);
+    if (track->vvcC->ptl_present_flag)
+    {
+        TRACE_1(MKV, "> general_profile_idc: %u", track->vvcC->general_profile_idc);
+        TRACE_1(MKV, "> general_tier_flag  : %u", track->vvcC->general_tier_flag);
+        TRACE_1(MKV, "> general_level_idc  : %u", track->vvcC->general_level_idc);
+        TRACE_1(MKV, "> max_picture_width  : %u", track->vvcC->max_picture_width);
+        TRACE_1(MKV, "> max_picture_height : %u", track->vvcC->max_picture_height);
+        TRACE_1(MKV, "> avg_frame_rate     : %u", track->vvcC->avg_frame_rate);
+    }
+    TRACE_1(MKV, "> num_of_arrays      : %u", track->vvcC->num_of_arrays);
 #endif // ENABLE_DEBUG
 
     // xmlMapper
     if (mkv->xml)
     {
+        fprintf(mkv->xml, "  <a tt=\"VVC Configuration\" add=\"private\" tp=\"data\" off=\"%" PRId64 "\" sz=\"%" PRId64 "\">\n",
+                track->CodecPrivate_offset, track->CodecPrivate_size);
+
         xmlSpacer(mkv->xml, "VVC Configuration", -1);
+
+        fprintf(mkv->xml, "  <lengthSizeMinusOne>%u</lengthSizeMinusOne>\n", track->vvcC->lengthSizeMinusOne);
+        fprintf(mkv->xml, "  <ptl_present_flag>%u</ptl_present_flag>\n", track->vvcC->ptl_present_flag);
+        if (track->vvcC->ptl_present_flag)
+        {
+            fprintf(mkv->xml, "  <ols_idx>%u</ols_idx>\n", track->vvcC->ols_idx);
+            fprintf(mkv->xml, "  <num_sublayers>%u</num_sublayers>\n", track->vvcC->num_sublayers);
+            fprintf(mkv->xml, "  <constant_frame_rate>%u</constant_frame_rate>\n", track->vvcC->constant_frame_rate);
+            fprintf(mkv->xml, "  <chroma_format_idc>%u</chroma_format_idc>\n", track->vvcC->chroma_format_idc);
+            fprintf(mkv->xml, "  <bit_depth_minus8>%u</bit_depth_minus8>\n", track->vvcC->bit_depth_minus8);
+            fprintf(mkv->xml, "  <general_profile_idc>%u</general_profile_idc>\n", track->vvcC->general_profile_idc);
+            fprintf(mkv->xml, "  <general_tier_flag>%u</general_tier_flag>\n", track->vvcC->general_tier_flag);
+            fprintf(mkv->xml, "  <general_level_idc>%u</general_level_idc>\n", track->vvcC->general_level_idc);
+            fprintf(mkv->xml, "  <max_picture_width>%u</max_picture_width>\n", track->vvcC->max_picture_width);
+            fprintf(mkv->xml, "  <max_picture_height>%u</max_picture_height>\n", track->vvcC->max_picture_height);
+            fprintf(mkv->xml, "  <avg_frame_rate>%u</avg_frame_rate>\n", track->vvcC->avg_frame_rate);
+        }
+        fprintf(mkv->xml, "  <num_of_arrays>%u</num_of_arrays>\n", track->vvcC->num_of_arrays);
+
         fprintf(mkv->xml, "  </a>\n");
     }
 

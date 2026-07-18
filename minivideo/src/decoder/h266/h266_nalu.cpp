@@ -213,51 +213,51 @@ const char *h266_nalu_get_string_type1(unsigned nal_unit_type)
 {
     switch (nal_unit_type)
     {
-        case NALU_TYPE_TRAIL_NUT:
+        case H266_NALU_TRAIL_NUT:
             return "TRAIL_NUT (Coded slice of a trailing picture or subpicture)";
-        case NALU_TYPE_STSA_NUT:
+        case H266_NALU_STSA_NUT:
             return "STSA_NUT (Coded slice of an STSA picture or subpicture)";
-        case NALU_TYPE_RADL_NUT:
+        case H266_NALU_RADL_NUT:
             return "RADL_NUT (Coded slice of a RADL picture or subpicture)";
-        case NALU_TYPE_RASL_NUT:
+        case H266_NALU_RASL_NUT:
             return "RASL_NUT (Coded slice of a RASL picture or subpicture)";
 
-        case NALU_TYPE_IDR_W_RADL:
+        case H266_NALU_IDR_W_RADL:
             return "IDR_W_RADL (Coded slice of an IDR picture or subpicture)";
-        case NALU_TYPE_IDR_N_LP:
+        case H266_NALU_IDR_N_LP:
             return "IDR_N_LP (Coded slice of an IDR picture or subpicture)";
-        case NALU_TYPE_CRA_NUT:
+        case H266_NALU_CRA_NUT:
             return "CRA_NUT (Coded slice of a CRA picture or subpicture)";
-        case NALU_TYPE_GDR_NUT:
+        case H266_NALU_GDR_NUT:
             return "GDR_NUT (Coded slice of a GDR picture or subpicture)";
 
-        case NALU_TYPE_OPI_NUT:
+        case H266_NALU_OPI_NUT:
             return "OPI_NUT (Operating Point Information)";
-        case NALU_TYPE_DCI_NUT:
+        case H266_NALU_DCI_NUT:
             return "DCI_NUT (Decoding Capability Information)";
-        case NALU_TYPE_VPS_NUT:
+        case H266_NALU_VPS_NUT:
             return "VPS_NUT (Video Parameter Set)";
-        case NALU_TYPE_SPS_NUT:
+        case H266_NALU_SPS_NUT:
             return "SPS_NUT (Sequence Parameter Set)";
-        case NALU_TYPE_PPS_NUT:
+        case H266_NALU_PPS_NUT:
             return "PPS_NUT (Picture Parameter Set)";
-        case NALU_TYPE_PREFIX_APS_NUT:
+        case H266_NALU_PREFIX_APS_NUT:
             return "PREFIX_APS_NUT (Adaptation Parameter Set)";
-        case NALU_TYPE_SUFFIX_APS_NUT:
+        case H266_NALU_SUFFIX_APS_NUT:
             return "SUFFIX_APS_NUT (Adaptation Parameter Set)";
-        case NALU_TYPE_PH_NUT:
+        case H266_NALU_PH_NUT:
             return "PH_NUT (Picture Header)";
-        case NALU_TYPE_AUD_NUT:
+        case H266_NALU_AUD_NUT:
             return "AUD_NUT (Access Unit Delimiter)";
-        case NALU_TYPE_EOS_NUT:
+        case H266_NALU_EOS_NUT:
             return "EOS_NUT (End of Sequence)";
-        case NALU_TYPE_EOB_NUT:
+        case H266_NALU_EOB_NUT:
             return "EOB_NUT (End of Bitstream)";
-        case NALU_TYPE_PREFIX_SEI_NUT:
+        case H266_NALU_PREFIX_SEI_NUT:
             return "PREFIX_SEI_NUT (Supplemental Enhancement Information)";
-        case NALU_TYPE_SUFFIX_SEI_NUT:
+        case H266_NALU_SUFFIX_SEI_NUT:
             return "SUFFIX_SEI_NUT (Supplemental Enhancement Information)";
-        case NALU_TYPE_FD_NUT:
+        case H266_NALU_FD_NUT:
             return "FD_NUT (Filler Data)";
 
         default:

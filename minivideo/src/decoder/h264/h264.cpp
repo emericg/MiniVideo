@@ -287,12 +287,12 @@ void freeDecodingContext(DecodingContext_t **dc_ptr)
             TRACE_1(H264, ">> NAL Unit freed");
         }
 
-        for (i = 0; i < MAX_SPS; i++)
+        for (i = 0; i < H264_MAX_SPS; i++)
         {
             freeSPS(&(*dc_ptr)->sps_array[i]);
         }
 
-        for (i = 0; i < MAX_PPS; i++)
+        for (i = 0; i < H264_MAX_PPS; i++)
         {
             freePPS(&(*dc_ptr)->pps_array[i]);
         }
@@ -316,9 +316,8 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
     TRACE_1(H264, BLD_GREEN "h264_decode_nalu()" CLR_RESET);
     int retcode = FAILURE;
 
-    // Goto correct data offset
-    //bitstream_goto_offset(dc->bitstr, nalu_offset);
-    buffer_feed_manual(dc->bitstr, nalu_offset, nalu_size);
+    // Load the NAL unit (with emulation prevention bytes removed)
+    buffer_feed_manual_rbsp(dc->bitstr, nalu_offset, nalu_size);
 
     // Check header validity
     if (h264_nalu_parse_header(dc->bitstr, dc->active_nalu))
@@ -330,18 +329,17 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
         // Decode NAL Unit content
         switch (dc->active_nalu->nal_unit_type)
         {
-            case NALU_TYPE_SLICE: //////////////////////////////////////
+            case NALU_TYPE_SLICE: //////////////////////////////////////////////
             {
                 TRACE_1(H264, "This decoder only support IDR slice decoding!");
             }
             break;
 
-            case NALU_TYPE_IDR: ////////////////////////////////////////
+            case NALU_TYPE_IDR: ////////////////////////////////////////////////
             {
                 TRACE_INFO(H264, "> " BLD_GREEN "decodeIDR(%i at %lli)" CLR_RESET,
                            dc->idrCounter, bitstream_get_absolute_byte_offset(dc->bitstr));
 
-                h264_nalu_clean_sample(dc->bitstr);
                 dc->IdrPicFlag = true;
 
                 if (decode_slice(dc))
@@ -356,31 +354,10 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_SEI: ////////////////////////////////////////
+            case NALU_TYPE_SEI: ////////////////////////////////////////////////
             {
-                // SEI messages are not needed for decoding, skip them
-                retcode = SUCCESS;
-            }
-            break;
-
-            case NALU_TYPE_AUD: ////////////////////////////////////////
-            {
-                h264_nalu_clean_sample(dc->bitstr);
-
-                h264_aud_t aud;
-                if (decodeAUD(dc->bitstr, &aud))
-                {
-                    retcode = SUCCESS;
-                }
-                else
-                    dc->errorCounter++;
-            }
-            break;
+                retcode = SUCCESS; // SEI messages are not needed for decoding
 /*
-            case NALU_TYPE_SEI: ////////////////////////////////////////
-            {
-                h264_nalu_clean_sample(dc->bitstr);
-
                 if (dc->active_sei != NULL)
                     free(dc->active_sei);
 
@@ -395,13 +372,12 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                     else
                         dc->errorCounter++;
                 }
+*/
             }
             break;
-*/
-            case NALU_TYPE_SPS: ////////////////////////////////////////
-            {
-                h264_nalu_clean_sample(dc->bitstr);
 
+            case NALU_TYPE_SPS: ////////////////////////////////////////////////
+            {
                 h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
                 if (sps)
                 {
@@ -431,10 +407,8 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_PPS: ////////////////////////////////////////
+            case NALU_TYPE_PPS: ////////////////////////////////////////////////
             {
-                h264_nalu_clean_sample(dc->bitstr);
-
                 h264_pps_t *pps = (h264_pps_t*)calloc(1, sizeof(h264_pps_t));
                 if (pps)
                 {
@@ -460,7 +434,19 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            default:
+            case NALU_TYPE_AUD: ////////////////////////////////////////////////
+            {
+                h264_aud_t aud;
+                if (decodeAUD(dc->bitstr, &aud))
+                {
+                    retcode = SUCCESS;
+                }
+                else
+                    dc->errorCounter++;
+            }
+            break;
+
+            default: ///////////////////////////////////////////////////////////
             {
                 TRACE_ERROR(NALU, "Unsupported NAL Unit! (nal_unit_type %i)", dc->active_nalu->nal_unit_type);
                 dc->errorCounter++;

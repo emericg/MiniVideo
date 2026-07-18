@@ -2248,7 +2248,7 @@ h264_hrd_t *decodeHRD(Bitstream_t *bitstr)
         hrd->cpb_size_scale = read_bits(bitstr, 4);
 
         for (unsigned SchedSelIdx = 0;
-             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < H264_MAX_CPB;
              SchedSelIdx++)
         {
             hrd->bit_rate_value_minus1[SchedSelIdx] = read_ue(bitstr);
@@ -2294,7 +2294,7 @@ static int checkHRD(h264_hrd_t *hrd)
     }
     else // Check HRD values
     {
-        if (hrd->cpb_cnt_minus1 > (MAX_CPB - 1))
+        if (hrd->cpb_cnt_minus1 > (H264_MAX_CPB - 1))
         {
             TRACE_WARNING(PARAM, "      - cpb_cnt_minus1 is %i, but should be between 0 and 31", hrd->cpb_cnt_minus1);
             retcode = FAILURE;
@@ -2305,7 +2305,7 @@ static int checkHRD(h264_hrd_t *hrd)
         //TRACE_1(PARAM, "      - cpb_size_scale    : %i", hrd->cpb_size_scale);
 
         for (unsigned SchedSelIdx = 0;
-             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < H264_MAX_CPB;
              SchedSelIdx++)
         {
             if (hrd->bit_rate_value_minus1[SchedSelIdx] > (pow(2, 32)-2))
@@ -2366,7 +2366,7 @@ static void printHRD(h264_hrd_t *hrd)
     TRACE_1(PARAM, "      - cpb_size_scale  = %u", hrd->cpb_size_scale);
 
     for (unsigned SchedSelIdx = 0;
-         SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < MAX_CPB;
+         SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx < H264_MAX_CPB;
          SchedSelIdx++)
     {
         TRACE_1(PARAM, "      - bit_rate_value_minus1[%u]       = %u", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx]);
@@ -2394,7 +2394,7 @@ static void mapHRD(h264_hrd_t *hrd, FILE *xml)
         fprintf(xml, "  <cpb_size_scale>%u</cpb_size_scale>\n", hrd->cpb_size_scale);
 
         for (unsigned SchedSelIdx = 0;
-             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (MAX_CPB - 1);
+             SchedSelIdx <= hrd->cpb_cnt_minus1 && SchedSelIdx <= (H264_MAX_CPB - 1);
              SchedSelIdx++)
         {
             fprintf(xml, "  <bit_rate_value_minus1_%u>%u</bit_rate_value_minus1_%u>\n", SchedSelIdx, hrd->bit_rate_value_minus1[SchedSelIdx], SchedSelIdx);

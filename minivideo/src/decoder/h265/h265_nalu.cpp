@@ -212,58 +212,58 @@ const char *h265_nalu_get_string_type1(unsigned nal_unit_type)
 {
     switch (nal_unit_type)
     {
-        case NALU_TYPE_TRAIL_N:
+        case H265_NALU_TRAIL_N:
             return "TRAIL_N (Coded slice segment of a non-TSA, non-STSA trailing picture)";
-        case NALU_TYPE_TRAIL_R:
+        case H265_NALU_TRAIL_R:
             return "TRAIL_R (Coded slice segment of a non-TSA, non-STSA trailing picture)";
-        case NALU_TYPE_TSA_N:
+        case H265_NALU_TSA_N:
             return "TSA_N (Coded slice segment of a TSA picture)";
-        case NALU_TYPE_TSA_R:
+        case H265_NALU_TSA_R:
             return "TSA_R (Coded slice segment of a TSA picture)";
-        case NALU_TYPE_STSA_N:
+        case H265_NALU_STSA_N:
             return "STSA_N (Coded slice segment of an STSA picture)";
-        case NALU_TYPE_STSA_R:
+        case H265_NALU_STSA_R:
             return "STSA_R (Coded slice segment of an STSA picture)";
-        case NALU_TYPE_RADL_N:
+        case H265_NALU_RADL_N:
             return "RADL_N (Coded slice segment of a RADL picture)";
-        case NALU_TYPE_RADL_R:
+        case H265_NALU_RADL_R:
             return "RADL_R (Coded slice segment of a RADL picture)";
-        case NALU_TYPE_RASL_N:
+        case H265_NALU_RASL_N:
             return "RASL_N (Coded slice segment of a RASL picture)";
-        case NALU_TYPE_RASL_R:
+        case H265_NALU_RASL_R:
             return "RASL_R (Coded slice segment of a RASL picture)";
 
-        case NALU_TYPE_BLA_W_LP:
+        case H265_NALU_BLA_W_LP:
             return "BLA_W_LP (Coded slice segment of a BLA picture)";
-        case NALU_TYPE_BLA_W_RADL:
+        case H265_NALU_BLA_W_RADL:
             return "BLA_W_RADL (Coded slice segment of a BLA picture)";
-        case NALU_TYPE_BLA_N_LP:
+        case H265_NALU_BLA_N_LP:
             return "BLA_N_LP (Coded slice segment of a BLA picture)";
 
-        case NALU_TYPE_IDR_W_RADL:
+        case H265_NALU_IDR_W_RADL:
             return "IDR_W_RADL (Coded slice segment of an IDR picture)";
-        case NALU_TYPE_IDR_N_LP:
+        case H265_NALU_IDR_N_LP:
             return "IDR_N_LP (Coded slice segment of an IDR picture)";
-        case NALU_TYPE_CRA_NUT:
+        case H265_NALU_CRA_NUT:
             return "CRA_NUT (Coded slice segment of a CRA picture)";
 
-        case NALU_TYPE_VPS_NUT:
+        case H265_NALU_VPS_NUT:
             return "VPS_NUT (Video Parameter Set)";
-        case NALU_TYPE_SPS_NUT:
+        case H265_NALU_SPS_NUT:
             return "SPS_NUT (Sequence Parameter Set)";
-        case NALU_TYPE_PPS_NUT:
+        case H265_NALU_PPS_NUT:
             return "PPS_NUT (Picture Parameter Set)";
-        case NALU_TYPE_AUD_NUT:
+        case H265_NALU_AUD_NUT:
             return "AUD_NUT (Access Unit Delimiter)";
-        case NALU_TYPE_EOS_NUT:
+        case H265_NALU_EOS_NUT:
             return "EOS_NUT (End of Sequence)";
-        case NALU_TYPE_EOB_NUT:
+        case H265_NALU_EOB_NUT:
             return "EOB_NUT (End of Bitstream)";
-        case NALU_TYPE_FD_NUT:
+        case H265_NALU_FD_NUT:
             return "FD_NUT (Filler Data)";
-        case NALU_TYPE_PREFIX_SEI_NUT:
+        case H265_NALU_PREFIX_SEI_NUT:
             return "PREFIX_SEI_NUT (Supplemental Enhancement Information)";
-        case NALU_TYPE_SUFFIX_SEI_NUT:
+        case H265_NALU_SUFFIX_SEI_NUT:
             return "SUFFIX_SEI_NUT (Supplemental Enhancement Information)";
 
         default:

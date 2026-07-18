@@ -66,36 +66,36 @@ typedef struct h266_nalu_t
 //! H.266 NAL Unit content type
 typedef enum h266_nalu_type_e
 {
-    NALU_TYPE_TRAIL_NUT     = 0,    //!< Coded slice of a trailing picture or subpicture
-    NALU_TYPE_STSA_NUT      = 1,    //!< Coded slice of an STSA picture or subpicture
-    NALU_TYPE_RADL_NUT      = 2,    //!< Coded slice of a RADL picture or subpicture
-    NALU_TYPE_RASL_NUT      = 3,    //!< Coded slice of a RASL picture or subpicture
+    H266_NALU_TRAIL_NUT     = 0,    //!< Coded slice of a trailing picture or subpicture
+    H266_NALU_STSA_NUT      = 1,    //!< Coded slice of an STSA picture or subpicture
+    H266_NALU_RADL_NUT      = 2,    //!< Coded slice of a RADL picture or subpicture
+    H266_NALU_RASL_NUT      = 3,    //!< Coded slice of a RASL picture or subpicture
 
-    NALU_TYPE_RSV_VCL_4     = 4,    //!< Reserved non-IRAP VCL NAL unit types
-    NALU_TYPE_RSV_VCL_5     = 5,
-    NALU_TYPE_RSV_VCL_6     = 6,
+    H266_NALU_RSV_VCL_4     = 4,    //!< Reserved non-IRAP VCL NAL unit types
+    H266_NALU_RSV_VCL_5     = 5,
+    H266_NALU_RSV_VCL_6     = 6,
 
-    NALU_TYPE_IDR_W_RADL    = 7,    //!< Coded slice of an IDR picture or subpicture
-    NALU_TYPE_IDR_N_LP      = 8,
-    NALU_TYPE_CRA_NUT       = 9,    //!< Coded slice of a CRA picture or subpicture
-    NALU_TYPE_GDR_NUT       = 10,   //!< Coded slice of a GDR picture or subpicture
+    H266_NALU_IDR_W_RADL    = 7,    //!< Coded slice of an IDR picture or subpicture
+    H266_NALU_IDR_N_LP      = 8,
+    H266_NALU_CRA_NUT       = 9,    //!< Coded slice of a CRA picture or subpicture
+    H266_NALU_GDR_NUT       = 10,   //!< Coded slice of a GDR picture or subpicture
 
-    NALU_TYPE_RSV_IRAP_11   = 11,   //!< Reserved IRAP VCL NAL unit type
+    H266_NALU_RSV_IRAP_11   = 11,   //!< Reserved IRAP VCL NAL unit type
 
-    NALU_TYPE_OPI_NUT       = 12,   //!< Operating Point Information
-    NALU_TYPE_DCI_NUT       = 13,   //!< Decoding Capability Information
-    NALU_TYPE_VPS_NUT       = 14,   //!< Video Parameter Set
-    NALU_TYPE_SPS_NUT       = 15,   //!< Sequence Parameter Set
-    NALU_TYPE_PPS_NUT       = 16,   //!< Picture Parameter Set
-    NALU_TYPE_PREFIX_APS_NUT= 17,   //!< Adaptation Parameter Set
-    NALU_TYPE_SUFFIX_APS_NUT= 18,
-    NALU_TYPE_PH_NUT        = 19,   //!< Picture Header
-    NALU_TYPE_AUD_NUT       = 20,   //!< Access Unit Delimiter
-    NALU_TYPE_EOS_NUT       = 21,   //!< End of Sequence
-    NALU_TYPE_EOB_NUT       = 22,   //!< End of Bitstream
-    NALU_TYPE_PREFIX_SEI_NUT= 23,   //!< Supplemental Enhancement Information
-    NALU_TYPE_SUFFIX_SEI_NUT= 24,
-    NALU_TYPE_FD_NUT        = 25,   //!< Filler Data
+    H266_NALU_OPI_NUT       = 12,   //!< Operating Point Information
+    H266_NALU_DCI_NUT       = 13,   //!< Decoding Capability Information
+    H266_NALU_VPS_NUT       = 14,   //!< Video Parameter Set
+    H266_NALU_SPS_NUT       = 15,   //!< Sequence Parameter Set
+    H266_NALU_PPS_NUT       = 16,   //!< Picture Parameter Set
+    H266_NALU_PREFIX_APS_NUT= 17,   //!< Adaptation Parameter Set
+    H266_NALU_SUFFIX_APS_NUT= 18,
+    H266_NALU_PH_NUT        = 19,   //!< Picture Header
+    H266_NALU_AUD_NUT       = 20,   //!< Access Unit Delimiter
+    H266_NALU_EOS_NUT       = 21,   //!< End of Sequence
+    H266_NALU_EOB_NUT       = 22,   //!< End of Bitstream
+    H266_NALU_PREFIX_SEI_NUT= 23,   //!< Supplemental Enhancement Information
+    H266_NALU_SUFFIX_SEI_NUT= 24,
+    H266_NALU_FD_NUT        = 25,   //!< Filler Data
 
 } h266_nalu_type_e;
 

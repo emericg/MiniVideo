@@ -72,11 +72,14 @@ typedef struct Bitstream_t
 
 /* ************************************************************************** */
 
-Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint32_t buffer_size);
 Bitstream_t *init_bitstream(MediaFile_t *media, MediaStream_t *stream);
+Bitstream_t *init_bitstream0(MediaFile_t *media, int64_t bitstream_offset, uint32_t buffer_size);
+Bitstream_t *init_bitstream_rbsp(Bitstream_t *parent, int64_t bitstream_offset, int64_t size);
+
 void free_bitstream(Bitstream_t **bitstr_ptr);
 
 int buffer_feed_manual(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t size);
+int buffer_feed_manual_rbsp(Bitstream_t *bitstr, int64_t bitstream_offset, int64_t size);
 int buffer_feed_dynamic(Bitstream_t *bitstr, int64_t new_bitstream_offset);
 
 // Bits operations

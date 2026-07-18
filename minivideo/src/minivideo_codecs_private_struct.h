@@ -32,6 +32,9 @@
 
 /* ************************************************************************** */
 
+/*!
+ * AVC Decoder Configuration Record, from ISO/IEC 14496-15 - 5.3.2
+ */
 typedef struct codecprivate_avcC_t
 {
     uint8_t configurationVersion;
@@ -43,17 +46,20 @@ typedef struct codecprivate_avcC_t
     uint8_t sps_count;
     int32_t *sps_sample_size;
     int64_t *sps_sample_offset;
-    h264_sps_t *sps_array[MAX_SPS];
+    h264_sps_t *sps_array[H264_MAX_SPS];
 
     uint8_t pps_count;
     int32_t *pps_sample_size;
     int64_t *pps_sample_offset;
-    h264_pps_t *pps_array[MAX_PPS];
+    h264_pps_t *pps_array[H264_MAX_PPS];
 
 } codecprivate_avcC_t;
 
 /* ************************************************************************** */
 
+/*!
+ * HEVC Decoder Configuration Record, from ISO/IEC 14496-15 - 8.3.2
+ */
 typedef struct codecprivate_hvcC_t
 {
     uint8_t configurationVersion;
@@ -76,34 +82,72 @@ typedef struct codecprivate_hvcC_t
     uint8_t lengthSizeMinusOne;
 
     uint8_t numOfArrays;
-    uint8_t *array_completeness;
-    uint8_t *NAL_unit_type;
-    uint16_t *numNalus;
-    uint16_t **nalUnitLength;
-    uint8_t ***nalUnit;
+
+    uint32_t vps_count;
+    int32_t vps_sample_size[H265_MAX_VPS];
+    int64_t vps_sample_offset[H265_MAX_VPS];
+    h265_vps_t *vps_array[H265_MAX_VPS];
+
+    uint32_t sps_count;
+    int32_t sps_sample_size[H265_MAX_SPS];
+    int64_t sps_sample_offset[H265_MAX_SPS];
+    h265_sps_t *sps_array[H265_MAX_SPS];
+
+    uint32_t pps_count;
+    int32_t pps_sample_size[H265_MAX_PPS];
+    int64_t pps_sample_offset[H265_MAX_PPS];
+    h265_pps_t *pps_array[H265_MAX_PPS];
 
 } codecprivate_hvcC_t;
 
 /* ************************************************************************** */
 
+/*!
+ * VVC Decoder Configuration Record, from ISO/IEC 14496-15 - 11.2.4
+ */
 typedef struct codecprivate_vvcC_t
 {
-    uint8_t profile_idc;
-    uint8_t tier_flag;
-    uint8_t general_level_idc;
-    uint8_t ptl_frame_only_constraint_flag;
-    uint8_t ptl_multilayer_enabled_flag;
-    uint8_t gci_present_flag;
-    //if (gci_present_flag)
-        uint8_t gci_general_constraints[9];
-        uint8_t gci_num_reserved_bits;
-    uint8_t *ptl_sublayer_level_present_flag;
-    //if (ptl_sublayer_level_present_flag)
-        uint8_t *sublayer_level_idc;
-    uint8_t ptl_num_sub_profiles;
-    uint32_t *general_sub_profile_idc;
+    uint8_t lengthSizeMinusOne;
+    bool ptl_present_flag;
 
-    // TODO // NALs
+    uint16_t ols_idx;
+    uint8_t num_sublayers;
+    uint8_t constant_frame_rate;
+    uint8_t chroma_format_idc;
+    uint8_t bit_depth_minus8;
+
+    uint8_t num_bytes_constraint_info;
+    uint8_t general_profile_idc;
+    bool general_tier_flag;
+    uint8_t general_level_idc;
+    bool ptl_frame_only_constraint_flag;
+    bool ptl_multilayer_enabled_flag;
+    uint8_t general_constraint_info[63];
+    bool ptl_sublayer_level_present_flag[8];
+    uint8_t sublayer_level_idc[8];
+    uint8_t ptl_num_sub_profiles;
+    uint32_t general_sub_profile_idc[256];
+
+    uint16_t max_picture_width;
+    uint16_t max_picture_height;
+    uint16_t avg_frame_rate;
+
+    uint8_t num_of_arrays;
+
+    uint32_t vps_count;
+    int32_t vps_sample_size[H266_MAX_VPS];
+    int64_t vps_sample_offset[H266_MAX_VPS];
+    h266_vps_t *vps_array[H266_MAX_VPS];
+
+    uint32_t sps_count;
+    int32_t sps_sample_size[H266_MAX_SPS];
+    int64_t sps_sample_offset[H266_MAX_SPS];
+    h266_sps_t *sps_array[H266_MAX_SPS];
+
+    uint32_t pps_count;
+    int32_t pps_sample_size[H266_MAX_PPS];
+    int64_t pps_sample_offset[H266_MAX_PPS];
+    h266_pps_t *pps_array[H266_MAX_PPS];
 
 } codecprivate_vvcC_t;
 
