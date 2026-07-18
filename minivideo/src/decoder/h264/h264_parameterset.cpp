@@ -152,33 +152,42 @@ static int checkHRD(h264_hrd_t *hrd);
  * 7.4.2.1.1.1 Scaling list semantics.
  * 8.5.9 Derivation process for scaling functions.
  */
-static void scaling_list_4x4(Bitstream_t *bitstr, h264_sps_t *sps, int i)
+static void scaling_list_4x4(Bitstream_t *bitstr, int list[16], int matrix[4][4], bool *useDefaultFlag, const int i)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_4x4()" CLR_RESET);
 
     int lastScale = 8;
     int nextScale = 8;
 
-    if (sps)
+    *useDefaultFlag = false;
+
+    for (int j = 0; j < 16; j++)
     {
-        for (int j = 0; j < 16; j++)
+        if (nextScale != 0)
         {
-            if (nextScale != 0)
-            {
-                int delta_scale = read_se(bitstr);
-                nextScale = (lastScale + delta_scale + 256) % 256;
-                sps->UseDefaultScalingMatrix4x4Flag[i] = (bool)(j == 0 && nextScale == 0);
-            }
-
-            sps->ScalingList4x4[i][j] = (nextScale == 0) ? lastScale : nextScale;
-            lastScale = sps->ScalingList4x4[i][j];
-
-            //TRACE_3(PARAM, "ScalingList4x4 : %i", sps->ScalingList4x4[i][j])
+            int delta_scale = read_se(bitstr);
+            nextScale = (lastScale + delta_scale + 256) % 256;
+            *useDefaultFlag = (bool)(j == 0 && nextScale == 0);
         }
 
-        // Transform the list into a matrix
-        inverse_scan_4x4(sps->ScalingList4x4[i], sps->ScalingMatrix4x4[i]);
+        list[j] = (nextScale == 0) ? lastScale : nextScale;
+        lastScale = list[j];
+
+        //TRACE_3(PARAM, "ScalingList4x4 : %i", list[j])
     }
+
+    // "use default" signaled in the bitstream (delta_scale driving nextScale to 0 on j==0)
+    if (*useDefaultFlag)
+    {
+        const int8_t *def = (i < 3) ? Default_4x4_Intra : Default_4x4_Inter;
+        for (int j = 0; j < 16; j++)
+        {
+            list[j] = def[j];
+        }
+    }
+
+    // Transform the list into a matrix
+    inverse_scan_4x4(list, matrix);
 }
 
 /* ************************************************************************** */
@@ -192,32 +201,209 @@ static void scaling_list_4x4(Bitstream_t *bitstr, h264_sps_t *sps, int i)
  * 7.4.2.1.1.1 Scaling list semantics.
  * 8.5.9 Derivation process for scaling functions.
  */
-static void scaling_list_8x8(Bitstream_t *bitstr, h264_sps_t *sps, int i)
+static void scaling_list_8x8(Bitstream_t *bitstr, int list[64], int matrix[8][8],
+                             bool *useDefaultFlag, const int k)
 {
     TRACE_INFO(PARAM, "> " BLD_GREEN "scaling_list_8x8()" CLR_RESET);
 
     int lastScale = 8;
     int nextScale = 8;
 
-    if (sps)
+    *useDefaultFlag = false;
+
+    for (int j = 0; j < 64; j++)
     {
-        for (int j = 0; j < 64; j++)
+        if (nextScale != 0)
         {
-            if (nextScale != 0)
-            {
-                int delta_scale = read_se(bitstr);
-                nextScale = (lastScale + delta_scale + 256) % 256;
-                sps->UseDefaultScalingMatrix8x8Flag[i] = (bool)(j == 0 && nextScale == 0);
-            }
-
-            sps->ScalingList8x8[i][j] = (nextScale == 0) ? lastScale : nextScale;
-            lastScale = sps->ScalingList8x8[i][j];
-
-            //TRACE_3(PARAM, "ScalingList8x8 : %i", sps->ScalingList8x8[i][j])
+            int delta_scale = read_se(bitstr);
+            nextScale = (lastScale + delta_scale + 256) % 256;
+            *useDefaultFlag = (bool)(j == 0 && nextScale == 0);
         }
 
-        // Transform the list into a matrix
-        inverse_scan_8x8(sps->ScalingList8x8[i], sps->ScalingMatrix8x8[i]);
+        list[j] = (nextScale == 0) ? lastScale : nextScale;
+        lastScale = list[j];
+
+        //TRACE_3(PARAM, "ScalingList8x8 : %i", list[j])
+    }
+
+    // "use default" signaled in the bitstream (delta_scale driving nextScale to 0 on j==0)
+    if (*useDefaultFlag)
+    {
+        const int8_t *def = (k % 2 == 0) ? Default_8x8_Intra : Default_8x8_Inter;
+        for (int j = 0; j < 64; j++)
+        {
+            list[j] = def[j];
+        }
+    }
+
+    // Transform the list into a matrix
+    inverse_scan_8x8(list, matrix);
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Scaling list fall-back rule set A, for lists absent from the bitstream.
+ * \param *sps The SPS to fill.
+ * \param i The scaling list id [0;11].
+ *
+ * From 'ITU-T H.264' recommendation:
+ * Table 7-2: Assignment of mnemonic names to scaling list indices and specification of fall-back rule.
+ */
+static void scaling_list_fallback_A(h264_sps_t *sps, const int i)
+{
+    if (i < 6) // 4x4 lists
+    {
+        if (i == 0 || i == 3)
+        {
+            const int8_t *def = (i == 0) ? Default_4x4_Intra : Default_4x4_Inter;
+            for (int j = 0; j < 16; j++)
+            {
+                sps->ScalingList4x4[i][j] = def[j];
+            }
+        }
+        else // use previous list
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                sps->ScalingList4x4[i][j] = sps->ScalingList4x4[i - 1][j];
+            }
+        }
+
+        inverse_scan_4x4(sps->ScalingList4x4[i], sps->ScalingMatrix4x4[i]);
+    }
+    else // 8x8 lists
+    {
+        const int k = i - 6;
+
+        if (k == 0 || k == 1)
+        {
+            const int8_t *def = (k == 0) ? Default_8x8_Intra : Default_8x8_Inter;
+            for (int j = 0; j < 64; j++)
+            {
+                sps->ScalingList8x8[k][j] = def[j];
+            }
+        }
+        else // use previous list (of the same intra/inter class)
+        {
+            for (int j = 0; j < 64; j++)
+            {
+                sps->ScalingList8x8[k][j] = sps->ScalingList8x8[k - 2][j];
+            }
+        }
+
+        inverse_scan_8x8(sps->ScalingList8x8[k], sps->ScalingMatrix8x8[k]);
+    }
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Scaling list fall-back rule set B, for lists absent from the PPS.
+ * \param *sps The SPS associated with this PPS.
+ * \param *pps The PPS to fill.
+ * \param i The scaling list id [0;11].
+ *
+ * From 'ITU-T H.264' recommendation:
+ * Table 7-2: Assignment of mnemonic names to scaling list indices and
+ * specification of fall-back rule.
+ *
+ * Same as rule set A, except that lists 0, 3, 6 and 7 fall back to the
+ * corresponding SPS list when seq_scaling_matrix_present_flag is set.
+ */
+static void scaling_list_fallback_B(h264_sps_t *sps, h264_pps_t *pps, const int i)
+{
+    if (i < 6) // 4x4 lists
+    {
+        if (i == 0 || i == 3)
+        {
+            if (sps->seq_scaling_matrix_present_flag)
+            {
+                for (int j = 0; j < 16; j++)
+                {
+                    pps->ScalingList4x4[i][j] = sps->ScalingList4x4[i][j];
+                }
+            }
+            else
+            {
+                const int8_t *def = (i == 0) ? Default_4x4_Intra : Default_4x4_Inter;
+                for (int j = 0; j < 16; j++)
+                {
+                    pps->ScalingList4x4[i][j] = def[j];
+                }
+            }
+        }
+        else // use previous list
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                pps->ScalingList4x4[i][j] = pps->ScalingList4x4[i - 1][j];
+            }
+        }
+
+        inverse_scan_4x4(pps->ScalingList4x4[i], pps->ScalingMatrix4x4[i]);
+    }
+    else // 8x8 lists
+    {
+        const int k = i - 6;
+
+        if (k == 0 || k == 1)
+        {
+            if (sps->seq_scaling_matrix_present_flag)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    pps->ScalingList8x8[k][j] = sps->ScalingList8x8[k][j];
+                }
+            }
+            else
+            {
+                const int8_t *def = (k == 0) ? Default_8x8_Intra : Default_8x8_Inter;
+                for (int j = 0; j < 64; j++)
+                {
+                    pps->ScalingList8x8[k][j] = def[j];
+                }
+            }
+        }
+        else // use previous list (of the same intra/inter class)
+        {
+            for (int j = 0; j < 64; j++)
+            {
+                pps->ScalingList8x8[k][j] = pps->ScalingList8x8[k - 2][j];
+            }
+        }
+
+        inverse_scan_8x8(pps->ScalingList8x8[k], pps->ScalingMatrix8x8[k]);
+    }
+}
+
+/* ************************************************************************** */
+
+/*!
+ * \brief Copy every effective scaling list (and derived matrix) from the SPS.
+ * \param *sps The SPS associated with this PPS.
+ * \param *pps The PPS to fill.
+ *
+ * Used when pic_scaling_matrix_present_flag is not set: the PPS inherits the
+ * scaling lists of the active SPS (flat lists, parsed lists, or rule set A
+ * fall-backs, whichever the SPS ended up with).
+ */
+static void scaling_list_inherit_sps(h264_sps_t *sps, h264_pps_t *pps)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        for (int j = 0; j < 16; j++)
+        {
+            pps->ScalingList4x4[i][j] = sps->ScalingList4x4[i][j];
+        }
+
+        for (int j = 0; j < 64; j++)
+        {
+            pps->ScalingList8x8[i][j] = sps->ScalingList8x8[i][j];
+        }
+
+        inverse_scan_4x4(pps->ScalingList4x4[i], pps->ScalingMatrix4x4[i]);
+        inverse_scan_8x8(pps->ScalingList8x8[i], pps->ScalingMatrix8x8[i]);
     }
 }
 
@@ -334,9 +520,20 @@ int decodeSPS(Bitstream_t *bitstr, h264_sps_t *sps)
                     if (sps->seq_scaling_list_present_flag[i])
                     {
                         if (i < 6)
-                            scaling_list_4x4(bitstr, sps, i);
+                        {
+                            scaling_list_4x4(bitstr, sps->ScalingList4x4[i], sps->ScalingMatrix4x4[i],
+                                             &sps->UseDefaultScalingMatrix4x4Flag[i], i);
+                        }
                         else
-                            scaling_list_8x8(bitstr, sps, i - 6);
+                        {
+                            scaling_list_8x8(bitstr, sps->ScalingList8x8[i - 6], sps->ScalingMatrix8x8[i - 6],
+                                             &sps->UseDefaultScalingMatrix8x8Flag[i - 6], i - 6);
+                        }
+                    }
+                    else
+                    {
+                        // The list is absent from the bitstream, use fall-back rule set A
+                        scaling_list_fallback_A(sps, i);
                     }
                 }
             }
@@ -974,19 +1171,54 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
             sps_array[pps->seq_parameter_set_id] &&
             sps_array[pps->seq_parameter_set_id]->profile_idc >= HIGHP)
         {
+            h264_sps_t *sps = sps_array[pps->seq_parameter_set_id];
+
             pps->transform_8x8_mode_flag = read_bit(bitstr);
 
             pps->pic_scaling_matrix_present_flag = read_bit(bitstr);
             if (pps->pic_scaling_matrix_present_flag)
             {
-                for (int i = 0; i < (6 + ((sps_array[pps->seq_parameter_set_id]->chroma_format_idc != 3) ? 2 : 6) * pps->transform_8x8_mode_flag); i++)
+                const int list_count = 6 + ((sps->chroma_format_idc != 3) ? 2 : 6) * pps->transform_8x8_mode_flag;
+
+                for (int i = 0; i < list_count; i++)
                 {
                     pps->pic_scaling_list_present_flag[i] = read_bit(bitstr);
                     if (pps->pic_scaling_list_present_flag[i])
                     {
-                        TRACE_ERROR(PARAM, "UNIMPLEMENTED PPS scaling list !!!");
+                        if (i < 6)
+                        {
+                            scaling_list_4x4(bitstr, pps->ScalingList4x4[i], pps->ScalingMatrix4x4[i],
+                                             &pps->UseDefaultScalingMatrix4x4Flag[i], i);
+                        }
+                        else
+                        {
+                            scaling_list_8x8(bitstr, pps->ScalingList8x8[i - 6], pps->ScalingMatrix8x8[i - 6],
+                                             &pps->UseDefaultScalingMatrix8x8Flag[i - 6], i - 6);
+                        }
+                    }
+                    else
+                    {
+                        // The list is absent from the bitstream, use fall-back rule set B
+                        scaling_list_fallback_B(sps, pps, i);
                     }
                 }
+
+                // 8x8 lists not covered by the loop (transform_8x8_mode_flag off,
+                // or chroma lists with 4:2:x subsampling): inherit from the SPS
+                for (int k = (list_count > 6) ? (list_count - 6) : 0; k < 6; k++)
+                {
+                    for (int j = 0; j < 64; j++)
+                    {
+                        pps->ScalingList8x8[k][j] = sps->ScalingList8x8[k][j];
+                    }
+
+                    inverse_scan_8x8(pps->ScalingList8x8[k], pps->ScalingMatrix8x8[k]);
+                }
+            }
+            else
+            {
+                // No PPS override: the effective lists are those of the SPS
+                scaling_list_inherit_sps(sps, pps);
             }
 
             pps->second_chroma_qp_index_offset = read_se(bitstr);
@@ -996,6 +1228,23 @@ int decodePPS(Bitstream_t *bitstr, h264_pps_t *pps, h264_sps_t **sps_array)
             pps->transform_8x8_mode_flag = false;
             pps->pic_scaling_matrix_present_flag = false;
             pps->second_chroma_qp_index_offset = pps->chroma_qp_index_offset;
+
+            if (sps_array && sps_array[pps->seq_parameter_set_id])
+            {
+                scaling_list_inherit_sps(sps_array[pps->seq_parameter_set_id], pps);
+            }
+            else
+            {
+                // No SPS to inherit from: use flat scaling lists
+                for (int i = 0; i < 6; i++)
+                {
+                    for (int j = 0; j < 16; j++) pps->ScalingList4x4[i][j] = 16;
+                    for (int j = 0; j < 64; j++) pps->ScalingList8x8[i][j] = 16;
+
+                    inverse_scan_4x4(pps->ScalingList4x4[i], pps->ScalingMatrix4x4[i]);
+                    inverse_scan_8x8(pps->ScalingList8x8[i], pps->ScalingMatrix8x8[i]);
+                }
+            }
         }
 
         retcode = h264_rbsp_trailing_bits(bitstr);

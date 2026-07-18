@@ -312,7 +312,16 @@ typedef struct h264_pps_t
         bool pic_scaling_matrix_present_flag;
         //if (pic_scaling_matrix_present_flag)
             bool pic_scaling_list_present_flag[12];
-            // TODO
+
+        // Effective scaling lists for this PPS: parsed from the bitstream,
+        // completed by fall-back rule set B, or inherited from the active SPS
+        bool UseDefaultScalingMatrix4x4Flag[6];
+        int ScalingList4x4[6][16];
+        int ScalingMatrix4x4[6][4][4]; // derived from ScalingList4x4
+
+        bool UseDefaultScalingMatrix8x8Flag[6];
+        int ScalingList8x8[6][64];
+        int ScalingMatrix8x8[6][8][8]; // derived from ScalingList8x8
 
         int second_chroma_qp_index_offset;
 

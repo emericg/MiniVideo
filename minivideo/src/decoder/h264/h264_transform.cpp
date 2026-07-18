@@ -649,8 +649,14 @@ static void derivChromaQP(DecodingContext_t *dc, const int iCbCr)
 /*!
  * \param *dc The current DecodingContext.
  * \param *sps The SPS currently in use.
+ * \param *pps The PPS currently in use, holding the effective scaling matrices (can be NULL before any PPS was decoded).
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 8.5.9 Derivation process for scaling functions.
+ *
+ * weightScale4x4 = ScalingList4x4[iYCbCr + ((mbIsInterFlag == 1) ? 3 : 0)]
  */
-void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
+void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps, h264_pps_t *pps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
@@ -674,6 +680,10 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
 
+    // The effective scaling matrices are the ones of the active PPS
+    // (which inherits from the SPS when not overridden)
+    int (*ScalingMatrix4x4)[4][4] = (pps) ? pps->ScalingMatrix4x4 : sps->ScalingMatrix4x4;
+
     // Compute // if we have scaling lists
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
     {
@@ -683,7 +693,7 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
             {
                 for (j = 0; j < 4; j++)
                 {
-                    sps->LevelScale4x4[YCbCr][q][i][j] = sps->ScalingMatrix4x4[YCbCr + ((mbIsInterFlag) ? 3 : 0)][i][j] * dc->normAdjust4x4[q][i][j];
+                    sps->LevelScale4x4[YCbCr][q][i][j] = ScalingMatrix4x4[YCbCr + ((mbIsInterFlag) ? 3 : 0)][i][j] * dc->normAdjust4x4[q][i][j];
                 }
             }
         }
@@ -712,8 +722,14 @@ void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps)
 /*!
  * \param *dc The current DecodingContext.
  * \param *sps The SPS currently in use.
+ * \param *pps The PPS currently in use, holding the effective scaling matrices (can be NULL before any PPS was decoded).
+ *
+ * From 'ITU-T H.264' recommendation:
+ * 8.5.9 Derivation process for scaling functions.
+ *
+ * weightScale8x8 = ScalingList8x8[2 * iYCbCr + mbIsInterFlag]
  */
-void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
+void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps, h264_pps_t *pps)
 {
     // Initialization
     int YCbCr = 0, q = 0, i = 0, j = 0;
@@ -737,7 +753,11 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
     }
 #endif // ENABLE_SEPARATE_COLOUR_PLANES
 
-    // Compute // we have SPS scaling lists
+    // The effective scaling matrices are the ones of the active PPS
+    // (which inherits from the SPS when not overridden)
+    int (*ScalingMatrix8x8)[8][8] = (pps) ? pps->ScalingMatrix8x8 : sps->ScalingMatrix8x8;
+
+    // Compute // if we have scaling lists
     for (YCbCr = 0; YCbCr < 3; YCbCr++)
     {
         for (q = 0; q < 6; q++)
@@ -746,7 +766,7 @@ void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps)
             {
                 for (j = 0; j < 8; j++)
                 {
-                    sps->LevelScale8x8[YCbCr][q][i][j] = sps->ScalingMatrix8x8[YCbCr + ((mbIsInterFlag) ? 3 : 0)][i][j] * dc->normAdjust8x8[q][i][j];
+                    sps->LevelScale8x8[YCbCr][q][i][j] = ScalingMatrix8x8[(YCbCr * 2) + ((mbIsInterFlag) ? 1 : 0)][i][j] * dc->normAdjust8x8[q][i][j];
                 }
             }
         }

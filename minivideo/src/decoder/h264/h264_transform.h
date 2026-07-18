@@ -30,8 +30,16 @@
 
 /* ************************************************************************** */
 
-void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps);
-void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps);
+// Default scaling lists, from 'ITU-T H.264' recommendation Table 7-3 and Table 7-4
+extern int8_t Default_4x4_Intra[16];
+extern int8_t Default_4x4_Inter[16];
+extern int8_t Default_8x8_Intra[64];
+extern int8_t Default_8x8_Inter[64];
+
+/* ************************************************************************** */
+
+void computeLevelScale4x4(DecodingContext_t *dc, h264_sps_t *sps, h264_pps_t *pps);
+void computeLevelScale8x8(DecodingContext_t *dc, h264_sps_t *sps, h264_pps_t *pps);
 
 void transform4x4_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma4x4BlkIdx);
 void transform8x8_luma(DecodingContext_t *dc, Macroblock_t *mb, int luma8x8BlkIdx);

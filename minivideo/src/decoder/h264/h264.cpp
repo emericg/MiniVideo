@@ -406,9 +406,10 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                         dc->profile_idc = sps->profile_idc;
                         dc->ChromaArrayType = sps->ChromaArrayType;
 
-                        // Init quantization tables
-                        computeLevelScale4x4(dc, sps);
-                        computeLevelScale8x8(dc, sps);
+                        // Init quantization tables (recomputed with the effective
+                        // scaling matrices when a PPS referencing this SPS is decoded)
+                        computeLevelScale4x4(dc, sps, NULL);
+                        computeLevelScale8x8(dc, sps, NULL);
 
                         // Macroblocks "table" allocation (on macroblock **mbs_data):
                         dc->PicSizeInMbs = sps->FrameHeightInMbs * sps->PicWidthInMbs;
@@ -434,7 +435,14 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
                     {
                         dc->pps_array[pps->pic_parameter_set_id] = pps;
                         dc->active_pps = pps->pic_parameter_set_id;
-                        dc->entropy_coding_mode_flag = pps->entropy_coding_mode_flag,
+                        dc->entropy_coding_mode_flag = pps->entropy_coding_mode_flag;
+
+                        // Recompute quantization tables with the effective (PPS) scaling matrices
+                        if (dc->sps_array[pps->seq_parameter_set_id])
+                        {
+                            computeLevelScale4x4(dc, dc->sps_array[pps->seq_parameter_set_id], pps);
+                            computeLevelScale8x8(dc, dc->sps_array[pps->seq_parameter_set_id], pps);
+                        }
 
                         //printPPS(pps, dc->sps_array);
                         retcode = SUCCESS;
