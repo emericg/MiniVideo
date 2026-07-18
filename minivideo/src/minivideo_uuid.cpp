@@ -33,12 +33,12 @@ char *getGuidString(const uint8_t uuid_in[16], char guid_out[39])
 {
     if (guid_out)
     {
-        sprintf(guid_out, "{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-                uuid_in[0], uuid_in[1], uuid_in[2], uuid_in[3],
-                uuid_in[4], uuid_in[5],
-                uuid_in[6], uuid_in[7],
-                uuid_in[8], uuid_in[9],
-                uuid_in[10], uuid_in[11], uuid_in[12], uuid_in[13], uuid_in[14], uuid_in[15]);
+        snprintf(guid_out, 39, "{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+                 uuid_in[0], uuid_in[1], uuid_in[2], uuid_in[3],
+                 uuid_in[4], uuid_in[5],
+                 uuid_in[6], uuid_in[7],
+                 uuid_in[8], uuid_in[9],
+                 uuid_in[10], uuid_in[11], uuid_in[12], uuid_in[13], uuid_in[14], uuid_in[15]);
 
         return guid_out;
     }
@@ -46,16 +46,16 @@ char *getGuidString(const uint8_t uuid_in[16], char guid_out[39])
     return NULL;
 }
 
-char *getUrnString(const uint8_t uuid_in[16], char urn_out[45])
+char *getUrnString(const uint8_t uuid_in[16], char urn_out[46])
 {
     if (urn_out)
     {
-        sprintf(urn_out, "urn:uuid:%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-                uuid_in[0], uuid_in[1], uuid_in[2], uuid_in[3],
-                uuid_in[4], uuid_in[5],
-                uuid_in[6], uuid_in[7],
-                uuid_in[8], uuid_in[9],
-                uuid_in[10], uuid_in[11], uuid_in[12], uuid_in[13], uuid_in[14], uuid_in[15]);
+        snprintf(urn_out, 46, "urn:uuid:%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+                 uuid_in[0], uuid_in[1], uuid_in[2], uuid_in[3],
+                 uuid_in[4], uuid_in[5],
+                 uuid_in[6], uuid_in[7],
+                 uuid_in[8], uuid_in[9],
+                 uuid_in[10], uuid_in[11], uuid_in[12], uuid_in[13], uuid_in[14], uuid_in[15]);
 
         return urn_out;
     }

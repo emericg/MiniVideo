@@ -286,7 +286,10 @@ int main(int argc, char *argv[])
             }
 
             // Close the video file
-            minivideo_retcode = minivideo_close(&input_video);
+            if (minivideo_close(&input_video) != 1)
+            {
+                minivideo_retcode = 0;
+            }
         }
 
         // Convert library return code into program exit code

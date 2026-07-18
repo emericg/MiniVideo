@@ -47,7 +47,7 @@
     #include <png.h>
 #endif
 
-#if STB_IMAGE_WRITE
+#if ENABLE_STB_IMAGE_WRITE
     // stbiw
     #define STB_IMAGE_WRITE_IMPLEMENTATION
     #include "thirdparty/stb_image_write.h"
@@ -582,7 +582,7 @@ static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
     retcode = SUCCESS;
 
-#elif STB_IMAGE_WRITE
+#elif ENABLE_STB_IMAGE_WRITE
 
     TRACE_INFO(IO, BLD_GREEN "export_idr_jpg(STBIMWRITE)" CLR_RESET);
 
@@ -598,7 +598,7 @@ static int export_idr_jpg(DecodingContext_t *dc, OutputFile_t *PictureFile)
         free(buffer_rgb);
     }
 
-#endif // ENABLE_JPG or STB_IMAGE_WRITE
+#endif // ENABLE_JPG or ENABLE_STB_IMAGE_WRITE
 
     return retcode;
 }
@@ -695,7 +695,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
     retcode = SUCCESS;
 
-#elif STB_IMAGE_WRITE
+#elif ENABLE_STB_IMAGE_WRITE
 
     TRACE_INFO(IO, BLD_GREEN "export_idr_png(STBIMWRITE)" CLR_RESET);
 
@@ -711,7 +711,7 @@ static int export_idr_png(DecodingContext_t *dc, OutputFile_t *PictureFile)
         free(buffer_rgb);
     }
 
-#endif // ENABLE_PNG or STB_IMAGE_WRITE
+#endif // ENABLE_PNG or ENABLE_STB_IMAGE_WRITE
 
     return retcode;
 }
@@ -727,7 +727,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
-#if STB_IMAGE_WRITE
+#if ENABLE_STB_IMAGE_WRITE
     TRACE_INFO(IO, BLD_GREEN "export_idr_bmp()" CLR_RESET);
 
     h264_sps_t *sps = dc->sps_array[dc->active_sps];
@@ -745,7 +745,7 @@ static int export_idr_bmp(DecodingContext_t *dc, OutputFile_t *PictureFile)
         free(buffer_rgb);
     }
 
-#endif // STB_IMAGE_WRITE
+#endif // ENABLE_STB_IMAGE_WRITE
 
     return retcode;
 }
@@ -761,7 +761,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 {
     int retcode = FAILURE;
 
-#if STB_IMAGE_WRITE
+#if ENABLE_STB_IMAGE_WRITE
     TRACE_INFO(IO, BLD_GREEN "export_idr_tga()" CLR_RESET);
 
     h264_sps_t *sps = dc->sps_array[dc->active_sps];
@@ -778,7 +778,7 @@ static int export_idr_tga(DecodingContext_t *dc, OutputFile_t *PictureFile)
 
         free(buffer_rgb);
     }
-#endif // STB_IMAGE_WRITE
+#endif // ENABLE_STB_IMAGE_WRITE
 
     return retcode;
 }
@@ -800,7 +800,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     int retcode = FAILURE;
 
     // Check export format availability
-#if ENABLE_AVIF == 0 && ENABLE_WEBP == 0 && ENABLE_JPEG == 0 && ENABLE_PNG == 0 && STB_IMAGE_WRITE == 0
+#if ENABLE_AVIF == 0 && ENABLE_WEBP == 0 && ENABLE_JPEG == 0 && ENABLE_PNG == 0 && ENABLE_STB_IMAGE_WRITE == 0
 
     if (out->picture_format < PICTURE_YUV420)
     {
@@ -818,7 +818,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     }
     #endif // ENABLE_WEBP
 
-    #if ENABLE_JPEG == 0 && STB_IMAGE_WRITE == 0
+    #if ENABLE_JPEG == 0 && ENABLE_STB_IMAGE_WRITE == 0
     if (out->picture_format == PICTURE_JPG)
     {
         TRACE_WARNING(IO, "No jpg export library available, trying png");
@@ -826,7 +826,7 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     }
     #endif // ENABLE_JPEG
 
-    #if ENABLE_PNG == 0 && STB_IMAGE_WRITE == 0
+    #if ENABLE_PNG == 0 && ENABLE_STB_IMAGE_WRITE == 0
     if (out->picture_format == PICTURE_PNG)
     {
         TRACE_WARNING(IO, "No png export library available, forcing YCbCr 4:2:0");
@@ -834,13 +834,13 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
     }
     #endif // ENABLE_PNG
 
-    #if STB_IMAGE_WRITE == 0
+    #if ENABLE_STB_IMAGE_WRITE == 0
     if (out->picture_format == PICTURE_BMP || out->picture_format == PICTURE_TGA)
     {
         TRACE_WARNING(IO, "No bmp / tga export library available, forcing YCbCr 4:2:0");
         out->picture_format = PICTURE_YUV420;
     }
-    #endif // STB_IMAGE_WRITE
+    #endif // ENABLE_STB_IMAGE_WRITE
 
 #endif
 
@@ -902,6 +902,12 @@ int export_idr_file(DecodingContext_t *dc, OutputFile_t *out)
 
     // Picture absolute file path
     strncat(out->file_path, out->file_directory, 254);
+
+    // Make sure the directory is separated from the file name
+    size_t dir_len = strlen(out->file_path);
+    if (dir_len > 0 && out->file_path[dir_len - 1] != '/')
+        strncat(out->file_path, "/", 2);
+
     strncat(out->file_path, out->file_name, 254);
     strncat(out->file_path, ".", 2);
     strncat(out->file_path, out->file_extension, 254);

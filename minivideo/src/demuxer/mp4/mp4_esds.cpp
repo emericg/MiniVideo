@@ -454,7 +454,7 @@ int parse_esds(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
                         for (uint8_t i = 0; i < num_front_channel_elements; i++)
                         {
                             char fieldname[64];
-                            sprintf(fieldname, "front_element_is_cpe[%i]", i);
+                            snprintf(fieldname, sizeof(fieldname), "front_element_is_cpe[%i]", i);
 
                             /*uint8_t front_element_is_cpe[i] =*/ read_mp4_uint(bitstr, 1, mp4->xml, fieldname);
                             /*uint8_t front_element_tag_select[i] =*/ read_mp4_uint(bitstr, 4, mp4->xml, fieldname);

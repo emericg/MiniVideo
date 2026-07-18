@@ -43,14 +43,14 @@ minivideo_EXPORT char *getGuidString(const uint8_t uuid_in[16], char guid_out[39
 /*!
  * \brief Get a printable URN string
  * \param uuid_in[in]: A 16 characters UUID.
- * \param guid_out[in,out]: A 45 character C string.
- * \return A pointer to the provided urn_out[45] so this function can be used directly inside a printf().
+ * \param guid_out[in,out]: A 46 character C string.
+ * \return A pointer to the provided urn_out[46] so this function can be used directly inside a printf().
  *
  * RFC 4122 defines a Uniform Resource Name (URN) namespace for UUIDs.
  * A UUID presented as a URN prints as follows:
  * urn:uuid:123e4567-e89b-12d3-a456-426655440000
  */
-minivideo_EXPORT char *getUrnString(const uint8_t uuid_in[16], char urn_out[45]);
+minivideo_EXPORT char *getUrnString(const uint8_t uuid_in[16], char urn_out[46]);
 
 /*!
  * \brief Read UUID with big endian order (use for everything NOT from Microsoft).
