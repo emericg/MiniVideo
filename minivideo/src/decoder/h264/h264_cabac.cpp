@@ -563,6 +563,24 @@ int initCabacContextVariables(DecodingContext_t *dc)
             }
         }
 
+        // ctxIdx 1012 to 1023 are used by coded_block_flag for 8x8 blocks
+        // (ctxBlockCat 5, 9 and 13, only present when ChromaArrayType is 3)
+        for (ctxIdx = 1012; ctxIdx < 1024; ctxIdx++)
+        {
+            preCtxState = iClip3(1, 126, ((cabac_context_init_I_1012[ctxIdx - 1012][0] * iClip3(0, 51, dc->active_slice->SliceQPY)) >> 4) + cabac_context_init_I_1012[ctxIdx - 1012][1]);
+
+            if (preCtxState < 64)
+            {
+                dc->active_slice->cc->pStateIdx[ctxIdx] = (63 - preCtxState);
+                dc->active_slice->cc->valMPS[ctxIdx] = 0;
+            }
+            else
+            {
+                dc->active_slice->cc->pStateIdx[ctxIdx] = (preCtxState - 64);
+                dc->active_slice->cc->valMPS[ctxIdx] = 1;
+            }
+        }
+
         // Note: ctxIdx equal to 276 is associated with the end_of_slice_flag and the bin of mb_type
         dc->active_slice->cc->pStateIdx[276] = 63;
         dc->active_slice->cc->valMPS[276] = 0;
@@ -741,11 +759,15 @@ static int getBinarization(DecodingContext_t *dc,
             prefix->bintable_x = 4;
             prefix->bintable_y = 16;
 
-            suffix->maxBinIdxCtx = 1;
-            suffix->ctxIdxOffset = 77;
-            suffix->bintable = (uint8_t **)binarization_tu2;
-            suffix->bintable_x = 2;
-            suffix->bintable_y = 3;
+            // The chroma suffix is only present when ChromaArrayType is 1 or 2 (see 9.3.2.6)
+            if (dc->ChromaArrayType == 1 || dc->ChromaArrayType == 2)
+            {
+                suffix->maxBinIdxCtx = 1;
+                suffix->ctxIdxOffset = 77;
+                suffix->bintable = (uint8_t **)binarization_tu2;
+                suffix->bintable_x = 2;
+                suffix->bintable_y = 3;
+            }
 
             retcode = SUCCESS; // bp_CBP();
         break;
@@ -1254,9 +1276,9 @@ static int decodingProcessFlow(DecodingContext_t *dc,
                 decodedSE[binIdx] = DecodeTerminate(dc->active_slice->cc, dc->bitstr);
             }
 #if ENABLE_DEBUG
-            else if (ctxIdx > 459)
+            else if ((ctxIdx > 459 && ctxIdx < 1012) || ctxIdx > 1023)
             {
-                TRACE_ERROR(CABAC, "Error, ctxIdx value is too high, please extend cabac_context_init_I table!");
+                TRACE_ERROR(CABAC, "Error, ctxIdx %i is out of the supported ranges [0;459] and [1012;1023]!", ctxIdx);
                 return FAILURE;
             }
 #endif // ENABLE_DEBUG

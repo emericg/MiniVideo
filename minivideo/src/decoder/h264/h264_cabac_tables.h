@@ -210,6 +210,16 @@ const int8_t cabac_context_init_I[460][2] =
 */
 };
 
+//! Values of variables m and n for ctxIdx from 1012 to 1023, I frame only.
+//! Used by coded_block_flag for 8x8 blocks (ctxBlockCat 5, 9 and 13).
+const int8_t cabac_context_init_I_1012[12][2] =
+{
+    // Table 9-33 | ctxIdx 1012 -> 1023
+    {  -3,  70 }, {  -8,  93 }, { -10,  90 }, { -30, 127 },
+    {  -3,  70 }, {  -8,  93 }, { -10,  90 }, { -30, 127 },
+    {  -3,  70 }, {  -8,  93 }, { -10,  90 }, { -30, 127 },
+};
+
 /* ************************************************************************** */
 
 //! Binarization k-th order Exp-Golomb (see 9.3.2.3)

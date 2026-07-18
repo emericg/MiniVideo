@@ -125,8 +125,8 @@ typedef struct drpm_t
 //! CABAC decoding context
 typedef struct CabacContext_t
 {
-    uint8_t pStateIdx[460]; //!< Corresponds to a probability state index
-    uint8_t valMPS[460];    //!< Corresponds to the value of the most probable symbol
+    uint8_t pStateIdx[1024]; //!< Corresponds to a probability state index
+    uint8_t valMPS[1024];    //!< Corresponds to the value of the most probable symbol
 
     // The status of the arithmetic decoding engine is represented by the variables codIRange and codIOffset.
     uint16_t codIRange;
