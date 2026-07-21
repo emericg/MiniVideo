@@ -94,26 +94,29 @@ typedef struct h264_nalu_t
 //! H.264 NAL Unit content type
 typedef enum h264_nalu_type_e
 {
-    NALU_TYPE_UNKNOWN      = 0,
-    NALU_TYPE_SLICE        = 1,     //!< Contain a coded slice
-    NALU_TYPE_DPA          = 2,     //!< Contain a data partition, type A
-    NALU_TYPE_DPB          = 3,     //!< Contain a data partition, type B
-    NALU_TYPE_DPC          = 4,     //!< Contain a data partition, type C
-    NALU_TYPE_IDR          = 5,     //!< Contain an IDR
-    NALU_TYPE_SEI          = 6,     //!< Contain Supplemental Enhancement Information
-    NALU_TYPE_SPS          = 7,     //!< Contain a Sequence Parameter Set
-    NALU_TYPE_PPS          = 8,     //!< Contain a Picture Parameter Set
-    NALU_TYPE_AUD          = 9,     //!< Contain/Indicate a Access Unit Delimiter
-    NALU_TYPE_END_SEQUENCE = 10,    //!< Indicate end of sequence
-    NALU_TYPE_END_STREAM   = 11,    //!< Indicate end of stream
-    NALU_TYPE_FILL         = 12,    //!< Contain filler data
-    NALU_TYPE_SPS_EXT      = 13,    //!< Sequence Parameter Set extension
-    NALU_TYPE_PREFIX_NAL   = 14,    //!< Prefix NAL unit
-    NALU_TYPE_SPS_SUBSET   = 15,    //!< Subset Sequence Parameter Set
-    NALU_TYPE_DPS          = 16,    //!< Depth Parameter Set
-    NALU_TYPE_SLICE_AUX    = 19,    //!< Coded slice of an auxiliary coded picture without partitioning
-    NALU_TYPE_SLICE_EXT    = 20,    //!< Coded slice extension
-    NALU_TYPE_SLICE_EXT_3D = 21,    //!< Coded slice extension for depth view / 3D-AVC texture view
+    H264_NALU_UNKNOWN      = 0,
+
+    H264_NALU_SLICE        = 1,     //!< Contain a coded slice
+    H264_NALU_DPA          = 2,     //!< Contain a data partition, type A
+    H264_NALU_DPB          = 3,     //!< Contain a data partition, type B
+    H264_NALU_DPC          = 4,     //!< Contain a data partition, type C
+    H264_NALU_IDR          = 5,     //!< Contain an IDR
+
+    H264_NALU_SEI          = 6,     //!< Contain Supplemental Enhancement Information
+    H264_NALU_SPS          = 7,     //!< Contain a Sequence Parameter Set
+    H264_NALU_PPS          = 8,     //!< Contain a Picture Parameter Set
+    H264_NALU_AUD          = 9,     //!< Contain/Indicate a Access Unit Delimiter
+
+    H264_NALU_END_SEQUENCE = 10,    //!< Indicate end of sequence
+    H264_NALU_END_STREAM   = 11,    //!< Indicate end of stream
+    H264_NALU_FILL         = 12,    //!< Contain filler data
+    H264_NALU_SPS_EXT      = 13,    //!< Sequence Parameter Set extension
+    H264_NALU_PREFIX_NAL   = 14,    //!< Prefix NAL unit
+    H264_NALU_SPS_SUBSET   = 15,    //!< Subset Sequence Parameter Set
+    H264_NALU_DPS          = 16,    //!< Depth Parameter Set
+    H264_NALU_SLICE_AUX    = 19,    //!< Coded slice of an auxiliary coded picture without partitioning
+    H264_NALU_SLICE_EXT    = 20,    //!< Coded slice extension
+    H264_NALU_SLICE_EXT_3D = 21,    //!< Coded slice extension for depth view / 3D-AVC texture view
 
 } h264_nalu_type_e;
 

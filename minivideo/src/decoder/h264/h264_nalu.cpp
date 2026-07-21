@@ -314,43 +314,43 @@ const char *h264_nalu_get_string_type1(unsigned nal_unit_type)
 {
     switch (nal_unit_type)
     {
-        case NALU_TYPE_SLICE:
+        case H264_NALU_SLICE:
             return "SLICE (coded slice)";
-        case NALU_TYPE_DPA:
+        case H264_NALU_DPA:
             return "DPA (data partition, type A)";
-        case NALU_TYPE_DPB:
+        case H264_NALU_DPB:
             return "DPB (data partition, type B)";
-        case NALU_TYPE_DPC:
+        case H264_NALU_DPC:
             return "DPC (data partition, type C)";
-        case NALU_TYPE_IDR:
+        case H264_NALU_IDR:
             return "IDR (Instantaneous Decode Refresh frame)";
-        case NALU_TYPE_SEI:
+        case H264_NALU_SEI:
             return "SEI (Supplemental Enhancement Information)";
-        case NALU_TYPE_SPS:
+        case H264_NALU_SPS:
             return "SPS (Sequence Parameter Set)";
-        case NALU_TYPE_SPS_EXT:
+        case H264_NALU_SPS_EXT:
             return "SPS EXT (Sequence Parameter Set Extension)";
-        case NALU_TYPE_SPS_SUBSET:
+        case H264_NALU_SPS_SUBSET:
             return "SPS SUBSET (Subset Sequence Parameter Set)";
-        case NALU_TYPE_PPS:
+        case H264_NALU_PPS:
             return "PPS (Picture Parameter Set)";
-        case NALU_TYPE_AUD:
+        case H264_NALU_AUD:
             return "AUD (Access Unit Delimiter)";
-        case NALU_TYPE_END_SEQUENCE:
+        case H264_NALU_END_SEQUENCE:
             return "END_SEQUENCE (end of sequence)";
-        case NALU_TYPE_END_STREAM:
+        case H264_NALU_END_STREAM:
             return "END_STREAM (end of stream)";
-        case NALU_TYPE_FILL:
+        case H264_NALU_FILL:
             return "FILL (filler data)";
-        case NALU_TYPE_PREFIX_NAL:
+        case H264_NALU_PREFIX_NAL:
             return "Prefix NAL unit";
-        case NALU_TYPE_DPS:
+        case H264_NALU_DPS:
             return "DPS (Depth Parameter Set)";
-        case NALU_TYPE_SLICE_AUX:
+        case H264_NALU_SLICE_AUX:
             return "SLICE AUX (coded slice of an auxiliary coded picture)";
-        case NALU_TYPE_SLICE_EXT:
+        case H264_NALU_SLICE_EXT:
             return "SLICE EXT (coded slice extension)";
-        case NALU_TYPE_SLICE_EXT_3D:
+        case H264_NALU_SLICE_EXT_3D:
             return "SLICE EXT 3D (coded slice extension for depth view / 3D-AVC texture view)";
 
         default:

@@ -139,27 +139,27 @@ unsigned depack_h264_sample(Bitstream_t *bitstr,
                 sample.type = n.nal_unit_type;
                 sample.type_cstr = h264_nalu_get_string_type1(n.nal_unit_type);
 
-                if (sample.type == NALU_TYPE_AUD)
+                if (sample.type == H264_NALU_AUD)
                 {
                     h264_aud_t *aud = (h264_aud_t*)calloc(1, sizeof(h264_aud_t));
                     decodeAUD(bitstr, aud);
                     mapAUD(aud, sample.offset, sample.size, xml);
                 }
-                if (sample.type == NALU_TYPE_SPS)
+                if (sample.type == H264_NALU_SPS)
                 {
                     h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
                     decodeSPS(bitstr, sps);
                     mapSPS(sps, sample.offset, sample.size, xml);
                     freeSPS(&sps);
                 }
-                if (sample.type == NALU_TYPE_PPS)
+                if (sample.type == H264_NALU_PPS)
                 {
                     h264_pps_t *pps = (h264_pps_t*)calloc(1, sizeof(h264_pps_t));
                     decodePPS(bitstr, pps, nullptr);
                     mapPPS(pps, nullptr, sample.offset, sample.size, xml);
                     freePPS(&pps);
                 }
-                if (sample.type == NALU_TYPE_SEI)
+                if (sample.type == H264_NALU_SEI)
                 {
                     h264_sei_t *sei = (h264_sei_t*)calloc(1, sizeof(h264_sei_t));
                     decodeSEI(bitstr, sei, sample.size);

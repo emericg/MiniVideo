@@ -329,13 +329,13 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
         // Decode NAL Unit content
         switch (dc->active_nalu->nal_unit_type)
         {
-            case NALU_TYPE_SLICE: //////////////////////////////////////////////
+            case H264_NALU_SLICE: //////////////////////////////////////////////
             {
                 TRACE_1(H264, "This decoder only support IDR slice decoding!");
             }
             break;
 
-            case NALU_TYPE_IDR: ////////////////////////////////////////////////
+            case H264_NALU_IDR: ////////////////////////////////////////////////
             {
                 TRACE_INFO(H264, "> " BLD_GREEN "decodeIDR(%i at %lli)" CLR_RESET,
                            dc->idrCounter, bitstream_get_absolute_byte_offset(dc->bitstr));
@@ -354,7 +354,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_SEI: ////////////////////////////////////////////////
+            case H264_NALU_SEI: ////////////////////////////////////////////////
             {
                 retcode = SUCCESS; // SEI messages are not needed for decoding
 /*
@@ -376,7 +376,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_SPS: ////////////////////////////////////////////////
+            case H264_NALU_SPS: ////////////////////////////////////////////////
             {
                 h264_sps_t *sps = (h264_sps_t*)calloc(1, sizeof(h264_sps_t));
                 if (sps)
@@ -407,7 +407,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_PPS: ////////////////////////////////////////////////
+            case H264_NALU_PPS: ////////////////////////////////////////////////
             {
                 h264_pps_t *pps = (h264_pps_t*)calloc(1, sizeof(h264_pps_t));
                 if (pps)
@@ -434,7 +434,7 @@ int h264_decode_nalu(DecodingContext_t *dc, const int64_t nalu_offset, const int
             }
             break;
 
-            case NALU_TYPE_AUD: ////////////////////////////////////////////////
+            case H264_NALU_AUD: ////////////////////////////////////////////////
             {
                 h264_aud_t aud;
                 if (decodeAUD(dc->bitstr, &aud))
