@@ -225,13 +225,13 @@ static int mkv_parse_tracks_entry_video_projection(Bitstream_t *bitstr, EbmlElem
                 if (projection->ProjectionPrivate) projection->ProjectionPrivate_size = element_sub.size;
                 break;
             case eid_spatial_ProjectionPoseYaw:
-                projection->ProjectionPoseYaw = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPoseYaw");
+                projection->ProjectionPoseYaw = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "ProjectionPoseYaw");
                 break;
             case eid_spatial_ProjectionPosePitch:
-                projection->ProjectionPosePitch = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPosePitch");
+                projection->ProjectionPosePitch = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "ProjectionPosePitch");
                 break;
             case eid_spatial_ProjectionPoseRoll:
-                projection->ProjectionPoseRoll = read_ebml_data_uint(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
+                projection->ProjectionPoseRoll = read_ebml_data_float(bitstr, &element_sub, mkv->xml, "ProjectionPoseRoll");
                 break;
 
             case eid_void:

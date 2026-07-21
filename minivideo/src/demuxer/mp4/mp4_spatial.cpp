@@ -380,7 +380,7 @@ int parse_cbmp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned layout = read_mp4_uint32(bitstr, mp4->xml, "layout");
     unsigned padding = read_mp4_uint32(bitstr, mp4->xml, "padding");
 
-    if (layout == 1)
+    if (layout == 0)
         track->projection = PROJECTION_CUBEMAP_A;
 
     if (mp4->xml) fprintf(mp4->xml, "  </a>\n");
@@ -443,7 +443,7 @@ int parse_mshp(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4Track_t *track, Mp4
     unsigned crc = read_mp4_uint32(bitstr, mp4->xml, "crc");
     unsigned encoding_four_cc = read_mp4_uint32(bitstr, mp4->xml, "encoding_four_cc");
 
-    track->projection = PROJECTION_EQUIRECTANGULAR;
+    track->projection = PROJECTION_MESH;
 
     if (encoding_four_cc == fcc_raw)
     {

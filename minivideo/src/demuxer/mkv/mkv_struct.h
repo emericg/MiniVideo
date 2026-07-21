@@ -287,9 +287,9 @@ typedef struct mkv_track_video_projection_t
     uint64_t ProjectionType = 0;
     int ProjectionPrivate_size = 0;
     uint8_t *ProjectionPrivate = nullptr;
-    uint64_t ProjectionPoseYaw = 0;
-    uint64_t ProjectionPosePitch = 0;
-    uint64_t ProjectionPoseRoll = 0;
+    double ProjectionPoseYaw = 0;
+    double ProjectionPosePitch = 0;
+    double ProjectionPoseRoll = 0;
 
 } mkv_track_video_projection_t;
 

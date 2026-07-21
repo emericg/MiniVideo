@@ -1304,8 +1304,11 @@ static int parse_trak(Bitstream_t *bitstr, Mp4Box_t *box_header, Mp4_t *mp4)
                     break;
 
                 case BOX_UUID:
-                    if (memcmp(box_subheader.usertype, SphericalVideoUUID, 16))
+                    if (memcmp(box_subheader.usertype, SphericalVideoUUID, 16) == 0)
+                    {
+                        // we don't actually parse the XML content...
                         mp4->tracks[track_id]->projection = PROJECTION_EQUIRECTANGULAR;
+                    }
                     retcode = parse_unknown_box(bitstr, &box_subheader, mp4->xml);
                     break;
 
