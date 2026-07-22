@@ -79,6 +79,9 @@
 */
 /* ************************************************************************** */
 
+//! Maximum length of a bin string, and the row stride of the binarization tables
+#define CABAC_MAX_BINS  64
+
 static int getBinarization(DecodingContext_t *dc,
                            SyntaxElementType_e seType, BlockType_e blkType,
                            binarization_t *prefix,
@@ -96,16 +99,16 @@ static int decodingProcessFlow(DecodingContext_t *dc,
                                SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx,
                                binarization_t *bin);
 
-static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, const uint8_t decodedSE[32], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset);
-        static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
+static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType, const int blkIdx, const uint8_t decodedSE[CABAC_MAX_BINS], int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset);
+        static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx, const int ctxIdxOffset);
         static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset);
-        static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx);
-        static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx);
+        static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx);
+        static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx);
         static int deriv_ctxIdxInc_mbQPd(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_intrachromapredmode(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc);
         static int deriv_ctxIdxInc_codedblockflag(DecodingContext_t *dc, const int blkType, const int blkIdx);
-        static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset);
+        static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx, const int ctxIdxOffset);
         static int assign_ctxIdxInc_se(DecodingContext_t *dc, const SyntaxElementType_e seType, const BlockType_e blkType, const int binIdx);
 
     static int decodeBin(DecodingContext_t *dc, const int ctxIdx, const bool bypassFlag);
@@ -691,8 +694,8 @@ static int getBinarization(DecodingContext_t *dc,
             prefix->ctxIdxOffset = 54;
 
             prefix->bintable = (uint8_t **)binarization_u;
-            prefix->bintable_x = 32;
-            prefix->bintable_y = 32;
+            prefix->bintable_x = 64;
+            prefix->bintable_y = 32; // ref_idx_lX is at most 31
 
             retcode = SUCCESS; // bp_U();
         break;
@@ -702,8 +705,8 @@ static int getBinarization(DecodingContext_t *dc,
             prefix->ctxIdxOffset = 60;
 
             prefix->bintable = (uint8_t **)binarization_u;
-            prefix->bintable_x = 32;
-            prefix->bintable_y = 32;
+            prefix->bintable_x = 64;
+            prefix->bintable_y = 64; // mb_qp_delta of -26 maps to codeNum of at most 52
 
             retcode = SUCCESS; // bp_mbQPd();
         break;
@@ -1235,7 +1238,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
     int ctxIdx = -1;
     int match = 999;
 
-    uint8_t decodedSE[32];
+    uint8_t decodedSE[CABAC_MAX_BINS];
     //memset(decodedSE, 255, sizeof(decodedSE));
 
     {
@@ -1251,6 +1254,12 @@ static int decodingProcessFlow(DecodingContext_t *dc,
     {
         // Next bin
         binIdx++;
+
+        if (binIdx >= CABAC_MAX_BINS)
+        {
+            TRACE_ERROR(CABAC, "Bin string is longer than the binarization table, bitstream is desynchronized!");
+            return FAILURE;
+        }
 
         // Decode bin
         ////////////////////////////////////////////////////////////////////////
@@ -1364,7 +1373,7 @@ static int decodingProcessFlow(DecodingContext_t *dc,
  * 9.3.3.1 Derivation process for ctxIdx.
  */
 static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e blkType,
-                     const int blkIdx, const uint8_t decodedSE[32],
+                     const int blkIdx, const uint8_t decodedSE[CABAC_MAX_BINS],
                      int binIdx, const int maxBinIdxCtx, const int ctxIdxOffset)
 {
     TRACE_2(CABAC, BLD_GREEN " getCtxIdx()" CLR_RESET);
@@ -1455,7 +1464,7 @@ static int getCtxIdx(DecodingContext_t *dc, SyntaxElementType_e seType, BlockTyp
 /*!
  * \return ctxIdxInc docme.
  */
-static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
+static int deriv_ctxIdxInc(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx, const int ctxIdxOffset)
 {
     TRACE_2(CABAC, BLD_GREEN "  ctxIdxInc()" CLR_RESET);
     int ctxIdxInc = -1;
@@ -1636,7 +1645,7 @@ static int deriv_ctxIdxInc_mbtype(DecodingContext_t *dc, const int ctxIdxOffset)
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
  */
-static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx)
+static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx)
 {
     TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
@@ -1725,7 +1734,7 @@ static int deriv_ctxIdxInc_cbp_luma(DecodingContext_t *dc, const uint8_t decoded
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.1.4 Derivation process of ctxIdxInc for the syntax element coded_block_pattern.
  */
-static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[32], const int binIdx)
+static int deriv_ctxIdxInc_cbp_chroma(DecodingContext_t *dc, const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx)
 {
     TRACE_3(CABAC, BLD_GREEN "  deriv_ctxIdxInc_cbp()" CLR_RESET);
 
@@ -2235,7 +2244,7 @@ static int deriv_ctxIdxInc_transformsize8x8flag(DecodingContext_t *dc)
  * From 'ITU-T H.264' recommendation:
  * 9.3.3.1.2 Assignment process of ctxIdxInc using prior decoded bin values.
  */
-static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[32], const int binIdx, const int ctxIdxOffset)
+static int assign_ctxIdxInc_priorvalues(const uint8_t decodedSE[CABAC_MAX_BINS], const int binIdx, const int ctxIdxOffset)
 {
     TRACE_3(CABAC, BLD_GREEN "  assign_ctxIdxInc_priorvalues()" CLR_RESET);
     int ctxIdxInc = -1;
