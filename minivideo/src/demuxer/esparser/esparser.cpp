@@ -75,13 +75,22 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
                 }
                 else
                 {
-                    // We have a full 0x000001 start code
-                    if (current_byte == 0x01 && current_startcode_size > 2)
+                    // We have a full start code (Annex B allows both 0x000001 and 0x00000001)
+                    if (current_byte == 0x01 && current_startcode_size > 1)
                     {
                         // Determine the type of the sample detected
                         next_byte = next_byte_aligned(bitstr);
 
-                        if (next_byte == 0x67 || next_byte == 0x68)
+                        bool nalu_is_xps = ((next_byte & 0x1F) == 7 || (next_byte & 0x1F) == 8);
+                        bool nalu_is_idr = ((next_byte & 0x1F) == 5);
+                        bool nalu_is_frame = ((next_byte & 0x1F) == 1);
+
+                        if ((next_byte & 0x80) != 0) // forbidden_zero_bit
+                        {
+                            nalu_is_xps = nalu_is_idr = nalu_is_frame = false;
+                        }
+
+                        if (nalu_is_xps)
                         {
                             // Add a sample
                             if (media->tracks_video[0]->parameter_count < 32)
@@ -95,7 +104,7 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
                             }
                         }
 
-                        if (next_byte == 0x67 || next_byte == 0x68 || next_byte == 0x65 || next_byte == 0x41)
+                        if (nalu_is_xps || nalu_is_idr || nalu_is_frame)
                         {
                             // Add a sample
                             if (media->tracks_video[0]->sample_count < 999999)
@@ -119,7 +128,7 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
                                     }
                                 }
 
-                                if (next_byte == 0x67 || next_byte == 0x68)
+                                if (nalu_is_xps)
                                 {
                                     // xPS
                                     media->tracks_video[0]->sample_pts[media->tracks_video[0]->sample_count] = 0;
@@ -131,7 +140,7 @@ int es_fileParse(MediaFile_t *media, Codecs_e video_codec)
                                     // frames
                                     media->tracks_video[0]->sample_pts[media->tracks_video[0]->sample_count] = (media->tracks_video[0]->sample_count - media->tracks_video[0]->parameter_count) * 41708;
 
-                                    if (next_byte == 0x65)
+                                    if (nalu_is_idr)
                                     {
                                         media->tracks_video[0]->sample_type[media->tracks_video[0]->sample_count] = sample_VIDEO_SYNC;
                                         media->tracks_video[0]->frame_count_idr++;

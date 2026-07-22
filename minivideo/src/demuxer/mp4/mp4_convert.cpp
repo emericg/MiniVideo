@@ -254,7 +254,10 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             map->max_ref_frames = track->max_ref_frames;
 
             // IDR count
-            map->frame_count_idr = track->stss_entry_count;
+            if (track->stss_entry_count == 0)
+                map->frame_count_idr = track->stsz_sample_count; // no stss box: every sample is a sync sample
+            else
+                map->frame_count_idr = track->stss_entry_count;
 
             // Framerate
             {
@@ -431,12 +434,20 @@ int mp4_convert_track(MediaFile_t *media, Mp4Track_t *track)
             // Set sample type
             if (track->handlerType == MP4_HANDLER_VIDEO)
             {
-                map->sample_type[sid] = sample_VIDEO;
-
-                for (unsigned j = 0; j < track->stss_entry_count; j++)
+                if (track->stss_entry_count == 0)
                 {
-                    if (i == (track->stss_sample_number[j] - 1))
-                        map->sample_type[sid] = sample_VIDEO_SYNC;
+                    // No stss box: every sample is a sync sample
+                    map->sample_type[sid] = sample_VIDEO_SYNC;
+                }
+                else
+                {
+                    map->sample_type[sid] = sample_VIDEO;
+
+                    for (unsigned j = 0; j < track->stss_entry_count; j++)
+                    {
+                        if (i == (track->stss_sample_number[j] - 1))
+                            map->sample_type[sid] = sample_VIDEO_SYNC;
+                    }
                 }
             }
             else if (track->handlerType == MP4_HANDLER_AUDIO)

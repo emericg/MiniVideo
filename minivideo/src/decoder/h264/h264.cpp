@@ -535,16 +535,29 @@ int h264_decode(DecodingContext_t *dc, unsigned sid)
 
     if (!dc) return retcode;
 
+    MediaStream_t *track = dc->MediaFile->tracks_video[dc->active_tid];
+
     // Get one sample
     retcode = buffer_feed_manual(dc->bitstr,
-                                 dc->MediaFile->tracks_video[dc->active_tid]->sample_offset[sid],
-                                 dc->MediaFile->tracks_video[dc->active_tid]->sample_size[sid]);
+                                 track->sample_offset[sid],
+                                 track->sample_size[sid]);
 
     // Depacketize
     es_sample_t essample_list[16];
-    int essample_count = depack_h264_sample_legacy(dc->bitstr,
-                                                   dc->MediaFile->tracks_video[dc->active_tid],
-                                                   sid, essample_list);
+    int essample_count = 0;
+
+    if (track->stream_packetized == false)
+    {
+        // Annex B elementary stream: a sample already is a single NAL Unit
+        essample_list[0].offset = track->sample_offset[sid];
+        essample_list[0].size = track->sample_size[sid];
+        essample_list[0].type_cstr = nullptr;
+        essample_count = 1;
+    }
+    else
+    {
+        essample_count = depack_h264_sample_legacy(dc->bitstr, track, sid, essample_list);
+    }
 
     for (int i = 0; i < essample_count && dc->decoderRunning; i++)
     {
