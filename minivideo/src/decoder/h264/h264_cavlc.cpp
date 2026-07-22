@@ -205,8 +205,10 @@ void residual_block_cavlc(DecodingContext_t *dc, int *coeffLevel, const int star
 
     if (CoeffToken == -1)
     {
-        TRACE_WARNING(CAVLC, "Fatal error: could not compute CoeffToken!");
-        exit(EXIT_FAILURE);
+        TRACE_ERROR(CAVLC, "Entropy decoding ERROR: could not compute CoeffToken!");
+        dc->entropyFailure = true;
+        dc->errorCounter++;
+        return;
     }
 
     if (blkType < 4)

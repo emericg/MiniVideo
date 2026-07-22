@@ -383,8 +383,10 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
 
     if (getBinarization(dc, seType, blk_UNKNOWN, &prefix, &suffix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Binarization process");
-        exit(EXIT_FAILURE);
+        TRACE_ERROR(CABAC, "Error during Binarization process");
+        dc->entropyFailure = true;
+        dc->errorCounter++;
+        return 0;
     }
 
     // Arithmetic decoding process
@@ -393,8 +395,10 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     // Prefix
     if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic (prefix) decoding process");
-        exit(EXIT_FAILURE);
+        TRACE_ERROR(CABAC, "Entropy decoding ERROR during Arithmetic (prefix) decoding process");
+        dc->entropyFailure = true;
+        dc->errorCounter++;
+        return 0;
     }
 
     // Suffix?
@@ -402,8 +406,10 @@ int read_ae(DecodingContext_t *dc, SyntaxElementType_e seType)
     {
         if (decodingProcessFlow(dc, seType, blk_UNKNOWN, blk_UNKNOWN, &suffix) == FAILURE)
         {
-            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process");
-            exit(EXIT_FAILURE);
+            TRACE_ERROR(CABAC, "Entropy decoding ERROR during Arithmetic (suffix) decoding process");
+            dc->entropyFailure = true;
+            dc->errorCounter++;
+            return 0;
         }
 
         if (seType == SE_coded_block_pattern)
@@ -485,8 +491,10 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
 
     if (getBinarization(dc, seType, blkType, &prefix, &suffix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Binarization process");
-        exit(EXIT_FAILURE);
+        TRACE_ERROR(CABAC, "Entropy decoding ERROR during Binarization process");
+        dc->entropyFailure = true;
+        dc->errorCounter++;
+        return 0;
     }
 
     // Arithmetic decoding process
@@ -495,8 +503,10 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     // Prefix
     if (decodingProcessFlow(dc, seType, blkType, blkIdx, &prefix) == FAILURE)
     {
-        TRACE_ERROR(CABAC, "Fatal error during Arithmetic (prefix) decoding process");
-        exit(EXIT_FAILURE);
+        TRACE_ERROR(CABAC, "Entropy decoding ERROR during Arithmetic (prefix) decoding process");
+        dc->entropyFailure = true;
+        dc->errorCounter++;
+        return 0;
     }
 
     // Suffix?
@@ -504,8 +514,10 @@ int read_ae_blk(DecodingContext_t *dc, SyntaxElementType_e seType, BlockType_e b
     {
         if (decodingProcessFlow(dc, seType, blkType, blkIdx, &suffix) == FAILURE)
         {
-            TRACE_ERROR(CABAC, "Fatal error during Arithmetic (suffix) decoding process");
-            exit(EXIT_FAILURE);
+            TRACE_ERROR(CABAC, "Entropy decoding ERROR during Arithmetic (suffix) decoding process");
+            dc->entropyFailure = true;
+            dc->errorCounter++;
+            return 0;
         }
 
         SyntaxElementValue = prefix.SyntaxElementValue + suffix.SyntaxElementValue;

@@ -989,6 +989,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
     // Initialization
     int retcode = SUCCESS;
     dc->CurrMbAddr = 0;
+    dc->entropyFailure = false;
     slice->moreDataFlag = true;
     slice->prevMbSkipped = false;
 
@@ -1016,6 +1017,7 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
     }
 
     while ((retcode == SUCCESS) &&
+           (dc->entropyFailure == false) &&
            (slice->moreDataFlag == true) &&
            (dc->CurrMbAddr < dc->PicSizeInMbs))
     {
@@ -1107,6 +1109,12 @@ static int decodeSliceData(DecodingContext_t *dc, slice_t *slice)
 
         // Get next macroblock address
         dc->CurrMbAddr = NextMbAddress(dc, dc->CurrMbAddr);
+    }
+
+    if (dc->entropyFailure == true)
+    {
+        TRACE_ERROR(SLICE, "CABAC/CAVLC decoding failed at macroblock %u/%u, slice aborted", dc->CurrMbAddr, dc->PicSizeInMbs);
+        retcode = FAILURE;
     }
 
     return retcode;

@@ -48,6 +48,7 @@ typedef struct DecodingContext_t
     Bitstream_t *bitstr;            //!< Bitstream reader used for decoding (opened on the input file)
 
     bool decoderRunning;            //!< Set 'decoderRunning' to false to stop video decoding
+    bool entropyFailure;            //!< Set when CABAC/CAVLC decoding fails, to abort the current slice
     unsigned frameCounter;          //!< The number of frame decoded
     unsigned idrCounter;            //!< The number of idr frame decoded
     unsigned errorCounter;          //!< The number of decoding error so far
